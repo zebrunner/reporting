@@ -8,6 +8,7 @@ Request:
 {
 	"jobURL": "http://stg.caronfly.com:8081/view/zafira/job/zafira-ws"
 }
+
 Response:
 {
    "id": 1,
@@ -17,7 +18,22 @@ Response:
 }
 ```
 #### POST: /tests/cases
+```
+Request:
+{
+	"name": "sanity",
+	"description": "Test it!",
+	"userName": "akhursevich"
+}
 
+Response:
+{
+   "id": 1,
+   "name": "sanity",
+   "description": "Test it!",
+   "userName": "akhursevich"
+}
+```
 
 #### POST: /tests/suites
 
