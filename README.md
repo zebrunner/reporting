@@ -4,10 +4,11 @@
 
 * ### POST: /jobs
 ```
+Request:
 {
 	"jobURL": "http://stg.caronfly.com:8081/view/zafira/job/zafira-ws"
 }
-
+Response:
 {
    "id": 1,
    "modifiedAt": 1415651776000,
