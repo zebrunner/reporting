@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.zafira.ws.dto.TestSuiteType</class-a>
-		<class-b>com.zafira.dbaccess.model.TestSuite</class-b>
+		<class-a>com.qaprosoft.zafira.ws.dto.TestSuiteType</class-a>
+		<class-b>com.qaprosoft.zafira.dbaccess.model.TestSuite</class-b>
 
 		<field>
 			<a>id</a>

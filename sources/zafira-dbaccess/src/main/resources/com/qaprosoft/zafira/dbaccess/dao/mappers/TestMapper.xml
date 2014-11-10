@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper">
+
+	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL)
+			VALUES (
+				#{name},
+			    #{status},
+			    #{testArgs},
+			    #{testRunId},
+			    #{testCaseId},
+			    #{message},
+			    #{startTime},
+			    #{finishTime},
+			    #{demoURL},
+			    #{logURL}
+			)
+		]]>
+	</insert>
+
+	<sql id="getTest">
+		<![CDATA[
+			SELECT
+				T.ID AS TEST_ID,
+				T.NAME AS TEST_NAME,
+				T.STATUS AS TEST_STATUS,
+				T.TEST_ARGS AS TEST_TEST_ARGS,
+				T.TEST_RUN_ID AS TEST_TEST_RUN_ID,
+				T.TEST_CASE_ID AS TEST_TEST_CASE_ID,
+				T.MESSAGE AS TEST_MESSAGE,
+				T.START_TIME AS TEST_START_TIME,
+				T.FINISH_TIME AS TEST_FINISH_TIME,
+				T.DEMO_URL AS TEST_DEMO_URL,
+				T.LOG_URL AS TEST_LOG_URL,
+				T.MODIFIED_AT AS TEST_MODIFIED_AT,
+				T.CREATED_AT AS TEST_CREATED_AT
+			FROM
+				TESTS T
+		]]>
+	</sql>
+
+	<select id="getTestById" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE T.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getTestByName" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE T.NAME = #{name};
+		]]>
+	</select>
+
+	<update id="updateTest">
+		<![CDATA[
+			UPDATE
+			    TESTS
+			SET
+				NAME = #{name},
+				STATUS = #{status},
+				TEST_ARGS = #{testArgs},
+				TEST_RUN_ID = #{testRunId},
+				TEST_CASE_ID = #{testCaseId},
+				MESSAGE = #{message},
+				START_TIME = #{startTime},
+				FINISH_TIME = #{finishTime},
+				DEMO_URL = #{demoURL},
+				LOG_URL = #{logURL}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteTest">
+		<![CDATA[
+			DELETE FROM TESTS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteTest">
+		<include refid="deleteTest" />
+	</delete>
+
+	<delete id="deleteTestById">
+		<include refid="deleteTest" />
+	</delete>
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Test" id="TestResultMap" autoMapping="false">
+		<id column="TEST_ID" property="id" />
+		<result column="TEST_NAME" property="name" />
+		<result column="TEST_STATUS" property="status" />
+		<result column="TEST_TEST_ARGS" property="testArgs" />
+		<result column="TEST_TEST_RUN_ID" property="testRunId" />
+		<result column="TEST_TEST_CASE_ID" property="testCaseId" />
+		<result column="TEST_MESSAGE" property="message" />
+		<result column="TEST_START_TIME" property="startTime" />
+		<result column="TEST_FINISH_TIME" property="finishTime" />
+		<result column="TEST_DEMO_URL" property="demoURL" />
+		<result column="TEST_LOG_URL" property="logURL" />
+		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
+		<result column="TEST_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

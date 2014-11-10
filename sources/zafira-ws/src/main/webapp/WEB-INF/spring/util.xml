@@ -23,9 +23,9 @@
 		<property name="validationMessageSource" ref="messageSource" />
 	</bean>
 
-	<bean id="longToUserConverter" class="com.zafira.ws.util.dozer.LongToUserConverter" />
+	<bean id="longToUserConverter" class="com.qaprosoft.zafira.ws.util.dozer.LongToUserConverter" />
 
-	<bean id="mapper" class="com.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
+	<bean id="mapper" class="com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
 		<property name="mappingFiles">
 			<list>
 				<value>dozer/TestSuite-dozer-mapping.xml</value>

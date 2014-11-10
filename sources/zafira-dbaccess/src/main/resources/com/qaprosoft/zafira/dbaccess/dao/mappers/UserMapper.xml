@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper">
+
+	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO USERS (USERNAME, FIRST_NAME, LAST_NAME, EMAIL)
+			VALUES (
+				#{userName},
+			    #{firstName},
+				#{lastName},
+				#{email}
+			)
+		]]>
+	</insert>
+
+	<sql id="getUser">
+		<![CDATA[
+			SELECT
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT
+			FROM
+				USERS U
+		]]>
+	</sql>
+
+	<select id="getUserById" resultMap="UserResultMap">
+		<include refid="getUser" />
+		<![CDATA[
+			WHERE U.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getUserByUserName" resultMap="UserResultMap">
+		<include refid="getUser" />
+		<![CDATA[
+			WHERE U.USERNAME = #{username};
+		]]>
+	</select>
+
+	<update id="updateUser">
+		<![CDATA[
+			UPDATE
+			    USERS
+			SET
+				USERNAME = #{userName},
+			    FIRST_NAME = #{firstName},
+			    LAST_NAME = #{lastName},
+			    EMAIL = #{email}			    	    
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteUser">
+		<![CDATA[
+			DELETE FROM USERS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteUser">
+		<include refid="deleteUser" />
+	</delete>
+
+	<delete id="deleteUserById">
+		<include refid="deleteUser" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.User" id="UserResultMap" autoMapping="false">
+		<id column="USER_ID" property="id" />
+		<result column="USER_USERNAME" property="userName" />
+		<result column="USER_FIRST_NAME" property="firstName" />
+		<result column="USER_LAST_NAME" property="lastName" />
+		<result column="USER_EMAIL" property="email" />
+		<result column="USER_MODIFIED_AT" property="modifiedAt" />
+		<result column="USER_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

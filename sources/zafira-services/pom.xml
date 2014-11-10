@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.zafira</groupId>
+		<groupId>com.qaprosoft</groupId>
 		<artifactId>zafira</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
@@ -16,7 +16,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.zafira</groupId>
+			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
 		</dependency>
 
