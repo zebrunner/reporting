@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zafira.dbaccess.dao.mysql.WorkItemMapper">
+
+	<insert id="createWorkItem" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO WORK_ITEMS (JIRA_ID)
+			VALUES (
+				#{jiraId}
+			)
+		]]>
+	</insert>
+
+	<sql id="getWorkItem">
+		<![CDATA[
+			SELECT
+				J.ID AS WORK_ITEM_ID,
+				J.JIRA_ID AS WORK_ITEM_JIRA_ID,
+				J.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
+				J.CREATED_AT AS WORK_ITEM_CREATED_AT
+			FROM
+				WORK_ITEMS J
+		]]>
+	</sql>
+
+	<select id="getWorkItemById" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE J.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getWorkItemByJiraId" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE J.JIRA_ID = #{jiraId};
+		]]>
+	</select>
+
+	<update id="updateWorkItem">
+		<![CDATA[
+			UPDATE
+			    WORK_ITEMS
+			SET
+				JIRA_ID = #{jiraId}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteWorkItem">
+		<![CDATA[
+			DELETE FROM WORK_ITEMS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteWorkItem">
+		<include refid="deleteWorkItem" />
+	</delete>
+
+	<delete id="deleteWorkItemById">
+		<include refid="deleteWorkItem" />
+	</delete>
+
+	<resultMap type="com.zafira.dbaccess.model.WorkItem" id="WorkItemResultMap" autoMapping="false">
+		<id column="WORK_ITEM_ID" property="id" />
+		<result column="WORK_ITEM_JIRA_ID" property="jiraId" />
+		<result column="WORK_ITEM_MODIFIED_AT" property="modifiedAt" />
+		<result column="WORK_ITEM_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

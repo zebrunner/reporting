@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>classpath:environment.properties</value>
+			</array>
+		</property>
+	</bean>
+
+	<util:properties id="environmentProperties" location="classpath:environment.properties" />
+
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+
+	<bean id="longToUserConverter" class="com.zafira.ws.util.dozer.LongToUserConverter" />
+
+	<bean id="mapper" class="com.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
+		<property name="mappingFiles">
+			<list>
+				<value>dozer/TestSuite-dozer-mapping.xml</value>
+				<value>dozer/TestCase-dozer-mapping.xml</value>
+			</list>
+		</property>
+		<property name="customConvertersWithId">
+			<map>
+				<entry key="longToUserConverter" value-ref="longToUserConverter" />
+			</map>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.zafira.ws.dto.TestCaseType</class-a>
+		<class-b>com.zafira.dbaccess.model.TestCase</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>testClass</a>
+			<b>testClass</b>
+		</field>
+		<field>
+			<a>testMethod</a>
+			<b>testMethod</b>
+		</field>
+		<field>
+			<a>info</a>
+			<b>info</b>
+		</field>
+		<field>
+			<a>testSuiteId</a>
+			<b>testSuiteId</b>
+		</field>
+		<field>
+			<a>userName</a>
+			<b>user.userName</b>
+		</field>
+	</mapping>
+</mappings>

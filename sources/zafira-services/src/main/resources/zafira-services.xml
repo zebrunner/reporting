@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:component-scan base-package="com.zafira.services.services" />
+	<context:component-scan base-package="com.zafira.services.util.switches" />
+	<context:component-scan base-package="com.zafira.services.util.test" />
+
+	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
+
+	<bean id="tokenizer" class="com.zafira.services.util.Tokenizer">
+		<constructor-arg index="0" value="SHA1PRNG" />
+		<constructor-arg index="1" value="SHA-1" />
+	</bean>
+
+	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
+		<property name="serializationInclusion" value="NON_NULL" />
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="messageJsonifier" />
+		<property name="targetMethod" value="configure" />
+		<property name="arguments">
+			<list>
+				<value type="com.fasterxml.jackson.databind.SerializationFeature">FAIL_ON_EMPTY_BEANS</value>
+				<value>false</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="serviceMessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:i18n/services/messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	
+</beans>
