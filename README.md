@@ -18,7 +18,7 @@
    "jenkinsHost": "http://stg.caronfly.com:8081"
 }
 ```
-#### POST: /tests/cases
+#### POST: /tests/suites
 
 ```
 >>>
@@ -37,7 +37,7 @@
 }
 ```
 
-#### POST: /tests/suites
+#### POST: /tests/cases
 ```
 >>>
 [
