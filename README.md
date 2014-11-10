@@ -38,4 +38,42 @@
 ```
 
 #### POST: /tests/suites
+```
+>>>
+[
+	{
+		"testClass": "com.qaprosoft.Zafira",
+		"testMethod": "testMe",
+		"info": "Haha!",
+		"testSuiteId": 1,
+		"userName": "akhursevich"
+	},
+	{
+		"testClass": "com.qaprosoft.Zafira1",
+		"testMethod": "testMe1",
+		"info": "Haha!",
+		"testSuiteId": 1,
+		"userName": "akhursevich"
+	}
+]
 
+<<<
+[
+      {
+      "id": 1,
+      "testClass": "com.qaprosoft.Zafira",
+      "testMethod": "testMe",
+      "info": "Haha!",
+      "testSuiteId": 1,
+      "userName": "akhursevich"
+   },
+      {
+      "id": 2,
+      "testClass": "com.qaprosoft.Zafira1",
+      "testMethod": "testMe1",
+      "info": "Haha!",
+      "testSuiteId": 1,
+      "userName": "akhursevich"
+   }
+]
+```
