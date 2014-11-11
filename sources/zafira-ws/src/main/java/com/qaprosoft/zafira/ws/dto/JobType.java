@@ -8,21 +8,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class JobType extends AbstractType
 {
-	private Long userId;
 	private String name;
 	@NotNull
 	private String jobURL;
 	private String jenkinsHost;
-
-	public Long getUserId()
-	{
-		return userId;
-	}
-
-	public void setUserId(Long userId)
-	{
-		this.userId = userId;
-	}
+	@NotNull
+	private String userName;
 
 	public String getName()
 	{
@@ -52,5 +43,15 @@ public class JobType extends AbstractType
 	public void setJenkinsHost(String jenkinsHost)
 	{
 		this.jenkinsHost = jenkinsHost;
+	}
+
+	public String getUserName()
+	{
+		return userName;
+	}
+
+	public void setUserName(String userName)
+	{
+		this.userName = userName;
 	}
 }

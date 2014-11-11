@@ -15,7 +15,7 @@ import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 
 @Test
-@ContextConfiguration("classpath:com/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
 public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 {
 	/**

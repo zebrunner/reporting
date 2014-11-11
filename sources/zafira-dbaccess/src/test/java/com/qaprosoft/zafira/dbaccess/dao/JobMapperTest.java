@@ -12,9 +12,10 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
+import com.qaprosoft.zafira.dbaccess.model.User;
 
 @Test
-@ContextConfiguration("classpath:com/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
 public class JobMapperTest extends AbstractTestNGSpringContextTests
 {
 	/**
@@ -26,8 +27,12 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			setName("lc-sanity");
-			setJobURL("http://localhost:8080/lc-sanity");
+			User user = new User();
+			user.setId(1L);
+			
+			setUser(user);
+			setName("lc_sanity");
+			setJobURL("http://localhost:8080/lc_sanity");
 			setJenkinsHost("http://localhost:8080");
 		}
 	};
@@ -69,8 +74,9 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 	{ "createJob" })
 	public void updateJob()
 	{
-		JOB.setName("lc-regression");
-		JOB.setJobURL("http://10.2.3.2:8080/lc-regression");
+		JOB.getUser().setId(2L);
+		JOB.setName("lc_regression");
+		JOB.setJobURL("http://10.2.3.2:8080/lc_regression");
 		JOB.setJenkinsHost("http://10.2.3.2:8080");
 		
 		jobMapper.updateJob(JOB);
@@ -112,6 +118,6 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(job.getName(), JOB.getName(), "Job name must match");
 		assertEquals(job.getJobURL(), JOB.getJobURL(), "Job URL must match");
 		assertEquals(job.getJenkinsHost(), JOB.getJenkinsHost(), "Jenkins host must match");
-		assertEquals(job.getUserId(), JOB.getUserId(), "User ID must match");
+		assertEquals(job.getUser().getId(), JOB.getUser().getId(), "User ID must match");
 	}
 }

@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.services.services;
 
 import java.net.URI;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
+import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.URLFormatUtil;
 
@@ -23,6 +23,9 @@ public class JobsService
 	
 	@Autowired
 	private JobMapper jobMapper;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Value("${zafira.jenkins.username}")
 	private String jenkinsUsername;
@@ -43,7 +46,7 @@ public class JobsService
 	}
 	
 	@Transactional(readOnly = true)
-	public Job getJobByJobName(String name) throws ServiceException
+	public Job getJobByName(String name) throws ServiceException
 	{
 		return jobMapper.getJobByName(name);
 	}
@@ -62,26 +65,36 @@ public class JobsService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Job initiateJob(Job j) throws ServiceException
+	public Job initializeJob(Job newJob) throws ServiceException
 	{
 		try
 		{
-			if(StringUtils.isEmpty(j.getJobURL())) throw new Exception("Invalid job URL!");
-			
-			Job job = getJobByJobName(getJobName(j.getJobURL()));
+			// Create or retrieve user
+			User user = userService.getUserByUserName(newJob.getUser().getUserName());
+			newJob.setUser(user);
+			Job job = getJobByName(getJobName(newJob.getJobURL()));
+			// Create new job
 			if(job == null)
 			{
-				JenkinsServer jenkins = new JenkinsServer(new URI(getJenkinsHost(j.getJobURL())), jenkinsUsername, jenkinsPassword);
-				JobWithDetails jobDetails = jenkins.getJob(getJobName(j.getJobURL()));
+				JenkinsServer jenkins = new JenkinsServer(new URI(getJenkinsHost(newJob.getJobURL())), jenkinsUsername, jenkinsPassword);
+				JobWithDetails jobDetails = jenkins.getJob(getJobName(newJob.getJobURL()));
 				
 				job = new Job();
-				job.setJenkinsHost(URLFormatUtil.normalize(getJenkinsHost(j.getJobURL())));
+				job.setJenkinsHost(URLFormatUtil.normalize(getJenkinsHost(newJob.getJobURL())));
 				job.setJobURL(URLFormatUtil.normalize(jobDetails.getUrl()));
 				job.setName(jobDetails.getName());
-				
+				if(user != null)
+				{
+					job.setUser(user);
+				}
 				createJob(job);
 			}
-			
+			// Current job should be updated
+			else if(!newJob.equals(job))
+			{
+				newJob.setId(job.getId());
+				updateJob(newJob);
+			}
 			return job;
 		}
 		catch(Exception e)

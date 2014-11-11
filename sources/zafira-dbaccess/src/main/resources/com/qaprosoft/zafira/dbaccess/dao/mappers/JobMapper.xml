@@ -7,7 +7,7 @@
 		<![CDATA[
 			INSERT INTO JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST)
 			VALUES (
-				#{userId},
+				#{user.id},
 			    #{name},
 				#{jobURL},
 				#{jenkinsHost}
@@ -56,7 +56,7 @@
 			UPDATE
 			    JOBS
 			SET
-				USER_ID = #{userId},
+				USER_ID = #{user.id},
 				NAME = #{name},
 			    JOB_URL = #{jobURL},
 			    JENKINS_HOST = #{jenkinsHost}
@@ -82,7 +82,7 @@
 
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Job" id="JobResultMap" autoMapping="false">
 		<id column="JOB_ID" property="id" />
-		<result column="JOB_USER_ID" property="userId" />
+		<result column="JOB_USER_ID" property="user.id" />
 		<result column="JOB_NAME" property="name" />
 		<result column="JOB_JOB_URL" property="jobURL" />
 		<result column="JOB_JENKINS_HOST" property="jenkinsHost" />

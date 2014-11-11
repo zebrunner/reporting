@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.services.services;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,27 +50,29 @@ public class TestCaseService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestCase [] initiateTestCases(TestCase [] testCases) throws ServiceException
+	public TestCase [] initiateTestCases(TestCase [] newTestCases) throws ServiceException
 	{
-		if(ArrayUtils.isEmpty(testCases)) throw new ServiceException("No test cases found!");
-		
 		int index = 0;
-		for(TestCase tc : testCases)
+		for(TestCase newTestCase : newTestCases)
 		{
-			User user = userService.createUser(tc.getUser().getUserName());
-			TestCase testCase = getTestCaseByClassAndMethod(tc.getTestClass(), tc.getTestMethod());
+			User user = userService.createUser(newTestCase.getUser().getUserName());
+			newTestCase.setUser(user);
+			TestCase testCase = getTestCaseByClassAndMethod(newTestCase.getTestClass(), newTestCase.getTestMethod());
 			if(testCase == null)
 			{
-				testCase = tc;
-				testCase.setUser(user);
-				createTestCase(testCase);
+				createTestCase(newTestCase);
+			}
+			else if(!testCase.equals(newTestCase))
+			{
+				newTestCase.setId(testCase.getId());
+				updateTestCase(newTestCase);
 			}
 			else
 			{
-				testCase.setUser(user);
+				newTestCase = testCase;
 			}
-			testCases[index++] = testCase;
+			newTestCases[index++] = newTestCase;
 		}
-		return testCases;
+		return newTestCases;
 	}
 }

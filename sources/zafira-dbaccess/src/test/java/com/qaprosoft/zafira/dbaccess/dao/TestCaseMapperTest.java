@@ -14,7 +14,7 @@ import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.dbaccess.model.User;
 
 @Test
-@ContextConfiguration("classpath:com/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
 public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 {
 	/**

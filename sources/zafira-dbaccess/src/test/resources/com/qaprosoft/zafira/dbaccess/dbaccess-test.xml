@@ -7,7 +7,7 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<array>
-				<value>classpath:com/zafira/dbaccess/db.properties</value>
+				<value>classpath:com/qaprosoft/zafira/dbaccess/db.properties</value>
 			</array>
 		</property>
 	</bean>
@@ -28,7 +28,7 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="mapperLocations" value="classpath*:/com/zafira/dbaccess/dao/mappers/**/*.xml" />
+		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/**/*.xml" />
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

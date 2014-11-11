@@ -50,19 +50,19 @@ public class TestSuiteService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestSuite initiateTestSuite(TestSuite newTestSuite) throws ServiceException
+	public TestSuite initializeTestSuite(TestSuite newTestSuite) throws ServiceException
 	{
 		User user = userService.createUser(newTestSuite.getUser().getUserName());
+		newTestSuite.setUser(user);
 		TestSuite testSuite = getTestSuiteByName(newTestSuite.getName());
 		if(testSuite == null)
 		{
-			testSuite = newTestSuite;
-			testSuite.setUser(user);
 			createTestSuite(newTestSuite);
 		}
-		else
+		else if(!testSuite.equals(newTestSuite))
 		{
-			testSuite.setUser(user);
+			newTestSuite.setId(testSuite.getId());
+			updateTestSuite(testSuite);
 		}
 		return testSuite;
 	}

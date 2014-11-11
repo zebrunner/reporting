@@ -14,7 +14,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
 @Test
-@ContextConfiguration("classpath:com/zafira/dbaccess/dbaccess-test.xml")
+@ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
 public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 {
 	/**

@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
-import org.apache.commons.lang3.StringUtils;
 
 public class TestSuite extends AbstractEntity
 {
@@ -8,7 +7,7 @@ public class TestSuite extends AbstractEntity
 
 	private String name;
 	private String description;
-	private User user;
+	private User user = new User();
 
 	public String getName()
 	{
@@ -43,16 +42,12 @@ public class TestSuite extends AbstractEntity
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(obj != null && obj instanceof TestSuite)
-		{
-			TestSuite testSuite = (TestSuite) obj;
-			return StringUtils.equals(this.name, testSuite.name) && 
-					StringUtils.equals(this.description, testSuite.description) && 
-					this.user.equals(testSuite.getUser());
-		}
-		else
-		{
-			return false;
-		}
+		return (obj != null && obj instanceof TestSuite && this.hashCode() == ((TestSuite)obj).hashCode());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return (name + description + user.getUserName()).hashCode();
 	}
 }

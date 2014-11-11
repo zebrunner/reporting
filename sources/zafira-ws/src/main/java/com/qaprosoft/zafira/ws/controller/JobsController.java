@@ -32,6 +32,6 @@ public class JobsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job) throws ServiceException
 	{
-		return mapper.map(jobsService.initiateJob(mapper.map(job, Job.class)), JobType.class);
+		return mapper.map(jobsService.initializeJob(mapper.map(job, Job.class)), JobType.class);
 	}
 }

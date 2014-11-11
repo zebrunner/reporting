@@ -1,22 +1,23 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
+
 public class Job extends AbstractEntity
 {
 	private static final long serialVersionUID = -7136622077881406856L;
 
-	private Long userId;
 	private String name;
 	private String jobURL;
 	private String jenkinsHost;
-
-	public Long getUserId()
+	private User user = new User();
+	
+	public User getUser()
 	{
-		return userId;
+		return user;
 	}
 
-	public void setUserId(Long userId)
+	public void setUser(User user)
 	{
-		this.userId = userId;
+		this.user = user;
 	}
 
 	public String getName()
@@ -47,5 +48,17 @@ public class Job extends AbstractEntity
 	public void setJenkinsHost(String jenkinsHost)
 	{
 		this.jenkinsHost = jenkinsHost;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return (obj != null && obj instanceof Job && this.hashCode() == ((Job)obj).hashCode());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return (jobURL + user.getUserName()).hashCode();
 	}
 }

@@ -8,7 +8,7 @@ public class TestCase extends AbstractEntity
 	private String testMethod;
 	private String info;
 	private Long testSuiteId;
-	private User user;
+	private User user = new User();
 
 	public String getTestClass()
 	{
@@ -58,5 +58,17 @@ public class TestCase extends AbstractEntity
 	public void setUser(User user)
 	{
 		this.user = user;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return (obj != null && obj instanceof TestCase && this.hashCode() == ((TestCase)obj).hashCode());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return (testClass + testMethod + testSuiteId + info + user.getUserName()).hashCode();
 	}
 }
