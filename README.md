@@ -2,7 +2,7 @@
 
 <b>Base URL: http://91.194.250.224:8080/zafira<b>
 
-### POST: /jobs
+#### POST: /jobs
 
 ```
 >>>
@@ -20,6 +20,7 @@
    "userName": "akhursevich"
 }
 ```
+
 #### POST: /tests/suites
 
 ```
@@ -131,5 +132,38 @@
    "upstreamJobBuildNumber": 1,
    "buildNumber": "2",
    "startedBy": "UPSTREAM_JOB"
+}
+```
+
+#### POST: /tests
+
+```
+>>>
+{
+	"name": "Carina login test",
+	"status": "FAILED",
+	"testArgs": "<config><arg><key>login</key><value>alex</value></arg><arg><key>password</key><value>qwerty</value></arg></config>",
+	"testRunId": 1,
+	"testCaseId": 2,
+	"message": "Login failed!",
+	"startTime": 1415746157780,
+	"finishTime": 1415746154490,
+	"demoURL": "http://localhost:8080/lc/demo",
+	"logURL": "http://localhost:8080/lc/log"
+}
+
+<<<
+{
+   "id": 2,
+   "name": "Carina login test",
+   "status": "FAILED",
+   "testArgs": "<config><arg><key>url<\/key><value>http://localhost:8080<\/value><\/arg><\/config>",
+   "testRunId": 1,
+   "testCaseId": 2,
+   "message": "Login failed!",
+   "startTime": 1415746157780,
+   "finishTime": 1415746154490,
+   "demoURL": "http://localhost:8080/lc/demo",
+   "logURL": "http://localhost:8080/lc/log"
 }
 ```
