@@ -79,3 +79,35 @@
    }
 ]
 ```
+
+#### POST: /tests/runs
+```
+>>>
+{
+	"testSuiteId": 1,
+	"jobId": 1,
+	"buildNumber": 2,
+	"scmURL": "git@github.com:qaprosoft/zafira.git",
+	"scmBranch": "master",
+	"scmRevision": "uk2s34f2s44s23hhjsfsdf",
+	"configXML": "<config><arg><key>url</key><value>http://localhost:8080</value></arg></config>",
+	"startedBy": "UPSTREAM_JOB",
+	"upstreamJobBuildNumber": 1,
+	"upstreamJobId": 2
+}
+
+<<<
+{
+   "id": 2,
+   "testSuiteId": 1,
+   "scmURL": "git@github.com:qaprosoft/zafira.git",
+   "scmBranch": "master",
+   "scmRevision": "uk2s34f2s44s23hhjsfsdf",
+   "configXML": "<config><arg><key>url<\/key><value>http://localhost:8080<\/value><\/arg><\/config>",
+   "jobId": 1,
+   "upstreamJobId": 2,
+   "upstreamJobBuildNumber": 1,
+   "buildNumber": "2",
+   "startedBy": "UPSTREAM_JOB"
+}
+```
