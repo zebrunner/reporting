@@ -55,6 +55,13 @@
 			WHERE T.NAME = #{name};
 		]]>
 	</select>
+	
+	<select id="getTestsByTestRunId" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE T.TEST_RUN_ID = #{testRunId};
+		]]>
+	</select>
 
 	<update id="updateTest">
 		<![CDATA[

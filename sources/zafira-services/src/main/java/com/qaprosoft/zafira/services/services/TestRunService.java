@@ -1,16 +1,20 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 
 @Service
 public class TestRunService
@@ -20,6 +24,9 @@ public class TestRunService
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private TestService testService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -75,5 +82,27 @@ public class TestRunService
 		newTestRun.setStatus(Status.IN_PROGRESS);
 		createTestRun(newTestRun);
 		return newTestRun;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun finilizeTestRun(long id) throws ServiceException
+	{
+		TestRun testRun = getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+		testRun.setStatus(Status.PASSED);
+		for(Test test : tests)
+		{
+			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) ||
+			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+			{
+				testRun.setStatus(Status.FAILED);
+			}
+		}
+		updateTestRun(testRun);
+		return testRun;
 	}
 }

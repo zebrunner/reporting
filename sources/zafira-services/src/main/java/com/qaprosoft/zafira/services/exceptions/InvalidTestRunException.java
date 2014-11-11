@@ -2,8 +2,8 @@ package com.qaprosoft.zafira.services.exceptions;
 
 public class InvalidTestRunException extends ServiceException
 {
-	private static final long serialVersionUID = -8012121652412303537L;
-	
+	private static final long serialVersionUID = 2071417461140045873L;
+
 	public InvalidTestRunException()
 	{
 		super();

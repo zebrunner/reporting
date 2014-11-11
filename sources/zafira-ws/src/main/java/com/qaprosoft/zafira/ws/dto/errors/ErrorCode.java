@@ -7,7 +7,8 @@ import com.qaprosoft.zafira.ws.util.ErrorCodeSerializer;
 public enum ErrorCode
 {
 	JOB_NOT_FOUND(1000),
-	INVALID_TEST_RUN(1001);
+	INVALID_TEST_RUN(1001),
+	TEST_RUN_NOT_FOUND(1000);
 
 	private int code;
 
