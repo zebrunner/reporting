@@ -14,7 +14,7 @@ public class TestRun extends AbstractEntity
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
 
-	private Long userId;
+	private User user;
 	private Long testSuiteId;
 	private Status status;
 	private String scmURL;
@@ -22,18 +22,20 @@ public class TestRun extends AbstractEntity
 	private String scmRevision;
 	private String configXML;
 	private Long workItemId;
-	private Long jobId;
-	private String buildURL;
+	private Job job;
+	private Integer buildNumber;
+	private Job upstreamJob;
+	private Integer upstreamJobBuildNumber;
 	private Initiator startedBy;
 
-	public Long getUserId()
+	public User getUser()
 	{
-		return userId;
+		return user;
 	}
 
-	public void setUserId(Long userId)
+	public void setUser(User user)
 	{
-		this.userId = userId;
+		this.user = user;
 	}
 
 	public Long getTestSuiteId()
@@ -106,24 +108,44 @@ public class TestRun extends AbstractEntity
 		this.workItemId = workItemId;
 	}
 
-	public Long getJobId()
+	public Job getJob()
 	{
-		return jobId;
+		return job;
 	}
 
-	public void setJobId(Long jobId)
+	public void setJob(Job job)
 	{
-		this.jobId = jobId;
+		this.job = job;
+	}
+	
+	public Integer getBuildNumber()
+	{
+		return buildNumber;
 	}
 
-	public String getBuildURL()
+	public void setBuildNumber(Integer buildNumber)
 	{
-		return buildURL;
+		this.buildNumber = buildNumber;
 	}
 
-	public void setBuildURL(String buildURL)
+	public Job getUpstreamJob()
 	{
-		this.buildURL = buildURL;
+		return upstreamJob;
+	}
+
+	public void setUpstreamJob(Job upstreamJob)
+	{
+		this.upstreamJob = upstreamJob;
+	}
+
+	public Integer getUpstreamJobBuildNumber()
+	{
+		return upstreamJobBuildNumber;
+	}
+
+	public void setUpstreamJobBuildNumber(Integer upstreamJobBuildNumber)
+	{
+		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
 	}
 
 	public Initiator getStartedBy()

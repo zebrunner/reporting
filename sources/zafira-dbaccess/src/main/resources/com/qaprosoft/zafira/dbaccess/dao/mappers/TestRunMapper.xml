@@ -5,9 +5,9 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL,SCM_BRANCH, SCM_REVISION, CONFIG_XML, WORK_ITEM_ID, JOB_ID, BUILD_URL, STARTED_BY)
+			INSERT INTO TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_REVISION, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
-				#{userId},
+				#{user.id},
 			    #{testSuiteId},
 				#{status},
 				#{scmURL},
@@ -15,8 +15,10 @@
 				#{scmRevision},
 				#{configXML},
 				#{workItemId},
-				#{jobId},
-				#{buildURL},
+				#{job.id},
+				#{upstreamJob.id},
+				#{upstreamJobBuildNumber},
+				#{buildNumber},
 				#{startedBy}
 			)
 		]]>
@@ -37,7 +39,9 @@
 				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
 				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
 				TR.JOB_ID AS TEST_RUN_JOB_ID,
-				TR.BUILD_URL AS TEST_RUN_BUILD_URL,
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT
@@ -58,7 +62,7 @@
 			UPDATE
 			    TEST_RUNS
 			SET
-				USER_ID = #{userId},
+				USER_ID = #{user.id},
 				TEST_SUITE_ID = #{testSuiteId},
 				STATUS = #{status},
 			    SCM_URL = #{scmURL},
@@ -67,8 +71,10 @@
 			    SCM_REVISION = #{scmRevision},
 			    WORK_ITEM_ID = #{workItemId},
 			    CONFIG_XML = #{configXML},
-			    JOB_ID = #{jobId},
-			    BUILD_URL = #{buildURL},
+			    JOB_ID = #{job.id},
+			    UPSTREAM_JOB_ID = #{upstreamJob.id},
+			    UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber},
+			    BUILD_NUMBER = #{buildNumber},
 			    STARTED_BY = #{startedBy}
 			WHERE
 			    ID = #{id}
@@ -92,7 +98,7 @@
 
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.TestRun" id="TestRunResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="id" />
-		<result column="TEST_RUN_USER_ID" property="userId" />
+		<result column="TEST_RUN_USER_ID" property="user.id" />
 		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuiteId" />
 		<result column="TEST_RUN_STATUS" property="status" />
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
@@ -100,8 +106,10 @@
 		<result column="TEST_RUN_SCM_REVISION" property="scmRevision" />
 		<result column="TEST_RUN_WORK_ITEM_ID" property="workItemId" />
 		<result column="TEST_RUN_CONFIG_XML" property="configXML" />
-		<result column="TEST_RUN_JOB_ID" property="jobId" />
-		<result column="TEST_RUN_BUILD_URL" property="buildURL" />
+		<result column="TEST_RUN_JOB_ID" property="job.id" />
+		<result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />
+		<result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
+		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
 		<result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_RUN_CREATED_AT" property="createdAt" />

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.ws.dto.TestRunType</class-a>
+		<class-b>com.qaprosoft.zafira.dbaccess.model.TestRun</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>testSuiteId</a>
+			<b>testSuiteId</b>
+		</field>
+		<field>
+			<a>scmURL</a>
+			<b>scmURL</b>
+		</field>
+		<field>
+			<a>scmBranch</a>
+			<b>scmBranch</b>
+		</field>
+		<field>
+			<a>scmRevision</a>
+			<b>scmRevision</b>
+		</field>
+		<field>
+			<a>configXML</a>
+			<b>configXML</b>
+		</field>
+		<field>
+			<a>workItemId</a>
+			<b>workItemId</b>
+		</field>
+		<field>
+			<a>jobId</a>
+			<b>job.id</b>
+		</field>
+		<field>
+			<a>upstreamJobId</a>
+			<b>upstreamJob.id</b>
+		</field>
+		<field>
+			<a>upstreamJobBuildNumber</a>
+			<b>upstreamJobBuildNumber</b>
+		</field>
+		<field>
+			<a>buildNumber</a>
+			<b>buildNumber</b>
+		</field>
+		<field>
+			<a>startedBy</a>
+			<b>startedBy</b>
+		</field>
+		<field>
+			<a>userName</a>
+			<b>user.userName</b>
+		</field>
+	</mapping>
+</mappings>

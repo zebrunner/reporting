@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.URLFormatUtil;
 
@@ -70,37 +73,51 @@ public class JobsService
 		try
 		{
 			// Create or retrieve user
-			User user = userService.getUserByUserName(newJob.getUser().getUserName());
+			User user = userService.createUser(newJob.getUser().getUserName());
 			newJob.setUser(user);
 			Job job = getJobByName(getJobName(newJob.getJobURL()));
 			// Create new job
-			if(job == null)
+			if(job == null || !newJob.equals(job))
 			{
-				JenkinsServer jenkins = new JenkinsServer(new URI(getJenkinsHost(newJob.getJobURL())), jenkinsUsername, jenkinsPassword);
-				JobWithDetails jobDetails = jenkins.getJob(getJobName(newJob.getJobURL()));
+				boolean isNull = (job == null);
 				
-				job = new Job();
+				JobWithDetails jobDetails = getJobDetails(newJob.getJobURL());
+				if(jobDetails == null)
+				{
+					throw new JobNotFoundException("Job not found!");
+				}
+				
+				job = (isNull) ? new Job() : job;
 				job.setJenkinsHost(URLFormatUtil.normalize(getJenkinsHost(newJob.getJobURL())));
 				job.setJobURL(URLFormatUtil.normalize(jobDetails.getUrl()));
 				job.setName(jobDetails.getName());
-				if(user != null)
+				job.setUser(user);
+				
+				if(isNull)
 				{
-					job.setUser(user);
+					createJob(job);
 				}
-				createJob(job);
-			}
-			// Current job should be updated
-			else if(!newJob.equals(job))
-			{
-				newJob.setId(job.getId());
-				updateJob(newJob);
+				else
+				{
+					updateJob(job);
+				}
 			}
 			return job;
+		}
+		catch(ServiceException e)
+		{
+			throw e;
 		}
 		catch(Exception e)
 		{
 			throw new ServiceException(e.getMessage());
 		}
+	}
+	
+	private JobWithDetails getJobDetails(String jobURL) throws URISyntaxException, IOException
+	{
+		JenkinsServer jenkins = new JenkinsServer(new URI(getJenkinsHost(jobURL)), jenkinsUsername, jenkinsPassword);
+		return jenkins.getJob(getJobName(jobURL));
 	}
 	
 	private String getJenkinsHost(String jobURL)

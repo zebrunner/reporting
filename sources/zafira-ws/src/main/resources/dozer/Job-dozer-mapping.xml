@@ -7,6 +7,10 @@
 		<class-b>com.qaprosoft.zafira.dbaccess.model.Job</class-b>
 
 		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
 			<a>name</a>
 			<b>name</b>
 		</field>

@@ -10,9 +10,11 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
+import com.qaprosoft.zafira.dbaccess.model.User;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -21,20 +23,28 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	/**
 	 * Turn this on to enable this test
 	 */
-	private static final boolean ENABLED = false;
+	private static final boolean ENABLED = true;
 	
 	private static final TestRun TEST_RUN = new TestRun()
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			setUserId(1L);
+			User user = new User();
+			user.setId(1L);
+			
+			Job job = new Job();
+			job.setId(1L);
+			
+			setUser(user);
 			setTestSuiteId(1L);
 			setScmBranch("prod");
 			setScmRevision("sdfsdfsdfs234234132ff");
 			setScmURL("http://localhost:8080/lc");
-			setJobId(1L);
+			setJob(job);
+//			setUpstreamJob(job);
+			setUpstreamJobBuildNumber(2);
 			setConfigXML("<xml>");
-			setBuildURL("http://1");
+			setBuildNumber(5);
 			setStatus(Status.PASSED);
 			setStartedBy(Initiator.HUMAN);
 			setWorkItemId(1L);
@@ -63,14 +73,16 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	{ "createTestRun" })
 	public void updateTestRun()
 	{
-		TEST_RUN.setUserId(2L);
+		TEST_RUN.getUser().setId(2L);
 		TEST_RUN.setTestSuiteId(2L);
 		TEST_RUN.setScmBranch("stg");
 		TEST_RUN.setScmRevision("sdfsdsdffs4132ff");
 		TEST_RUN.setScmURL("http://localhost:8080/lc2");
-		TEST_RUN.setJobId(2L);
+		TEST_RUN.getJob().setId(2L);
+		TEST_RUN.getUpstreamJob().setId(2L);
+		TEST_RUN.setUpstreamJobBuildNumber(5);
 		TEST_RUN.setConfigXML("<xml/>");
-		TEST_RUN.setBuildURL("http://2");
+		TEST_RUN.setBuildNumber(6);
 		TEST_RUN.setStatus(Status.FAILED);
 		TEST_RUN.setStartedBy(Initiator.SCHEDULER);
 		TEST_RUN.setWorkItemId(2L);
@@ -111,7 +123,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 
 	private void checkTestRun(TestRun testRun)
 	{
-		assertEquals(testRun.getUserId(), TEST_RUN.getUserId(), "User ID must match");
+		assertEquals(testRun.getUser().getId(), TEST_RUN.getUser().getId(), "User ID must match");
 		assertEquals(testRun.getTestSuiteId(), TEST_RUN.getTestSuiteId(), "Test suite ID must match");
 		assertEquals(testRun.getStatus(), TEST_RUN.getStatus(), "Status must match");
 		assertEquals(testRun.getScmURL(), TEST_RUN.getScmURL(), "SCM URL must match");
@@ -119,8 +131,10 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testRun.getScmRevision(), TEST_RUN.getScmRevision(), "SCM revision must match");
 		assertEquals(testRun.getConfigXML(), TEST_RUN.getConfigXML(), "Config XML must match");
 		assertEquals(testRun.getStartedBy(), TEST_RUN.getStartedBy(), "Initiator must match");
-		assertEquals(testRun.getBuildURL(), TEST_RUN.getBuildURL(), "Build URL must match");
+		assertEquals(testRun.getBuildNumber(), TEST_RUN.getBuildNumber(), "Build number must match");
 		assertEquals(testRun.getWorkItemId(), TEST_RUN.getWorkItemId(), "Work item ID must match");
-		assertEquals(testRun.getJobId(), TEST_RUN.getJobId(), "Job ID must match");
+		assertEquals(testRun.getJob().getId(), TEST_RUN.getJob().getId(), "Job ID must match");
+		assertEquals(testRun.getUpstreamJob().getId(), TEST_RUN.getUpstreamJob().getId(), "Upstream job ID must match");
+		assertEquals(testRun.getUpstreamJobBuildNumber(), TEST_RUN.getUpstreamJobBuildNumber(), "Upstream job build number must match");
 	}
 }

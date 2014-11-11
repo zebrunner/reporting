@@ -58,11 +58,13 @@ public class TestSuiteService
 		if(testSuite == null)
 		{
 			createTestSuite(newTestSuite);
+			testSuite = newTestSuite;
 		}
 		else if(!testSuite.equals(newTestSuite))
 		{
 			newTestSuite.setId(testSuite.getId());
 			updateTestSuite(testSuite);
+			testSuite = newTestSuite;
 		}
 		return testSuite;
 	}

@@ -14,18 +14,18 @@ public abstract class AbstractEntity implements Serializable
 {
 	private static final long serialVersionUID = 6187567312503626298L;
 
-	private long id;
+	private Long id;
 	@Transient
 	private Date modifiedAt;
 	@Transient
 	private Date createdAt;
 
-	public long getId()
+	public Long getId()
 	{
 		return id;
 	}
 
-	public void setId(long id)
+	public void setId(Long id)
 	{
 		this.id = id;
 	}
