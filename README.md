@@ -142,7 +142,7 @@
 {
 	"name": "Carina login test",
 	"status": "FAILED",
-	"testArgs": "<config><arg><key>login</key><value>alex</value></arg><arg><key>password</key><value>qwerty</value></arg></config>",
+	"testArgs": "<config><arg><key>password</key><value>qwerty</value></arg></config>",
 	"testRunId": 1,
 	"testCaseId": 2,
 	"message": "Login failed!",
@@ -157,7 +157,7 @@
    "id": 2,
    "name": "Carina login test",
    "status": "FAILED",
-   "testArgs": "<config><arg><key>url<\/key><value>http://localhost:8080<\/value><\/arg><\/config>",
+   "testArgs": "<config><arg><key>password</key><value>qwerty</value></arg></config>",
    "testRunId": 1,
    "testCaseId": 2,
    "message": "Login failed!",
