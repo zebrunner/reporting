@@ -111,3 +111,25 @@
    "startedBy": "UPSTREAM_JOB"
 }
 ```
+
+#### POST: /tests/runs/{id}/finish
+```
+>>>
+// no body
+
+<<<
+{
+   "id": 2,
+   "testSuiteId": 1,
+   "status": "PASSED",
+   "scmURL": "git@github.com:qaprosoft/zafira.git",
+   "scmBranch": "master",
+   "scmRevision": "uk2s34f2s44s23hhjsfsdf",
+   "configXML": "<config><arg><key>url<\/key><value>http://localhost:8080<\/value><\/arg><\/config>",
+   "jobId": 1,
+   "upstreamJobId": 2,
+   "upstreamJobBuildNumber": 1,
+   "buildNumber": "2",
+   "startedBy": "UPSTREAM_JOB"
+}
+```
