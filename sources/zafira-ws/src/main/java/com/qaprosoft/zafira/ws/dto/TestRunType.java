@@ -5,12 +5,14 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
+import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType
 {
 	@NotNull
 	private Long testSuiteId;
+	private Status status;
 	private String userName;
 	private String scmURL;
 	private String scmBranch;
@@ -34,6 +36,16 @@ public class TestRunType extends AbstractType
 	public void setTestSuiteId(Long testSuiteId)
 	{
 		this.testSuiteId = testSuiteId;
+	}
+	
+	public Status getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(Status status)
+	{
+		this.status = status;
 	}
 
 	public String getUserName()
