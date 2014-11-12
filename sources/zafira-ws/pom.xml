@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.qaprosoft</groupId>
 		<artifactId>zafira</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>1.0</version>
 	</parent>
 
 	<artifactId>zafira-ws</artifactId>
@@ -130,11 +130,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -180,29 +175,6 @@
 					<uriEncoding>UTF-8</uriEncoding>
 				</configuration>
 			</plugin>
-			<!--plugin>
-				<groupId>com.github.kongchen</groupId>
-				<artifactId>swagger-maven-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<apiSources>
-						<apiSource>
-							<locations>com.zafira.ws.controller</locations>
-							<apiVersion>1.0</apiVersion>
-							<basePath>http://qaprosoft.com/zafira</basePath>
-							<swaggerDirectory>generated/swagger-ui</swaggerDirectory>
-						</apiSource>
-					</apiSources>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin-->
 		</plugins>
 	</build>
 </project>

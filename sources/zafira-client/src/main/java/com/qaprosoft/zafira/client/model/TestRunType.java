@@ -1,16 +1,61 @@
-package com.qaprosoft.zafira.ws.dto;
+package com.qaprosoft.zafira.client.model;
 
-import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-
-@JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType
 {
-	@NotNull
+	public enum Status
+	{
+		IN_PROGRESS, PASSED, FAILED;
+	}
+
+	public enum Initiator
+	{
+		SCHEDULER, UPSTREAM_JOB, HUMAN;
+	}
+	
+	public TestRunType(Long testSuiteId, String userName, String scmURL, String scmBranch, String scmRevision,
+			String configXML, Long jobId, Integer buildNumber, Initiator startedBy)
+	{
+		this.testSuiteId = testSuiteId;
+		this.userName = userName;
+		this.scmURL = scmURL;
+		this.scmBranch = scmBranch;
+		this.scmRevision = scmRevision;
+		this.configXML = configXML;
+		this.jobId = jobId;
+		this.buildNumber = buildNumber;
+		this.startedBy = startedBy;
+	}
+
+	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
+			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy)
+	{
+		this.testSuiteId = testSuiteId;
+		this.scmURL = scmURL;
+		this.scmBranch = scmBranch;
+		this.scmRevision = scmRevision;
+		this.configXML = configXML;
+		this.jobId = jobId;
+		this.upstreamJobId = upstreamJobId;
+		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
+		this.buildNumber = buildNumber;
+		this.startedBy = startedBy;
+	}
+	
+	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
+			Long jobId, Integer buildNumber, Initiator startedBy)
+	{
+		super();
+		this.testSuiteId = testSuiteId;
+		this.scmURL = scmURL;
+		this.scmBranch = scmBranch;
+		this.scmRevision = scmRevision;
+		this.configXML = configXML;
+		this.jobId = jobId;
+		this.buildNumber = buildNumber;
+		this.startedBy = startedBy;
+	}
+
 	private Long testSuiteId;
 	private Status status;
 	private String userName;
@@ -19,13 +64,10 @@ public class TestRunType extends AbstractType
 	private String scmRevision;
 	private String configXML;
 	private Long workItemId;
-	@NotNull
 	private Long jobId;
 	private Long upstreamJobId;
 	private Integer upstreamJobBuildNumber;
-	@NotNull
 	private Integer buildNumber;
-	@NotNull
 	private Initiator startedBy;
 
 	public Long getTestSuiteId()
