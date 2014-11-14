@@ -14,7 +14,7 @@
 				#{scmBranch},
 				#{scmRevision},
 				#{configXML},
-				#{workItemId},
+				#{workItem.id},
 				#{job.id},
 				#{upstreamJob.id},
 				#{upstreamJobBuildNumber},
@@ -69,7 +69,7 @@
 			    SCM_BRANCH = #{scmBranch},
 			    SCM_REVISION = #{scmRevision},
 			    SCM_REVISION = #{scmRevision},
-			    WORK_ITEM_ID = #{workItemId},
+			    WORK_ITEM_ID = #{workItem.id},
 			    CONFIG_XML = #{configXML},
 			    JOB_ID = #{job.id},
 			    UPSTREAM_JOB_ID = #{upstreamJob.id},
@@ -104,7 +104,7 @@
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
 		<result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
 		<result column="TEST_RUN_SCM_REVISION" property="scmRevision" />
-		<result column="TEST_RUN_WORK_ITEM_ID" property="workItemId" />
+		<result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
 		<result column="TEST_RUN_CONFIG_XML" property="configXML" />
 		<result column="TEST_RUN_JOB_ID" property="job.id" />
 		<result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />

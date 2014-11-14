@@ -12,7 +12,7 @@ public class TestSuiteType extends AbstractType
 	private String name;
 	private String description;
 	@NotNull
-	private String userName;
+	private Long userId;
 
 	public String getName()
 	{
@@ -34,13 +34,13 @@ public class TestSuiteType extends AbstractType
 		this.description = description;
 	}
 
-	public String getUserName()
+	public Long getUserId()
 	{
-		return userName;
+		return userId;
 	}
 
-	public void setUserName(String userName)
+	public void setUserId(Long userId)
 	{
-		this.userName = userName;
+		this.userId = userId;
 	}
 }

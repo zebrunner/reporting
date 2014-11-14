@@ -31,6 +31,13 @@ public class TestCaseController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase) throws ServiceException
+	{
+		return mapper.map(testCaseService.createOrUpdateCase(mapper.map(testCase, TestCase.class)), TestCaseType.class);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs) throws ServiceException
 	{
 		if(!ArrayUtils.isEmpty(tcs))
@@ -40,7 +47,7 @@ public class TestCaseController extends AbstractController
 			{
 				testCases[i] = mapper.map(tcs[i], TestCase.class);
 			}
-			testCases = testCaseService.initiateTestCases(testCases);
+			testCases = testCaseService.createOrUpdateCases(testCases);
 			for(int i = 0; i < testCases.length; i++)
 			{
 				tcs[i] = mapper.map(testCases[i], TestCaseType.class);

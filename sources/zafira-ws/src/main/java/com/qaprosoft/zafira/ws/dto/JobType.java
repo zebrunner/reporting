@@ -8,12 +8,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class JobType extends AbstractType
 {
+	@NotNull
 	private String name;
 	@NotNull
 	private String jobURL;
+	@NotNull
 	private String jenkinsHost;
 	@NotNull
-	private String userName;
+	private Long userId;
 
 	public String getName()
 	{
@@ -45,13 +47,13 @@ public class JobType extends AbstractType
 		this.jenkinsHost = jenkinsHost;
 	}
 
-	public String getUserName()
+	public Long getUserId()
 	{
-		return userName;
+		return userId;
 	}
 
-	public void setUserName(String userName)
+	public void setUserId(Long userId)
 	{
-		this.userName = userName;
+		this.userId = userId;
 	}
 }

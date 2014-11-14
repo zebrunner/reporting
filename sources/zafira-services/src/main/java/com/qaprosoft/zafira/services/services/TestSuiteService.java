@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestSuiteMapper;
 import com.qaprosoft.zafira.dbaccess.model.TestSuite;
-import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -50,22 +49,22 @@ public class TestSuiteService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestSuite initializeTestSuite(TestSuite newTestSuite) throws ServiceException
+	public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) throws ServiceException
 	{
-		User user = userService.createUser(newTestSuite.getUser().getUserName());
-		newTestSuite.setUser(user);
 		TestSuite testSuite = getTestSuiteByName(newTestSuite.getName());
 		if(testSuite == null)
 		{
 			createTestSuite(newTestSuite);
-			testSuite = newTestSuite;
 		}
 		else if(!testSuite.equals(newTestSuite))
 		{
 			newTestSuite.setId(testSuite.getId());
-			updateTestSuite(testSuite);
-			testSuite = newTestSuite;
+			updateTestSuite(newTestSuite);
 		}
-		return testSuite;
+		else
+		{
+			newTestSuite = testSuite;
+		}
+		return newTestSuite;
 	}
 }

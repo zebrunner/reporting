@@ -20,6 +20,22 @@ public class UserService
 		userMapper.createUser(user);
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
+	public User createOrUpdateUser(User newUser) throws ServiceException
+	{
+		User user = getUserByUserName(newUser.getUserName());
+		if(user == null)
+		{
+			createUser(newUser);
+		}
+		else
+		{
+			newUser.setId(user.getId());
+			updateUser(newUser);
+		}
+		return newUser;
+	}
+	
 	@Transactional(readOnly = true)
 	public User getUserById(long id) throws ServiceException
 	{
@@ -43,17 +59,5 @@ public class UserService
 	public void deleteUser(User user) throws ServiceException
 	{
 		userMapper.deleteUser(user);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public User createUser(String userName) throws ServiceException
-	{
-		User user = getUserByUserName(userName);
-		if(user == null)
-		{
-			user = new User(userName);
-			createUser(user);
-		}
-		return user;
 	}
 }

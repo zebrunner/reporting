@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
-import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -50,28 +49,32 @@ public class TestCaseService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestCase [] initiateTestCases(TestCase [] newTestCases) throws ServiceException
+	public TestCase createOrUpdateCase(TestCase newTestCase) throws ServiceException
+	{
+		TestCase testCase = getTestCaseByClassAndMethod(newTestCase.getTestClass(), newTestCase.getTestMethod());
+		if(testCase == null)
+		{
+			createTestCase(newTestCase);
+		}
+		else if(!testCase.equals(newTestCase))
+		{
+			newTestCase.setId(testCase.getId());
+			updateTestCase(newTestCase);
+		}
+		else
+		{
+			newTestCase = testCase;
+		}
+		return newTestCase;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public TestCase [] createOrUpdateCases(TestCase [] newTestCases) throws ServiceException
 	{
 		int index = 0;
 		for(TestCase newTestCase : newTestCases)
 		{
-			User user = userService.createUser(newTestCase.getUser().getUserName());
-			newTestCase.setUser(user);
-			TestCase testCase = getTestCaseByClassAndMethod(newTestCase.getTestClass(), newTestCase.getTestMethod());
-			if(testCase == null)
-			{
-				createTestCase(newTestCase);
-			}
-			else if(!testCase.equals(newTestCase))
-			{
-				newTestCase.setId(testCase.getId());
-				updateTestCase(newTestCase);
-			}
-			else
-			{
-				newTestCase = testCase;
-			}
-			newTestCases[index++] = newTestCase;
+			newTestCases[index++] = createOrUpdateCase(newTestCase);
 		}
 		return newTestCases;
 	}

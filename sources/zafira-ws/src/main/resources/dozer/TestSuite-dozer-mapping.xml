@@ -19,8 +19,8 @@
 			<b>description</b>
 		</field>
 		<field>
-			<a>userName</a>
-			<b>user.userName</b>
+			<a>userId</a>
+			<b>user.id</b>
 		</field>
 	</mapping>
 </mappings>

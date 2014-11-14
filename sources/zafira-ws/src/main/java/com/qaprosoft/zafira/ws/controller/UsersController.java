@@ -13,25 +13,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.dbaccess.model.Job;
+import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.JobsService;
-import com.qaprosoft.zafira.ws.dto.JobType;
+import com.qaprosoft.zafira.services.services.UserService;
+import com.qaprosoft.zafira.ws.dto.UserType;
 
 @Controller
-@RequestMapping("jobs")
-public class JobsController extends AbstractController
+@RequestMapping("users")
+public class UsersController extends AbstractController
 {
 	@Autowired
 	private Mapper mapper;
 	
 	@Autowired
-	private JobsService jobsService;
+	private UserService userService;
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job) throws ServiceException
+	public @ResponseBody UserType createUser(@RequestBody @Valid UserType user) throws ServiceException
 	{
-		return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
+		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
 	}
 }

@@ -5,19 +5,19 @@ public class TestSuiteType extends AbstractType
 {
 	private String name;
 	private String description;
-	private String userName;
+	private Long userId;
 	
-	public TestSuiteType(String name, String userName)
+	public TestSuiteType(String name, Long userId)
 	{
 		this.name = name;
-		this.userName = userName;
+		this.userId = userId;
 	}
 
-	public TestSuiteType(String name, String description, String userName)
+	public TestSuiteType(String name, String description, Long userId)
 	{
 		this.name = name;
 		this.description = description;
-		this.userName = userName;
+		this.userId = userId;
 	}
 
 	public String getName()
@@ -40,13 +40,13 @@ public class TestSuiteType extends AbstractType
 		this.description = description;
 	}
 
-	public String getUserName()
+	public Long getUserId()
 	{
-		return userName;
+		return userId;
 	}
 
-	public void setUserName(String userName)
+	public void setUserId(Long userId)
 	{
-		this.userName = userName;
+		this.userId = userId;
 	}
 }

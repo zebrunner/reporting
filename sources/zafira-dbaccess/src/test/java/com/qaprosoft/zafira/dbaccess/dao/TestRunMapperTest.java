@@ -15,6 +15,7 @@ import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -35,19 +36,22 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			Job job = new Job();
 			job.setId(1L);
 			
+			WorkItem workItem = new WorkItem();
+			workItem.setId(1L);
+			
 			setUser(user);
 			setTestSuiteId(1L);
 			setScmBranch("prod");
 			setScmRevision("sdfsdfsdfs234234132ff");
 			setScmURL("http://localhost:8080/lc");
 			setJob(job);
-//			setUpstreamJob(job);
+			setUpstreamJob(job);
 			setUpstreamJobBuildNumber(2);
 			setConfigXML("<xml>");
 			setBuildNumber(5);
 			setStatus(Status.PASSED);
 			setStartedBy(Initiator.HUMAN);
-			setWorkItemId(1L);
+			setWorkItem(workItem);
 		}
 	};
 
@@ -85,7 +89,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		TEST_RUN.setBuildNumber(6);
 		TEST_RUN.setStatus(Status.FAILED);
 		TEST_RUN.setStartedBy(Initiator.SCHEDULER);
-		TEST_RUN.setWorkItemId(2L);
+		TEST_RUN.getWorkItem().setId(2L);
 		
 		testRunMapper.updateTestRun(TEST_RUN);
 
@@ -132,7 +136,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testRun.getConfigXML(), TEST_RUN.getConfigXML(), "Config XML must match");
 		assertEquals(testRun.getStartedBy(), TEST_RUN.getStartedBy(), "Initiator must match");
 		assertEquals(testRun.getBuildNumber(), TEST_RUN.getBuildNumber(), "Build number must match");
-		assertEquals(testRun.getWorkItemId(), TEST_RUN.getWorkItemId(), "Work item ID must match");
+		assertEquals(testRun.getWorkItem().getId(), TEST_RUN.getWorkItem().getId(), "Work item ID must match");
 		assertEquals(testRun.getJob().getId(), TEST_RUN.getJob().getId(), "Job ID must match");
 		assertEquals(testRun.getUpstreamJob().getId(), TEST_RUN.getUpstreamJob().getId(), "Upstream job ID must match");
 		assertEquals(testRun.getUpstreamJobBuildNumber(), TEST_RUN.getUpstreamJobBuildNumber(), "Upstream job build number must match");

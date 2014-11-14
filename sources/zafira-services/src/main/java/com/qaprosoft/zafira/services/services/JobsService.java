@@ -1,40 +1,18 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.JobWithDetails;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
-import com.qaprosoft.zafira.dbaccess.model.User;
-import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.util.URLFormatUtil;
 
 @Service
 public class JobsService
 {
-	private static String VIEW_PATTER = "/view/";
-	private static String JOB_PATTER = "/job/";
-	
 	@Autowired
 	private JobMapper jobMapper;
-	
-	@Autowired
-	private UserService userService;
-	
-	@Value("${zafira.jenkins.username}")
-	private String jenkinsUsername;
-	
-	@Value("${zafira.jenkins.password}")
-	private String jenkinsPassword;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createJob(Job job) throws ServiceException
@@ -68,65 +46,22 @@ public class JobsService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Job initializeJob(Job newJob) throws ServiceException
+	public Job createOrUpdateJob(Job newJob) throws ServiceException
 	{
-		try
+		Job job = getJobByName(newJob.getName());
+		if(job == null )
 		{
-			// Create or retrieve user
-			User user = userService.createUser(newJob.getUser().getUserName());
-			newJob.setUser(user);
-			Job job = getJobByName(getJobName(newJob.getJobURL()));
-			// Create new job
-			if(job == null || !newJob.equals(job))
-			{
-				boolean isNull = (job == null);
-				
-				JobWithDetails jobDetails = getJobDetails(newJob.getJobURL());
-				if(jobDetails == null)
-				{
-					throw new JobNotFoundException("Job not found!");
-				}
-				
-				job = (isNull) ? new Job() : job;
-				job.setJenkinsHost(URLFormatUtil.normalize(getJenkinsHost(newJob.getJobURL())));
-				job.setJobURL(URLFormatUtil.normalize(jobDetails.getUrl()));
-				job.setName(jobDetails.getName());
-				job.setUser(user);
-				
-				if(isNull)
-				{
-					createJob(job);
-				}
-				else
-				{
-					updateJob(job);
-				}
-			}
-			return job;
+			createJob(newJob);
 		}
-		catch(ServiceException e)
+		else if(!job.equals(newJob))
 		{
-			throw e;
+			newJob.setId(job.getId());
+			updateJob(newJob);
 		}
-		catch(Exception e)
+		else
 		{
-			throw new ServiceException(e.getMessage());
+			newJob = job;
 		}
-	}
-	
-	private JobWithDetails getJobDetails(String jobURL) throws URISyntaxException, IOException
-	{
-		JenkinsServer jenkins = new JenkinsServer(new URI(getJenkinsHost(jobURL)), jenkinsUsername, jenkinsPassword);
-		return jenkins.getJob(getJobName(jobURL));
-	}
-	
-	private String getJenkinsHost(String jobURL)
-	{
-		return jobURL.contains(VIEW_PATTER) ? jobURL.split(VIEW_PATTER)[0] : jobURL.split(JOB_PATTER)[0];
-	}
-	
-	private String getJobName(String jobURL)
-	{
-		return jobURL.split(JOB_PATTER)[1].replaceAll("/", "");
+		return newJob;
 	}
 }

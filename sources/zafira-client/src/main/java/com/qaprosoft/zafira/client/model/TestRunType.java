@@ -13,11 +13,25 @@ public class TestRunType extends AbstractType
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
 	
-	public TestRunType(Long testSuiteId, String userName, String scmURL, String scmBranch, String scmRevision,
-			String configXML, Long jobId, Integer buildNumber, Initiator startedBy)
+	private Long testSuiteId;
+	private Status status;
+	private String scmURL;
+	private String scmBranch;
+	private String scmRevision;
+	private String configXML;
+	private String workItemJiraId;
+	private Long jobId;
+	private Long upstreamJobId;
+	private Integer upstreamJobBuildNumber;
+	private Integer buildNumber;
+	private Initiator startedBy;
+	private Long userId;
+	
+	public TestRunType(Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmRevision,
+			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
 		this.testSuiteId = testSuiteId;
-		this.userName = userName;
+		this.userId = userId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
 		this.scmRevision = scmRevision;
@@ -25,10 +39,11 @@ public class TestRunType extends AbstractType
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
+		this.workItemJiraId = workItemJiraId;
 	}
 
 	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
-			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy)
+			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
@@ -40,12 +55,12 @@ public class TestRunType extends AbstractType
 		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
+		this.workItemJiraId = workItemJiraId;
 	}
 	
 	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
-			Long jobId, Integer buildNumber, Initiator startedBy)
+			Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
-		super();
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
@@ -54,21 +69,8 @@ public class TestRunType extends AbstractType
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
+		this.workItemJiraId = workItemJiraId;
 	}
-
-	private Long testSuiteId;
-	private Status status;
-	private String userName;
-	private String scmURL;
-	private String scmBranch;
-	private String scmRevision;
-	private String configXML;
-	private Long workItemId;
-	private Long jobId;
-	private Long upstreamJobId;
-	private Integer upstreamJobBuildNumber;
-	private Integer buildNumber;
-	private Initiator startedBy;
 
 	public Long getTestSuiteId()
 	{
@@ -88,16 +90,6 @@ public class TestRunType extends AbstractType
 	public void setStatus(Status status)
 	{
 		this.status = status;
-	}
-
-	public String getUserName()
-	{
-		return userName;
-	}
-
-	public void setUserName(String userName)
-	{
-		this.userName = userName;
 	}
 
 	public String getScmURL()
@@ -140,14 +132,14 @@ public class TestRunType extends AbstractType
 		this.configXML = configXML;
 	}
 
-	public Long getWorkItemId()
+	public String getWorkItemJiraId()
 	{
-		return workItemId;
+		return workItemJiraId;
 	}
 
-	public void setWorkItemId(Long workItemId)
+	public void setWorkItemJiraId(String workItemJiraId)
 	{
-		this.workItemId = workItemId;
+		this.workItemJiraId = workItemJiraId;
 	}
 
 	public Long getJobId()
@@ -199,4 +191,15 @@ public class TestRunType extends AbstractType
 	{
 		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
 	}
-}
+
+	public Long getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+}	
+

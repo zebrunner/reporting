@@ -3,28 +3,28 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.ws.dto.JobType</class-a>
-		<class-b>com.qaprosoft.zafira.dbaccess.model.Job</class-b>
+		<class-a>com.qaprosoft.zafira.ws.dto.UserType</class-a>
+		<class-b>com.qaprosoft.zafira.dbaccess.model.User</class-b>
 
 		<field>
 			<a>id</a>
 			<b>id</b>
 		</field>
 		<field>
-			<a>name</a>
-			<b>name</b>
+			<a>userName</a>
+			<b>userName</b>
 		</field>
 		<field>
-			<a>jobURL</a>
-			<b>jobURL</b>
+			<a>email</a>
+			<b>email</b>
 		</field>
 		<field>
-			<a>jenkinsHost</a>
-			<b>jenkinsHost</b>
+			<a>firstName</a>
+			<b>firstName</b>
 		</field>
 		<field>
-			<a>userId</a>
-			<b>user.id</b>
+			<a>lastName</a>
+			<b>lastName</b>
 		</field>
 	</mapping>
 </mappings>

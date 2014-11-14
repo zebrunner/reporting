@@ -16,7 +16,7 @@ public class TestCaseType extends AbstractType
 	@NotNull
 	private Long testSuiteId;
 	@NotNull
-	private String userName;
+	private Long userId;
 
 	public String getTestClass()
 	{
@@ -58,13 +58,13 @@ public class TestCaseType extends AbstractType
 		this.testSuiteId = testSuiteId;
 	}
 
-	public String getUserName()
+	public Long getUserId()
 	{
-		return userName;
+		return userId;
 	}
 
-	public void setUserName(String userName)
+	public void setUserId(Long userId)
 	{
-		this.userName = userName;
+		this.userId = userId;
 	}
 }

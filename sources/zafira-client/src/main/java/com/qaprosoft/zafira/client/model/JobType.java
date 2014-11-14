@@ -1,17 +1,20 @@
 package com.qaprosoft.zafira.client.model;
 
 
+
 public class JobType extends AbstractType
 {
 	private String name;
 	private String jobURL;
 	private String jenkinsHost;
-	private String userName;
-
-	public JobType(String jobURL, String userName)
+	private Long userId;
+	
+	public JobType(String name, String jobURL, String jenkinsHost, Long userId)
 	{
+		this.name = name;
 		this.jobURL = jobURL;
-		this.userName = userName;
+		this.jenkinsHost = jenkinsHost;
+		this.userId = userId;
 	}
 
 	public String getName()
@@ -44,13 +47,13 @@ public class JobType extends AbstractType
 		this.jenkinsHost = jenkinsHost;
 	}
 
-	public String getUserName()
+	public Long getUserId()
 	{
-		return userName;
+		return userId;
 	}
 
-	public void setUserName(String userName)
+	public void setUserId(Long userId)
 	{
-		this.userName = userName;
+		this.userId = userId;
 	}
 }

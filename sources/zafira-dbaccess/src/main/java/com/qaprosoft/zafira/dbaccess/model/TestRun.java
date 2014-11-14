@@ -21,7 +21,7 @@ public class TestRun extends AbstractEntity
 	private String scmBranch;
 	private String scmRevision;
 	private String configXML;
-	private Long workItemId;
+	private WorkItem workItem;
 	private Job job;
 	private Integer buildNumber;
 	private Job upstreamJob;
@@ -98,14 +98,14 @@ public class TestRun extends AbstractEntity
 		this.configXML = configXML;
 	}
 
-	public Long getWorkItemId()
+	public WorkItem getWorkItem()
 	{
-		return workItemId;
+		return workItem;
 	}
 
-	public void setWorkItemId(Long workItemId)
+	public void setWorkItem(WorkItem workItem)
 	{
-		this.workItemId = workItemId;
+		this.workItem = workItem;
 	}
 
 	public Job getJob()

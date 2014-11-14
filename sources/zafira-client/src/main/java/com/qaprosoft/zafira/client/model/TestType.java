@@ -8,8 +8,20 @@ public class TestType extends AbstractType
 		PASSED, FAILED, SKIPPED;
 	}
 	
+	private String name;
+	private Status status;
+	private String testArgs;
+	private Long testRunId;
+	private Long testCaseId;
+	private String message;
+	private Long startTime;
+	private Long finishTime;
+	private String demoURL;
+	private String logURL;
+	private String [] workItems;
+	
 	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, String message,
-			Long startTime, Long finishTime, String demoURL, String logURL)
+			Long startTime, Long finishTime, String demoURL, String logURL, String [] workItems)
 	{
 		this.name = name;
 		this.status = status;
@@ -21,18 +33,8 @@ public class TestType extends AbstractType
 		this.finishTime = finishTime;
 		this.demoURL = demoURL;
 		this.logURL = logURL;
+		this.workItems = workItems;
 	}
-
-	private String name;
-	private Status status;
-	private String testArgs;
-	private Long testRunId;
-	private Long testCaseId;
-	private String message;
-	private Long startTime;
-	private Long finishTime;
-	private String demoURL;
-	private String logURL;
 
 	public String getName()
 	{
@@ -132,5 +134,15 @@ public class TestType extends AbstractType
 	public void setLogURL(String logURL)
 	{
 		this.logURL = logURL;
+	}
+
+	public String[] getWorkItems()
+	{
+		return workItems;
+	}
+
+	public void setWorkItems(String[] workItems)
+	{
+		this.workItems = workItems;
 	}
 }

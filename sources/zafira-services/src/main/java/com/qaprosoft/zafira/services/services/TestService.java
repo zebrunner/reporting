@@ -17,9 +17,10 @@ public class TestService
 	private TestMapper testMapper;
 	
 	@Transactional(rollbackFor = Exception.class)
-	public void createTest(Test test) throws ServiceException
+	public Test createTest(Test test) throws ServiceException
 	{
 		testMapper.createTest(test);
+		return test;
 	}
 	
 	@Transactional(readOnly = true)
@@ -45,12 +46,5 @@ public class TestService
 	public void deleteTest(Test test) throws ServiceException
 	{
 		testMapper.deleteTest(test);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public Test initializeTest(Test test) throws ServiceException
-	{
-		createTest(test);
-		return test;
 	}
 }

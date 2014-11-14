@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.services.services;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +10,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
@@ -27,6 +25,9 @@ public class TestRunService
 	
 	@Autowired
 	private TestService testService;
+
+	@Autowired
+	private WorkItemService workItemService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -59,12 +60,10 @@ public class TestRunService
 		switch (newTestRun.getStartedBy())
 		{
 			case HUMAN:
-				if(newTestRun.getUser() == null || StringUtils.isEmpty(newTestRun.getUser().getUserName()))
+				if(newTestRun.getUser() == null)
 				{
 					throw new InvalidTestRunException("Specify userName if started by HUMAN!");
 				}
-				User user = userService.createUser(newTestRun.getUser().getUserName());
-				newTestRun.setUser(user);
 				break;
 			case SCHEDULER:
 				newTestRun.setBuildNumber(null);
@@ -76,10 +75,13 @@ public class TestRunService
 				{
 					throw new InvalidTestRunException("Specify upstreamJobId and upstreaBuildNumber if started by UPSTREAM_JOB!");
 				}
-				newTestRun.setUser(null);
 				break;
 		}
 		newTestRun.setStatus(Status.IN_PROGRESS);
+		if(newTestRun.getWorkItem() != null)
+		{
+			newTestRun.setWorkItem(workItemService.createOrGetWorkItem(newTestRun.getWorkItem()));
+		}
 		createTestRun(newTestRun);
 		return newTestRun;
 	}

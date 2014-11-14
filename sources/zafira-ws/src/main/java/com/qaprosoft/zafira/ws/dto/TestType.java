@@ -25,6 +25,7 @@ public class TestType extends AbstractType
 	private Date finishTime;
 	private String demoURL;
 	private String logURL;
+	private String [] workItems; 
 
 	public String getName()
 	{
@@ -124,5 +125,15 @@ public class TestType extends AbstractType
 	public void setLogURL(String logURL)
 	{
 		this.logURL = logURL;
+	}
+
+	public String[] getWorkItems()
+	{
+		return workItems;
+	}
+
+	public void setWorkItems(String[] workItems)
+	{
+		this.workItems = workItems;
 	}
 }
