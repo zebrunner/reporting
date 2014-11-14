@@ -66,7 +66,7 @@ public class TestRunService
 				}
 				break;
 			case SCHEDULER:
-				newTestRun.setBuildNumber(null);
+				newTestRun.setUpstreamJobBuildNumber(null);
 				newTestRun.setUpstreamJob(null);
 				newTestRun.setUser(null);
 				break;
