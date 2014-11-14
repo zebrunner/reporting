@@ -17,6 +17,7 @@ public class ZafiraClient
 	private static final String TESTS_PATH = "/tests";
 	private static final String TEST_SUITES_PATH = "/tests/suites";
 	private static final String TEST_CASES_PATH = "/tests/cases";
+	private static final String TEST_CASES_BATCH_PATH = "/tests/cases/batch";
 	private static final String TEST_RUNS_PATH = "/tests/runs";
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
 
@@ -134,12 +135,33 @@ public class ZafiraClient
 		return response;
 	}
 	
+	public Response<TestCaseType> createTestCase(TestCaseType testCase)
+	{
+		Response<TestCaseType> response = new Response<TestCaseType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + TEST_CASES_PATH);
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testCase);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(TestCaseType.class));
+			}
+
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
 	public Response<TestCaseType []> createTestCases(TestCaseType [] testCases)
 	{
 		Response<TestCaseType []> response = new Response<TestCaseType []>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + TEST_CASES_PATH);
+			WebResource webResource = client.resource(serviceURL + TEST_CASES_BATCH_PATH);
 			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testCases);
 			response.setStatus(clientRS.getStatus());
