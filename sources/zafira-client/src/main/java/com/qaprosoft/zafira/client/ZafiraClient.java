@@ -32,14 +32,14 @@ public class ZafiraClient
 		this.client = Client.create();
 	}
 	
-	public Response<UserType> createUser(UserType job)
+	public Response<UserType> createUser(UserType user)
 	{
 		Response<UserType> response = new Response<UserType>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + USERS_PATH);
 			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, job);
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, user);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
