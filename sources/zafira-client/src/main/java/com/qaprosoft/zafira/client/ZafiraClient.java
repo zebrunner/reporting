@@ -7,12 +7,14 @@ import com.qaprosoft.zafira.client.model.TestCaseType;
 import com.qaprosoft.zafira.client.model.TestRunType;
 import com.qaprosoft.zafira.client.model.TestSuiteType;
 import com.qaprosoft.zafira.client.model.TestType;
+import com.qaprosoft.zafira.client.model.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class ZafiraClient
 {
+	private static final String USERS_PATH = "/users";
 	private static final String JOBS_PATH = "/jobs";
 	private static final String TESTS_PATH = "/tests";
 	private static final String TEST_SUITES_PATH = "/tests/suites";
@@ -28,6 +30,27 @@ public class ZafiraClient
 	{
 		this.serviceURL = serviceURL;
 		this.client = Client.create();
+	}
+	
+	public Response<UserType> createUser(UserType job)
+	{
+		Response<UserType> response = new Response<UserType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + USERS_PATH);
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, job);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return response;
 	}
 
 	public Response<JobType> createJob(JobType job)
