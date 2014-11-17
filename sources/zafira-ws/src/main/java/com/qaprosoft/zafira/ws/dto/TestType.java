@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.ws.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,7 +26,7 @@ public class TestType extends AbstractType
 	private Date finishTime;
 	private String demoURL;
 	private String logURL;
-	private String [] workItems; 
+	private List<String> workItems; 
 
 	public String getName()
 	{
@@ -127,12 +128,12 @@ public class TestType extends AbstractType
 		this.logURL = logURL;
 	}
 
-	public String[] getWorkItems()
+	public List<String> getWorkItems()
 	{
 		return workItems;
 	}
 
-	public void setWorkItems(String[] workItems)
+	public void setWorkItems(List<String> workItems)
 	{
 		this.workItems = workItems;
 	}

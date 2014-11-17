@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.client.model;
 
+import java.util.List;
+
 
 public class TestType extends AbstractType
 {
@@ -18,10 +20,10 @@ public class TestType extends AbstractType
 	private Long finishTime;
 	private String demoURL;
 	private String logURL;
-	private String [] workItems;
+	private List<String> workItems;
 	
 	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, String message,
-			Long startTime, Long finishTime, String demoURL, String logURL, String [] workItems)
+			Long startTime, Long finishTime, String demoURL, String logURL, List<String> workItems)
 	{
 		this.name = name;
 		this.status = status;
@@ -136,12 +138,12 @@ public class TestType extends AbstractType
 		this.logURL = logURL;
 	}
 
-	public String[] getWorkItems()
+	public List<String> getWorkItems()
 	{
 		return workItems;
 	}
 
-	public void setWorkItems(String[] workItems)
+	public void setWorkItems(List<String> workItems)
 	{
 		this.workItems = workItems;
 	}
