@@ -8,6 +8,14 @@ public class UserType extends AbstractType
 	private String firstName;
 	private String lastName;
 
+	public UserType(String userName, String email, String firstName, String lastName)
+	{
+		this.userName = userName;
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
 	public String getUserName()
 	{
 		return userName;
