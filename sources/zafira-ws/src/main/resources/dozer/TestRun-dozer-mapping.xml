@@ -27,8 +27,8 @@
 			<b>scmBranch</b>
 		</field>
 		<field>
-			<a>scmRevision</a>
-			<b>scmRevision</b>
+			<a>scmCommit</a>
+			<b>scmCommit</b>
 		</field>
 		<field>
 			<a>configXML</a>
