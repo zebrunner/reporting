@@ -50,12 +50,35 @@
 		<![CDATA[
 			UPDATE
 			    TEST_CASES
-			SET
-				USER_ID = #{user.id},
-				TEST_SUITE_ID = #{testSuiteId},
-				TEST_CLASS = #{testClass},
-			    TEST_METHOD = #{testMethod},
-			    INFO = #{info}
+		]]>
+			<set>
+				<if test="0 != user.id">
+		            <![CDATA[
+		               USER_ID = #{user.id},
+		            ]]>
+				</if>
+				<if test="null != testSuiteId">
+		            <![CDATA[
+		               TEST_SUITE_ID = #{testSuiteId},
+		            ]]>
+				</if>
+				<if test="null != testClass">
+		            <![CDATA[
+		               TEST_CLASS = #{testClass},
+		            ]]>
+				</if>
+				<if test="null != testMethod">
+		            <![CDATA[
+		               TEST_METHOD = #{testMethod},	
+		            ]]>
+				</if>
+				<if test="null != info">
+		            <![CDATA[
+		               INFO = #{info}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[	    
 			WHERE
 			    ID = #{id}
 		]]>

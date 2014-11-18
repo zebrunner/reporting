@@ -55,11 +55,30 @@
 		<![CDATA[
 			UPDATE
 			    JOBS
-			SET
-				USER_ID = #{user.id},
-				NAME = #{name},
-			    JOB_URL = #{jobURL},
-			    JENKINS_HOST = #{jenkinsHost}
+		]]>
+			<set>
+				<if test="0 != user.id">
+		            <![CDATA[
+		               USER_ID = #{user.id},
+		            ]]>
+				</if>
+				<if test="null != name">
+		            <![CDATA[
+		               NAME = #{name},
+		            ]]>
+				</if>
+				<if test="null != jobURL">
+		            <![CDATA[
+		               JOB_URL = #{jobURL},
+		            ]]>
+				</if>
+				<if test="null != jenkinsHost">
+		            <![CDATA[
+		               JENKINS_HOST = #{jenkinsHost}	
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>

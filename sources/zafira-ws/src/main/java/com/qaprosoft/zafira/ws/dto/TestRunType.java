@@ -15,7 +15,7 @@ public class TestRunType extends AbstractType
 	private Status status;
 	private String scmURL;
 	private String scmBranch;
-	private String scmRevision;
+	private String scmCommit;
 	private String configXML;
 	@NotNull
 	private Long jobId;
@@ -68,14 +68,14 @@ public class TestRunType extends AbstractType
 		this.scmBranch = scmBranch;
 	}
 
-	public String getScmRevision()
+	public String getScmCommit()
 	{
-		return scmRevision;
+		return scmCommit;
 	}
 
-	public void setScmRevision(String scmRevision)
+	public void setScmCommit(String scmCommit)
 	{
-		this.scmRevision = scmRevision;
+		this.scmCommit = scmCommit;
 	}
 
 	public String getConfigXML()

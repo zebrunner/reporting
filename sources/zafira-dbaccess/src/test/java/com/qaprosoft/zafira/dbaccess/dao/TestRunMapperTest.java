@@ -42,7 +42,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setUser(user);
 			setTestSuiteId(1L);
 			setScmBranch("prod");
-			setScmRevision("sdfsdfsdfs234234132ff");
+			setScmCommit("sdfsdfsdfs234234132ff");
 			setScmURL("http://localhost:8080/lc");
 			setJob(job);
 			setUpstreamJob(job);
@@ -80,7 +80,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		TEST_RUN.getUser().setId(2L);
 		TEST_RUN.setTestSuiteId(2L);
 		TEST_RUN.setScmBranch("stg");
-		TEST_RUN.setScmRevision("sdfsdsdffs4132ff");
+		TEST_RUN.setScmCommit("sdfsdsdffs4132ff");
 		TEST_RUN.setScmURL("http://localhost:8080/lc2");
 		TEST_RUN.getJob().setId(2L);
 		TEST_RUN.getUpstreamJob().setId(2L);
@@ -132,7 +132,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testRun.getStatus(), TEST_RUN.getStatus(), "Status must match");
 		assertEquals(testRun.getScmURL(), TEST_RUN.getScmURL(), "SCM URL must match");
 		assertEquals(testRun.getScmBranch(), TEST_RUN.getScmBranch(), "SCM branch must match");
-		assertEquals(testRun.getScmRevision(), TEST_RUN.getScmRevision(), "SCM revision must match");
+		assertEquals(testRun.getScmCommit(), TEST_RUN.getScmCommit(), "SCM commit must match");
 		assertEquals(testRun.getConfigXML(), TEST_RUN.getConfigXML(), "Config XML must match");
 		assertEquals(testRun.getStartedBy(), TEST_RUN.getStartedBy(), "Initiator must match");
 		assertEquals(testRun.getBuildNumber(), TEST_RUN.getBuildNumber(), "Build number must match");

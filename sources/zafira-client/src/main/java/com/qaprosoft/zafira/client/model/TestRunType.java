@@ -17,7 +17,7 @@ public class TestRunType extends AbstractType
 	private Status status;
 	private String scmURL;
 	private String scmBranch;
-	private String scmRevision;
+	private String scmCommit;
 	private String configXML;
 	private String workItemJiraId;
 	private Long jobId;
@@ -27,14 +27,14 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	
-	public TestRunType(Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmRevision,
+	public TestRunType(Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
 		this.testSuiteId = testSuiteId;
 		this.userId = userId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
-		this.scmRevision = scmRevision;
+		this.scmCommit = scmCommit;
 		this.configXML = configXML;
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
@@ -42,13 +42,13 @@ public class TestRunType extends AbstractType
 		this.workItemJiraId = workItemJiraId;
 	}
 
-	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
+	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
 			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
-		this.scmRevision = scmRevision;
+		this.scmCommit = scmCommit;
 		this.configXML = configXML;
 		this.jobId = jobId;
 		this.upstreamJobId = upstreamJobId;
@@ -58,13 +58,13 @@ public class TestRunType extends AbstractType
 		this.workItemJiraId = workItemJiraId;
 	}
 	
-	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmRevision, String configXML,
+	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
 			Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
 	{
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
-		this.scmRevision = scmRevision;
+		this.scmCommit = scmCommit;
 		this.configXML = configXML;
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
@@ -112,14 +112,14 @@ public class TestRunType extends AbstractType
 		this.scmBranch = scmBranch;
 	}
 
-	public String getScmRevision()
+	public String getScmCommit()
 	{
-		return scmRevision;
+		return scmCommit;
 	}
 
-	public void setScmRevision(String scmRevision)
+	public void setScmCommit(String scmCommit)
 	{
-		this.scmRevision = scmRevision;
+		this.scmCommit = scmCommit;
 	}
 
 	public String getConfigXML()

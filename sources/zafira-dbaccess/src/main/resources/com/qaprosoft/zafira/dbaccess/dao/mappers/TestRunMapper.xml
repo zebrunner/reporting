@@ -5,14 +5,14 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_REVISION, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
+			INSERT INTO TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
 				#{status},
 				#{scmURL},
 				#{scmBranch},
-				#{scmRevision},
+				#{scmCommit},
 				#{configXML},
 				#{workItem.id},
 				#{job.id},
@@ -35,7 +35,7 @@
 				TR.STATUS AS TEST_RUN_STATUS,
 				TR.SCM_URL AS TEST_RUN_SCM_URL,
 				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
-				TR.SCM_REVISION AS TEST_RUN_SCM_REVISION,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
 				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
 				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
 				TR.JOB_ID AS TEST_RUN_JOB_ID,
@@ -67,8 +67,8 @@
 				STATUS = #{status},
 			    SCM_URL = #{scmURL},
 			    SCM_BRANCH = #{scmBranch},
-			    SCM_REVISION = #{scmRevision},
-			    SCM_REVISION = #{scmRevision},
+			    SCM_COMMIT = #{scmCommit},
+			    SCM_COMMIT = #{scmCommit},
 			    WORK_ITEM_ID = #{workItem.id},
 			    CONFIG_XML = #{configXML},
 			    JOB_ID = #{job.id},
@@ -103,7 +103,7 @@
 		<result column="TEST_RUN_STATUS" property="status" />
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
 		<result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
-		<result column="TEST_RUN_SCM_REVISION" property="scmRevision" />
+		<result column="TEST_RUN_SCM_COMMIT" property="scmCommit" />
 		<result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
 		<result column="TEST_RUN_CONFIG_XML" property="configXML" />
 		<result column="TEST_RUN_JOB_ID" property="job.id" />

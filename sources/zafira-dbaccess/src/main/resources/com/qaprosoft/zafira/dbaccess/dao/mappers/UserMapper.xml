@@ -48,11 +48,30 @@
 		<![CDATA[
 			UPDATE
 			    USERS
-			SET
-				USERNAME = #{userName},
-			    FIRST_NAME = #{firstName},
-			    LAST_NAME = #{lastName},
-			    EMAIL = #{email}			    	    
+		]]>
+			<set>
+				<if test="null != firstName">
+		            <![CDATA[
+		               FIRST_NAME = #{firstName},
+		            ]]>
+				</if>
+				<if test="null != lastName">
+		            <![CDATA[
+		               LAST_NAME = #{lastName},
+		            ]]>
+				</if>
+				<if test="null != email">
+		            <![CDATA[
+		               EMAIL = #{email},
+		            ]]>
+				</if>
+				<if test="null != userName">
+		            <![CDATA[
+		               USERNAME = #{userName}	
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>

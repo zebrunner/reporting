@@ -46,10 +46,25 @@
 		<![CDATA[
 			UPDATE
 			    TEST_SUITES
-			SET
-				USER_ID = #{user.id},
-				NAME = #{name},
-			    DESCRIPTION = #{description}
+		]]>
+			<set>
+				<if test="0 != user.id">
+		            <![CDATA[
+		               USER_ID = #{user.id},
+		            ]]>
+				</if>
+				<if test="null != name">
+		            <![CDATA[
+		               NAME = #{name},
+		            ]]>
+				</if>
+				<if test="null != description">
+		            <![CDATA[
+		               DESCRIPTION = #{description}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[ 
 			WHERE
 			    ID = #{id}
 		]]>
