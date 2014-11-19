@@ -9,7 +9,7 @@ public interface WorkItemMapper
 	WorkItem getWorkItemById(long id);
 
 	WorkItem getWorkItemByJiraId(String jiraId);
-
+	
 	void updateWorkItem(WorkItem workItem);
 
 	void deleteWorkItemById(long id);

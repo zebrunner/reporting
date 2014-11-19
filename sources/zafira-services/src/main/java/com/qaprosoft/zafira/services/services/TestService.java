@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -16,10 +17,21 @@ public class TestService
 	@Autowired
 	private TestMapper testMapper;
 	
+	@Autowired
+	private WorkItemService workItemService;
+	
 	@Transactional(rollbackFor = Exception.class)
-	public Test createTest(Test test) throws ServiceException
+	public Test createTest(Test test, List<String> jiraIds) throws ServiceException
 	{
 		testMapper.createTest(test);
+		if(jiraIds != null)
+		{
+			for(String jiraId : jiraIds)
+			{
+				WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+				testMapper.createTestWorkItem(test, workItem);
+			}
+		}
 		return test;
 	}
 	

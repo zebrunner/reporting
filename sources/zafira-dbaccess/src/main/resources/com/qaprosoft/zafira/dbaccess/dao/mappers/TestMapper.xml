@@ -20,6 +20,16 @@
 			)
 		]]>
 	</insert>
+	
+	<insert id="createTestWorkItem" useGeneratedKeys="true">
+		<![CDATA[
+			INSERT INTO TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID)
+			VALUES (
+				#{test.id},
+			    #{workItem.id}
+			)
+		]]>
+	</insert>
 
 	<sql id="getTest">
 		<![CDATA[
