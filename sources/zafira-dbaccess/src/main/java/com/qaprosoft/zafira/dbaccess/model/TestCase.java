@@ -69,6 +69,6 @@ public class TestCase extends AbstractEntity
 	@Override
 	public int hashCode()
 	{
-		return (testClass + testMethod + testSuiteId + info + user.getUserName()).hashCode();
+		return (testClass + testMethod + testSuiteId + info + user.getId()).hashCode();
 	}
 }

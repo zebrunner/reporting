@@ -35,7 +35,7 @@
 			<b>configXML</b>
 		</field>
 		<field>
-			<a>workItemJiraId</a>
+			<a>workItem</a>
 			<b>workItem.jiraId</b>
 		</field>
 		<field>

@@ -19,7 +19,7 @@ public class TestRunType extends AbstractType
 	private String scmBranch;
 	private String scmCommit;
 	private String configXML;
-	private String workItemJiraId;
+	private String workItem;
 	private Long jobId;
 	private Long upstreamJobId;
 	private Integer upstreamJobBuildNumber;
@@ -28,7 +28,7 @@ public class TestRunType extends AbstractType
 	private Long userId;
 	
 	public TestRunType(Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
-			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
+			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
 		this.testSuiteId = testSuiteId;
 		this.userId = userId;
@@ -39,11 +39,11 @@ public class TestRunType extends AbstractType
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
-		this.workItemJiraId = workItemJiraId;
+		this.workItem = workItem;
 	}
 
 	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
-			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItemJiraId)
+			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItem)
 	{
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
@@ -55,11 +55,11 @@ public class TestRunType extends AbstractType
 		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
-		this.workItemJiraId = workItemJiraId;
+		this.workItem = workItem;
 	}
 	
 	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
-			Long jobId, Integer buildNumber, Initiator startedBy, String workItemJiraId)
+			Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
@@ -69,7 +69,7 @@ public class TestRunType extends AbstractType
 		this.jobId = jobId;
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
-		this.workItemJiraId = workItemJiraId;
+		this.workItem = workItem;
 	}
 
 	public Long getTestSuiteId()
@@ -132,14 +132,14 @@ public class TestRunType extends AbstractType
 		this.configXML = configXML;
 	}
 
-	public String getWorkItemJiraId()
+	public String getWorkItem()
 	{
-		return workItemJiraId;
+		return workItem;
 	}
 
-	public void setWorkItemJiraId(String workItemJiraId)
+	public void setWorkItem(String workItem)
 	{
-		this.workItemJiraId = workItemJiraId;
+		this.workItem = workItem;
 	}
 
 	public Long getJobId()

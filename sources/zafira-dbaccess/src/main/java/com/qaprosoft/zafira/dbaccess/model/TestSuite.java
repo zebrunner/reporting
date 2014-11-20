@@ -48,6 +48,6 @@ public class TestSuite extends AbstractEntity
 	@Override
 	public int hashCode()
 	{
-		return (name + description + user.getUserName()).hashCode();
+		return (name + description + user.getId()).hashCode();
 	}
 }

@@ -26,7 +26,7 @@ public class TestRunType extends AbstractType
 	@NotNull
 	private Initiator startedBy;
 	private Long userId;
-	private String workItemJiraId;
+	private String workItem;
 
 	public Long getTestSuiteId()
 	{
@@ -148,13 +148,13 @@ public class TestRunType extends AbstractType
 		this.userId = userId;
 	}
 
-	public String getWorkItemJiraId()
+	public String getWorkItem()
 	{
-		return workItemJiraId;
+		return workItem;
 	}
 
-	public void setWorkItemJiraId(String workItemJiraId)
+	public void setWorkItem(String workItem)
 	{
-		this.workItemJiraId = workItemJiraId;
+		this.workItem = workItem;
 	}
 }

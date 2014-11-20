@@ -35,6 +35,22 @@ public class TestService
 		return test;
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
+	public Test createTestWorkItems(long id, List<String> jiraIds) throws ServiceException
+	{
+		Test test = getTestById(id);
+		if(test == null)
+		{
+			throw new ServiceException("Test not found by id: " + id);
+		}
+		for(String jiraId : jiraIds)
+		{
+			WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+			testMapper.createTestWorkItem(test, workItem);
+		}
+		return test;
+	}
+	
 	@Transactional(readOnly = true)
 	public Test getTestById(long id) throws ServiceException
 	{

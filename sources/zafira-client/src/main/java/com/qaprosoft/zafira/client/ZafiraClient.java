@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.client;
 
+import java.util.List;
+
 import javax.ws.rs.core.MediaType;
 
 import com.qaprosoft.zafira.client.model.JobType;
@@ -17,6 +19,7 @@ public class ZafiraClient
 	private static final String USERS_PATH = "/users";
 	private static final String JOBS_PATH = "/jobs";
 	private static final String TESTS_PATH = "/tests";
+	private static final String TEST_WORK_ITEMS_PATH = "/tests/%d/workitems";
 	private static final String TEST_SUITES_PATH = "/tests/suites";
 	private static final String TEST_CASES_PATH = "/tests/cases";
 	private static final String TEST_CASES_BATCH_PATH = "/tests/cases/batch";
@@ -145,6 +148,27 @@ public class ZafiraClient
 			WebResource webResource = client.resource(serviceURL + TESTS_PATH);
 			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, test);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(TestType.class));
+			}
+
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
+	public Response<TestType> createTestWorkItems(long testId, List<String> workItems)
+	{
+		Response<TestType> response = new Response<TestType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_WORK_ITEMS_PATH, testId));
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, workItems);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
