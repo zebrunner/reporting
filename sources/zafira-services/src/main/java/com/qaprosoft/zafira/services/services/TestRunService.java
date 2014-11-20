@@ -99,8 +99,7 @@ public class TestRunService
 		testRun.setStatus(Status.PASSED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) ||
-			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED))
 			{
 				testRun.setStatus(Status.FAILED);
 			}
