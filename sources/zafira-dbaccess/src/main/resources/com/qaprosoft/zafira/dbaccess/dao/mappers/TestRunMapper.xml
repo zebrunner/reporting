@@ -68,7 +68,6 @@
 			    SCM_URL = #{scmURL},
 			    SCM_BRANCH = #{scmBranch},
 			    SCM_COMMIT = #{scmCommit},
-			    SCM_COMMIT = #{scmCommit},
 			    WORK_ITEM_ID = #{workItem.id},
 			    CONFIG_XML = #{configXML},
 			    JOB_ID = #{job.id},
