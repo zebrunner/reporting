@@ -5,7 +5,7 @@
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO USERS (USERNAME, FIRST_NAME, LAST_NAME, EMAIL)
+			INSERT INTO zafira.USERS (USERNAME, FIRST_NAME, LAST_NAME, EMAIL)
 			VALUES (
 				#{userName},
 			    #{firstName},
@@ -26,7 +26,7 @@
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT
 			FROM
-				USERS U
+				zafira.USERS U
 		]]>
 	</sql>
 
@@ -47,7 +47,7 @@
 	<update id="updateUser">
 		<![CDATA[
 			UPDATE
-			    USERS
+			    zafira.USERS
 		]]>
 			<set>
 				<if test="null != firstName">
@@ -79,7 +79,7 @@
 
 	<sql id="deleteUser">
 		<![CDATA[
-			DELETE FROM USERS
+			DELETE FROM zafira.USERS
 			WHERE ID = #{id}
 		]]>
 	</sql>
