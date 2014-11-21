@@ -5,7 +5,7 @@
 
 	<insert id="createJob" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST)
+			INSERT INTO zafira.JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST)
 			VALUES (
 				#{user.id},
 			    #{name},
@@ -26,7 +26,7 @@
 				J.MODIFIED_AT AS JOB_MODIFIED_AT,
 				J.CREATED_AT AS JOB_CREATED_AT
 			FROM
-				JOBS J
+				zafira.JOBS J
 		]]>
 	</sql>
 
@@ -54,7 +54,7 @@
 	<update id="updateJob">
 		<![CDATA[
 			UPDATE
-			    JOBS
+			    zafira.JOBS
 		]]>
 			<set>
 				<if test="0 != user.id">
@@ -86,7 +86,7 @@
 
 	<sql id="deleteJob">
 		<![CDATA[
-			DELETE FROM JOBS
+			DELETE FROM zafira.JOBS
 			WHERE ID = #{id}
 		]]>
 	</sql>

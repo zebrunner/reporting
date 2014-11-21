@@ -5,7 +5,7 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO)
+			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
@@ -28,7 +28,7 @@
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT
 			FROM
-				TEST_CASES TC
+				zafira.TEST_CASES TC
 		]]>
 	</sql>
 
@@ -49,7 +49,7 @@
 	<update id="updateTestCase">
 		<![CDATA[
 			UPDATE
-			    TEST_CASES
+			    zafira.TEST_CASES
 		]]>
 			<set>
 				<if test="0 != user.id">
@@ -86,7 +86,7 @@
 
 	<sql id="deleteTestCase">
 		<![CDATA[
-			DELETE FROM TEST_CASES
+			DELETE FROM zafira.TEST_CASES
 			WHERE ID = #{id}
 		]]>
 	</sql>

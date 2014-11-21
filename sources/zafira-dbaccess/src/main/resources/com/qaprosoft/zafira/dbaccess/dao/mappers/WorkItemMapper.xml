@@ -5,7 +5,7 @@
 
 	<insert id="createWorkItem" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO WORK_ITEMS (JIRA_ID)
+			INSERT INTO zafira.WORK_ITEMS (JIRA_ID)
 			VALUES (
 				#{jiraId}
 			)
@@ -20,7 +20,7 @@
 				J.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
 				J.CREATED_AT AS WORK_ITEM_CREATED_AT
 			FROM
-				WORK_ITEMS J
+				zafira.WORK_ITEMS J
 		]]>
 	</sql>
 
@@ -41,7 +41,7 @@
 	<update id="updateWorkItem">
 		<![CDATA[
 			UPDATE
-			    WORK_ITEMS
+			    zafira.WORK_ITEMS
 			SET
 				JIRA_ID = #{jiraId}
 			WHERE
@@ -51,7 +51,7 @@
 
 	<sql id="deleteWorkItem">
 		<![CDATA[
-			DELETE FROM WORK_ITEMS
+			DELETE FROM zafira.WORK_ITEMS
 			WHERE ID = #{id}
 		]]>
 	</sql>

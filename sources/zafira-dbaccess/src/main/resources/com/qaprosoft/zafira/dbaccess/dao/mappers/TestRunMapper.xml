@@ -5,7 +5,7 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
+			INSERT INTO zafira.TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
@@ -46,7 +46,7 @@
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT
 			FROM
-				TEST_RUNS TR
+				zafira.TEST_RUNS TR
 		]]>
 	</sql>
 	
@@ -60,7 +60,7 @@
 	<update id="updateTestRun">
 		<![CDATA[
 			UPDATE
-			    TEST_RUNS
+			    zafira.TEST_RUNS
 			SET
 				USER_ID = #{user.id},
 				TEST_SUITE_ID = #{testSuiteId},
@@ -82,7 +82,7 @@
 
 	<sql id="deleteTestRun">
 		<![CDATA[
-			DELETE FROM TEST_RUNS
+			DELETE FROM zafira.TEST_RUNS
 			WHERE ID = #{id}
 		]]>
 	</sql>
