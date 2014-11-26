@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.qaprosoft.zafira.client.model.JobType;
 import com.qaprosoft.zafira.client.model.TestCaseType;
 import com.qaprosoft.zafira.client.model.TestRunType;
@@ -16,6 +19,11 @@ import com.sun.jersey.api.client.WebResource;
 
 public class ZafiraClient
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraClient.class);
+	
+	private static final Integer TIMEOUT = 15 * 1000;
+	
+	private static final String STATUS_PATH = "/status";
 	private static final String USERS_PATH = "/users";
 	private static final String JOBS_PATH = "/jobs";
 	private static final String TESTS_PATH = "/tests";
@@ -33,6 +41,28 @@ public class ZafiraClient
 	{
 		this.serviceURL = serviceURL;
 		this.client = Client.create();
+		this.client.setConnectTimeout(TIMEOUT);
+		this.client.setReadTimeout(TIMEOUT);
+	}
+	
+	public boolean isAvailable(UserType user)
+	{
+		boolean isAvailable = false;
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + STATUS_PATH);
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);
+			if (clientRS.getStatus() == 200)
+			{
+				isAvailable = true;
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		return isAvailable;
 	}
 	
 	public Response<UserType> createUser(UserType user)
@@ -51,7 +81,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -72,7 +102,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -93,7 +123,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -114,7 +144,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -135,7 +165,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -156,7 +186,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -177,7 +207,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -198,7 +228,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
@@ -219,7 +249,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return response;
 	}
