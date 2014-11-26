@@ -18,7 +18,7 @@ public class StatusController extends AbstractController
 {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET)
-	public void getStatus(@RequestBody @Valid JobType job) throws ServiceException
+	public void getStatus() throws ServiceException
 	{
 	}
 }
