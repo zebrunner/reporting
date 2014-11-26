@@ -45,7 +45,7 @@ public class ZafiraClient
 		this.client.setReadTimeout(TIMEOUT);
 	}
 	
-	public boolean isAvailable(UserType user)
+	public boolean isAvailable()
 	{
 		boolean isAvailable = false;
 		try
