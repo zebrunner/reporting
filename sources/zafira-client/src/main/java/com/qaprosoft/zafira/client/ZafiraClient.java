@@ -51,8 +51,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + STATUS_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);
+			ClientResponse clientRS = webResource.get(ClientResponse.class);
 			if (clientRS.getStatus() == 200)
 			{
 				isAvailable = true;
