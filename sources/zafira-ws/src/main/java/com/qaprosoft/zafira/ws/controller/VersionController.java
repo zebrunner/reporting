@@ -15,7 +15,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.VersionService;
 
 @Controller
-@RequestMapping("version")
+@RequestMapping("/")
 public class VersionController extends AbstractController
 {
 	@Autowired
