@@ -6,6 +6,7 @@ public class TestSuite extends AbstractEntity
 	private static final long serialVersionUID = -1847933012610222160L;
 
 	private String name;
+	private String fileName;
 	private String description;
 	private User user = new User();
 
@@ -17,6 +18,16 @@ public class TestSuite extends AbstractEntity
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
 	}
 
 	public String getDescription()

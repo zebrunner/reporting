@@ -15,6 +15,10 @@
 			<b>name</b>
 		</field>
 		<field>
+			<a>fileName</a>
+			<b>fileName</b>
+		</field>
+		<field>
 			<a>description</a>
 			<b>description</b>
 		</field>

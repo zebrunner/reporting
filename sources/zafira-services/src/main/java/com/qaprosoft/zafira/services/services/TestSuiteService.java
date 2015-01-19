@@ -35,6 +35,12 @@ public class TestSuiteService
 		return testSuiteMapper.getTestSuiteByName(name);
 	}
 	
+	@Transactional(readOnly = true)
+	public TestSuite getTestSuiteByNameAndFileNameAndUserId(String name, String fileName, long userId) throws ServiceException
+	{
+		return testSuiteMapper.getTestSuiteByNameAndFileNameAndUserId(name, fileName, userId);
+	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public TestSuite updateTestSuite(TestSuite testSuite) throws ServiceException
 	{
@@ -51,7 +57,7 @@ public class TestSuiteService
 	@Transactional(rollbackFor = Exception.class)
 	public TestSuite createOrUpdateTestSuite(TestSuite newTestSuite) throws ServiceException
 	{
-		TestSuite testSuite = getTestSuiteByName(newTestSuite.getName());
+		TestSuite testSuite = getTestSuiteByNameAndFileNameAndUserId(newTestSuite.getName(), newTestSuite.getFileName(), newTestSuite.getUser().getId());
 		if(testSuite == null)
 		{
 			createTestSuite(newTestSuite);

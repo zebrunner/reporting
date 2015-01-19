@@ -5,10 +5,11 @@
 
 	<insert id="createTestSuite" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_SUITES (USER_ID, NAME, DESCRIPTION)
+			INSERT INTO zafira.TEST_SUITES (USER_ID, NAME, FILE_NAME, DESCRIPTION)
 			VALUES (
 				#{user.id},
 			    #{name},
+			    #{fileName},
 				#{description}
 			)
 		]]>
@@ -17,28 +18,36 @@
 	<sql id="getTestSuite">
 		<![CDATA[
 			SELECT
-				J.ID AS TEST_SUITE_ID,
-				J.USER_ID AS TEST_SUITE_USER_ID,
-				J.NAME AS TEST_SUITE_NAME,
-				J.DESCRIPTION AS TEST_SUITE_DESCRIPTION,
-				J.MODIFIED_AT AS TEST_SUITE_MODIFIED_AT,
-				J.CREATED_AT AS TEST_SUITE_CREATED_AT
+				TS.ID AS TEST_SUITE_ID,
+				TS.USER_ID AS TEST_SUITE_USER_ID,
+				TS.NAME AS TEST_SUITE_NAME,
+				TS.FILE_NAME AS TEST_SUITE_FILE_NAME,
+				TS.DESCRIPTION AS TEST_SUITE_DESCRIPTION,
+				TS.MODIFIED_AT AS TEST_SUITE_MODIFIED_AT,
+				TS.CREATED_AT AS TEST_SUITE_CREATED_AT
 			FROM
-				zafira.TEST_SUITES J
+				zafira.TEST_SUITES TS
 		]]>
 	</sql>
 
 	<select id="getTestSuiteById" resultMap="TestSuiteResultMap">
 		<include refid="getTestSuite" />
 		<![CDATA[
-			WHERE J.ID = #{id};
+			WHERE TS.ID = #{id};
 		]]>
 	</select>
 
 	<select id="getTestSuiteByName" resultMap="TestSuiteResultMap">
 		<include refid="getTestSuite" />
 		<![CDATA[
-			WHERE J.NAME = #{name};
+			WHERE TS.NAME = #{name};
+		]]>
+	</select>
+	
+	<select id="getTestSuiteByNameAndFileNameAndUserId" resultMap="TestSuiteResultMap">
+		<include refid="getTestSuite" />
+		<![CDATA[
+			WHERE TS.NAME = #{name} AND TS.FILE_NAME = #{fileName} AND TS.USER_ID = #{userId};
 		]]>
 	</select>
 
@@ -56,6 +65,11 @@
 				<if test="null != name">
 		            <![CDATA[
 		               NAME = #{name},
+		            ]]>
+				</if>
+				<if test="null != fileName">
+		            <![CDATA[
+		               FILE_NAME = #{fileName},
 		            ]]>
 				</if>
 				<if test="null != description">
@@ -89,6 +103,7 @@
 		<id column="TEST_SUITE_ID" property="id" />
 		<result column="TEST_SUITE_USER_ID" property="user.id" />
 		<result column="TEST_SUITE_NAME" property="name" />
+		<result column="TEST_SUITE_FILE_NAME" property="fileName" />
 		<result column="TEST_SUITE_DESCRIPTION" property="description" />
 		<result column="TEST_SUITE_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_SUITE_CREATED_AT" property="createdAt" />

@@ -10,6 +10,8 @@ public class TestSuiteType extends AbstractType
 {
 	@NotNull
 	private String name;
+	@NotNull
+	private String fileName;
 	private String description;
 	@NotNull
 	private Long userId;
@@ -22,6 +24,16 @@ public class TestSuiteType extends AbstractType
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
 	}
 
 	public String getDescription()

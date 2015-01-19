@@ -4,16 +4,17 @@ package com.qaprosoft.zafira.client.model;
 public class TestSuiteType extends AbstractType
 {
 	private String name;
+	private String fileName;
 	private String description;
 	private Long userId;
 	
-	public TestSuiteType(String name, Long userId)
+	public TestSuiteType(String name, String fileName, Long userId)
 	{
 		this.name = name;
 		this.userId = userId;
 	}
 
-	public TestSuiteType(String name, String description, Long userId)
+	public TestSuiteType(String name, String fileName, String description, Long userId)
 	{
 		this.name = name;
 		this.description = description;
@@ -28,6 +29,16 @@ public class TestSuiteType extends AbstractType
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public String getFileName()
+	{
+		return fileName;
+	}
+
+	public void setFileName(String fileName)
+	{
+		this.fileName = fileName;
 	}
 
 	public String getDescription()
