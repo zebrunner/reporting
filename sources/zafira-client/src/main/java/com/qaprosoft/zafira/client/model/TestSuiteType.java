@@ -12,6 +12,7 @@ public class TestSuiteType extends AbstractType
 	{
 		this.name = name;
 		this.userId = userId;
+		this.fileName = fileName;
 	}
 
 	public TestSuiteType(String name, String fileName, String description, Long userId)
@@ -19,6 +20,7 @@ public class TestSuiteType extends AbstractType
 		this.name = name;
 		this.description = description;
 		this.userId = userId;
+		this.fileName = fileName;
 	}
 
 	public String getName()
