@@ -51,7 +51,8 @@
 {
 	"name": "regression",
 	"description": "Regression tests",
-	"userId": 1
+	"userId": 1,
+	"fileName": "regression.xml"
 }
 
 <<<
