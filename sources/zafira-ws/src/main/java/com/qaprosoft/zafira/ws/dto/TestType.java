@@ -26,7 +26,8 @@ public class TestType extends AbstractType
 	private Date finishTime;
 	private String demoURL;
 	private String logURL;
-	private List<String> workItems; 
+	private List<String> workItems;
+	private int retry;
 
 	public String getName()
 	{
@@ -136,5 +137,15 @@ public class TestType extends AbstractType
 	public void setWorkItems(List<String> workItems)
 	{
 		this.workItems = workItems;
+	}
+
+	public int getRetry()
+	{
+		return retry;
+	}
+
+	public void setRetry(int retry)
+	{
+		this.retry = retry;
 	}
 }

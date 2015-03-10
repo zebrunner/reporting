@@ -21,9 +21,10 @@ public class TestType extends AbstractType
 	private String demoURL;
 	private String logURL;
 	private List<String> workItems;
+	private int retry;
 	
 	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, String message,
-			Long startTime, Long finishTime, String demoURL, String logURL, List<String> workItems)
+			Long startTime, Long finishTime, String demoURL, String logURL, List<String> workItems, int retry)
 	{
 		this.name = name;
 		this.status = status;
@@ -36,6 +37,7 @@ public class TestType extends AbstractType
 		this.demoURL = demoURL;
 		this.logURL = logURL;
 		this.workItems = workItems;
+		this.retry = retry;
 	}
 
 	public String getName()
@@ -146,5 +148,15 @@ public class TestType extends AbstractType
 	public void setWorkItems(List<String> workItems)
 	{
 		this.workItems = workItems;
+	}
+
+	public int getRetry()
+	{
+		return retry;
+	}
+
+	public void setRetry(int retry)
+	{
+		this.retry = retry;
 	}
 }

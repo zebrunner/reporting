@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY)
 			VALUES (
 				#{name},
 			    #{status},
@@ -16,7 +16,8 @@
 			    #{startTime},
 			    #{finishTime},
 			    #{demoURL},
-			    #{logURL}
+			    #{logURL},
+			    #{retry}
 			)
 		]]>
 	</insert>
@@ -45,6 +46,7 @@
 				T.FINISH_TIME AS TEST_FINISH_TIME,
 				T.DEMO_URL AS TEST_DEMO_URL,
 				T.LOG_URL AS TEST_LOG_URL,
+				T.RETRY AS TEST_RETRY,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT
 			FROM
@@ -87,7 +89,8 @@
 				START_TIME = #{startTime},
 				FINISH_TIME = #{finishTime},
 				DEMO_URL = #{demoURL},
-				LOG_URL = #{logURL}
+				LOG_URL = #{logURL},
+				RETRY = #{retry}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -120,6 +123,7 @@
 		<result column="TEST_FINISH_TIME" property="finishTime" />
 		<result column="TEST_DEMO_URL" property="demoURL" />
 		<result column="TEST_LOG_URL" property="logURL" />
+		<result column="RETRY" property="retry" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 	</resultMap>

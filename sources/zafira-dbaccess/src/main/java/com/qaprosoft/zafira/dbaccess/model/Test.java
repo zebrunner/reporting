@@ -21,6 +21,7 @@ public class Test extends AbstractEntity
 	private Date finishTime;
 	private String demoURL;
 	private String logURL;
+	private int retry;
 
 	public String getName()
 	{
@@ -120,5 +121,15 @@ public class Test extends AbstractEntity
 	public void setLogURL(String logURL)
 	{
 		this.logURL = logURL;
+	}
+
+	public int getRetry()
+	{
+		return retry;
+	}
+
+	public void setRetry(int retry)
+	{
+		this.retry = retry;
 	}
 }
