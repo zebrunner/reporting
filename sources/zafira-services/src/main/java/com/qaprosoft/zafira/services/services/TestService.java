@@ -75,4 +75,10 @@ public class TestService
 	{
 		testMapper.deleteTest(test);
 	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestWorkItemByTestId(long testId) throws ServiceException
+	{
+		testMapper.deleteTestWorkItemByTestId(testId);
+	}
 }

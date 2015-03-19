@@ -24,8 +24,6 @@
 		]]>
 	</insert>
 	
-	
-
 	<sql id="getTestRun">
 		<![CDATA[
 			SELECT
@@ -54,6 +52,17 @@
 		<include refid="getTestRun" />
 		<![CDATA[
 			WHERE TR.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getTestRunForRerun" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE 
+				TR.TEST_SUITE_ID = #{testSuiteId} AND
+				TR.JOB_ID = #{jobId} AND
+				TR.UPSTREAM_JOB_ID = #{upstreamJobId} AND
+				TR.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamBuildNumber}; 
 		]]>
 	</select>
 

@@ -76,6 +76,20 @@ public class TestRunService
 				{
 					throw new InvalidTestRunException("Specify upstreamJobId and upstreaBuildNumber if started by UPSTREAM_JOB!");
 				}
+				// Preparation for rerun if test run exists
+				TestRun existingTestRun = testRunMapper.getTestRunForRerun(newTestRun.getTestSuiteId(), 
+																		   newTestRun.getJob().getId(), 
+																		   newTestRun.getUpstreamJob().getId(), 
+																		   newTestRun.getUpstreamJobBuildNumber());
+				if(existingTestRun != null)
+				{
+					for(Test test : testService.getTestsByTestRunId(existingTestRun.getId()))
+					{
+						testService.deleteTestWorkItemByTestId(test.getId());
+						testService.deleteTest(test);
+					}
+					deleteTestRun(existingTestRun);
+				}
 				break;
 		}
 		newTestRun.setStatus(Status.IN_PROGRESS);
