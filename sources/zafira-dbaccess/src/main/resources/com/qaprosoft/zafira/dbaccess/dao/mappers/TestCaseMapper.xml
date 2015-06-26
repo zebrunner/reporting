@@ -38,6 +38,15 @@
 			WHERE TC.ID = #{id};
 		]]>
 	</select>
+	
+	<select id="getTestCasesByUsername" resultMap="TestCaseResultMap">
+		<include refid="getTestCase" />
+		<![CDATA[
+			INNER JOIN zafira.USERS U
+			ON U.ID = TC.USER_ID
+			WHERE U.USERNAME = #{userName};
+		]]>
+	</select>
 
 	<select id="getTestCaseByClassAndMethod" resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />

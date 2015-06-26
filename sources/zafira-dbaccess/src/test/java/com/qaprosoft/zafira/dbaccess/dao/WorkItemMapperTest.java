@@ -4,6 +4,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,18 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	@Autowired
 	private WorkItemMapper workItemMapper;
 
+	@Test
+	public void createWorkItem1()
+	{
+		List<WorkItem> wi = workItemMapper.getWorkItemsByUsername("szagriychuk");
+		for(WorkItem w : wi)
+		{
+			System.out.println(w.getJiraId());
+		}
+		System.out.println();
+	}
+	
+	
 	@Test(enabled = ENABLED)
 	public void createWorkItem()
 	{

@@ -14,7 +14,7 @@
 
 	<sql id="getWorkItem">
 		<![CDATA[
-			SELECT
+			SELECT distinct
 				J.ID AS WORK_ITEM_ID,
 				J.JIRA_ID AS WORK_ITEM_JIRA_ID,
 				J.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
@@ -35,6 +35,21 @@
 		<include refid="getWorkItem" />
 		<![CDATA[
 			WHERE J.JIRA_ID = #{jiraId};
+		]]>
+	</select>
+	
+	<select id="getWorkItemsByUsername" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			INNER JOIN zafira.TEST_WORK_ITEMS TWI
+			ON J.ID = TWI.WORK_ITEM_ID
+			INNER JOIN zafira.TESTS T
+			ON TWI.TEST_ID = T.ID
+			INNER JOIN zafira.TEST_CASES TC
+			ON T.TEST_CASE_ID = TC.ID
+			INNER JOIN zafira.USERS U
+			ON U.ID = TC.USER_ID
+			WHERE U.USERNAME = #{userName};
 		]]>
 	</select>
 

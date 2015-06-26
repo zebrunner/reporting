@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import java.util.List;
+
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
 public interface WorkItemMapper
@@ -9,6 +11,8 @@ public interface WorkItemMapper
 	WorkItem getWorkItemById(long id);
 
 	WorkItem getWorkItemByJiraId(String jiraId);
+	
+	List<WorkItem> getWorkItemsByUsername(String userName);
 	
 	void updateWorkItem(WorkItem workItem);
 
