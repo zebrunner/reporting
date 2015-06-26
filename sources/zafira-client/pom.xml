@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.qaprosoft</groupId>
 	<artifactId>zafira-client</artifactId>
-	<version>1.0</version>
+	<version>${zafira-client}</version>
 	<packaging>jar</packaging>
 
 	<name>Zafira :: Client</name>
@@ -38,6 +38,19 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>deploymentRepo</id>
+			<name>Releases</name>
+			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>deploymentRepo</id>
+			<name>Snapshots</name>
+			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
 	<build>
 		<finalName>${project.artifactId}</finalName>
 
@@ -68,17 +81,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<distributionManagement>
-		<repository>
-			<id>maven-repository</id>
-			<url>${github.maven.repository}</url>
-		</repository>
-	</distributionManagement>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<github.maven.repository>file:///${basedir}</github.maven.repository>
-	</properties>
 </project>
 
