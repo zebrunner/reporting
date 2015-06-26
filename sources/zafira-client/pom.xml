@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.qaprosoft</groupId>
 	<artifactId>zafira-client</artifactId>
-	<version>${zafira-client}</version>
+	<version>${zafira_client_version}</version>
 	<packaging>jar</packaging>
 
 	<name>Zafira :: Client</name>
