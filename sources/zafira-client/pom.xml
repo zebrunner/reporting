@@ -40,12 +40,12 @@
 
 	<distributionManagement>
 		<repository>
-			<id>deploymentRepo</id>
+			<id>releaseRepo</id>
 			<name>Releases</name>
 			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>deploymentRepo</id>
+			<id>snapshotRepo</id>
 			<name>Snapshots</name>
 			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
