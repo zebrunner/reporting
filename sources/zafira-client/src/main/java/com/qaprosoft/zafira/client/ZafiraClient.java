@@ -64,7 +64,7 @@ public class ZafiraClient
 		return isAvailable;
 	}
 	
-	public Response<UserType> createUser(UserType user)
+	public synchronized Response<UserType> createUser(UserType user)
 	{
 		Response<UserType> response = new Response<UserType>(0, null);
 		try
@@ -85,7 +85,7 @@ public class ZafiraClient
 		return response;
 	}
 
-	public Response<JobType> createJob(JobType job)
+	public synchronized Response<JobType> createJob(JobType job)
 	{
 		Response<JobType> response = new Response<JobType>(0, null);
 		try
@@ -106,7 +106,7 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<TestSuiteType> createTestSuite(TestSuiteType testSuite)
+	public synchronized Response<TestSuiteType> createTestSuite(TestSuiteType testSuite)
 	{
 		Response<TestSuiteType> response = new Response<TestSuiteType>(0, null);
 		try
@@ -211,7 +211,7 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<TestCaseType> createTestCase(TestCaseType testCase)
+	public synchronized Response<TestCaseType> createTestCase(TestCaseType testCase)
 	{
 		Response<TestCaseType> response = new Response<TestCaseType>(0, null);
 		try
