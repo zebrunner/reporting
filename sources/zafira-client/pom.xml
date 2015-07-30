@@ -14,6 +14,12 @@
 	<packaging>jar</packaging>
 
 	<name>Zafira :: Client</name>
+	
+	<properties>
+		<source.version>1.7</source.version>
+		<target.version>1.7</target.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -66,6 +72,15 @@
 		</resources>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${source.version}</source>
+					<target>${target.version}</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
