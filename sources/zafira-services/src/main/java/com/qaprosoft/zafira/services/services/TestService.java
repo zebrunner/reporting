@@ -77,9 +77,9 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(Test test) throws ServiceException
+	public void deleteTestByTestRunIdAndTestCaseIdAndLogURL(Test test) throws ServiceException
 	{
-		testMapper.deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(test.getTestRunId(), test.getTestCaseId(), test.getLogURL());
+		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(test.getTestRunId(), test.getTestCaseId(), test.getLogURL());
 	}
 	
 	@Transactional(rollbackFor = Exception.class)

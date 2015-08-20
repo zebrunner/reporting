@@ -23,6 +23,10 @@ public class TestType extends AbstractType
 	private List<String> workItems;
 	private int retry;
 	
+	public TestType()
+	{
+	}
+	
 	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, String message,
 			Long startTime, Long finishTime, String demoURL, String logURL, List<String> workItems, int retry)
 	{

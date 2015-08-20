@@ -109,7 +109,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 	{ "createTest", "getTestById", "updateTest" })
 	public void deleteTestByTestRunIdAndTestCaseIdAndTestLogURL()
 	{
-		testMapper.deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(3, 1, "http://localhost:8080/lc/log");
+		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(3, 1, "http://localhost:8080/lc/log");
 
 		assertNull(testMapper.getTestById(TEST.getId()));
 	}

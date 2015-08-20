@@ -45,10 +45,10 @@ public class TestsController extends AbstractController
 		return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
 	}
 	
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(method = RequestMethod.DELETE)
-	public void de(@RequestBody TestType test) throws ServiceException
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="duplicates/remove", method = RequestMethod.PUT)
+	public void deleteTestDuplicates(@RequestBody TestType test) throws ServiceException
 	{
-		testService.deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(mapper.map(test, Test.class));
+		testService.deleteTestByTestRunIdAndTestCaseIdAndLogURL(mapper.map(test, Test.class));
 	}
 }
