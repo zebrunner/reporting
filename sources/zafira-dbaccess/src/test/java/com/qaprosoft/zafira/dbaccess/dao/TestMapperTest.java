@@ -104,6 +104,15 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 
 		assertNull(testMapper.getTestById(TEST.getId()));
 	}
+	
+	@org.testng.annotations.Test(enabled = ENABLED && DELETE_ENABLED && !DELETE_BY_TEST, dependsOnMethods =
+	{ "createTest", "getTestById", "updateTest" })
+	public void deleteTestByTestRunIdAndTestCaseIdAndTestLogURL()
+	{
+		testMapper.deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(3, 1, "http://localhost:8080/lc/log");
+
+		assertNull(testMapper.getTestById(TEST.getId()));
+	}
 
 	private void checkTest(Test test)
 	{

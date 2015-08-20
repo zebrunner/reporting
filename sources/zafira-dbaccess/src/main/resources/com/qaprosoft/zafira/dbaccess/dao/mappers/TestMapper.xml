@@ -118,6 +118,13 @@
 		<include refid="deleteTest" />
 	</delete>
 	
+	<delete id="deleteTestByTestRunIdAndTestCaseIdAndLogURL">
+		<![CDATA[
+			DELETE FROM zafira.TESTS
+			WHERE TEST_RUN_ID=#{testRunId} AND TEST_CASE_ID=#{testCaseId} AND LOG_URL=#{logURL}
+		]]>
+	</delete>
+	
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Test" id="TestResultMap" autoMapping="false">
 		<id column="TEST_ID" property="id" />
 		<result column="TEST_NAME" property="name" />

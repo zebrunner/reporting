@@ -190,6 +190,19 @@ public class ZafiraClient
 		return response;
 	}
 	
+	public void deleteTest(TestType test)
+	{
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + TESTS_PATH);
+			webResource.type(MediaType.APPLICATION_JSON)
+					.delete(ClientResponse.class, test);
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
 	public Response<TestType> createTestWorkItems(long testId, List<String> workItems)
 	{
 		Response<TestType> response = new Response<TestType>(0, null);

@@ -24,4 +24,6 @@ public interface TestMapper
 	void deleteTestById(long id);
 
 	void deleteTest(Test test);
+	
+	void deleteTestByTestRunIdAndTestCaseIdAndTestLogURL(@Param("testRunId") long testRunId, @Param("testCaseId") long testCaseId, @Param("logURL") String logURL);
 }
