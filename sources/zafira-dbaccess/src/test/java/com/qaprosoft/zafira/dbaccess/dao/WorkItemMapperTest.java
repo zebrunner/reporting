@@ -35,7 +35,7 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	@Autowired
 	private WorkItemMapper workItemMapper;
 
-	@Test
+	@Test(enabled = ENABLED)
 	public void createWorkItem1()
 	{
 		List<WorkItem> wi = workItemMapper.getWorkItemsByUsername("szagriychuk");
