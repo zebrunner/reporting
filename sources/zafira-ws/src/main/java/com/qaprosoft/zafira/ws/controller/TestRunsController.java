@@ -1,8 +1,10 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
 
 import org.dozer.Mapper;
+import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +33,7 @@ public class TestRunsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createTestRun(@RequestBody @Valid TestRunType testRun) throws ServiceException
+	public @ResponseBody TestRunType createTestRun(@RequestBody @Valid TestRunType testRun) throws ServiceException, MappingException, JAXBException
 	{
 		return mapper.map(testRunService.initializeTestRun(mapper.map(testRun, TestRun.class)), TestRunType.class);
 	}

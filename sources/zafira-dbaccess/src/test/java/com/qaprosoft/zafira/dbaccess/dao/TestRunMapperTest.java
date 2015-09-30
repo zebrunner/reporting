@@ -4,9 +4,13 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
@@ -14,6 +18,7 @@ import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
+import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
@@ -123,6 +128,14 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		testRunMapper.deleteTestRunById((TEST_RUN.getId()));
 
 		assertNull(testRunMapper.getTestRunById(TEST_RUN.getId()));
+	}
+	
+	@Test(enabled = ENABLED)
+	public void getTestRunForRerun()
+	{
+		List<Argument> args = new ArrayList<>();
+		args.add(new Argument("url", "http://localhost:8080"));
+		Assert.assertNotNull(testRunMapper.getTestRunsForRerun(1L, 1L, 1L, 1L, args));
 	}
 
 	private void checkTestRun(TestRun testRun)

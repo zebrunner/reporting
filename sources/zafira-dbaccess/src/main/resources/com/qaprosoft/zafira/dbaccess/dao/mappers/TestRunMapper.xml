@@ -55,15 +55,20 @@
 		]]>
 	</select>
 	
-	<select id="getTestRunForRerun" resultMap="TestRunResultMap">
+	<select id="getTestRunsForRerun" resultMap="TestRunResultMap">
 		<include refid="getTestRun" />
 		<![CDATA[
 			WHERE 
 				TR.TEST_SUITE_ID = #{testSuiteId} AND
 				TR.JOB_ID = #{jobId} AND
 				TR.UPSTREAM_JOB_ID = #{upstreamJobId} AND
-				TR.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamBuildNumber}; 
+				TR.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamBuildNumber} 
 		]]>
+		<if test="uniqueArgs != null and uniqueArgs.size > 0">
+            <foreach item="arg" index="index" collection="uniqueArgs" open="AND " separator=" AND " close=";">
+				<![CDATA[CONFIG_XML LIKE CONCAT('%<key>', #{arg.key}, '</key><value>', #{arg.value}, '</value>%')]]>
+			</foreach>
+		</if>
 	</select>
 
 	<update id="updateTestRun">
