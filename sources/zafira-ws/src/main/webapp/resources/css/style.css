@@ -1,0 +1,45 @@
+div.search {
+	margin: 0 0 20px 0;
+}
+
+img.pending {
+	height: 25px; 
+	width: 25px;
+}
+
+.result_row {
+	border: 1px solid #e6e6e6;
+	border-radius: 4px;
+	margin: 2px 0;
+	padding: 15px;
+}
+
+.results_details {
+	margin-top: 20px;
+}
+
+.float_right {
+	float: right;
+}
+
+.result_error {
+	background: #ffb3b3; 
+	padding: 8px; 
+	margin: 5px 0;
+}
+
+.w50 {
+	width: 50px;
+}
+
+.w60 {
+	width: 60px;
+}
+
+.w210 {
+	width: 210px;
+}
+
+.time {
+	color: grey;
+}

@@ -6,13 +6,13 @@
 	<parent>
 		<groupId>com.qaprosoft</groupId>
 		<artifactId>zafira</artifactId>
-		<version>1.0</version>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>zafira-ws</artifactId>
 	<packaging>war</packaging>
 
-	<name>Zafira :: Web service</name>
+	<name>Zafira :: Web Service</name>
 
 	<dependencies>
 		<dependency>
@@ -80,14 +80,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jasypt</groupId>
-			<artifactId>jasypt-springsecurity3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -162,7 +154,7 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<configuration>
 					<url>${zafira.tomcat.url}</url>
-					<path>${zafira.tomcat.ws.path}</path>
+					<path>${zafira.tomcat.admin.path}</path>
 					<server>TomcatServer</server>
 				</configuration>
 			</plugin>

@@ -33,9 +33,10 @@ public class TestsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestType createTest(@RequestBody @Valid TestType test) throws ServiceException
+	public @ResponseBody TestType createTest(@RequestBody @Valid TestType t) throws ServiceException
 	{
-		return mapper.map(testService.createTest(mapper.map(test, Test.class), test.getWorkItems()), TestType.class);
+		Test test = testService.createTest(mapper.map(t, Test.class), t.getWorkItems());
+		return mapper.map(test, TestType.class);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

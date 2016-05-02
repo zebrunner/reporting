@@ -8,7 +8,7 @@
 			INSERT INTO zafira.TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
 				#{user.id},
-			    #{testSuiteId},
+			    #{testSuite.id},
 				#{status},
 				#{scmURL},
 				#{scmBranch},
@@ -48,8 +48,60 @@
 		]]>
 	</sql>
 	
+	<sql id="getTestRunFull">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				
+				U.ID AS TEST_RUN_USER_ID,
+				U.USERNAME AS TEST_RUN_USER_USER_NAME,
+				U.EMAIL AS TEST_RUN_USER_EMAIL,
+				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
+				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
+				
+				TS.ID AS TEST_RUN_TEST_SUITE_ID,
+				TS.NAME AS TEST_RUN_TEST_SUITE_NAME,
+				TS.FILE_NAME AS TEST_RUN_TEST_SUITE_FILE_NAME,
+				TS.DESCRIPTION AS TEST_RUN_TEST_SUITE_DESCRIPTION,
+				
+				TR.STATUS AS TEST_RUN_STATUS,
+				TR.SCM_URL AS TEST_RUN_SCM_URL,
+				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
+				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
+				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
+				
+				J.ID AS TEST_RUN_JOB_ID,
+				J.NAME AS TEST_RUN_JOB_NAME,
+				J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
+				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST,
+				
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
+				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT
+			FROM
+				zafira.TEST_RUNS TR
+			LEFT JOIN zafira.USERS U
+				ON TR.USER_ID = U.ID
+			LEFT JOIN zafira.JOBS J
+				ON TR.JOB_ID = J.ID
+			LEFT JOIN zafira.TEST_SUITES TS
+				ON TR.TEST_SUITE_ID = TS.ID
+		]]>
+	</sql>
+	
 	<select id="getTestRunById" resultMap="TestRunResultMap">
 		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
 		<![CDATA[
 			WHERE TR.ID = #{id};
 		]]>
@@ -77,7 +129,7 @@
 			    zafira.TEST_RUNS
 			SET
 				USER_ID = #{user.id},
-				TEST_SUITE_ID = #{testSuiteId},
+				TEST_SUITE_ID = #{testSuite.id},
 				STATUS = #{status},
 			    SCM_URL = #{scmURL},
 			    SCM_BRANCH = #{scmBranch},
@@ -111,15 +163,30 @@
 
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.TestRun" id="TestRunResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="id" />
+		
 		<result column="TEST_RUN_USER_ID" property="user.id" />
-		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuiteId" />
+		<result column="TEST_RUN_USER_USER_NAME" property="user.userName" />
+		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
+		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
+		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
+		
+		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
+		<result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
+		<result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
+		<result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+		
 		<result column="TEST_RUN_STATUS" property="status" />
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
 		<result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
 		<result column="TEST_RUN_SCM_COMMIT" property="scmCommit" />
 		<result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
 		<result column="TEST_RUN_CONFIG_XML" property="configXML" />
+		
 		<result column="TEST_RUN_JOB_ID" property="job.id" />
+		<result column="TEST_RUN_JOB_NAME" property="job.name" />
+		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
+		<result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
+		
 		<result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />
 		<result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
 		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />

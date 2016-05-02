@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.qaprosoft</groupId>
 		<artifactId>zafira</artifactId>
-		<version>1.0</version>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>zafira-services</artifactId>
@@ -51,19 +51,6 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>				
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -79,41 +66,7 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.twilio.sdk</groupId>
-			<artifactId>twilio-java-sdk</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.googlecode.libphonenumber</groupId>
-			<artifactId>libphonenumber</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.braintreepayments.gateway</groupId>
-			<artifactId>braintree-java</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smack</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.igniterealtime.smack</groupId>
-			<artifactId>smackx</artifactId>
-		</dependency>
 		
-		<dependency>
-			<groupId>com.github.fernandospr</groupId>
-			<artifactId>javapns-jdk16</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -137,42 +90,32 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.pubnub</groupId>
+			<artifactId>pubnub</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-amq-store</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-kahadb-store</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>de.congrace</groupId>
-			<artifactId>exp4j</artifactId>
-		</dependency>
-		
-		<dependency>
-		  <groupId>com.offbytwo.jenkins</groupId>
-		  <artifactId>jenkins-client</artifactId>
-		</dependency>
-		
 	</dependencies>
 
 	<build>

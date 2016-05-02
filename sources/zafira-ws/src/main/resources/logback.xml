@@ -3,7 +3,7 @@
 
 <configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<contextName>zafira</contextName>
+	<contextName>condor</contextName>
 	<jmxConfigurator />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -15,10 +15,10 @@
 	</appender>
 
 	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${catalina.home}/logs/zafira/log-admin.txt</file>
+		<file>${catalina.home}/logs/zafira/app-logs.txt</file>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${catalina.home}/logs/zafira/log-admin.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+			<fileNamePattern>${catalina.home}/logs/zafira/app-logs.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
 			<maxHistory>5</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>10MB</maxFileSize>
@@ -30,7 +30,7 @@
 		</encoder>
 	</appender>
 
-	<root level="info">
+	<root level="error">
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</root>

@@ -5,7 +5,7 @@
 
 	<groupId>com.qaprosoft</groupId>
 	<artifactId>zafira</artifactId>
-	<version>1.0</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Zafira :: Root project</name>
@@ -26,11 +26,11 @@
 		<spring-data-mongodb.version>1.3.2.RELEASE</spring-data-mongodb.version>
 		<spring-security.version>3.1.4.RELEASE</spring-security.version>
 
-		<activemq.version>5.8.0</activemq.version>
-		<activemq-core.version>5.7.0</activemq-core.version>
-
 		<aspectj.version>1.7.4</aspectj.version>
 
+		<mysql-connector-java.version>5.1.27</mysql-connector-java.version>
+		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
+		
 		<c3p0.version>0.9.1.2</c3p0.version>
 		<mybatis.version>3.2.3</mybatis.version>
 		<mybatis-spring.version>1.2.1</mybatis-spring.version>
@@ -44,42 +44,28 @@
 		<commons-fileupload.version>1.3</commons-fileupload.version>
 		<commons-codec.version>1.8</commons-codec.version>
 		<commons-logging.version>1.1.3</commons-logging.version>
-		<commons-collections.version>3.2.1</commons-collections.version>
-		<commons-net.version>3.1</commons-net.version>
-		<commons-pool.version>1.6</commons-pool.version>
 
 		<httpclient.version>4.3.1</httpclient.version>
-
-		<smack.version>3.2.1</smack.version>	
 
 		<dozer.version>5.4.0</dozer.version>
 
 		<jackson.version>2.3.0</jackson.version>
 
 		<jasypt.version>1.9.1</jasypt.version>
-		<jasypt-spring31.version>1.9.1</jasypt-spring31.version>
 
 		<joda-time.version>2.3</joda-time.version>
 
 		<hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
 
-		<aws-java-sdk.version>1.6.5</aws-java-sdk.version>
-
-		<twilio.version>3.4.1</twilio.version>
-
-		<libphonenumber.version>5.8</libphonenumber.version>
-
-		<braintree.version>2.25.1</braintree.version>
-
-		<quartz.version>2.2.1</quartz.version>
-
-		<javapns.version>2.2.1</javapns.version>
-
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
 
 		<testng.version>6.8.7</testng.version>
-
+		
+		<jtds.version>1.3.1</jtds.version>
+		
+		<javapns.version>2.2.1</javapns.version>
+		
 		<maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
@@ -87,59 +73,29 @@
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
 
 		<tomcat.version>7.0.42</tomcat.version>
-		<freemarker.version>2.3.20</freemarker.version>
-
-		<wrapper.version>3.2.3</wrapper.version>
-		<vysper.version>0.7</vysper.version>
-
-		<exp4j.version>0.3.11</exp4j.version>
-
-		<jenkins-client.version>0.2.0</jenkins-client.version>
 		
-		<jersey.version>1.18.2</jersey.version>
-		<genson.version>0.99</genson.version>
-		<swagger.version>1.3.10</swagger.version>
+		<guava.version>13.0.1</guava.version>
+		
+		<gson.version>2.2.2</gson.version>
+		
+		<pubnub.version>3.7.8</pubnub.version>
+		
+		<log4j.version>1.2.12</log4j.version>
 
-		<mysql-connector-java.version>5.1.27</mysql-connector-java.version>
-		<postgresql.version>9.1-901-1.jdbc4</postgresql.version>
 	</properties>
 
 	<modules>
-		<module>zafira-conf</module>
+		<module>zafira-conf</module>  
 		<module>zafira-dbaccess</module>
-		<module>zafira-services</module>
-		<module>zafira-ws</module>
-		<module>zafira-client</module>
+		<module>zafira-services</module>     		
+        <module>zafira-ws</module>
 	</modules>
-
-	<repositories>
-		<repository>
-			<id>jcenter-release</id>
-			<name>jcenter</name>
-			<url>http://oss.jfrog.org/artifactory/oss-release-local/</url>
-		</repository>
-	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>${mysql-connector-java.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>${postgresql.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-conf</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>zafira-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -154,22 +110,7 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>zafira-batch-services</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>zafira-webservices</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>zafira-admin</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>zafira-agent-admin</artifactId>
+				<artifactId>zafira-ws</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -194,7 +135,7 @@
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
 				<version>${javax.mail.version}</version>
-			</dependency>    
+			</dependency>
 
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -240,16 +181,6 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-expression</artifactId>
 				<version>${spring.version}</version>
-			</dependency>			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jms</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-spring</artifactId>
-				<version>${activemq.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.data</groupId>
@@ -276,27 +207,6 @@
 				<artifactId>spring-security-web</artifactId>
 				<version>${spring-security.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-taglibs</artifactId>
-				<version>${spring-security.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-amq-store</artifactId>
-				<version>${activemq.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-core</artifactId>
-				<version>${activemq-core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-kahadb-store</artifactId>
-				<version>${activemq.version}</version>
-			</dependency>
 
 			<dependency>
 				<groupId>org.aspectj</groupId>
@@ -315,6 +225,16 @@
 			</dependency>
 
 			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector-java.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>c3p0</groupId>
 				<artifactId>c3p0</artifactId>
 				<version>${c3p0.version}</version>
@@ -328,18 +248,6 @@
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis-spring</artifactId>
 				<version>${mybatis-spring.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>redis.clients</groupId>
-				<artifactId>jedis</artifactId>
-				<version>${jedis.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.mongodb</groupId>
-				<artifactId>mongo-java-driver</artifactId>
-				<version>${mongo-java-driver.version}</version>
 			</dependency>
 
 			<dependency>
@@ -367,38 +275,11 @@
 				<artifactId>commons-logging</artifactId>
 				<version>${commons-logging.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>commons-collections</groupId>
-				<artifactId>commons-collections</artifactId>
-				<version>${commons-collections.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-net</groupId>
-				<artifactId>commons-net</artifactId>
-				<version>${commons-net.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-pool</groupId>
-				<artifactId>commons-pool</artifactId>
-				<version>${commons-pool.version}</version>
-			</dependency>
-
 
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>${httpclient.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smack</artifactId>
-				<version>${smack.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smackx</artifactId>
-				<version>${smack.version}</version>
 			</dependency>
 
 			<dependency>
@@ -434,16 +315,6 @@
 				<artifactId>jasypt</artifactId>
 				<version>${jasypt.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.jasypt</groupId>
-				<artifactId>jasypt-spring31</artifactId>
-				<version>${jasypt.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jasypt</groupId>
-				<artifactId>jasypt-springsecurity3</artifactId>
-				<version>${jasypt.version}</version>
-			</dependency>
 
 			<dependency>
 				<groupId>joda-time</groupId>
@@ -455,42 +326,6 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>${hibernate-validator.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk</artifactId>
-				<version>${aws-java-sdk.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.twilio.sdk</groupId>
-				<artifactId>twilio-java-sdk</artifactId>
-				<version>${twilio.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.googlecode.libphonenumber</groupId>
-				<artifactId>libphonenumber</artifactId>
-				<version>${libphonenumber.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.braintreepayments.gateway</groupId>
-				<artifactId>braintree-java</artifactId>
-				<version>${braintree.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>${quartz.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.github.fernandospr</groupId>
-				<artifactId>javapns-jdk16</artifactId>
-				<version>${javapns.version}</version>
 			</dependency>
 
 			<dependency>
@@ -513,7 +348,12 @@
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>net.sourceforge.jtds</groupId>
+				<artifactId>jtds</artifactId>
+				<version>${jtds.version}</version>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
@@ -526,55 +366,32 @@
 				<version>${spring.version}</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.freemarker</groupId>
-				<artifactId>freemarker</artifactId>
-				<version>${freemarker.version}</version>
-			</dependency>						
-			<dependency>
-				<groupId>tanukisoft</groupId>
-				<artifactId>wrapper</artifactId>
-				<version>${wrapper.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.vysper</groupId>
-				<artifactId>vysper-core</artifactId>
-				<version>${vysper.version}</version>
-			</dependency>
 
 			<dependency>
-				<groupId>de.congrace</groupId>
-				<artifactId>exp4j</artifactId>
-				<version>${exp4j.version}</version>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${gson.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.pubnub</groupId>
+				<artifactId>pubnub</artifactId>
+				<version>${pubnub.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>com.offbytwo.jenkins</groupId>
-				<artifactId>jenkins-client</artifactId>
-				<version>${jenkins-client.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.codehaus.jackson</groupId>
-						<artifactId>jackson-mapper-asl</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-json</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-			   <groupId>com.owlike</groupId>
-			   <artifactId>genson</artifactId>
-			   <version>${genson.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

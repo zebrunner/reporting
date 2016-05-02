@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.config.Argument;
@@ -44,8 +45,11 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			WorkItem workItem = new WorkItem();
 			workItem.setId(1L);
 			
+			TestSuite testSuite = new TestSuite();
+			testSuite.setId(1L);
+			
 			setUser(user);
-			setTestSuiteId(1L);
+			setTestSuite(testSuite);
 			setScmBranch("prod");
 			setScmCommit("sdfsdfsdfs234234132ff");
 			setScmURL("http://localhost:8080/lc");
@@ -83,7 +87,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	public void updateTestRun()
 	{
 		TEST_RUN.getUser().setId(2L);
-		TEST_RUN.setTestSuiteId(2L);
+		TEST_RUN.getTestSuite().setId(2L);
 		TEST_RUN.setScmBranch("stg");
 		TEST_RUN.setScmCommit("sdfsdsdffs4132ff");
 		TEST_RUN.setScmURL("http://localhost:8080/lc2");
@@ -141,7 +145,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	private void checkTestRun(TestRun testRun)
 	{
 		assertEquals(testRun.getUser().getId(), TEST_RUN.getUser().getId(), "User ID must match");
-		assertEquals(testRun.getTestSuiteId(), TEST_RUN.getTestSuiteId(), "Test suite ID must match");
+		assertEquals(testRun.getTestSuite().getId(), TEST_RUN.getTestSuite().getId(), "Test suite ID must match");
 		assertEquals(testRun.getStatus(), TEST_RUN.getStatus(), "Status must match");
 		assertEquals(testRun.getScmURL(), TEST_RUN.getScmURL(), "SCM URL must match");
 		assertEquals(testRun.getScmBranch(), TEST_RUN.getScmBranch(), "SCM branch must match");

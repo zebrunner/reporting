@@ -34,6 +34,7 @@ public class ZafiraClient
 	private static final String TEST_CASES_BATCH_PATH = "/tests/cases/batch";
 	private static final String TEST_RUNS_PATH = "/tests/runs";
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
+	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
 
 	private String serviceURL;
 	private Client client;
@@ -258,6 +259,27 @@ public class ZafiraClient
 			if (clientRS.getStatus() == 200)
 			{
 				response.setObject(clientRS.getEntity(TestCaseType [].class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		return response;
+	}
+	
+	public Response<TestType []> getTestRunResults(long id)
+	{
+		Response<TestType []> response = new Response<TestType []>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_RESULTS_PATH, id));
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(TestType [].class));
 			}
 
 		} catch (Exception e)

@@ -15,7 +15,7 @@ public class TestRun extends AbstractEntity
 	}
 
 	private User user;
-	private Long testSuiteId;
+	private TestSuite testSuite;
 	private Status status;
 	private String scmURL;
 	private String scmBranch;
@@ -38,14 +38,12 @@ public class TestRun extends AbstractEntity
 		this.user = user;
 	}
 
-	public Long getTestSuiteId()
-	{
-		return testSuiteId;
+	public TestSuite getTestSuite() {
+		return testSuite;
 	}
 
-	public void setTestSuiteId(Long testSuiteId)
-	{
-		this.testSuiteId = testSuiteId;
+	public void setTestSuite(TestSuite testSuite) {
+		this.testSuite = testSuite;
 	}
 
 	public Status getStatus()

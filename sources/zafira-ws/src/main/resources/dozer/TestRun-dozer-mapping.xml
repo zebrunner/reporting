@@ -16,7 +16,7 @@
 		</field>
 		<field>
 			<a>testSuiteId</a>
-			<b>testSuiteId</b>
+			<b>testSuite.id</b>
 		</field>
 		<field>
 			<a>scmURL</a>

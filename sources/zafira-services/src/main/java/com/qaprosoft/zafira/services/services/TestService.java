@@ -3,13 +3,17 @@ package com.qaprosoft.zafira.services.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
+import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
 public class TestService
@@ -19,6 +23,10 @@ public class TestService
 	
 	@Autowired
 	private WorkItemService workItemService;
+	
+	@Autowired
+	@Qualifier("pubNubService")
+	private IPushService notificationService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Test createTest(Test test, List<String> jiraIds) throws ServiceException
@@ -32,6 +40,7 @@ public class TestService
 				testMapper.createTestWorkItem(test, workItem);
 			}
 		}
+		notificationService.publish(Channel.COMMON_EVENTS, new TestPush(test));
 		return test;
 	}
 	

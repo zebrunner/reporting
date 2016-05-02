@@ -11,6 +11,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +21,12 @@ import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
+import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
+import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
 public class TestRunService
@@ -36,12 +40,19 @@ public class TestRunService
 	private UserService userService;
 	
 	@Autowired
+	private JobsService jobsService;
+	
+	@Autowired
 	private TestService testService;
 
 	@Autowired
 	private WorkItemService workItemService;
 	
 	private Unmarshaller unmarshaller;
+	
+	@Autowired
+	@Qualifier("pubNubService")
+	private IPushService notificationService;
 	
 	public TestRunService()
 	{
@@ -66,6 +77,12 @@ public class TestRunService
 	public TestRun getTestRunById(long id) throws ServiceException
 	{
 		return testRunMapper.getTestRunById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public TestRun getTestRunByIdFull(long id) throws ServiceException
+	{
+		return testRunMapper.getTestRunByIdFull(id);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -104,7 +121,7 @@ public class TestRunService
 				}
 
 				// Preparation for rerun if test run exists
-				List<TestRun> existingTestRuns = testRunMapper.getTestRunsForRerun(newTestRun.getTestSuiteId(), 
+				List<TestRun> existingTestRuns = testRunMapper.getTestRunsForRerun(newTestRun.getTestSuite().getId(), 
 																		   newTestRun.getJob().getId(), 
 																		   newTestRun.getUpstreamJob().getId(), 
 																		   newTestRun.getUpstreamJobBuildNumber(),
@@ -126,6 +143,7 @@ public class TestRunService
 			newTestRun.setWorkItem(workItemService.createOrGetWorkItem(newTestRun.getWorkItem()));
 		}
 		createTestRun(newTestRun);
+		notificationService.publish(Channel.COMMON_EVENTS, new TestRunPush(getTestRunByIdFull(newTestRun.getId())));
 		return newTestRun;
 	}
 	
@@ -144,9 +162,11 @@ public class TestRunService
 			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED))
 			{
 				testRun.setStatus(Status.FAILED);
+				break;
 			}
 		}
 		updateTestRun(testRun);
+		notificationService.publish(Channel.COMMON_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
