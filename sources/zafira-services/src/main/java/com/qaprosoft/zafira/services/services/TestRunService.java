@@ -2,7 +2,11 @@ package com.qaprosoft.zafira.services.services;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -143,7 +147,7 @@ public class TestRunService
 			newTestRun.setWorkItem(workItemService.createOrGetWorkItem(newTestRun.getWorkItem()));
 		}
 		createTestRun(newTestRun);
-		notificationService.publish(Channel.COMMON_EVENTS, new TestRunPush(getTestRunByIdFull(newTestRun.getId())));
+		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(newTestRun.getId())));
 		return newTestRun;
 	}
 	
@@ -159,14 +163,15 @@ public class TestRunService
 		testRun.setStatus(Status.PASSED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED))
+			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) ||
+			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
 			{
 				testRun.setStatus(Status.FAILED);
 				break;
 			}
 		}
 		updateTestRun(testRun);
-		notificationService.publish(Channel.COMMON_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -191,5 +196,33 @@ public class TestRunService
 			logger.error(e.getMessage());
 		}
 		return uniqueArgs;
+	}
+	
+	@Transactional(readOnly=true)
+	public Map<Long, Map<String, Test>> createCompareMatrix(List<Long> testRunIds) throws ServiceException
+	{
+		Map<Long, Map<String, Test>> testNamesWithTests = new HashMap<>();
+		Set<String> testNames = new HashSet<>();
+		for(Long id : testRunIds)
+		{
+			List<Test> tests = testService.getTestsByTestRunId(id);
+			testNamesWithTests.put(id, new HashMap<String, Test>());
+			for(Test test : tests)
+			{
+				testNames.add(test.getName());
+				testNamesWithTests.get(id).put(test.getName(), test);
+			}
+		}
+		for(Long testRunId : testRunIds)
+		{
+			for(String testName : testNames)
+			{
+				if(testNamesWithTests.get(testRunId).get(testName) == null)
+				{
+					testNamesWithTests.get(testRunId).put(testName, null);
+				}
+			}
+		}
+		return testNamesWithTests;
 	}
 }

@@ -2,5 +2,6 @@ package com.qaprosoft.zafira.services.services.thirdparty.push;
 
 public enum Channel
 {
-	COMMON_EVENTS
+	TEST_RUN_EVENTS,
+	TEST_EVENTS,
 }

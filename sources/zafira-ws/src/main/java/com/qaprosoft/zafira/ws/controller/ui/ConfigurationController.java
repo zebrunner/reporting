@@ -38,7 +38,8 @@ public class ConfigurationController extends AbstractController
 			config.put("udid", "zafira");
 			config.put("publishKey", pubNubService.getPublishKey());
 			config.put("subscribeKey", pubNubService.getSubscribeKey());
-			config.put("channel", Channel.COMMON_EVENTS.toString());
+			config.put("testRunsChannel", Channel.TEST_RUN_EVENTS.toString());
+			config.put("testsChannel", Channel.TEST_EVENTS.toString());
 		}
 		return config;
 	}

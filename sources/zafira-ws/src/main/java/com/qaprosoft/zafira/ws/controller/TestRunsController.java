@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
@@ -59,5 +61,17 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody List<Test> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException
 	{
 		return testService.getTestsByTestRunId(id);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{ids}/compare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Long, Map<String, Test>> createCompareMatrix(@PathVariable(value="ids") String testRunIds) throws ServiceException
+	{
+		List<Long> ids = new ArrayList<>();
+		for(String id : testRunIds.split("\\+"))
+		{
+			ids.add(Long.valueOf(id));
+		}
+		return testRunService.createCompareMatrix(ids);
 	}
 }

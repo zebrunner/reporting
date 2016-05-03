@@ -40,7 +40,7 @@ public class TestService
 				testMapper.createTestWorkItem(test, workItem);
 			}
 		}
-		notificationService.publish(Channel.COMMON_EVENTS, new TestPush(test));
+		notificationService.publish(Channel.TEST_EVENTS, new TestPush(test));
 		return test;
 	}
 	

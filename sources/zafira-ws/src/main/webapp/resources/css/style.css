@@ -22,6 +22,10 @@ img.pending {
 	float: right;
 }
 
+.float_left {
+	float: left;
+}
+
 .result_error {
 	background: #ffb3b3; 
 	padding: 8px; 
@@ -32,14 +36,30 @@ img.pending {
 	width: 50px;
 }
 
-.w60 {
-	width: 60px;
+.w65 {
+	width: 65px;
 }
 
-.w210 {
-	width: 210px;
+.w250 {
+	width: 250px;
+}
+
+.mw300 {
+	min-width:  300px;
 }
 
 .time {
 	color: grey;
+}
+
+.PASSED {
+	background: #e6ffe6;
+}
+
+.FAILED {
+	background: #ffe6e6;
+}
+
+.SKIPPED {
+	background: #ffffcc;
 }

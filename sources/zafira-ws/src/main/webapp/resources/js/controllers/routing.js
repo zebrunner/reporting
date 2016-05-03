@@ -4,6 +4,12 @@ ZafiraApp.constant('ROUTES', [
 	config : {
 		templateUrl : 'dashboard'
 	}
+},
+{
+	url : '/tests/runs/:ids/compare',
+	config : {
+		templateUrl : 'compare'
+	}
 }]);
 
 ZafiraApp.config([ '$routeProvider', 'ROUTES',
