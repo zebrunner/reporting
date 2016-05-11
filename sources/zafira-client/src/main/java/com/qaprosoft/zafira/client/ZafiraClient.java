@@ -179,7 +179,7 @@ public class ZafiraClient
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_BY_ID_PATH, id));
 			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
