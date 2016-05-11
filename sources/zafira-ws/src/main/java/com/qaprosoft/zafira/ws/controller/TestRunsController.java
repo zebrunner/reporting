@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
@@ -53,6 +54,18 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody TestRunType finishTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.finilizeTestRun(id);
+		return mapper.map(testRun, TestRunType.class);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType getTestRun(@PathVariable(value="id") long id) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
 		return mapper.map(testRun, TestRunType.class);
 	}
 	
