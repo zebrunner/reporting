@@ -27,6 +27,7 @@ public class ZafiraClient
 	private static final String USERS_PATH = "/users";
 	private static final String JOBS_PATH = "/jobs";
 	private static final String TESTS_PATH = "/tests";
+	private static final String TEST_BY_ID_PATH = "/tests/%d";
 	private static final String TESTS_DUPLICATES_PATH = "/tests/duplicates/remove";
 	private static final String TEST_WORK_ITEMS_PATH = "/tests/%d/workitems";
 	private static final String TEST_SUITES_PATH = "/tests/suites";
@@ -212,6 +213,19 @@ public class ZafiraClient
 			LOGGER.error(e.getMessage());
 		}
 		return response;
+	}
+	
+	public void deleteTest(long id)
+	{
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_BY_ID_PATH, id));
+			webResource.delete(ClientResponse.class);
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
 	}
 	
 	public void deleteTestDuplicates(TestType test)

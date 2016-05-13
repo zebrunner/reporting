@@ -45,7 +45,7 @@ public class TestRunsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType createTestRun(@RequestBody @Valid TestRunType tr) throws ServiceException, MappingException, JAXBException
 	{
-		TestRun testRun = testRunService.initializeTestRun(mapper.map(tr, TestRun.class));
+		TestRun testRun = testRunService.initializeTestRun(mapper.map(tr, TestRun.class), tr.isRerun());
 		return mapper.map(testRun, TestRunType.class);
 	}
 	

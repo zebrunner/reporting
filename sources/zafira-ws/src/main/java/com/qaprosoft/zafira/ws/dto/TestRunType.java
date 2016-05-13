@@ -27,6 +27,7 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private String workItem;
+	private boolean rerun;
 
 	public Long getTestSuiteId()
 	{
@@ -156,5 +157,15 @@ public class TestRunType extends AbstractType
 	public void setWorkItem(String workItem)
 	{
 		this.workItem = workItem;
+	}
+
+	public boolean isRerun()
+	{
+		return rerun;
+	}
+
+	public void setRerun(boolean rerun)
+	{
+		this.rerun = rerun;
 	}
 }

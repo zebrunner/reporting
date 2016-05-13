@@ -103,8 +103,26 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun initializeTestRun(TestRun newTestRun) throws ServiceException, JAXBException
+	public TestRun initializeTestRun(TestRun newTestRun, boolean rerun) throws ServiceException, JAXBException
 	{
+		if(rerun == true)
+		{
+			long latestID = 0;
+			TestRun existingTestRun = null;
+			for(TestRun tr : getTestRunsForRerun(newTestRun))
+			{
+				if(tr.getId() > latestID)
+				{
+					existingTestRun = tr;
+					latestID = tr.getId();
+				}
+			}
+			if(existingTestRun != null)
+			{
+				return existingTestRun;
+			}
+		}
+		
 		switch (newTestRun.getStartedBy())
 		{
 			case HUMAN:
@@ -125,11 +143,8 @@ public class TestRunService
 				}
 
 				// Preparation for rerun if test run exists
-				List<TestRun> existingTestRuns = testRunMapper.getTestRunsForRerun(newTestRun.getTestSuite().getId(), 
-																		   newTestRun.getJob().getId(), 
-																		   newTestRun.getUpstreamJob().getId(), 
-																		   newTestRun.getUpstreamJobBuildNumber(),
-																		   readUniqueArgs(newTestRun.getConfigXML()));
+				List<TestRun> existingTestRuns = getTestRunsForRerun(newTestRun);
+						
 				for(TestRun tr : existingTestRuns)
 				{
 					for(Test test : testService.getTestsByTestRunId(tr.getId()))
@@ -224,5 +239,14 @@ public class TestRunService
 			}
 		}
 		return testNamesWithTests;
+	}
+	
+	private List<TestRun> getTestRunsForRerun(TestRun newTestRun)
+	{
+		return testRunMapper.getTestRunsForRerun(newTestRun.getTestSuite().getId(), 
+				   newTestRun.getJob().getId(), 
+				   newTestRun.getUpstreamJob().getId(), 
+				   newTestRun.getUpstreamJobBuildNumber(),
+				   readUniqueArgs(newTestRun.getConfigXML()));
 	}
 }

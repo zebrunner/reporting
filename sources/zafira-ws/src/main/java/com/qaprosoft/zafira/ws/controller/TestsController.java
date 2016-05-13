@@ -52,4 +52,11 @@ public class TestsController extends AbstractController
 	{
 		testService.deleteTestByTestRunIdAndTestCaseIdAndLogURL(mapper.map(test, Test.class));
 	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
+	public void deleteTest(@PathVariable(value="id") long id) throws ServiceException
+	{
+		testService.deleteTestById(id);
+	}
 }
