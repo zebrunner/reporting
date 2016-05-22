@@ -12,6 +12,7 @@ import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
 import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
@@ -42,6 +43,26 @@ public class TestService
 		}
 		notificationService.publish(Channel.TEST_EVENTS, new TestPush(test));
 		return test;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Test finishTest(Test test) throws ServiceException
+	{
+		Test existingTest = testMapper.getTestById(test.getId());
+		if(existingTest == null)
+		{
+			throw new TestNotFoundException();
+		}
+		
+		existingTest.setFinishTime(test.getFinishTime());
+		existingTest.setStatus(test.getStatus());
+		if(test.getMessage() != null)
+		{
+			existingTest.setMessage(test.getMessage());
+		}
+		testMapper.updateTest(existingTest);
+		
+		return existingTest;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)

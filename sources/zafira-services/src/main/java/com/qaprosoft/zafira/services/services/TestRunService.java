@@ -167,7 +167,7 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun finilizeTestRun(long id) throws ServiceException
+	public TestRun finishTestRun(long id) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)

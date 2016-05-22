@@ -53,7 +53,7 @@ public class TestRunsController extends AbstractController
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType finishTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
-		TestRun testRun = testRunService.finilizeTestRun(id);
+		TestRun testRun = testRunService.finishTestRun(id);
 		return mapper.map(testRun, TestRunType.class);
 	}
 	

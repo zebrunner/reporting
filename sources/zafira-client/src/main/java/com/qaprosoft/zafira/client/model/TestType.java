@@ -7,7 +7,7 @@ public class TestType extends AbstractType
 {
 	public enum Status
 	{
-		PASSED, FAILED, SKIPPED;
+		STARTED, PASSED, FAILED, SKIPPED;
 	}
 	
 	private String name;
@@ -26,22 +26,28 @@ public class TestType extends AbstractType
 	public TestType()
 	{
 	}
-	
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, String message,
-			Long startTime, Long finishTime, String demoURL, String logURL, List<String> workItems, int retry)
+
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, String demoURL,
+			String logURL, List<String> workItems, int retry)
 	{
 		this.name = name;
 		this.status = status;
 		this.testArgs = testArgs;
 		this.testRunId = testRunId;
 		this.testCaseId = testCaseId;
-		this.message = message;
 		this.startTime = startTime;
-		this.finishTime = finishTime;
 		this.demoURL = demoURL;
 		this.logURL = logURL;
 		this.workItems = workItems;
 		this.retry = retry;
+	}
+	
+	public TestType(long id, Status status, String message, Long finishTime)
+	{
+		super.setId(id);
+		this.status = status;
+		this.message = message;
+		this.finishTime = finishTime;
 	}
 
 	public String getName()

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.ws.dto.errors.Error;
 import com.qaprosoft.zafira.ws.dto.errors.ErrorCode;
@@ -34,6 +35,16 @@ public abstract class AbstractController
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public ErrorResponse handleTestRunNotFoundException(TestRunNotFoundException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));
+		return result;
+	}
+	
+	@ExceptionHandler(TestNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorResponse handleTestNotFoundException(TestNotFoundException e)
 	{
 		ErrorResponse result = new ErrorResponse();
 		result.setError(new Error(ErrorCode.TEST_RUN_NOT_FOUND));

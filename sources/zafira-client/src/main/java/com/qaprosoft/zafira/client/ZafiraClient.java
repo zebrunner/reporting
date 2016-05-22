@@ -27,6 +27,7 @@ public class ZafiraClient
 	private static final String USERS_PATH = "/users";
 	private static final String JOBS_PATH = "/jobs";
 	private static final String TESTS_PATH = "/tests";
+	private static final String TEST_FINISH_PATH = "/tests/%d/finish";
 	private static final String TEST_BY_ID_PATH = "/tests/%d";
 	private static final String TESTS_DUPLICATES_PATH = "/tests/duplicates/remove";
 	private static final String TEST_WORK_ITEMS_PATH = "/tests/%d/workitems";
@@ -131,7 +132,7 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<TestRunType> createTestRun(TestRunType testRun)
+	public Response<TestRunType> startTestRun(TestRunType testRun)
 	{
 		Response<TestRunType> response = new Response<TestRunType>(0, null);
 		try
@@ -194,12 +195,33 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<TestType> createTest(TestType test)
+	public Response<TestType> startTest(TestType test)
 	{
 		Response<TestType> response = new Response<TestType>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TESTS_PATH);
+			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, test);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(TestType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		return response;
+	}
+	
+	public Response<TestType> finishTest(TestType test)
+	{
+		Response<TestType> response = new Response<TestType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_FINISH_PATH, test.getId()));
 			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, test);
 			response.setStatus(clientRS.getStatus());
