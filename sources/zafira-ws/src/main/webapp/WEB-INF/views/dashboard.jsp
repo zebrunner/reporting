@@ -60,13 +60,14 @@
 							      <div ng-switch-when="PASSED" class="btn btn-success btn-xs w65">PASSED</div>
 							      <div ng-switch-when="FAILED" class="btn btn-danger btn-xs w65">FAILED</div>
 							      <div ng-switch-when="SKIPPED" class="btn btn-warning btn-xs w65">SKIPPED</div>
+							      <img ng-switch-default src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
 							  	</td>
                                 <td>	
                                 	<div>{{test.name}}</div>
                                 	<div class="result_error" data-ng-if="test.message">{{test.message}}</div>
                                 </td>
                                 <td class="w250">
-                                	<div class="float_right">
+                                	<div class="float_right" data-ng-if="test.status != STARTED">
 	                                	<span class="time">{{test.finishTime | date:'hh:mm MM/dd/yyyy'}}</span>
 	                                	&nbsp;
 	                                	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
