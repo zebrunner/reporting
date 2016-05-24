@@ -8,7 +8,7 @@ public class Test extends AbstractEntity
 
 	public enum Status
 	{
-		STARTED, PASSED, FAILED, SKIPPED; 
+		IN_PROGRESS, PASSED, FAILED, SKIPPED; 
 	}
 
 	private String name;

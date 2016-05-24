@@ -7,7 +7,7 @@ public class TestType extends AbstractType
 {
 	public enum Status
 	{
-		STARTED, PASSED, FAILED, SKIPPED;
+		IN_PROGRESS, PASSED, FAILED, SKIPPED;
 	}
 	
 	private String name;
