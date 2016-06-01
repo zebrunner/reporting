@@ -26,7 +26,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
 			
 			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:1000000});
+			PubNub.ngHistory({channel:$scope.testsChannel, count:100000});
 			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
 				var message = payload.message;
 				console.log(message);
