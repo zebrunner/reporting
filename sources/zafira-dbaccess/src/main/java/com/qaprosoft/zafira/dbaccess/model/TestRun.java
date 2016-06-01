@@ -6,7 +6,7 @@ public class TestRun extends AbstractEntity
 
 	public enum Status
 	{
-		IN_PROGRESS, PASSED, FAILED;
+		IN_PROGRESS, PASSED, FAILED, ABORTED;
 	}
 
 	public enum Initiator

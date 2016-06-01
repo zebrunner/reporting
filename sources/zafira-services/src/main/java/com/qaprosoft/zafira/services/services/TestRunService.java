@@ -1,19 +1,15 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -23,8 +19,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
-import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -35,8 +29,6 @@ import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 @Service
 public class TestRunService
 {
-	private Logger logger = Logger.getLogger(TestRunService.class);
-	
 	@Autowired
 	private TestRunMapper testRunMapper;
 	
@@ -52,24 +44,12 @@ public class TestRunService
 	@Autowired
 	private WorkItemService workItemService;
 	
-	private Unmarshaller unmarshaller;
-	
 	@Autowired
 	@Qualifier("pubNubService")
 	private IPushService notificationService;
 	
-	public TestRunService()
-	{
-		JAXBContext context;
-		try
-		{
-			context = JAXBContext.newInstance(Configuration.class);
-			unmarshaller = context.createUnmarshaller();
-		} catch (JAXBException e)
-		{
-			throw new RuntimeException(e.getMessage());
-		}
-	}
+	@Autowired
+	private TestConfigService testConfigService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -87,6 +67,12 @@ public class TestRunService
 	public TestRun getTestRunByIdFull(long id) throws ServiceException
 	{
 		return testRunMapper.getTestRunByIdFull(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException
+	{
+		return testRunMapper.getTestRunsByStatusAndStartedBefore(status, startedBefore);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -190,27 +176,18 @@ public class TestRunService
 		return testRun;
 	}
 	
-	public List<Argument> readUniqueArgs(String configXML)
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun abortTestRun(long id) throws ServiceException
 	{
-		List<Argument> uniqueArgs = new ArrayList<>();
-		try
+		TestRun testRun = getTestRunById(id);
+		if(testRun == null)
 		{
-			if(!StringUtils.isEmpty(configXML))
-			{
-				Configuration config = (Configuration) unmarshaller.unmarshal(new ByteArrayInputStream(configXML.getBytes()));
-				for(Argument arg : config.getArg())
-				{
-					if(arg.getUnique())
-					{
-						uniqueArgs.add(arg);
-					}
-				}
-			}
+			throw new TestRunNotFoundException();
 		}
-		catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return uniqueArgs;
+		testRun.setStatus(Status.ABORTED);
+		updateTestRun(testRun);
+		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		return testRun;
 	}
 	
 	@Transactional(readOnly=true)
@@ -247,6 +224,6 @@ public class TestRunService
 				   newTestRun.getJob().getId(), 
 				   newTestRun.getUpstreamJob().getId(), 
 				   newTestRun.getUpstreamJobBuildNumber(),
-				   readUniqueArgs(newTestRun.getConfigXML()));
+				   testConfigService.readConfigArgs(newTestRun.getConfigXML(), true));
 	}
 }

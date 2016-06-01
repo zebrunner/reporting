@@ -5,6 +5,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,14 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		checkTestRun(testRunMapper.getTestRunById(TEST_RUN.getId()));
 	}
 
+	
+	@Test
+	public void getTestRuns()
+	{
+		List<TestRun> tr = testRunMapper.getTestRunsByStatusAndStartedBefore(Status.IN_PROGRESS, new Date());
+		System.out.println();
+	}
+	
 	@Test(enabled = ENABLED, dependsOnMethods =
 	{ "createTestRun" })
 	public void updateTestRun()

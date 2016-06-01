@@ -1,0 +1,151 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.qaprosoft</groupId>
+		<artifactId>zafira</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>zafira-batch-services</artifactId>
+	<packaging>jar</packaging>
+
+	<name>Zafira :: Batch services</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.qaprosoft</groupId>
+			<artifactId>zafira-conf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qaprosoft</groupId>
+			<artifactId>zafira-dbaccess</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qaprosoft</groupId>
+			<artifactId>zafira-services</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>tanukisoft</groupId>
+			<artifactId>wrapper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${maven-enforcer-plugin.version}</version>
+				<executions>
+					<execution>
+						<configuration>
+							<rules>
+								<dependencyConvergence />
+							</rules>
+						</configuration>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>generate-jsw-scripts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-daemons</goal>
+						</goals>
+						<configuration>
+							<repositoryLayout>flat</repositoryLayout>
+							<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+							<daemons>
+								<daemon>
+									<id>JobService</id>
+									<mainClass>com.qaprosoft.zafira.batchservices.JobService</mainClass>
+									<commandLineArguments>
+										<commandLineArgument>start</commandLineArgument>
+									</commandLineArguments>
+									<jvmSettings>
+										<initialMemorySize>256M</initialMemorySize>
+										<maxMemorySize>256M</maxMemorySize>
+									</jvmSettings>
+									<generatorConfigurations>
+										<generatorConfiguration>
+											<generator>jsw</generator>
+											<includes>
+												<include>linux-x86-64</include>
+												<include>windows-x86-64</include>
+											</includes>
+										</generatorConfiguration>
+									</generatorConfigurations>
+									<platforms>
+										<platform>jsw</platform>
+									</platforms>
+								</daemon>
+							</daemons>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

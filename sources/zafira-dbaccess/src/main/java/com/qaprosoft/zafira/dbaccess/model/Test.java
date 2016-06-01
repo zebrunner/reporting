@@ -22,6 +22,12 @@ public class Test extends AbstractEntity
 	private String demoURL;
 	private String logURL;
 	private int retry;
+	private TestConfig testConfig;
+	
+	public Test()
+	{
+		testConfig = new TestConfig();
+	}
 
 	public String getName()
 	{
@@ -131,5 +137,15 @@ public class Test extends AbstractEntity
 	public void setRetry(int retry)
 	{
 		this.retry = retry;
+	}
+
+	public TestConfig getTestConfig()
+	{
+		return testConfig;
+	}
+
+	public void setTestConfig(TestConfig testConfig)
+	{
+		this.testConfig = testConfig;
 	}
 }

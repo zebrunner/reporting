@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
+import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -26,12 +27,21 @@ public class TestService
 	private WorkItemService workItemService;
 	
 	@Autowired
+	private TestConfigService testConfigService;
+	
+	@Autowired
+	private TestRunService testRunService;
+	
+	@Autowired
 	@Qualifier("pubNubService")
 	private IPushService notificationService;
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Test createTest(Test test, List<String> jiraIds) throws ServiceException
+	public Test createTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
+		TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
+		test.setTestConfig(config);
+		
 		testMapper.createTest(test);
 		if(jiraIds != null)
 		{

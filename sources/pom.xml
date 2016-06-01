@@ -81,6 +81,9 @@
 		<pubnub.version>3.7.8</pubnub.version>
 		
 		<log4j.version>1.2.12</log4j.version>
+		
+		<wrapper.version>3.2.3</wrapper.version>
+		<quartz.version>2.2.1</quartz.version>
 
 	</properties>
 
@@ -89,6 +92,7 @@
 		<module>zafira-dbaccess</module>
 		<module>zafira-services</module>     		
         <module>zafira-ws</module>
+		<module>zafira-batch-services</module>
 	</modules>
 
 	<dependencyManagement>
@@ -111,6 +115,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-ws</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>zafira-batch-services</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -390,7 +399,18 @@
 				<artifactId>log4j</artifactId>
 				<version>${log4j.version}</version>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>tanukisoft</groupId>
+				<artifactId>wrapper</artifactId>
+				<version>${wrapper.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>

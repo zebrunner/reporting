@@ -122,6 +122,13 @@
 			</foreach>
 		</if>
 	</select>
+	
+	<select id="getTestRunsByStatusAndStartedBefore" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.STATUS = #{status} AND TR.CREATED_AT < #{startedBefore}
+		]]>
+	</select>
 
 	<update id="updateTestRun">
 		<![CDATA[

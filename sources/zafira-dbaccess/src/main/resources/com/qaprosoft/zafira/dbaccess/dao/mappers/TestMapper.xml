@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID)
 			VALUES (
 				#{name},
 			    #{status},
@@ -17,7 +17,8 @@
 			    #{finishTime},
 			    #{demoURL},
 			    #{logURL},
-			    #{retry}
+			    #{retry},
+			    #{testConfig.id}
 			)
 		]]>
 	</insert>
@@ -55,9 +56,25 @@
 				T.LOG_URL AS TEST_LOG_URL,
 				T.RETRY AS TEST_RETRY,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
-				T.CREATED_AT AS TEST_CREATED_AT
+				T.CREATED_AT AS TEST_CREATED_AT,
+				
+				TC.ID AS TEST_TEST_CONFIG_ID,
+				TC.URL AS TEST_TEST_CONFIG_URL,
+				TC.ENV AS TEST_TEST_CONFIG_ENV,
+				TC.PLATFORM AS TEST_TEST_CONFIG_PLATFORM,
+				TC.PLATFORM_VERSION AS TEST_TEST_CONFIG_PLATFORM_VERSION,
+				TC.BROWSER AS TEST_TEST_CONFIG_BROWSER,
+				TC.BROWSER_VERSION AS TEST_TEST_CONFIG_BROWSER_VERSION,
+				TC.APP_VERSION AS TEST_TEST_CONFIG_APP_VERSION,
+				TC.LOCALE AS TEST_TEST_CONFIG_LOCALE,
+				TC.LANGUAGE AS TEST_TEST_CONFIG_LANGUAGE,
+				TC.DEVICE AS TEST_TEST_CONFIG_DEVICE,
+				TC.MODIFIED_AT AS TEST_TEST_CONFIG_MODIFIED_AT,
+				TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT
 			FROM
 				zafira.TESTS T
+			LEFT JOIN zafira.TEST_CONFIGS TC
+				ON T.TEST_CONFIG_ID = TC.ID
 		]]>
 	</sql>
 
@@ -97,6 +114,13 @@
 				FINISH_TIME = #{finishTime},
 				DEMO_URL = #{demoURL},
 				LOG_URL = #{logURL},
+		]]>
+		<if test="null != testConfig and null != testConfig.id">
+            <![CDATA[
+               TEST_CONFIG_ID = #{testConfig.id},
+            ]]>
+		</if>
+		<![CDATA[
 				RETRY = #{retry}
 			WHERE
 			    ID = #{id}
@@ -137,9 +161,23 @@
 		<result column="TEST_FINISH_TIME" property="finishTime" />
 		<result column="TEST_DEMO_URL" property="demoURL" />
 		<result column="TEST_LOG_URL" property="logURL" />
-		<result column="RETRY" property="retry" />
+		<result column="TEST_RETRY" property="retry" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
+		
+		<result column="TEST_TEST_CONFIG_ID" property="testConfig.id" />
+		<result column="TEST_TEST_CONFIG_URL" property="testConfig.url" />
+		<result column="TEST_TEST_CONFIG_ENV" property="testConfig.env" />
+		<result column="TEST_TEST_CONFIG_PLATFORM" property="testConfig.platform" />
+		<result column="TEST_TEST_CONFIG_PLATFORM_VERSION" property="testConfig.platformVersion" />
+		<result column="TEST_TEST_CONFIG_BROWSER" property="testConfig.browser" />
+		<result column="TEST_TEST_CONFIG_BROWSER_VERSION" property="testConfig.browserVersion" />
+		<result column="TEST_TEST_CONFIG_APP_VERSION" property="testConfig.appVersion" />
+		<result column="TEST_TEST_CONFIG_LOCALE" property="testConfig.locale" />
+		<result column="TEST_TEST_CONFIG_LANGUAGE" property="testConfig.language" />
+		<result column="TEST_TEST_CONFIG_DEVICE" property="testConfig.device" />
+		<result column="TEST_TEST_CONFIG_MODIFIED_AT" property="testConfig.modifiedAt" />
+		<result column="TEST_TEST_CONFIG_CREATED_AT" property="testConfig.createdAt" />
 	</resultMap>
 
 </mapper>

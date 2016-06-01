@@ -13,6 +13,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.Test.Status;
+import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 
 @org.testng.annotations.Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -27,6 +28,19 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
+			TestConfig testConfig = new TestConfig();
+			testConfig.setId(5L);
+			testConfig.setUrl("http://localhost:8080");
+			testConfig.setEnv("QA");
+			testConfig.setPlatform("iOS");
+			testConfig.setPlatformVersion("9.1");
+			testConfig.setBrowser("chrome");
+			testConfig.setBrowserVersion("43");
+			testConfig.setAppVersion("1.1");
+			testConfig.setLocale("en");
+			testConfig.setLanguage("GB");
+			testConfig.setDevice("Samsung Galaxy S3");
+			
 			setName("MyTest");
 			setStatus(Status.PASSED);
 			setTestArgs("<xml>");
@@ -37,6 +51,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setFinishTime(new Date());
 			setLogURL("http://1");
 			setDemoURL("http://1");
+			setTestConfig(testConfig);
 		}
 	};
 
@@ -70,6 +85,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setMessage("Aha!");
 		TEST.setLogURL("http://2");
 		TEST.setDemoURL("http://2");
+		TEST.setTestConfig(new TestConfig(3L));
 		
 		testMapper.updateTest(TEST);
 
@@ -124,5 +140,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getMessage(), TEST.getMessage(), "Message must match");
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
 		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
+		assertEquals(test.getTestConfig().getId(), TEST.getTestConfig().getId(), "Config ID must match");
 	}
 }

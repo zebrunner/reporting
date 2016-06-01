@@ -22,13 +22,14 @@ public class TestType extends AbstractType
 	private String logURL;
 	private List<String> workItems;
 	private int retry;
+	private String configXML;
 	
 	public TestType()
 	{
 	}
 
 	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, String demoURL,
-			String logURL, List<String> workItems, int retry)
+			String logURL, List<String> workItems, int retry, String configXML)
 	{
 		this.name = name;
 		this.status = status;
@@ -40,6 +41,7 @@ public class TestType extends AbstractType
 		this.logURL = logURL;
 		this.workItems = workItems;
 		this.retry = retry;
+		this.configXML = configXML;
 	}
 	
 	public TestType(long id, Status status, String message, Long finishTime)
@@ -168,5 +170,15 @@ public class TestType extends AbstractType
 	public void setRetry(int retry)
 	{
 		this.retry = retry;
+	}
+
+	public String getConfigXML()
+	{
+		return configXML;
+	}
+
+	public void setConfigXML(String configXML)
+	{
+		this.configXML = configXML;
 	}
 }

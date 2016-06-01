@@ -1,10 +1,12 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 
 
@@ -23,4 +25,6 @@ public interface TestRunMapper
 	void deleteTestRunById(long id);
 
 	void deleteTestRun(TestRun testRun);
+	
+	List<TestRun> getTestRunsByStatusAndStartedBefore(@Param("status") Status status, @Param("startedBefore") Date startedBefore);
 }

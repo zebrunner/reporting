@@ -28,6 +28,7 @@ public class TestType extends AbstractType
 	private String logURL;
 	private List<String> workItems;
 	private int retry;
+	private String configXML;
 
 	public String getName()
 	{
@@ -147,5 +148,15 @@ public class TestType extends AbstractType
 	public void setRetry(int retry)
 	{
 		this.retry = retry;
+	}
+
+	public String getConfigXML()
+	{
+		return configXML;
+	}
+
+	public void setConfigXML(String configXML)
+	{
+		this.configXML = configXML;
 	}
 }
