@@ -29,8 +29,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.ngHistory({channel:$scope.testsChannel, count:100000});
 			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
 				var message = payload.message;
-				console.log(message);
-				
+//				console.log(message);
 				if($scope.tests[message.test.testRunId] == null)
 		    	{
 		    		$scope.tests[message.test.testRunId] = [];
@@ -55,7 +54,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.ngHistory({channel:$scope.testRunsChannel, count:1000});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
 				var message = payload.message;
-				console.log(message);
+//				console.log(message);
 				message.testRun.showDetails = false;
 		    	if($scope.testRuns[message.testRun.id] == null)
 		    	{
