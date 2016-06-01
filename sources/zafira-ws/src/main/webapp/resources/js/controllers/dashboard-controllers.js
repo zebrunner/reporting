@@ -2,6 +2,8 @@
 
 ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub', function($scope, $rootScope, $http, PubNub) {
 
+	$scope.showLoading = true;
+	
 	$scope.testRuns = {};
 	$scope.totalTestRuns = 0;
 	$scope.testRunResults = {};
@@ -24,54 +26,49 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
 			
 			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:300000});
-			$rootScope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
+			PubNub.ngHistory({channel:$scope.testsChannel, count:1000000});
+			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
 				var message = payload.message;
 				console.log(message);
-				$scope.$apply(function () {
-					if($scope.tests[message.test.testRunId] == null)
-			    	{
-			    		$scope.tests[message.test.testRunId] = [];
-			    	}
-			    	$scope.tests[message.test.testRunId].push(message.test);
-			    	$scope.initTestRunResults(message.test.testRunId);
-		    		switch(message.test.status) {
-			    		case "PASSED":
-			    			$scope.testRunResults[message.test.testRunId].passed = $scope.testRunResults[message.test.testRunId].passed + 1;
-			    			break;
-			    		case "FAILED":
-			    			$scope.testRunResults[message.test.testRunId].failed = $scope.testRunResults[message.test.testRunId].failed + 1;
-			    			break;
-			    		case "SKIPPED":
-			    			$scope.testRunResults[message.test.testRunId].skipped = $scope.testRunResults[message.test.testRunId].skipped + 1;
-			    			break;
-			    	}
-		    		$scope.totalTests = $scope.totalTests + 1;
-				});
+				
+				if($scope.tests[message.test.testRunId] == null)
+		    	{
+		    		$scope.tests[message.test.testRunId] = [];
+		    	}
+		    	$scope.tests[message.test.testRunId].push(message.test);
+		    	$scope.initTestRunResults(message.test.testRunId);
+	    		switch(message.test.status) {
+		    		case "PASSED":
+		    			$scope.testRunResults[message.test.testRunId].passed = $scope.testRunResults[message.test.testRunId].passed + 1;
+		    			break;
+		    		case "FAILED":
+		    			$scope.testRunResults[message.test.testRunId].failed = $scope.testRunResults[message.test.testRunId].failed + 1;
+		    			break;
+		    		case "SKIPPED":
+		    			$scope.testRunResults[message.test.testRunId].skipped = $scope.testRunResults[message.test.testRunId].skipped + 1;
+		    			break;
+		    	}
+	    		$scope.totalTests = $scope.totalTests + 1;
 			});
 			
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
 			PubNub.ngHistory({channel:$scope.testRunsChannel, count:1000});
-			$rootScope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
+			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
 				var message = payload.message;
 				console.log(message);
-				$scope.$apply(function () {
-					message.testRun.showDetails = false;
-			    	if($scope.testRuns[message.testRun.id] == null)
-			    	{
-			    		message.testRun.jenkinsURL = message.testRun.job.jobURL + "/" + message.testRun.buildNumber;
-			    		$scope.testRuns[message.testRun.id] = message.testRun;
-			    		$scope.totalTestRuns = $scope.totalTestRuns + 1;
-			    		$scope.initTestRunResults(message.testRun.id);
-			    	}
-			    	else
-			    	{
-			    		$scope.testRuns[message.testRun.id].status = message.testRun.status;
-			    	}
-				});
+				message.testRun.showDetails = false;
+		    	if($scope.testRuns[message.testRun.id] == null)
+		    	{
+		    		message.testRun.jenkinsURL = message.testRun.job.jobURL + "/" + message.testRun.buildNumber;
+		    		$scope.testRuns[message.testRun.id] = message.testRun;
+		    		$scope.totalTestRuns = $scope.totalTestRuns + 1;
+		    		$scope.initTestRunResults(message.testRun.id);
+		    	}
+		    	else
+		    	{
+		    		$scope.testRuns[message.testRun.id].status = message.testRun.status;
+		    	}
 			});
-			
-			
 		});
 	};
 	
@@ -143,5 +140,10 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 	
 	(function init(){
 		$scope.initPubNub();
+		setTimeout(function() {  
+			$scope.$apply(function () {
+				$scope.showLoading = false;
+			});
+		}, 30000);
 	})();
 } ]);

@@ -22,6 +22,8 @@
 	                </button>
 	            </span>
             </div>
+            <div class="result_row" align="center" data-ng-show="showLoading && totalTestRuns == 0"><img src="<c:url value="/resources/img/pending.gif" />" class="pending"/> Loading data...</div>
+            <div class="result_row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">No results yet</div>
 			<div class="result_row" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)">
 				<div class="float_left" data>
 					<input type="checkbox"
@@ -44,7 +46,7 @@
 				<a href="{{testRun.jenkinsURL}}">{{truncate(testRun.jenkinsURL, 50)}}</a>
 				<b>{{getArgValue(testRun.configXML, 'env')}}</b>
 				<div class="float_right">
-					<span class="time">{{testRun.modifiedAt | date:'hh:mm MM/dd/yyyy'}}</span>
+					<span class="time">{{testRun.createdAt | date:'hh:mm MM/dd/yyyy'}}</span>
 					&nbsp;
 					<span class="label label-success arrowed arrowed-in-right">{{testRunResults[testRun.id].passed}}</span>
 					<span class="label label-danger arrowed arrowed-in-right">{{testRunResults[testRun.id].failed}}</span>
