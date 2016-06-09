@@ -3,18 +3,23 @@ div.search {
 }
 
 img.pending {
-	height: 25px; 
-	width: 25px;
+	height: 20px; 
+	width: 20px;
+	margin-left: 25px;
 }
 
-.result_row {
+.run_result {
 	border: 1px solid #e6e6e6;
 	border-radius: 4px;
 	margin: 2px 0;
-	padding: 15px;
+	padding: 15px 5px;
 }
 
-.results_details {
+.run_result:hover {
+	background-color: #f5f5ef;
+}
+
+.test_result {
 	margin-top: 20px;
 }
 
@@ -66,4 +71,12 @@ img.pending {
 
 .SKIPPED {
 	background: #ffffcc;
+}
+
+.wrap { 
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
 }
