@@ -21,7 +21,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.1</small></a>
+	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.2</small></a>
 	            </div>
 	            <div class="navbar-default sidebar" role="navigation">
 	                <div class="sidebar-nav navbar-collapse">
