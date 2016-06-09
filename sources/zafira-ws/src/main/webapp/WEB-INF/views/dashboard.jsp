@@ -66,8 +66,7 @@
 				<div class="col-lg-12" data-ng-show="testRun.showDetails == true" style="margin-top: 20px;">
                     <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in tests[testRun.id] | orderObjectBy:'id':false">
                     	<div class="col-lg-10">
-                    		<img data-ng-if="test.status == 'IN_PROGRESS'" class="pending"/>
-                    		<div>{{test.name}}</div>
+                    		<div><img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}}</div>
                             <div class="result_error wrap" data-ng-if="test.message">{{test.message}}</div>
                     	</div>
                     	<div class="col-lg-2">
