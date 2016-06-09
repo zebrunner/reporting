@@ -54,6 +54,13 @@ public class TestConfigMapperTest extends AbstractTestNGSpringContextTests
 	{
 		checkTestConfig(testConfigMapper.getTestConfigById(TEST_CONFIG.getId()));
 	}
+	
+	@Test(enabled = ENABLED, dependsOnMethods =
+	{ "createTestConfig" })
+	public void searchTestConfig()
+	{
+		checkTestConfig(testConfigMapper.searchTestConfig(TEST_CONFIG));
+	}
 
 	@Test(enabled = ENABLED, dependsOnMethods = { "createTestConfig" })
 	public void updateTestConfig()
@@ -79,7 +86,7 @@ public class TestConfigMapperTest extends AbstractTestNGSpringContextTests
 	 */
 	private static final boolean DELETE_ENABLED = true;
 
-	@Test(enabled = ENABLED && DELETE_ENABLED , dependsOnMethods = { "createTestConfig", "getTestConfigById", "updateTestConfig" })
+	@Test(enabled = ENABLED && DELETE_ENABLED , dependsOnMethods = { "createTestConfig", "getTestConfigById", "updateTestConfig", "searchTestConfig" })
 	public void deleteTestConfig()
 	{
 		testConfigMapper.deleteTestConfigById(TEST_CONFIG.getId());

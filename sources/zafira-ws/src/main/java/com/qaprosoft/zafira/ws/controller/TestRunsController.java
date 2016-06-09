@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -62,6 +63,18 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody TestRunType getTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		return mapper.map(testRun, TestRunType.class);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value="ciRunId") String ciRunId) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
 		if(testRun == null)
 		{
 			throw new TestRunNotFoundException();

@@ -64,6 +64,12 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly = true)
+	public TestRun getTestRunByCiRunId(String ciRunId) throws ServiceException
+	{
+		return testRunMapper.getTestRunByCiRunId(ciRunId);
+	}
+	
+	@Transactional(readOnly = true)
 	public TestRun getTestRunByIdFull(long id) throws ServiceException
 	{
 		return testRunMapper.getTestRunByIdFull(id);

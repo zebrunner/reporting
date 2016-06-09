@@ -89,6 +89,7 @@ public class TestService
 		}
 		testMapper.updateTest(existingTest);
 		
+		notificationService.publish(Channel.TEST_EVENTS, new TestPush(test));
 		return existingTest;
 	}
 	

@@ -50,6 +50,65 @@
 			WHERE TC.ID = #{id};
 		]]>
 	</select>
+	
+	<select id="searchTestConfig" resultMap="TestConfigResultMap">
+		<include refid="getTestConfig" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="testConfig.url != null">
+	            <![CDATA[
+	               TC.URL = #{testConfig.url}
+	            ]]>
+			</if>
+			<if test="testConfig.env != null">
+	            <![CDATA[
+	               AND TC.ENV = #{testConfig.env}
+	            ]]>
+			</if>
+			<if test="testConfig.platform != null">
+	            <![CDATA[
+	               AND TC.PLATFORM = #{testConfig.platform}
+	            ]]>
+			</if>
+			<if test="testConfig.platformVersion != null">
+	            <![CDATA[
+	               AND TC.PLATFORM_VERSION = #{testConfig.platformVersion}
+	            ]]>
+			</if>
+			<if test="testConfig.browser != null">
+	            <![CDATA[
+	               AND TC.BROWSER = #{testConfig.browser}
+	            ]]>
+			</if>
+			<if test="testConfig.browserVersion != null">
+	            <![CDATA[
+	               AND TC.BROWSER_VERSION = #{testConfig.browserVersion}
+	            ]]>
+			</if>
+			<if test="testConfig.appVersion != null">
+	            <![CDATA[
+	               AND TC.APP_VERSION = #{testConfig.appVersion}
+	            ]]>
+			</if>
+			<if test="testConfig.locale != null">
+	            <![CDATA[
+	               AND TC.LOCALE = #{testConfig.locale}
+	            ]]>
+			</if>
+			<if test="testConfig.language != null">
+	            <![CDATA[
+	               AND TC.LANGUAGE = #{testConfig.language}
+	            ]]>
+			</if>
+			<if test="testConfig.device != null">
+	            <![CDATA[
+	               AND TC.DEVICE = #{testConfig.device}
+	            ]]>
+			</if>
+		</trim>
+		 <![CDATA[
+              LIMIT 1
+           ]]>
+	</select>
 
 	<update id="updateTestConfig">
 		<![CDATA[

@@ -21,7 +21,7 @@ import com.qaprosoft.zafira.ws.dto.TestCaseType;
 
 @Controller
 @RequestMapping("tests/cases")
-public class TestCaseController extends AbstractController
+public class TestCasesController extends AbstractController
 {
 	@Autowired
 	private Mapper mapper;

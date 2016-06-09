@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 
 public interface TestConfigMapper
@@ -7,6 +9,8 @@ public interface TestConfigMapper
 	void createTestConfig(TestConfig testConfig);
 
 	TestConfig getTestConfigById(long id);
+	
+	TestConfig searchTestConfig(@Param("testConfig") TestConfig testConfig);
 	
 	void updateTestConfig(TestConfig testConfig);
 

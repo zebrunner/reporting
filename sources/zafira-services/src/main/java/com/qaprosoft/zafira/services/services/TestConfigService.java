@@ -67,7 +67,16 @@ public class TestConfigService
 		List<Argument> testConfig = readConfigArgs(testConfigXML, false);
 		
 		TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
-		createTestConfig(config);
+
+		TestConfig existingTestConfig = searchTestConfig(config);
+		if(existingTestConfig != null)
+		{
+			config = existingTestConfig;
+		}
+		else
+		{
+			createTestConfig(config);
+		}
 		
 		return config;
 	}
@@ -76,6 +85,12 @@ public class TestConfigService
 	public TestConfig getTestConfigById(long id) throws ServiceException
 	{
 		return testConfigMapper.getTestConfigById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public TestConfig searchTestConfig(TestConfig testConfig) throws ServiceException
+	{
+		return testConfigMapper.searchTestConfig(testConfig);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
