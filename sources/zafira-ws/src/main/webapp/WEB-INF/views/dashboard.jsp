@@ -28,7 +28,7 @@
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" style="position: parent;" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)" data-ng-click="testRun.showDetails = !testRun.showDetails">
+			<div class="run_result row" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)">
 				<div style="position: absolute; z-index: 100000;">
 					<input type="checkbox"
 							data-ng-model="isChecked"
@@ -54,28 +54,25 @@
 				</div>
 				<div  class="col-lg-3">
 					<div class="float_right">
-						<span class="time">{{testRun.createdAt | date:'hh:mm MM/dd/yyyy'}}</span>
+						<span class="time">{{testRun.createdAt | date:'MM/dd/yy hh:mm'}}</span>
 						&nbsp;
 						<span class="label label-success arrowed arrowed-in-right">{{testRunResults[testRun.id].passed}}</span>
 						<span class="label label-danger arrowed arrowed-in-right">{{testRunResults[testRun.id].failed}}</span>
 						<span class="label label-warning arrowed arrowed-in-right">{{testRunResults[testRun.id].skipped}}</span>
+						&nbsp;
+						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="testRun.showDetails = !testRun.showDetails"></i>
 					</div>
 				</div>
-				<div class="col-lg-12 test_result" data-ng-show="testRun.showDetails == true">
-                    <div class="row" data-ng-repeat="test in tests[testRun.id] | orderObjectBy:'id':false" style="border-top: solid #e6e6e6 1px; padding: 5px;">
-                    	<div ng-switch on="test.status" class="col-lg-1">
-                    		<div ng-switch-when="PASSED" class="btn btn-success btn-xs w70">PASSED</div>
-						    <div ng-switch-when="FAILED" class="btn btn-danger btn-xs w70">FAILED</div>
-						    <div ng-switch-when="SKIPPED" class="btn btn-warning btn-xs w70">SKIPPED</div>
-						    <img ng-switch-default src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
-                    	</div>
-                    	<div class="col-lg-9">
+				<div class="col-lg-12" data-ng-show="testRun.showDetails == true" style="margin-top: 20px;">
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in tests[testRun.id] | orderObjectBy:'id':false">
+                    	<div class="col-lg-10">
+                    		<img data-ng-if="test.status == 'IN_PROGRESS'" class="pending"/>
                     		<div>{{test.name}}</div>
                             <div class="result_error wrap" data-ng-if="test.message">{{test.message}}</div>
                     	</div>
                     	<div class="col-lg-2">
                     		<div class="float_right" data-ng-if="test.status != STARTED">
-                            	<span class="time">{{test.finishTime | date:'hh:mm MM/dd/yyyy'}}</span>
+                            	<span class="time">{{test.finishTime | date:'hh:mm'}}</span>
                             	&nbsp;
                             	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
                        		</div>

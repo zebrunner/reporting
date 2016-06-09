@@ -13,14 +13,24 @@ img.pending {
 	border-radius: 4px;
 	margin: 2px 0;
 	padding: 15px 5px;
-}
-
-.run_result:hover {
-	background-color: #f5f5ef;
+	position: parent;
 }
 
 .test_result {
-	margin-top: 20px;
+	border-top: solid #e6e6e6 1px; 
+	padding: 15px 5px;
+}
+
+.test_result.PASSED {
+	border-left: solid 10px #5cb85c;
+}
+
+.test_result.FAILED {
+	border-left: solid 10px #d9534f;
+}
+
+.test_result.SKIPPED {
+	border-left: solid 10px #f0ad4e;
 }
 
 .float_right {
