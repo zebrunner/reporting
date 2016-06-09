@@ -14,6 +14,7 @@ public class TestRun extends AbstractEntity
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
 
+	private String ciRunId;
 	private User user;
 	private TestSuite testSuite;
 	private Status status;
@@ -154,5 +155,15 @@ public class TestRun extends AbstractEntity
 	public void setStartedBy(Initiator startedBy)
 	{
 		this.startedBy = startedBy;
+	}
+
+	public String getCiRunId()
+	{
+		return ciRunId;
+	}
+
+	public void setCiRunId(String ciRunId)
+	{
+		this.ciRunId = ciRunId;
 	}
 }

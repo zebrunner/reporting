@@ -89,67 +89,57 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun initializeTestRun(TestRun newTestRun, boolean rerun) throws ServiceException, JAXBException
+	public TestRun startTestRun(TestRun testRun) throws ServiceException, JAXBException
 	{
-		if(rerun == true)
+		if(!StringUtils.isEmpty(testRun.getCiRunId()))
 		{
-			long latestID = 0;
-			TestRun existingTestRun = null;
-			for(TestRun tr : getTestRunsForRerun(newTestRun))
-			{
-				if(tr.getId() > latestID)
-				{
-					existingTestRun = tr;
-					latestID = tr.getId();
-				}
-			}
+			TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(testRun.getCiRunId());
 			if(existingTestRun != null)
 			{
-				return existingTestRun;
+				testRun = existingTestRun;
 			}
 		}
 		
-		switch (newTestRun.getStartedBy())
+		// New test run
+		if(testRun.getId() == null || testRun.getId() == 0)
 		{
-			case HUMAN:
-				if(newTestRun.getUser() == null)
-				{
-					throw new InvalidTestRunException("Specify userName if started by HUMAN!");
-				}
-				break;
-			case SCHEDULER:
-				newTestRun.setUpstreamJobBuildNumber(null);
-				newTestRun.setUpstreamJob(null);
-				newTestRun.setUser(null);
-				break;
-			case UPSTREAM_JOB:
-				if(newTestRun.getUpstreamJob() == null || newTestRun.getUpstreamJobBuildNumber() == null)
-				{
-					throw new InvalidTestRunException("Specify upstreamJobId and upstreaBuildNumber if started by UPSTREAM_JOB!");
-				}
-
-				// Preparation for rerun if test run exists
-				List<TestRun> existingTestRuns = getTestRunsForRerun(newTestRun);
-						
-				for(TestRun tr : existingTestRuns)
-				{
-					for(Test test : testService.getTestsByTestRunId(tr.getId()))
+			switch (testRun.getStartedBy())
+			{
+				case HUMAN:
+					if(testRun.getUser() == null)
 					{
-						testService.deleteTestWorkItemByTestId(test.getId());
-						testService.deleteTest(test);
+						throw new InvalidTestRunException("Specify userName if started by HUMAN!");
 					}
-					deleteTestRun(tr);
-				}
-				break;
+					break;
+				case SCHEDULER:
+					testRun.setUpstreamJobBuildNumber(null);
+					testRun.setUpstreamJob(null);
+					testRun.setUser(null);
+					break;
+				case UPSTREAM_JOB:
+					if(testRun.getUpstreamJob() == null || testRun.getUpstreamJobBuildNumber() == null)
+					{
+						throw new InvalidTestRunException("Specify upstreamJobId and upstreaBuildNumber if started by UPSTREAM_JOB!");
+					}
+					break;
+			}
+			
+			if(testRun.getWorkItem() != null && !StringUtils.isEmpty(testRun.getWorkItem().getJiraId()))
+			{
+				testRun.setWorkItem(workItemService.createOrGetWorkItem(testRun.getWorkItem()));
+			}
+			testRun.setStatus(Status.IN_PROGRESS);
+			createTestRun(testRun);
 		}
-		newTestRun.setStatus(Status.IN_PROGRESS);
-		if(newTestRun.getWorkItem() != null && !StringUtils.isEmpty(newTestRun.getWorkItem().getJiraId()))
+		// Existing test run
+		else
 		{
-			newTestRun.setWorkItem(workItemService.createOrGetWorkItem(newTestRun.getWorkItem()));
+			testRun.setStatus(Status.IN_PROGRESS);
+			updateTestRun(testRun);
 		}
-		createTestRun(newTestRun);
-		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(newTestRun.getId())));
-		return newTestRun;
+		
+		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		return testRun;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -216,14 +206,5 @@ public class TestRunService
 			}
 		}
 		return testNamesWithTests;
-	}
-	
-	private List<TestRun> getTestRunsForRerun(TestRun newTestRun)
-	{
-		return testRunMapper.getTestRunsForRerun(newTestRun.getTestSuite().getId(), 
-				   newTestRun.getJob().getId(), 
-				   newTestRun.getUpstreamJob().getId(), 
-				   newTestRun.getUpstreamJobBuildNumber(),
-				   testConfigService.readConfigArgs(newTestRun.getConfigXML(), true));
 	}
 }

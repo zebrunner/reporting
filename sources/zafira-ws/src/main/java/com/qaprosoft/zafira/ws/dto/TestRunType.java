@@ -10,6 +10,7 @@ import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType
 {
+	private String ciRunId;
 	@NotNull
 	private Long testSuiteId;
 	private Status status;
@@ -27,7 +28,16 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private String workItem;
-	private boolean rerun;
+
+	public String getCiRunId()
+	{
+		return ciRunId;
+	}
+
+	public void setCiRunId(String ciRunId)
+	{
+		this.ciRunId = ciRunId;
+	}
 
 	public Long getTestSuiteId()
 	{
@@ -157,15 +167,5 @@ public class TestRunType extends AbstractType
 	public void setWorkItem(String workItem)
 	{
 		this.workItem = workItem;
-	}
-
-	public boolean isRerun()
-	{
-		return rerun;
-	}
-
-	public void setRerun(boolean rerun)
-	{
-		this.rerun = rerun;
 	}
 }

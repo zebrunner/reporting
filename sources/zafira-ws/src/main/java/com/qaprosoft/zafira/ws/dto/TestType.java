@@ -14,7 +14,6 @@ public class TestType extends AbstractType
 {
 	@NotNull
 	private String name;
-	@NotNull
 	private Status status;
 	private String testArgs;
 	@NotNull

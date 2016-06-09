@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.ws.dto.TestType</class-a>
+		<class-b>com.qaprosoft.zafira.dbaccess.model.Test</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>status</a>
+			<b>status</b>
+		</field>
+		<field>
+			<a>testArgs</a>
+			<b>testArgs</b>
+		</field>
+		<field>
+			<a>testRunId</a>
+			<b>testRunId</b>
+		</field>
+		<field>
+			<a>testCaseId</a>
+			<b>testCaseId</b>
+		</field>
+		
+		<field>
+			<a>message</a>
+			<b>message</b>
+		</field>
+		<field>
+			<a>startTime</a>
+			<b>startTime</b>
+		</field>
+		<field>
+			<a>finishTime</a>
+			<b>finishTime</b>
+		</field>
+		
+		<field>
+			<a>demoURL</a>
+			<b>demoURL</b>
+		</field>
+		<field>
+			<a>logURL</a>
+			<b>logURL</b>
+		</field>
+		<field>
+			<a>retry</a>
+			<b>retry</b>
+		</field>
+	</mapping>
+</mappings>

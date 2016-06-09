@@ -43,9 +43,9 @@ public class TestRunsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createTestRun(@RequestBody @Valid TestRunType tr) throws ServiceException, MappingException, JAXBException
+	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr) throws ServiceException, MappingException, JAXBException
 	{
-		TestRun testRun = testRunService.initializeTestRun(mapper.map(tr, TestRun.class), tr.isRerun());
+		TestRun testRun = testRunService.startTestRun(mapper.map(tr, TestRun.class));
 		return mapper.map(testRun, TestRunType.class);
 	}
 	

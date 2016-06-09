@@ -13,6 +13,7 @@ public class TestRunType extends AbstractType
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
 	
+	private String ciRunId;
 	private Long testSuiteId;
 	private Status status;
 	private String scmURL;
@@ -26,11 +27,11 @@ public class TestRunType extends AbstractType
 	private Integer buildNumber;
 	private Initiator startedBy;
 	private Long userId;
-	private boolean rerun;
 	
-	public TestRunType(Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
+	public TestRunType(String ciRunId,Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
+		this.ciRunId = ciRunId;
 		this.testSuiteId = testSuiteId;
 		this.userId = userId;
 		this.scmURL = scmURL;
@@ -43,9 +44,10 @@ public class TestRunType extends AbstractType
 		this.workItem = workItem;
 	}
 
-	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
+	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
 			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItem)
 	{
+		this.ciRunId = ciRunId;
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
@@ -59,9 +61,10 @@ public class TestRunType extends AbstractType
 		this.workItem = workItem;
 	}
 	
-	public TestRunType(Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
+	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
 			Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
+		this.ciRunId = ciRunId;
 		this.testSuiteId = testSuiteId;
 		this.scmURL = scmURL;
 		this.scmBranch = scmBranch;
@@ -71,6 +74,16 @@ public class TestRunType extends AbstractType
 		this.buildNumber = buildNumber;
 		this.startedBy = startedBy;
 		this.workItem = workItem;
+	}
+
+	public String getCiRunId()
+	{
+		return ciRunId;
+	}
+
+	public void setCiRunId(String ciRunId)
+	{
+		this.ciRunId = ciRunId;
 	}
 
 	public Long getTestSuiteId()
@@ -201,16 +214,6 @@ public class TestRunType extends AbstractType
 	public void setUserId(Long userId)
 	{
 		this.userId = userId;
-	}
-
-	public boolean isRerun()
-	{
-		return rerun;
-	}
-
-	public void setRerun(boolean rerun)
-	{
-		this.rerun = rerun;
 	}
 }	
 

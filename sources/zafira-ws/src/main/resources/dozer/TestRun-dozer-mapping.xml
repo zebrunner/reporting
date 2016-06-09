@@ -11,6 +11,10 @@
 			<b>id</b>
 		</field>
 		<field>
+			<a>ciRunId</a>
+			<b>ciRunId</b>
+		</field>
+		<field>
 			<a>status</a>
 			<b>status</b>
 		</field>

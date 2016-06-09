@@ -5,8 +5,9 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_RUNS (USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
+			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
+				#{ciRunId},
 				#{user.id},
 			    #{testSuite.id},
 				#{status},
@@ -28,6 +29,7 @@
 		<![CDATA[
 			SELECT
 				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
 				TR.USER_ID AS TEST_RUN_USER_ID,
 				TR.TEST_SUITE_ID AS TEST_RUN_TEST_SUITE_ID,
 				TR.STATUS AS TEST_RUN_STATUS,
@@ -52,6 +54,7 @@
 		<![CDATA[
 			SELECT
 				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
 				
 				U.ID AS TEST_RUN_USER_ID,
 				U.USERNAME AS TEST_RUN_USER_USER_NAME,
@@ -100,6 +103,13 @@
 		]]>
 	</select>
 	
+	<select id="getTestRunByCiRunId" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.CI_RUN_ID = #{ciRunId};
+		]]>
+	</select>
+	
 	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
 		<![CDATA[
@@ -135,6 +145,7 @@
 			UPDATE
 			    zafira.TEST_RUNS
 			SET
+				CI_RUN_ID = #{ciRunId},
 				USER_ID = #{user.id},
 				TEST_SUITE_ID = #{testSuite.id},
 				STATUS = #{status},
@@ -182,6 +193,7 @@
 		<result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
 		<result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
 		
+		<result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
 		<result column="TEST_RUN_STATUS" property="status" />
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
 		<result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />

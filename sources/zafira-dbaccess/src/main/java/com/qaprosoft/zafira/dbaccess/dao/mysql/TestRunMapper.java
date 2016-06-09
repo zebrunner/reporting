@@ -18,6 +18,8 @@ public interface TestRunMapper
 	
 	TestRun getTestRunByIdFull(long id);
 	
+	TestRun getTestRunByCiRunId(String ciRunId);
+	
 	List<TestRun> getTestRunsForRerun(@Param("testSuiteId") long testSuiteId, @Param("jobId") long jobId, @Param("upstreamJobId") long upstreamJobId, @Param("upstreamBuildNumber") long upstreamBuildNumber, @Param("uniqueArgs") List<Argument> uniqueArgs);
 	
 	void updateTestRun(TestRun testRun);

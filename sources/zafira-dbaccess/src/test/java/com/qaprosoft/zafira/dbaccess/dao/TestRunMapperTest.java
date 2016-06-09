@@ -5,8 +5,8 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,12 +17,12 @@ import org.testng.annotations.Test;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
+import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -62,6 +62,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setStatus(Status.PASSED);
 			setStartedBy(Initiator.HUMAN);
 			setWorkItem(workItem);
+			setCiRunId(UUID.randomUUID().toString());
 		}
 	};
 
@@ -82,13 +83,12 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	{
 		checkTestRun(testRunMapper.getTestRunById(TEST_RUN.getId()));
 	}
-
 	
-	@Test
-	public void getTestRuns()
+	@Test(enabled = ENABLED, dependsOnMethods =
+	{ "createTestRun" })
+	public void getTestRunByCiRunId()
 	{
-		List<TestRun> tr = testRunMapper.getTestRunsByStatusAndStartedBefore(Status.IN_PROGRESS, new Date());
-		System.out.println();
+		checkTestRun(testRunMapper.getTestRunByCiRunId(TEST_RUN.getCiRunId()));
 	}
 	
 	@Test(enabled = ENABLED, dependsOnMethods =
@@ -100,14 +100,13 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		TEST_RUN.setScmBranch("stg");
 		TEST_RUN.setScmCommit("sdfsdsdffs4132ff");
 		TEST_RUN.setScmURL("http://localhost:8080/lc2");
-		TEST_RUN.getJob().setId(2L);
-		TEST_RUN.getUpstreamJob().setId(2L);
+		TEST_RUN.getJob().setId(1L);
+		TEST_RUN.getUpstreamJob().setId(1L);
 		TEST_RUN.setUpstreamJobBuildNumber(5);
 		TEST_RUN.setConfigXML("<xml/>");
 		TEST_RUN.setBuildNumber(6);
 		TEST_RUN.setStatus(Status.FAILED);
 		TEST_RUN.setStartedBy(Initiator.SCHEDULER);
-		TEST_RUN.getWorkItem().setId(2L);
 		
 		testRunMapper.updateTestRun(TEST_RUN);
 
@@ -126,7 +125,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	private static final boolean DELETE_BY_TEST_RUN = false;
 
 	@Test(enabled = ENABLED && DELETE_ENABLED && DELETE_BY_TEST_RUN, dependsOnMethods =
-	{ "createTestRun", "getTestRunById", "updateTestRun" })
+	{ "createTestRun", "getTestRunById", "updateTestRun", "getTestRunByCiRunId" })
 	public void deleteTestRun()
 	{
 		testRunMapper.deleteTestRun(TEST_RUN);
@@ -154,6 +153,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	private void checkTestRun(TestRun testRun)
 	{
 		assertEquals(testRun.getUser().getId(), TEST_RUN.getUser().getId(), "User ID must match");
+		assertEquals(testRun.getCiRunId(), TEST_RUN.getCiRunId(), "CI run ID must match");
 		assertEquals(testRun.getTestSuite().getId(), TEST_RUN.getTestSuite().getId(), "Test suite ID must match");
 		assertEquals(testRun.getStatus(), TEST_RUN.getStatus(), "Status must match");
 		assertEquals(testRun.getScmURL(), TEST_RUN.getScmURL(), "SCM URL must match");

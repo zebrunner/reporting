@@ -11,6 +11,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.Test.Status;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
@@ -37,20 +38,35 @@ public class TestService
 	private IPushService notificationService;
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Test createTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
+	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
-		TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
-		test.setTestConfig(config);
-		
-		testMapper.createTest(test);
-		if(jiraIds != null)
+		// New test
+		if(test.getId() == null || test.getId() == 0)
 		{
-			for(String jiraId : jiraIds)
+			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
+			test.setTestConfig(config);
+			test.setStatus(Status.IN_PROGRESS);
+			testMapper.createTest(test);
+			if(jiraIds != null)
 			{
-				WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-				testMapper.createTestWorkItem(test, workItem);
+				for(String jiraId : jiraIds)
+				{
+					WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+					testMapper.createTestWorkItem(test, workItem);
+				}
 			}
 		}
+		// Existing test
+		else
+		{
+			test.setMessage(null);
+			test.setFinishTime(null);
+			test.setDemoURL(null);
+			test.setLogURL(null);
+			test.setStatus(Status.IN_PROGRESS);
+			updateTest(test);
+		}
+		
 		notificationService.publish(Channel.TEST_EVENTS, new TestPush(test));
 		return test;
 	}
@@ -66,6 +82,7 @@ public class TestService
 		
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
+		existingTest.setRetry(test.getRetry());
 		if(test.getMessage() != null)
 		{
 			existingTest.setMessage(test.getMessage());
