@@ -61,8 +61,6 @@ public class TestService
 		{
 			test.setMessage(null);
 			test.setFinishTime(null);
-			test.setDemoURL(null);
-			test.setLogURL(null);
 			test.setStatus(Status.IN_PROGRESS);
 			updateTest(test);
 		}
