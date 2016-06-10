@@ -34,7 +34,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			});
 			
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
-			PubNub.ngHistory({channel:$scope.testRunsChannel, count:100});
+			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
 				$scope.addTestRun(payload.message.testRun);
 			});
@@ -77,7 +77,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 				$scope.testRunResults[test.testRunId].skipped = $scope.testRunResults[test.testRunId].skipped + amount;
 				break;
 			case "IN_PROGRESS":
-				$scope.testRunResults[test.testRunId].skipped = $scope.testRunResults[test.testRunId].skipped + amount;
+				$scope.testRunResults[test.testRunId].in_progress = $scope.testRunResults[test.testRunId].in_progress + amount;
 				break;
 		}
 	};
@@ -105,6 +105,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			$scope.testRunResults[testRunId].passed = 0;
 			$scope.testRunResults[testRunId].failed = 0;
 			$scope.testRunResults[testRunId].skipped = 0;
+			$scope.testRunResults[testRunId].in_progress = 0;
     	}
 	};
 	
