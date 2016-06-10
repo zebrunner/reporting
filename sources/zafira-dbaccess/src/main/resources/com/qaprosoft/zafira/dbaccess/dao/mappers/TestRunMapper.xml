@@ -110,6 +110,32 @@
 		]]>
 	</select>
 	
+	<select id="searchTestRuns" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
+		<if test="sortOrder.toString() == 'ASC'">
+			<![CDATA[
+				ORDER BY TR.ID ASC
+			]]>
+		</if>
+		<if test="sortOrder.toString() == 'DESC'">
+			<![CDATA[
+				ORDER BY TR.ID DESC
+			]]>
+		</if>
+		<![CDATA[
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+	</select>
+	
+	<select id="getTestRunsSearchCount" resultType="java.lang.Integer">
+	    <![CDATA[
+            SELECT
+                COUNT(*)
+            FROM
+                zafira.TEST_RUNS TR
+        ]]>
+    </select>
+	
 	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
 		<![CDATA[

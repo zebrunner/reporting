@@ -14,6 +14,20 @@ ZafiraApp.directive('ngReallyClick', [ function() {
 	}
 }]);
 
+ZafiraApp.service('UtilService', function() {
+	this.truncate = function(fullStr, strLen) {
+		if (fullStr.length <= strLen) return fullStr;
+	    var separator = '...';
+	    var sepLen = separator.length,
+	        charsToShow = strLen - sepLen,
+	        frontChars = Math.ceil(charsToShow/2),
+	        backChars = Math.floor(charsToShow/2);
+	    return fullStr.substr(0, frontChars) + 
+	           separator + 
+	           fullStr.substr(fullStr.length - backChars);
+    };
+});
+
 angular.module('ZafiraApp').filter('orderObjectBy', function() {
 	  return function(items, field, reverse) {
 	    var filtered = [];

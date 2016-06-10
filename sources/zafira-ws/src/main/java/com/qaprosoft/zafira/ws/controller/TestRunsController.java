@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -68,6 +70,13 @@ public class TestRunsController extends AbstractController
 			throw new TestRunNotFoundException();
 		}
 		return mapper.map(testRun, TestRunType.class);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException
+	{
+		return testRunService.searchTestRuns(sc);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

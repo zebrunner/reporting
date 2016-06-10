@@ -23,7 +23,7 @@
 	            </span>
             </div>
             <div class="run_result row" align="center" data-ng-show="showLoading && totalTestRuns == 0">
-            	<div class="col-lg-12"><img src="<c:url value="/resources/img/pending.gif" />" class="pending"/> Loading data...</div>
+            	<div class="col-lg-12"><i class="fa fa-clock-o fa-lg" aria-hidden="true"></i> Loading data...</div>
             </div>
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
@@ -39,8 +39,8 @@
 							name="{{testRun.id}}"
 							data-ng-show="testRun.status != 'IN_PROGRESS'" onclick="event.cancelBubble=true;"/>
 					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
-				  	<b>{{truncate(testRun.testSuite.name, 50)}}</b>
-					<a href="{{testRun.jenkinsURL}}">{{truncate(testRun.jenkinsURL, 40)}}</a>
+				  	<b>{{UtilService.truncate(testRun.testSuite.name, 50)}}</b>
+					<a href="{{testRun.jenkinsURL}}">{{UtilService.truncate(testRun.jenkinsURL, 40)}}</a>
 					<b>{{getArgValue(testRun.configXML, 'env')}}</b>
 				</div>
 				<div  class="col-lg-3">
@@ -72,7 +72,7 @@
 			</div>
 			<div style="padding: 5px 15px;">
 				<a href="#/tests/runs/{{queryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
-				<a href="" data-ng-click="compareTestRunResults()" class="float_right" data-ng-show="(page * pageSize) < totalTestRuns">Show more</a>
+				<a href="" data-ng-click="page = page + 1" class="float_right" data-ng-show="(page * pageSize) < totalTestRuns">Show more</a>
 			</div>
 			<br/>
 		</div>

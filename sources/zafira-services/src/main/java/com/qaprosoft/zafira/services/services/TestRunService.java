@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
@@ -61,6 +63,18 @@ public class TestRunService
 	public TestRun getTestRunById(long id) throws ServiceException
 	{
 		return testRunMapper.getTestRunById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
+	{
+		SearchResult<TestRun> results = new SearchResult<TestRun>();
+		results.setPage(sc.getPage());
+		results.setPageSize(sc.getPageSize());
+		results.setSortOrder(sc.getSortOrder());
+		results.setResults(testRunMapper.searchTestRuns(sc));
+		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
+		return results;
 	}
 	
 	@Transactional(readOnly = true)

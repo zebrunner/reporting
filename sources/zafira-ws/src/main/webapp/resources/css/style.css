@@ -30,7 +30,10 @@ img.pending {
 }
 
 .test_result {
-	border-top: solid #e6e6e6 1px; 
+	border-top: solid #e6e6e6 1px;
+	border-bottom: solid #e6e6e6 1px; 
+	border-right: solid #e6e6e6 1px;
+	margin: 5px 0;
 	padding: 15px 5px;
 }
 

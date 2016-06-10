@@ -1,16 +1,17 @@
 'use strict';
 
-ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub', function($scope, $rootScope, $http, PubNub) {
+ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub', 'UtilService', function($scope, $rootScope, $http, PubNub, UtilService) {
 
+	$scope.UtilService = UtilService;
+	
 	$scope.showLoading = true;
 	
-	$scope.testRuns = {};
 	$scope.totalTestRuns = 0;
-	$scope.testRunResults = {};
 	
 	$scope.tests = {};
+	$scope.testRuns = {};
+	$scope.testRunResults = {};
 	$scope.testRunsTestIds = {};
-	$scope.totalTests = 0;
 
 	$scope.page = 1;
 	$scope.pageSize = 20;
@@ -27,57 +28,71 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
 			
 			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:5000});
+			PubNub.ngHistory({channel:$scope.testsChannel, count:100000});
 			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
-				var message = payload.message;
-				if($scope.tests[message.test.id] == null)
-		    	{
-		    		$scope.tests[message.test.testRunId] = {};
-		    	}
-				if($scope.testRunsTestIds[message.test.testRunId] == null)
-		    	{
-					$scope.testRunsTestIds[message.test.testRunId] = [];
-		    	}
-		    	$scope.tests[message.test.id] = message.test;
-		    	if($scope.testRunsTestIds[message.test.testRunId].indexOf(message.test.id) < 0)
-		    	{
-		    		$scope.testRunsTestIds[message.test.testRunId].push(message.test.id)
-		    	}
-		    	$scope.initTestRunResults(message.test.testRunId);
-	    		switch(message.test.status) {
-		    		case "PASSED":
-		    			$scope.testRunResults[message.test.testRunId].passed = $scope.testRunResults[message.test.testRunId].passed + 1;
-		    			break;
-		    		case "FAILED":
-		    			$scope.testRunResults[message.test.testRunId].failed = $scope.testRunResults[message.test.testRunId].failed + 1;
-		    			break;
-		    		case "SKIPPED":
-		    			$scope.testRunResults[message.test.testRunId].skipped = $scope.testRunResults[message.test.testRunId].skipped + 1;
-		    			break;
-		    	}
-	    		$scope.totalTests = $scope.totalTests + 1;
-	    		$scope.$apply();
+				$scope.addTest(payload.message.test);
 			});
 			
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
-			PubNub.ngHistory({channel:$scope.testRunsChannel, count:50});
+			PubNub.ngHistory({channel:$scope.testRunsChannel, count:100});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
-				var message = payload.message;
-				message.testRun.showDetails = false;
-		    	if($scope.testRuns[message.testRun.id] == null)
-		    	{
-		    		message.testRun.jenkinsURL = message.testRun.job.jobURL + "/" + message.testRun.buildNumber;
-		    		$scope.testRuns[message.testRun.id] = message.testRun;
-		    		$scope.totalTestRuns = $scope.totalTestRuns + 1;
-		    		$scope.initTestRunResults(message.testRun.id);
-		    	}
-		    	else
-		    	{
-		    		$scope.testRuns[message.testRun.id].status = message.testRun.status;
-		    	}
-		    	$scope.$apply();
+				$scope.addTestRun(payload.message.testRun);
 			});
 		});
+	};
+	
+	$scope.addTest = function(test) {
+		if($scope.tests[test.id] == null)
+    	{
+    		$scope.tests[test.testRunId] = {};
+    	}
+		if($scope.testRunsTestIds[test.testRunId] == null)
+    	{
+			$scope.testRunsTestIds[test.testRunId] = [];
+    	}
+    	if($scope.testRunsTestIds[test.testRunId].indexOf(test.id) < 0)
+    	{
+    		$scope.testRunsTestIds[test.testRunId].push(test.id)
+    	}
+    	// Remove previous result
+    	if($scope.tests[test.id] != null)
+    	{
+    		$scope.updateTestRunResults($scope.tests[test.id], -1);
+    	}
+    	$scope.tests[test.id] = test;
+    	$scope.initTestRunResults(test.testRunId);
+    	$scope.updateTestRunResults($scope.tests[test.id], 1);
+		$scope.$apply();
+	};
+	
+	$scope.updateTestRunResults = function(test, amount) {
+		switch(test.status) {
+			case "PASSED":
+				$scope.testRunResults[test.testRunId].passed = $scope.testRunResults[test.testRunId].passed + amount;
+				break;
+			case "FAILED":
+				$scope.testRunResults[test.testRunId].failed = $scope.testRunResults[test.testRunId].failed + amount;
+				break;
+			case "SKIPPED":
+				$scope.testRunResults[test.testRunId].skipped = $scope.testRunResults[test.testRunId].skipped + amount;
+				break;
+		}
+	};
+	
+	$scope.addTestRun = function(testRun) {
+		testRun.showDetails = false;
+    	if($scope.testRuns[testRun.id] == null)
+    	{
+    		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
+    		$scope.testRuns[testRun.id] = testRun;
+    		$scope.totalTestRuns = $scope.totalTestRuns + 1;
+    		$scope.initTestRunResults(testRun.id);
+    	}
+    	else
+    	{
+    		$scope.testRuns[testRun.id].status = testRun.status;
+    	}
+    	$scope.$apply();
 	};
 	
 	$scope.initTestRunResults = function(testRunId) {
@@ -103,14 +118,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 		return null;
 	};
 	
-	$scope.showMore = function() {
-		$scope.page = $scope.page + 1;
-	};
-	
-	$scope.compareTestRunResults = function() {
-		$scope.page = $scope.page + 1;
-	};
-	
 	$scope.selectTestRun = function(id, isChecked) {		 
 		if(isChecked == "true") {
 			$scope.testRunsToCompare.push(id);
@@ -129,21 +136,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 				$scope.queryString = $scope.queryString + "+";
 			}
 		}
-	};
-	
-	$scope.truncate = function(fullStr, strLen) {
-	    if (fullStr.length <= strLen) return fullStr;
-
-	    var separator = '...';
-
-	    var sepLen = separator.length,
-	        charsToShow = strLen - sepLen,
-	        frontChars = Math.ceil(charsToShow/2),
-	        backChars = Math.floor(charsToShow/2);
-
-	    return fullStr.substr(0, frontChars) + 
-	           separator + 
-	           fullStr.substr(fullStr.length - backChars);
 	};
 	
 	(function init(){
