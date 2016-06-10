@@ -5,15 +5,28 @@ div.search {
 img.pending {
 	height: 20px; 
 	width: 20px;
-	margin-left: 25px;
 }
 
 .run_result {
 	border: 1px solid #e6e6e6;
-	border-radius: 4px;
-	margin: 2px 0;
 	padding: 15px 5px;
-	position: parent;
+	margin: 5px 0;
+}
+
+.result_PASSED {
+	border-left: solid 10px #5cb85c;
+}
+
+.result_FAILED {
+	border-left: solid 10px #d9534f;
+}
+
+.result_IN_PROGRESS {
+	border-left: solid 10px #3a87ad;
+}
+
+.result_ABORTED {
+	border-left: solid 10px #f0ad4e;
 }
 
 .test_result {
@@ -22,15 +35,19 @@ img.pending {
 }
 
 .test_result.PASSED {
-	border-left: solid 10px #5cb85c;
+	border-left: solid 5px #5cb85c;
 }
 
 .test_result.FAILED {
-	border-left: solid 10px #d9534f;
+	border-left: solid 5px #d9534f;
+}
+
+.test_result.IN_PROGRESS {
+	border-left: solid 5px #3a87ad;
 }
 
 .test_result.SKIPPED {
-	border-left: solid 10px #f0ad4e;
+	border-left: solid 5px #f0ad4e;
 }
 
 .float_right {

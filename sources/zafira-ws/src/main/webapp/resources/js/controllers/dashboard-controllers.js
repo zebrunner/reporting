@@ -9,6 +9,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 	$scope.testRunResults = {};
 	
 	$scope.tests = {};
+	$scope.testRunsTestIds = {};
 	$scope.totalTests = 0;
 
 	$scope.page = 1;
@@ -26,15 +27,22 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
 			
 			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:100000});
+			PubNub.ngHistory({channel:$scope.testsChannel, count:5000});
 			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
 				var message = payload.message;
-//				console.log(message);
-				if($scope.tests[message.test.testRunId] == null)
+				if($scope.tests[message.test.id] == null)
 		    	{
-		    		$scope.tests[message.test.testRunId] = [];
+		    		$scope.tests[message.test.testRunId] = {};
 		    	}
-		    	$scope.tests[message.test.testRunId].push(message.test);
+				if($scope.testRunsTestIds[message.test.testRunId] == null)
+		    	{
+					$scope.testRunsTestIds[message.test.testRunId] = [];
+		    	}
+		    	$scope.tests[message.test.id] = message.test;
+		    	if($scope.testRunsTestIds[message.test.testRunId].indexOf(message.test.id) < 0)
+		    	{
+		    		$scope.testRunsTestIds[message.test.testRunId].push(message.test.id)
+		    	}
 		    	$scope.initTestRunResults(message.test.testRunId);
 	    		switch(message.test.status) {
 		    		case "PASSED":
@@ -48,13 +56,13 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 		    			break;
 		    	}
 	    		$scope.totalTests = $scope.totalTests + 1;
+	    		$scope.$apply();
 			});
 			
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
-			PubNub.ngHistory({channel:$scope.testRunsChannel, count:1000});
+			PubNub.ngHistory({channel:$scope.testRunsChannel, count:50});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
 				var message = payload.message;
-//				console.log(message);
 				message.testRun.showDetails = false;
 		    	if($scope.testRuns[message.testRun.id] == null)
 		    	{
@@ -67,6 +75,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 		    	{
 		    		$scope.testRuns[message.testRun.id].status = message.testRun.status;
 		    	}
+		    	$scope.$apply();
 			});
 		});
 	};

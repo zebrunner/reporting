@@ -28,8 +28,8 @@
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)">
-				<div style="position: absolute; z-index: 100000;">
+			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)">
+				<div class="col-lg-9">
 					<input type="checkbox"
 							data-ng-model="isChecked"
 							data-ng-true-value="true"
@@ -38,16 +38,7 @@
 							value="{{testRun.id}}" 
 							name="{{testRun.id}}"
 							data-ng-show="testRun.status != 'IN_PROGRESS'" onclick="event.cancelBubble=true;"/>
-				</div>
-				<div class="col-lg-1">
-					<div ng-switch on="testRun.status">
-				      <div ng-switch-when="PASSED" class="btn btn-success btn-xs w70">PASSED</div>
-				      <div ng-switch-when="FAILED" class="btn btn-danger btn-xs w70">FAILED</div>
-				      <div ng-switch-when="ABORTED" class="btn btn-warning btn-xs w70">ABORTED</div>
-				      <img ng-switch-default src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
-				  	</div>
-				</div>
-				<div class="col-lg-8">
+					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
 				  	<b>{{truncate(testRun.testSuite.name, 50)}}</b>
 					<a href="{{testRun.jenkinsURL}}">{{truncate(testRun.jenkinsURL, 40)}}</a>
 					<b>{{getArgValue(testRun.configXML, 'env')}}</b>
@@ -64,16 +55,16 @@
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-show="testRun.showDetails == true" style="margin-top: 20px;">
-                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in tests[testRun.id] | orderObjectBy:'id':false">
+                    <div class="row test_result" data-ng-class="tests[testId].status"  data-ng-class="" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
                     	<div class="col-lg-10">
-                    		<div><img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}}</div>
-                            <div class="result_error wrap" data-ng-if="test.message">{{test.message}}</div>
+                    		<div><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}}</div>
+                            <div class="result_error wrap" data-ng-if="tests[testId].message">{{tests[testId].message}}</div>
                     	</div>
                     	<div class="col-lg-2">
-                    		<div class="float_right" data-ng-if="test.status != STARTED">
-                            	<span class="time">{{test.finishTime | date:'hh:mm'}}</span>
+                    		<div class="float_right" data-ng-if="tests[testId].status != STARTED">
+                            	<span class="time">{{tests[testId].finishTime | date:'hh:mm'}}</span>
                             	&nbsp;
-                            	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
+                            	<a data-ng-if="tests[testId].logURL" href="{{tests[testId].logURL}}" target="blank">Log</a> <span data-ng-if="tests[testId].demoURL">| <a href="{{tests[testId].demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>
 	                 </div>
