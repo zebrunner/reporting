@@ -2,8 +2,11 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,6 +21,8 @@ import com.qaprosoft.zafira.ws.dto.errors.ErrorResponse;
 
 public abstract class AbstractController
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractController.class);
+	
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
 	
@@ -60,4 +65,12 @@ public abstract class AbstractController
 		result.setError(new Error(ErrorCode.INVALID_TEST_RUN));
 		return result;
 	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public void handleMethodArgumentNotValidException(MethodArgumentNotValidException e) 
+	{
+		LOGGER.error(e.getMessage());
+    }
 }
