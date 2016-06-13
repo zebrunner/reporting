@@ -85,7 +85,7 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public TestRun getTestRunByCiRunId(String ciRunId) throws ServiceException
 	{
-		return testRunMapper.getTestRunByCiRunId(ciRunId);
+		return !StringUtils.isEmpty(ciRunId) ? testRunMapper.getTestRunByCiRunId(ciRunId) : null;
 	}
 	
 	@Transactional(readOnly = true)
