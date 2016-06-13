@@ -1,3 +1,4 @@
+set schema 'zafira';
 ALTER TABLE zafira.test_work_items
 DROP CONSTRAINT fk_TEST_WORK_ITEMS_TESTS1;
 ALTER TABLE zafira.test_work_items

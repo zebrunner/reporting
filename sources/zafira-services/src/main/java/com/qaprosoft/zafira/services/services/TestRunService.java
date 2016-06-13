@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 @Service
 public class TestRunService
 {
+	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
+	
 	@Autowired
 	private TestRunMapper testRunMapper;
 	
@@ -80,7 +85,7 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public TestRun getTestRunByCiRunId(String ciRunId) throws ServiceException
 	{
-		return testRunMapper.getTestRunByCiRunId(ciRunId);
+		return !StringUtils.isEmpty(ciRunId) ? testRunMapper.getTestRunByCiRunId(ciRunId) : null;
 	}
 	
 	@Transactional(readOnly = true)
@@ -118,6 +123,13 @@ public class TestRunService
 			{
 				testRun = existingTestRun;
 			}
+			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
+			LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
+		}
+		else
+		{
+			testRun.setCiRunId(UUID.randomUUID().toString());
+			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
 		}
 		
 		// New test run
