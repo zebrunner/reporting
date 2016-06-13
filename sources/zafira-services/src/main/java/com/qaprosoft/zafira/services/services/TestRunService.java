@@ -124,6 +124,7 @@ public class TestRunService
 				testRun = existingTestRun;
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
+			LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
 		}
 		else
 		{
