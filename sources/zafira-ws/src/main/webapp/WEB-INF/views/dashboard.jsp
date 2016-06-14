@@ -47,15 +47,15 @@
 					<div class="float_right">
 						<span class="time">{{testRun.createdAt | date:'MM/dd/yy hh:mm'}}</span>
 						&nbsp;
-						<span class="label label-success arrowed arrowed-in-right">{{testRunResults[testRun.id].passed}}</span>
-						<span class="label label-danger arrowed arrowed-in-right">{{testRunResults[testRun.id].failed}}</span>
-						<span class="label label-warning arrowed arrowed-in-right">{{testRunResults[testRun.id].skipped}}</span>
+						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRunResults[testRun.id].passed == 0, 'label-success': testRunResults[testRun.id].passed > 0}">{{testRunResults[testRun.id].passed}}</span>
+						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRunResults[testRun.id].failed == 0, 'label-danger': testRunResults[testRun.id].failed > 0}">{{testRunResults[testRun.id].failed}}</span>
+						<span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRunResults[testRun.id].skipped == 0, 'label-warning': testRunResults[testRun.id].skipped > 0}">{{testRunResults[testRun.id].skipped}}</span>
 						&nbsp;
 						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="testRun.showDetails = !testRun.showDetails"></i>
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-show="testRun.showDetails == true" style="margin-top: 20px;">
-                    <div class="row test_result" data-ng-class="tests[testId].status"  data-ng-class="" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
+                    <div class="row test_result" data-ng-class="tests[testId].status" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
                     	<div class="col-lg-10">
                     		<div><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}}</div>
                             <div class="result_error wrap" data-ng-if="tests[testId].message">{{tests[testId].message}}</div>

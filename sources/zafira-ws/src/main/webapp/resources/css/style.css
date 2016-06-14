@@ -110,3 +110,28 @@ img.pending {
    white-space: -o-pre-wrap;   /* Opera 7 */    
    word-wrap: break-word;      /* IE */
 }
+
+.label-success-border {
+	border: 1px solid #5cb85c;
+}
+
+.label-success-empty {
+	color: #5cb85c;
+}
+
+.label-danger-border {
+	border: 1px solid #d9534f;
+}
+
+.label-danger-empty {
+	color: #d9534f;
+}
+
+.label-warning-border {
+	border: 1px solid #f0ad4e;
+}
+
+.label-warning-empty {
+	color: #f0ad4e;
+}
+
