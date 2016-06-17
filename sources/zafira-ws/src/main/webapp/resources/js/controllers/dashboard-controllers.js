@@ -6,18 +6,25 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 	
 	$scope.showLoading = true;
 	
-	$scope.totalTestRuns = 0;
-	
 	$scope.tests = {};
 	$scope.testRuns = {};
 	$scope.testRunResults = {};
 	$scope.testRunsTestIds = {};
 
-	$scope.page = 1;
-	$scope.pageSize = 20;
-	
 	$scope.testRunsToCompare = [];
-	$scope.queryString = "";
+	$scope.compareQueryString = "";
+	$scope.totalResults = 0;
+	
+	$scope.testRunSearchCriteria = {
+		'page' : 0,
+		'pageSize' : 25
+	};
+	
+	$scope.testSearchCriteria = {
+		'page' : 0,
+		'pageSize' : 100000
+	};
+	
 	
 	$scope.initPubNub = function(){
 		$http.get('config/pubnub').success(function(config) {
@@ -28,15 +35,17 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
 			
 			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:100000});
+			PubNub.ngHistory({channel:$scope.testsChannel, count:15});
 			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
 				$scope.addTest(payload.message.test);
+				$scope.$apply();
 			});
 			
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
 			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
 				$scope.addTestRun(payload.message.testRun);
+				$scope.$apply();
 			});
 		});
 	};
@@ -62,7 +71,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
     	$scope.tests[test.id] = test;
     	$scope.initTestRunResults(test.testRunId);
     	$scope.updateTestRunResults($scope.tests[test.id], 1);
-		$scope.$apply();
 	};
 	
 	$scope.updateTestRunResults = function(test, amount) {
@@ -88,14 +96,12 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
     		$scope.testRuns[testRun.id] = testRun;
-    		$scope.totalTestRuns = $scope.totalTestRuns + 1;
     		$scope.initTestRunResults(testRun.id);
     	}
     	else
     	{
     		$scope.testRuns[testRun.id].status = testRun.status;
     	}
-    	$scope.$apply();
 	};
 	
 	$scope.initTestRunResults = function(testRunId) {
@@ -110,14 +116,21 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 	};
 	
 	$scope.getArgValue = function(xml, key){
-		var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
-		var args = xmlDoc.getElementsByTagName("config")[0].childNodes;
-		for(var i = 0; i < args.length; i++)
+		try
 		{
-			if(args[i].getElementsByTagName("key")[0].innerHTML == key)
+			var xmlDoc = new DOMParser().parseFromString(xml,"text/xml");
+			var args = xmlDoc.getElementsByTagName("config")[0].childNodes;
+			for(var i = 0; i < args.length; i++)
 			{
-				return args[i].getElementsByTagName("value")[0].innerHTML;
+				if(args[i].getElementsByTagName("key")[0].innerHTML == key)
+				{
+					return args[i].getElementsByTagName("value")[0].innerHTML;
+				}
 			}
+		}
+		catch(err)
+		{
+			console.log("Environment arg not retrieved!");
 		}
 		return null;
 	};
@@ -131,19 +144,62 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 				$scope.testRunsToCompare.splice(idx, 1);
 			}
 		}
-		$scope.queryString = "";
+		$scope.compareQueryString = "";
 		for(var i = 0; i < $scope.testRunsToCompare.length; i++)
 		{
-			$scope.queryString = $scope.queryString + $scope.testRunsToCompare[i];
+			$scope.compareQueryString = $scope.compareQueryString + $scope.testRunsToCompare[i];
 			if(i < $scope.testRunsToCompare.length - 1)
 			{
-				$scope.queryString = $scope.queryString + "+";
+				$scope.compareQueryString = $scope.compareQueryString + "+";
 			}
 		}
 	};
 	
+	$scope.loadTestRuns = function(page, pageSize){
+		$scope.testRunSearchCriteria.page = page;
+		if(pageSize)
+		{
+			$scope.testRunSearchCriteria.pageSize = pageSize;
+		}
+		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
+			$scope.testRunSearchCriteria.page = data.page;
+			$scope.testRunSearchCriteria.pageSize = data.pageSize;
+			$scope.totalResults = data.totalResults;
+			
+			var testRunIds = [];
+			for(var i = 0; i < data.results.length; i ++)
+			{
+				testRunIds.push(data.results[i].id);
+				$scope.addTestRun(data.results[i]);
+			}
+			
+			$scope.loadTests(testRunIds);
+			
+		}).error(function() {
+			console.error('Failed to search test runs');
+		});
+	};
+	
+	$scope.loadTests = function(testRunIds){
+		$scope.testSearchCriteria.testRunIds = testRunIds;
+		$http.post('tests/search', $scope.testSearchCriteria).success(function(data) {
+			$scope.userSearchResult = data;
+			$scope.testSearchCriteria.page = data.page;
+			$scope.testSearchCriteria.pageSize = data.pageSize;
+			
+			for(var i = 0; i < data.results.length; i ++)
+			{
+				$scope.addTest(data.results[i]);
+			}
+			
+		}).error(function() {
+			console.error('Failed to search tests');
+		});
+	};
+	
 	(function init(){
 		$scope.initPubNub();
+		$scope.loadTestRuns(0);
 		setTimeout(function() {  
 			$scope.$apply(function () {
 				$scope.showLoading = false;

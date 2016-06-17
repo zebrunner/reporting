@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
+import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.Test.Status;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
@@ -148,5 +152,17 @@ public class TestService
 	public void deleteTestWorkItemByTestId(long testId) throws ServiceException
 	{
 		testMapper.deleteTestWorkItemByTestId(testId);
+	}
+	
+	@Transactional(readOnly = true)
+	public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException
+	{
+		SearchResult<Test> results = new SearchResult<Test>();
+		results.setPage(sc.getPage());
+		results.setPageSize(sc.getPageSize());
+		results.setSortOrder(sc.getSortOrder());
+		results.setResults(testMapper.searchTests(sc));
+		results.setTotalResults(testMapper.getTestsSearchCount(sc));
+		return results;
 	}
 }

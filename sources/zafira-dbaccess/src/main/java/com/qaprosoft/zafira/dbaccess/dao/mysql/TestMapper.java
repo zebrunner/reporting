@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
@@ -26,4 +27,8 @@ public interface TestMapper
 	void deleteTest(Test test);
 	
 	void deleteTestByTestRunIdAndTestCaseIdAndLogURL(@Param("testRunId") long testRunId, @Param("testCaseId") long testCaseId, @Param("logURL") String logURL);
+	
+	List<Test> searchTests(TestSearchCriteria sc);
+	
+	Integer getTestsSearchCount(TestSearchCriteria sc);
 }

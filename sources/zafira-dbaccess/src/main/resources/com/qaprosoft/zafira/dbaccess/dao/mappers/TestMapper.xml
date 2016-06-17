@@ -98,6 +98,52 @@
 			WHERE T.TEST_RUN_ID = #{testRunId};
 		]]>
 	</select>
+	
+	<select id="searchTests" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != testRunIds and testRunIds.size > 0">
+	            <![CDATA[
+	               AND T.TEST_RUN_ID IN
+	            ]]>
+	            <foreach item="testRunId" index="index" collection="testRunIds" open="(" separator="," close=")">
+					#{testRunId}
+				</foreach>
+			</if>
+		</trim>
+		<if test="sortOrder.toString() == 'ASC'">
+			<![CDATA[
+				ORDER BY T.ID ASC
+			]]>
+		</if>
+		<if test="sortOrder.toString() == 'DESC'">
+			<![CDATA[
+				ORDER BY T.ID DESC
+			]]>
+		</if>
+		<![CDATA[
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+	</select>
+	
+	<select id="getTestsSearchCount" resultType="java.lang.Integer">
+	    <![CDATA[
+            SELECT
+                COUNT(*)
+            FROM
+                zafira.TESTS T
+        ]]>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != testRunIds and testRunIds.size > 0">
+	            <![CDATA[
+	               AND T.TEST_RUN_ID IN
+	            ]]>
+	            <foreach item="testRunId" index="index" collection="testRunIds" open="(" separator="," close=")">
+					#{testRunId}
+				</foreach>
+			</if>
+		</trim>
+    </select>
 
 	<update id="updateTest">
 		<![CDATA[

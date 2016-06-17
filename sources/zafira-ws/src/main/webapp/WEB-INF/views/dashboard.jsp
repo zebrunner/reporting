@@ -28,7 +28,7 @@
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" ng-show="$index < (page * pageSize)">
+			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index">
 				<div class="col-lg-9">
 					<input type="checkbox"
 							data-ng-model="isChecked"
@@ -45,7 +45,7 @@
 				</div>
 				<div  class="col-lg-3">
 					<div class="float_right">
-						<span class="time">{{testRun.createdAt | date:'MM/dd/yy hh:mm'}}</span>
+						<span class="time">{{testRun.createdAt | date:'MMM dd HH:mm'}}</span>
 						&nbsp;
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRunResults[testRun.id].passed == 0, 'label-success': testRunResults[testRun.id].passed > 0}">{{testRunResults[testRun.id].passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRunResults[testRun.id].failed == 0, 'label-danger': testRunResults[testRun.id].failed > 0}">{{testRunResults[testRun.id].failed}}</span>
@@ -72,7 +72,7 @@
 			</div>
 			<div style="padding: 5px 15px;">
 				<a href="#/tests/runs/{{queryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
-				<a href="" data-ng-click="page = page + 1" class="float_right" data-ng-show="(page * pageSize) < totalTestRuns">Show more</a>
+				<a href="" data-ng-click="loadTestRuns(testRunSearchCriteria.page + 1)" class="float_right" data-ng-show="(testRunSearchCriteria.page * testRunSearchCriteria.pageSize) < totalResults">Show more</a>
 			</div>
 			<br/>
 		</div>
