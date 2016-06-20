@@ -14,7 +14,7 @@
     </div>
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="input-group custom-search-form search">
+			<div class="input-group custom-search-form search" data-ng-show="testRunId == null">
                 <input type="text" class="form-control" data-ng-model="jenkinsURLFilter" placeholder="Job filter">
                 <span class="input-group-btn">
 	                <button class="btn btn-default" type="button" disabled>
@@ -28,7 +28,7 @@
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index">
+			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" context-menu="menuOptions">
 				<div class="col-lg-9">
 					<input type="checkbox"
 							data-ng-model="isChecked"
@@ -37,7 +37,7 @@
 							data-ng-change="selectTestRun(testRun.id, isChecked)"
 							value="{{testRun.id}}" 
 							name="{{testRun.id}}"
-							data-ng-show="testRun.status != 'IN_PROGRESS'" onclick="event.cancelBubble=true;"/>
+							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/>
 					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
 				  	<b>{{UtilService.truncate(testRun.testSuite.name, 50)}}</b>
 					<a href="{{testRun.jenkinsURL}}">{{UtilService.truncate(testRun.jenkinsURL, 40)}}</a>
@@ -71,8 +71,8 @@
 				</div>
 			</div>
 			<div style="padding: 5px 15px;">
-				<a href="#/tests/runs/{{queryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
-				<a href="" data-ng-click="loadTestRuns(testRunSearchCriteria.page + 1)" class="float_right" data-ng-show="(testRunSearchCriteria.page * testRunSearchCriteria.pageSize) < totalResults">Show more</a>
+				<a href="#/tests/runs/{{compareQueryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
+				<a href="" data-ng-click="loadTestRuns(testRunSearchCriteria.page + 1)" class="float_right" data-ng-show="(testRunSearchCriteria.page * testRunSearchCriteria.pageSize) < totalResults && testRunId == null">Show more</a>
 			</div>
 			<br/>
 		</div>

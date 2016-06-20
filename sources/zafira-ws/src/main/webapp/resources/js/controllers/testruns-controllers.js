@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('CompareCtrl', [ '$scope', '$rootScope', '$http', 'PubNub', '$routeParams', function($scope, $rootScope, $http, PubNub, $routeParams) {
+ZafiraApp.controller('TestRunsCompareCtrl', [ '$scope', '$rootScope', '$http', '$routeParams', function($scope, $rootScope, $http, $routeParams) {
 	
 	$scope.initCompareMatrix = function(){
 		$http.get('tests/runs/' + $routeParams.ids + '/compare').success(function(matrix) {

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
@@ -108,5 +109,12 @@ public class TestRunsController extends AbstractController
 			ids.add(Long.valueOf(id));
 		}
 		return testRunService.createCompareMatrix(ids);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="compare", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView compareTestRuns()
+	{
+		return new ModelAndView("tests/runs/compare");
 	}
 }

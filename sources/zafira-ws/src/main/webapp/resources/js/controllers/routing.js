@@ -8,7 +8,7 @@ ZafiraApp.constant('ROUTES', [
 {
 	url : '/tests/runs/:ids/compare',
 	config : {
-		templateUrl : 'compare'
+		templateUrl : 'tests/runs/compare'
 	}
 }]);
 

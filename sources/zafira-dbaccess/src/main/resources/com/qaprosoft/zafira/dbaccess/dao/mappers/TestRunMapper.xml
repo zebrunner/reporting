@@ -112,6 +112,13 @@
 	
 	<select id="searchTestRuns" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != id">
+	            <![CDATA[
+	               AND TR.ID = #{id}
+	            ]]>
+			</if>
+		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
 				ORDER BY TR.ID ASC
@@ -134,6 +141,13 @@
             FROM
                 zafira.TEST_RUNS TR
         ]]>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != id">
+	            <![CDATA[
+	               AND TR.ID = #{id}
+	            ]]>
+			</if>
+		</trim>
     </select>
 	
 	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">

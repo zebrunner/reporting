@@ -1,9 +1,9 @@
 'use strict';
 
-ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub', 'UtilService', function($scope, $rootScope, $http, PubNub, UtilService) {
+ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$location', 'PubNub', 'UtilService', function($scope, $rootScope, $http, $location, PubNub, UtilService) {
 
 	$scope.UtilService = UtilService;
-	
+	$scope.testRunId = $location.search().id;
 	$scope.showLoading = true;
 	
 	$scope.tests = {};
@@ -44,6 +44,10 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
 			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
 			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
+				if($scope.testRunId && $scope.testRunId != payload.message.testRun.id)
+				{
+					return;
+				}
 				$scope.addTestRun(payload.message.testRun);
 				$scope.$apply();
 			});
@@ -91,7 +95,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 	};
 	
 	$scope.addTestRun = function(testRun) {
-		testRun.showDetails = false;
+		testRun.showDetails = $scope.testRunId ? true : false;
     	if($scope.testRuns[testRun.id] == null)
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
@@ -161,6 +165,10 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 		{
 			$scope.testRunSearchCriteria.pageSize = pageSize;
 		}
+		if($scope.testRunId)
+		{
+			$scope.testRunSearchCriteria.id = $scope.testRunId;
+		}
 		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
 			$scope.testRunSearchCriteria.page = data.page;
 			$scope.testRunSearchCriteria.pageSize = data.pageSize;
@@ -206,4 +214,28 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', 'PubNub
 			});
 		}, 30000);
 	})();
+	
+	$scope.menuOptions = [
+      ['Open', function ($itemScope) {
+          window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
+      }],
+      null,
+      ['Copy link', function ($itemScope) {
+    	  	var node = document.createElement('pre');
+	  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
+	  	    document.body.appendChild(node);
+	  	    
+	  	    var selection = getSelection();
+	  	    selection.removeAllRanges();
+	
+	  	    var range = document.createRange();
+	  	    range.selectNodeContents(node);
+	  	    selection.addRange(range);
+	
+	  	    document.execCommand('copy');
+	  	    selection.removeAllRanges();
+	  	    document.body.removeChild(node);
+      }]
+    ];
+	
 } ]);

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.ui;
+package com.qaprosoft.zafira.ws.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.VersionService;
 import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
 import com.qaprosoft.zafira.services.services.thirdparty.push.PubNubService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 
 @Controller
 @RequestMapping("config")

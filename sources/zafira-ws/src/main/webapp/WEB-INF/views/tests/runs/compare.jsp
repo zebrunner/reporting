@@ -5,7 +5,7 @@
     pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
-<div data-ng-controller="CompareCtrl">
+<div data-ng-controller="TestRunsCompareCtrl">
 	<div class="row">
          <div class="col-lg-12">
          	<h2>Compare results</h2>
