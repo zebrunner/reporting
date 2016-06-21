@@ -99,6 +99,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
     	if($scope.testRuns[testRun.id] == null)
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
+    		testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL
     		$scope.testRuns[testRun.id] = testRun;
     		$scope.initTestRunResults(testRun.id);
     	}

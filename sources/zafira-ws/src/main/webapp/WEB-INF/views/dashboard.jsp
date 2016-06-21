@@ -15,7 +15,7 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="input-group custom-search-form search" data-ng-show="testRunId == null">
-                <input type="text" class="form-control" data-ng-model="jenkinsURLFilter" placeholder="Job filter">
+                <input type="text" class="form-control" data-ng-model="uidFilter" placeholder="Test run filter">
                 <span class="input-group-btn">
 	                <button class="btn btn-default" type="button" disabled>
 	                    <i class="fa fa-search"></i>
@@ -28,7 +28,7 @@
             <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{jenkinsURL:jenkinsURLFilter}:false track by $index" context-menu="menuOptions">
+			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{UID:uidFilter}:false track by $index" context-menu="menuOptions">
 				<div class="col-lg-9">
 					<input type="checkbox"
 							data-ng-model="isChecked"
