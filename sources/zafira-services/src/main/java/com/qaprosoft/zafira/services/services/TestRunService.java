@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +53,11 @@ public class TestRunService
 	private WorkItemService workItemService;
 	
 	@Autowired
-	@Qualifier("pubNubService")
+	@Qualifier("xmppService")
 	private IPushService notificationService;
+	
+	@Value("${zafira.jabber.username}")
+	private String xmppChannel;
 	
 	@Autowired
 	private TestConfigService testConfigService;
@@ -170,7 +174,7 @@ public class TestRunService
 			updateTestRun(testRun);
 		}
 		
-		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -194,7 +198,7 @@ public class TestRunService
 			}
 		}
 		updateTestRun(testRun);
-		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -208,7 +212,7 @@ public class TestRunService
 		}
 		testRun.setStatus(Status.ABORTED);
 		updateTestRun(testRun);
-		notificationService.publish(Channel.TEST_RUN_EVENTS, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	

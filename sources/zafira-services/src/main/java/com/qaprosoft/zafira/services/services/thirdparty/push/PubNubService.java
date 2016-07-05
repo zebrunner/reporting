@@ -55,19 +55,7 @@ public class PubNubService implements IPushService
 		pubnub.setUUID(adminUUID);
 	}
 
-	public void publish(Channel channel, AbstractPush push)
-	{
-		if(enabled)
-		{
-			try
-			{
-				pubnub.publish(channel.toString(), new JSONObject(messageJsonifier.writeValueAsString(push)), callback);
-			} catch (Exception e)
-			{
-				logger.error(e.getMessage());
-			}
-		}
-	}
+	
 
 	public String getPublishKey()
 	{
@@ -81,5 +69,20 @@ public class PubNubService implements IPushService
 
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	@Override
+	public void publish(String channel, AbstractPush push)
+	{
+		if(enabled)
+		{
+			try
+			{
+				pubnub.publish(channel, new JSONObject(messageJsonifier.writeValueAsString(push)), callback);
+			} catch (Exception e)
+			{
+				logger.error(e.getMessage());
+			}
+		}
 	}
 }

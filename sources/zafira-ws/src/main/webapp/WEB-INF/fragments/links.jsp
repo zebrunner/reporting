@@ -12,6 +12,7 @@
 <script src="<spring:url value='/resources/js/3rd_party/metisMenu.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/sb-admin-2.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/pubnub.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/strophe.min.js'/>" type="text/javascript"></script>
 
 <!-- AngularJS core -->
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>

@@ -84,6 +84,8 @@
 		
 		<wrapper.version>3.2.3</wrapper.version>
 		<quartz.version>2.2.1</quartz.version>
+		
+		<smack.version>3.2.1</smack.version>
 
 	</properties>
 
@@ -410,6 +412,17 @@
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
 				<version>${quartz.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smack</artifactId>
+				<version>${smack.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smackx</artifactId>
+				<version>${smack.version}</version>
 			</dependency>
 
 		</dependencies>

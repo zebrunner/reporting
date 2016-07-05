@@ -26,31 +26,70 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	};
 	
 	
-	$scope.initPubNub = function(){
-		$http.get('config/pubnub').success(function(config) {
-			
-			$scope.testRunsChannel = config['testRunsChannel'];
-			$scope.testsChannel = config['testsChannel'];
-			
-			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
-			
-			PubNub.ngSubscribe({channel:$scope.testsChannel});
-			PubNub.ngHistory({channel:$scope.testsChannel, count:15});
-			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
-				$scope.addTest(payload.message.test);
-				$scope.$apply();
-			});
-			
-			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
-			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
-			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
-				if($scope.testRunId && $scope.testRunId != payload.message.testRun.id)
-				{
-					return;
-				}
-				$scope.addTestRun(payload.message.testRun);
-				$scope.$apply();
-			});
+//	$scope.initPubNub = function(){
+//		$http.get('config/pubnub').success(function(config) {
+//			
+//			$scope.testRunsChannel = config['testRunsChannel'];
+//			$scope.testsChannel = config['testsChannel'];
+//			
+//			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
+//			
+//			PubNub.ngSubscribe({channel:$scope.testsChannel});
+//			PubNub.ngHistory({channel:$scope.testsChannel, count:15});
+//			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
+//				$scope.addTest(payload.message.test);
+//				$scope.$apply();
+//			});
+//			
+//			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
+//			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
+//			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
+//				if($scope.testRunId && $scope.testRunId != payload.message.testRun.id)
+//				{
+//					return;
+//				}
+//				$scope.addTestRun(payload.message.testRun);
+//				$scope.$apply();
+//			});
+//		});
+//	};
+	
+	$scope.initXMPP = function(){
+		$http.get('settings/xmpp').success(function(settings) {
+			if(settings.enabled)
+			{
+				var connection = new Strophe.Connection(settings.httpBind);
+				connection.connect(settings.username, settings.password, function (status) {
+		            if (status === Strophe.Status.CONNECTED) {
+		                 connection.addHandler(function(msg){
+		                	 var elems = msg.getElementsByTagName('body');
+		                	 if (elems.length > 0) 
+		                	 {
+		                		 var event = JSON.parse(Strophe.getText(elems[0]).replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+		                		 console.log(event);
+		                		 if(event.type == 'TEST_RUN')
+	                			 {
+		             				if($scope.testRunId && $scope.testRunId != event.testRun.id)
+		             				{
+		             					return;
+		             				}
+		             				$scope.addTestRun(event.testRun);
+		             				$scope.$apply();
+	                			 }
+		                		 else if(event.type == 'TEST')
+	                			 {
+		             				$scope.addTest(event.test);
+		             				$scope.$apply();
+	                			 }
+		                	 }
+		                	 return true;
+		                 }, null, 'message', 'chat', null,  null);
+		                 connection.send($pres().tree());
+		            }
+		        });
+			}
+		}).error(function() {
+			console.error('Failed to connect to XMPP');
 		});
 	};
 	
@@ -207,8 +246,9 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	};
 	
 	(function init(){
-		$scope.initPubNub();
+		$scope.initXMPP();
 		$scope.loadTestRuns(0);
+
 		setTimeout(function() {  
 			$scope.$apply(function () {
 				$scope.showLoading = false;

@@ -4,22 +4,20 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.TestConfig;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.Test.Status;
+import com.qaprosoft.zafira.dbaccess.model.TestConfig;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
 import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
@@ -38,8 +36,11 @@ public class TestService
 	private TestRunService testRunService;
 	
 	@Autowired
-	@Qualifier("pubNubService")
+	@Qualifier("xmppService")
 	private IPushService notificationService;
+	
+	@Value("${zafira.jabber.username}")
+	private String xmppChannel;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -69,7 +70,7 @@ public class TestService
 			updateTest(test);
 		}
 		
-		notificationService.publish(Channel.TEST_EVENTS, new TestPush(test));
+		notificationService.publish(xmppChannel, new TestPush(test));
 		return test;
 	}
 	
@@ -91,7 +92,7 @@ public class TestService
 		}
 		testMapper.updateTest(existingTest);
 		
-		notificationService.publish(Channel.TEST_EVENTS, new TestPush(existingTest));
+		notificationService.publish(xmppChannel, new TestPush(existingTest));
 		return existingTest;
 	}
 	
