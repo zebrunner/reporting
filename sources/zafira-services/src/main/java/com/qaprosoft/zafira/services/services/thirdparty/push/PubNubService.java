@@ -55,8 +55,6 @@ public class PubNubService implements IPushService
 		pubnub.setUUID(adminUUID);
 	}
 
-	
-
 	public String getPublishKey()
 	{
 		return publishKey;
