@@ -29,7 +29,6 @@ import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
 import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service

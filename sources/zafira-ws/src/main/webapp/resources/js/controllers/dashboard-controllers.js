@@ -4,7 +4,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
-	$scope.showLoading = true;
 	
 	$scope.tests = {};
 	$scope.testRuns = {};
@@ -96,7 +95,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	$scope.addTest = function(test) {
 		if($scope.tests[test.id] == null)
     	{
-    		$scope.tests[test.testRunId] = {};
+    		$scope.tests[test.id] = {};
     	}
 		if($scope.testRunsTestIds[test.testRunId] == null)
     	{
@@ -248,12 +247,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	(function init(){
 		$scope.initXMPP();
 		$scope.loadTestRuns(0);
-
-		setTimeout(function() {  
-			$scope.$apply(function () {
-				$scope.showLoading = false;
-			});
-		}, 30000);
 	})();
 	
 	$scope.menuOptions = [

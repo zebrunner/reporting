@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'pubnub.angular.service' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'pubnub.angular.service', 'chieffancypants.loadingBar', 'ngAnimate' ]);
 
 ZafiraApp.directive('ngReallyClick', [ function() {
 	return {

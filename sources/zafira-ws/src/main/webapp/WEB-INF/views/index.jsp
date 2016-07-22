@@ -23,7 +23,7 @@
 	            <div class="navbar-header">
 	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.2</small></a>
 	            </div>
-	            <div class="navbar-default sidebar" role="navigation">
+	            <!-- div class="navbar-default sidebar" role="navigation">
 	                <div class="sidebar-nav navbar-collapse">
 	                    <ul class="nav" id="side-menu">
 	                        <li>
@@ -31,18 +31,10 @@
 	                        </li>
 	                    </ul>
 	                </div>
-	                <!-- /.sidebar-collapse -->
-	            </div>
-	            <!-- /.navbar-static-side -->
+	            </div -->
 	        </nav>
-	
 	        <div id="page-wrapper" data-ng-view>
 	 		</div>
-	        <!-- /#page-wrapper -->
-	
 	    </div>
-	    <!-- /#wrapper -->
-	 
 	</body>
-	
 </html>

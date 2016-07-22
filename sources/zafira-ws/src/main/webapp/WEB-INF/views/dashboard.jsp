@@ -22,13 +22,10 @@
 	                </button>
 	            </span>
             </div>
-            <div class="run_result row" align="center" data-ng-show="showLoading && totalTestRuns == 0">
-            	<div class="col-lg-12"><i class="fa fa-clock-o fa-lg" aria-hidden="true"></i> Loading data...</div>
-            </div>
-            <div class="run_result row" align="center" data-ng-show="!showLoading && totalTestRuns == 0">
+            <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results yet</div>
             </div>
-			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{UID:uidFilter}:false track by $index" context-menu="menuOptions">
+			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'createdAt':true | filter:{testSuite.name:uidFilter}:false" context-menu="menuOptions">
 				<div class="col-lg-9">
 					<input type="checkbox"
 							data-ng-model="isChecked"
@@ -58,7 +55,7 @@
                     <div class="row test_result" data-ng-class="tests[testId].status" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
                     	<div class="col-lg-10">
                     		<div><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}}</div>
-                            <div class="result_error wrap" data-ng-if="tests[testId].message">{{tests[testId].message}}</div>
+                            <div class="result_error wrap" data-ng-if="tests[testId].message && tests[testId].status == 'FAILED'">{{tests[testId].message}}</div>
                     	</div>
                     	<div class="col-lg-2">
                     		<div class="float_right" data-ng-if="tests[testId].status != STARTED">

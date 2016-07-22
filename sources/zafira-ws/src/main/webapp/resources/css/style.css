@@ -14,19 +14,19 @@ img.pending {
 }
 
 .result_PASSED {
-	border-left: solid 10px #5cb85c;
+	border-left: solid 8px #5cb85c;
 }
 
 .result_FAILED {
-	border-left: solid 10px #d9534f;
+	border-left: solid 8px #d9534f;
 }
 
 .result_IN_PROGRESS {
-	border-left: solid 10px #3a87ad;
+	border-left: solid 8px #3a87ad;
 }
 
 .result_ABORTED {
-	border-left: solid 10px #f0ad4e;
+	border-left: solid 8px #f0ad4e;
 }
 
 .test_result {
