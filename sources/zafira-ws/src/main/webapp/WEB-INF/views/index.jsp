@@ -23,6 +23,12 @@
 	            <div class="navbar-header">
 	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.2</small></a>
 	            </div>
+	            <ul class="nav navbar-top-links navbar-right">
+	                <li>
+	                    <a href="#/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+	               	</li>
+	               	<li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	            </ul>
 	            <!-- div class="navbar-default sidebar" role="navigation">
 	                <div class="sidebar-nav navbar-collapse">
 	                    <ul class="nav" id="side-menu">

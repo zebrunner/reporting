@@ -23,7 +23,6 @@
 <script src="<spring:url value='/resources/js/3rd_party/strophe.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/loading-bar.js'/>" type="text/javascript"></script>
 
-
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/routing.js'/>" type="text/javascript"></script>

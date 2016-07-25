@@ -8,7 +8,7 @@
 <div data-ng-controller="DashboardCtrl">
 	<div class="row">
          <div class="col-lg-12">
-         	<h2>Dashboard</h2>
+         	<h2><i class="fa fa-dashboard fa-fw"></i> Dashboard</h2>
 			<hr/>
          </div>
     </div>
@@ -51,7 +51,7 @@
 						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="testRun.showDetails = !testRun.showDetails"></i>
 					</div>
 				</div>
-				<div class="col-lg-12" data-ng-show="testRun.showDetails == true" style="margin-top: 20px;">
+				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 20px;">
                     <div class="row test_result" data-ng-class="tests[testId].status" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
                     	<div class="col-lg-10">
                     		<div><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}}</div>
@@ -59,7 +59,7 @@
                     	</div>
                     	<div class="col-lg-2">
                     		<div class="float_right" data-ng-if="tests[testId].status != STARTED">
-                            	<span class="time">{{tests[testId].finishTime | date:'hh:mm'}}</span>
+                            	<span class="time">{{tests[testId].finishTime | date:'HH:mm'}}</span>
                             	&nbsp;
                             	<a data-ng-if="tests[testId].logURL && testRun.status != 'IN_PROGRESS'" href="{{tests[testId].logURL}}" target="blank">Log</a> <span data-ng-if="tests[testId].demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{tests[testId].demoURL}}" target="blank">Demo</a></span>
                        		</div>

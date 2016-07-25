@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$location', 'PubNub', 'UtilService', function($scope, $rootScope, $http, $location, PubNub, UtilService) {
+ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', function($scope, $rootScope, $http, $location, UtilService) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -23,35 +23,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 		'page' : 0,
 		'pageSize' : 100000
 	};
-	
-	
-//	$scope.initPubNub = function(){
-//		$http.get('config/pubnub').success(function(config) {
-//			
-//			$scope.testRunsChannel = config['testRunsChannel'];
-//			$scope.testsChannel = config['testsChannel'];
-//			
-//			PubNub.init({publish_key:config['publishKey'],subscribe_key:config['subscribeKey'],uuid:config['udid'],ssl:true});
-//			
-//			PubNub.ngSubscribe({channel:$scope.testsChannel});
-//			PubNub.ngHistory({channel:$scope.testsChannel, count:15});
-//			$scope.$on(PubNub.ngMsgEv($scope.testsChannel), function(event, payload) {
-//				$scope.addTest(payload.message.test);
-//				$scope.$apply();
-//			});
-//			
-//			PubNub.ngSubscribe({channel:$scope.testRunsChannel});
-//			PubNub.ngHistory({channel:$scope.testRunsChannel, count:5});
-//			$scope.$on(PubNub.ngMsgEv($scope.testRunsChannel), function(event, payload) {
-//				if($scope.testRunId && $scope.testRunId != payload.message.testRun.id)
-//				{
-//					return;
-//				}
-//				$scope.addTestRun(payload.message.testRun);
-//				$scope.$apply();
-//			});
-//		});
-//	};
 	
 	$scope.initXMPP = function(){
 		$http.get('settings/xmpp').success(function(settings) {
@@ -244,11 +215,6 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 		});
 	};
 	
-	(function init(){
-		$scope.initXMPP();
-		$scope.loadTestRuns(0);
-	})();
-	
 	$scope.menuOptions = [
       ['Open', function ($itemScope) {
           window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
@@ -272,4 +238,9 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
       }]
     ];
 	
-} ]);
+	(function init(){
+		$scope.initXMPP();
+		$scope.loadTestRuns(0);
+	})();
+	
+}]);
