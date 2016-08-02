@@ -75,7 +75,7 @@
                     		<div class="float_right" data-ng-if="tests[testId].status != STARTED">
                             	<span class="time">{{tests[testId].finishTime | date:'HH:mm'}}</span>
                             	&nbsp;
-                            	<a data-ng-if="tests[testId].logURL" href="{{tests[testId].logURL}}" target="blank">Log</a> <span data-ng-if="tests[testId].demoURL">| <a href="{{tests[testId].demoURL}}" target="blank">Demo</a></span>
+                            	<a data-ng-if="tests[testId].logURL  && testRun.status != 'IN_PROGRESS'" href="{{tests[testId].logURL}}" target="blank">Log</a> <span data-ng-if="tests[testId].demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{tests[testId].demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>
 	                 </div>
