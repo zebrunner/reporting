@@ -33,9 +33,9 @@
 	               	<li>
 	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
-	               	<li>
-	               		<a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout
-	               	</a>
+	               	<li data-ng-show="false">
+	               		<a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	               	</li>
 	            </ul>
 	            <!-- div class="navbar-default sidebar" role="navigation">
 	                <div class="sidebar-nav navbar-collapse">
