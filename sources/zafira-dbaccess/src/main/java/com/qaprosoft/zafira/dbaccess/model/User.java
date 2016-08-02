@@ -1,5 +1,9 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class User extends AbstractEntity
 {
 	private static final long serialVersionUID = 2720141152633805371L;

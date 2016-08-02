@@ -22,9 +22,13 @@
 <script src="<spring:url value='/resources/js/3rd_party/pubnub.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/strophe.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/loading-bar.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/paging.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/raphael-min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/morris.min.js'/>" type="text/javascript"></script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/routing.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/dashboard-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testruns-controllers.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/testcases-controllers.js'/>" type="text/javascript"></script>

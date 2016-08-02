@@ -1,10 +1,16 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestCaseMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
@@ -77,5 +83,29 @@ public class TestCaseService
 			newTestCases[index++] = createOrUpdateCase(newTestCase);
 		}
 		return newTestCases;
+	}
+	
+	@Transactional(readOnly = true)
+	public SearchResult<TestCase> searchTestRuns(TestCaseSearchCriteria sc) throws ServiceException
+	{
+		SearchResult<TestCase> results = new SearchResult<TestCase>();
+		results.setPage(sc.getPage());
+		results.setPageSize(sc.getPageSize());
+		results.setSortOrder(sc.getSortOrder());
+		results.setResults(testCaseMapper.searchTestCases(sc));
+		results.setTotalResults(testCaseMapper.getTestCasesSearchCount(sc));
+		return results;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<TestCaseOwnersCount> getTestCaseOwnersStatistics() throws ServiceException
+	{
+		return testCaseMapper.getTestCaseOwnersStatistics();
+	}
+	
+	@Transactional(readOnly = true)
+	public List<TestCaseImplementationCount> getTestCaseImplementationStatistics() throws ServiceException
+	{
+		return testCaseMapper.getTestCaseImplementationStatistics();
 	}
 }

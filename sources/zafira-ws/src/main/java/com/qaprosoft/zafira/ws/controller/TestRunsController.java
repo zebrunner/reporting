@@ -46,6 +46,13 @@ public class TestRunsController extends AbstractController
 	private TestService testService;
 	
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView index()
+	{
+		return new ModelAndView("tests/runs/index");
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr) throws ServiceException, MappingException, JAXBException
 	{

@@ -2,9 +2,11 @@ package com.qaprosoft.zafira.dbaccess.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 
-
+@JsonInclude(Include.NON_NULL)
 public class TestConfig extends AbstractEntity
 {
 	private static final long serialVersionUID = 5668009693004786533L;

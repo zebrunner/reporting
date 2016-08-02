@@ -16,6 +16,6 @@ public class DashboardController extends AbstractController
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView index()
 	{
-		return new ModelAndView("dashboard");
+		return new ModelAndView("dashboard/index");
 	}
 }

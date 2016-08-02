@@ -31,6 +31,43 @@
 				zafira.TEST_CASES TC
 		]]>
 	</sql>
+	
+	<sql id="getTestCaseFull">
+		<![CDATA[
+			SELECT
+				TC.ID AS TEST_CASE_ID,
+				TC.USER_ID AS TEST_CASE_USER_ID,
+				TC.TEST_SUITE_ID AS TEST_CASE_TEST_SUITE_ID,
+				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
+				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
+				TC.INFO AS TEST_CASE_INFO,
+				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
+				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
+				(SELECT STATUS FROM zafira.TESTS T WHERE T.TEST_CASE_ID = TC.ID ORDER BY T.ID DESC LIMIT 1) AS TEST_CASE_STATUS,
+				
+				U.ID AS TEST_CASE_USER_ID,
+				U.USERNAME AS TEST_CASE_USER_USERNAME,
+				U.FIRST_NAME AS TEST_CASE_USER_FIRST_NAME,
+				U.LAST_NAME AS TEST_CASE_USER_LAST_NAME,
+				U.EMAIL AS TEST_CASE_USER_EMAIL,
+				U.MODIFIED_AT AS TEST_CASE_USER_MODIFIED_AT,
+				U.CREATED_AT AS TEST_CASE_USER_CREATED_AT,
+				
+				TS.ID AS TEST_CASE_TEST_SUITE_ID,
+				TS.USER_ID AS TEST_CASE_TEST_SUITE_USER_ID,
+				TS.NAME AS TEST_CASE_TEST_SUITE_NAME,
+				TS.FILE_NAME AS TEST_CASE_TEST_SUITE_FILE_NAME,
+				TS.DESCRIPTION AS TEST_CASE_TEST_SUITE_DESCRIPTION,
+				TS.MODIFIED_AT AS TEST_CASE_TEST_SUITE_MODIFIED_AT,
+				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT
+			FROM
+				zafira.TEST_CASES TC
+			LEFT JOIN 
+				zafira.USERS U ON U.ID = TC.USER_ID
+			LEFT JOIN 
+			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+		]]>
+	</sql>
 
 	<select id="getTestCaseById" resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />
@@ -52,6 +89,129 @@
 		<include refid="getTestCase" />
 		<![CDATA[
 			WHERE TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod};
+		]]>
+	</select>
+	
+	<select id="searchTestCases" resultMap="TestCaseResultMap">
+		<include refid="getTestCaseFull" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != id">
+	            <![CDATA[
+	               AND TC.ID = #{id}
+	            ]]>
+			</if>
+			<if test="null != testClass">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_CLASS) LIKE LOWER(CONCAT('%', #{testClass}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testMethod">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_METHOD) LIKE LOWER(CONCAT('%', #{testMethod}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteName">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuiteName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteFile">
+	            <![CDATA[
+	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
+	            ]]>
+			</if>
+			<if test="null != userName">
+	            <![CDATA[
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{userName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != date">
+	            <![CDATA[
+	               AND DATE(TC.CREATED_AT) = DATE(#{date})
+	            ]]>
+			</if>
+		</trim>
+		<![CDATA[
+			ORDER BY TS.FILE_NAME ASC
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+	</select>
+	
+	<select id="getTestCasesSearchCount" resultType="java.lang.Integer">
+	    <![CDATA[
+            SELECT
+                COUNT(*)
+            FROM
+				zafira.TEST_CASES TC
+			LEFT JOIN 
+				zafira.USERS U ON U.ID = TC.USER_ID
+			LEFT JOIN 
+			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+        ]]>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != id">
+	            <![CDATA[
+	               AND TC.ID = #{id}
+	            ]]>
+			</if>
+			<if test="null != testClass">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_CLASS) LIKE LOWER(CONCAT('%', #{testClass}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testMethod">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_METHOD) LIKE LOWER(CONCAT('%', #{testMethod}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteName">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuiteName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteFile">
+	            <![CDATA[
+	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
+	            ]]>
+			</if>
+			<if test="null != userName">
+	            <![CDATA[
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{userName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != date">
+	            <![CDATA[
+	               AND DATE(TC.CREATED_AT) = DATE(#{date})
+	            ]]>
+			</if>
+		</trim>
+    </select>
+    
+    <select id="getTestCaseOwnersStatistics" resultMap="TestCaseOwnersCountResultMap">
+		<![CDATA[
+			SELECT 
+				U.USERNAME AS TEST_CASE_OWNER_COUNT_USERNAME,
+				COUNT(*) AS TEST_CASE_OWNER_COUNT_COUNT
+			FROM 
+				zafira.TEST_CASES TC 
+			INNER JOIN 
+				zafira.USERS U 
+			ON U.ID = TC.USER_ID 
+			GROUP BY U.USERNAME;
+		]]>
+	</select>
+	
+	 <select id="getTestCaseImplementationStatistics" resultMap="TestCaseImplementationCountResultMap">
+		<![CDATA[
+			SELECT 
+				DATE(CREATED_AT) AS TEST_CASE_IMPLEMENTATION_COUNT_DATE, 
+				COUNT(*) AS TEST_CASE_IMPLEMENTATION_COUNT_COUNT
+			FROM 
+				zafira.TEST_CASES TC
+			WHERE 
+				AGE(TC.CREATED_AT) < INTERVAL '30 day'
+			GROUP BY DATE(CREATED_AT) 
+			ORDER BY DATE(CREATED_AT) ASC;
 		]]>
 	</select>
 
@@ -115,8 +275,34 @@
 		<result column="TEST_CASE_TEST_CLASS" property="testClass" />
 		<result column="TEST_CASE_TEST_METHOD" property="testMethod" />
 		<result column="TEST_CASE_INFO" property="info" />
+		<result column="TEST_CASE_STATUS" property="status" />
 		<result column="TEST_CASE_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CASE_CREATED_AT" property="createdAt" />
+		
+		<result column="TEST_CASE_TEST_SUITE_ID" property="testSuite.id" />
+		<result column="TEST_CASE_TEST_SUITE_NAME" property="testSuite.name" />
+		<result column="TEST_CASE_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
+		<result column="TEST_CASE_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+		<result column="TEST_CASE_TEST_SUITE_MODIFIED_AT" property="testSuite.modifiedAt" />
+		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
+		
+		<result column="TEST_CASE_USER_ID" property="user.id" />
+		<result column="TEST_CASE_USER_USERNAME" property="user.userName" />
+		<result column="TEST_CASE_USER_FIRST_NAME" property="user.firstName" />
+		<result column="TEST_CASE_USER_LAST_NAME" property="user.lastName" />
+		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
+		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
+		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
+	</resultMap>
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount" id="TestCaseOwnersCountResultMap" autoMapping="false">
+		<result column="TEST_CASE_OWNER_COUNT_COUNT" property="count" />
+		<result column="TEST_CASE_OWNER_COUNT_USERNAME" property="userName" />
+	</resultMap>
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount" id="TestCaseImplementationCountResultMap" autoMapping="false">
+		<result column="TEST_CASE_IMPLEMENTATION_COUNT_COUNT" property="count" />
+		<result column="TEST_CASE_IMPLEMENTATION_COUNT_DATE" property="date" />
 	</resultMap>
 
 </mapper>

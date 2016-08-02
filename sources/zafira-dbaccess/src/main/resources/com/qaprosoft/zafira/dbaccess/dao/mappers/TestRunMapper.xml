@@ -118,6 +118,31 @@
 	               AND TR.ID = #{id}
 	            ]]>
 			</if>
+			<if test="null != testSuite">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+	            ]]>
+			</if>
+			<if test="null != executionURL">
+	            <![CDATA[
+	               AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
+	            ]]>
+			</if>
+			<if test="null != environment">
+	            <![CDATA[
+	               AND TR.CONFIG_XML LIKE CONCAT('%', #{environment}, '%')
+	            ]]>
+			</if>
+			<if test="null != platform">
+	            <![CDATA[
+	               AND TR.CONFIG_XML LIKE CONCAT('%', #{platform}, '%')
+	            ]]>
+			</if>
+			<if test="null != date">
+	            <![CDATA[
+	               AND DATE(TR.CREATED_AT) = DATE(#{date})
+	            ]]>
+			</if>
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
@@ -140,11 +165,42 @@
                 COUNT(*)
             FROM
                 zafira.TEST_RUNS TR
+			LEFT JOIN zafira.USERS U
+				ON TR.USER_ID = U.ID
+			LEFT JOIN zafira.JOBS J
+				ON TR.JOB_ID = J.ID
+			LEFT JOIN zafira.TEST_SUITES TS
+				ON TR.TEST_SUITE_ID = TS.ID
         ]]>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
 	            <![CDATA[
 	               AND TR.ID = #{id}
+	            ]]>
+			</if>
+			<if test="null != testSuite">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+	            ]]>
+			</if>
+			<if test="null != executionURL">
+	            <![CDATA[
+	               AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
+	            ]]>
+			</if>
+			<if test="null != environment">
+	            <![CDATA[
+	               AND TR.CONFIG_XML LIKE CONCAT('%', #{environment}, '%')
+	            ]]>
+			</if>
+			<if test="null != platform">
+	            <![CDATA[
+	               AND TR.CONFIG_XML LIKE CONCAT('%', #{platform}, '%')
+	            ]]>
+			</if>
+			<if test="null != date">
+	            <![CDATA[
+	               AND DATE(TR.CREATED_AT) = DATE(#{date})
 	            ]]>
 			</if>
 		</trim>

@@ -110,6 +110,9 @@
 					#{testRunId}
 				</foreach>
 			</if>
+			<if test="null != testCaseId">
+				AND T.TEST_CASE_ID = #{testCaseId}
+			</if>
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
@@ -142,9 +145,26 @@
 					#{testRunId}
 				</foreach>
 			</if>
+			<if test="null != testCaseId">
+				AND T.TEST_CASE_ID = #{testCaseId}
+			</if>
 		</trim>
     </select>
-
+    
+    <select id="getTestStatusesStatistics" resultMap="TestStatusCountResultMap">
+		<![CDATA[
+			SELECT 
+				STATUS AS TEST_STATUS_COUNT_STATUS, 
+				COUNT(*) AS TEST_STATUS_COUNT_COUNT, 
+				DATE(CREATED_AT) AS TEST_STATUS_COUNT_DATE 
+			FROM 
+				zafira.TESTS
+			WHERE 
+				AGE(CREATED_AT) < INTERVAL '30 day' 
+			GROUP BY DATE(CREATED_AT), STATUS
+		]]>
+	</select>
+	
 	<update id="updateTest">
 		<![CDATA[
 			UPDATE
@@ -225,5 +245,11 @@
 		<result column="TEST_TEST_CONFIG_MODIFIED_AT" property="testConfig.modifiedAt" />
 		<result column="TEST_TEST_CONFIG_CREATED_AT" property="testConfig.createdAt" />
 	</resultMap>
-
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount" id="TestStatusCountResultMap" autoMapping="false">
+		<result column="TEST_STATUS_COUNT_COUNT" property="count" />
+		<result column="TEST_STATUS_COUNT_STATUS" property="status" />
+		<result column="TEST_STATUS_COUNT_DATE" property="date" />
+	</resultMap>
+	
 </mapper>

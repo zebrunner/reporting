@@ -7,10 +7,17 @@ img.pending {
 	width: 20px;
 }
 
+.results_header {
+	padding: 10px 4px;
+	margin: 5px 0;
+	background: #fafafa;
+}
+
 .run_result {
 	border: 1px solid #e6e6e6;
-	padding: 15px 5px;
+	padding: 8px 4px;
 	margin: 5px 0;
+	min-height: 40px;
 }
 
 .result_PASSED {
@@ -29,12 +36,16 @@ img.pending {
 	border-left: solid 8px #f0ad4e;
 }
 
+.result_SKIPPED {
+	border-left: solid 8px #f0ad4e;
+}
+
 .test_result {
 	border-top: solid #e6e6e6 1px;
 	border-bottom: solid #e6e6e6 1px; 
 	border-right: solid #e6e6e6 1px;
 	margin: 5px 0;
-	padding: 15px 5px;
+	padding: 8px 4px;
 }
 
 .test_result.PASSED {
@@ -134,4 +145,43 @@ img.pending {
 .label-warning-empty {
 	color: #f0ad4e;
 }
+
+.danger {
+	color: red;
+}
+
+.platform-icon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 20px;
+	height: 20px;
+	background: url(../img/platforms.png) no-repeat;
+	background-position: 150px 0;
+}
+
+.platform-icon.safari {
+	background-position: -3px -35px;
+}
+
+.platform-icon.chrome {
+	background-position: -3px -115px;
+}
+
+.platform-icon.firefox {
+	background-position: -3px -70px;
+}
+
+.platform-icon.iexplore, .platform-icon.ie, .platform-icon.edge {
+	background-position: -3px -3px;
+}
+
+.platform-icon.android, .platform-icon.Android {
+	background-position: -3px -206px;
+}
+
+.platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
+	background-position: -3px -252px;
+}
+
+
 

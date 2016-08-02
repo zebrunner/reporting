@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging' ]);
 
 ZafiraApp.directive('ngReallyClick', [ function() {
 	return {
@@ -41,6 +41,51 @@ angular.module('ZafiraApp').filter('orderObjectBy', function() {
 	    return filtered;
 	  };
 });
+
+ZafiraApp.directive('showMore', [function() {
+    return {
+        restrict: 'AE',
+        replace: true,
+        scope: {
+            text: '=',
+            limit:'='
+        },
+
+        template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" ng-show="isShowMore">Show more</a><a href="javascript:;" ng-click="showLess()" ng-hide="isShowMore">Show less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
+
+        link: function(scope, iElement, iAttrs) {
+
+            
+            scope.end = scope.limit;
+            scope.isShowMore = true;
+            scope.largeText = true;
+
+            if (scope.text.length <= scope.limit) {
+                scope.largeText = false;
+            };
+
+            scope.showMore = function() {
+
+                scope.end = scope.text.length;
+                scope.isShowMore = false;
+            };
+
+            scope.showLess = function() {
+
+                scope.end = scope.limit;
+                scope.isShowMore = true;
+            };
+        }
+    };
+}]);
+
+ZafiraApp.filter('subString', function() {
+    return function(str, start, end) {
+        if (str != undefined) {
+            return str.substr(start, end);
+        }
+    }
+})
 
 ZafiraApp.directive('contextMenu', ["$parse", "$q", "$sce", function ($parse, $q, custom, $sce) {
 

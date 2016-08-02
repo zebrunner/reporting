@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Test;
+import com.qaprosoft.zafira.dbaccess.model.Test.Status;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.TestType;
@@ -76,5 +79,12 @@ public class TestsController extends AbstractController
 	public @ResponseBody SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) throws ServiceException
 	{
 		return testService.searchTests(sc);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="statuses/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Long, Map<Status, TestStatusesCount>> getTestsStatusStatistics() throws ServiceException
+	{
+		return testService.getTestStatusesStatistics();
 	}
 }

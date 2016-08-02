@@ -5,7 +5,7 @@ public class SearchCriteria
 	public enum SortOrder {ASC, DESC};
 	
 	// Pages are zero-based
-	private Integer page = 0;
+	private Integer page = 1;
 	// The very default page size, just not to get NPE'd
 	private Integer pageSize = 25;
 	
@@ -33,7 +33,7 @@ public class SearchCriteria
 
 	public Integer getOffset()
 	{
-		return page * pageSize;
+		return (page - 1) * pageSize;
 	}
 
 	public SortOrder getSortOrder()
