@@ -88,6 +88,13 @@ public class TestRunsController extends AbstractController
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<TestRun> searchTestRuns() throws ServiceException
+	{
+		return testRunService.searchTestRuns(new TestRunSearchCriteria()).getResults();
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value="ciRunId") String ciRunId) throws ServiceException
 	{

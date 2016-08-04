@@ -29,6 +29,7 @@
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/routing.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/navigation-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/dashboard-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testruns-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testcases-controllers.js'/>" type="text/javascript"></script>

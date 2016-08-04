@@ -23,7 +23,7 @@
 	            <div class="navbar-header">
 	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.2</small></a>
 	            </div>
-	            <ul class="nav navbar-top-links navbar-right">
+	            <ul class="nav navbar-top-links navbar-right"  data-ng-controller="NavigationCtrl">
 	                <li>
 	                    <a href="#/dashboard"><i class="fa fa-pie-chart fa-fw"></i> Dashboard</a>
 	               	</li>
@@ -33,8 +33,8 @@
 	               	<li>
 	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
-	               	<li data-ng-show="false">
-	               		<a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	               	<li>
+	               		<a href="" data-ng-click="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 	               	</li>
 	            </ul>
 	            <!-- div class="navbar-default sidebar" role="navigation">
