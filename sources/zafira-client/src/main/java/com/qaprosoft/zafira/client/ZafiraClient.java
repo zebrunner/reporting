@@ -407,6 +407,6 @@ public class ZafiraClient
 	
 	private String getBasicAuth(String username, String password)
 	{
-		return "Basic " + Base64.encode((username + ":" + password).getBytes());
+		return "Basic " + new String(Base64.encode(username + ":" + password));
 	}
 }
