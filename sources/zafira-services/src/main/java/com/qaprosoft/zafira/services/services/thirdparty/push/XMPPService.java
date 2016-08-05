@@ -14,7 +14,7 @@ import com.qaprosoft.zafira.services.util.xmpp.XMPPConnectionManager;
 @Service
 public class XMPPService implements IPushService
 {
-	private static final Logger logger = LoggerFactory.getLogger(PubNubService.class);
+	private static final Logger logger = LoggerFactory.getLogger(XMPPService.class);
 	
 	@Autowired
 	@Qualifier(value="xmppConnectionManager")

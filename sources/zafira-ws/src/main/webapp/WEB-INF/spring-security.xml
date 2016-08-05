@@ -11,9 +11,20 @@
 		</security:authentication-provider>
 	</security:authentication-manager>
 
-	<security:http use-expressions="true">
-		<security:intercept-url pattern="/off" access="hasRole('ADMIN')" />
+	<security:http auto-config="true" use-expressions="true" entry-point-ref="apiUnauthorizedEntryPoint">
+		<security:form-login login-page="/signin" always-use-default-target="true" default-target-url="/" authentication-failure-url="/signin/failed" />
+		<security:logout logout-success-url="/signin" invalidate-session="true" />
 		<security:http-basic />
+		<security:intercept-url pattern="/signin" access="permitAll"/>
+		<security:intercept-url pattern="/signin/failed" access="permitAll"/>  
+		<security:intercept-url pattern="/j_spring_security_check" access="permitAll"/>
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/status" access="permitAll" />
+		<security:intercept-url pattern="/**" access="hasRole('ADMIN')" />
 	</security:http>
+	
+	<bean id="apiUnauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.servlet.listeners.APIUnauthorizedEntryPoint">
+	    <constructor-arg  name="loginUrl" value="/signin"/>
+	</bean>
 
 </beans>
