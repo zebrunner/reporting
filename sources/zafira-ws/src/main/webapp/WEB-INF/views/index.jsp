@@ -34,7 +34,7 @@
 	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
 	               	<li>
-	               		<a href="" data-ng-click="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	               		<a href="<c:url value="/j_spring_security_logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 	               	</li>
 	            </ul>
 	            <!-- div class="navbar-default sidebar" role="navigation">
