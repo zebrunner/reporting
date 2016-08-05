@@ -6,7 +6,7 @@
 	<security:authentication-manager>
 		<security:authentication-provider>
 			<security:user-service>
-				<security:user name="admin" password="admin" authorities="ADMIN" />
+				<security:user name="admin" password="avatei16" authorities="ADMIN" />
 			</security:user-service>
 		</security:authentication-provider>
 	</security:authentication-manager>
