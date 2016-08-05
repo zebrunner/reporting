@@ -16,7 +16,7 @@ import com.qaprosoft.zafira.client.model.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import com.sun.jersey.core.util.Base64;
 
 public class ZafiraClient
 {
