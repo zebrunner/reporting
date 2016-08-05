@@ -130,12 +130,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%', #{environment}, '%')
+	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{environment}, '%')
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%', #{platform}, '%')
+	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{platform}, '%')
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -190,12 +190,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%', #{environment}, '%')
+	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{environment}, '%')
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%', #{platform}, '%')
+	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{platform}, '%')
 	            ]]>
 			</if>
 			<if test="null != date">
