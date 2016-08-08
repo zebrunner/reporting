@@ -15,6 +15,10 @@
 			<b>userName</b>
 		</field>
 		<field>
+			<a>password</a>
+			<b>password</b>
+		</field>
+		<field>
 			<a>email</a>
 			<b>email</b>
 		</field>

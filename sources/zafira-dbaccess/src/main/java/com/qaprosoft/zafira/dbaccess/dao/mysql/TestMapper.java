@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;

@@ -10,6 +10,7 @@ public class UserType extends AbstractType
 {
 	@NotNull
 	private String userName;
+	private String password;
 	private String email;
 	private String firstName;
 	private String lastName;
@@ -22,6 +23,16 @@ public class UserType extends AbstractType
 	public void setUserName(String userName)
 	{
 		this.userName = userName;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
 	}
 
 	public String getEmail()

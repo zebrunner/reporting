@@ -24,7 +24,18 @@
             	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
             	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
             	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Environment" data-ng-model="testRunSearchCriteria.environment"></div>
-            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform"></div>
+            	<div class="col-lg-1">
+            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
+            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
+            			<option value="" disabled selected>Platform</option>
+            			<option value="Android">Android</option>
+            			<option value="iOS">iOS</option>
+            			<option value="chrome">chrome</option>
+            			<option value="firefox">firefox</option>
+            			<option value="safari">safari</option>
+            			<option value="ie">ie</option>
+            		</select>
+            	</div>
             	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunSearchCriteria.date"></div>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">

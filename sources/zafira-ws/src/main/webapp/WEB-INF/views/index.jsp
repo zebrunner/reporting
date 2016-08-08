@@ -21,7 +21,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.6 | client 1.6.2</small></a>
+	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.7 | client 1.7.2</small></a>
 	            </div>
 	            <ul class="nav navbar-top-links navbar-right"  data-ng-controller="NavigationCtrl">
 	                <li>
@@ -33,6 +33,11 @@
 	               	<li>
 	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
+	               	<sec:authorize access="hasAnyRole('ADMIN')">
+	               	<li>
+	                    <a href="#/users"><i class="fa fa-user fa-fw"></i> Users</a>
+	               	</li>
+	               	</sec:authorize>
 	               	<li>
 	               		<a href="<c:url value="/j_spring_security_logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 	               	</li>

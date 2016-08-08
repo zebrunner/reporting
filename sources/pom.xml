@@ -223,6 +223,11 @@
 				<artifactId>spring-security-taglibs</artifactId>
 				<version>${spring-security.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt-springsecurity3</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.aspectj</groupId>

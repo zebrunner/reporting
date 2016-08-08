@@ -130,12 +130,13 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{environment}, '%')
+	               AND LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>env</key><value>', #{environment}, '%'))
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{platform}, '%')
+	               AND (LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>browser</key><value>', #{platform}, '%'))
+	            	OR  LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>mobile_platform_name</key><value>', #{platform}, '%')))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -190,12 +191,13 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{environment}, '%')
+	               AND LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>env</key><value>', #{environment}, '%'))
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.CONFIG_XML LIKE CONCAT('%<value>', #{platform}, '%')
+	               AND (LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>browser</key><value>', #{platform}, '%'))
+	            	OR  LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>mobile_platform_name</key><value>', #{platform}, '%')))
 	            ]]>
 			</if>
 			<if test="null != date">

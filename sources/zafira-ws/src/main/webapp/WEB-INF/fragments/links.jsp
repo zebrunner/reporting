@@ -12,6 +12,7 @@
 <script src="<spring:url value='/resources/js/angular/angular-animate.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-route.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/pubnub-angular.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
@@ -33,3 +34,4 @@
 <script src="<spring:url value='/resources/js/controllers/dashboard-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testruns-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testcases-controllers.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/users-controllers.js'/>" type="text/javascript"></script>

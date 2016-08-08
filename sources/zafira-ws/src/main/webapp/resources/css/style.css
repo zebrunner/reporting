@@ -182,3 +182,13 @@ img.pending {
 .platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
 	background-position: -3px -252px;
 }
+
+select.icon-menu option {
+	background-repeat:no-repeat;
+	background-position:bottom left;
+	padding-left:30px;
+}
+
+select option[value="Android"] {
+background-image:url(../img/key.png);
+}

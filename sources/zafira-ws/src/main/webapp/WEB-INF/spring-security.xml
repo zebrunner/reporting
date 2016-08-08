@@ -9,7 +9,18 @@
 				<security:user name="admin" password="avatei16" authorities="ADMIN" />
 			</security:user-service>
 		</security:authentication-provider>
+		<security:authentication-provider user-service-ref="userAuthService">
+			<security:password-encoder ref="passwordEncoder" />
+		</security:authentication-provider>
 	</security:authentication-manager>
+	
+	<bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
+		<property name="passwordEncryptor">
+			<ref bean="passwordEncryptor" />
+		</property>
+	</bean>
+	
+	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserAuthService" />
 
 	<security:http auto-config="true" use-expressions="true" entry-point-ref="apiUnauthorizedEntryPoint">
 		<security:form-login login-page="/signin" always-use-default-target="true" default-target-url="/" authentication-failure-url="/signin/failed" />
@@ -20,7 +31,7 @@
 		<security:intercept-url pattern="/j_spring_security_check" access="permitAll"/>
 		<security:intercept-url pattern="/resources/**" access="permitAll" />
 		<security:intercept-url pattern="/status" access="permitAll" />
-		<security:intercept-url pattern="/**" access="hasRole('ADMIN')" />
+		<security:intercept-url pattern="/**" access="hasAnyRole('ADMIN', 'USER')" />
 	</security:http>
 	
 	<bean id="apiUnauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.servlet.listeners.APIUnauthorizedEntryPoint">

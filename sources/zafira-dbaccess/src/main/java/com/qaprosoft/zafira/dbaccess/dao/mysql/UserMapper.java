@@ -1,5 +1,8 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import java.util.List;
+
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.User;
 
 public interface UserMapper
@@ -15,4 +18,8 @@ public interface UserMapper
 	void deleteUserById(long id);
 
 	void deleteUser(User user);
+
+	List<User> searchUsers(UserSearchCriteria sc);
+
+	Integer getUserSearchCount(UserSearchCriteria sc);
 }
