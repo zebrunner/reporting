@@ -21,7 +21,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.7 | client 1.7.2</small></a>
+	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.7 | client 1.7.3</small></a>
 	            </div>
 	            <ul class="nav navbar-top-links navbar-right"  data-ng-controller="NavigationCtrl">
 	                <li>

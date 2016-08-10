@@ -45,14 +45,19 @@ public class ZafiraClient
 	private String username;
 	private String password;
 	
-	public ZafiraClient(String serviceURL, String username, String password)
+	public ZafiraClient(String serviceURL)
 	{
 		this.serviceURL = serviceURL;
-		this.username = username;
-		this.password = password;
 		this.client = Client.create();
 		this.client.setConnectTimeout(TIMEOUT);
 		this.client.setReadTimeout(TIMEOUT);
+	}
+	
+	public ZafiraClient(String serviceURL, String username, String password)
+	{
+		this(serviceURL);
+		this.username = username;
+		this.password = password;
 	}
 	
 	public boolean isAvailable()
@@ -80,7 +85,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + USERS_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS =  initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, user);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -101,7 +106,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + JOBS_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, job);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -122,7 +127,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_SUITES_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testSuite);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -143,7 +148,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testRun);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -164,7 +169,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_FINISH_PATH, id));
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -185,7 +190,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_BY_ID_PATH, id));
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -206,7 +211,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
-			ClientResponse clientRS = webResource.queryParam("ciRunId", ciRunId).type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -227,7 +232,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TESTS_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, test);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -248,7 +253,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_FINISH_PATH, test.getId()));
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, test);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -281,7 +286,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TESTS_DUPLICATES_PATH);
-			webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.put(ClientResponse.class, test);
 		} catch (Exception e)
 		{
@@ -295,7 +300,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_WORK_ITEMS_PATH, testId));
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, workItems);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -316,7 +321,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_CASES_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testCase);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -337,7 +342,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_CASES_BATCH_PATH);
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, testCases);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -358,7 +363,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_RESULTS_PATH, id));
-			ClientResponse clientRS = webResource.type(MediaType.APPLICATION_JSON).header("Authorization", getBasicAuth(username, password))
+			ClientResponse clientRS = initBasicAuth(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
@@ -405,8 +410,12 @@ public class ZafiraClient
 		}
 	}
 	
-	private String getBasicAuth(String username, String password)
+	private WebResource.Builder initBasicAuth(WebResource.Builder builder)
 	{
-		return "Basic " + new String(Base64.encode(username + ":" + password));
+		if(username != null && password != null)
+		{
+			builder.header("Authorization", "Basic " + new String(Base64.encode(username + ":" + password)));
+		}
+		return builder;
 	}
 }
