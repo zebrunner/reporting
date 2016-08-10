@@ -201,7 +201,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.addTestRun(data.results[i]);
 			}
 			
-			$scope.loadTests(testRunIds);
+			if(testRunIds.legth > 0)
+			{
+				$scope.loadTests(testRunIds);
+			}
 			
 		}).error(function() {
 			console.error('Failed to search test runs');
