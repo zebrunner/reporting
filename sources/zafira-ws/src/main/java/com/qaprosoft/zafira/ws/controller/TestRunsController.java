@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,13 +88,6 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException
 	{
 		return testRunService.searchTestRuns(sc);
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<TestRun> searchTestRuns() throws ServiceException
-	{
-		return testRunService.searchTestRuns(new TestRunSearchCriteria()).getResults();
 	}
 	
 	@ResponseStatus(HttpStatus.OK)

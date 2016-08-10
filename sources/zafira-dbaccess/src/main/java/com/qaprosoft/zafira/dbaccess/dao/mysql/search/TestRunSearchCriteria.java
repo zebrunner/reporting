@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TestRunSearchCriteria extends SearchCriteria
@@ -10,6 +12,8 @@ public class TestRunSearchCriteria extends SearchCriteria
 	private String environment;
 	private String platform;
 	private Date date;
+	private Date fromDate;
+	private Date toDate;
 	
 	public TestRunSearchCriteria()
 	{
@@ -75,4 +79,35 @@ public class TestRunSearchCriteria extends SearchCriteria
 	{
 		this.date = date;
 	}
+
+	public Date getFromDate()
+	{
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate)
+	{
+		this.fromDate = fromDate;
+	}
+	
+	public void setFromDateString(String fromDate) throws ParseException
+	{
+		this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
+	}
+
+	public Date getToDate()
+	{
+		return toDate;
+	}
+
+	public void setToDate(Date toDate)
+	{
+		this.toDate = toDate;
+	}
+	
+	public void setToDateString(String toDate) throws ParseException
+	{
+		this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
+	}
+
 }

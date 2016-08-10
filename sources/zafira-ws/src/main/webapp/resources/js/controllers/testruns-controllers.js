@@ -255,9 +255,41 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		};
 	};
 	
+	$scope.populateSearchQuery = function(){
+		if($location.search().testSuite)
+		{
+			$scope.testRunSearchCriteria.testSuite = $location.search().testSuite;
+		}
+		if($location.search().platform)
+		{
+			$scope.testRunSearchCriteria.platform = $location.search().platform;
+		}
+		if($location.search().environment)
+		{
+			$scope.testRunSearchCriteria.environment = $location.search().environment;
+		}
+		if($location.search().page)
+		{
+			$scope.testRunSearchCriteria.page = $location.search().page;
+		}
+		if($location.search().pageSize)
+		{
+			$scope.testRunSearchCriteria.pageSize = $location.search().pageSize;
+		}
+		if($location.search().fromDate)
+		{
+			$scope.testRunSearchCriteria.fromDateString = $location.search().fromDate;
+		}
+		if($location.search().toDate)
+		{
+			$scope.testRunSearchCriteria.toDateString = $location.search().toDate;
+		}
+	};
+	
 	(function init(){
 		$scope.initXMPP();
 		$scope.loadTestRuns(1);
+		$scope.populateSearchQuery();
 	})();
 	
 }]);
