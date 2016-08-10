@@ -252,6 +252,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     ];
 	
 	$scope.resetSearchCriteria = function(){
+		$location.url($location.path());
 		$scope.testRunSearchCriteria = {
 			'page' : 1,
 			'pageSize' : 25
