@@ -201,7 +201,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.addTestRun(data.results[i]);
 			}
 			
-			if(testRunIds.legth > 0)
+			if(testRunIds.length > 0)
 			{
 				$scope.loadTests(testRunIds);
 			}
