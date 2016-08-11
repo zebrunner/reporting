@@ -1,22 +1,26 @@
 'use strict';
 
-ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', function($scope, $rootScope, $http, $location) {
+ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', function($scope, $rootScope, $http, $location, $cookieStore, $route) {
 
-	$scope.logout = function(){
-		var str = $location.$$absUrl.replace("http://", "http://" + new Date().getTime() + "@");
-	    var xmlhttp;
-	    if (window.XMLHttpRequest) 
-	    	xmlhttp=new XMLHttpRequest();
-	    else 
-	    	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	    xmlhttp.onreadystatechange=function()
-	    {
-	        if (xmlhttp.readyState==4) location.reload();
-	    }
-	    xmlhttp.open("GET",str,true);
-	    xmlhttp.setRequestHeader("Authorization","Basic xxxxxxxxxx")
-	    xmlhttp.send();
-	    return false;
+	$scope.project = null;
+	$scope.projects = [];
+	
+	$scope.loadProjects = function(){
+		$http.get('config/projects').success(function(projects) {
+			$scope.projects = projects;
+		}).error(function() {
+			console.error('Failed to load projects');
+		});
 	};
+	
+	$scope.setProject = function(project){
+		$cookieStore.put("project", project);
+		$scope.project = project;
+		$route.reload();
+	};
+	
+	(function init(){
+		$scope.project = $cookieStore.get("project");
+	})();
 	
 }]);

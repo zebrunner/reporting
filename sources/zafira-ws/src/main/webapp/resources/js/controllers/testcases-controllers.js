@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', function($scope, $rootScope, $http, $location, UtilService) {
+ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
 
 	$scope.UtilService = UtilService;
 	
@@ -27,7 +27,7 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 			$scope.testCasesSearchCriteria.pageSize = pageSize;
 		}
 		
-		$http.post('tests/cases/search', $scope.testCasesSearchCriteria).success(function(data) {
+		$http.post('tests/cases/search', ProjectProvider.initProject($scope.testCasesSearchCriteria)).success(function(data) {
 			$scope.testCasesSearchCriteria.page = data.page;
 			$scope.testCasesSearchCriteria.pageSize = data.pageSize;
 			$scope.testCases = data.results;

@@ -34,6 +34,7 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 			setName("lc_sanity");
 			setJobURL("http://localhost:8080/lc_sanity");
 			setJenkinsHost("http://localhost:8080");
+			setProject("P1");
 		}
 	};
 
@@ -78,6 +79,7 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 		JOB.setName("lc_regression");
 		JOB.setJobURL("http://10.2.3.2:8080/lc_regression");
 		JOB.setJenkinsHost("http://10.2.3.2:8080");
+		JOB.setProject("P2");
 		
 		jobMapper.updateJob(JOB);
 
@@ -118,6 +120,7 @@ public class JobMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(job.getName(), JOB.getName(), "Job name must match");
 		assertEquals(job.getJobURL(), JOB.getJobURL(), "Job URL must match");
 		assertEquals(job.getJenkinsHost(), JOB.getJenkinsHost(), "Jenkins host must match");
+		assertEquals(job.getProject(), JOB.getProject(), "Project must match");
 		assertEquals(job.getUser().getId(), JOB.getUser().getId(), "User ID must match");
 	}
 }

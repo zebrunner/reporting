@@ -30,7 +30,7 @@ public interface TestCaseMapper
 	
 	Integer getTestCasesSearchCount(TestCaseSearchCriteria sc);
 	
-	List<TestCaseOwnersCount> getTestCaseOwnersStatistics();
+	List<TestCaseOwnersCount> getTestCaseOwnersStatistics(@Param("project") String project);
 	
-	List<TestCaseImplementationCount> getTestCaseImplementationStatistics();
+	List<TestCaseImplementationCount> getTestCaseImplementationStatistics(@Param("project") String project);
 }

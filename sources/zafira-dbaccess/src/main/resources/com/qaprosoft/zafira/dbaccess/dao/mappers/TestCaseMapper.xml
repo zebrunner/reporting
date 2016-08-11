@@ -5,13 +5,14 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO)
+			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO, PROJECT)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
 				#{testClass},
 				#{testMethod},
-				#{info}
+				#{info},
+				#{project}
 			)
 		]]>
 	</insert>
@@ -25,6 +26,7 @@
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
 				TC.INFO AS TEST_CASE_INFO,
+				TC.PROJECT AS TEST_CASE_PROJECT,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT
 			FROM
@@ -41,6 +43,7 @@
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
 				TC.INFO AS TEST_CASE_INFO,
+				TC.PROJECT AS TEST_CASE_PROJECT,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
 				(SELECT STATUS FROM zafira.TESTS T WHERE T.TEST_CASE_ID = TC.ID ORDER BY T.ID DESC LIMIT 1) AS TEST_CASE_STATUS,
@@ -50,6 +53,7 @@
 				U.FIRST_NAME AS TEST_CASE_USER_FIRST_NAME,
 				U.LAST_NAME AS TEST_CASE_USER_LAST_NAME,
 				U.EMAIL AS TEST_CASE_USER_EMAIL,
+				U.PROJECT AS TEST_CASE_USER_PROJECT,
 				U.MODIFIED_AT AS TEST_CASE_USER_MODIFIED_AT,
 				U.CREATED_AT AS TEST_CASE_USER_CREATED_AT,
 				
@@ -58,6 +62,7 @@
 				TS.NAME AS TEST_CASE_TEST_SUITE_NAME,
 				TS.FILE_NAME AS TEST_CASE_TEST_SUITE_FILE_NAME,
 				TS.DESCRIPTION AS TEST_CASE_TEST_SUITE_DESCRIPTION,
+				TS.PROJECT AS TEST_CASE_TEST_SUITE_PROJECT,
 				TS.MODIFIED_AT AS TEST_CASE_TEST_SUITE_MODIFIED_AT,
 				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT
 			FROM
@@ -130,6 +135,11 @@
 	               AND DATE(TC.CREATED_AT) = DATE(#{date})
 	            ]]>
 			</if>
+			<if test="null != project">
+	            <![CDATA[
+	          	   AND TC.PROJECT = #{project}
+	            ]]>
+			</if>
 		</trim>
 		<![CDATA[
 			ORDER BY TS.FILE_NAME ASC
@@ -184,6 +194,11 @@
 	               AND DATE(TC.CREATED_AT) = DATE(#{date})
 	            ]]>
 			</if>
+			<if test="null != project">
+	            <![CDATA[
+	          	   AND TC.PROJECT = #{project}
+	            ]]>
+			</if>
 		</trim>
     </select>
     
@@ -196,7 +211,14 @@
 				zafira.TEST_CASES TC 
 			INNER JOIN 
 				zafira.USERS U 
-			ON U.ID = TC.USER_ID 
+			ON U.ID = TC.USER_ID
+		]]>
+		<if test="null != project">
+            <![CDATA[
+          	   WHERE TC.PROJECT = #{project}
+            ]]>
+		</if>
+		<![CDATA[
 			GROUP BY U.USERNAME;
 		]]>
 	</select>
@@ -210,6 +232,13 @@
 				zafira.TEST_CASES TC
 			WHERE 
 				AGE(TC.CREATED_AT) < INTERVAL '30 day'
+		]]>
+		<if test="null != project">
+            <![CDATA[
+          	   AND TC.PROJECT = #{project}
+            ]]>
+		</if>
+		<![CDATA[
 			GROUP BY DATE(CREATED_AT) 
 			ORDER BY DATE(CREATED_AT) ASC;
 		]]>
@@ -243,7 +272,12 @@
 				</if>
 				<if test="null != info">
 		            <![CDATA[
-		               INFO = #{info}
+		               INFO = #{info},
+		            ]]>
+				</if>
+				<if test="null != project">
+		            <![CDATA[
+		               PROJECT = #{project}
 		            ]]>
 				</if>
 			</set>
@@ -276,6 +310,7 @@
 		<result column="TEST_CASE_TEST_METHOD" property="testMethod" />
 		<result column="TEST_CASE_INFO" property="info" />
 		<result column="TEST_CASE_STATUS" property="status" />
+		<result column="TEST_CASE_PROJECT" property="project" />
 		<result column="TEST_CASE_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CASE_CREATED_AT" property="createdAt" />
 		
@@ -283,6 +318,7 @@
 		<result column="TEST_CASE_TEST_SUITE_NAME" property="testSuite.name" />
 		<result column="TEST_CASE_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
 		<result column="TEST_CASE_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+		<result column="TEST_CASE_TEST_SUITE_PROJECT" property="testSuite.project" />
 		<result column="TEST_CASE_TEST_SUITE_MODIFIED_AT" property="testSuite.modifiedAt" />
 		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
 		
@@ -291,6 +327,7 @@
 		<result column="TEST_CASE_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_CASE_USER_LAST_NAME" property="user.lastName" />
 		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
+		<result column="TEST_CASE_USER_PROJECT" property="user.project" />
 		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
 		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
 	</resultMap>

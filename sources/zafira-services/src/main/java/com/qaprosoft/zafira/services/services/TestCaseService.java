@@ -98,14 +98,14 @@ public class TestCaseService
 	}
 	
 	@Transactional(readOnly = true)
-	public List<TestCaseOwnersCount> getTestCaseOwnersStatistics() throws ServiceException
+	public List<TestCaseOwnersCount> getTestCaseOwnersStatistics(String project) throws ServiceException
 	{
-		return testCaseMapper.getTestCaseOwnersStatistics();
+		return testCaseMapper.getTestCaseOwnersStatistics(project);
 	}
 	
 	@Transactional(readOnly = true)
-	public List<TestCaseImplementationCount> getTestCaseImplementationStatistics() throws ServiceException
+	public List<TestCaseImplementationCount> getTestCaseImplementationStatistics(String project) throws ServiceException
 	{
-		return testCaseMapper.getTestCaseImplementationStatistics();
+		return testCaseMapper.getTestCaseImplementationStatistics(project);
 	}
 }

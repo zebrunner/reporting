@@ -56,5 +56,9 @@
 			<a>retry</a>
 			<b>retry</b>
 		</field>
+		<field>
+			<a>project</a>
+			<b>project</b>
+		</field>
 	</mapping>
 </mappings>

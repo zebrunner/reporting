@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,20 +54,22 @@ public class TestCasesController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase) throws ServiceException
+	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
+		testCase.setProject(project);
 		return mapper.map(testCaseService.createOrUpdateCase(mapper.map(testCase, TestCase.class)), TestCaseType.class);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs) throws ServiceException
+	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		if(!ArrayUtils.isEmpty(tcs))
 		{
 			TestCase [] testCases = new TestCase[tcs.length];
 			for(int i = 0; i < tcs.length; i++)
 			{
+				testCases[i].setProject(project);
 				testCases[i] = mapper.map(tcs[i], TestCase.class);
 			}
 			testCases = testCaseService.createOrUpdateCases(testCases);
@@ -83,15 +87,15 @@ public class TestCasesController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="owners/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody  List<TestCaseOwnersCount> getTestCaseOwnersStatistics() throws ServiceException
+	public @ResponseBody  List<TestCaseOwnersCount> getTestCaseOwnersStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
 	{
-		return testCaseService.getTestCaseOwnersStatistics();
+		return testCaseService.getTestCaseOwnersStatistics(project);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="implementation/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody  List<TestCaseImplementationCount> getTestCaseImplementationStatistics() throws ServiceException
+	public @ResponseBody  List<TestCaseImplementationCount> getTestCaseImplementationStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
 	{
-		return testCaseService.getTestCaseImplementationStatistics();
+		return testCaseService.getTestCaseImplementationStatistics(project);
 	}
 }

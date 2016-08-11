@@ -1,9 +1,9 @@
 'use strict';
 
-ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', function($scope, $rootScope, $http, $location, UtilService) {
+ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', function($scope, $rootScope, $http, $location, ProjectProvider) {
 
 	$scope.loadTestStatusesStatistics = function() {
-		$http.get('tests/statuses/statistics').success(function(results) {
+		$http.get('tests/statuses/statistics' + ProjectProvider.getProjectQueryParam()).success(function(results) {
 			var data = [];
 			angular.element(document.querySelector('#test-results-statistics')).html('');
 			for (var key in results)
@@ -32,7 +32,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	};
 	
 	$scope.loadTestCaseOwnersStatistics = function() {
-		$http.get('tests/cases/owners/statistics').success(function(results) {
+		$http.get('tests/cases/owners/statistics' + ProjectProvider.getProjectQueryParam()).success(function(results) {
 			var statistics = [];
 			for(var i = 0; i < results.length; i++)
 			{
@@ -49,7 +49,7 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	};
 	
 	$scope.loadTestCaseImplementationStatistics = function() {
-		$http.get('tests/cases/implementation/statistics').success(function(results) {
+		$http.get('tests/cases/implementation/statistics' + ProjectProvider.getProjectQueryParam()).success(function(results) {
 			var statistics = [];
 			for(var i = 0; i < results.length; i++)
 			{

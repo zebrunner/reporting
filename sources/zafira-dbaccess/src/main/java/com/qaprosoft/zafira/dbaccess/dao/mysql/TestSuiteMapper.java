@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.model.TestSuite;
@@ -20,4 +22,6 @@ public interface TestSuiteMapper
 	void deleteTestSuiteById(long id);
 
 	void deleteTestSuite(TestSuite testSuite);
+	
+	List<String> getAllProjects();
 }

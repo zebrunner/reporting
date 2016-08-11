@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', function($scope, $rootScope, $http, $location, UtilService) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -183,7 +183,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$scope.testRunSearchCriteria.id = $scope.testRunId;
 		}
 		
-		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
+		$http.post('tests/runs/search', ProjectProvider.initProject($scope.testRunSearchCriteria)).success(function(data) {
 			
 			$scope.tests = {};
 			$scope.testRuns = {};

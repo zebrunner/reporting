@@ -39,13 +39,6 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 	
-	<bean id="pubNubService" class="com.qaprosoft.zafira.services.services.thirdparty.push.PubNubService">
-		<constructor-arg index="0" value="${zafira.pubnub.enabled}" />
-		<constructor-arg index="1" value="${zafira.pubnub.publish.key}" />
-		<constructor-arg index="2" value="${zafira.pubnub.subscribe.key}" />
-		<constructor-arg index="3" value="${zafira.pubnub.admin.uuid}" />
-	</bean>
-	
 	<bean id="xmppService" class="com.qaprosoft.zafira.services.services.thirdparty.push.XMPPService" />
 	
 	<bean id="xmppServerConfig" class="org.jivesoftware.smack.ConnectionConfiguration"> 

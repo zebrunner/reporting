@@ -171,10 +171,10 @@ public class TestService
 	}
 	
 	@Transactional(readOnly = true)
-	public Map<Long, Map<Status, TestStatusesCount>> getTestStatusesStatistics() throws ServiceException
+	public Map<Long, Map<Status, TestStatusesCount>> getTestStatusesStatistics(String project) throws ServiceException
 	{
 		Map<Long, Map<Status, TestStatusesCount>> statistics = new HashMap<>();
-		List<TestStatusesCount> results = testMapper.getTestStatusesStatistics();
+		List<TestStatusesCount> results = testMapper.getTestStatusesStatistics(project);
 		for(TestStatusesCount result : results)
 		{
 			long time = result.getDate().getTime();

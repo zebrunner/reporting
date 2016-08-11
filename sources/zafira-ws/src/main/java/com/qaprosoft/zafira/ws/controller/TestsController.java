@@ -12,8 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -38,8 +40,9 @@ public class TestsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestType startTest(@RequestBody @Valid TestType t) throws ServiceException
+	public @ResponseBody TestType startTest(@RequestBody @Valid TestType t, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
+		t.setProject(project);
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
 		return mapper.map(test, TestType.class);
 	}
@@ -83,8 +86,8 @@ public class TestsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="statuses/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Long, Map<Status, TestStatusesCount>> getTestsStatusStatistics() throws ServiceException
+	public @ResponseBody Map<Long, Map<Status, TestStatusesCount>> getTestsStatusStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
 	{
-		return testService.getTestStatusesStatistics();
+		return testService.getTestStatusesStatistics(project);
 	}
 }

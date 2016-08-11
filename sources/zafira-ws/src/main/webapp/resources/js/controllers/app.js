@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies' ]);
 
 ZafiraApp.directive('ngReallyClick', [ function() {
 	return {
@@ -25,6 +25,28 @@ ZafiraApp.service('UtilService', function() {
 	    return fullStr.substr(0, frontChars) + 
 	           separator + 
 	           fullStr.substr(fullStr.length - backChars);
+    };
+});
+
+ZafiraApp.provider('ProjectProvider', function() {
+    this.$get = function($cookieStore) {
+        return {
+            initProject: function(sc) {
+            	if($cookieStore.get("project") != null)
+            	{
+            		sc.project = $cookieStore.get("project");
+            	}
+                return sc;
+            },
+            getProjectQueryParam: function(sc) {
+            	var query = "";
+            	if($cookieStore.get("project") != null)
+            	{
+            		query = "?project=" + $cookieStore.get("project");
+            	}
+                return query; 
+            }
+        }
     };
 });
 

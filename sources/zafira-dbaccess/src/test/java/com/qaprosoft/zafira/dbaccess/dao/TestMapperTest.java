@@ -33,7 +33,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		private static final long serialVersionUID = 1L;
 		{
 			TestConfig testConfig = new TestConfig();
-			testConfig.setId(5L);
+			testConfig.setId(1L);
 			testConfig.setUrl("http://localhost:8080");
 			testConfig.setEnv("QA");
 			testConfig.setPlatform("iOS");
@@ -55,6 +55,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setFinishTime(new Date());
 			setLogURL("http://1");
 			setDemoURL("http://1");
+			setProject("P1");
 			setTestConfig(testConfig);
 		}
 	};
@@ -100,6 +101,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setLogURL("http://2");
 		TEST.setDemoURL("http://2");
 		TEST.setTestConfig(new TestConfig(3L));
+		TEST.setProject("P2");
 		
 		testMapper.updateTest(TEST);
 
@@ -155,5 +157,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
 		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
 		assertEquals(test.getTestConfig().getId(), TEST.getTestConfig().getId(), "Config ID must match");
+		assertEquals(test.getProject(), TEST.getProject(), "Project must match");
 	}
 }

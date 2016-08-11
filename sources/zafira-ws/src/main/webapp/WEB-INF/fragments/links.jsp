@@ -11,6 +11,7 @@
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-animate.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-route.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-cookies.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 

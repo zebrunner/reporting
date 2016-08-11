@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * AbstractEntity - base for all domains.
  * 
@@ -19,6 +21,8 @@ public abstract class AbstractEntity implements Serializable
 	private Date modifiedAt;
 	@Transient
 	private Date createdAt;
+	@JsonIgnore
+	private String project;
 
 	public Long getId()
 	{
@@ -48,5 +52,15 @@ public abstract class AbstractEntity implements Serializable
 	public void setCreatedAt(Date createdAt)
 	{
 		this.createdAt = createdAt;
+	}
+
+	public String getProject()
+	{
+		return project;
+	}
+
+	public void setProject(String project)
+	{
+		this.project = project;
 	}
 }

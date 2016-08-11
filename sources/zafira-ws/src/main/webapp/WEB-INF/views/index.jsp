@@ -21,9 +21,23 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.7 | client 1.7.3</small></a>
+	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.7 | client 1.7.4</small></a>
 	            </div>
-	            <ul class="nav navbar-top-links navbar-right"  data-ng-controller="NavigationCtrl">
+	            <ul class="nav navbar-top-links navbar-left" data-ng-controller="NavigationCtrl">
+		            <li class="dropdown">
+		                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-ng-click="loadProjects()">Project <span data-ng-show="project"> ({{project}})</span> <b class="caret"></b></a>
+		                    <ul class="dropdown-menu">
+		                    	<li>
+		                            <a data-ng-click="setProject(null)" style="color: red;">Clear x</a>
+		                        </li>
+		                        <li data-ng-repeat="project in projects">
+		                            <a data-ng-click="setProject(project)">{{project}}</a>
+	                        </li>
+	                    </ul>
+	                </li>
+	            </ul>
+	            <ul class="nav navbar-top-links navbar-right">
+	                
 	                <li>
 	                    <a href="#/dashboard"><i class="fa fa-pie-chart fa-fw"></i> Dashboard</a>
 	               	</li>

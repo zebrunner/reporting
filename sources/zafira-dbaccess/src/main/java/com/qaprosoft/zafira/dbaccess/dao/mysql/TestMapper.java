@@ -33,5 +33,5 @@ public interface TestMapper
 	
 	Integer getTestsSearchCount(TestSearchCriteria sc);
 	
-	List<TestStatusesCount> getTestStatusesStatistics();
+	List<TestStatusesCount> getTestStatusesStatistics(@Param("project") String project);
 }

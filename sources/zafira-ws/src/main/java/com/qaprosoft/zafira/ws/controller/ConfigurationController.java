@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,35 +14,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.TestSuiteService;
 import com.qaprosoft.zafira.services.services.VersionService;
-import com.qaprosoft.zafira.services.services.thirdparty.push.Channel;
-import com.qaprosoft.zafira.services.services.thirdparty.push.PubNubService;
 
 @Controller
 @RequestMapping("config")
 public class ConfigurationController extends AbstractController
 {
 	@Autowired
-	private PubNubService pubNubService;
-	
-	@Autowired
 	private VersionService versionService;
 	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "pubnub", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, String> getPubNubConfig() throws ServiceException
-	{
-		Map<String, String> config = new HashMap<String, String>();
-		if(pubNubService.isEnabled())
-		{
-			config.put("udid", "zafira");
-			config.put("publishKey", pubNubService.getPublishKey());
-			config.put("subscribeKey", pubNubService.getSubscribeKey());
-			config.put("testRunsChannel", Channel.TEST_RUN_EVENTS.toString());
-			config.put("testsChannel", Channel.TEST_EVENTS.toString());
-		}
-		return config;
-	}
+	@Autowired
+	private TestSuiteService testSuiteService;
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,5 +35,12 @@ public class ConfigurationController extends AbstractController
 		config.put("service", versionService.getServiceVersion());
 		config.put("client", versionService.getClientVersion());
 		return config;
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<String> getAllProjects() throws ServiceException
+	{
+		return testSuiteService.getAllProjects();
 	}
 }
