@@ -145,17 +145,17 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) = DATE(#{date})
+	               AND TR.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != fromDate">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) >= DATE(#{fromDate})
+	               AND TR.CREATED_AT::date >= #{fromDate}::date
 	            ]]>
 			</if>
 			<if test="null != toDate">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) <= DATE(#{toDate})
+	               AND TR.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != project">
@@ -221,17 +221,17 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) = DATE(#{date})
+	               AND TR.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != fromDate">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) >= DATE(#{fromDate})
+	               AND TR.CREATED_AT::date >= #{fromDate}::date
 	            ]]>
 			</if>
 			<if test="null != toDate">
 	            <![CDATA[
-	               AND DATE(TR.CREATED_AT) <= DATE(#{toDate})
+	               AND TR.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != project">

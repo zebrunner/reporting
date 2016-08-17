@@ -73,7 +73,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(U.CREATED_AT) = DATE(#{date})
+	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != project">
@@ -127,7 +127,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(U.CREATED_AT) = DATE(#{date})
+	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != project">

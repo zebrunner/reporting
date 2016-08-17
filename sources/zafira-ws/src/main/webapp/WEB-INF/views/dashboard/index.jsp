@@ -15,7 +15,7 @@
 		<div class="col-lg-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Test results statistics (last 30 days)
+                    Test results statistics (last 5 days)
                 </div>
                 <div class="panel-body" style="min-height: 500px">
                     <div id="test-results-statistics"></div>

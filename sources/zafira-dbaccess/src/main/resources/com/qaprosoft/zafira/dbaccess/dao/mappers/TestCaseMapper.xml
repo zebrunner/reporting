@@ -132,7 +132,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(TC.CREATED_AT) = DATE(#{date})
+	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != project">
@@ -191,7 +191,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND DATE(TC.CREATED_AT) = DATE(#{date})
+	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != project">
@@ -226,12 +226,12 @@
 	 <select id="getTestCaseImplementationStatistics" resultMap="TestCaseImplementationCountResultMap">
 		<![CDATA[
 			SELECT 
-				DATE(CREATED_AT) AS TEST_CASE_IMPLEMENTATION_COUNT_DATE, 
+				CREATED_AT::date AS TEST_CASE_IMPLEMENTATION_COUNT_DATE, 
 				COUNT(*) AS TEST_CASE_IMPLEMENTATION_COUNT_COUNT
 			FROM 
 				zafira.TEST_CASES TC
 			WHERE 
-				AGE(TC.CREATED_AT) < INTERVAL '30 day'
+				TC.CREATED_AT::date > (current_date - 30)
 		]]>
 		<if test="null != project">
             <![CDATA[
@@ -239,8 +239,8 @@
             ]]>
 		</if>
 		<![CDATA[
-			GROUP BY DATE(CREATED_AT) 
-			ORDER BY DATE(CREATED_AT) ASC;
+			GROUP BY CREATED_AT::date
+			ORDER BY CREATED_AT::date ASC;
 		]]>
 	</select>
 

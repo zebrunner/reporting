@@ -172,11 +172,11 @@
 			SELECT 
 				STATUS AS TEST_STATUS_COUNT_STATUS, 
 				COUNT(*) AS TEST_STATUS_COUNT_COUNT, 
-				DATE(CREATED_AT) AS TEST_STATUS_COUNT_DATE 
+				CREATED_AT::date AS TEST_STATUS_COUNT_DATE 
 			FROM 
 				zafira.TESTS
 			WHERE 
-				AGE(CREATED_AT) < INTERVAL '30 day' 
+				CREATED_AT >= (current_date - 5)
 			]]>
 			<if test="null != project">
 	            <![CDATA[
@@ -184,7 +184,7 @@
 	            ]]>
 			</if>
 			<![CDATA[
-			GROUP BY DATE(CREATED_AT), STATUS
+			GROUP BY CREATED_AT::date, STATUS
 		]]>
 	</select>
 	
