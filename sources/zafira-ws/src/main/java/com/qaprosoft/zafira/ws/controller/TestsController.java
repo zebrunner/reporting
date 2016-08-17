@@ -57,6 +57,14 @@ public class TestsController extends AbstractController
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/passed", method = RequestMethod.POST)
+	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException
+	{
+		Test test = testService.markTestAsPassed(id);
+		return mapper.map(test, TestType.class);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/workitems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestType createTestWorkItems(@PathVariable(value="id") long id, @RequestBody List<String> workItems) throws ServiceException
 	{

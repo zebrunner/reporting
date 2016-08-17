@@ -100,6 +100,24 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public Test markTestAsPassed(long id) throws ServiceException
+	{
+		Test test = getTestById(id);
+		if(test == null)
+		{
+			throw new TestNotFoundException();
+		}
+		
+		test.setStatus(Status.PASSED);
+		updateTest(test);
+		notificationService.publish(xmppChannel, new TestPush(test));
+		
+		testRunService.recalculateTestRunResult(test.getTestRunId());
+		
+		return test;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public Test createTestWorkItems(long id, List<String> jiraIds) throws ServiceException
 	{
 		Test test = getTestById(id);

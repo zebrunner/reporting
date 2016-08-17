@@ -77,7 +77,7 @@
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
                     <div class="row test_result" data-ng-class="tests[testId].status" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
                     	<div class="col-lg-10">
-                    		<div><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}}</div>
+                    		<div class="clearfix"><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}} <a href="" class="float_right clearfix label-success-empty" data-ng-if="tests[testId].status == 'FAILED' || tests[testId].status == 'SKIPPED'" data-ng-click="markTestAsPassed(testId)">Mark as passed</a></div>
                             <div class="result_error" data-ng-if="tests[testId].message && tests[testId].status == 'FAILED'">
                             	<show-more text="tests[testId].message" limit="100"></show-more>
                             </div>

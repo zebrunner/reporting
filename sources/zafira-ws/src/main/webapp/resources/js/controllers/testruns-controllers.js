@@ -290,6 +290,13 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}
 	};
 	
+	$scope.markTestAsPassed = function(id){
+		$http.post('tests/' + id + '/passed').success(function(data) {
+		}).error(function() {
+			console.error('Failed to mark test as passed!');
+		});
+	};
+	
 	(function init(){
 		$scope.initXMPP();
 		$scope.loadTestRuns(1);

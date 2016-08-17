@@ -242,4 +242,31 @@ public class TestRunService
 		}
 		return testNamesWithTests;
 	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun recalculateTestRunResult(long testRunId) throws ServiceException
+	{
+		TestRun testRun = getTestRunByIdFull(testRunId);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		
+		// Try to update test run status if all the rest passed
+		if(testRun.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.TestRun.Status.FAILED))
+		{
+			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
+			{
+				if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) 
+						|| test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+				{
+					return testRun;
+				}
+			}
+			testRun.setStatus(Status.PASSED);
+			updateTestRun(testRun);
+			notificationService.publish(xmppChannel, new TestRunPush(testRun));
+		}
+		return testRun;
+	}
 }
