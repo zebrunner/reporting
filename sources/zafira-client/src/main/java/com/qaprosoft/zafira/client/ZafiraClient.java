@@ -213,7 +213,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
-			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+			ClientResponse clientRS = initHeaders(webResource.queryParam("ciRunId", ciRunId).type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
