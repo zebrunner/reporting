@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<context:annotation-config />
+
+	<util:properties id="environmentProperties" location="classpath:environment.properties" />
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>classpath:environment.properties</value>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="gridRequestQueueProcessorTask"
+		class="com.qaprosoft.zafira.grid.tasks.GridRequestQueueProcessorTask" />
+
+	<bean id="schedulerService" class="com.qaprosoft.zafira.grid.service.impl.SchedulerService" />
+
+	<!-- Job Details -->
+	<bean id="gridRequestQueueProcessorTaskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="schedulerService" />
+		<property name="targetMethod" value="executeGridRequestQueueTask" />
+	</bean>
+	
+	<!-- Triggers -->
+	<bean id="gridRequestQueueProcessorTaskTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="gridRequestQueueProcessorTaskJobDetail" />
+		<property name="cronExpression"
+			value="${zafira.batch.jobs.gridRequestQueueProcessor.trigger.cronExpression}" />
+	</bean>
+
+	<bean id="springScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="gridRequestQueueProcessorTaskJobDetail" />
+			</list>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="gridRequestQueueProcessorTaskTrigger" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="gridRequestQueueService" class="com.qaprosoft.zafira.grid.queue.GridRequestQueueService">
+		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
+		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
+		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
+	</bean>
+	
+	<bean id="stfService" class="com.qaprosoft.zafira.grid.stf.STFService">
+		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
+		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
+	</bean>
+	
+	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
+		<property name="serializationInclusion" value="NON_NULL" />
+	</bean>
+</beans>
