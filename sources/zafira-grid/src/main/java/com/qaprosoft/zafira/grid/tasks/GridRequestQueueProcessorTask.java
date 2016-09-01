@@ -34,6 +34,7 @@ public class GridRequestQueueProcessorTask
 		for(GridRequest rq : gridRequestQueueService.getConnectRequests().values())
 		{
 			boolean deviceFound = false;
+			// TODO: optimize api calls for STF
 			for(Device device : stfService.getAllDevices())
 			{
 				deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel());
