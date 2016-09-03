@@ -51,7 +51,7 @@ public class GridRequestQueueProcessorTask
 					if(remoteDevice != null)
 					{
 						device.setRemoteConnectUrl(remoteDevice.getRemoteConnectUrl());
-						gridRequestQueueService.notifyDeviceConnected(rq.getTestId(), device);
+						gridRequestQueueService.notifyDeviceConnected(rq, device);
 						deviceFound = true;
 						break;
 					}
@@ -59,7 +59,7 @@ public class GridRequestQueueProcessorTask
 			}
 			if(!deviceFound)
 			{
-				gridRequestQueueService.notifyDeviceNotConnected(rq.getTestId());
+				gridRequestQueueService.notifyDeviceNotConnected(rq);
 			}
 		}
 	}

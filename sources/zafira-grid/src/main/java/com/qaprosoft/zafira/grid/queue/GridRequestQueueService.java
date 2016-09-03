@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.grid.queue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -37,10 +38,13 @@ public class GridRequestQueueService
 	
 	private Set<GridRequest> disconnectRequests = Collections.synchronizedSet(new LinkedHashSet<GridRequest>());
 	
+	private Map<String, ArrayList<String>> busyDevices = Collections.synchronizedMap(new LinkedHashMap<String, ArrayList<String>>());
+	
 	public GridRequestQueueService(String pubKey, String subKey, String channel) throws PubnubException
 	{
 		this.pubnub = new Pubnub(pubKey, subKey);
 		this.channel = channel;
+		// Device connect / disconnect handling
 		this.pubnub.subscribe(channel, new Callback()
 		{
 			@Override
@@ -59,6 +63,7 @@ public class GridRequestQueueService
 							break;
 						case DISCONNECT:
 							connectRequests.remove(rq.getTestId());
+							busyDevices.get(rq.getGridSessionId()).remove(rq.getSerial());
 							disconnectRequests.add(rq);
 							break;	
 						}
@@ -70,18 +75,52 @@ public class GridRequestQueueService
 				}
 			}
 		});
+		// Session timeout handling - when test suites aborted
+		this.pubnub.presence(channel, new Callback() 
+		{
+			@Override
+			public void successCallback(String channel, Object message) 
+			{
+				try
+				{
+					JSONObject json = (JSONObject) message;
+					if("timeout".equals(json.getString("action")))
+					{
+						String gridSessionId = json.getString("uuid");
+						if(busyDevices.containsKey(gridSessionId))
+						{
+							for(String serial : busyDevices.get(gridSessionId))
+							{
+								disconnectRequests.add(new GridRequest(serial));
+							}
+							busyDevices.remove(gridSessionId);
+							LOGGER.info("Disconnecting devices by timeout fot grid session: " + gridSessionId);
+						}
+					}
+				}
+				catch(Exception e)
+				{
+					LOGGER.error(e.getMessage());
+				}
+			}
+		});
 	}
 	
-	public void notifyDeviceConnected(String testId, Device device)
+	public void notifyDeviceConnected(GridRequest rq, Device device)
 	{
-		connectRequests.remove(testId);
-		publishMessage(new GridResponse(testId, device, true));
+		connectRequests.remove(rq.getTestId());
+		if(!busyDevices.containsKey(rq.getGridSessionId()))
+		{
+			busyDevices.put(rq.getGridSessionId(), new ArrayList<String>());
+		}
+		busyDevices.get(rq.getGridSessionId()).add(device.getSerial());
+		publishMessage(new GridResponse(rq.getTestId(), device, true));
 	}
 	
-	public void notifyDeviceNotConnected(String testId)
+	public void notifyDeviceNotConnected(GridRequest rq)
 	{
-		connectRequests.remove(testId);
-		publishMessage(new GridResponse(testId, false));
+		connectRequests.remove(rq.getTestId());
+		publishMessage(new GridResponse(rq.getTestId(), false));
 	}
 	
 	private void publishMessage(GridResponse rs)
