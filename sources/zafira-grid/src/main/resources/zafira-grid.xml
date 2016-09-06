@@ -67,4 +67,6 @@
 	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
+	
+	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.queue.matchers.DeviceByModelMatcher" />
 </beans>

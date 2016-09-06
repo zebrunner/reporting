@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.grid.stf;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,9 @@ import com.qaprosoft.zafira.grid.stf.models.RemoteConnectUserDevice;
 @Service
 public class STFService
 {
+	@Value("${zafira.grid.device_timeout.sec}")
+	private long deviceTimeout;
+	
 	private STFClient stfClient;
 
 	public STFService(String serviceURL, String authToken)
@@ -25,10 +29,10 @@ public class STFService
 	}
 	
 	@Transactional
-	public RemoteConnectUserDevice connectDevice(String serial, long timeoutSec)
+	public RemoteConnectUserDevice connectDevice(String serial)
 	{
 		RemoteConnectUserDevice device = null;
-		if(stfClient.reserveDevice(serial, timeoutSec * 1000))
+		if(stfClient.reserveDevice(serial, deviceTimeout * 1000))
 		{
 			device = stfClient.remoteConnectDevice(serial).getObject();
 		}
