@@ -175,7 +175,7 @@ img.pending {
 	background-position: -3px -3px;
 }
 
-.platform-icon.android, .platform-icon.Android {
+.platform-icon.android, .platform-icon.Android, .platform-icon.ANDROID {
 	background-position: -3px -206px;
 }
 
