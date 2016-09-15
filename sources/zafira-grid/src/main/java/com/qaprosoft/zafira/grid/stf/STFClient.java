@@ -18,7 +18,8 @@ public class STFClient
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(STFClient.class);
 	
-	private static final Integer TIMEOUT = 30 * 1000;
+	// Max device timout 1 hour
+	private static final Integer TIMEOUT = 60 * 60 * 1000;
 	
 	private static final String DEVICES_PATH = "/api/v1/devices";
 	private static final String USER_DEVICES_PATH = "/api/v1/user/devices";
