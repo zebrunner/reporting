@@ -112,43 +112,46 @@ public class GridRequestQueueService
 	
 	private synchronized void connectDevice(GridRequest rq)
 	{
-		boolean deviceFound = false;
-		// TODO: optimize api calls for STF
-		for(Device device : stfService.getAllDevices())
+		if(pendingConnections.containsKey(rq.getTestId()))
 		{
-			deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel());
-			
-			if(!device.getPresent() || !device.getReady() || device.getUsing() || device.getOwner() != null)
+			boolean deviceFound = false;
+			// TODO: optimize api calls for STF
+			for(Device device : stfService.getAllDevices())
 			{
-				continue;
-			}
-			
-			// TODO: improve search logic
-			if(deviceMatcher.matches(rq, device))
-			{
-				RemoteConnectUserDevice remoteDevice = stfService.connectDevice(device.getSerial());
-				if(remoteDevice != null)
+				deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel());
+				
+				if(!device.getPresent() || !device.getReady() || device.getUsing() || device.getOwner() != null)
 				{
-					device.setRemoteConnectUrl(remoteDevice.getRemoteConnectUrl());
-					pendingConnections.remove(rq.getTestId());
-					if(!devicesInUse.containsKey(rq.getGridSessionId()))
+					continue;
+				}
+				
+				// TODO: improve search logic
+				if(deviceMatcher.matches(rq, device))
+				{
+					RemoteConnectUserDevice remoteDevice = stfService.connectDevice(device.getSerial());
+					if(remoteDevice != null)
 					{
-						devicesInUse.put(rq.getGridSessionId(), new ArrayList<String>());
+						device.setRemoteConnectUrl(remoteDevice.getRemoteConnectUrl());
+						pendingConnections.remove(rq.getTestId());
+						if(!devicesInUse.containsKey(rq.getGridSessionId()))
+						{
+							devicesInUse.put(rq.getGridSessionId(), new ArrayList<String>());
+						}
+						devicesInUse.get(rq.getGridSessionId()).add(device.getSerial());
+						publishMessage(new GridResponse(rq.getTestId(), device, true));
+						LOGGER.info(String.format("Found device %s for test %s!", device.getSerial(), rq.getTestId()));
+						return;
 					}
-					devicesInUse.get(rq.getGridSessionId()).add(device.getSerial());
-					publishMessage(new GridResponse(rq.getTestId(), device, true));
-					LOGGER.info(String.format("Found device %s for test %s!", device.getModel(), rq.getTestId()));
-					return;
 				}
 			}
+			if(!deviceFound)
+			{
+				pendingConnections.remove(rq.getTestId());
+				publishMessage(new GridResponse(rq.getTestId(), false));
+				LOGGER.info("Unable to find device for test: " + rq.getTestId());
+			}
 		}
-		if(!deviceFound)
-		{
-			pendingConnections.remove(rq.getTestId());
-			publishMessage(new GridResponse(rq.getTestId(), false));
-			LOGGER.info("Unable to find device for test: " + rq.getTestId());
-		}
-		else if(!pendingConnections.containsKey(rq.getTestId()))
+		else
 		{
 			pendingConnections.put(rq.getTestId(), rq);
 		}
