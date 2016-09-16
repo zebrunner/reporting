@@ -98,7 +98,7 @@ public class GridRequestQueueService
 								stfService.disconnectDevice(serial);
 							}
 							devicesInUse.remove(gridSessionId);
-							LOGGER.info("Disconnecting devices by timeout fot grid session: " + gridSessionId);
+							LOGGER.info("Disconnecting devices by timeout for suite: " + gridSessionId);
 						}
 					}
 				}
@@ -139,7 +139,7 @@ public class GridRequestQueueService
 						}
 						devicesInUse.get(rq.getGridSessionId()).add(device.getSerial());
 						publishMessage(new GridResponse(rq.getTestId(), device, true));
-						LOGGER.info(String.format("Found device %s for test %s!", device.getSerial(), rq.getTestId()));
+						LOGGER.info(String.format("Found device %s for test %s.", device.getSerial(), rq.getTestId()));
 						return;
 					}
 				}
@@ -165,7 +165,7 @@ public class GridRequestQueueService
 		{
 			devicesInUse.get(rq.getGridSessionId()).remove(rq.getSerial());
 		}
-		LOGGER.info("Disconnecting device: " + rq.getSerial());
+		LOGGER.info(String.format("Disconnecting device %s from test %s.", rq.getSerial(), rq.getTestId()));
 	}
 	
 	private void publishMessage(GridResponse rs)
@@ -182,10 +182,10 @@ public class GridRequestQueueService
 	
 	public void processPendingConnections()
 	{
+		LOGGER.info(String.format("Starting to process %d device requests...", pendingConnections.size()));
 		for(GridRequest rq : new LinkedHashMap<String, GridRequest>(pendingConnections).values())
 		{
 			connectDevice(rq);
-			LOGGER.info("Processing pending device request for test: " + rq.getTestId());
 		}
 	}
 }
