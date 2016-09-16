@@ -176,7 +176,7 @@
 			FROM 
 				zafira.TESTS
 			WHERE 
-				CREATED_AT >= (current_date - 5)
+				CREATED_AT >= (current_date - 30)
 			]]>
 			<if test="null != project">
 	            <![CDATA[

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+	<profiles>
+		<profile>
+			<id>zafira</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<zafira.url>http://localhost:8080</zafira.url>
+				<zafira.tomcat.url>${zafira.url}/manager/text</zafira.tomcat.url>
+				<zafira.tomcat.ws.path>/zafira</zafira.tomcat.ws.path>
+				<zafira.ws.url>http://localhost:8080</zafira.ws.url>
+				<zafira.integrationTest.host>${zafira.url}</zafira.integrationTest.host>
+				
+				<zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
+				<zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
+				<zafira.db.jdbc.user>{user}</zafira.db.jdbc.user>
+				<zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
+				<zafira.db.c3p0.maxPoolSize>2</zafira.db.c3p0.maxPoolSize>
+				
+				<zafira.jabber.enabled>true</zafira.jabber.enabled>
+				<zafira.jabber.username>{username}</zafira.jabber.username>
+				<zafira.jabber.password>{password}</zafira.jabber.password>
+				
+				<zafira.grid.enabled>false</zafira.grid.enabled>
+				<zafira.grid.stf.url>{url}</zafira.grid.stf.url>
+				<zafira.grid.stf.token>{token}</zafira.grid.stf.token>
+				<zafira.grid.device_timeout.sec>900</zafira.grid.device_timeout.sec>
+				<zafira.grid.pubnub.pub_key>{key}</zafira.grid.pubnub.pub_key>
+				<zafira.grid.pubnub.sub_key>{key}</zafira.grid.pubnub.sub_key>
+				<zafira.grid.pubnub.channel>grid</zafira.grid.pubnub.channel>
+			</properties>
+		</profile>
+	</profiles>
+</settings>
