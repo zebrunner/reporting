@@ -39,17 +39,4 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<bean id="xmppService" class="com.qaprosoft.zafira.services.services.thirdparty.push.XMPPService" />
-
-	<bean id="xmppServerConfig" class="org.jivesoftware.smack.ConnectionConfiguration">
-		<constructor-arg index="0" value="${zafira.jabber.host}" />
-		<constructor-arg index="1" type="int" value="${zafira.jabber.port}"/>
-	</bean>
-
-	<bean id="xmppConnectionManager" class="com.qaprosoft.zafira.services.util.xmpp.XMPPConnectionManager">
-		<constructor-arg index="0" ref="xmppServerConfig" />
-		<constructor-arg index="1" value="${zafira.jabber.admin.username}" />
-		<constructor-arg index="2" value="${zafira.jabber.admin.password}" />
-	</bean>
-
 </beans>

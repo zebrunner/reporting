@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +23,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
 public class TestRunService
@@ -50,13 +46,6 @@ public class TestRunService
 
 	@Autowired
 	private WorkItemService workItemService;
-	
-	@Autowired
-	@Qualifier("xmppService")
-	private IPushService notificationService;
-	
-	@Value("${zafira.jabber.username}")
-	private String xmppChannel;
 	
 	@Autowired
 	private TestConfigService testConfigService;
@@ -172,8 +161,6 @@ public class TestRunService
 			testRun.setStatus(Status.IN_PROGRESS);
 			updateTestRun(testRun);
 		}
-		
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -197,7 +184,6 @@ public class TestRunService
 			}
 		}
 		updateTestRun(testRun);
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -211,7 +197,8 @@ public class TestRunService
 		}
 		testRun.setStatus(Status.ABORTED);
 		updateTestRun(testRun);
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+//		TODO: Replace by websocket.
+//		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -252,7 +239,7 @@ public class TestRunService
 			throw new TestRunNotFoundException();
 		}
 		
-		// Try to update test run status if all the rest passed
+		// Try to update test run status if all the test passed
 		if(testRun.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.TestRun.Status.FAILED))
 		{
 			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
@@ -265,8 +252,8 @@ public class TestRunService
 			}
 			testRun.setStatus(Status.PASSED);
 			updateTestRun(testRun);
-			notificationService.publish(xmppChannel, new TestRunPush(testRun));
+			return testRun;
 		}
-		return testRun;
+		return null;
 	}
 }

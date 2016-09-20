@@ -2,6 +2,7 @@
 
 ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
 
+	$scope.stomp = {};
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
 	
@@ -23,46 +24,37 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		'page' : 1,
 		'pageSize' : 100000
 	};
-	
-	$scope.initXMPP = function(){
-		$http.get('settings/xmpp').success(function(settings) {
-			if(settings.enabled)
-			{
-				var connection = new Strophe.Connection(settings.httpBind);
-				connection.connect(settings.username, settings.password, function (status) {
-		            if (status === Strophe.Status.CONNECTED) {
-		                 connection.addHandler(function(msg){
-		                	 var elems = msg.getElementsByTagName('body');
-		                	 if (elems.length > 0) 
-		                	 {
-		                		 var event = JSON.parse(Strophe.getText(elems[0]).replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
-		                		 console.log(event);
-		                		 if(event.type == 'TEST_RUN')
-	                			 {
-		             				if($scope.testRunId && $scope.testRunId != event.testRun.id)
-		             				{
-		             					return;
-		             				}
-		             				$scope.addTestRun(event.testRun);
-		             				$scope.$apply();
-	                			 }
-		                		 else if(event.type == 'TEST')
-	                			 {
-		             				$scope.addTest(event.test);
-		             				$scope.$apply();
-	                			 }
-		                	 }
-		                	 return true;
-		                 }, null, 'message', 'chat', null,  null);
-		                 connection.send($pres().tree());
-		            }
-		        });
-			}
-		}).error(function() {
-			console.error('Failed to connect to XMPP');
-		});
-	};
-	
+     
+    $scope.initWebsocket = function() {
+    	  $scope.sockJS = new SockJS("/zafira-ws/gs-guide-websocket");
+    	  $scope.stomp = Stomp.over($scope.sockJS);
+    	  $scope.stomp.debug = null
+    	  $scope.stomp.connect({}, function() {
+    	      $scope.stomp.subscribe("/topic/tests", function(data) {
+    	        	$scope.getMessage(data.body);
+    	      });
+    	  });
+     };
+     
+     $scope.getMessage = function(elems) {
+     		 var event = JSON.parse(elems.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+     		 if(event.type == 'TEST_RUN')
+ 			 {
+  				if($scope.testRunId && $scope.testRunId != event.testRun.id)
+  				{
+  					return;
+  				}
+  				$scope.addTestRun(event.testRun);
+  				$scope.$apply();
+ 			 }
+     		 else if(event.type == 'TEST')
+ 			 {
+  				$scope.addTest(event.test);
+  				$scope.$apply();
+ 			 }
+     	 return true;
+     };
+		
 	$scope.addTest = function(test) {
 		if($scope.tests[test.id] == null)
     	{
@@ -298,7 +290,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	};
 	
 	(function init(){
-		$scope.initXMPP();
+		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
 	})();

@@ -12,6 +12,7 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.TestRunService;
@@ -46,6 +48,9 @@ public class TestRunsController extends AbstractController
 	@Autowired
 	private TestService testService;
 	
+	@Autowired
+	private SimpMessagingTemplate websocketTemplate;
+	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView index()
@@ -59,6 +64,8 @@ public class TestRunsController extends AbstractController
 	{
 		tr.setProject(project);
 		TestRun testRun = testRunService.startTestRun(mapper.map(tr, TestRun.class));
+		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
 	
@@ -67,6 +74,8 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody TestRunType finishTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.finishTestRun(id);
+		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
 	

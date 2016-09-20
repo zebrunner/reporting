@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +16,8 @@ import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.Test.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
 public class TestService
@@ -34,17 +30,7 @@ public class TestService
 	
 	@Autowired
 	private TestConfigService testConfigService;
-	
-	@Autowired
-	private TestRunService testRunService;
-	
-	@Autowired
-	@Qualifier("xmppService")
-	private IPushService notificationService;
-	
-	@Value("${zafira.jabber.username}")
-	private String xmppChannel;
-	
+		
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
@@ -73,7 +59,6 @@ public class TestService
 			updateTest(test);
 		}
 		
-		notificationService.publish(xmppChannel, new TestPush(test));
 		return test;
 	}
 	
@@ -95,7 +80,6 @@ public class TestService
 		}
 		testMapper.updateTest(existingTest);
 		
-		notificationService.publish(xmppChannel, new TestPush(existingTest));
 		return existingTest;
 	}
 	
@@ -110,9 +94,6 @@ public class TestService
 		
 		test.setStatus(Status.PASSED);
 		updateTest(test);
-		notificationService.publish(xmppChannel, new TestPush(test));
-		
-		testRunService.recalculateTestRunResult(test.getTestRunId());
 		
 		return test;
 	}

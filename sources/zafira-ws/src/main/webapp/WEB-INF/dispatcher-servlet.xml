@@ -17,5 +17,4 @@
 	<bean id="mvcExceptionResolver" class="com.qaprosoft.zafira.ws.servlet.exceptionhandling.MVCExceptionResolver" />
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-
 </beans>

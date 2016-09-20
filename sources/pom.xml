@@ -16,7 +16,7 @@
 		<source.level>1.7</source.level>
 		<target.level>1.7</target.level>
 
-		<servlet-api.version>3.0.1</servlet-api.version>
+		<servlet-api.version>3.1.0</servlet-api.version>
 		<jsp-api.version>2.2</jsp-api.version>
 		<jstl.version>1.2</jstl.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
@@ -72,7 +72,7 @@
 		<tomcat-maven-plugin.version>1.1</tomcat-maven-plugin.version>
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
 
-		<tomcat.version>7.0.42</tomcat.version>
+		<tomcat.version>7.0.52</tomcat.version>
 
 		<guava.version>13.0.1</guava.version>
 
@@ -151,7 +151,16 @@
 				<artifactId>mail</artifactId>
 				<version>${javax.mail.version}</version>
 			</dependency>
-
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-messaging</artifactId>
+			    <version>${spring.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-websocket</artifactId>
+			    <version>${spring.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -622,6 +631,11 @@
 						<dependency>
 							<groupId>org.apache.tomcat.embed</groupId>
 							<artifactId>tomcat-embed-logging-log4j</artifactId>
+							<version>${tomcat.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.apache.tomcat.embed</groupId>
+							<artifactId>tomcat-embed-websocket</artifactId>
 							<version>${tomcat.version}</version>
 						</dependency>
 					</dependencies>
