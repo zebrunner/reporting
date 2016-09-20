@@ -10,11 +10,6 @@ public class Test extends AbstractEntity
 {
 	private static final long serialVersionUID = -915700504693067056L;
 
-	public enum Status
-	{
-		IN_PROGRESS, PASSED, FAILED, SKIPPED; 
-	}
-
 	private String name;
 	private Status status;
 	private String testArgs;

@@ -4,8 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType

@@ -20,6 +20,10 @@ img.pending {
 	min-height: 40px;
 }
 
+.result_UNKNOWN {
+	border-left: solid 8px #ccccb3;
+}
+
 .result_PASSED {
 	border-left: solid 8px #5cb85c;
 }

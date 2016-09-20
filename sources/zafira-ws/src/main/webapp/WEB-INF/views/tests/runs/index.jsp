@@ -67,26 +67,26 @@
 					<div>
 						<span class="time">{{testRun.createdAt | date:'MM/dd HH:mm'}}</span>
 						&nbsp;
-						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRunResults[testRun.id].passed == 0, 'label-success': testRunResults[testRun.id].passed > 0}">{{testRunResults[testRun.id].passed}}</span>
-						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRunResults[testRun.id].failed == 0, 'label-danger': testRunResults[testRun.id].failed > 0}">{{testRunResults[testRun.id].failed}}</span>
-						<span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRunResults[testRun.id].skipped == 0, 'label-warning': testRunResults[testRun.id].skipped > 0}">{{testRunResults[testRun.id].skipped}}</span>
+						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
+						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
+						<span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
 						&nbsp;
-						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="testRun.showDetails = !testRun.showDetails"  class="float_right"></i>
+						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="showDetails(testRun.id)"  class="float_right"></i>
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
-                    <div class="row test_result" data-ng-class="tests[testId].status" data-ng-repeat="testId in testRunsTestIds[testRun.id] | orderBy:'testId':false">
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':false">
                     	<div class="col-lg-10">
-                    		<div class="clearfix"><img data-ng-if="tests[testId].status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{tests[testId].name}} <a href="" class="float_right clearfix label-success-empty" data-ng-if="tests[testId].status == 'FAILED' || tests[testId].status == 'SKIPPED'" data-ng-click="markTestAsPassed(testId)">Mark as passed</a></div>
-                            <div class="result_error" data-ng-if="tests[testId].message && tests[testId].status == 'FAILED'">
-                            	<show-more text="tests[testId].message" limit="100"></show-more>
+                    		<div class="clearfix"><img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} <a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a></div>
+                            <div class="result_error" data-ng-if="test.message && test.status == 'FAILED'">
+                            	<show-more text="test.message" limit="100"></show-more>
                             </div>
                     	</div>
                     	<div class="col-lg-2">
-                    		<div class="float_right" data-ng-if="tests[testId].status != STARTED">
-                            	<span class="time">{{tests[testId].finishTime | date:'HH:mm'}}</span>
+                    		<div class="float_right" data-ng-if="test.status != STARTED">
+                            	<span class="time">{{test.finishTime | date:'HH:mm'}}</span>
                             	&nbsp;
-                            	<a data-ng-if="tests[testId].logURL  && testRun.status != 'IN_PROGRESS'" href="{{tests[testId].logURL}}" target="blank">Log</a> <span data-ng-if="tests[testId].demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{tests[testId].demoURL}}" target="blank">Demo</a></span>
+                            	<a data-ng-if="test.logURL  && testRun.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>
 	                 </div>

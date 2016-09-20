@@ -16,9 +16,9 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;

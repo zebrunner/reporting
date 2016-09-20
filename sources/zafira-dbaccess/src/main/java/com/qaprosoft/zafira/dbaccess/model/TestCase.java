@@ -2,13 +2,12 @@ package com.qaprosoft.zafira.dbaccess.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.dbaccess.model.Test.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestCase extends AbstractEntity
 {
 	private static final long serialVersionUID = 4877029098773384360L;
-
+	
 	private String testClass;
 	private String testMethod;
 	private Status status;

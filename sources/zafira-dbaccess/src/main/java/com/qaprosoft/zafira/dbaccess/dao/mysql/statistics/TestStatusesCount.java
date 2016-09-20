@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.dbaccess.model.Test.Status;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestStatusesCount implements Serializable

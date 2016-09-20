@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -189,8 +189,8 @@ public class TestRunService
 		testRun.setStatus(Status.PASSED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) ||
-			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.FAILED) ||
+			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.SKIPPED))
 			{
 				testRun.setStatus(Status.FAILED);
 				break;
@@ -253,12 +253,11 @@ public class TestRunService
 		}
 		
 		// Try to update test run status if all the rest passed
-		if(testRun.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.TestRun.Status.FAILED))
+		if(testRun.getStatus().equals(Status.FAILED))
 		{
 			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
-				if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) 
-						|| test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+				if(test.getStatus().equals(Status.FAILED) || test.getStatus().equals(Status.SKIPPED))
 				{
 					return testRun;
 				}

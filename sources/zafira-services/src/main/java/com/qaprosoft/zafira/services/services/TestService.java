@@ -14,8 +14,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.Test.Status;
+import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
@@ -37,6 +38,9 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
+	
+	@Autowired
+	private TestCaseService testCaseService;
 	
 	@Autowired
 	@Qualifier("xmppService")
@@ -95,6 +99,13 @@ public class TestService
 		}
 		testMapper.updateTest(existingTest);
 		
+		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+		if(testCase != null)
+		{
+			testCase.setStatus(test.getStatus());
+			testCaseService.updateTestCase(testCase);
+		}
+		
 		notificationService.publish(xmppChannel, new TestPush(existingTest));
 		return existingTest;
 	}
@@ -110,6 +121,14 @@ public class TestService
 		
 		test.setStatus(Status.PASSED);
 		updateTest(test);
+		
+		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+		if(testCase != null)
+		{
+			testCase.setStatus(test.getStatus());
+			testCaseService.updateTestCase(testCase);
+		}
+		
 		notificationService.publish(xmppChannel, new TestPush(test));
 		
 		testRunService.recalculateTestRunResult(test.getTestRunId());

@@ -8,15 +8,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.testRunsToCompare = [];
 	$scope.compareQueryString = "";
 	
-	$scope.tests = {};
 	$scope.testRuns = {};
-	$scope.testRunResults = {};
-	$scope.testRunsTestIds = {};
 	$scope.totalResults = 0;
 	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
-		'pageSize' : 25
+		'pageSize' : 20
 	};
 	
 	$scope.testSearchCriteria = {
@@ -43,7 +40,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		             				{
 		             					return;
 		             				}
-		             				$scope.addTestRun(event.testRun);
+		             				$scope.addTestRun(event.testRun, true);
 		             				$scope.$apply();
 	                			 }
 		                		 else if(event.type == 'TEST')
@@ -63,69 +60,55 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
-	$scope.addTest = function(test) {
-		if($scope.tests[test.id] == null)
-    	{
-    		$scope.tests[test.id] = {};
-    	}
-		if($scope.testRunsTestIds[test.testRunId] == null)
-    	{
-			$scope.testRunsTestIds[test.testRunId] = [];
-    	}
-    	if($scope.testRunsTestIds[test.testRunId].indexOf(test.id) < 0)
-    	{
-    		$scope.testRunsTestIds[test.testRunId].push(test.id)
-    	}
-    	// Remove previous result
-    	if($scope.tests[test.id] != null)
-    	{
-    		$scope.updateTestRunResults($scope.tests[test.id], -1);
-    	}
-    	$scope.tests[test.id] = test;
-    	$scope.initTestRunResults(test.testRunId);
-    	$scope.updateTestRunResults($scope.tests[test.id], 1);
-	};
-	
-	$scope.updateTestRunResults = function(test, amount) {
-		switch(test.status) {
-			case "PASSED":
-				$scope.testRunResults[test.testRunId].passed = $scope.testRunResults[test.testRunId].passed + amount;
-				break;
-			case "FAILED":
-				$scope.testRunResults[test.testRunId].failed = $scope.testRunResults[test.testRunId].failed + amount;
-				break;
-			case "SKIPPED":
-				$scope.testRunResults[test.testRunId].skipped = $scope.testRunResults[test.testRunId].skipped + amount;
-				break;
-			case "IN_PROGRESS":
-				$scope.testRunResults[test.testRunId].in_progress = $scope.testRunResults[test.testRunId].in_progress + amount;
-				break;
+	$scope.addTest = function(test, isEvent) {
+		var testRun = $scope.testRuns[test.testRunId];
+		if(testRun == null)
+		{
+			return;
 		}
+		
+		if(isEvent)
+		{
+			var existingTest = testRun.tests[test.id];
+			if(existingTest != null)
+			{
+				$scope.updateTestRunResults(testRun.id, existingTest.status, -1);
+			}
+			$scope.updateTestRunResults(testRun.id, test.status, 1);
+		}
+		testRun.tests[test.id] = test;
+
 	};
 	
+	$scope.updateTestRunResults = function(id, status, changeByAmount)
+	{
+		switch(status) {
+		case "PASSED":
+			testRuns[id].passed = testRuns[id].passed + 1;
+			break;
+		case "FAILED":
+			testRuns[id].failed = testRuns[id].failed + 1;
+			break;
+		case "SKIPPED":
+			testRuns[id].skipped = testRuns[id].skipped + 1;
+			break;
+		default:
+			break;
+		}
+	}
+
 	$scope.addTestRun = function(testRun) {
 		testRun.showDetails = $scope.testRunId ? true : false;
     	if($scope.testRuns[testRun.id] == null)
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
     		testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL
+    		testRun.tests = {};
     		$scope.testRuns[testRun.id] = testRun;
-    		$scope.initTestRunResults(testRun.id);
     	}
     	else
     	{
     		$scope.testRuns[testRun.id].status = testRun.status;
-    	}
-	};
-	
-	$scope.initTestRunResults = function(testRunId) {
-		if($scope.testRunResults[testRunId] == null)
-    	{
-			$scope.testRunResults[testRunId] = {};
-			$scope.testRunResults[testRunId].passed = 0;
-			$scope.testRunResults[testRunId].failed = 0;
-			$scope.testRunResults[testRunId].skipped = 0;
-			$scope.testRunResults[testRunId].in_progress = 0;
     	}
 	};
 	
@@ -185,25 +168,15 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		
 		$http.post('tests/runs/search', ProjectProvider.initProject($scope.testRunSearchCriteria)).success(function(data) {
 			
-			$scope.tests = {};
 			$scope.testRuns = {};
-			$scope.testRunResults = {};
-			$scope.testRunsTestIds = {};
 			
 			$scope.testRunSearchCriteria.page = data.page;
 			$scope.testRunSearchCriteria.pageSize = data.pageSize;
 			$scope.totalResults = data.totalResults;
 			
-			var testRunIds = [];
 			for(var i = 0; i < data.results.length; i ++)
 			{
-				testRunIds.push(data.results[i].id);
 				$scope.addTestRun(data.results[i]);
-			}
-			
-			if(testRunIds.length > 0)
-			{
-				$scope.loadTests(testRunIds);
 			}
 			
 		}).error(function() {
@@ -211,8 +184,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
-	$scope.loadTests = function(testRunIds){
-		$scope.testSearchCriteria.testRunIds = testRunIds;
+	$scope.loadTests = function(testRunId){
+		$scope.testSearchCriteria.testRunId = testRunId;
 		$http.post('tests/search', $scope.testSearchCriteria).success(function(data) {
 			$scope.userSearchResult = data;
 			$scope.testSearchCriteria.page = data.page;
@@ -220,7 +193,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			
 			for(var i = 0; i < data.results.length; i ++)
 			{
-				$scope.addTest(data.results[i]);
+				$scope.addTest(data.results[i], false);
 			}
 			
 		}).error(function() {
@@ -250,6 +223,15 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	    document.body.removeChild(node);
       }]
     ];
+	
+	$scope.showDetails = function(id) {
+		var testRun = $scope.testRuns[id];
+		testRun.showDetails = !testRun.showDetails;
+		if(testRun.showDetails)
+		{
+			$scope.loadTests(id);
+		}
+	}
 	
 	$scope.resetSearchCriteria = function(){
 		$location.url($location.path());
