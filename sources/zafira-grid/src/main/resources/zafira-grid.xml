@@ -2,9 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
-	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 	<context:annotation-config />
 
@@ -30,7 +30,7 @@
 		<property name="targetObject" ref="schedulerService" />
 		<property name="targetMethod" value="executeGridRequestQueueTask" />
 	</bean>
-	
+
 	<!-- Triggers -->
 	<bean id="gridRequestQueueProcessorTaskTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
@@ -52,21 +52,21 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="gridRequestQueueService" class="com.qaprosoft.zafira.grid.queue.GridRequestQueueService">
 		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
 		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
 		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
 	</bean>
-	
+
 	<bean id="stfService" class="com.qaprosoft.zafira.grid.stf.STFService">
 		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
 		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
 	</bean>
-	
+
 	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
-	
+
 	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.queue.matchers.DeviceByModelMatcher" />
 </beans>

@@ -47,7 +47,7 @@
 					<span data-ng-if="user.password != '' && user.password != null" class="label arrowed arrowed-in-right label-success">active</span>
 					<span data-ng-if="user.password == '' || user.password == null" class="label arrowed arrowed-in-right label-danger">inactive</span>
 					&nbsp;
-					<i class="float_right fa fa-gear" style="line-height: 20px;" data-ng-click="openUserDetailsModal(user.id)"></i>
+					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openUserDetailsModal(user.id)"></i>
 				</div>
 			</div>
 			<paging class="float_right"

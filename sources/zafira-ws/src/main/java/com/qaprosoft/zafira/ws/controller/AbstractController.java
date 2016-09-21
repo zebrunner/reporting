@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.ws.dto.errors.ErrorResponse;
 public abstract class AbstractController
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractController.class);
+	protected static final String WEBSOCKET_PATH = "/topic/tests";
 	
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;

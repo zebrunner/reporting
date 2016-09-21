@@ -9,6 +9,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,11 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
+import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
+import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.TestType;
 
@@ -38,12 +43,19 @@ public class TestsController extends AbstractController
 	@Autowired
 	private TestService testService;
 	
+	@Autowired
+	private TestRunService testRunService;
+	
+	@Autowired
+	private SimpMessagingTemplate websocketTemplate;
+		
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestType startTest(@RequestBody @Valid TestType t, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		t.setProject(project);
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 	
@@ -53,6 +65,7 @@ public class TestsController extends AbstractController
 	{
 		t.setId(id);
 		Test test = testService.finishTest(mapper.map(t, Test.class));
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 	
@@ -61,6 +74,12 @@ public class TestsController extends AbstractController
 	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException
 	{
 		Test test = testService.markTestAsPassed(id);
+		TestRun testRun = testRunService.recalculateTestRunResult(test.getTestRunId());
+		if(testRun != null) 
+		{
+			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		}
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 	

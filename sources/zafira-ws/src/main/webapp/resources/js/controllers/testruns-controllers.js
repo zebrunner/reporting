@@ -21,44 +21,40 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		'pageSize' : 100000
 	};
 	
-	$scope.initXMPP = function(){
-		$http.get('settings/xmpp').success(function(settings) {
-			if(settings.enabled)
-			{
-				var connection = new Strophe.Connection(settings.httpBind);
-				connection.connect(settings.username, settings.password, function (status) {
-		            if (status === Strophe.Status.CONNECTED) {
-		                 connection.addHandler(function(msg){
-		                	 var elems = msg.getElementsByTagName('body');
-		                	 if (elems.length > 0) 
-		                	 {
-		                		 var event = JSON.parse(Strophe.getText(elems[0]).replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
-		                		 console.log(event);
-		                		 if(event.type == 'TEST_RUN')
-	                			 {
-		             				if($scope.testRunId && $scope.testRunId != event.testRun.id)
-		             				{
-		             					return;
-		             				}
-		             				$scope.addTestRun(event.testRun, true);
-		             				$scope.$apply();
-	                			 }
-		                		 else if(event.type == 'TEST')
-	                			 {
-		             				$scope.addTest(event.test);
-		             				$scope.$apply();
-	                			 }
-		                	 }
-		                	 return true;
-		                 }, null, 'message', 'chat', null,  null);
-		                 connection.send($pres().tree());
-		            }
-		        });
-			}
-		}).error(function() {
-			console.error('Failed to connect to XMPP');
-		});
-	};
+	$scope.initWebsocket = function() 
+	{
+  	  var sockJS = new SockJS("/zafira-ws/gs-guide-websocket");
+  	  var stomp = Stomp.over(sockJS);
+  	  //stomp.debug = null;
+  	  stomp.connect({}, function() {
+  	      stomp.subscribe("/topic/tests", function(data) 
+  	      {
+  	        	$scope.getMessage(data.body);
+  	      });
+  	  });
+   };
+   
+   $scope.getMessage = function(message) {
+	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+	 if(event.type == 'TEST_RUN')
+	 {
+		if($scope.testRunId && $scope.testRunId != event.testRun.id)
+		{
+			return;
+		}
+		$scope.addTestRun(event.testRun);
+		$scope.$apply();
+	 }
+	 else if(event.type == 'TEST')
+	 {
+		$scope.addTest(event.test, true);
+		if($scope.testRuns[event.test.testRunId].showDetails)
+		{
+			$scope.$apply();
+		}
+	 }
+   	 return true;
+   };
 	
 	$scope.addTest = function(test, isEvent) {
 		var testRun = $scope.testRuns[test.testRunId];
@@ -69,28 +65,30 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		
 		if(isEvent)
 		{
-			var existingTest = testRun.tests[test.id];
-			if(existingTest != null)
+			if(testRun.tests[test.id] != null)
 			{
-				$scope.updateTestRunResults(testRun.id, existingTest.status, -1);
+				$scope.updateTestRunResults(testRun.id, testRun.tests[test.id].status, -1);
 			}
+			testRun.tests[test.id] = test;
 			$scope.updateTestRunResults(testRun.id, test.status, 1);
 		}
-		testRun.tests[test.id] = test;
-
+		else
+		{
+			testRun.tests[test.id] = test;
+		}
 	};
 	
 	$scope.updateTestRunResults = function(id, status, changeByAmount)
 	{
 		switch(status) {
 		case "PASSED":
-			testRuns[id].passed = testRuns[id].passed + 1;
+			$scope.testRuns[id].passed = $scope.testRuns[id].passed + changeByAmount;
 			break;
 		case "FAILED":
-			testRuns[id].failed = testRuns[id].failed + 1;
+			$scope.testRuns[id].failed = $scope.testRuns[id].failed + changeByAmount;
 			break;
 		case "SKIPPED":
-			testRuns[id].skipped = testRuns[id].skipped + 1;
+			$scope.testRuns[id].skipped = $scope.testRuns[id].skipped + changeByAmount;
 			break;
 		default:
 			break;
@@ -179,6 +177,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.addTestRun(data.results[i]);
 			}
 			
+			if($scope.testRunId)
+			{
+				$scope.loadTests($scope.testRunId);
+			}
 		}).error(function() {
 			console.error('Failed to search test runs');
 		});
@@ -280,7 +282,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	};
 	
 	(function init(){
-		$scope.initXMPP();
+		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
 	})();

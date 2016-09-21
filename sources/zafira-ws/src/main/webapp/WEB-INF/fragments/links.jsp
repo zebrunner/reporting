@@ -16,6 +16,8 @@
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
+<script src="<spring:url value='/resources/js/3rd_party/sockjs-1.1.1.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/stomp.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/jquery-2.0.3.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/bootstrap.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/metisMenu.min.js'/>" type="text/javascript"></script>

@@ -1,4 +1,4 @@
-<%@ page 
+<%@ page
     language="java"
     contentType="text/html; charset=UTF-8"
     trimDirectiveWhitespaces="true"
@@ -15,9 +15,7 @@
 	</head>
 
 	<body>
-	
 	    <div id="wrapper">
-	
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	            <div class="navbar-header">
@@ -37,7 +35,7 @@
 	                </li>
 	            </ul>
 	            <ul class="nav navbar-top-links navbar-right">
-	                
+
 	                <li>
 	                    <a href="#/dashboard"><i class="fa fa-pie-chart fa-fw"></i> Dashboard</a>
 	               	</li>
@@ -47,13 +45,13 @@
 	               	<li>
 	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
-	               	<sec:authorize access="hasAnyRole('ADMIN')">
+	               	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	               	<li>
 	                    <a href="#/users"><i class="fa fa-user fa-fw"></i> Users</a>
 	               	</li>
 	               	</sec:authorize>
 	               	<li>
-	               		<a href="<c:url value="/j_spring_security_logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	               		<a href="<c:url value="/logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 	               	</li>
 	            </ul>
 	            <!-- div class="navbar-default sidebar" role="navigation">
@@ -66,6 +64,7 @@
 	                </div>
 	            </div -->
 	        </nav>
+	       
 	        <div id="page-wrapper" data-ng-view>
 	 		</div>
 	    </div>

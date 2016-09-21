@@ -196,3 +196,7 @@ select.icon-menu option {
 select option[value="Android"] {
 background-image:url(../img/key.png);
 }
+
+i.pointer {
+	cursor: pointer;
+}

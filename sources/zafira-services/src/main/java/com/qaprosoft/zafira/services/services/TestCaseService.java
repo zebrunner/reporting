@@ -11,6 +11,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
@@ -26,6 +27,10 @@ public class TestCaseService
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestCase(TestCase testCase) throws ServiceException
 	{
+		if(testCase.getStatus() == null)
+		{
+			testCase.setStatus(Status.UNKNOWN);
+		}
 		testCaseMapper.createTestCase(testCase);
 	}
 	

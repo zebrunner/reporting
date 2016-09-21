@@ -5,14 +5,15 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO, PROJECT)
+			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO, PROJECT, STATUS)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
 				#{testClass},
 				#{testMethod},
 				#{info},
-				#{project}
+				#{project},
+				#{status}
 			)
 		]]>
 	</insert>
@@ -27,6 +28,7 @@
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
 				TC.INFO AS TEST_CASE_INFO,
 				TC.PROJECT AS TEST_CASE_PROJECT,
+				TC.STATUS AS TEST_CASE_STATUS,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT
 			FROM
@@ -277,7 +279,12 @@
 				</if>
 				<if test="null != project">
 		            <![CDATA[
-		               PROJECT = #{project}
+		               PROJECT = #{project},
+		            ]]>
+				</if>
+				<if test="null != status">
+		            <![CDATA[
+		               STATUS = #{status}
 		            ]]>
 				</if>
 			</set>
