@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.client.model;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class TestType extends AbstractType
@@ -23,6 +24,7 @@ public class TestType extends AbstractType
 	private List<String> workItems;
 	private int retry;
 	private String configXML;
+	private Map<String, Long> testMetrics;
 	
 	public TestType()
 	{
@@ -180,5 +182,15 @@ public class TestType extends AbstractType
 	public void setConfigXML(String configXML)
 	{
 		this.configXML = configXML;
+	}
+
+	public Map<String, Long> getTestMetrics()
+	{
+		return testMetrics;
+	}
+
+	public void setTestMetrics(Map<String, Long> testMetrics)
+	{
+		this.testMetrics = testMetrics;
 	}
 }

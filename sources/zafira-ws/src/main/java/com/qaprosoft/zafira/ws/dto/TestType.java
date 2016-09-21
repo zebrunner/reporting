@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.ws.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -28,6 +29,7 @@ public class TestType extends AbstractType
 	private List<String> workItems;
 	private int retry;
 	private String configXML;
+	private Map<String, Long> testMetrics;
 
 	public String getName()
 	{
@@ -157,5 +159,15 @@ public class TestType extends AbstractType
 	public void setConfigXML(String configXML)
 	{
 		this.configXML = configXML;
+	}
+
+	public Map<String, Long> getTestMetrics()
+	{
+		return testMetrics;
+	}
+
+	public void setTestMetrics(Map<String, Long> testMetrics)
+	{
+		this.testMetrics = testMetrics;
 	}
 }

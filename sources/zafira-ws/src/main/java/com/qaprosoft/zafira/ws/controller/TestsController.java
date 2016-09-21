@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,10 +26,12 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
+import com.qaprosoft.zafira.dbaccess.model.TestMetric;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.TestType;
@@ -37,11 +40,16 @@ import com.qaprosoft.zafira.ws.dto.TestType;
 @RequestMapping("tests")
 public class TestsController extends AbstractController
 {
+	private static final Logger LOGGER = Logger.getLogger(TestsController.class);
+	
 	@Autowired
 	private Mapper mapper;
 	
 	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private TestMetricService testMetricService;
 	
 	@Autowired
 	private TestRunService testRunService;
@@ -66,6 +74,23 @@ public class TestsController extends AbstractController
 		t.setId(id);
 		Test test = testService.finishTest(mapper.map(t, Test.class));
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		
+		try
+		{
+			Map<String, Long> testMetrics = t.getTestMetrics();
+			if(testMetrics != null)
+			{
+				for(String key : testMetrics.keySet())
+				{
+					testMetricService.createTestMetric(new TestMetric(key, testMetrics.get(key), test.getId()));
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			LOGGER.error("Unable to register test metrics: " + e.getMessage());
+		}
+		
 		return mapper.map(test, TestType.class);
 	}
 	
