@@ -75,7 +75,7 @@
 				TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT
 			FROM
 				zafira.TESTS T
-			LEFT JOIN zafira.TEST_CONFIGS TC
+			INNER JOIN zafira.TEST_CONFIGS TC
 				ON T.TEST_CONFIG_ID = TC.ID
 		]]>
 	</sql>
@@ -158,6 +158,11 @@
 	            <foreach item="testRunId" index="index" collection="testRunIds" open="(" separator="," close=")">
 					#{testRunId}
 				</foreach>
+			</if>
+			<if test="null != testRunId">
+				<![CDATA[
+					AND T.TEST_RUN_ID = #{testRunId}
+				]]>
 			</if>
 			<if test="null != testCaseId">
 				<![CDATA[
