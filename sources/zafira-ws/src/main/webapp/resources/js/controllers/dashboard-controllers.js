@@ -8,20 +8,15 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$locat
 			angular.element(document.querySelector('#test-results-statistics')).html('');
 			for (var key in results)
 			{ 
-				var all = results[key]["IN_PROGRESS"].count 
-						+ results[key]["PASSED"].count
-						+ results[key]["FAILED"].count 
-						+ results[key]["SKIPPED"].count;
-				data.push({createdAt: parseInt(key), ALL: all, IN_PROGRESS: results[key]["IN_PROGRESS"].count, PASSED: results[key]["PASSED"].count, FAILED: results[key]["FAILED"].count, SKIPPED: results[key]["SKIPPED"].count});
+				data.push({createdAt: parseInt(key), IN_PROGRESS: results[key]["IN_PROGRESS"].count, PASSED: results[key]["PASSED"].count, FAILED: results[key]["FAILED"].count, SKIPPED: results[key]["SKIPPED"].count});
 			}
 			Morris.Line({
 				  element: 'test-results-statistics',
 				  data: data,
 				  xkey: 'createdAt',
-				  ykeys: ['ALL', 'IN_PROGRESS', 'PASSED', 'FAILED', 'SKIPPED' ],
+				  ykeys: ['IN_PROGRESS', 'PASSED', 'FAILED', 'SKIPPED' ],
 				  lineColors: ['#a3a38e', '#3a87ad', '#5cb85c', '#d9534f', '#f0ad4e'],
-				  labels: ["All", 
-				           "In progress", 
+				  labels: ["In progress", 
 				           "Passed", 
 				           "Failed",
 				           "Skipped"],
