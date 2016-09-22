@@ -61,7 +61,7 @@
 					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
 				</div>
 				<div  class="col-lg-1">
-					<span class="platform-icon {{getArgValue(testRun.configXML, 'browser')}} {{getArgValue(testRun.configXML, 'mobile_platform_name')}} chrome"></span>
+					<span class="platform-icon {{getArgValue(testRun.configXML, 'browser')}} {{getArgValue(testRun.configXML, 'mobile_platform_name')}}"></span>
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
