@@ -1,7 +1,8 @@
 'use strict';
 
-ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', function($scope, $rootScope, $http, $location, ProjectProvider) {
+ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route) {
 
+	
 	$scope.loadTestStatusesStatistics = function() {
 		$http.get('tests/statuses/statistics' + ProjectProvider.getProjectQueryParam()).success(function(results) {
 			var data = [];
@@ -43,6 +44,35 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$locat
 		});
 	};
 	
+	$scope.loadAllDashboards = function() {
+		$http.get('dashboard/all').success(function(dashboards) {
+			$scope.dashboards = dashboards;
+			$scope.loadDashboardData(0);
+		});
+	};
+	
+	$scope.loadDashboardData = function(index) {
+		if($scope.dashboards && $scope.dashboards[index])
+		{
+			var sqlAdapter = {};
+			sqlAdapter.sql = $scope.dashboards[index].sql;
+			$http.post('dashboard/sql', sqlAdapter).success(function(data) {
+				for(var j = 0; j < data.length; j++)
+				{
+					if(data[j].CREATED_AT)
+					{
+						data[j].CREATED_AT = new Date(data[j].CREATED_AT);
+					}
+				}
+				$scope.dashboards[index].model = JSON.parse($scope.dashboards[index].model);
+				$scope.dashboards[index].data = {};
+				$scope.dashboards[index].data.dataset = data;
+				$scope.loadDashboardData(index + 1);
+			});
+		}
+	};
+	
+	
 	$scope.loadTestCaseImplementationStatistics = function() {
 		$http.get('tests/cases/implementation/statistics' + ProjectProvider.getProjectQueryParam()).success(function(results) {
 			var statistics = [];
@@ -69,6 +99,79 @@ ZafiraApp.controller('DashboardCtrl', [ '$scope', '$rootScope', '$http', '$locat
 		$scope.loadTestStatusesStatistics();
 		$scope.loadTestCaseOwnersStatistics();
 		$scope.loadTestCaseImplementationStatistics();
+		$scope.loadAllDashboards();
 	})();
+	
+	
+	$scope.openDashboardDetailsModal = function(id){
+		if(id)
+		{
+			$http.get('dashboard/' + id).success(function(dashboard) {
+				$modal.open({
+					templateUrl : 'resources/templates/dashboard-details-modal.jsp',
+					resolve : {
+						'id' : function(){
+							return id;
+						},
+						'dashboard' : function(){
+							return dashboard;
+						}
+					},
+					controller : function($scope, $modalInstance, id, dashboard){
+						
+						$scope.id = id;
+						$scope.dashboard = dashboard;
+		
+						$scope.updateDashboard = function(dashboard){
+							$http.put('dashboard', dashboard).success(function(data) {
+								$route.reload();
+							}).error(function(data, status) {
+								alert('Failed to update dashboard');
+							});
+							$modalInstance.close(0);
+						};
+						
+						$scope.deleteDashboard = function(dashboard){
+							$http.delete('dashboard/' + dashboard.id).success(function() {
+								$route.reload();
+							}).error(function(data, status) {
+								alert('Failed to delete dashboard');
+							});
+							$modalInstance.close(0);
+						};
+						
+						$scope.cancel = function(){
+							$modalInstance.close(0);
+						};
+					}
+				});
+			}).error(function() {
+				console.error('Failed to load dashboard');
+			});
+		}
+		else
+		{
+			$modal.open({
+				templateUrl : 'resources/templates/dashboard-details-modal.jsp',
+				controller : function($scope, $modalInstance){
+					
+					$scope.dashboard = {};
+	
+					$scope.createDashboard = function(dashboard){
+						$http.post('dashboard', dashboard).success(function(data) {
+							$route.reload();
+						}).error(function(data, status) {
+							alert('Failed to create dashboard');
+						});
+						$modalInstance.close(0);
+					};
+					
+					$scope.cancel = function(){
+						$modalInstance.close(0);
+					};
+				}
+			});
+		}
+	};
 	
 }]);

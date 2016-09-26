@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper">
+
+	<select id="executeSQL" parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLAdapter" resultType="Hashmap">
+		<![CDATA[
+			${sql}
+		]]>
+	</select>
+	
+	<insert id="createDashboard" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO zafira.DASHBOARDS (TITLE, POSITION, SQL, MODEL, SIZE, TYPE)
+			VALUES (
+				#{title},
+			    #{position},
+				#{sql},
+				#{model},
+				#{size},
+				#{type}
+			)
+		]]>
+	</insert>
+	
+	<sql id="getDashboard">
+		<![CDATA[
+			SELECT
+				D.ID AS DASHBOARD_ID,
+				D.TITLE AS DASHBOARD_TITLE,
+				D.POSITION AS DASHBOARD_POSITION,
+				D.SQL AS DASHBOARD_SQL,
+				D.MODEL AS DASHBOARD_MODEL,
+				D.SIZE AS DASHBOARD_SIZE,
+				D.TYPE AS DASHBOARD_TYPE,
+				D.MODIFIED_AT AS DASHBOARD_MODIFIED_AT,
+				D.CREATED_AT AS DASHBOARD_CREATED_AT
+			FROM
+				zafira.DASHBOARDS D
+		]]>
+	</sql>
+	
+	<select id="getAllDashboards" resultMap="DashboardResultMap">
+		<include refid="getDashboard" />
+	</select>
+	
+	<select id="getDashboardById" resultMap="DashboardResultMap">
+		<include refid="getDashboard" />
+		<![CDATA[
+			WHERE D.ID = #{id};
+		]]>
+	</select>
+	
+	<update id="updateDashboard">
+		<![CDATA[
+			UPDATE
+			    zafira.DASHBOARDS
+		]]>
+			<set>
+				<if test="null != title">
+		            <![CDATA[
+		               TITLE = #{title},
+		            ]]>
+				</if>
+				<if test="null != position">
+		            <![CDATA[
+		               POSITION = #{position},
+		            ]]>
+				</if>
+				<if test="null != sql">
+		            <![CDATA[
+		               SQL = #{sql},
+		            ]]>
+				</if>
+				<if test="null != model">
+		            <![CDATA[
+		               MODEL = #{model},
+		            ]]>
+				</if>
+				<if test="null != size">
+		            <![CDATA[
+		               SIZE = #{size},	
+		            ]]>
+				</if>
+				<if test="null != type">
+		            <![CDATA[
+		               TYPE = #{type}	
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+	
+	<sql id="deleteDashboard">
+		<![CDATA[
+			DELETE FROM zafira.DASHBOARDS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteDashboardById">
+		<include refid="deleteDashboard" />
+	</delete>
+	
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Dashboard" id="DashboardResultMap" autoMapping="false">
+		<id column="DASHBOARD_ID" property="id" />
+		<result column="DASHBOARD_TITLE" property="title" />
+		<result column="DASHBOARD_POSITION" property="position" />
+		<result column="DASHBOARD_SQL" property="sql" />
+		<result column="DASHBOARD_MODEL" property="model" />
+		<result column="DASHBOARD_SIZE" property="size" />
+		<result column="DASHBOARD_TYPE" property="type" />
+		<result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
+		<result column="DASHBOARD_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

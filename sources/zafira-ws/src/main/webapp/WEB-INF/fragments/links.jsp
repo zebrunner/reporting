@@ -6,6 +6,7 @@
 <link href="<spring:url value="/resources/css/sb-admin-2.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/style.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/loading-bar.css" />" rel="stylesheet" type="text/css" />
+<link href="<spring:url value="/resources/css/LineChart.min.css" />" rel="stylesheet" type="text/css" />
 
 <!-- AngularJS core -->
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>
@@ -27,6 +28,9 @@
 <script src="<spring:url value='/resources/js/3rd_party/paging.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/raphael-min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/morris.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/d3.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/LineChart.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>
