@@ -24,10 +24,6 @@
 				<zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
 				<zafira.db.c3p0.maxPoolSize>2</zafira.db.c3p0.maxPoolSize>
 				
-				<zafira.jabber.enabled>true</zafira.jabber.enabled>
-				<zafira.jabber.username>{username}</zafira.jabber.username>
-				<zafira.jabber.password>{password}</zafira.jabber.password>
-				
 				<zafira.grid.enabled>false</zafira.grid.enabled>
 				<zafira.grid.stf.url>{url}</zafira.grid.stf.url>
 				<zafira.grid.stf.token>{token}</zafira.grid.stf.token>
