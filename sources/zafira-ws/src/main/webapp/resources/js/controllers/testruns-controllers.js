@@ -23,7 +23,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	$scope.initWebsocket = function() 
 	{
-  	  var sockJS = new SockJS("/zafira-ws/gs-guide-websocket");
+  	  var sockJS = new SockJS("/zafira-ws/zafira-websocket");
   	  var stomp = Stomp.over(sockJS);
   	  //stomp.debug = null;
   	  stomp.connect({}, function() {

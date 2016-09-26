@@ -18,7 +18,7 @@
 	<import resource="classpath:zafira-services.xml" />
 
 	<websocket:message-broker application-destination-prefix="/websocket">
-		<websocket:stomp-endpoint path="/gs-guide-websocket">
+		<websocket:stomp-endpoint path="/zafira-websocket">
 			<websocket:sockjs />
 		</websocket:stomp-endpoint>
 		<websocket:simple-broker prefix="/topic" />

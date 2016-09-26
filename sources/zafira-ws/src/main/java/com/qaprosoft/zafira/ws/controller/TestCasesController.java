@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,15 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestCaseService;
@@ -83,19 +78,5 @@ public class TestCasesController extends AbstractController
 		{
 			return new TestCaseType[0]; 
 		}
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="owners/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody  List<TestCaseOwnersCount> getTestCaseOwnersStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
-	{
-		return testCaseService.getTestCaseOwnersStatistics(project);
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="implementation/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody  List<TestCaseImplementationCount> getTestCaseImplementationStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
-	{
-		return testCaseService.getTestCaseImplementationStatistics(project);
 	}
 }

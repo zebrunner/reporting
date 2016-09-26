@@ -200,3 +200,8 @@ background-image:url(../img/key.png);
 i.pointer {
 	cursor: pointer;
 }
+
+.pie-chart {
+	height: 320px; 
+	width: 320px;
+}

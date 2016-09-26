@@ -1,8 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
@@ -186,26 +183,5 @@ public class TestService
 		results.setResults(testMapper.searchTests(sc));
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
-	}
-	
-	@Transactional(readOnly = true)
-	public Map<Long, Map<Status, TestStatusesCount>> getTestStatusesStatistics(String project) throws ServiceException
-	{
-		Map<Long, Map<Status, TestStatusesCount>> statistics = new HashMap<>();
-		List<TestStatusesCount> results = testMapper.getTestStatusesStatistics(project);
-		for(TestStatusesCount result : results)
-		{
-			long time = result.getDate().getTime();
-			if(!statistics.containsKey(time))
-			{
-				statistics.put(time, new HashMap<Status, TestStatusesCount>());
-				statistics.get(time).put(Status.IN_PROGRESS, new TestStatusesCount(0, Status.IN_PROGRESS));
-				statistics.get(time).put(Status.PASSED, new TestStatusesCount(0, Status.PASSED));
-				statistics.get(time).put(Status.FAILED, new TestStatusesCount(0, Status.FAILED));
-				statistics.get(time).put(Status.SKIPPED, new TestStatusesCount(0, Status.SKIPPED));
-			}
-			statistics.get(time).put(result.getStatus(), result);
-		}
-		return statistics;
 	}
 }

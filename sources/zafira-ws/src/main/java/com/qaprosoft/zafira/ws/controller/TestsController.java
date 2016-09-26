@@ -17,14 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
-import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestMetric;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
@@ -134,12 +131,5 @@ public class TestsController extends AbstractController
 	public @ResponseBody SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) throws ServiceException
 	{
 		return testService.searchTests(sc);
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="statuses/statistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Long, Map<Status, TestStatusesCount>> getTestsStatusStatistics(@RequestParam(value="project", required=false) String project) throws ServiceException
-	{
-		return testService.getTestStatusesStatistics(project);
 	}
 }

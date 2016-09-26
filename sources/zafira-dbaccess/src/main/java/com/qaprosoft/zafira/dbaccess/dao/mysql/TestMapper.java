@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
 
@@ -32,6 +31,4 @@ public interface TestMapper
 	List<Test> searchTests(TestSearchCriteria sc);
 	
 	Integer getTestsSearchCount(TestSearchCriteria sc);
-	
-	List<TestStatusesCount> getTestStatusesStatistics(@Param("project") String project);
 }

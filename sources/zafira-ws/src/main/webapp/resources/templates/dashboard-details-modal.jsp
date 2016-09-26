@@ -15,8 +15,19 @@
 			<input type="text" class="form-control" data-ng-model="dashboard.title" required></input>
 		</div>
 		<div class="form-group">
+			<label>Type</label> 
+			<select class="form-control" data-ng-model="dashboard.type" required>
+				<option value="linechart">Line chart</option>
+				<option value="piechart">Pie chart</option>
+			</select>
+		</div>
+		<div class="form-group">
 			<label>Size</label> 
-			<input type="number" class="form-control" data-ng-model="dashboard.size" required></input>
+			<select class="form-control" data-ng-model="dashboard.size" required>
+				<option value=4>S</option>
+				<option value=8>M</option>
+				<option value=12>L</option>
+			</select>
 		</div>
 		<div class="form-group">
 			<label>Position</label> 
@@ -24,11 +35,11 @@
 		</div>
 		<div class="form-group">
 			<label>SQL</label> 
-			<textarea class="form-control" data-ng-model="dashboard.sql"></textarea>
+			<textarea class="form-control" data-ng-model="dashboard.sql" rows="15"></textarea>
 		</div>
 		<div class="form-group">
 			<label>Model</label> 
-			<textarea class="form-control" data-ng-model="dashboard.model"></textarea>
+			<textarea class="form-control" data-ng-model="dashboard.model" rows="15"></textarea>
 		</div>
 	</form>
 </div>

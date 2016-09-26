@@ -203,48 +203,6 @@
 			</if>
 		</trim>
     </select>
-    
-    <select id="getTestCaseOwnersStatistics" resultMap="TestCaseOwnersCountResultMap">
-		<![CDATA[
-			SELECT 
-				U.USERNAME AS TEST_CASE_OWNER_COUNT_USERNAME,
-				COUNT(*) AS TEST_CASE_OWNER_COUNT_COUNT
-			FROM 
-				zafira.TEST_CASES TC 
-			INNER JOIN 
-				zafira.USERS U 
-			ON U.ID = TC.USER_ID
-		]]>
-		<if test="null != project">
-            <![CDATA[
-          	   WHERE TC.PROJECT = #{project}
-            ]]>
-		</if>
-		<![CDATA[
-			GROUP BY U.USERNAME;
-		]]>
-	</select>
-	
-	 <select id="getTestCaseImplementationStatistics" resultMap="TestCaseImplementationCountResultMap">
-		<![CDATA[
-			SELECT 
-				CREATED_AT::date AS TEST_CASE_IMPLEMENTATION_COUNT_DATE, 
-				COUNT(*) AS TEST_CASE_IMPLEMENTATION_COUNT_COUNT
-			FROM 
-				zafira.TEST_CASES TC
-			WHERE 
-				TC.CREATED_AT::date > (current_date - 30)
-		]]>
-		<if test="null != project">
-            <![CDATA[
-          	   AND TC.PROJECT = #{project}
-            ]]>
-		</if>
-		<![CDATA[
-			GROUP BY CREATED_AT::date
-			ORDER BY CREATED_AT::date ASC;
-		]]>
-	</select>
 
 	<update id="updateTestCase">
 		<![CDATA[
@@ -337,16 +295,6 @@
 		<result column="TEST_CASE_USER_PROJECT" property="user.project" />
 		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
 		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
-	</resultMap>
-	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount" id="TestCaseOwnersCountResultMap" autoMapping="false">
-		<result column="TEST_CASE_OWNER_COUNT_COUNT" property="count" />
-		<result column="TEST_CASE_OWNER_COUNT_USERNAME" property="userName" />
-	</resultMap>
-	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount" id="TestCaseImplementationCountResultMap" autoMapping="false">
-		<result column="TEST_CASE_IMPLEMENTATION_COUNT_COUNT" property="count" />
-		<result column="TEST_CASE_IMPLEMENTATION_COUNT_DATE" property="date" />
 	</resultMap>
 
 </mapper>
