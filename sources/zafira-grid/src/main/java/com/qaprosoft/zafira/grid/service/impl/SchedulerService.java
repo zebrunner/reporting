@@ -20,11 +20,11 @@ public class SchedulerService implements ISchedulerService
 	{
 		try
 		{
+			logger.info("Running executeGridRequestQueueTask");	
 			gridRequestQueueTask.runTask();
-			logger.info("");		
 		} catch (ServiceException e)
 		{
-			logger.error("" + e);
+			logger.error("Error in executeGridRequestQueueTask:" + e);
 		}
 	}
 }

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Controller;
 import com.qaprosoft.zafira.dbaccess.model.push.AbstractPush;
 
 @Controller
-public class WebSocketController {
-
+public class WebSocketController
+{
 	@MessageMapping("/tests/send")
 	@SendTo("/topic/tests")
-	public AbstractPush sendMessage(AbstractPush message) throws Exception {
+	public AbstractPush sendMessage(AbstractPush message) throws Exception
+	{
 		return message;
 	}
 }

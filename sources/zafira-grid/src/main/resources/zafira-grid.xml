@@ -8,6 +8,9 @@
 
 	<context:annotation-config />
 
+	<import resource="classpath:zafira-dbaccess.xml" />
+	<import resource="classpath:zafira-services.xml" />
+
 	<util:properties id="environmentProperties" location="classpath:environment.properties" />
 
 	<bean

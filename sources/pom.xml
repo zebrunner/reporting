@@ -20,6 +20,7 @@
 		<jsp-api.version>2.2</jsp-api.version>
 		<jstl.version>1.2</jstl.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
+		<javax.mail-api.version>1.5.5</javax.mail-api.version>
 
 		<spring.version>4.3.2.RELEASE</spring.version>
 		<spring-data-redis.version>1.7.2.RELEASE</spring-data-redis.version>
@@ -89,6 +90,8 @@
 
 		<jersey.version>1.18.2</jersey.version>
 		<genson.version>0.99</genson.version>
+		
+		<freemarker.version>2.3.23</freemarker.version>
 
 	</properties>
 
@@ -152,6 +155,11 @@
 				<version>${javax.mail.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>${javax.mail-api.version}</version>
+			</dependency>
+			<dependency>
 			    <groupId>org.springframework</groupId>
 			    <artifactId>spring-messaging</artifactId>
 			    <version>${spring.version}</version>
@@ -174,6 +182,11 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
@@ -463,6 +476,12 @@
 				<groupId>com.owlike</groupId>
 				<artifactId>genson</artifactId>
 				<version>${genson.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${freemarker.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

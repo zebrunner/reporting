@@ -38,5 +38,26 @@
 		<property name="basename" value="classpath:i18n/services/messages" />
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="username" value="${mail.user}" />
+		<property name="password" value="${mail.pass}" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+       	      	<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
+		id="freemarkerConfiguration">
+		<property name="preferFileSystemAccess" value="true" />
+		<property name="templateLoaderPaths" value="classpath:templates" />
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
 
 </beans>
