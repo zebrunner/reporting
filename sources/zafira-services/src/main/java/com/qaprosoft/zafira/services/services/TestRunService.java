@@ -106,6 +106,12 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestRunById(Long id) throws ServiceException
+	{
+		testRunMapper.deleteTestRunById(id);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public TestRun startTestRun(TestRun testRun) throws ServiceException, JAXBException
 	{
 		if(!StringUtils.isEmpty(testRun.getCiRunId()))

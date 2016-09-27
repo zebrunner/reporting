@@ -93,7 +93,15 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		default:
 			break;
 		}
-	}
+	};
+	
+	$scope.deleteTestRun = function(id){
+		$http.delete('tests/runs/' + id).success(function() {
+			$scope.loadTestRuns($scope.testRunSearchCriteria.page);
+		}).error(function(data, status) {
+			alert('Failed to delete test run');
+		});
+	};
 
 	$scope.addTestRun = function(testRun) {
 		testRun.showDetails = $scope.testRunId ? true : false;
@@ -203,28 +211,44 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
-	$scope.menuOptions = [
-      ['Open', function ($itemScope) {
-          window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
-      }],
+	// --------------------  Context menu ------------------------
+	const OPEN_TEST_RUN = ['Open', function ($itemScope) {
+        window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
+    }];
+	
+	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
+	  	var node = document.createElement('pre');
+  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
+  	    document.body.appendChild(node);
+  	    
+  	    var selection = getSelection();
+  	    selection.removeAllRanges();
+
+  	    var range = document.createRange();
+  	    range.selectNodeContents(node);
+  	    selection.addRange(range);
+
+  	    document.execCommand('copy');
+  	    selection.removeAllRanges();
+  	    document.body.removeChild(node);
+	}];
+	
+	const DELETE_TEST_RUN = ['Delete', function ($itemScope) {
+	  	$scope.deleteTestRun($itemScope.testRun.id);
+    }];
+	
+	$scope.adminMenuOptions = [
+      OPEN_TEST_RUN,
+      COPY_TEST_RUN_LINK,
       null,
-      ['Copy link', function ($itemScope) {
-    	  	var node = document.createElement('pre');
-	  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
-	  	    document.body.appendChild(node);
-	  	    
-	  	    var selection = getSelection();
-	  	    selection.removeAllRanges();
-	
-	  	    var range = document.createRange();
-	  	    range.selectNodeContents(node);
-	  	    selection.addRange(range);
-	
-	  	    document.execCommand('copy');
-	  	    selection.removeAllRanges();
-	  	    document.body.removeChild(node);
-      }]
+      DELETE_TEST_RUN
     ];
+	
+	$scope.userMenuOptions = [
+      OPEN_TEST_RUN,
+      COPY_TEST_RUN_LINK
+    ];
+	// -----------------------------------------------------------
 	
 	$scope.showDetails = function(id) {
 		var testRun = $scope.testRuns[id];

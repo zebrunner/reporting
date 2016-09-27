@@ -135,4 +135,11 @@ public class TestRunsController extends AbstractController
 	{
 		return new ModelAndView("tests/runs/compare");
 	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
+	public void deleteTestRun(@PathVariable(value="id") long id) throws ServiceException
+	{
+		testRunService.deleteTestRunById(id);
+	}
 }
