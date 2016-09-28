@@ -67,7 +67,7 @@
 		</property>
 		<property name="triggers">
 			<list>
-				<!-- ref bean="gridRequestQueueProcessorTaskTrigger" / -->
+				<ref bean="gridRequestQueueProcessorTaskTrigger" />
 				<ref bean="gridHealthCheckTaskTrigger" />
 			</list>
 		</property>
