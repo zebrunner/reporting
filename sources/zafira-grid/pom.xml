@@ -88,14 +88,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.owlike</groupId>
 			<artifactId>genson</artifactId>
 		</dependency>

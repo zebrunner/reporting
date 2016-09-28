@@ -24,6 +24,9 @@
 
 	<bean id="gridRequestQueueProcessorTask"
 		class="com.qaprosoft.zafira.grid.tasks.GridRequestQueueProcessorTask" />
+		
+	<bean id="gridHealthCheckTask"
+		class="com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask" />
 
 	<bean id="schedulerService" class="com.qaprosoft.zafira.grid.service.impl.SchedulerService" />
 
@@ -33,6 +36,12 @@
 		<property name="targetObject" ref="schedulerService" />
 		<property name="targetMethod" value="executeGridRequestQueueTask" />
 	</bean>
+	
+	<bean id="gridHealthCheckTaskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="schedulerService" />
+		<property name="targetMethod" value="executeGridHealthCheckTask" />
+	</bean>
 
 	<!-- Triggers -->
 	<bean id="gridRequestQueueProcessorTaskTrigger"
@@ -40,6 +49,13 @@
 		<property name="jobDetail" ref="gridRequestQueueProcessorTaskJobDetail" />
 		<property name="cronExpression"
 			value="${zafira.batch.jobs.gridRequestQueueProcessor.trigger.cronExpression}" />
+	</bean>
+	
+	<bean id="gridHealthCheckTaskTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="gridHealthCheckTaskJobDetail" />
+		<property name="cronExpression"
+			value="${zafira.batch.jobs.gridHealthCheck.trigger.cronExpression}" />
 	</bean>
 
 	<bean id="springScheduler"
@@ -51,7 +67,8 @@
 		</property>
 		<property name="triggers">
 			<list>
-				<ref bean="gridRequestQueueProcessorTaskTrigger" />
+				<!-- ref bean="gridRequestQueueProcessorTaskTrigger" / -->
+				<ref bean="gridHealthCheckTaskTrigger" />
 			</list>
 		</property>
 	</bean>
@@ -60,11 +77,6 @@
 		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
 		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
 		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
-	</bean>
-
-	<bean id="stfService" class="com.qaprosoft.zafira.grid.stf.STFService">
-		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
-		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
 	</bean>
 
 	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">

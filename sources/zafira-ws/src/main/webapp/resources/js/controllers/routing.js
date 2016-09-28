@@ -28,6 +28,18 @@ ZafiraApp.constant('ROUTES', [
 	config : {
 		templateUrl : 'tests/runs/compare'
 	}
+},
+{
+	url : '/settings',
+	config : {
+		templateUrl : 'settings/index'
+	}
+},
+{
+	url : '/devices',
+	config : {
+		templateUrl : 'devices/index'
+	}
 }]);
 
 ZafiraApp.config([ '$routeProvider', 'ROUTES',

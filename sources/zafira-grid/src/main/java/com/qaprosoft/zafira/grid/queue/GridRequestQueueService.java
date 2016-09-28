@@ -15,12 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
+import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import com.qaprosoft.zafira.dbaccess.model.stf.RemoteConnectUserDevice;
 import com.qaprosoft.zafira.grid.queue.matchers.IDeviceMatcher;
 import com.qaprosoft.zafira.grid.queue.models.GridRequest;
 import com.qaprosoft.zafira.grid.queue.models.GridResponse;
-import com.qaprosoft.zafira.grid.stf.STFService;
-import com.qaprosoft.zafira.grid.stf.models.Device;
-import com.qaprosoft.zafira.grid.stf.models.RemoteConnectUserDevice;
+import com.qaprosoft.zafira.services.services.stf.STFService;
 
 @Service
 public class GridRequestQueueService
@@ -116,7 +116,7 @@ public class GridRequestQueueService
 		{
 			boolean deviceFound = false;
 			// TODO: optimize api calls for STF
-			for(Device device : stfService.getAllDevices())
+			for(STFDevice device : stfService.getAllDevices())
 			{
 				deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel());
 				

@@ -49,6 +49,12 @@
 	               	<li>
 	                    <a href="#/users"><i class="fa fa-user fa-fw"></i> Users</a>
 	               	</li>
+	               	<li>
+	                    <a href="#/devices"><i class="fa fa-plug fa-fw"></i> Devices</a>
+	               	</li>
+	               	<li>
+	                    <a href="#/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
+	               	</li>
 	               	</sec:authorize>
 	               	<li>
 	               		<a href="<c:url value="/logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.services.services.notifications;
+package com.qaprosoft.zafira.services.services;
 
 import javax.mail.internet.MimeMessage;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.notifications.email.IEmailMessage;
+import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
 
 import freemarker.template.Configuration;
 

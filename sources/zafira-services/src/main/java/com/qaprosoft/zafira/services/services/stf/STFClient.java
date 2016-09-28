@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.grid.stf;
+package com.qaprosoft.zafira.services.services.stf;
 
 import javax.ws.rs.core.MediaType;
 
@@ -6,10 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qaprosoft.zafira.grid.stf.models.Devices;
-import com.qaprosoft.zafira.grid.stf.models.RemoteConnectUserDevice;
-import com.qaprosoft.zafira.grid.stf.models.Response;
-import com.qaprosoft.zafira.grid.stf.models.Serial;
+import com.qaprosoft.zafira.dbaccess.model.stf.Devices;
+import com.qaprosoft.zafira.dbaccess.model.stf.RemoteConnectUserDevice;
+import com.qaprosoft.zafira.dbaccess.model.stf.Response;
+import com.qaprosoft.zafira.dbaccess.model.stf.Serial;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;

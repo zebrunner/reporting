@@ -59,5 +59,10 @@
 		<property name="templateLoaderPaths" value="classpath:templates" />
 		<property name="defaultEncoding" value="UTF-8"/>
 	</bean>
+	
+	<bean id="stfService" class="com.qaprosoft.zafira.services.services.stf.STFService">
+		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
+		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
+	</bean>
 
 </beans>

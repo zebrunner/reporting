@@ -40,3 +40,5 @@
 <script src="<spring:url value='/resources/js/controllers/testruns-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/testcases-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/users-controllers.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/settings-controllers.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/devices-controllers.js'/>" type="text/javascript"></script>

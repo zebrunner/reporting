@@ -1,5 +1,5 @@
 
-package com.qaprosoft.zafira.grid.stf.models;
+package com.qaprosoft.zafira.dbaccess.model.stf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "using",
     "version"
 })
-public class Device {
+public class STFDevice {
 
     /**
      * 

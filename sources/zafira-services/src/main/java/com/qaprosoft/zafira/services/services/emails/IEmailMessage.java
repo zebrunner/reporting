@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.services.services.notifications.email;
+package com.qaprosoft.zafira.services.services.emails;
 
 public interface IEmailMessage
 {

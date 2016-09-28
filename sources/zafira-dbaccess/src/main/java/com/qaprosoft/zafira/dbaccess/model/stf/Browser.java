@@ -1,7 +1,9 @@
 
-package com.qaprosoft.zafira.grid.stf.models;
+package com.qaprosoft.zafira.dbaccess.model.stf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -14,62 +16,62 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "channel",
-    "name"
+    "apps",
+    "selected"
 })
-public class Provider {
+public class Browser {
 
     /**
      * 
      */
-    @JsonProperty("channel")
-    private String channel;
+    @JsonProperty("apps")
+    private List<App> apps = new ArrayList<App>();
     /**
      * 
      */
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("selected")
+    private Boolean selected;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
      * @return
-     *     The channel
+     *     The apps
      */
-    @JsonProperty("channel")
-    public String getChannel() {
-        return channel;
+    @JsonProperty("apps")
+    public List<App> getApps() {
+        return apps;
     }
 
     /**
      * 
-     * @param channel
-     *     The channel
+     * @param apps
+     *     The apps
      */
-    @JsonProperty("channel")
-    public void setChannel(String channel) {
-        this.channel = channel;
+    @JsonProperty("apps")
+    public void setApps(List<App> apps) {
+        this.apps = apps;
     }
 
     /**
      * 
      * @return
-     *     The name
+     *     The selected
      */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("selected")
+    public Boolean getSelected() {
+        return selected;
     }
 
     /**
      * 
-     * @param name
-     *     The name
+     * @param selected
+     *     The selected
      */
-    @JsonProperty("name")
-    public void setName(String name) {
-        this.name = name;
+    @JsonProperty("selected")
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     @JsonAnyGetter

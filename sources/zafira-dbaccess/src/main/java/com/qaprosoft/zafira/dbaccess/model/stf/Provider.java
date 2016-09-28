@@ -1,9 +1,7 @@
 
-package com.qaprosoft.zafira.grid.stf.models;
+package com.qaprosoft.zafira.dbaccess.model.stf;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -16,62 +14,62 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "devices",
-    "success"
+    "channel",
+    "name"
 })
-public class Devices {
+public class Provider {
 
     /**
      * 
      */
-    @JsonProperty("devices")
-    private List<Device> devices = new ArrayList<Device>();
+    @JsonProperty("channel")
+    private String channel;
     /**
      * 
      */
-    @JsonProperty("success")
-    private Boolean success;
+    @JsonProperty("name")
+    private String name;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
      * @return
-     *     The devices
+     *     The channel
      */
-    @JsonProperty("devices")
-    public List<Device> getDevices() {
-        return devices;
+    @JsonProperty("channel")
+    public String getChannel() {
+        return channel;
     }
 
     /**
      * 
-     * @param devices
-     *     The devices
+     * @param channel
+     *     The channel
      */
-    @JsonProperty("devices")
-    public void setDevices(List<Device> devices) {
-        this.devices = devices;
+    @JsonProperty("channel")
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
     /**
      * 
      * @return
-     *     The success
+     *     The name
      */
-    @JsonProperty("success")
-    public Boolean getSuccess() {
-        return success;
+    @JsonProperty("name")
+    public String getName() {
+        return name;
     }
 
     /**
      * 
-     * @param success
-     *     The success
+     * @param name
+     *     The name
      */
-    @JsonProperty("success")
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     @JsonAnyGetter

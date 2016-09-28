@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.grid.stf.models;
+package com.qaprosoft.zafira.dbaccess.model.stf;
 
 import javax.annotation.Generated;
 
