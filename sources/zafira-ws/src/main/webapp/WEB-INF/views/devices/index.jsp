@@ -7,7 +7,9 @@
 
 <div class="view-wrapper" data-ng-controller="DevicesCtrl">
 	<div class="row">
-         <h2><i class="fa fa-plug fa-fw"></i> Devices <button class="btn btn-xs btn-success" data-ng-click="openDeviceModal()"> <i class="fa fa-plus-circle"></i> new</button> <button class="btn btn-xs btn-primary" data-ng-really-message="Do you really want to sync all devices with STF?" data-ng-really-click="syncDevices()"> <i class="fa fa-refresh"></i> sync</button></h2>
+        <div class="col-lg-12">
+         	<h2><i class="fa fa-plug fa-fw"></i> Devices <button class="btn btn-xs btn-success" data-ng-click="openDeviceModal()"> <i class="fa fa-plus-circle"></i> new</button> <button class="btn btn-xs btn-primary" data-ng-really-message="Do you really want to sync all devices with STF?" data-ng-really-click="syncDevices()"> <i class="fa fa-refresh"></i> sync</button></h2>
+    	</div>
     </div>
 	<div class="row">
 		<div class="col-lg-12">

@@ -205,6 +205,11 @@ i.pointer {
 	cursor: pointer;
 }
 
+.graph-box {
+	height: 350px; 
+	padding-bottom: 35px;
+}
+
 .pie-chart {
 	height: 320px; 
 	width: 320px;

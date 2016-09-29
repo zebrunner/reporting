@@ -21,10 +21,22 @@
                     <i class="float_right fa fa-copy pointer" style="line-height: 20px;  margin-right: 5px;" data-ng-click="openDashboardDetailsModal(dashboard.id, true)"></i>
                 	</sec:authorize>
                 </div>
-                <div align="center" class="panel-body" style="height: 350px; padding-bottom: 35px;">
+                <div align="center" class="panel-body" data-ng-class="{'graph-box' : dashboard.type != 'table'}">
                      <linechart data-ng-if="dashboard.type == 'linechart'" data="dashboard.data" options="dashboard.model"></linechart>
                      <div  data-ng-if="dashboard.type == 'piechart'" class="pie-chart">
                      	<pie-chart data="dashboard.data.dataset" options="dashboard.model"></pie-chart>
+                     </div>
+                     <div class="table-responsive" data-ng-if="dashboard.type == 'table'">
+                     	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                     		<tr>
+                     			<th data-ng-repeat="column in dashboard.model.columns">
+                     				{{column}}
+                     			</th>
+                     		</tr>
+                     		<tr data-ng-repeat="row in dashboard.data.dataset">
+                     			<td data-ng-repeat="column in dashboard.model.columns">{{row[column]}}</td>
+                     		</tr>
+                     	</table>
                      </div>
                 </div>
             </div>

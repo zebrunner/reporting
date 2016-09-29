@@ -7,7 +7,9 @@
 
 <div data-ng-controller="UsersListCtrl">
 	<div class="row">
-         <h2><i class="fa fa-user fa-fw"></i> Users <button class="btn btn-xs btn-success" data-ng-click="openUserDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+         <div class="col-lg-12">
+         	<h2><i class="fa fa-user fa-fw"></i> Users <button class="btn btn-xs btn-success" data-ng-click="openUserDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+    	</div>
     </div>
 	<div class="row">
 		<div class="col-lg-12">

@@ -7,7 +7,9 @@
 
 <div class="view-wrapper" data-ng-controller="SettingsCtrl">
 	<div class="row">
-         <h2><i class="fa fa-gear fa-fw"></i> Settings <button class="btn btn-xs btn-success" data-ng-click="openSettingsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+        <div class="col-lg-12">
+         	<h2><i class="fa fa-gear fa-fw"></i> Settings <button class="btn btn-xs btn-success" data-ng-click="openSettingsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+    	</div>
     </div>
 	<div class="row">
 		<div class="col-lg-12">
