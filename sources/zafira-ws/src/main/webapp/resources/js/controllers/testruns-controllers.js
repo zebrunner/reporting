@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -96,13 +96,16 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	};
 	
 	$scope.deleteTestRun = function(id){
-		$http.delete('tests/runs/' + id).success(function() {
-			$scope.loadTestRuns($scope.testRunSearchCriteria.page);
-		}).error(function(data, status) {
-			alert('Failed to delete test run');
-		});
+		if(confirm("Do you really want to delete test run?"))
+		{
+			$http.delete('tests/runs/' + id).success(function() {
+				$scope.loadTestRuns($scope.testRunSearchCriteria.page);
+			}).error(function(data, status) {
+				alert('Failed to delete test run');
+			});
+		}
 	};
-
+	
 	$scope.addTestRun = function(testRun) {
 		testRun.showDetails = $scope.testRunId ? true : false;
     	if($scope.testRuns[testRun.id] == null)
@@ -237,16 +240,22 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	$scope.deleteTestRun($itemScope.testRun.id);
     }];
 	
+	const SEND_EMAIL = ['Send as email', function ($itemScope) {
+	  	$scope.openEmailModal($itemScope.testRun);
+    }];
+	
 	$scope.adminMenuOptions = [
       OPEN_TEST_RUN,
       COPY_TEST_RUN_LINK,
+      SEND_EMAIL,
       null,
       DELETE_TEST_RUN
     ];
 	
 	$scope.userMenuOptions = [
       OPEN_TEST_RUN,
-      COPY_TEST_RUN_LINK
+      COPY_TEST_RUN_LINK,
+      SEND_EMAIL
     ];
 	// -----------------------------------------------------------
 	
@@ -302,6 +311,34 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		$http.post('tests/' + id + '/passed').success(function(data) {
 		}).error(function() {
 			console.error('Failed to mark test as passed!');
+		});
+	};
+	
+	$scope.openEmailModal = function(testRun){
+		$modal.open({
+			templateUrl : 'resources/templates/email-details-modal.jsp',
+			resolve : {
+				'testRun' : function(){
+					return testRun;
+				}
+			},
+			controller : function($scope, $modalInstance, testRun){
+				
+				$scope.testRun = testRun;
+				$scope.email = {};
+				
+				$scope.sendEmail = function(id){
+					$modalInstance.close(0);
+					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).success(function() {
+						alert('Email was successfully sent!');
+					}).error(function(data, status) {
+						alert('Failed to send email');
+					});
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
 		});
 	};
 	

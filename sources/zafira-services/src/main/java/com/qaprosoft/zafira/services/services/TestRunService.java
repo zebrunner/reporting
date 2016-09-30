@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +26,12 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
+
 
 @Service
 public class TestRunService
@@ -49,6 +55,9 @@ public class TestRunService
 	
 	@Autowired
 	private TestConfigService testConfigService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -261,4 +270,28 @@ public class TestRunService
 		}
 		return testRun;
 	}
+	
+	@Transactional(readOnly=true)
+	public void sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByIdFull(testRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by ID: " + testRunId);
+		}
+		Configuration configuration = readConfiguration(testRun.getConfigXML());
+		
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		
+		emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests), recipients);
+	}
+	
+	private Configuration readConfiguration(String xml) throws JAXBException
+	{
+		ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
+		Configuration configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
+		IOUtils.closeQuietly(xmlBA);
+		return configuration;
+	}
+	
 }

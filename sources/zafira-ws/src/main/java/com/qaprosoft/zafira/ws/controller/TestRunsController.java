@@ -33,6 +33,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.ws.dto.EmailType;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
 
 @Controller
@@ -141,5 +142,12 @@ public class TestRunsController extends AbstractController
 	public void deleteTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		testRunService.deleteTestRunById(id);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/email", method = RequestMethod.POST)
+	public void sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email) throws ServiceException, JAXBException
+	{
+		testRunService.sendTestRunResultsEmail(id, email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 }

@@ -31,7 +31,7 @@ public class EmailService
 	private Configuration freemarkerConfiguration;
 	
 	
-	public void sendEmail(final IEmailMessage message, final String... receipients)
+	public void sendEmail(final IEmailMessage message, final String... recipients)
 	{
 		MimeMessagePreparator preparator = new MimeMessagePreparator()
 		{
@@ -39,7 +39,7 @@ public class EmailService
 			{
 				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
 				msg.setSubject(message.getSubject());
-				msg.setTo(receipients);
+				msg.setTo(recipients);
 				msg.setFrom(mailUser);
 				msg.setText(getFreeMarkerTemplateContent(message), true);
 			}
