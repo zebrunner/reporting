@@ -51,12 +51,12 @@ public class Widget extends AbstractEntity
 		this.model = model;
 	}
 
-	public int getSize()
+	public Integer getSize()
 	{
 		return size;
 	}
 
-	public void setSize(int size)
+	public void setSize(Integer size)
 	{
 		this.size = size;
 	}

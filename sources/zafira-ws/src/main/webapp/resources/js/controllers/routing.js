@@ -1,8 +1,8 @@
 ZafiraApp.constant('ROUTES', [  
 {
-	url : '/dashboard',
+	url : '/dashboards',
 	config : {
-		templateUrl : 'dashboard'
+		templateUrl : 'dashboards'
 	}
 },
 {

@@ -43,6 +43,9 @@
 	
 	<select id="getAllDashboards" resultMap="DashboardResultMap">
 		<include refid="getDashboard" />
+		<![CDATA[
+			ORDER BY D.TITLE ASC;
+		]]>
 	</select>
 	
 	<select id="getDashboardById" resultMap="DashboardResultMap">

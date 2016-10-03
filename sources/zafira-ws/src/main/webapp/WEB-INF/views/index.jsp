@@ -37,7 +37,7 @@
 	            <ul class="nav navbar-top-links navbar-right">
 
 	                <li>
-	                    <a href="#/dashboard"><i class="fa fa-pie-chart fa-fw"></i> Dashboard</a>
+	                    <a href="#/dashboards"><i class="fa fa-pie-chart fa-fw"></i> Dashboards</a>
 	               	</li>
 	               	<li>
 	                    <a href="#/tests/runs"><i class="fa fa-play-circle fa-fw"></i> Test runs</a>

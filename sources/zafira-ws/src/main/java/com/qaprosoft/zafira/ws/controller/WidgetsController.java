@@ -18,64 +18,45 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.WidgetService;
 
 @Controller
-@RequestMapping("dashboard")
-public class DashboardController extends AbstractController
+@RequestMapping("widgets")
+public class WidgetsController extends AbstractController
 {
-	@Autowired
-	private DashboardService dashboardService;
-	
 	@Autowired
 	private WidgetService widgetService;
 	
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView index()
-	{
-		return new ModelAndView("dashboard/index");
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		return dashboardService.createDashboard(dashboard);
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards() throws ServiceException
-	{
-		return dashboardService.getAllDashboards();
+		return widgetService.createWidget(widget);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard getDashboard(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody Widget getWidget(@PathVariable(value="id") long id) throws ServiceException
 	{
-		return dashboardService.getDashboardById(id);
+		return widgetService.getWidgetById(id);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
-	public void deleteDashboard(@PathVariable(value="id") long id) throws ServiceException
+	public void deleteWidget(@PathVariable(value="id") long id) throws ServiceException
 	{
-		dashboardService.deleteDashboardById(id);
+		widgetService.deleteWidgetById(id);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard updateDashboard(@RequestBody Dashboard dashboard) throws ServiceException
+	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
 	{
-		return dashboardService.updateDashboard(dashboard);
+		return widgetService.updateWidget(widget);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
