@@ -65,4 +65,11 @@ public class WidgetsController extends AbstractController
 	{
 		return widgetService.executeSQL(sql.getSql().replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : ""));
 	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Widget> getAllWidgets() throws ServiceException
+	{
+		return widgetService.getAllWidgets();
+	}
 }

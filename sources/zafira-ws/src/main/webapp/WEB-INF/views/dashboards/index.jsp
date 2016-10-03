@@ -9,10 +9,9 @@
 	<div class="row">
          <div class="col-lg-12">
          	<h2>
-         		<i class="fa fa-pie-chart fa-fw"></i> Dashboard 
+         		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
          		<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-         			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal()"> <i class="fa fa-plus-circle"></i> new dashboard</button>
-         			<button class="btn btn-xs btn-success" data-ng-click="openWidgetDetailsModal()"> <i class="fa fa-plus-circle"></i> new widget</button>
+         			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button>
          		</sec:authorize></h2><br/>
          </div>
     </div>
@@ -38,8 +37,7 @@
                 <div class="panel-heading">
                     {{widget.title}}
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-                    <i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openWidgetDetailsModal(widget.id, false)"></i>
-                    <i class="float_right fa fa-copy pointer" style="line-height: 20px;  margin-right: 5px;" data-ng-click="openWidgetDetailsModal(widget.id, true)"></i>
+                    <i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget)"></i>
                 	</sec:authorize>
                 </div>
                 <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
@@ -63,6 +61,17 @@
             </div>
         </div>
 	</div>
+	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	<div class="row">
+		<div class="col-lg-6">
+			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openWidgetDetailsModal()">Create new widget</button>
+		</div>
+		<div class="col-lg-6">
+			<button type="button" class="btn btn-outline btn-primary btn-lg btn-block" data-ng-click="openDashboardWidgetModal()">Add widget to dashboard</button>
+		</div>
+	</div>
+	<br/>
+	</sec:authorize>
 </div>
 
               

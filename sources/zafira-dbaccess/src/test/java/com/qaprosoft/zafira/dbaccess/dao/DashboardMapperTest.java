@@ -83,7 +83,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard"})
     public void addWidgetToDashboard() {
         widgetMapper.createWidget(WIDGET);
-        dashboardMapper.addWidget(DASHBOARD.getId(), WIDGET);
+        dashboardMapper.addDashboardWidget(DASHBOARD.getId(), WIDGET);
         DASHBOARD.setWidgets(Arrays.asList(WIDGET));
     }
 
@@ -93,7 +93,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
 
-    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard"})
+    @Test
     public void getAllDashboards()
     {
         List<Dashboard> dashboards = dashboardMapper.getAllDashboards();
@@ -114,14 +114,14 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
 
         DASHBOARD.getWidgets().get(0).setPosition(3);
         DASHBOARD.getWidgets().get(0).setSize(3);
-        dashboardMapper.updateWidget(DASHBOARD, DASHBOARD.getWidgets().get(0));
+        dashboardMapper.updateDashboardWidget(DASHBOARD.getId(), DASHBOARD.getWidgets().get(0));
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "getDashboardById", "getAllDashboards", "updateDashboard",
             "addWidgetToDashboard", "updateWidgetOnDashboard"})
     public void removeWidgetFromDashboard() {
-        dashboardMapper.removeWidget((long) 20);
+        dashboardMapper.deleteDashboardWidget(DASHBOARD.getId(), DASHBOARD.getWidgets().get(0).getId());
     }
     
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "getDashboardById", "getAllDashboards", "updateDashboard", "updateWidgetOnDashboard", "removeWidgetFromDashboard"})

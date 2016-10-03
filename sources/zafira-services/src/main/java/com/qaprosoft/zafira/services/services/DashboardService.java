@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -46,5 +47,25 @@ public class DashboardService
 	public void deleteDashboardById(Long id) throws ServiceException
 	{
 		dashboardMapper.deleteDashboardById(id);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Widget addDashboardWidget(Long dashboardId, Widget widget) throws ServiceException
+	{
+		dashboardMapper.addDashboardWidget(dashboardId, widget);
+		return widget;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Widget updateDashboardWidget(Long dashboardId, Widget widget) throws ServiceException
+	{
+		dashboardMapper.updateDashboardWidget(dashboardId, widget);
+		return widget;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteDashboardWidget(Long dashboardId, Long widgetId) throws ServiceException
+	{
+		dashboardMapper.deleteDashboardWidget(dashboardId, widgetId);
 	}
 }

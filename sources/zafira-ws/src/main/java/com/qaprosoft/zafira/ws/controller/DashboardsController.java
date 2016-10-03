@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.WidgetService;
@@ -72,5 +73,26 @@ public class DashboardsController extends AbstractController
 	public @ResponseBody Dashboard updateDashboard(@RequestBody Dashboard dashboard) throws ServiceException
 	{
 		return dashboardService.updateDashboard(dashboard);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{dashboardId}/widgets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Widget addDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
+	{
+		return dashboardService.addDashboardWidget(dashboardId, widget);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{dashboardId}/widgets/{widgetId}", method = RequestMethod.DELETE)
+	public void deleteDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="widgetId") long widgetId) throws ServiceException
+	{
+		dashboardService.deleteDashboardWidget(dashboardId, widgetId);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{dashboardId}/widgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Widget updateDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
+	{
+		return dashboardService.updateDashboardWidget(dashboardId, widget);
 	}
 }

@@ -33,9 +33,9 @@ public interface DashboardMapper
 
 	void deleteDashboardById(long id);
 	
-	void addWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
+	void addDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 
-	void removeWidget(Long id);
+	void deleteDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widgetId") Long widgetId);
 
-	void updateWidget(@Param("dashboard") Dashboard dashboard, @Param("widget") Widget widget);
+	void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 }

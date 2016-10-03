@@ -29,6 +29,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		});
 	};
 	
+	$scope.loadAllWidgets = function() {
+		$http.get('widgets/all').success(function(widgets) {
+			$scope.widgets = widgets;
+		});
+	};
+	
 	$scope.switchDashboard = function(id) {
 		window.open($location.$$absUrl.split("?")[0] + "?id=" + id, '_self');
 	};
@@ -59,8 +65,72 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	
 	(function init(){
 		$scope.loadAllDashboards();
+		$scope.loadAllWidgets();
 	})();
 	
+	$scope.openDashboardWidgetModal = function(widget) {
+		$modal.open({
+			templateUrl : 'resources/templates/dashboard-widget-details-modal.jsp',
+			resolve : {
+				'dashboardId' : function(){
+					return $scope.dashboard.id;
+				},
+				'widget' : function(){
+					return widget;
+				},
+				'widgets' : function(){
+					return $scope.widgets;
+				},
+				'isNew' : function(){
+					return widget == null ? true : false;
+				}
+			},
+			controller : function($scope, $modalInstance, isNew, dashboardId, widget, widgets){
+				
+				$scope.widgets = widgets; 
+				$scope.isNew = isNew;
+				if(isNew)
+				{
+					$scope.widget = {"position" : 0, "size" : 4}
+				}
+				else
+				{
+					$scope.widget = widget;
+				}
+				
+				$scope.addDashboardWidget = function(widget){
+					$http.post('dashboards/' + dashboardId + '/widgets', widget).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to add widget');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.deleteDashboardWidget = function(widget){
+					$http.delete('dashboards/' + dashboardId + '/widgets/' + widget.id).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to delete widget');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.updateDashboardWidget = function(widget){
+					$http.put('dashboards/' + dashboardId + '/widgets', {"id" : widget.id, "size" : widget.size, "position": widget.position}).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to update widget');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
+	};
 	
 	$scope.openDashboardDetailsModal = function(id, copy){
 		if(id)
@@ -76,19 +146,6 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					controller : function($scope, $modalInstance, dashboard){
 						
 						$scope.dashboard = dashboard;
-						if(copy)
-						{
-							$scope.dashboard.id = null;
-						}
-						
-						$scope.createDashboard = function(dashboard){
-							$http.post('dashboards', dashboard).success(function(data) {
-								window.open($location.$$absUrl.split("?")[0] + "?id=" + data.id, '_self');
-							}).error(function(data, status) {
-								alert('Failed to create dashboard');
-							});
-							$modalInstance.close(0);
-						};
 		
 						$scope.updateDashboard = function(dashboard){
 							$http.put('dashboards', dashboard).success(function(data) {

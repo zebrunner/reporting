@@ -90,7 +90,7 @@
     
     <!-- Dashboard widgets -->
     
-    <insert id="addWidget">
+    <insert id="addDashboardWidget">
         <![CDATA[
             INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE)
             VALUES (
@@ -102,15 +102,15 @@
         ]]>
     </insert>
 
-    <delete id="removeWidget">
+    <delete id="deleteDashboardWidget">
         DELETE 
         FROM 
         	zafira.DASHBOARDS_WIDGETS
-        WHERE 
-        	ID = #{id}
+       	WHERE 
+       		ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widgetId})
     </delete>
     
-    <update id="updateWidget">
+    <update id="updateDashboardWidget">
         <![CDATA[
             UPDATE
               zafira.DASHBOARDS_WIDGETS
@@ -128,7 +128,7 @@
             </if>
         </set>
         <![CDATA[
-            WHERE ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboard.id} AND WIDGET_ID = #{widget.id})
+            WHERE ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widget.id})
         ]]>
     </update>
 
