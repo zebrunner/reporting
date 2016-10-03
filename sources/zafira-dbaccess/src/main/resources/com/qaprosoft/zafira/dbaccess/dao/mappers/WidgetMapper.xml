@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper">
+
+	<select id="executeSQL" parameterType="com.qaprosoft.zafira.dbaccess.utils.SQLAdapter" resultType="Hashmap">
+		<![CDATA[
+			${sql}
+		]]>
+	</select>
+	
+	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO zafira.WIDGETS (TITLE, SQL, MODEL, TYPE)
+			VALUES (
+				#{title},
+				#{sql},
+				#{model},
+				#{type}
+			)
+		]]>
+	</insert>
+	
+	<sql id="getWidget">
+		<![CDATA[
+			SELECT
+				W.ID AS WIDGET_ID,
+				W.TITLE AS WIDGET_TITLE,
+				W.SQL AS WIDGET_SQL,
+				W.MODEL AS WIDGET_MODEL,
+				W.TYPE AS WIDGET_TYPE,
+				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
+				W.CREATED_AT AS WIDGET_CREATED_AT
+			FROM
+				zafira.WIDGETS W
+		]]>
+	</sql>
+	
+	<select id="getAllWidgets" resultMap="WidgetResultMap">
+		<include refid="getWidget" />
+	</select>
+	
+	<select id="getWidgetById" resultMap="WidgetResultMap">
+		<include refid="getWidget" />
+		<![CDATA[
+			WHERE W.ID = #{id};
+		]]>
+	</select>
+	
+	<update id="updateWidget">
+		<![CDATA[
+			UPDATE
+			    zafira.WIDGETS
+		]]>
+			<set>
+				<if test="null != title">
+		            <![CDATA[
+		               TITLE = #{title},
+		            ]]>
+				</if>
+				<if test="null != sql">
+		            <![CDATA[
+		               SQL = #{sql},
+		            ]]>
+				</if>
+				<if test="null != model">
+		            <![CDATA[
+		               MODEL = #{model},
+		            ]]>
+				</if>
+				<if test="null != type">
+		            <![CDATA[
+		               TYPE = #{type}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+	
+	<sql id="deleteWidget">
+		<![CDATA[
+			DELETE FROM zafira.WIDGETS
+		]]>
+	</sql>
+
+	<delete id="deleteWidgetById">
+		<include refid="deleteWidget" />
+		<![CDATA[
+			WHERE ID = #{id}
+		]]>
+	</delete>
+	
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Widget" id="WidgetResultMap" autoMapping="false">
+		<id column="WIDGET_ID" property="id" />
+		<result column="WIDGET_TITLE" property="title" />
+		<result column="WIDGET_SQL" property="sql" />
+		<result column="WIDGET_MODEL" property="model" />
+		<result column="WIDGET_TYPE" property="type" />
+		
+		<result column="DASHBOARD_WIDGET_SIZE" property="size" />
+		<result column="DASHBOARD_WIDGET_POSITION" property="position" />
+		
+		<result column="WIDGET_MODIFIED_AT" property="modifiedAt" />
+		<result column="WIDGET_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

@@ -24,6 +24,7 @@ import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
+import com.qaprosoft.zafira.services.services.WidgetService;
 
 @Controller
 @RequestMapping("dashboard")
@@ -31,6 +32,9 @@ public class DashboardController extends AbstractController
 {
 	@Autowired
 	private DashboardService dashboardService;
+	
+	@Autowired
+	private WidgetService widgetService;
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
@@ -78,6 +82,6 @@ public class DashboardController extends AbstractController
 	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project) throws ServiceException
 	{
-		return dashboardService.executeSQL(sql.getSql().replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : ""));
+		return widgetService.executeSQL(sql.getSql().replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : ""));
 	}
 }

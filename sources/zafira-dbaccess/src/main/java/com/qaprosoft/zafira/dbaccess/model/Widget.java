@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
-public class Dashboard extends AbstractEntity
+public class Widget extends AbstractEntity
 {
 	private static final long serialVersionUID = -750759195176951157L;
 	

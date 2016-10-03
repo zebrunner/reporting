@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
-import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -48,11 +46,5 @@ public class DashboardService
 	public void deleteDashboardById(Long id) throws ServiceException
 	{
 		dashboardMapper.deleteDashboardById(id);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<Map<String, Object>> executeSQL(String sql) throws ServiceException
-	{
-		return dashboardMapper.executeSQL(new SQLAdapter(sql));
 	}
 }

@@ -12,7 +12,7 @@
          </div>
     </div>
 	<div class="row">
-        <div class="col-lg-{{dashboard.size}}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
+        <!-- div class="col-lg-{{dashboard.size}}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {{dashboard.title}}
@@ -40,7 +40,7 @@
                      </div>
                 </div>
             </div>
-        </div>
+        </div -->
 	</div>
 </div>
 
