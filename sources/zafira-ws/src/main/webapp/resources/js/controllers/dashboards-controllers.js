@@ -68,7 +68,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		$scope.loadAllWidgets();
 	})();
 	
-	$scope.openDashboardWidgetModal = function(widget) {
+	$scope.openDashboardWidgetModal = function(widget, isNew) {
 		$modal.open({
 			templateUrl : 'resources/templates/dashboard-widget-details-modal.jsp',
 			resolve : {
@@ -78,24 +78,20 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				'widget' : function(){
 					return widget;
 				},
-				'widgets' : function(){
-					return $scope.widgets;
-				},
 				'isNew' : function(){
-					return widget == null ? true : false;
+					return isNew;
 				}
 			},
-			controller : function($scope, $modalInstance, isNew, dashboardId, widget, widgets){
+			controller : function($scope, $modalInstance, isNew, dashboardId, widget){
 				
-				$scope.widgets = widgets; 
 				$scope.isNew = isNew;
+				$scope.widget = widget;
+				
+				
 				if(isNew)
 				{
-					$scope.widget = {"position" : 0, "size" : 4}
-				}
-				else
-				{
-					$scope.widget = widget;
+					$scope.widget.position = 0;
+					$scope.widget.size = 4;
 				}
 				
 				$scope.addDashboardWidget = function(widget){
@@ -132,151 +128,109 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		});
 	};
 	
-	$scope.openDashboardDetailsModal = function(id, copy){
-		if(id)
-		{
-			$http.get('dashboards/' + id).success(function(dashboard) {
-				$modal.open({
-					templateUrl : 'resources/templates/dashboard-details-modal.jsp',
-					resolve : {
-						'dashboard' : function(){
-							return dashboard;
-						}
-					},
-					controller : function($scope, $modalInstance, dashboard){
-						
-						$scope.dashboard = dashboard;
-		
-						$scope.updateDashboard = function(dashboard){
-							$http.put('dashboards', dashboard).success(function(data) {
-								$route.reload();
-							}).error(function(data, status) {
-								alert('Failed to update dashboard');
-							});
-							$modalInstance.close(0);
-						};
-						
-						$scope.deleteDashboard = function(dashboard){
-							$http.delete('dashboards/' + dashboard.id).success(function() {
-								window.open($location.$$absUrl.split("?")[0], '_self');
-							}).error(function(data, status) {
-								alert('Failed to delete dashboard');
-							});
-							$modalInstance.close(0);
-						};
-						
-						$scope.cancel = function(){
-							$modalInstance.close(0);
-						};
-					}
-				});
-			}).error(function() {
-				console.error('Failed to load dashboard');
-			});
-		}
-		else
-		{
-			$modal.open({
-				templateUrl : 'resources/templates/dashboard-details-modal.jsp',
-				controller : function($scope, $modalInstance){
-					
-					$scope.dashboard = {};
-	
-					$scope.createDashboard = function(dashboard){
-						$http.post('dashboards', dashboard).success(function(data) {
-							$route.reload();
-						}).error(function(data, status) {
-							alert('Failed to create dashboard');
-						});
-						$modalInstance.close(0);
-					};
-					
-					$scope.cancel = function(){
-						$modalInstance.close(0);
-					};
+	$scope.openDashboardDetailsModal = function(dashboard, isNew){
+		$modal.open({
+			templateUrl : 'resources/templates/dashboard-details-modal.jsp',
+			resolve : {
+				'dashboard' : function(){
+					return dashboard;
+				},
+				'isNew' : function(){
+					return isNew;
 				}
-			});
-		}
+			},
+			controller : function($scope, $modalInstance, dashboard, isNew){
+				
+				$scope.isNew = isNew;
+				$scope.dashboard = dashboard;
+				
+				$scope.createDashboard = function(dashboard){
+					$http.post('dashboards', dashboard).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to create dashboard');
+					});
+					$modalInstance.close(0);
+				};
+
+				$scope.updateDashboard = function(dashboard){
+					$http.put('dashboards', dashboard).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to update dashboard');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.deleteDashboard = function(dashboard){
+					$http.delete('dashboards/' + dashboard.id).success(function() {
+						window.open($location.$$absUrl.split("?")[0], '_self');
+					}).error(function(data, status) {
+						alert('Failed to delete dashboard');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
 	};
 	
-	$scope.openWidgetDetailsModal = function(id, copy){
-		if(id)
-		{
-			$http.get('widgets/' + id).success(function(widget) {
-				$modal.open({
-					templateUrl : 'resources/templates/widget-details-modal.jsp',
-					resolve : {
-						'dashboard' : function(){
-							return widget;
-						}
-					},
-					controller : function($scope, $modalInstance, widget){
-						
-						$scope.widget = widget;
-						if(copy)
-						{
-							$scope.widget.id = null;
-						}
-						
-						$scope.createWidget = function(widget){
-							$http.post('widgets', widget).success(function(data) {
-								$route.reload();
-							}).error(function(data, status) {
-								alert('Failed to create widget');
-							});
-							$modalInstance.close(0);
-						};
+	$scope.openWidgetDetailsModal = function(widget, isNew){
 		
-						$scope.updateWidget = function(widget){
-							$http.put('widgets', widget).success(function(data) {
-								$route.reload();
-							}).error(function(data, status) {
-								alert('Failed to update widget');
-							});
-							$modalInstance.close(0);
-						};
-						
-						$scope.deleteWidget = function(widget){
-							$http.delete('widgets/' + widget.id).success(function() {
-								$route.reload();
-							}).error(function(data, status) {
-								alert('Failed to delete widget');
-							});
-							$modalInstance.close(0);
-						};
-						
-						$scope.cancel = function(){
-							$modalInstance.close(0);
-						};
-					}
-				});
-			}).error(function() {
-				console.error('Failed to load widget');
-			});
-		}
-		else
-		{
-			$modal.open({
-				templateUrl : 'resources/templates/widget-details-modal.jsp',
-				controller : function($scope, $modalInstance){
-					
-					$scope.widget = {};
-	
-					$scope.createWidget = function(widget){
-						$http.post('widgets', widget).success(function(data) {
-							$route.reload();
-						}).error(function(data, status) {
-							alert('Failed to create widget');
-						});
-						$modalInstance.close(0);
-					};
-					
-					$scope.cancel = function(){
-						$modalInstance.close(0);
-					};
+		$modal.open({
+			templateUrl : 'resources/templates/widget-details-modal.jsp',
+			resolve : {
+				'widget' : function(){
+					return widget;
+				},
+				'isNew' : function(){
+					return isNew;
 				}
-			});
-		}
+			},
+			controller : function($scope, $modalInstance, widget, isNew){
+				
+				$scope.isNew = isNew;
+				$scope.widget = widget;
+				if($scope.isNew && $scope.widget != null)
+				{
+					$scope.widget.id = null;
+				}
+
+				$scope.createWidget = function(widget){
+					$http.post('widgets', widget).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to create widget');
+					});
+					$modalInstance.close(0);
+				};
+
+				$scope.updateWidget = function(widget){
+					$http.put('widgets', widget).success(function(data) {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to update widget');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.deleteWidget = function(widget){
+					$http.delete('widgets/' + widget.id).success(function() {
+						$route.reload();
+					}).error(function(data, status) {
+						alert('Failed to delete widget');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
 	};
 	
 }]);

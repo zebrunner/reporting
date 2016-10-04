@@ -10,15 +10,9 @@
 </div>
 <div class="modal-body">
 	<form name="dashboardWidgetForm">
-		<div data-ng-if="isNew" class="form-group">
+		<div class="form-group">
 			<label>Widget</label> 
-			<select class="form-control validation" data-ng-model="widget.id" required>
-				<option data-ng-repeat="w in widgets | orderBy:'title'" value="{{w.id}}">{{w.title}}</option>
-			</select>
-		</div>
-		<div data-ng-if="!isNew" class="form-group">
-			<label>Widget</label> 
-			<input type="text" class="form-control" data-ng-model="widget.title" required disabled></input>
+			<input type="text" class="form-control" data-ng-model="widget.title" required></input>
 		</div>
 		<div class="form-group">
 			<label>Size</label> 

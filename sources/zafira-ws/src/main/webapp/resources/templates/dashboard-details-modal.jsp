@@ -17,10 +17,10 @@
 	</form>
 </div>
 <div class="modal-footer">
-	<button data-ng-if="!dashboard.id" class="btn btn-success" data-ng-click="createDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
+	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
     	Create
     </button>
-	<button data-ng-if="dashboard.id" class="btn btn-success" data-ng-click="updateDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
+	<button data-ng-if="!isNew" class="btn btn-success" data-ng-click="updateDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
     	Save
     </button>
     <button class="btn btn-primary" data-ng-click="cancel()">

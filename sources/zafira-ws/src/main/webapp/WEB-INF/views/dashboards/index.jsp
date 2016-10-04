@@ -11,7 +11,7 @@
          	<h2>
          		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
          		<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-         			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button>
+         			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal({}, true)"> <i class="fa fa-plus-circle"></i> new</button>
          		</sec:authorize></h2><br/>
          </div>
     </div>
@@ -23,7 +23,7 @@
          				<span>{{dashboard.title}}</span>
 	         			<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	         				&nbsp;
-	                    	<span><i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardDetailsModal(dashboard.id, false)"></i></span>
+	                    	<span><i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardDetailsModal(dashboard, false)"></i></span>
 	                    </sec:authorize>
          			</a>
          		</li>
@@ -37,7 +37,7 @@
                 <div class="panel-heading">
                     {{widget.title}}
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-                    <i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget)"></i>
+                    <i class="float_right fa fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
                 	</sec:authorize>
                 </div>
                 <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
@@ -63,11 +63,28 @@
 	</div>
 	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	<div class="row">
-		<div class="col-lg-6">
-			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openWidgetDetailsModal()">Create new widget</button>
+		<div class="col-lg-12">
+			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openWidgetDetailsModal({}, true)">Create new widget</button>
 		</div>
-		<div class="col-lg-6">
-			<button type="button" class="btn btn-outline btn-primary btn-lg btn-block" data-ng-click="openDashboardWidgetModal()">Add widget to dashboard</button>
+	</div>
+	<div class="row">
+		<br/>
+		<div class="col-lg-12">
+			<div class="run_result row " data-ng-repeat="widget in widgets | orderBy:'title'">
+				<div class="col-lg-4">
+				  	{{widget.title}}
+				</div>
+				<div class="col-lg-4">
+					{{widget.type}}
+				</div>
+				<div class="col-lg-2">
+					<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="openDashboardWidgetModal(widget, true)">Add widget to dashboard</button>
+				</div>
+				<div class="col-lg-2">
+					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openWidgetDetailsModal(widget, false)"></i>
+					<i class="float_right fa fa-copy pointer" style="line-height: 20px; margin-right: 5px;" data-ng-click="openWidgetDetailsModal(widget, true)"></i>
+				</div>
+			</div>
 		</div>
 	</div>
 	<br/>
