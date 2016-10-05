@@ -5,7 +5,13 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
+			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, 
+			]]>
+			<if test="null != project and null != project.id">	
+				PROJECT_ID, 
+			</if>
+			<![CDATA[
+			STARTED_BY)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -20,6 +26,13 @@
 				#{upstreamJob.id},
 				#{upstreamJobBuildNumber},
 				#{buildNumber},
+		]]>
+		<if test="null != project and null != project.id">
+            <![CDATA[
+				#{project.id},
+			]]>
+		</if>
+		<![CDATA[
 				#{startedBy}
 			)
 		]]>
@@ -44,9 +57,17 @@
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
-				TR.CREATED_AT AS TEST_RUN_CREATED_AT
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
+				
+				P.ID AS TEST_RUN_PROJECT_ID,
+				P.NAME AS TEST_RUN_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_RUN_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_RUN_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_RUN_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_RUNS TR
+			LEFT JOIN
+				zafira.PROJECTS P ON TR.PROJECT_ID = P.ID
 		]]>
 	</sql>
 	
@@ -85,7 +106,13 @@
 				J.ID AS TEST_RUN_JOB_ID,
 				J.NAME AS TEST_RUN_JOB_NAME,
 				J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
-				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST
+				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST,
+				
+				P.ID AS TEST_RUN_PROJECT_ID,
+				P.NAME AS TEST_RUN_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_RUN_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_RUN_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_RUN_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_RUNS TR
 			LEFT JOIN zafira.USERS U
@@ -94,6 +121,8 @@
 				ON TR.JOB_ID = J.ID
 			LEFT JOIN zafira.TEST_SUITES TS
 				ON TR.TEST_SUITE_ID = TS.ID
+			LEFT JOIN
+				zafira.PROJECTS P ON TR.PROJECT_ID = P.ID
 		]]>
 	</sql>
 	
@@ -153,6 +182,11 @@
 			<if test="null != toDate">
 	            <![CDATA[
 	               AND TR.CREATED_AT::date <= #{toDate}::date
+	            ]]>
+			</if>
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               AND TR.PROJECT_ID = #{project.id}
 	            ]]>
 			</if>
 		</trim>
@@ -226,6 +260,11 @@
 	               AND TR.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               AND TR.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
 		</trim>
     </select>
 	
@@ -277,6 +316,13 @@
 			    UPSTREAM_JOB_ID = #{upstreamJob.id},
 			    UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber},
 			    BUILD_NUMBER = #{buildNumber},
+			]]>	    
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               PROJECT_ID = #{project.id},
+	            ]]>
+			</if>
+			<![CDATA[
 			    STARTED_BY = #{startedBy}
 			WHERE
 			    ID = #{id}
@@ -333,6 +379,12 @@
 		<result column="TEST_RUN_JOB_NAME" property="job.name" />
 		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
 		<result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
+		
+		<result column="TEST_RUN_PROJECT_ID" property="project.id" />
+		<result column="TEST_RUN_PROJECT_NAME" property="project.name" />
+		<result column="TEST_RUN_PROJECT_DESCRIPTION" property="project.description" />
+		<result column="TEST_RUN_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+		<result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
 	</resultMap>
 
 </mapper>

@@ -11,6 +11,9 @@
 		<if test="null != status">	
 			STATUS, 
 		</if>
+		<if test="null != project and null != project.id">	
+			PROJECT_ID, 
+		</if>
 		<![CDATA[	
 			INFO)
 			VALUES (
@@ -22,6 +25,11 @@
 		<if test="null != status">
             <![CDATA[
 				#{status},
+			]]>
+		</if>
+		<if test="null != project and null != project.id">
+            <![CDATA[
+				#{project.id},
 			]]>
 		</if>
 		<![CDATA[
@@ -41,9 +49,17 @@
 				TC.INFO AS TEST_CASE_INFO,
 				TC.STATUS AS TEST_CASE_STATUS,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
-				TC.CREATED_AT AS TEST_CASE_CREATED_AT
+				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
+				
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_CASES TC
+			LEFT JOIN
+				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
 		]]>
 	</sql>
 	
@@ -75,12 +91,20 @@
 				TS.DESCRIPTION AS TEST_CASE_TEST_SUITE_DESCRIPTION,
 				TS.MODIFIED_AT AS TEST_CASE_TEST_SUITE_MODIFIED_AT,
 				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT
+				
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_CASES TC
 			LEFT JOIN 
 				zafira.USERS U ON U.ID = TC.USER_ID
 			LEFT JOIN 
 			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			LEFT JOIN
+				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
 		]]>
 	</sql>
 
@@ -145,6 +169,11 @@
 	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               AND TC.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
 		</trim>
 		<![CDATA[
 			ORDER BY TS.FILE_NAME ASC
@@ -199,6 +228,11 @@
 	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               AND TC.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
 		</trim>
     </select>
 
@@ -231,6 +265,11 @@
 				<if test="null != info">
 		            <![CDATA[
 		               INFO = #{info},
+		            ]]>
+				</if>
+				<if test="null != project and null != project.id">
+		            <![CDATA[
+		               PROJECT_ID = #{project.id},
 		            ]]>
 				</if>
 				<if test="null != status">
@@ -285,6 +324,12 @@
 		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
 		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
 		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
+		
+		<result column="TEST_CASE_PROJECT_ID" property="project.id" />
+		<result column="TEST_CASE_PROJECT_NAME" property="project.name" />
+		<result column="TEST_CASE_PROJECT_DESCRIPTION" property="project.description" />
+		<result column="TEST_CASE_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+		<result column="TEST_CASE_PROJECT_CREATED_AT" property="project.createdAt" />
 	</resultMap>
 
 </mapper>

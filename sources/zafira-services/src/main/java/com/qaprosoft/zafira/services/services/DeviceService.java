@@ -22,12 +22,6 @@ public class DeviceService
 	@Autowired
 	private STFService stfService;
 
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteDeviceById(long id) throws ServiceException
-	{
-		deviceMapper.deleteDeviceById(id);
-	}
-
 	@Transactional(readOnly = true)
 	public List<Device> getAllDevices() throws ServiceException
 	{

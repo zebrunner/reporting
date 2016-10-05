@@ -18,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.model.Project;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestCaseService;
 import com.qaprosoft.zafira.ws.dto.TestCaseType;
 
@@ -32,6 +34,9 @@ public class TestCasesController extends AbstractController
 	
 	@Autowired
 	private TestCaseService testCaseService;
+	
+	@Autowired
+	private ProjectService projectService;
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
@@ -56,20 +61,23 @@ public class TestCasesController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException
 	{
+		testCase.setProject(projectService.getProjectByName(projectName));
 		return mapper.map(testCaseService.createOrUpdateCase(mapper.map(testCase, TestCase.class)), TestCaseType.class);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException
 	{
 		if(!ArrayUtils.isEmpty(tcs))
 		{
+			Project project = projectService.getProjectByName(projectName);
 			TestCase [] testCases = new TestCase[tcs.length];
 			for(int i = 0; i < tcs.length; i++)
 			{
+				tcs[i].setProject(project);
 				testCases[i] = mapper.map(tcs[i], TestCase.class);
 			}
 			testCases = testCaseService.createOrUpdateCases(testCases);

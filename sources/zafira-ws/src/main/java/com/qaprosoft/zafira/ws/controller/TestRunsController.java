@@ -31,6 +31,7 @@ import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.EmailType;
@@ -50,6 +51,9 @@ public class TestRunsController extends AbstractController
 	private TestService testService;
 	
 	@Autowired
+	private ProjectService projectService;
+	
+	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
 	
 	@ResponseStatus(HttpStatus.OK)
@@ -63,6 +67,7 @@ public class TestRunsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr, @RequestHeader(value="Project", required=false) String project) throws ServiceException, MappingException, JAXBException
 	{
+		tr.setProject(projectService.getProjectByName(project));
 		TestRun testRun = testRunService.startTestRun(mapper.map(tr, TestRun.class));
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));

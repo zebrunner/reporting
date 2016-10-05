@@ -10,6 +10,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestCaseMapper;
+import com.qaprosoft.zafira.dbaccess.model.Project;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.dbaccess.model.User;
@@ -30,7 +31,11 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 			User user = new User();
 			user.setId(1L);
 			
+			Project project = new Project();
+			project.setId(1L);
+			
 			setUser(user);
+			setProject(project);
 			setTestSuiteId(1L);
 			setTestClass("com.qaprosoft.Test");
 			setTestMethod("test");
@@ -77,6 +82,7 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 	public void updateTestCase()
 	{
 		TEST_CASE.getUser().setId(2L);
+		TEST_CASE.getProject().setId(2L);
 		TEST_CASE.setTestSuiteId(2L);
 		TEST_CASE.setTestClass("com.qaprosoft.SuperTest");
 		TEST_CASE.setTestMethod("test2");
@@ -125,5 +131,6 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testCase.getTestMethod(), TEST_CASE.getTestMethod(), "Test case method must match");
 		assertEquals(testCase.getInfo(), TEST_CASE.getInfo(), "Info must match");
 		assertEquals(testCase.getStatus(), TEST_CASE.getStatus(), "Status must match");
+		assertEquals(testCase.getProject().getId(), TEST_CASE.getProject().getId(), "Project must match");
 	}
 }
