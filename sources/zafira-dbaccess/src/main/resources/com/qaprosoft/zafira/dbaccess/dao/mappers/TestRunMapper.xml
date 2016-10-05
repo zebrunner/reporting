@@ -5,7 +5,7 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY, PROJECT)
+			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, STARTED_BY)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -20,8 +20,7 @@
 				#{upstreamJob.id},
 				#{upstreamJobBuildNumber},
 				#{buildNumber},
-				#{startedBy},
-				#{project}
+				#{startedBy}
 			)
 		]]>
 	</insert>
@@ -44,7 +43,6 @@
 				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
-				TR.PROJECT AS TEST_RUN_PROJECT,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT
 			FROM
@@ -63,7 +61,6 @@
 				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
 				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
 				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
-				TR.PROJECT AS TEST_RUN_PROJECT,
 				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
 				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
@@ -79,19 +76,16 @@
 				U.EMAIL AS TEST_RUN_USER_EMAIL,
 				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
 				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
-				U.PROJECT AS TEST_RUN_USER_PROJECT,
 				
 				TS.ID AS TEST_RUN_TEST_SUITE_ID,
 				TS.NAME AS TEST_RUN_TEST_SUITE_NAME,
 				TS.FILE_NAME AS TEST_RUN_TEST_SUITE_FILE_NAME,
 				TS.DESCRIPTION AS TEST_RUN_TEST_SUITE_DESCRIPTION,
-				TS.PROJECT AS TEST_RUN_TEST_SUITE_PROJECT,
 				
 				J.ID AS TEST_RUN_JOB_ID,
 				J.NAME AS TEST_RUN_JOB_NAME,
 				J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
-				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST,
-				J.PROJECT AS TEST_RUN_JOB_PROJECT
+				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST
 			FROM
 				zafira.TEST_RUNS TR
 			LEFT JOIN zafira.USERS U
@@ -159,11 +153,6 @@
 			<if test="null != toDate">
 	            <![CDATA[
 	               AND TR.CREATED_AT::date <= #{toDate}::date
-	            ]]>
-			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND TR.PROJECT = #{project}
 	            ]]>
 			</if>
 		</trim>
@@ -237,11 +226,6 @@
 	               AND TR.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND TR.PROJECT = #{project}
-	            ]]>
-			</if>
 		</trim>
     </select>
 	
@@ -293,13 +277,6 @@
 			    UPSTREAM_JOB_ID = #{upstreamJob.id},
 			    UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber},
 			    BUILD_NUMBER = #{buildNumber},
-		]]>
-		<if test="null != project">
-            <![CDATA[
-               PROJECT = #{project},
-            ]]>
-		</if>	    
-		<![CDATA[
 			    STARTED_BY = #{startedBy}
 			WHERE
 			    ID = #{id}
@@ -329,13 +306,11 @@
 		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
 		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
-		<result column="TEST_RUN_USER_PROJECT" property="user.project" />
 		
 		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
 		<result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
 		<result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
 		<result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
-		<result column="TEST_RUN_TEST_SUITE_PROJECT" property="testSuite.project" />
 		
 		<result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
 		<result column="TEST_RUN_STATUS" property="status" />
@@ -348,7 +323,6 @@
 		<result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
 		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
-		<result column="TEST_RUN_PROJECT" property="project" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />
@@ -359,7 +333,6 @@
 		<result column="TEST_RUN_JOB_NAME" property="job.name" />
 		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
 		<result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
-		<result column="TEST_RUN_JOB_PROJECT" property="job.project" />
 	</resultMap>
 
 </mapper>

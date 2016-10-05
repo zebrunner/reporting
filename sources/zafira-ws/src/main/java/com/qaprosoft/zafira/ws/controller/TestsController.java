@@ -58,7 +58,6 @@ public class TestsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestType startTest(@RequestBody @Valid TestType t, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		t.setProject(project);
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		return mapper.map(test, TestType.class);

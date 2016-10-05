@@ -63,7 +63,6 @@ public class TestRunsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr, @RequestHeader(value="Project", required=false) String project) throws ServiceException, MappingException, JAXBException
 	{
-		tr.setProject(project);
 		TestRun testRun = testRunService.startTestRun(mapper.map(tr, TestRun.class));
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));

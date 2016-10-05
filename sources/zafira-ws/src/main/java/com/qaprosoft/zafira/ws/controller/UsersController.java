@@ -44,7 +44,6 @@ public class UsersController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		user.setProject(project);
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
 	}
 	
@@ -73,7 +72,6 @@ public class UsersController extends AbstractController
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User updateUser(@RequestBody User user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		user.setProject(project);
 		return userService.createOrUpdateUser(user);
 	}
 }

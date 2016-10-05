@@ -49,13 +49,12 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setStatus(Status.PASSED);
 			setTestArgs("<xml>");
 			setTestCaseId(1L);
-			setTestRunId(1L);
+			setTestRunId(3L);
 			setMessage("Hm....");
 			setStartTime(new Date());
 			setFinishTime(new Date());
 			setLogURL("http://1");
 			setDemoURL("http://1");
-			setProject("P1");
 			setTestConfig(testConfig);
 		}
 	};
@@ -96,12 +95,11 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setStatus(Status.FAILED);
 		TEST.setTestArgs("<xml/>");
 		TEST.setTestCaseId(2L);
-		TEST.setTestRunId(2L);
+		TEST.setTestRunId(11L);
 		TEST.setMessage("Aha!");
 		TEST.setLogURL("http://2");
 		TEST.setDemoURL("http://2");
 		TEST.setTestConfig(new TestConfig(3L));
-		TEST.setProject("P2");
 		
 		testMapper.updateTest(TEST);
 
@@ -157,6 +155,5 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
 		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
 		assertEquals(test.getTestConfig().getId(), TEST.getTestConfig().getId(), "Config ID must match");
-		assertEquals(test.getProject(), TEST.getProject(), "Project must match");
 	}
 }

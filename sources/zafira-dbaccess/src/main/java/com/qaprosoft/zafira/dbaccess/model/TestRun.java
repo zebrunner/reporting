@@ -27,6 +27,7 @@ public class TestRun extends AbstractEntity
 	private Job upstreamJob;
 	private Integer upstreamJobBuildNumber;
 	private Initiator startedBy;
+	private Project project;
 	
 	private Integer passed;
 	private Integer failed;
@@ -199,5 +200,15 @@ public class TestRun extends AbstractEntity
 	public void setSkipped(Integer skipped)
 	{
 		this.skipped = skipped;
+	}
+
+	public Project getProject()
+	{
+		return project;
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
 	}
 }

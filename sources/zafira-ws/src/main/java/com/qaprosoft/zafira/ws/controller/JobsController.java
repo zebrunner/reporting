@@ -33,7 +33,6 @@ public class JobsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		job.setProject(project);
 		return mapper.map(jobsService.createOrUpdateJob(mapper.map(job, Job.class)), JobType.class);
 	}
 }

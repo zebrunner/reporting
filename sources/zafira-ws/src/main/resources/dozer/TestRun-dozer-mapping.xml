@@ -66,9 +66,5 @@
 			<a>userId</a>
 			<b>user.id</b>
 		</field>
-		<field>
-			<a>project</a>
-			<b>project</b>
-		</field>
 	</mapping>
 </mappings>

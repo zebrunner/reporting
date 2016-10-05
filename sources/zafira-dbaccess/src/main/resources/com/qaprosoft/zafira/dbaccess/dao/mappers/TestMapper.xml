@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, PROJECT)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID)
 			VALUES (
 				#{name},
 			    #{status},
@@ -18,8 +18,7 @@
 			    #{demoURL},
 			    #{logURL},
 			    #{retry},
-			    #{testConfig.id},
-			    #{project}
+			    #{testConfig.id}
 			)
 		]]>
 	</insert>
@@ -56,7 +55,6 @@
 				T.DEMO_URL AS TEST_DEMO_URL,
 				T.LOG_URL AS TEST_LOG_URL,
 				T.RETRY AS TEST_RETRY,
-				T.PROJECT AS TEST_PROJECT,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 				
@@ -122,11 +120,6 @@
 					AND T.TEST_CASE_ID = #{testCaseId}
 				]]>
 			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND T.PROJECT = #{project}
-	            ]]>
-			</if>
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
@@ -169,11 +162,6 @@
 					AND T.TEST_CASE_ID = #{testCaseId}
 				]]>
 			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND T.PROJECT = #{project}
-	            ]]>
-			</if>
 		</trim>
     </select>
 	
@@ -196,11 +184,6 @@
 		<if test="null != testConfig and null != testConfig.id">
             <![CDATA[
                TEST_CONFIG_ID = #{testConfig.id},
-            ]]>
-		</if>
-		<if test="null != project">
-            <![CDATA[
-               PROJECT = #{project},
             ]]>
 		</if>
 		<![CDATA[
@@ -245,7 +228,6 @@
 		<result column="TEST_DEMO_URL" property="demoURL" />
 		<result column="TEST_LOG_URL" property="logURL" />
 		<result column="TEST_RETRY" property="retry" />
-		<result column="TEST_PROJECT" property="project" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 		

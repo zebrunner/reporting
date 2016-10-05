@@ -51,7 +51,6 @@ public class TestCasesController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		testCase.setProject(project);
 		return mapper.map(testCaseService.createOrUpdateCase(mapper.map(testCase, TestCase.class)), TestCaseType.class);
 	}
 	
@@ -64,7 +63,6 @@ public class TestCasesController extends AbstractController
 			TestCase [] testCases = new TestCase[tcs.length];
 			for(int i = 0; i < tcs.length; i++)
 			{
-				testCases[i].setProject(project);
 				testCases[i] = mapper.map(tcs[i], TestCase.class);
 			}
 			testCases = testCaseService.createOrUpdateCases(testCases);

@@ -15,6 +15,7 @@ public class TestCase extends AbstractEntity
 	private Long testSuiteId;
 	private User user = new User();
 	private TestSuite testSuite = new TestSuite();
+	private Project project;
 
 	public String getTestClass()
 	{
@@ -84,6 +85,16 @@ public class TestCase extends AbstractEntity
 	public void setStatus(Status status)
 	{
 		this.status = status;
+	}
+	
+	public Project getProject()
+	{
+		return project;
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
 	}
 
 	@Override

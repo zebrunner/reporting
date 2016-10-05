@@ -33,7 +33,6 @@ public class TestSuiteMapperTest extends AbstractTestNGSpringContextTests
 			setUser(user);
 			setName("lc-sanity");
 			setDescription("Some tests...");
-			setProject("P1");
 			setFileName("test.txt");
 		}
 	};
@@ -78,7 +77,6 @@ public class TestSuiteMapperTest extends AbstractTestNGSpringContextTests
 		TEST_SUITE.getUser().setId(2L);
 		TEST_SUITE.setName("lc-regression");
 		TEST_SUITE.setDescription("New description...");
-		TEST_SUITE.setProject("P2");
 		
 		testSuiteMapper.updateTestSuite(TEST_SUITE);
 
@@ -119,6 +117,5 @@ public class TestSuiteMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testSuite.getDescription(), TEST_SUITE.getDescription(), "Description must match");
 		assertEquals(testSuite.getName(), TEST_SUITE.getName(), "TestSuite name must match");
 		assertEquals(testSuite.getUser().getId(), TEST_SUITE.getUser().getId(), "User ID must match");
-		assertEquals(testSuite.getProject(), TEST_SUITE.getProject());
 	}
 }

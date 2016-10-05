@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.ProjectMapper">
+
+	<insert id="createProject" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION)
+			VALUES (#{name},
+					#{description});
+		]]>
+	</insert>
+
+	<sql id="getProject">
+		<![CDATA[
+			SELECT
+				P.ID AS PROJECT_ID,
+				P.NAME AS PROJECT_NAME,
+				P.DESCRIPTION AS PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS PROJECT_CREATED_AT
+			FROM
+				zafira.PROJECTS P
+		]]>
+	</sql>
+	
+	<select id="getAllProjects" resultMap="ProjectResultMap">
+		<include refid="getProject" />
+		<![CDATA[
+			ORDER BY P.NAME;
+		]]>
+	</select>
+	
+	<select id="getProjectById" resultMap="ProjectResultMap">
+		<include refid="getProject" />
+		<![CDATA[
+			WHERE P.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getProjectByName" resultMap="ProjectResultMap">
+		<include refid="getProject" />
+		<![CDATA[
+			WHERE P.NAME = #{name};
+		]]>
+	</select>
+
+	<update id="updateProject">
+		<![CDATA[
+			UPDATE
+			    zafira.PROJECTS
+			SET
+			    NAME = #{name},
+			    DESCRIPTION = #{description}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteProject">
+		<![CDATA[
+			DELETE FROM zafira.PROJECTS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteProjectById">
+		<include refid="deleteProject" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Project" id="ProjectResultMap" autoMapping="false">
+		<id column="PROJECT_ID" property="id" />
+		<result column="PROJECT_NAME" property="name" />
+		<result column="PROJECT_DESCRIPTION" property="description" />
+		<result column="PROJECT_MODIFIED_AT" property="modifiedAt" />
+		<result column="PROJECT_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

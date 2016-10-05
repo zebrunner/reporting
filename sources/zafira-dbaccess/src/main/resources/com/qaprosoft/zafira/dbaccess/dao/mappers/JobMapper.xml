@@ -5,13 +5,12 @@
 
 	<insert id="createJob" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST, PROJECT)
+			INSERT INTO zafira.JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST)
 			VALUES (
 				#{user.id},
 			    #{name},
 				#{jobURL},
-				#{jenkinsHost},
-				#{project}
+				#{jenkinsHost}
 			)
 		]]>
 	</insert>
@@ -24,7 +23,6 @@
 				J.NAME AS JOB_NAME,
 				J.JOB_URL AS JOB_JOB_URL,
 				J.JENKINS_HOST AS JOB_JENKINS_HOST,
-				J.PROJECT AS JOB_PROJECT,
 				J.MODIFIED_AT AS JOB_MODIFIED_AT,
 				J.CREATED_AT AS JOB_CREATED_AT
 			FROM
@@ -76,12 +74,7 @@
 				</if>
 				<if test="null != jenkinsHost">
 		            <![CDATA[
-		               JENKINS_HOST = #{jenkinsHost},
-		            ]]>
-				</if>
-				<if test="null != project">
-		            <![CDATA[
-		               PROJECT = #{project}	
+		               JENKINS_HOST = #{jenkinsHost}
 		            ]]>
 				</if>
 			</set>
@@ -112,7 +105,6 @@
 		<result column="JOB_NAME" property="name" />
 		<result column="JOB_JOB_URL" property="jobURL" />
 		<result column="JOB_JENKINS_HOST" property="jenkinsHost" />
-		<result column="JOB_PROJECT" property="project" />
 		<result column="JOB_MODIFIED_AT" property="modifiedAt" />
 		<result column="JOB_CREATED_AT" property="createdAt" />
 	</resultMap>
