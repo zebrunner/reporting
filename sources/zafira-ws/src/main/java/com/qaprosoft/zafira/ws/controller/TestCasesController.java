@@ -41,6 +41,13 @@ public class TestCasesController extends AbstractController
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "metrics", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView metrics()
+	{
+		return new ModelAndView("tests/cases/metrics");
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestCase> searchTestCases(@RequestBody TestCaseSearchCriteria sc) throws ServiceException
 	{

@@ -24,6 +24,12 @@ ZafiraApp.constant('ROUTES', [
 	}
 },
 {
+	url : '/tests/cases/:id/metrics',
+	config : {
+		templateUrl : 'tests/cases/metrics'
+	}
+},
+{
 	url : '/tests/runs/:ids/compare',
 	config : {
 		templateUrl : 'tests/runs/compare'
