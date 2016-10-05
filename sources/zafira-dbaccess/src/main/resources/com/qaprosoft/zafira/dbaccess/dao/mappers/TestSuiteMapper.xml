@@ -50,16 +50,6 @@
 			WHERE TS.NAME = #{name} AND TS.FILE_NAME = #{fileName} AND TS.USER_ID = #{userId};
 		]]>
 	</select>
-	
-	<select id="getAllProjects" resultType="string">
-		<![CDATA[
-			SELECT 
-				DISTINCT PROJECT
-			FROM 
-				zafira.TEST_SUITES WHERE PROJECT IS NOT NULL 
-			ORDER BY PROJECT ASC;
-		]]>
-	</select>
 
 	<update id="updateTestSuite">
 		<![CDATA[

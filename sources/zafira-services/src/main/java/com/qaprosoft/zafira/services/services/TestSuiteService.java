@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,11 +72,5 @@ public class TestSuiteService
 			newTestSuite = testSuite;
 		}
 		return newTestSuite;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<String> getAllProjects()
-	{
-		return testSuiteMapper.getAllProjects();
 	}
 }

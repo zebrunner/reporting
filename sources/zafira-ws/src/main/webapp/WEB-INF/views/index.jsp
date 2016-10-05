@@ -23,13 +23,13 @@
 	            </div>
 	            <ul class="nav navbar-top-links navbar-left" data-ng-controller="NavigationCtrl">
 		            <li class="dropdown">
-		                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-ng-click="loadProjects()">Project <span data-ng-show="project"> ({{project}})</span> <b class="caret"></b></a>
+		                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-ng-click="loadProjects()">Project <span data-ng-show="project"> ({{project.name}})</span> <b class="caret"></b></a>
 		                    <ul class="dropdown-menu">
 		                    	<li>
 		                            <a data-ng-click="setProject(null)" style="color: red;">Clear x</a>
 		                        </li>
 		                        <li data-ng-repeat="project in projects">
-		                            <a data-ng-click="setProject(project)">{{project}}</a>
+		                            <a data-ng-click="setProject(project)">{{project.name}}</a>
 	                        </li>
 	                    </ul>
 	                </li>

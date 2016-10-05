@@ -22,6 +22,4 @@ public interface TestSuiteMapper
 	void deleteTestSuiteById(long id);
 
 	void deleteTestSuite(TestSuite testSuite);
-	
-	List<String> getAllProjects();
 }

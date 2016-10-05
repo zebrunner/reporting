@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.model.Project;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.TestSuiteService;
+import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.VersionService;
 
 @Controller
@@ -25,7 +26,7 @@ public class ConfigurationController extends AbstractController
 	private VersionService versionService;
 	
 	@Autowired
-	private TestSuiteService testSuiteService;
+	private ProjectService projectService;
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,8 +40,8 @@ public class ConfigurationController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<String> getAllProjects() throws ServiceException
+	public @ResponseBody List<Project> getAllProjects() throws ServiceException
 	{
-		return testSuiteService.getAllProjects();
+		return projectService.getAllProjects();
 	}
 }
