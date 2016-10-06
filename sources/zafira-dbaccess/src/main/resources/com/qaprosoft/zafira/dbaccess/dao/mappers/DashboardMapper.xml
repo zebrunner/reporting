@@ -5,9 +5,10 @@
 	
 	 <insert id="createDashboard" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-			INSERT INTO zafira.DASHBOARDS (TITLE)
+			INSERT INTO zafira.DASHBOARDS (TITLE, TYPE)
 			VALUES (
-				#{title}
+				#{title},
+				#{type}
 			)
 		]]>
     </insert>
@@ -17,6 +18,7 @@
 			SELECT
 				D.ID AS DASHBOARD_ID,
 				D.TITLE AS DASHBOARD_TITLE,
+				D.TYPE AS DASHBOARD_TYPE,
 				D.MODIFIED_AT AS DASHBOARD_MODIFIED_AT,
 				D.CREATED_AT AS DASHBOARD_CREATED_AT,
 				W.ID AS WIDGET_ID,
@@ -54,13 +56,22 @@
 			WHERE D.ID = #{id};
 		]]>
 	</select>
+
+    <select id="getAllDashboardsByType" resultMap="DashboardResultMap">
+        <include refid="getDashboard" />
+        <![CDATA[
+			WHERE D.TYPE = #{type}
+			ORDER BY D.TITLE ASC;
+		]]>
+    </select>
 	
 	<update id="updateDashboard">
 		<![CDATA[
 			UPDATE
 			    zafira.DASHBOARDS
 			SET
-				TITLE = #{title}
+				TITLE = #{title},
+				TYPE = #{type}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -82,6 +93,7 @@
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Dashboard" id="DashboardResultMap" autoMapping="false">
         <id column="DASHBOARD_ID" property="id" />
         <result column="DASHBOARD_TITLE" property="title" />
+        <result column="DASHBOARD_TYPE" property="type"/>
         <result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
         <result column="DASHBOARD_CREATED_AT" property="createdAt" />
         <collection property="widgets" ofType="com.qaprosoft.zafira.dbaccess.model.Widget"

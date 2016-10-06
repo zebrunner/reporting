@@ -1,14 +1,15 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
-import java.util.List;
-
+import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import com.qaprosoft.zafira.dbaccess.model.Widget;
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import java.util.List;
+
 //public interface DashboardMapper
 //{
 //	List<Map<String, Object>> executeSQL(SQLAdapter sql);
-//	
+//
 //	void createDashboard(Dashboard dashboard);
 //
 //	Dashboard getDashboardById(Long id);
@@ -19,7 +20,6 @@ import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 //
 //	void deleteDashboardById(long id);
 //}
-import com.qaprosoft.zafira.dbaccess.model.Widget;
 
 public interface DashboardMapper
 {
@@ -38,4 +38,6 @@ public interface DashboardMapper
 	void deleteDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widgetId") Long widgetId);
 
 	void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
+
+	List<Dashboard> getAllDashboardsByType(Dashboard.Type type);
 }

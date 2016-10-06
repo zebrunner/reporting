@@ -63,6 +63,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         private static final long serialVersionUID = 1L;
         {
             setTitle("t1");
+            setType(Type.PERFORMANCE);
             setWidgets(WIDGETS);
         }
     };
@@ -87,23 +88,30 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         DASHBOARD.setWidgets(Arrays.asList(WIDGET));
     }
 
-    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard"})
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getDashboardById()
     {
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
 
-    @Test
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "updateDashboard"})
+    public void getDashboardByType() {
+        List<Dashboard> dashboards = dashboardMapper.getAllDashboardsByType(Dashboard.Type.GENERAL);
+        checkDashboard(dashboards.get(dashboards.size() - 1));
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getAllDashboards()
     {
         List<Dashboard> dashboards = dashboardMapper.getAllDashboards();
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
 
-    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard"})
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void updateDashboard()
     {
         DASHBOARD.setTitle("t2");
+        DASHBOARD.setType(Dashboard.Type.GENERAL);
         dashboardMapper.updateDashboard(DASHBOARD);
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
@@ -124,7 +132,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         dashboardMapper.deleteDashboardWidget(DASHBOARD.getId(), DASHBOARD.getWidgets().get(0).getId());
     }
     
-    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "getDashboardById", "getAllDashboards", "updateDashboard", "updateWidgetOnDashboard", "removeWidgetFromDashboard"})
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "getDashboardById", "getAllDashboards", "updateDashboard", "updateWidgetOnDashboard", "removeWidgetFromDashboard"})
     public void deleteDashboardById()
     {
         dashboardMapper.deleteDashboardById((DASHBOARD.getId()));
@@ -134,6 +142,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     private void checkDashboard(Dashboard dashboard)
     {
         assertEquals(dashboard.getTitle(), DASHBOARD.getTitle(), "Dashboard title must match");
+        assertEquals(dashboard.getType(), DASHBOARD.getType(), "Dashboard type must match");
         List<Widget> widgets = dashboard.getWidgets();
         assertEquals(widgets.size(), DASHBOARD.getWidgets().size(), "Invalid amount of widgets!");
         for(int i = 0; i < widgets.size(); i++)
