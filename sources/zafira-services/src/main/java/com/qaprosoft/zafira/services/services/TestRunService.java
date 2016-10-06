@@ -128,6 +128,7 @@ public class TestRunService
 			TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(testRun.getCiRunId());
 			if(existingTestRun != null)
 			{
+				existingTestRun.setBuildNumber(testRun.getBuildNumber());
 				testRun = existingTestRun;
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
