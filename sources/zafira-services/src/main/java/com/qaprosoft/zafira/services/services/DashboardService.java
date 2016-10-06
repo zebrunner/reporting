@@ -36,6 +36,12 @@ public class DashboardService
 		return dashboardMapper.getAllDashboards();
 	}
 	
+	@Transactional(readOnly = true)
+	public List<Dashboard> getAllDashboardsByType(Dashboard.Type type) throws ServiceException
+	{
+		return dashboardMapper.getAllDashboardsByType(type);
+	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
 	{

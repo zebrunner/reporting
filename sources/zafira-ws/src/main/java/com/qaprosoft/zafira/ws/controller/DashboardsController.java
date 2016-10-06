@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.model.Widget;
+import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.WidgetService;
@@ -44,6 +45,7 @@ public class DashboardsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
+		dashboard.setType(Type.GENERAL);
 		return dashboardService.createDashboard(dashboard);
 	}
 	
@@ -51,7 +53,7 @@ public class DashboardsController extends AbstractController
 	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Dashboard> getAllDashboards() throws ServiceException
 	{
-		return dashboardService.getAllDashboards();
+		return dashboardService.getAllDashboardsByType(Type.GENERAL);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
