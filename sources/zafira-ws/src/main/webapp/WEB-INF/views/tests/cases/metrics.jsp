@@ -20,7 +20,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">{{operation}}</div>
 				<div align="center" class="panel-body">
-					<div class="col-lg-4" data-ng-repeat="env in widgetEnvs">
+					<div class="col-lg-12" data-ng-repeat="env in widgetEnvs">
 						<div class="panel panel-default">
 							<div class="panel-heading">{{env}}</div>
 							<div align="center" class="panel-body" style="padding-bottom: 30px;">
