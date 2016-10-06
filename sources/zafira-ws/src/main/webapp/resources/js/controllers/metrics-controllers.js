@@ -9,7 +9,7 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 	$scope.timeStep = $scope.timeSteps[1];
 	
 	$scope.loadAllDashboards = function() {
-		$http.get('dashboards/all').success(function(data) {
+		$http.get('dashboards/all?type=PERFORMANCE').success(function(data) {
 			$scope.loadWidget(data[0].widgets[0], $scope.timeStep);
 		});
 	};
