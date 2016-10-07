@@ -118,7 +118,7 @@ public class GridRequestQueueService
 			// TODO: optimize api calls for STF
 			for(STFDevice device : stfService.getAllDevices())
 			{
-				deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel());
+				deviceFound = deviceFound ? true : rq.getModels().contains(device.getModel()) && device.getReady() && device.getPresent();
 				
 				if(!device.getPresent() || !device.getReady() || device.getUsing() || device.getOwner() != null)
 				{
