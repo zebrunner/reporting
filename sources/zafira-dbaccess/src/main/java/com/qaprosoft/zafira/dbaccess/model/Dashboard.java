@@ -10,6 +10,7 @@ public class Dashboard extends AbstractEntity
 	private String title;
 	private List<Widget> widgets = new ArrayList<Widget>();
 	private Type type;
+	private Integer position;
 
 	public enum Type {
 		GENERAL, PERFORMANCE;
@@ -41,5 +42,13 @@ public class Dashboard extends AbstractEntity
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
 	}
 }
