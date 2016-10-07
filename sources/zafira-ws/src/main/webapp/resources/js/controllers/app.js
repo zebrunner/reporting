@@ -38,6 +38,12 @@ ZafiraApp.provider('ProjectProvider', function() {
             	}
                 return sc;
             },
+            getProject: function() {
+            	return $cookieStore.get("project");
+            },
+            setProject: function(project) {
+            	$cookieStore.put("project", project);
+            },
             getProjectQueryParam: function(sc) {
             	var query = "";
             	if($cookieStore.get("project") != null)

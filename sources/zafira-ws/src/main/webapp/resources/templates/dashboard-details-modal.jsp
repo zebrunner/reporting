@@ -14,6 +14,10 @@
 			<label>Title</label> 
 			<input type="text" class="form-control" data-ng-model="dashboard.title" required></input>
 		</div>
+		<div class="form-group">
+			<label>Position</label> 
+			<input type="number" class="form-control" data-ng-model="dashboard.position" required></input>
+		</div>
 	</form>
 </div>
 <div class="modal-footer">

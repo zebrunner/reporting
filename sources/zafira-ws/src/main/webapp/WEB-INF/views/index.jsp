@@ -25,12 +25,17 @@
 		            <li class="dropdown">
 		                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-ng-click="loadProjects()">Project <span data-ng-show="project"> ({{project.name}})</span> <b class="caret"></b></a>
 		                    <ul class="dropdown-menu">
-		                    	<li>
+		                    	<li class="pointer">
 		                            <a data-ng-click="setProject(null)" style="color: red;">Clear x</a>
 		                        </li>
 		                        <li data-ng-repeat="project in projects">
 		                            <a data-ng-click="setProject(project)">{{project.name}}</a>
-	                        </li>
+	                        	</li>
+	                        	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	                        	<li class="pointer">
+		                            <a data-ng-click="openProjectDetailsModal()" style="color: green;">New +</a>
+		                        </li>
+		                        </sec:authorize>
 	                    </ul>
 	                </li>
 	            </ul>
@@ -60,15 +65,6 @@
 	               		<a href="<c:url value="/logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
 	               	</li>
 	            </ul>
-	            <!-- div class="navbar-default sidebar" role="navigation">
-	                <div class="sidebar-nav navbar-collapse">
-	                    <ul class="nav" id="side-menu">
-	                        <li>
-	                            <a href="#/dashboard"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-	                        </li>
-	                    </ul>
-	                </div>
-	            </div -->
 	        </nav>
 	       
 	        <div id="page-wrapper" data-ng-view>

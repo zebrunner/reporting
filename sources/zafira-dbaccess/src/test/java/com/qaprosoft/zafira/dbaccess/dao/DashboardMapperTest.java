@@ -64,6 +64,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         {
             setTitle("t1");
             setType(Type.PERFORMANCE);
+            setPosition(0);
             setWidgets(WIDGETS);
         }
     };
@@ -112,6 +113,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     {
         DASHBOARD.setTitle("t2");
         DASHBOARD.setType(Dashboard.Type.GENERAL);
+        DASHBOARD.setPosition(1);
         dashboardMapper.updateDashboard(DASHBOARD);
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
@@ -143,6 +145,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     {
         assertEquals(dashboard.getTitle(), DASHBOARD.getTitle(), "Dashboard title must match");
         assertEquals(dashboard.getType(), DASHBOARD.getType(), "Dashboard type must match");
+        assertEquals(dashboard.getPosition(), DASHBOARD.getPosition(), "Dashboard position must match");
         List<Widget> widgets = dashboard.getWidgets();
         assertEquals(widgets.size(), DASHBOARD.getWidgets().size(), "Invalid amount of widgets!");
         for(int i = 0; i < widgets.size(); i++)
