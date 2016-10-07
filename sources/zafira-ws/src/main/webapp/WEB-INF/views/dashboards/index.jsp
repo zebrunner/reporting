@@ -18,7 +18,7 @@
     <div class="row">
          <div class="col-lg-12">
          	<ul class="nav nav-pills">
-         		<li data-ng-class="{'active': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'title'">
+         		<li data-ng-class="{'active': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
          			<a href="" data-ng-click="switchDashboard(dashboard.id)">
          				<span>{{dashboard.title}}</span>
 	         			<sec:authorize access="hasAnyRole('ROLE_ADMIN')">

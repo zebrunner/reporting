@@ -48,7 +48,7 @@
 	<select id="getAllDashboards" resultMap="DashboardResultMap">
 		<include refid="getDashboard" />
 		<![CDATA[
-			ORDER BY D.ID ASC;
+			ORDER BY D.POSITION ASC;
 		]]>
 	</select>
 	
@@ -63,7 +63,7 @@
         <include refid="getDashboard" />
         <![CDATA[
 			WHERE D.TYPE = #{type}
-			ORDER BY D.ID ASC;
+			ORDER BY D.POSITION ASC;
 		]]>
     </select>
 	
