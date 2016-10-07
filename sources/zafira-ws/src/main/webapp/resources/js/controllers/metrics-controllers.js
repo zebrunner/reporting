@@ -28,9 +28,9 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 	$scope.convertInterval = function() {
 		switch($scope.timeStep)
 		{
-			case 'Last week': return "and tm.created_at >= CURRENT_TIMESTAMP - interval '1 days'";
-			case 'Last month': return "and tm.created_at >= CURRENT_TIMESTAMP - interval '1 month'";
-			case 'Last year': return "and tm.created_at >= CURRENT_TIMESTAMP - interval '1 year'";
+			case 'Last week': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 days'";
+			case 'Last month': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 month'";
+			case 'Last year': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 year'";
 			case 'All time': return "";
 			default: return "";
 		}
@@ -51,7 +51,7 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 	$scope.populateEnvsAndOperations = function(data) {
 		for(var i = 0; i < data.length; i++)
 		{
-			if(data[i].CREATED_AT) data[i].CREATED_AT = new Date(data[i].CREATED_AT);
+			if(data[i].CREATED_AT) data[i].CREATED_AT = i; //TODO: improve counter for X coordinate
 			if($scope.widgetEnvs.indexOf(data[i].env) == -1) $scope.widgetEnvs[$scope.widgetEnvs.length] = data[i].env;
 			if($scope.operations.indexOf(data[i].operation) == -1) $scope.operations[$scope.operations.length] = data[i].operation;
 		}
