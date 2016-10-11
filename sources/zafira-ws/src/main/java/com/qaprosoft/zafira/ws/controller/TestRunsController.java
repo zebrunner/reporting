@@ -1,29 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
-
-import org.dozer.Mapper;
-import org.dozer.MappingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
@@ -34,10 +10,32 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.ws.annotations.GetResponse;
+import com.qaprosoft.zafira.ws.annotations.PostResponse;
 import com.qaprosoft.zafira.ws.dto.EmailType;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.dozer.Mapper;
+import org.dozer.MappingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
+@Api(value = "testRunsController", description = "Test runs operations")
 @RequestMapping("tests/runs")
 public class TestRunsController extends AbstractController
 {
@@ -55,14 +53,18 @@ public class TestRunsController extends AbstractController
 	
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView index()
 	{
 		return new ModelAndView("tests/runs/index");
 	}
-	
+
+	@PostResponse
+	@ApiOperation(value = "Start test-run", nickname = "startTestRun", code = 200, httpMethod = "POST",
+			notes = "start test-run", response = TestRun.class, responseContainer = "TestRun")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr, @RequestHeader(value="Project", required=false) String project) throws ServiceException, MappingException, JAXBException
@@ -73,20 +75,26 @@ public class TestRunsController extends AbstractController
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@PostResponse
+	@ApiOperation(value = "Finish test-run", nickname = "finishTestRun", code = 200, httpMethod = "POST",
+			notes = "finish test-run", response = TestRun.class, responseContainer = "TestRun")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType finishTestRun(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.finishTestRun(id);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@GetResponse
+	@ApiOperation(value = "Get test-run", nickname = "getTestRun", code = 200, httpMethod = "GET",
+			notes = "get test-run", response = TestRun.class, responseContainer = "TestRun")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType getTestRun(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunById(id);
 		if(testRun == null)
@@ -95,14 +103,18 @@ public class TestRunsController extends AbstractController
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException
 	{
 		return testRunService.searchTestRuns(sc);
 	}
-	
+
+	@GetResponse
+	@ApiOperation(value = "Get test-run by CiRunId", nickname = "getTestRunByCiRunId", code = 200, httpMethod = "GET",
+			notes = "get test-run by ciRunId", response = TestRun.class, responseContainer = "TestRun")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value="ciRunId") String ciRunId) throws ServiceException
@@ -114,14 +126,18 @@ public class TestRunsController extends AbstractController
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@GetResponse
+	@ApiOperation(value = "Get test-run results by Id", nickname = "getTestRunResults", code = 200, httpMethod = "GET",
+			notes = "get test-run results by Id", response = Test.class, responseContainer = "Test")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Test> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException
 	{
 		return testService.getTestsByTestRunId(id);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{ids}/compare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, Map<String, Test>> createCompareMatrix(@PathVariable(value="ids") String testRunIds) throws ServiceException
@@ -133,21 +149,24 @@ public class TestRunsController extends AbstractController
 		}
 		return testRunService.createCompareMatrix(ids);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="compare", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView compareTestRuns()
 	{
 		return new ModelAndView("tests/runs/compare");
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
 	public void deleteTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		testRunService.deleteTestRunById(id);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/email", method = RequestMethod.POST)
 	public void sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email) throws ServiceException, JAXBException

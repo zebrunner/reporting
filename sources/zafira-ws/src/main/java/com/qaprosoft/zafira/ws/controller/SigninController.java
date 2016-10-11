@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.ws.dto.forms.SigninForm;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
+@ApiIgnore
 public class SigninController
 {
 	@ResponseStatus(HttpStatus.OK)
