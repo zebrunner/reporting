@@ -41,7 +41,7 @@ public class UsersController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Create user", nickname = "createUser", code = 200, httpMethod = "POST",
-			notes = "create a new user", response = User.class, responseContainer = "User")
+			notes = "create a new user", response = UserType.class, responseContainer = "UserType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
@@ -49,6 +49,7 @@ public class UsersController extends AbstractController
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
 	}
 
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@RequestBody UserSearchCriteria sc) throws ServiceException
@@ -56,6 +57,7 @@ public class UsersController extends AbstractController
 		return userService.searchUsers(sc);
 	}
 
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User getUser(@PathVariable(value="id") long id) throws ServiceException
@@ -63,6 +65,7 @@ public class UsersController extends AbstractController
 		return userService.getUserById(id);
 	}
 
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable(value="id") long id) throws ServiceException
@@ -70,6 +73,7 @@ public class UsersController extends AbstractController
 		userService.deleteUser(id);
 	}
 
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User updateUser(@RequestBody User user, @RequestHeader(value="Project", required=false) String project) throws ServiceException

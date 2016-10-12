@@ -63,7 +63,7 @@ public class TestCasesController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Create test case", nickname = "createTestCase", code = 200, httpMethod = "POST",
-			notes = "create a new test case", response = TestCase.class, responseContainer = "TestCase")
+			notes = "create a new test case", response = TestCaseType.class, responseContainer = "TestCaseType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException

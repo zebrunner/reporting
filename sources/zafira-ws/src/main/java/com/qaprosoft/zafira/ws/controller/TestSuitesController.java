@@ -29,7 +29,7 @@ public class TestSuitesController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Create test suite", nickname = "createTestSuite", code = 200, httpMethod = "POST",
-			notes = "create a new Test Suite", response = TestSuite.class, responseContainer = "")
+			notes = "create a new Test Suite", response = TestSuiteType.class, responseContainer = "TestSuiteType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestSuiteType createTestSuite(@RequestBody @Valid TestSuiteType testSuite, @RequestHeader(value="Project", required=false) String project) throws ServiceException

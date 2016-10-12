@@ -64,7 +64,7 @@ public class TestRunsController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Start test-run", nickname = "startTestRun", code = 200, httpMethod = "POST",
-			notes = "start test-run", response = TestRun.class, responseContainer = "TestRun")
+			notes = "start test-run", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr, @RequestHeader(value="Project", required=false) String project) throws ServiceException, MappingException, JAXBException
@@ -78,7 +78,7 @@ public class TestRunsController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Finish test-run", nickname = "finishTestRun", code = 200, httpMethod = "POST",
-			notes = "finish test-run", response = TestRun.class, responseContainer = "TestRun")
+			notes = "finish test-run", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
@@ -91,7 +91,7 @@ public class TestRunsController extends AbstractController
 
 	@GetResponse
 	@ApiOperation(value = "Get test-run", nickname = "getTestRun", code = 200, httpMethod = "GET",
-			notes = "get test-run", response = TestRun.class, responseContainer = "TestRun")
+			notes = "get test-run", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
@@ -114,7 +114,7 @@ public class TestRunsController extends AbstractController
 
 	@GetResponse
 	@ApiOperation(value = "Get test-run by CiRunId", nickname = "getTestRunByCiRunId", code = 200, httpMethod = "GET",
-			notes = "get test-run by ciRunId", response = TestRun.class, responseContainer = "TestRun")
+			notes = "get test-run by ciRunId", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value="ciRunId") String ciRunId) throws ServiceException
@@ -129,7 +129,7 @@ public class TestRunsController extends AbstractController
 
 	@GetResponse
 	@ApiOperation(value = "Get test-run results by Id", nickname = "getTestRunResults", code = 200, httpMethod = "GET",
-			notes = "get test-run results by Id", response = Test.class, responseContainer = "Test")
+			notes = "get test-run results by Id", response = java.util.List.class, responseContainer = "Test")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Test> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException

@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.model.Job;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.JobsService;
@@ -30,7 +29,7 @@ public class JobsController extends AbstractController
 
 	@PostResponse
 	@ApiOperation(value = "Create job", nickname = "createJob", code = 200, httpMethod = "POST",
-			notes = "create a new Job", response = Dashboard.class, responseContainer = "Job")
+			notes = "create a new Job", response = JobType.class, responseContainer = "JobType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job, @RequestHeader(value="Project", required=false) String project) throws ServiceException
