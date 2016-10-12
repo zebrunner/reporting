@@ -69,7 +69,13 @@
             				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
             			</#if>
             		</td>
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'></td>
+            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <#list test.workItems as workItem>
+                            <#if workItem.jiraId??>
+                                <span>${workItem.jiraId}</span>
+                            </#if>
+                        </#list>
+                    </td>
             		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
             			<#if test.demoURL??>
             				<a href='${test.demoURL}' style='color: white;'>Demo</a>

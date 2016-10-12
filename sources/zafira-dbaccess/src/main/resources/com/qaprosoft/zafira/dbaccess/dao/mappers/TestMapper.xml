@@ -57,6 +57,11 @@
 				T.RETRY AS TEST_RETRY,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
+
+				WI.ID AS WORK_ITEM_ID,
+				WI.JIRA_ID AS WORK_ITEM_JIRA_ID,
+				WI.CREATED_AT AS WORK_ITEM_MODIFIED_AT,
+				WI.MODIFIED_AT AS WORK_ITEM_CREATED_AT,
 				
 				TC.ID AS TEST_TEST_CONFIG_ID,
 				TC.URL AS TEST_TEST_CONFIG_URL,
@@ -73,6 +78,12 @@
 				TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT
 			FROM
 				zafira.TESTS T
+			LEFT JOIN
+				zafira.TEST_WORK_ITEMS TWI
+            ON TWI.TEST_ID = T.ID
+			LEFT JOIN
+				zafira.WORK_ITEMS WI
+            ON WI.ID = TWI.WORK_ITEM_ID
 			INNER JOIN zafira.TEST_CONFIGS TC
 				ON T.TEST_CONFIG_ID = TC.ID
 		]]>
@@ -244,6 +255,9 @@
 		<result column="TEST_TEST_CONFIG_DEVICE" property="testConfig.device" />
 		<result column="TEST_TEST_CONFIG_MODIFIED_AT" property="testConfig.modifiedAt" />
 		<result column="TEST_TEST_CONFIG_CREATED_AT" property="testConfig.createdAt" />
+
+		<collection property="workItems" ofType="com.qaprosoft.zafira.dbaccess.model.WorkItem"
+					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper.WorkItemResultMap"/>
 	</resultMap>
 	
 </mapper>
