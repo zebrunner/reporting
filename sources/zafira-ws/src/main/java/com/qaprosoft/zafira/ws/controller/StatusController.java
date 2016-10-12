@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
+@ApiIgnore
 @RequestMapping("status")
 public class StatusController extends AbstractController
 {

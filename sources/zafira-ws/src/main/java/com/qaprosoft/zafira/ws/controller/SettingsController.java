@@ -1,24 +1,20 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.util.List;
-
+import com.qaprosoft.zafira.dbaccess.model.Setting;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
 
-import com.qaprosoft.zafira.dbaccess.model.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
+import java.util.List;
 
 @Controller
+@ApiIgnore
 @RequestMapping("settings")
 public class SettingsController extends AbstractController
 {

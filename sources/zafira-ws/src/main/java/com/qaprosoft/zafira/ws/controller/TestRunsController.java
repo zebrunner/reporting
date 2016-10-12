@@ -1,5 +1,9 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
@@ -36,8 +42,10 @@ import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.EmailType;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller
+@Api(value = "Test runs operations")
 @RequestMapping("tests/runs")
 public class TestRunsController extends AbstractController
 {
@@ -55,14 +63,18 @@ public class TestRunsController extends AbstractController
 	
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView index()
 	{
 		return new ModelAndView("tests/runs/index");
 	}
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST",
+			notes = "Starts new test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr, @RequestHeader(value="Project", required=false) String project) throws ServiceException, MappingException, JAXBException
@@ -73,20 +85,26 @@ public class TestRunsController extends AbstractController
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Finish test run", nickname = "finishTestRun", code = 200, httpMethod = "POST",
+			notes = "Finishes test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType finishTestRun(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.finishTestRun(id);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get test run", nickname = "getTestRun", code = 200, httpMethod = "GET",
+			notes = "Returns test run by id.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType getTestRun(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestRunType getTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunById(id);
 		if(testRun == null)
@@ -95,14 +113,18 @@ public class TestRunsController extends AbstractController
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException
 	{
 		return testRunService.searchTestRuns(sc);
 	}
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get test run by ci run id", nickname = "getTestRunByCiRunId", code = 200, httpMethod = "GET",
+			notes = "Returns test run by ci run id.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value="ciRunId") String ciRunId) throws ServiceException
@@ -114,14 +136,18 @@ public class TestRunsController extends AbstractController
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get test run results by id", nickname = "getTestRunResults", code = 200, httpMethod = "GET",
+			notes = "Returns test run results by id.", response = java.util.List.class, responseContainer = "Test")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Test> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException
 	{
 		return testService.getTestsByTestRunId(id);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{ids}/compare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, Map<String, Test>> createCompareMatrix(@PathVariable(value="ids") String testRunIds) throws ServiceException
@@ -133,21 +159,24 @@ public class TestRunsController extends AbstractController
 		}
 		return testRunService.createCompareMatrix(ids);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="compare", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView compareTestRuns()
 	{
 		return new ModelAndView("tests/runs/compare");
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
 	public void deleteTestRun(@PathVariable(value="id") long id) throws ServiceException
 	{
 		testRunService.deleteTestRunById(id);
 	}
-	
+
+	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/email", method = RequestMethod.POST)
 	public void sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email) throws ServiceException, JAXBException

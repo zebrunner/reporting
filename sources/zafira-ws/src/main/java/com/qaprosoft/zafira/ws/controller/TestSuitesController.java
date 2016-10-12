@@ -1,5 +1,8 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
@@ -18,8 +21,10 @@ import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestSuiteService;
 import com.qaprosoft.zafira.ws.dto.TestSuiteType;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller
+@Api(value = "Test suites operations")
 @RequestMapping("tests/suites")
 public class TestSuitesController extends AbstractController
 {
@@ -28,7 +33,10 @@ public class TestSuitesController extends AbstractController
 	
 	@Autowired
 	private TestSuiteService testSuiteService;
-	
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create test suite", nickname = "createTestSuite", code = 200, httpMethod = "POST",
+			notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestSuiteType createTestSuite(@RequestBody @Valid TestSuiteType testSuite, @RequestHeader(value="Project", required=false) String project) throws ServiceException
