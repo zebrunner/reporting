@@ -1,5 +1,26 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
+
+import springfox.documentation.annotations.ApiIgnore;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Project;
@@ -7,24 +28,11 @@ import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestCaseService;
-import com.qaprosoft.zafira.ws.annotations.PostResponse;
 import com.qaprosoft.zafira.ws.dto.TestCaseType;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.ArrayUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
-
-import javax.validation.Valid;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller
-@Api(value = "testCasesController", description = "Test cases operations")
+@Api(value = "Test cases operations")
 @RequestMapping("tests/cases")
 public class TestCasesController extends AbstractController
 {
@@ -61,9 +69,9 @@ public class TestCasesController extends AbstractController
 		return testCaseService.searchTestRuns(sc);
 	}
 
-	@PostResponse
+	@ResponseStatusDetails
 	@ApiOperation(value = "Create test case", nickname = "createTestCase", code = 200, httpMethod = "POST",
-			notes = "create a new test case", response = TestCaseType.class, responseContainer = "TestCaseType")
+			notes = "Creates a new test case or updates existing one.", response = TestCaseType.class, responseContainer = "TestCaseType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException
@@ -72,9 +80,9 @@ public class TestCasesController extends AbstractController
 		return mapper.map(testCaseService.createOrUpdateCase(mapper.map(testCase, TestCase.class)), TestCaseType.class);
 	}
 
-	@PostResponse
-	@ApiOperation(value = "Create test cases", nickname = "createTestCases", code = 200, httpMethod = "POST",
-			notes = "create new test cases", response = java.util.List.class, responseContainer = "TestCase")
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", code = 200, httpMethod = "POST",
+			notes = "Creates new test cases or updates existing.", response = java.util.List.class, responseContainer = "TestCase")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException

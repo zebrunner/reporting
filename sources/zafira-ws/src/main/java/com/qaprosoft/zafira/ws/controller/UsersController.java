@@ -1,27 +1,36 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.User;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.UserService;
-import com.qaprosoft.zafira.ws.annotations.PostResponse;
-import com.qaprosoft.zafira.ws.dto.UserType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
+
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.Valid;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.UserService;
+import com.qaprosoft.zafira.ws.dto.UserType;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller
-@Api(value = "usersController", description = "Users operations")
+@Api(value = "Users operations")
 @RequestMapping("users")
 public class UsersController extends AbstractController
 {
@@ -39,9 +48,9 @@ public class UsersController extends AbstractController
 		return new ModelAndView("users/index");
 	}
 
-	@PostResponse
+	@ResponseStatusDetails
 	@ApiOperation(value = "Create user", nickname = "createUser", code = 200, httpMethod = "POST",
-			notes = "create a new user", response = UserType.class, responseContainer = "UserType")
+			notes = "Creates a new user.", response = UserType.class, responseContainer = "UserType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
