@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +19,7 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.ws.dto.errors.Error;
 import com.qaprosoft.zafira.ws.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.ws.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 public abstract class AbstractController
 {
@@ -26,6 +28,18 @@ public abstract class AbstractController
 	
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
+	
+	protected SecuredUser getPrincipal()
+	{
+		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return user instanceof SecuredUser ? (SecuredUser) user : null;
+	}
+	
+	protected Long getPrincipalId()
+	{
+		SecuredUser user = getPrincipal();
+		return user != null ? user.getId() : 0;
+	}
 	
 	@ExceptionHandler(JobNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)

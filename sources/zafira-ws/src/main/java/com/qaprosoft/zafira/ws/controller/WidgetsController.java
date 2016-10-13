@@ -56,7 +56,7 @@ public class WidgetsController extends AbstractController
 	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project) throws ServiceException
 	{
-		return widgetService.executeSQL(sql.getSql().replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : ""));
+		return widgetService.executeSQL(sql.getSql().replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "").replaceAll("#\\{currentUserId\\}", String.valueOf(getPrincipalId())));
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
