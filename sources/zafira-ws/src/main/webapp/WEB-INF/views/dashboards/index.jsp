@@ -56,7 +56,7 @@
                      		</thead>
                      		<tbody>
 	                     		<tr data-ng-repeat="row in widget.data.dataset">
-	                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="row[column]"></td>
+	                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
 	                     		</tr>
 	                     	</tbody>
                      	</table>

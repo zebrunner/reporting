@@ -68,6 +68,14 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		$scope.loadAllWidgets();
 	})();
 	
+	$scope.asString = function(value) {
+		if(value != null)
+		{
+			value = value.toString();
+		}
+		return value;
+	};
+	
 	$scope.openDashboardWidgetModal = function(widget, isNew) {
 		$modal.open({
 			templateUrl : 'resources/templates/dashboard-widget-details-modal.jsp',
