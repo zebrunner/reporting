@@ -47,14 +47,18 @@
                      </div>
                      <div class="table-responsive" data-ng-if="widget.type == 'table'">
                      	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
-                     		<tr>
-                     			<th data-ng-repeat="column in widget.model.columns">
-                     				{{column}}
-                     			</th>
-                     		</tr>
-                     		<tr data-ng-repeat="row in widget.data.dataset">
-                     			<td data-ng-repeat="column in widget.model.columns">{{row[column]}}</td>
-                     		</tr>
+                     		<thead>
+	                     		<tr>
+	                     			<th data-ng-repeat="column in widget.model.columns">
+	                     				{{column}}
+	                     			</th>
+	                     		</tr>
+                     		</thead>
+                     		<tbody>
+	                     		<tr data-ng-repeat="row in widget.data.dataset">
+	                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="row[column]"></td>
+	                     		</tr>
+	                     	</tbody>
                      	</table>
                      </div>
                 </div>
