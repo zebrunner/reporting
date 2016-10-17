@@ -7,7 +7,9 @@
 
 <div data-ng-controller="UsersListCtrl">
 	<div class="row">
-         <h2><i class="fa fa-user fa-fw"></i> Users <button class="btn btn-xs btn-success" data-ng-click="openUserDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+         <div class="col-lg-12">
+         	<h2><i class="fa fa-user fa-fw"></i> Users <button class="btn btn-xs btn-success" data-ng-click="openUserDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+    	</div>
     </div>
 	<div class="row">
 		<div class="col-lg-12">
@@ -47,7 +49,7 @@
 					<span data-ng-if="user.password != '' && user.password != null" class="label arrowed arrowed-in-right label-success">active</span>
 					<span data-ng-if="user.password == '' || user.password == null" class="label arrowed arrowed-in-right label-danger">inactive</span>
 					&nbsp;
-					<i class="float_right fa fa-gear" style="line-height: 20px;" data-ng-click="openUserDetailsModal(user.id)"></i>
+					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openUserDetailsModal(user.id)"></i>
 				</div>
 			</div>
 			<paging class="float_right"

@@ -5,14 +5,13 @@
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL, PROJECT)
+			INSERT INTO zafira.USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL)
 			VALUES (
 				#{userName},
 				#{password},
 			    #{firstName},
 				#{lastName},
-				#{email},
-				#{project}
+				#{email}
 			)
 		]]>
 	</insert>
@@ -26,7 +25,6 @@
 				U.FIRST_NAME AS USER_FIRST_NAME,
 				U.LAST_NAME AS USER_LAST_NAME,
 				U.EMAIL AS USER_EMAIL,
-				U.PROJECT AS USER_PROJECT,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT
 			FROM
@@ -74,11 +72,6 @@
 			<if test="null != date">
 	            <![CDATA[
 	               AND U.CREATED_AT::date = #{date}::date
-	            ]]>
-			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND U.PROJECT = #{project}
 	            ]]>
 			</if>
 		</trim>
@@ -130,11 +123,6 @@
 	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
-			<if test="null != project">
-	            <![CDATA[
-	          	   AND U.PROJECT = #{project}
-	            ]]>
-			</if>
 		</trim>
 	</select>
 
@@ -162,11 +150,6 @@
 				<if test="null != userName">
 		            <![CDATA[
 		               USERNAME = #{userName},	
-		            ]]>
-				</if>
-				<if test="null != project">
-		            <![CDATA[
-		               PROJECT = #{project},	
 		            ]]>
 				</if>
 				<if test="null != password">
@@ -203,7 +186,6 @@
 		<result column="USER_FIRST_NAME" property="firstName" />
 		<result column="USER_LAST_NAME" property="lastName" />
 		<result column="USER_EMAIL" property="email" />
-		<result column="USER_PROJECT" property="project" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
 	</resultMap>

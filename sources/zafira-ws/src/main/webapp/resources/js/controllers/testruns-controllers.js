@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -8,15 +8,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.testRunsToCompare = [];
 	$scope.compareQueryString = "";
 	
-	$scope.tests = {};
 	$scope.testRuns = {};
-	$scope.testRunResults = {};
-	$scope.testRunsTestIds = {};
 	$scope.totalResults = 0;
 	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
-		'pageSize' : 25
+		'pageSize' : 20
 	};
 	
 	$scope.testSearchCriteria = {
@@ -24,82 +21,88 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		'pageSize' : 100000
 	};
 	
-	$scope.initXMPP = function(){
-		$http.get('settings/xmpp').success(function(settings) {
-			if(settings.enabled)
+	$scope.initWebsocket = function() 
+	{
+  	  var sockJS = new SockJS("/zafira-ws/zafira-websocket");
+  	  var stomp = Stomp.over(sockJS);
+  	  //stomp.debug = null;
+  	  stomp.connect({}, function() {
+  	      stomp.subscribe("/topic/tests", function(data) 
+  	      {
+  	        	$scope.getMessage(data.body);
+  	      });
+  	  });
+   };
+   
+   $scope.getMessage = function(message) {
+	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+	 if(event.type == 'TEST_RUN')
+	 {
+		if($scope.testRunId && $scope.testRunId != event.testRun.id)
+		{
+			return;
+		}
+		$scope.addTestRun(event.testRun);
+		$scope.$apply();
+	 }
+	 else if(event.type == 'TEST')
+	 {
+		$scope.addTest(event.test, true);
+		if($scope.testRuns[event.test.testRunId].showDetails)
+		{
+			$scope.$apply();
+		}
+	 }
+   	 return true;
+   };
+	
+	$scope.addTest = function(test, isEvent) {
+		var testRun = $scope.testRuns[test.testRunId];
+		if(testRun == null)
+		{
+			return;
+		}
+		
+		if(isEvent)
+		{
+			if(testRun.tests[test.id] != null)
 			{
-				var connection = new Strophe.Connection(settings.httpBind);
-				connection.connect(settings.username, settings.password, function (status) {
-		            if (status === Strophe.Status.CONNECTED) {
-		                 connection.addHandler(function(msg){
-		                	 var elems = msg.getElementsByTagName('body');
-		                	 if (elems.length > 0) 
-		                	 {
-		                		 var event = JSON.parse(Strophe.getText(elems[0]).replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
-		                		 console.log(event);
-		                		 if(event.type == 'TEST_RUN')
-	                			 {
-		             				if($scope.testRunId && $scope.testRunId != event.testRun.id)
-		             				{
-		             					return;
-		             				}
-		             				$scope.addTestRun(event.testRun);
-		             				$scope.$apply();
-	                			 }
-		                		 else if(event.type == 'TEST')
-	                			 {
-		             				$scope.addTest(event.test);
-		             				$scope.$apply();
-	                			 }
-		                	 }
-		                	 return true;
-		                 }, null, 'message', 'chat', null,  null);
-		                 connection.send($pres().tree());
-		            }
-		        });
+				$scope.updateTestRunResults(testRun.id, testRun.tests[test.id].status, -1);
 			}
-		}).error(function() {
-			console.error('Failed to connect to XMPP');
-		});
+			testRun.tests[test.id] = test;
+			$scope.updateTestRunResults(testRun.id, test.status, 1);
+		}
+		else
+		{
+			testRun.tests[test.id] = test;
+		}
 	};
 	
-	$scope.addTest = function(test) {
-		if($scope.tests[test.id] == null)
-    	{
-    		$scope.tests[test.id] = {};
-    	}
-		if($scope.testRunsTestIds[test.testRunId] == null)
-    	{
-			$scope.testRunsTestIds[test.testRunId] = [];
-    	}
-    	if($scope.testRunsTestIds[test.testRunId].indexOf(test.id) < 0)
-    	{
-    		$scope.testRunsTestIds[test.testRunId].push(test.id)
-    	}
-    	// Remove previous result
-    	if($scope.tests[test.id] != null)
-    	{
-    		$scope.updateTestRunResults($scope.tests[test.id], -1);
-    	}
-    	$scope.tests[test.id] = test;
-    	$scope.initTestRunResults(test.testRunId);
-    	$scope.updateTestRunResults($scope.tests[test.id], 1);
+	$scope.updateTestRunResults = function(id, status, changeByAmount)
+	{
+		switch(status) {
+		case "PASSED":
+			$scope.testRuns[id].passed = $scope.testRuns[id].passed + changeByAmount;
+			break;
+		case "FAILED":
+			$scope.testRuns[id].failed = $scope.testRuns[id].failed + changeByAmount;
+			break;
+		case "SKIPPED":
+			$scope.testRuns[id].skipped = $scope.testRuns[id].skipped + changeByAmount;
+			break;
+		default:
+			break;
+		}
 	};
 	
-	$scope.updateTestRunResults = function(test, amount) {
-		switch(test.status) {
-			case "PASSED":
-				$scope.testRunResults[test.testRunId].passed = $scope.testRunResults[test.testRunId].passed + amount;
-				break;
-			case "FAILED":
-				$scope.testRunResults[test.testRunId].failed = $scope.testRunResults[test.testRunId].failed + amount;
-				break;
-			case "SKIPPED":
-				$scope.testRunResults[test.testRunId].skipped = $scope.testRunResults[test.testRunId].skipped + amount;
-				break;
-			case "IN_PROGRESS":
-				$scope.testRunResults[test.testRunId].in_progress = $scope.testRunResults[test.testRunId].in_progress + amount;
-				break;
+	$scope.deleteTestRun = function(id){
+		if(confirm("Do you really want to delete test run?"))
+		{
+			$http.delete('tests/runs/' + id).success(function() {
+				$scope.loadTestRuns($scope.testRunSearchCriteria.page);
+			}).error(function(data, status) {
+				alert('Failed to delete test run');
+			});
 		}
 	};
 	
@@ -109,23 +112,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
     		testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL
+    		testRun.tests = {};
     		$scope.testRuns[testRun.id] = testRun;
-    		$scope.initTestRunResults(testRun.id);
     	}
     	else
     	{
     		$scope.testRuns[testRun.id].status = testRun.status;
-    	}
-	};
-	
-	$scope.initTestRunResults = function(testRunId) {
-		if($scope.testRunResults[testRunId] == null)
-    	{
-			$scope.testRunResults[testRunId] = {};
-			$scope.testRunResults[testRunId].passed = 0;
-			$scope.testRunResults[testRunId].failed = 0;
-			$scope.testRunResults[testRunId].skipped = 0;
-			$scope.testRunResults[testRunId].in_progress = 0;
     	}
 	};
 	
@@ -185,34 +177,28 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		
 		$http.post('tests/runs/search', ProjectProvider.initProject($scope.testRunSearchCriteria)).success(function(data) {
 			
-			$scope.tests = {};
 			$scope.testRuns = {};
-			$scope.testRunResults = {};
-			$scope.testRunsTestIds = {};
 			
 			$scope.testRunSearchCriteria.page = data.page;
 			$scope.testRunSearchCriteria.pageSize = data.pageSize;
 			$scope.totalResults = data.totalResults;
 			
-			var testRunIds = [];
 			for(var i = 0; i < data.results.length; i ++)
 			{
-				testRunIds.push(data.results[i].id);
 				$scope.addTestRun(data.results[i]);
 			}
 			
-			if(testRunIds.length > 0)
+			if($scope.testRunId)
 			{
-				$scope.loadTests(testRunIds);
+				$scope.loadTests($scope.testRunId);
 			}
-			
 		}).error(function() {
 			console.error('Failed to search test runs');
 		});
 	};
 	
-	$scope.loadTests = function(testRunIds){
-		$scope.testSearchCriteria.testRunIds = testRunIds;
+	$scope.loadTests = function(testRunId){
+		$scope.testSearchCriteria.testRunId = testRunId;
 		$http.post('tests/search', $scope.testSearchCriteria).success(function(data) {
 			$scope.userSearchResult = data;
 			$scope.testSearchCriteria.page = data.page;
@@ -220,7 +206,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			
 			for(var i = 0; i < data.results.length; i ++)
 			{
-				$scope.addTest(data.results[i]);
+				$scope.addTest(data.results[i], false);
 			}
 			
 		}).error(function() {
@@ -228,28 +214,59 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
-	$scope.menuOptions = [
-      ['Open', function ($itemScope) {
-          window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
-      }],
+	// --------------------  Context menu ------------------------
+	const OPEN_TEST_RUN = ['Open', function ($itemScope) {
+        window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
+    }];
+	
+	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
+	  	var node = document.createElement('pre');
+  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
+  	    document.body.appendChild(node);
+  	    
+  	    var selection = getSelection();
+  	    selection.removeAllRanges();
+
+  	    var range = document.createRange();
+  	    range.selectNodeContents(node);
+  	    selection.addRange(range);
+
+  	    document.execCommand('copy');
+  	    selection.removeAllRanges();
+  	    document.body.removeChild(node);
+	}];
+	
+	const DELETE_TEST_RUN = ['Delete', function ($itemScope) {
+	  	$scope.deleteTestRun($itemScope.testRun.id);
+    }];
+	
+	const SEND_EMAIL = ['Send as email', function ($itemScope) {
+	  	$scope.openEmailModal($itemScope.testRun);
+    }];
+	
+	$scope.adminMenuOptions = [
+      OPEN_TEST_RUN,
+      COPY_TEST_RUN_LINK,
+      SEND_EMAIL,
       null,
-      ['Copy link', function ($itemScope) {
-    	  	var node = document.createElement('pre');
-	  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
-	  	    document.body.appendChild(node);
-	  	    
-	  	    var selection = getSelection();
-	  	    selection.removeAllRanges();
-	
-	  	    var range = document.createRange();
-	  	    range.selectNodeContents(node);
-	  	    selection.addRange(range);
-	
-	  	    document.execCommand('copy');
-	  	    selection.removeAllRanges();
-	  	    document.body.removeChild(node);
-      }]
+      DELETE_TEST_RUN
     ];
+	
+	$scope.userMenuOptions = [
+      OPEN_TEST_RUN,
+      COPY_TEST_RUN_LINK,
+      SEND_EMAIL
+    ];
+	// -----------------------------------------------------------
+	
+	$scope.showDetails = function(id) {
+		var testRun = $scope.testRuns[id];
+		testRun.showDetails = !testRun.showDetails;
+		if(testRun.showDetails)
+		{
+			$scope.loadTests(id);
+		}
+	}
 	
 	$scope.resetSearchCriteria = function(){
 		$location.url($location.path());
@@ -297,8 +314,36 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
+	$scope.openEmailModal = function(testRun){
+		$modal.open({
+			templateUrl : 'resources/templates/email-details-modal.jsp',
+			resolve : {
+				'testRun' : function(){
+					return testRun;
+				}
+			},
+			controller : function($scope, $modalInstance, testRun){
+				
+				$scope.testRun = testRun;
+				$scope.email = {};
+				
+				$scope.sendEmail = function(id){
+					$modalInstance.close(0);
+					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).success(function() {
+						alert('Email was successfully sent!');
+					}).error(function(data, status) {
+						alert('Failed to send email');
+					});
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
+	};
+	
 	(function init(){
-		$scope.initXMPP();
+		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
 	})();

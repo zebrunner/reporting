@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
-import org.apache.commons.lang3.StringUtils;
+import com.qaprosoft.zafira.dbaccess.model.Project;
 
 public class SearchCriteria
 {
@@ -10,7 +10,7 @@ public class SearchCriteria
 	private Integer page = 1;
 	// The very default page size, just not to get NPE'd
 	private Integer pageSize = 25;
-	private String project;
+	private Project project;
 	
 	private SortOrder sortOrder = SortOrder.ASC;
 
@@ -49,14 +49,14 @@ public class SearchCriteria
 		this.sortOrder = sortOrder;
 	}
 
-	public String getProject()
+	public Project getProject()
 	{
 		return project;
 	}
 
-	public void setProject(String project)
+	public void setProject(Project project)
 	{
-		if(!StringUtils.isEmpty(project))
+		if(project != null)
 		{
 			this.project = project;
 		}

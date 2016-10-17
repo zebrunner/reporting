@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper">
+
+	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO zafira.SETTINGS (NAME, VALUE)
+			VALUES (#{name},
+					#{value})
+		]]>
+	</insert>
+
+	<sql id="getSetting">
+		<![CDATA[
+			SELECT
+				S.ID AS SETTING_ID,
+				S.NAME AS SETTING_NAME,
+				S.VALUE AS SETTING_VALUE,
+				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
+				S.CREATED_AT AS SETTING_CREATED_AT
+			FROM
+				zafira.SETTINGS S
+		]]>
+	</sql>
+	
+	<select id="getAllSettings" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			ORDER BY S.NAME;
+		]]>
+	</select>
+	
+	<select id="getSettingById" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getSettingByName" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.NAME = #{name};
+		]]>
+	</select>
+
+	<update id="updateSetting">
+		<![CDATA[
+			UPDATE
+			    zafira.SETTINGS
+			SET
+			    NAME = #{name},
+			    VALUE = #{value}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteSetting">
+		<![CDATA[
+			DELETE FROM zafira.SETTINGS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteSetting">
+		<include refid="deleteSetting" />
+	</delete>
+
+	<delete id="deleteSettingById">
+		<include refid="deleteSetting" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Setting" id="SettingResultMap" autoMapping="false">
+		<id column="SETTING_ID" property="id" />
+		<result column="SETTING_NAME" property="name" />
+		<result column="SETTING_VALUE" property="value" />
+		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
+		<result column="SETTING_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,28 +9,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
-import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
+import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
+import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
+
 
 @Service
 public class TestRunService
@@ -52,14 +54,10 @@ public class TestRunService
 	private WorkItemService workItemService;
 	
 	@Autowired
-	@Qualifier("xmppService")
-	private IPushService notificationService;
-	
-	@Value("${zafira.jabber.username}")
-	private String xmppChannel;
+	private TestConfigService testConfigService;
 	
 	@Autowired
-	private TestConfigService testConfigService;
+	private EmailService emailService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -117,6 +115,12 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestRunById(Long id) throws ServiceException
+	{
+		testRunMapper.deleteTestRunById(id);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public TestRun startTestRun(TestRun testRun) throws ServiceException, JAXBException
 	{
 		if(!StringUtils.isEmpty(testRun.getCiRunId()))
@@ -124,6 +128,7 @@ public class TestRunService
 			TestRun existingTestRun = testRunMapper.getTestRunByCiRunId(testRun.getCiRunId());
 			if(existingTestRun != null)
 			{
+				existingTestRun.setBuildNumber(testRun.getBuildNumber());
 				testRun = existingTestRun;
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
@@ -173,7 +178,6 @@ public class TestRunService
 			updateTestRun(testRun);
 		}
 		
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -189,15 +193,14 @@ public class TestRunService
 		testRun.setStatus(Status.PASSED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) ||
-			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.FAILED) ||
+			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.SKIPPED))
 			{
 				testRun.setStatus(Status.FAILED);
 				break;
 			}
 		}
 		updateTestRun(testRun);
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -211,7 +214,8 @@ public class TestRunService
 		}
 		testRun.setStatus(Status.ABORTED);
 		updateTestRun(testRun);
-		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
+//		TODO: Replace by websocket.
+//		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	
@@ -253,20 +257,42 @@ public class TestRunService
 		}
 		
 		// Try to update test run status if all the rest passed
-		if(testRun.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.TestRun.Status.FAILED))
+		if(testRun.getStatus().equals(Status.FAILED))
 		{
 			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
-				if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.FAILED) 
-						|| test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Test.Status.SKIPPED))
+				if(test.getStatus().equals(Status.FAILED) || test.getStatus().equals(Status.SKIPPED))
 				{
 					return testRun;
 				}
 			}
 			testRun.setStatus(Status.PASSED);
 			updateTestRun(testRun);
-			notificationService.publish(xmppChannel, new TestRunPush(testRun));
 		}
 		return testRun;
 	}
+	
+	@Transactional(readOnly=true)
+	public void sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByIdFull(testRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by ID: " + testRunId);
+		}
+		Configuration configuration = readConfiguration(testRun.getConfigXML());
+		
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		
+		emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests), recipients);
+	}
+	
+	private Configuration readConfiguration(String xml) throws JAXBException
+	{
+		ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
+		Configuration configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
+		IOUtils.closeQuietly(xmlBA);
+		return configuration;
+	}
+	
 }

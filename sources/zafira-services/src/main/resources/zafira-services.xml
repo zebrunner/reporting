@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
@@ -39,17 +40,41 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 	
-	<bean id="xmppService" class="com.qaprosoft.zafira.services.services.thirdparty.push.XMPPService" />
-	
-	<bean id="xmppServerConfig" class="org.jivesoftware.smack.ConnectionConfiguration"> 
-		<constructor-arg index="0" value="${zafira.jabber.host}" />
-		<constructor-arg index="1" type="int" value="${zafira.jabber.port}"/>
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}" />
+		<property name="port" value="${mail.port}" />
+		<property name="username" value="${mail.user}" />
+		<property name="password" value="${mail.pass}" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+       	      	<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
 	</bean>
 	
-	<bean id="xmppConnectionManager" class="com.qaprosoft.zafira.services.util.xmpp.XMPPConnectionManager"> 
-		<constructor-arg index="0" ref="xmppServerConfig" />
-		<constructor-arg index="1" value="${zafira.jabber.admin.username}" />
-		<constructor-arg index="2" value="${zafira.jabber.admin.password}" />
+	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
+		id="freemarkerConfiguration">
+		<property name="preferFileSystemAccess" value="true" />
+		<property name="templateLoaderPaths" value="classpath:templates" />
+		<property name="defaultEncoding" value="UTF-8"/>
 	</bean>
 	
+	<bean id="stfService" class="com.qaprosoft.zafira.services.services.stf.STFService">
+		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
+		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
+	</bean>
+	
+	<cache:annotation-driven />
+	
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean
+                  class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
+                  name="projects"/>
+            </set>
+        </property>
+    </bean>
 </beans>

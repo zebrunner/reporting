@@ -30,7 +30,6 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 			setFirstName("Elton");
 			setLastName("John");
 			setEmail("e.jhon@gmail.com");
-			setProject("P1");
 		}
 	};
 
@@ -75,7 +74,6 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		USER.setFirstName("Eric");
 		USER.setLastName("Clapton");
 		USER.setEmail("e.clapton@gmail.com");
-		USER.setProject("P2");
 
 		userMapper.updateUser(USER);
 
@@ -117,6 +115,5 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(user.getFirstName(), USER.getFirstName(), "First name must match");
 		assertEquals(user.getLastName(), USER.getLastName(), "Last name must match");
 		assertEquals(user.getEmail(), USER.getEmail(), "Email must match");
-		assertEquals(user.getProject(), USER.getProject(), "Project must match");
 	}
 }

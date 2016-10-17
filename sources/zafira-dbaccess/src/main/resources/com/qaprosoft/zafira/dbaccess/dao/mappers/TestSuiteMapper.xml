@@ -5,13 +5,12 @@
 
 	<insert id="createTestSuite" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_SUITES (USER_ID, NAME, FILE_NAME, DESCRIPTION, PROJECT)
+			INSERT INTO zafira.TEST_SUITES (USER_ID, NAME, FILE_NAME, DESCRIPTION)
 			VALUES (
 				#{user.id},
 			    #{name},
 			    #{fileName},
-				#{description},
-				#{project}
+				#{description}
 			)
 		]]>
 	</insert>
@@ -24,7 +23,6 @@
 				TS.NAME AS TEST_SUITE_NAME,
 				TS.FILE_NAME AS TEST_SUITE_FILE_NAME,
 				TS.DESCRIPTION AS TEST_SUITE_DESCRIPTION,
-				TS.PROJECT AS TEST_SUITE_PROJECT,
 				TS.MODIFIED_AT AS TEST_SUITE_MODIFIED_AT,
 				TS.CREATED_AT AS TEST_SUITE_CREATED_AT
 			FROM
@@ -52,16 +50,6 @@
 			WHERE TS.NAME = #{name} AND TS.FILE_NAME = #{fileName} AND TS.USER_ID = #{userId};
 		]]>
 	</select>
-	
-	<select id="getAllProjects" resultType="string">
-		<![CDATA[
-			SELECT 
-				DISTINCT PROJECT
-			FROM 
-				zafira.TEST_SUITES WHERE PROJECT IS NOT NULL 
-			ORDER BY PROJECT ASC;
-		]]>
-	</select>
 
 	<update id="updateTestSuite">
 		<![CDATA[
@@ -82,11 +70,6 @@
 				<if test="null != fileName">
 		            <![CDATA[
 		               FILE_NAME = #{fileName},
-		            ]]>
-				</if>
-				<if test="null != project">
-		            <![CDATA[
-		               PROJECT = #{project},
 		            ]]>
 				</if>
 				<if test="null != description">
@@ -122,7 +105,6 @@
 		<result column="TEST_SUITE_NAME" property="name" />
 		<result column="TEST_SUITE_FILE_NAME" property="fileName" />
 		<result column="TEST_SUITE_DESCRIPTION" property="description" />
-		<result column="TEST_SUITE_PROJECT" property="project" />
 		<result column="TEST_SUITE_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_SUITE_CREATED_AT" property="createdAt" />
 	</resultMap>

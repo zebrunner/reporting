@@ -30,6 +30,6 @@ public class UserAuthService implements UserDetailsService
 		{
 			throw new UsernameNotFoundException("User not found", e);
 		}
-		return new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), "USER");
+		return new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), "ROLE_USER");
 	}
 }

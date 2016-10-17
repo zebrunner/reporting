@@ -1,8 +1,8 @@
 ZafiraApp.constant('ROUTES', [  
 {
-	url : '/dashboard',
+	url : '/dashboards',
 	config : {
-		templateUrl : 'dashboard'
+		templateUrl : 'dashboards'
 	}
 },
 {
@@ -24,9 +24,27 @@ ZafiraApp.constant('ROUTES', [
 	}
 },
 {
+	url : '/tests/cases/:id/metrics',
+	config : {
+		templateUrl : 'tests/cases/metrics'
+	}
+},
+{
 	url : '/tests/runs/:ids/compare',
 	config : {
 		templateUrl : 'tests/runs/compare'
+	}
+},
+{
+	url : '/settings',
+	config : {
+		templateUrl : 'settings/index'
+	}
+},
+{
+	url : '/devices',
+	config : {
+		templateUrl : 'devices/index'
 	}
 }]);
 

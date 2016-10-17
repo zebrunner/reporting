@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.grid.queue.models;
 
-import com.qaprosoft.zafira.grid.stf.models.Device;
+import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 
 public class GridResponse
 {
@@ -12,7 +12,7 @@ public class GridResponse
 	private String model;
 	private boolean connected;
 
-	public GridResponse(String testId, Device device, boolean connected)
+	public GridResponse(String testId, STFDevice device, boolean connected)
 	{
 		this.testId = testId;
 		this.connected = connected;

@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', function($scope, $rootScope, $http, $location, $cookieStore, $route) {
+ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', '$modal', 'ProjectProvider', '$window', function($scope, $rootScope, $http, $location, $cookieStore, $route, $modal, ProjectProvider, $window) {
 
 	$scope.project = null;
 	$scope.projects = [];
@@ -13,10 +13,37 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 		});
 	};
 	
+	$scope.createProject = function(newProject){
+		$http.post('projects').success(function(newProject) {
+			
+		}).error(function() {
+			console.error('Failed to load projects');
+		});
+	};
+	
 	$scope.setProject = function(project){
-		$cookieStore.put("project", project);
-		$scope.project = project;
-		$route.reload();
+		ProjectProvider.setProject(project);
+		$window.location.reload();
+	};
+	
+	$scope.openProjectDetailsModal = function(){
+		$modal.open({
+			templateUrl : 'resources/templates/project-details-modal.jsp',
+			controller : function($scope, $modalInstance){
+				$scope.project = {};
+				$scope.createProject = function(project){
+					$http.post('projects', project).success(function(data) {
+					}).error(function(data, status) {
+						alert('Failed to create project');
+					});
+					$modalInstance.close(0);
+				};
+				
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
 	};
 	
 	(function init(){

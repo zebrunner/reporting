@@ -16,9 +16,10 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.model.Job;
+import com.qaprosoft.zafira.dbaccess.model.Project;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestSuite;
 import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
@@ -43,6 +44,9 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			Job job = new Job();
 			job.setId(1L);
 			
+			Project project = new Project();
+			project.setId(1L);
+			
 			WorkItem workItem = new WorkItem();
 			workItem.setId(1L);
 			
@@ -51,6 +55,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			
 			setUser(user);
 			setTestSuite(testSuite);
+			setProject(project);
 			setScmBranch("prod");
 			setScmCommit("sdfsdfsdfs234234132ff");
 			setScmURL("http://localhost:8080/lc");
@@ -63,7 +68,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setStartedBy(Initiator.HUMAN);
 			setWorkItem(workItem);
 			setCiRunId(UUID.randomUUID().toString());
-			setProject("P1");
 		}
 	};
 
@@ -98,6 +102,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 	{
 		TEST_RUN.getUser().setId(2L);
 		TEST_RUN.getTestSuite().setId(2L);
+		TEST_RUN.getProject().setId(2L);
 		TEST_RUN.setScmBranch("stg");
 		TEST_RUN.setScmCommit("sdfsdsdffs4132ff");
 		TEST_RUN.setScmURL("http://localhost:8080/lc2");
@@ -108,7 +113,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		TEST_RUN.setBuildNumber(6);
 		TEST_RUN.setStatus(Status.FAILED);
 		TEST_RUN.setStartedBy(Initiator.SCHEDULER);
-		TEST_RUN.setProject("P2");
 		
 		testRunMapper.updateTestRun(TEST_RUN);
 
@@ -168,6 +172,6 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testRun.getJob().getId(), TEST_RUN.getJob().getId(), "Job ID must match");
 		assertEquals(testRun.getUpstreamJob().getId(), TEST_RUN.getUpstreamJob().getId(), "Upstream job ID must match");
 		assertEquals(testRun.getUpstreamJobBuildNumber(), TEST_RUN.getUpstreamJobBuildNumber(), "Upstream job build number must match");
-		assertEquals(testRun.getProject(), TEST_RUN.getProject(), "Project must match");
+		assertEquals(testRun.getProject().getId(), TEST_RUN.getProject().getId(), "Project must match");
 	}
 }

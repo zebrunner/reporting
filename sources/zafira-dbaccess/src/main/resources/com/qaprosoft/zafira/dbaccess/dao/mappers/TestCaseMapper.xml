@@ -5,14 +5,35 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, INFO, PROJECT)
+			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
+		
+		]]>
+		<if test="null != status">	
+			STATUS, 
+		</if>
+		<if test="null != project and null != project.id">	
+			PROJECT_ID, 
+		</if>
+		<![CDATA[	
+			INFO)
 			VALUES (
 				#{user.id},
 			    #{testSuiteId},
 				#{testClass},
 				#{testMethod},
-				#{info},
-				#{project}
+		]]>
+		<if test="null != status">
+            <![CDATA[
+				#{status},
+			]]>
+		</if>
+		<if test="null != project and null != project.id">
+            <![CDATA[
+				#{project.id},
+			]]>
+		</if>
+		<![CDATA[
+				#{info}
 			)
 		]]>
 	</insert>
@@ -26,11 +47,19 @@
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
 				TC.INFO AS TEST_CASE_INFO,
-				TC.PROJECT AS TEST_CASE_PROJECT,
+				TC.STATUS AS TEST_CASE_STATUS,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
-				TC.CREATED_AT AS TEST_CASE_CREATED_AT
+				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
+				
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_CASES TC
+			LEFT JOIN
+				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
 		]]>
 	</sql>
 	
@@ -43,17 +72,15 @@
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
 				TC.INFO AS TEST_CASE_INFO,
-				TC.PROJECT AS TEST_CASE_PROJECT,
 				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
-				(SELECT STATUS FROM zafira.TESTS T WHERE T.TEST_CASE_ID = TC.ID ORDER BY T.ID DESC LIMIT 1) AS TEST_CASE_STATUS,
+				TC.STATUS AS TEST_CASE_STATUS,
 				
 				U.ID AS TEST_CASE_USER_ID,
 				U.USERNAME AS TEST_CASE_USER_USERNAME,
 				U.FIRST_NAME AS TEST_CASE_USER_FIRST_NAME,
 				U.LAST_NAME AS TEST_CASE_USER_LAST_NAME,
 				U.EMAIL AS TEST_CASE_USER_EMAIL,
-				U.PROJECT AS TEST_CASE_USER_PROJECT,
 				U.MODIFIED_AT AS TEST_CASE_USER_MODIFIED_AT,
 				U.CREATED_AT AS TEST_CASE_USER_CREATED_AT,
 				
@@ -62,15 +89,22 @@
 				TS.NAME AS TEST_CASE_TEST_SUITE_NAME,
 				TS.FILE_NAME AS TEST_CASE_TEST_SUITE_FILE_NAME,
 				TS.DESCRIPTION AS TEST_CASE_TEST_SUITE_DESCRIPTION,
-				TS.PROJECT AS TEST_CASE_TEST_SUITE_PROJECT,
 				TS.MODIFIED_AT AS TEST_CASE_TEST_SUITE_MODIFIED_AT,
-				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT
+				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT,
+				
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
 				zafira.TEST_CASES TC
 			LEFT JOIN 
 				zafira.USERS U ON U.ID = TC.USER_ID
 			LEFT JOIN 
 			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			LEFT JOIN
+				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
 		]]>
 	</sql>
 
@@ -135,9 +169,9 @@
 	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
-			<if test="null != project">
+			<if test="null != project and null != project.id">
 	            <![CDATA[
-	          	   AND TC.PROJECT = #{project}
+	               AND TC.PROJECT_ID = #{project.id}
 	            ]]>
 			</if>
 		</trim>
@@ -194,55 +228,13 @@
 	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
-			<if test="null != project">
+			<if test="null != project and null != project.id">
 	            <![CDATA[
-	          	   AND TC.PROJECT = #{project}
+	               AND TC.PROJECT_ID = #{project.id}
 	            ]]>
 			</if>
 		</trim>
     </select>
-    
-    <select id="getTestCaseOwnersStatistics" resultMap="TestCaseOwnersCountResultMap">
-		<![CDATA[
-			SELECT 
-				U.USERNAME AS TEST_CASE_OWNER_COUNT_USERNAME,
-				COUNT(*) AS TEST_CASE_OWNER_COUNT_COUNT
-			FROM 
-				zafira.TEST_CASES TC 
-			INNER JOIN 
-				zafira.USERS U 
-			ON U.ID = TC.USER_ID
-		]]>
-		<if test="null != project">
-            <![CDATA[
-          	   WHERE TC.PROJECT = #{project}
-            ]]>
-		</if>
-		<![CDATA[
-			GROUP BY U.USERNAME;
-		]]>
-	</select>
-	
-	 <select id="getTestCaseImplementationStatistics" resultMap="TestCaseImplementationCountResultMap">
-		<![CDATA[
-			SELECT 
-				CREATED_AT::date AS TEST_CASE_IMPLEMENTATION_COUNT_DATE, 
-				COUNT(*) AS TEST_CASE_IMPLEMENTATION_COUNT_COUNT
-			FROM 
-				zafira.TEST_CASES TC
-			WHERE 
-				TC.CREATED_AT::date > (current_date - 30)
-		]]>
-		<if test="null != project">
-            <![CDATA[
-          	   AND TC.PROJECT = #{project}
-            ]]>
-		</if>
-		<![CDATA[
-			GROUP BY CREATED_AT::date
-			ORDER BY CREATED_AT::date ASC;
-		]]>
-	</select>
 
 	<update id="updateTestCase">
 		<![CDATA[
@@ -275,9 +267,14 @@
 		               INFO = #{info},
 		            ]]>
 				</if>
-				<if test="null != project">
+				<if test="null != project and null != project.id">
 		            <![CDATA[
-		               PROJECT = #{project}
+		               PROJECT_ID = #{project.id},
+		            ]]>
+				</if>
+				<if test="null != status">
+		            <![CDATA[
+		               STATUS = #{status}
 		            ]]>
 				</if>
 			</set>
@@ -310,7 +307,6 @@
 		<result column="TEST_CASE_TEST_METHOD" property="testMethod" />
 		<result column="TEST_CASE_INFO" property="info" />
 		<result column="TEST_CASE_STATUS" property="status" />
-		<result column="TEST_CASE_PROJECT" property="project" />
 		<result column="TEST_CASE_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CASE_CREATED_AT" property="createdAt" />
 		
@@ -318,7 +314,6 @@
 		<result column="TEST_CASE_TEST_SUITE_NAME" property="testSuite.name" />
 		<result column="TEST_CASE_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
 		<result column="TEST_CASE_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
-		<result column="TEST_CASE_TEST_SUITE_PROJECT" property="testSuite.project" />
 		<result column="TEST_CASE_TEST_SUITE_MODIFIED_AT" property="testSuite.modifiedAt" />
 		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
 		
@@ -327,19 +322,14 @@
 		<result column="TEST_CASE_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_CASE_USER_LAST_NAME" property="user.lastName" />
 		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
-		<result column="TEST_CASE_USER_PROJECT" property="user.project" />
 		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
 		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
-	</resultMap>
-	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount" id="TestCaseOwnersCountResultMap" autoMapping="false">
-		<result column="TEST_CASE_OWNER_COUNT_COUNT" property="count" />
-		<result column="TEST_CASE_OWNER_COUNT_USERNAME" property="userName" />
-	</resultMap>
-	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount" id="TestCaseImplementationCountResultMap" autoMapping="false">
-		<result column="TEST_CASE_IMPLEMENTATION_COUNT_COUNT" property="count" />
-		<result column="TEST_CASE_IMPLEMENTATION_COUNT_DATE" property="date" />
+		
+		<result column="TEST_CASE_PROJECT_ID" property="project.id" />
+		<result column="TEST_CASE_PROJECT_NAME" property="project.name" />
+		<result column="TEST_CASE_PROJECT_DESCRIPTION" property="project.description" />
+		<result column="TEST_CASE_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+		<result column="TEST_CASE_PROJECT_CREATED_AT" property="project.createdAt" />
 	</resultMap>
 
 </mapper>

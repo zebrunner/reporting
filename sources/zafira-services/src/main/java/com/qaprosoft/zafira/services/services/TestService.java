@@ -1,27 +1,21 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestStatusesCount;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.Test.Status;
+import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.dbaccess.model.TestConfig;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.services.thirdparty.push.IPushService;
 
 @Service
 public class TestService
@@ -39,11 +33,7 @@ public class TestService
 	private TestRunService testRunService;
 	
 	@Autowired
-	@Qualifier("xmppService")
-	private IPushService notificationService;
-	
-	@Value("${zafira.jabber.username}")
-	private String xmppChannel;
+	private TestCaseService testCaseService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -72,8 +62,6 @@ public class TestService
 			test.setStatus(Status.IN_PROGRESS);
 			updateTest(test);
 		}
-		
-		notificationService.publish(xmppChannel, new TestPush(test));
 		return test;
 	}
 	
@@ -95,7 +83,12 @@ public class TestService
 		}
 		testMapper.updateTest(existingTest);
 		
-		notificationService.publish(xmppChannel, new TestPush(existingTest));
+		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+		if(testCase != null)
+		{
+			testCase.setStatus(test.getStatus());
+			testCaseService.updateTestCase(testCase);
+		}
 		return existingTest;
 	}
 	
@@ -110,9 +103,13 @@ public class TestService
 		
 		test.setStatus(Status.PASSED);
 		updateTest(test);
-		notificationService.publish(xmppChannel, new TestPush(test));
 		
-		testRunService.recalculateTestRunResult(test.getTestRunId());
+		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+		if(testCase != null)
+		{
+			testCase.setStatus(test.getStatus());
+			testCaseService.updateTestCase(testCase);
+		}
 		
 		return test;
 	}
@@ -186,26 +183,5 @@ public class TestService
 		results.setResults(testMapper.searchTests(sc));
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
-	}
-	
-	@Transactional(readOnly = true)
-	public Map<Long, Map<Status, TestStatusesCount>> getTestStatusesStatistics(String project) throws ServiceException
-	{
-		Map<Long, Map<Status, TestStatusesCount>> statistics = new HashMap<>();
-		List<TestStatusesCount> results = testMapper.getTestStatusesStatistics(project);
-		for(TestStatusesCount result : results)
-		{
-			long time = result.getDate().getTime();
-			if(!statistics.containsKey(time))
-			{
-				statistics.put(time, new HashMap<Status, TestStatusesCount>());
-				statistics.get(time).put(Status.IN_PROGRESS, new TestStatusesCount(0, Status.IN_PROGRESS));
-				statistics.get(time).put(Status.PASSED, new TestStatusesCount(0, Status.PASSED));
-				statistics.get(time).put(Status.FAILED, new TestStatusesCount(0, Status.FAILED));
-				statistics.get(time).put(Status.SKIPPED, new TestStatusesCount(0, Status.SKIPPED));
-			}
-			statistics.get(time).put(result.getStatus(), result);
-		}
-		return statistics;
 	}
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 
 
@@ -29,8 +27,4 @@ public interface TestCaseMapper
 	List<TestCase> searchTestCases(TestCaseSearchCriteria sc);
 	
 	Integer getTestCasesSearchCount(TestCaseSearchCriteria sc);
-	
-	List<TestCaseOwnersCount> getTestCaseOwnersStatistics(@Param("project") String project);
-	
-	List<TestCaseImplementationCount> getTestCaseImplementationStatistics(@Param("project") String project);
 }

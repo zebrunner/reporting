@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseImplementationCount;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.statistics.TestCaseOwnersCount;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
@@ -26,6 +23,10 @@ public class TestCaseService
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestCase(TestCase testCase) throws ServiceException
 	{
+		if(testCase.getStatus() == null)
+		{
+			testCase.setStatus(Status.UNKNOWN);
+		}
 		testCaseMapper.createTestCase(testCase);
 	}
 	
@@ -95,17 +96,5 @@ public class TestCaseService
 		results.setResults(testCaseMapper.searchTestCases(sc));
 		results.setTotalResults(testCaseMapper.getTestCasesSearchCount(sc));
 		return results;
-	}
-	
-	@Transactional(readOnly = true)
-	public List<TestCaseOwnersCount> getTestCaseOwnersStatistics(String project) throws ServiceException
-	{
-		return testCaseMapper.getTestCaseOwnersStatistics(project);
-	}
-	
-	@Transactional(readOnly = true)
-	public List<TestCaseImplementationCount> getTestCaseImplementationStatistics(String project) throws ServiceException
-	{
-		return testCaseMapper.getTestCaseImplementationStatistics(project);
 	}
 }

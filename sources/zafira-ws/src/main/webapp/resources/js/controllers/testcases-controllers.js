@@ -54,6 +54,10 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 		}
 	};
 	
+	$scope.openPerformancePage = function(testCase) {
+		$location.path('tests/cases/' + testCase.id + '/metrics');
+	};
+	
 	$scope.resetSearchCriteria = function(){
 		$scope.testCasesSearchCriteria = {
 			'page' : 1,

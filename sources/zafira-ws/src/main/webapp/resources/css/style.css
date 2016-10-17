@@ -20,6 +20,10 @@ img.pending {
 	min-height: 40px;
 }
 
+.result_UNKNOWN {
+	border-left: solid 8px #ccccb3;
+}
+
 .result_PASSED {
 	border-left: solid 8px #5cb85c;
 }
@@ -88,6 +92,14 @@ img.pending {
 
 .w70 {
 	width: 70px;
+}
+
+.w80 {
+	width: 80px;
+}
+
+.w140 {
+	width: 140px;
 }
 
 .w250 {
@@ -160,7 +172,7 @@ img.pending {
 }
 
 .platform-icon.safari {
-	background-position: -3px -35px;
+	background-position: -3px -25px;
 }
 
 .platform-icon.chrome {
@@ -191,4 +203,30 @@ select.icon-menu option {
 
 select option[value="Android"] {
 background-image:url(../img/key.png);
+}
+
+li.pointer, i.pointer {
+	cursor: pointer;
+}
+
+.graph-box {
+	height: 350px; 
+	padding-bottom: 35px;
+}
+
+.pie-chart {
+	height: 320px; 
+	width: 320px;
+}
+
+td.no-results {
+	text-align: center;
+}
+
+.center {
+	text-align: center;
+}
+
+.settings-line {
+	line-height: 25px;
 }

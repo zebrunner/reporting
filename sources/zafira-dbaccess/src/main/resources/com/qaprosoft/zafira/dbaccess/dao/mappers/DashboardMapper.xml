@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper">
+	
+	 <insert id="createDashboard" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+			INSERT INTO zafira.DASHBOARDS (TITLE, TYPE, POSITION)
+			VALUES (
+				#{title},
+				#{type},
+				#{position}
+			)
+		]]>
+    </insert>
+    
+    <sql id="getDashboard">
+        <![CDATA[
+			SELECT
+				D.ID AS DASHBOARD_ID,
+				D.TITLE AS DASHBOARD_TITLE,
+				D.TYPE AS DASHBOARD_TYPE,
+				D.POSITION AS DASHBOARD_POSITION,
+				D.MODIFIED_AT AS DASHBOARD_MODIFIED_AT,
+				D.CREATED_AT AS DASHBOARD_CREATED_AT,
+				W.ID AS WIDGET_ID,
+				W.TITLE AS WIDGET_TITLE,
+				DW.POSITION AS DASHBOARD_WIDGET_POSITION,
+				W.SQL AS WIDGET_SQL,
+				W.MODEL AS WIDGET_MODEL,
+				DW.SIZE AS DASHBOARD_WIDGET_SIZE,
+				W.TYPE AS WIDGET_TYPE,
+				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
+				W.CREATED_AT AS WIDGET_CREATED_AT
+			FROM
+				zafira.DASHBOARDS D
+            LEFT JOIN
+                zafira.DASHBOARDS_WIDGETS DW
+            ON
+                D.ID = DW.DASHBOARD_ID
+            LEFT JOIN
+                zafira.WIDGETS W
+            ON
+                DW.WIDGET_ID = W.ID
+		]]>
+    </sql>
+	
+	<select id="getAllDashboards" resultMap="DashboardResultMap">
+		<include refid="getDashboard" />
+		<![CDATA[
+			ORDER BY D.POSITION ASC;
+		]]>
+	</select>
+	
+	<select id="getDashboardById" resultMap="DashboardResultMap">
+		<include refid="getDashboard" />
+		<![CDATA[
+			WHERE D.ID = #{id};
+		]]>
+	</select>
+
+    <select id="getAllDashboardsByType" resultMap="DashboardResultMap">
+        <include refid="getDashboard" />
+        <![CDATA[
+			WHERE D.TYPE = #{type}
+			ORDER BY D.POSITION ASC;
+		]]>
+    </select>
+	
+	<update id="updateDashboard">
+		<![CDATA[
+			UPDATE
+			    zafira.DASHBOARDS
+			SET
+				TITLE = #{title},
+				TYPE = #{type},
+				POSITION = #{position}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+	
+	<sql id="deleteDashboard">
+		<![CDATA[
+			DELETE FROM zafira.DASHBOARDS
+		]]>
+	</sql>
+
+	<delete id="deleteDashboardById">
+		<include refid="deleteDashboard" />
+		<![CDATA[
+			WHERE ID = #{id}
+		]]>
+	</delete>
+	
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Dashboard" id="DashboardResultMap" autoMapping="false">
+        <id column="DASHBOARD_ID" property="id" />
+        <result column="DASHBOARD_TITLE" property="title" />
+        <result column="DASHBOARD_TYPE" property="type"/>
+        <result column="DASHBOARD_POSITION" property="position"/>
+        <result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
+        <result column="DASHBOARD_CREATED_AT" property="createdAt" />
+        <collection property="widgets" ofType="com.qaprosoft.zafira.dbaccess.model.Widget"
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper.WidgetResultMap"/>
+    </resultMap>
+    
+    <!-- Dashboard widgets -->
+    
+    <insert id="addDashboardWidget">
+        <![CDATA[
+            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE)
+            VALUES (
+                #{dashboardId},
+                #{widget.id},
+                #{widget.position},
+                #{widget.size}
+            )
+        ]]>
+    </insert>
+
+    <delete id="deleteDashboardWidget">
+        DELETE 
+        FROM 
+        	zafira.DASHBOARDS_WIDGETS
+       	WHERE 
+       		ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widgetId})
+    </delete>
+    
+    <update id="updateDashboardWidget">
+        <![CDATA[
+            UPDATE
+              zafira.DASHBOARDS_WIDGETS
+        ]]>
+        <set>
+            <if test="null != widget.position">
+                <![CDATA[
+                    POSITION = #{widget.position},
+                ]]>
+            </if>
+            <if test="null != widget.size">
+                <![CDATA[
+                    SIZE = #{widget.size}
+                ]]>
+            </if>
+        </set>
+        <![CDATA[
+            WHERE ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widget.id})
+        ]]>
+    </update>
+
+</mapper>

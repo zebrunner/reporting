@@ -8,11 +8,6 @@ public class TestRun extends AbstractEntity
 {
 	private static final long serialVersionUID = -1847933012610222160L;
 
-	public enum Status
-	{
-		IN_PROGRESS, PASSED, FAILED, ABORTED;
-	}
-
 	public enum Initiator
 	{
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
@@ -32,6 +27,12 @@ public class TestRun extends AbstractEntity
 	private Job upstreamJob;
 	private Integer upstreamJobBuildNumber;
 	private Initiator startedBy;
+	private Project project;
+	
+	private Integer passed;
+	private Integer failed;
+	private Integer skipped;
+	
 
 	public User getUser()
 	{
@@ -169,5 +170,45 @@ public class TestRun extends AbstractEntity
 	public void setCiRunId(String ciRunId)
 	{
 		this.ciRunId = ciRunId;
+	}
+
+	public Integer getPassed()
+	{
+		return passed;
+	}
+
+	public void setPassed(Integer passed)
+	{
+		this.passed = passed;
+	}
+
+	public Integer getFailed()
+	{
+		return failed;
+	}
+
+	public void setFailed(Integer failed)
+	{
+		this.failed = failed;
+	}
+
+	public Integer getSkipped()
+	{
+		return skipped;
+	}
+
+	public void setSkipped(Integer skipped)
+	{
+		this.skipped = skipped;
+	}
+
+	public Project getProject()
+	{
+		return project;
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
 	}
 }

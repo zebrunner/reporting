@@ -5,6 +5,7 @@ import java.util.List;
 public class TestSearchCriteria extends SearchCriteria
 {
 	private List<Long> testRunIds;
+	private Long testRunId;
 	private Long testCaseId;
 
 	public List<Long> getTestRunIds()
@@ -25,5 +26,15 @@ public class TestSearchCriteria extends SearchCriteria
 	public void setTestCaseId(Long testCaseId)
 	{
 		this.testCaseId = testCaseId;
+	}
+
+	public Long getTestRunId()
+	{
+		return testRunId;
+	}
+
+	public void setTestRunId(Long testRunId)
+	{
+		this.testRunId = testRunId;
 	}
 }

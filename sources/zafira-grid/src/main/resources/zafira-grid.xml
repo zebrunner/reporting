@@ -2,11 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
-	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 	<context:annotation-config />
+
+	<import resource="classpath:zafira-dbaccess.xml" />
+	<import resource="classpath:zafira-services.xml" />
 
 	<util:properties id="environmentProperties" location="classpath:environment.properties" />
 
@@ -21,6 +24,9 @@
 
 	<bean id="gridRequestQueueProcessorTask"
 		class="com.qaprosoft.zafira.grid.tasks.GridRequestQueueProcessorTask" />
+		
+	<bean id="gridHealthCheckTask"
+		class="com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask" />
 
 	<bean id="schedulerService" class="com.qaprosoft.zafira.grid.service.impl.SchedulerService" />
 
@@ -31,12 +37,25 @@
 		<property name="targetMethod" value="executeGridRequestQueueTask" />
 	</bean>
 	
+	<bean id="gridHealthCheckTaskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="schedulerService" />
+		<property name="targetMethod" value="executeGridHealthCheckTask" />
+	</bean>
+
 	<!-- Triggers -->
 	<bean id="gridRequestQueueProcessorTaskTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="gridRequestQueueProcessorTaskJobDetail" />
 		<property name="cronExpression"
 			value="${zafira.batch.jobs.gridRequestQueueProcessor.trigger.cronExpression}" />
+	</bean>
+	
+	<bean id="gridHealthCheckTaskTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="gridHealthCheckTaskJobDetail" />
+		<property name="cronExpression"
+			value="${zafira.batch.jobs.gridHealthCheck.trigger.cronExpression}" />
 	</bean>
 
 	<bean id="springScheduler"
@@ -49,24 +68,20 @@
 		<property name="triggers">
 			<list>
 				<ref bean="gridRequestQueueProcessorTaskTrigger" />
+				<ref bean="gridHealthCheckTaskTrigger" />
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="gridRequestQueueService" class="com.qaprosoft.zafira.grid.queue.GridRequestQueueService">
 		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
 		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
 		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
 	</bean>
-	
-	<bean id="stfService" class="com.qaprosoft.zafira.grid.stf.STFService">
-		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
-		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
-	</bean>
-	
+
 	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
-	
+
 	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.queue.matchers.DeviceByModelMatcher" />
 </beans>

@@ -4,8 +4,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.dbaccess.model.Project;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType
@@ -28,6 +29,7 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private String workItem;
+	private Project project;
 
 	public String getCiRunId()
 	{
@@ -167,5 +169,15 @@ public class TestRunType extends AbstractType
 	public void setWorkItem(String workItem)
 	{
 		this.workItem = workItem;
+	}
+
+	public Project getProject()
+	{
+		return project;
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
 	}
 }

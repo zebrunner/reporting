@@ -24,10 +24,6 @@
 				<zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
 				<zafira.db.c3p0.maxPoolSize>2</zafira.db.c3p0.maxPoolSize>
 				
-				<zafira.jabber.enabled>true</zafira.jabber.enabled>
-				<zafira.jabber.username>{username}</zafira.jabber.username>
-				<zafira.jabber.password>{password}</zafira.jabber.password>
-				
 				<zafira.grid.enabled>false</zafira.grid.enabled>
 				<zafira.grid.stf.url>{url}</zafira.grid.stf.url>
 				<zafira.grid.stf.token>{token}</zafira.grid.stf.token>
@@ -35,6 +31,11 @@
 				<zafira.grid.pubnub.pub_key>{key}</zafira.grid.pubnub.pub_key>
 				<zafira.grid.pubnub.sub_key>{key}</zafira.grid.pubnub.sub_key>
 				<zafira.grid.pubnub.channel>grid</zafira.grid.pubnub.channel>
+				
+				<mail.host>smtp.gmail.com</mail.host>
+        			<mail.port>587</mail.port>
+				<mail.user>{user}</mail.user>
+        			<mail.pass>{pass}</mail.pass>
 			</properties>
 		</profile>
 	</profiles>

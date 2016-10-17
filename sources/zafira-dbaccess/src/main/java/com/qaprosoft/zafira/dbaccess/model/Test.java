@@ -1,19 +1,15 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.util.Date;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class Test extends AbstractEntity
 {
 	private static final long serialVersionUID = -915700504693067056L;
-
-	public enum Status
-	{
-		IN_PROGRESS, PASSED, FAILED, SKIPPED; 
-	}
 
 	private String name;
 	private Status status;
@@ -27,6 +23,7 @@ public class Test extends AbstractEntity
 	private String logURL;
 	private int retry;
 	private TestConfig testConfig;
+	private List<WorkItem> workItems;
 	
 	public Test()
 	{
@@ -151,5 +148,13 @@ public class Test extends AbstractEntity
 	public void setTestConfig(TestConfig testConfig)
 	{
 		this.testConfig = testConfig;
+	}
+
+	public List<WorkItem> getWorkItems() {
+		return workItems;
+	}
+
+	public void setWorkItems(List<WorkItem> workItems) {
+		this.workItems = workItems;
 	}
 }
