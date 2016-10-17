@@ -1,9 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
@@ -42,7 +36,13 @@ import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.ws.dto.EmailType;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
+import com.qaprosoft.zafira.ws.dto.TestType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Test runs operations")
@@ -142,9 +142,14 @@ public class TestRunsController extends AbstractController
 			notes = "Returns test run results by id.", response = java.util.List.class, responseContainer = "Test")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Test> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody List<TestType> getTestRunResults(@PathVariable(value="id") long id) throws ServiceException
 	{
-		return testService.getTestsByTestRunId(id);
+		List<TestType> tests = new ArrayList<>();
+		for(Test test : testService.getTestsByTestRunId(id))
+		{
+			tests.add(mapper.map(test, TestType.class));
+		}
+		return tests;
 	}
 
 	@ApiIgnore
