@@ -41,6 +41,12 @@ public abstract class AbstractController
 		return user != null ? user.getId() : 0;
 	}
 	
+	protected String getPrincipalName()
+	{
+		SecuredUser user = getPrincipal();
+		return user != null ? user.getUsername() : "";
+	}
+	
 	@ExceptionHandler(JobNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
