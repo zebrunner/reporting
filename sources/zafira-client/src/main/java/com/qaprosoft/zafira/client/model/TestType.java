@@ -25,6 +25,7 @@ public class TestType extends AbstractType
 	private int retry;
 	private String configXML;
 	private Map<String, Long> testMetrics;
+	private boolean knownIssue;
 	
 	public TestType()
 	{
@@ -192,5 +193,13 @@ public class TestType extends AbstractType
 	public void setTestMetrics(Map<String, Long> testMetrics)
 	{
 		this.testMetrics = testMetrics;
+	}
+
+	public boolean isKnownIssue() {
+		return knownIssue;
+	}
+
+	public void setKnownIssue(boolean knownIssue) {
+		this.knownIssue = knownIssue;
 	}
 }

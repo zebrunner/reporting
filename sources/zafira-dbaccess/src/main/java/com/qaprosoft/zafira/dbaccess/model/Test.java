@@ -24,6 +24,7 @@ public class Test extends AbstractEntity
 	private int retry;
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
+	private boolean knownIssue;
 	
 	public Test()
 	{
@@ -156,5 +157,13 @@ public class Test extends AbstractEntity
 
 	public void setWorkItems(List<WorkItem> workItems) {
 		this.workItems = workItems;
+	}
+
+	public boolean isKnownIssue() {
+		return knownIssue;
+	}
+
+	public void setKnownIssue(boolean knownIssue) {
+		this.knownIssue = knownIssue;
 	}
 }

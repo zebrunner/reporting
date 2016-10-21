@@ -18,7 +18,7 @@ public class SettingsService
 
 	public enum SettingType
 	{
-		STF_NOTIFICATION_RECIPIENTS;
+		STF_NOTIFICATION_RECIPIENTS, JIRA_URL;
 	}
 
 	@Transactional(readOnly = true)

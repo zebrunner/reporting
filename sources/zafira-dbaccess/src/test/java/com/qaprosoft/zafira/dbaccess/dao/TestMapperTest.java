@@ -56,6 +56,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setLogURL("http://1");
 			setDemoURL("http://1");
 			setTestConfig(testConfig);
+			setKnownIssue(true);
 		}
 	};
 
@@ -99,7 +100,8 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setMessage("Aha!");
 		TEST.setLogURL("http://2");
 		TEST.setDemoURL("http://2");
-		TEST.setTestConfig(new TestConfig(3L));
+		TEST.setTestConfig(new TestConfig(2L));
+		TEST.setKnownIssue(false);
 		
 		testMapper.updateTest(TEST);
 
@@ -154,6 +156,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getMessage(), TEST.getMessage(), "Message must match");
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
 		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
+		assertEquals(test.isKnownIssue(), TEST.isKnownIssue(), "Known issue must match");
 		assertEquals(test.getTestConfig().getId(), TEST.getTestConfig().getId(), "Config ID must match");
 	}
 }

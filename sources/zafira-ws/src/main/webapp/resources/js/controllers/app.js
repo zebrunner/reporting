@@ -28,6 +28,18 @@ ZafiraApp.service('UtilService', function() {
     };
 });
 
+ZafiraApp.factory('SettingsService', function($http) {
+	var settingsService = {
+			getSetting : function(name) {
+			var promise = $http.get('settings/' + name).then(function(rs) {
+				return rs.data;
+			});
+			return promise;
+		}
+	};
+	return settingsService;
+});
+
 ZafiraApp.provider('ProjectProvider', function() {
     this.$get = function($cookieStore) {
         return {

@@ -42,19 +42,10 @@ public class TestRunService
 	private TestRunMapper testRunMapper;
 	
 	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private JobsService jobsService;
-	
-	@Autowired
 	private TestService testService;
 
 	@Autowired
 	private WorkItemService workItemService;
-	
-	@Autowired
-	private TestConfigService testConfigService;
 	
 	@Autowired
 	private EmailService emailService;

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,9 @@ public class TestService
 			test.setMessage(null);
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
+			test.setKnownIssue(false);
 			updateTest(test);
+			workItemService.deleteKnownIssuesByTestId(test.getId());
 		}
 		return test;
 	}
@@ -77,6 +80,21 @@ public class TestService
 		if(test.getMessage() != null)
 		{
 			existingTest.setMessage(test.getMessage());
+		}
+		
+		if(Status.FAILED.equals(test.getStatus()))
+		{
+			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
+			if(knownIssue != null)
+			{
+				existingTest.setKnownIssue(true);
+				testMapper.createTestWorkItem(existingTest, knownIssue);
+				if(existingTest.getWorkItems() == null)
+				{
+					existingTest.setWorkItems(new ArrayList<WorkItem>());
+				}
+				existingTest.getWorkItems().add(knownIssue);
+			}
 		}
 		testMapper.updateTest(existingTest);
 		
@@ -180,5 +198,24 @@ public class TestService
 		results.setResults(testMapper.searchTests(sc));
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
+	{
+		Test test = getTestById(testId);
+		if(test != null)
+		{
+			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+			test.setKnownIssue(true);
+			updateTest(test);
+		}
+		workItemService.createWorkItem(workItem);
+		testMapper.createTestWorkItem(test, workItem);
+		return workItem;
+	}
+	
+	private int getTestMessageHashCode(String message){
+		return message != null ? message.replaceAll("\\d+", "*").hashCode() : 0;
 	}
 }

@@ -13,8 +13,11 @@
     </div>
 	<div class="row">
 		<div class="col-lg-12">
-            <div class="row" align="right">
-            	<div class="col-lg-12">
+            <div class="row">
+            	<div class="col-lg-3">
+            		Enable realtime events <input type="checkbox" />
+            	</div>
+            	<div class="col-lg-9" align="right">
             		<span>Found: {{totalResults}}&nbsp;</span>
 					<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
 					<a href="" data-ng-click="loadTestRuns(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
@@ -43,14 +46,14 @@
             </div>
 			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'modifiedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
 				<div class="col-lg-3">
-					<input type="checkbox"
+					<!-- input type="checkbox"
 							data-ng-model="isChecked"
 							data-ng-true-value="true"
 							data-ng-false-value="false"
 							data-ng-change="selectTestRun(testRun.id, isChecked)"
 							value="{{testRun.id}}" 
 							name="{{testRun.id}}"
-							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/>
+							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/ -->
 					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
 				  	<b>{{testRun.testSuite.name}}</b>
 				</div>
@@ -65,7 +68,7 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
-						<span class="time">{{testRun.createdAt | date:'MM/dd HH:mm'}}</span>
+						<span class="time">{{testRun.modifiedAt | date:'MM/dd HH:mm'}}</span>
 						&nbsp;
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
@@ -77,15 +80,24 @@
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
                     <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':false">
                     	<div class="col-lg-10">
-                    		<div class="clearfix"><img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} <a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a></div>
+                    		<div class="clearfix">
+                    			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 
+                    			<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
+                    			<span class="float_right" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" style="margin: 0 5px;">|</span>
+                    			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="openKnownIssueModal(test)">Mark as known issue</a>
+                    		</div>
                             <div class="result_error" data-ng-if="test.message && test.status == 'FAILED'">
                             	<show-more text="test.message" limit="100"></show-more>
                             </div>
                     	</div>
-                    	<div class="col-lg-2">
-                    		<div class="float_right" data-ng-if="test.status != STARTED">
-                            	<span class="time">{{test.finishTime | date:'HH:mm'}}</span>
-                            	&nbsp;
+                    	<div class="col-lg-1 center" style="padding: 0;">
+                    		<span data-ng-repeat="issue in test.workItems">
+                    			<a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding" style="background-color: #337ab7;">{{issue.jiraId}}</a>
+                    			<a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
+                    		</span>
+                    	</div>
+                    	<div class="col-lg-1 center" style="padding: 0;">
+                    		<div data-ng-if="test.status != STARTED">
                             	<a data-ng-if="test.logURL  && testRun.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>

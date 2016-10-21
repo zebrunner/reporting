@@ -18,6 +18,11 @@ public class User extends AbstractEntity
 	{
 	}
 	
+	public User(long id)
+	{
+		super.setId(id);
+	}
+	
 	public User(String userName)
 	{
 		this.userName = userName;

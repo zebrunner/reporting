@@ -56,6 +56,10 @@
 			<a>retry</a>
 			<b>retry</b>
 		</field>
+		<field>
+			<a>knownIssue</a>
+			<b>knownIssue</b>
+		</field>
 		<field-exclude> 
 		  	<a>workItems</a> 
 		  	<b>workItems</b> 

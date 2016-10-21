@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -48,10 +48,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	 else if(event.type == 'TEST')
 	 {
 		$scope.addTest(event.test, true);
-		if($scope.testRuns[event.test.testRunId].showDetails)
-		{
-			$scope.$apply();
-		}
+		$scope.$apply();
 	 }
    	 return true;
    };
@@ -198,6 +195,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	};
 	
 	$scope.loadTests = function(testRunId){
+		$scope.lastTestRunOpened = testRunId;
 		$scope.testSearchCriteria.testRunId = testRunId;
 		$http.post('tests/search', $scope.testSearchCriteria).success(function(data) {
 			$scope.userSearchResult = data;
@@ -342,10 +340,78 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	};
 	
+	$scope.openKnownIssueModal = function(test){
+		var modalInstance = $modal.open({
+			templateUrl : 'resources/templates/test-known-issues-modal.jsp',
+			resolve : {
+				'test' : function(){
+					return test;
+				}
+			},
+			controller : function($scope, $modalInstance, test){
+				
+				$scope.knownIssues = {};
+				
+				$scope.createKnownIssue = function(){
+					$http.post('tests/' + test.id + '/issues', $scope.newKnownIssue).success(function() {
+						$scope.initNewKnownIssue();
+						$scope.getKnownIssues();
+						$modalInstance.close(true);
+					}).error(function(data, status) {
+						alert('Failed to create new known issue');
+					});
+				};
+				
+				$scope.deleteKnownIssue = function(id){
+					$http.delete('tests/issues/' + id).success(function() {
+						$scope.getKnownIssues();
+					}).error(function(data, status) {
+						alert('Failed to delete known issue');
+					});
+				};
+				
+				$scope.getKnownIssues = function(){
+					$http.get('tests/' + test.id + '/issues').success(function(issues) {
+						$scope.knownIssues = issues;
+					}).error(function(data, status) {
+						alert('Failed to load known issues');
+					});
+				};
+				
+				$scope.initNewKnownIssue = function()
+				{
+					$scope.newKnownIssue = {};
+					$scope.newKnownIssue.type = "BUG";
+					$scope.newKnownIssue.testCaseId = test.testCaseId;
+				};
+				
+				$scope.cancel = function(){
+					$modalInstance.close(false);
+				};
+				
+				
+				(function init(){
+					$scope.initNewKnownIssue();
+					$scope.getKnownIssues();
+				})();
+			}
+		});
+		
+		modalInstance.result.then(function (result) {
+		    if(result == true)
+		    {
+		    	$scope.loadTests($scope.lastTestRunOpened);
+		    }
+		}, function () {});
+	};
+	
 	(function init(){
 		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
+		SettingsService.getSetting("JIRA_URL").then(function(setting) {
+			$scope.jiraURL = setting;
+		});
 	})();
 	
 }]);
