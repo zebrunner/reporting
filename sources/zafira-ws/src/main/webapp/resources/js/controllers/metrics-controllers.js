@@ -28,7 +28,7 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 	$scope.convertInterval = function() {
 		switch($scope.timeStep)
 		{
-			case 'Last week': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 days'";
+			case 'Last week': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '7 days'";
 			case 'Last month': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 month'";
 			case 'Last year': return "AND TEST_METRICS.CREATED_AT >= CURRENT_TIMESTAMP - interval '1 year'";
 			case 'All time': return "";

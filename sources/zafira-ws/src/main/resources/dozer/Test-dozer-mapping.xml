@@ -56,5 +56,9 @@
 			<a>retry</a>
 			<b>retry</b>
 		</field>
+		<field-exclude> 
+		  	<a>workItems</a> 
+		  	<b>workItems</b> 
+		</field-exclude>  
 	</mapping>
 </mappings>

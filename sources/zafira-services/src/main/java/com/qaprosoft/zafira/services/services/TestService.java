@@ -30,9 +30,6 @@ public class TestService
 	private TestConfigService testConfigService;
 	
 	@Autowired
-	private TestRunService testRunService;
-	
-	@Autowired
 	private TestCaseService testCaseService;
 	
 	@Transactional(rollbackFor = Exception.class)
