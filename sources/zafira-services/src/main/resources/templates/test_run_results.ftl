@@ -28,7 +28,7 @@
             <tr>
                 <td>Test job URL:</td>
                 <td>
-                    <a href="${testRun.job.jobURL}/${testRun.buildNumber}">${testRun.job.jobURL}/${testRun.buildNumber?c}</a>
+                    <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}">${testRun.job.jobURL}/${testRun.buildNumber?c}</a>
                 </td>
             </tr>
             <tr class="pass" style="color: #66C266;">
