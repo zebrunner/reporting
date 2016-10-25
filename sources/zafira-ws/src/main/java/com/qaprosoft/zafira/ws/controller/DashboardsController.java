@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import io.swagger.annotations.ApiParam;
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -20,14 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
 import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
-import com.qaprosoft.zafira.services.services.WidgetService;
+
+import io.swagger.annotations.ApiParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
@@ -37,9 +35,6 @@ public class DashboardsController extends AbstractController
 	@Autowired
 	private DashboardService dashboardService;
 	
-	@Autowired
-	private WidgetService widgetService;
-
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView index()

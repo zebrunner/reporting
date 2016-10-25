@@ -184,8 +184,8 @@ public class TestRunsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email) throws ServiceException, JAXBException
+	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter) throws ServiceException, JAXBException
 	{
-		return testRunService.sendTestRunResultsEmail(id, email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 }

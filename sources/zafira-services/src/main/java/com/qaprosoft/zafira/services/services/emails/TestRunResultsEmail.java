@@ -21,8 +21,9 @@ public class TestRunResultsEmail implements IEmailMessage
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
+	private boolean showOnlyFailures;
 	
-	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests, Setting jiraURLSetting)
+	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests, Setting jiraURLSetting, boolean showOnlyFailures)
 	{
 		for(Argument arg : config.getArg())
 		{
@@ -31,6 +32,7 @@ public class TestRunResultsEmail implements IEmailMessage
 		this.testRun = testRun;
 		this.tests = tests;
 		this.jiraURL = jiraURLSetting != null ? jiraURLSetting.getValue() : "";
+		this.showOnlyFailures = showOnlyFailures;
 	}
 
 	public Map<String, String> getConfiguration()
@@ -69,6 +71,14 @@ public class TestRunResultsEmail implements IEmailMessage
 
 	public void setJiraURL(String jiraURL) {
 		this.jiraURL = jiraURL;
+	}
+	
+	public boolean isShowOnlyFailures() {
+		return showOnlyFailures;
+	}
+
+	public void setShowOnlyFailures(boolean showOnlyFailures) {
+		this.showOnlyFailures = showOnlyFailures;
 	}
 
 	@Override

@@ -57,41 +57,43 @@
                 <th width="10%">Test files</th>
             </tr>
             <#list tests as test>
-            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			${test.status}
-            		</td>
-            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			<span>${test.name}</span>
-            			<#if test.status == 'FAILED'>
-            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
-            			</#if>
-            			<#if test.status == 'SKIPPED'>
-            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
-            			</#if>
-            		</td>
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                        <#list test.workItems as workItem>
-                            <#if workItem.type == 'BUG'>
-                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
-                            </#if>
-                            <#if workItem.type == 'TASK'>
-                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
-                            </#if>
-                        </#list>
-                    </td>
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			<#if test.demoURL??>
-            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
-            			</#if>
-            			<#if test.demoURL?? && test.logURL??>
-            				<span> or </span>
-            			</#if>
-            			<#if test.logURL??>
-            				<a href='${test.logURL}' style='color: white;'>Log</a>
-            			</#if>
-            		</td>
-            	</tr>
+            	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
+	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			${test.status}
+	            		</td>
+	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<span>${test.name}</span>
+	            			<#if test.status == 'FAILED'>
+	            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            			</#if>
+	            			<#if test.status == 'SKIPPED'>
+	            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            			</#if>
+	            		</td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	                        <#list test.workItems as workItem>
+	                            <#if workItem.type == 'BUG'>
+	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+	                            </#if>
+	                            <#if workItem.type == 'TASK'>
+	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+	                            </#if>
+	                        </#list>
+	                    </td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<#if test.demoURL??>
+	            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
+	            			</#if>
+	            			<#if test.demoURL?? && test.logURL??>
+	            				<span> or </span>
+	            			</#if>
+	            			<#if test.logURL??>
+	            				<a href='${test.logURL}' style='color: white;'>Log</a>
+	            			</#if>
+	            		</td>
+	            	</tr>
+            	</#if>
             </#list>
 		</table>
 	</div>

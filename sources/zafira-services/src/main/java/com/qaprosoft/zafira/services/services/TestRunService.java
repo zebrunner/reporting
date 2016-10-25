@@ -271,7 +271,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -282,7 +282,7 @@ public class TestRunService
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		
-		return emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests, settingsService.getSettingByName(SettingType.JIRA_URL)), recipients);
+		return emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests, settingsService.getSettingByName(SettingType.JIRA_URL), showOnlyFailures), recipients);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException

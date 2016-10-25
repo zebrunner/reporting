@@ -41,7 +41,7 @@ public class ZafiraClient
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
 	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
 	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
-	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email";
+	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s";
 
 	private String serviceURL;
 	private Client client;
@@ -209,12 +209,12 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<String> sendTestRunReport(long id, String recipients)
+	public Response<String> sendTestRunReport(long id, String recipients, boolean showOnlyFailures)
 	{
 		Response<String> response = new Response<String>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id));
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id, showOnlyFailures ? "failures" : "all"));
 			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.TEXT_HTML_TYPE).post(ClientResponse.class, new EmailType(recipients));
 			response.setStatus(clientRS.getStatus());
@@ -457,5 +457,10 @@ public class ZafiraClient
 	{
 		this.project = project;
 		return this;
+	}
+	
+	public static void main(String[] args) {
+		ZafiraClient zc = new ZafiraClient("http://localhost:8081/zafira-ws", "admin", "avatei16");
+		zc.sendTestRunReport(58L, "hursevich@gmail.com", true);
 	}
 }
