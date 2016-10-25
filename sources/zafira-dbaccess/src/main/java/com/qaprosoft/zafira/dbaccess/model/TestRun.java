@@ -28,6 +28,7 @@ public class TestRun extends AbstractEntity
 	private Integer upstreamJobBuildNumber;
 	private Initiator startedBy;
 	private Project project;
+	private boolean knownIssue;
 	
 	private Integer passed;
 	private Integer failed;
@@ -210,5 +211,13 @@ public class TestRun extends AbstractEntity
 	public void setProject(Project project)
 	{
 		this.project = project;
+	}
+
+	public boolean isKnownIssue() {
+		return knownIssue;
+	}
+
+	public void setKnownIssue(boolean knownIssue) {
+		this.knownIssue = knownIssue;
 	}
 }

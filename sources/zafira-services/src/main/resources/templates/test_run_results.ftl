@@ -45,14 +45,15 @@
             </tr>
         </table>
     </div>
+    <br/>
 	<div id="results">
         <h2 style="margin: 0;">Test results:</h2>
         <hr/>
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
             <tr>
                 <th width="10%" align="center">Result</th>
-                <th width="75%">Test name</th>
-                <th width="5%">Jira</th>
+                <th width="70%">Test name</th>
+                <th width="10%">Jira</th>
                 <th width="10%">Test files</th>
             </tr>
             <#list tests as test>
@@ -71,8 +72,11 @@
             		</td>
             		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
                         <#list test.workItems as workItem>
-                            <#if workItem.jiraId??>
-                                <span>${workItem.jiraId}</span>
+                            <#if workItem.type == 'BUG'>
+                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+                            </#if>
+                            <#if workItem.type == 'TASK'>
+                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
                             </#if>
                         </#list>
                     </td>

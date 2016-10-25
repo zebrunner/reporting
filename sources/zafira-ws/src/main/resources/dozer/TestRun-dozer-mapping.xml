@@ -70,5 +70,9 @@
 			<a>project</a>
 			<b>project</b>
 		</field>
+		<field>
+			<a>knownIssue</a>
+			<b>knownIssue</b>
+		</field>
 	</mapping>
 </mappings>

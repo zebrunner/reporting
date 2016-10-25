@@ -47,7 +47,7 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 	};
 	
 	(function init(){
-		$scope.project = $cookieStore.get("project");
+		$scope.project = ProjectProvider.getProject();
 	})();
 	
 }]);

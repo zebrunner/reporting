@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,8 +48,11 @@ public class TestService
 			{
 				for(String jiraId : jiraIds)
 				{
-					WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-					testMapper.createTestWorkItem(test, workItem);
+					if(!StringUtils.isEmpty(jiraId))
+					{
+						WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+						testMapper.createTestWorkItem(test, workItem);
+					}
 				}
 			}
 		}

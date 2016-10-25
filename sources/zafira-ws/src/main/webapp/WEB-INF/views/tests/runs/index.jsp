@@ -15,7 +15,7 @@
 		<div class="col-lg-12">
             <div class="row">
             	<div class="col-lg-3">
-            		Enable realtime events <input type="checkbox" />
+            		Enable real-time events <input type="checkbox" data-ng-model="showRealTimeEvents" />
             	</div>
             	<div class="col-lg-9" align="right">
             		<span>Found: {{totalResults}}&nbsp;</span>

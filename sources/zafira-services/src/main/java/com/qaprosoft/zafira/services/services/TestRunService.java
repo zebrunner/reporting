@@ -30,6 +30,7 @@ import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 
@@ -49,6 +50,9 @@ public class TestRunService
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private SettingsService settingsService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -184,8 +188,11 @@ public class TestRunService
 		testRun.setStatus(Status.PASSED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.FAILED) ||
-			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.SKIPPED))
+			if(test.isKnownIssue())
+			{
+				testRun.setKnownIssue(true);
+			}
+			if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
 			{
 				testRun.setStatus(Status.FAILED);
 				break;
@@ -264,7 +271,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-	public void sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -275,7 +282,7 @@ public class TestRunService
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		
-		emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests), recipients);
+		return emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests, settingsService.getSettingByName(SettingType.JIRA_URL)), recipients);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException

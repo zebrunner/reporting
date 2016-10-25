@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY)
+			STARTED_BY, KNOWN_ISSUE)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -33,7 +33,8 @@
 			]]>
 		</if>
 		<![CDATA[
-				#{startedBy}
+				#{startedBy},
+				#{knownIssue}
 			)
 		]]>
 	</insert>
@@ -56,6 +57,7 @@
 				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
 				
@@ -86,6 +88,7 @@
 				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
@@ -323,7 +326,8 @@
 	            ]]>
 			</if>
 			<![CDATA[
-			    STARTED_BY = #{startedBy}
+			    STARTED_BY = #{startedBy},
+			    KNOWN_ISSUE = #{knownIssue}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -369,6 +373,7 @@
 		<result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
 		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
+		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />

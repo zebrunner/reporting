@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, $cookieStore) {
 
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
@@ -10,6 +10,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	$scope.testRuns = {};
 	$scope.totalResults = 0;
+	
+	$scope.showRealTimeEvents = false;
 	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
@@ -24,14 +26,22 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.initWebsocket = function() 
 	{
   	  var sockJS = new SockJS("/zafira-ws/zafira-websocket");
-  	  var stomp = Stomp.over(sockJS);
+  	  $scope.stomp = Stomp.over(sockJS);
   	  //stomp.debug = null;
-  	  stomp.connect({}, function() {
-  	      stomp.subscribe("/topic/tests", function(data) 
+  	  $scope.stomp.connect({}, function() {
+  		$scope.stomp.subscribe("/topic/tests", function(data) 
   	      {
   	        	$scope.getMessage(data.body);
   	      });
   	  });
+   };
+   
+   $scope.disconnectWebsocket = function() 
+   {
+	   if($scope.stomp != null)
+	   {
+		   $scope.stomp.disconnect();
+	   }
    };
    
    $scope.getMessage = function(message) {
@@ -405,8 +415,24 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}, function () {});
 	};
 	
+	$scope.$watch('showRealTimeEvents', function() {
+		$cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
+        if($scope.showRealTimeEvents)
+        {
+        	$scope.initWebsocket();
+        }
+        else
+        {
+        	$scope.disconnectWebsocket();
+        }
+    });
+	
 	(function init(){
-		$scope.initWebsocket();
+		if($cookieStore.get("showRealTimeEvents") != null)
+		{
+			$scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
+		}
+		
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
 		SettingsService.getSetting("JIRA_URL").then(function(setting) {

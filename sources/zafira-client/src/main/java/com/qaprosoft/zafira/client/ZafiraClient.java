@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.qaprosoft.zafira.client.model.EmailType;
 import com.qaprosoft.zafira.client.model.JobType;
 import com.qaprosoft.zafira.client.model.TestCaseType;
 import com.qaprosoft.zafira.client.model.TestRunType;
@@ -40,6 +41,7 @@ public class ZafiraClient
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
 	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
 	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
+	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email";
 
 	private String serviceURL;
 	private Client client;
@@ -198,6 +200,27 @@ public class ZafiraClient
 			if (clientRS.getStatus() == 200)
 			{
 				response.setObject(clientRS.getEntity(TestRunType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		return response;
+	}
+	
+	public Response<String> sendTestRunReport(long id, String recipients)
+	{
+		Response<String> response = new Response<String>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id));
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.TEXT_HTML_TYPE).post(ClientResponse.class, new EmailType(recipients));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(String.class));
 			}
 
 		} catch (Exception e)

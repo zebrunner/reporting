@@ -27,6 +27,7 @@ public class TestRunType extends AbstractType
 	private Integer buildNumber;
 	private Initiator startedBy;
 	private Long userId;
+	private boolean knownIssue;
 	
 	public TestRunType(String ciRunId,Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
@@ -214,6 +215,14 @@ public class TestRunType extends AbstractType
 	public void setUserId(Long userId)
 	{
 		this.userId = userId;
+	}
+
+	public boolean isKnownIssue() {
+		return knownIssue;
+	}
+
+	public void setKnownIssue(boolean knownIssue) {
+		this.knownIssue = knownIssue;
 	}
 }	
 
