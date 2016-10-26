@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY, KNOWN_ISSUE)
+			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -34,7 +34,9 @@
 		</if>
 		<![CDATA[
 				#{startedBy},
-				#{knownIssue}
+				#{knownIssue},
+				#{platform},
+				#{env}
 			)
 		]]>
 	</insert>
@@ -58,6 +60,8 @@
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.ENV AS TEST_RUN_ENV,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
 				
@@ -89,6 +93,8 @@
 				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.ENV AS TEST_RUN_ENV,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
@@ -163,13 +169,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>env</key><value>', #{environment}, '%'))
+	               AND LOWER(TR.ENV) LIKE LOWER(CONCAT('%', #{environment}, '%'))
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND (LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>browser</key><value>', #{platform}, '%'))
-	            	OR  LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>mobile_platform_name</key><value>', #{platform}, '%')))
+	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -239,13 +244,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>env</key><value>', #{environment}, '%'))
+	               AND LOWER(TR.ENV) LIKE LOWER(CONCAT('%', #{environment}, '%'))
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND (LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>browser</key><value>', #{platform}, '%'))
-	            	OR  LOWER(TR.CONFIG_XML) LIKE LOWER(CONCAT('%<key>mobile_platform_name</key><value>', #{platform}, '%')))
+	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -327,7 +331,9 @@
 			</if>
 			<![CDATA[
 			    STARTED_BY = #{startedBy},
-			    KNOWN_ISSUE = #{knownIssue}
+			    KNOWN_ISSUE = #{knownIssue},
+			    PLATFORM = #{platform},
+			    ENV = #{env}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -374,6 +380,8 @@
 		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
 		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
+		<result column="TEST_RUN_PLATFORM" property="platform" />
+		<result column="TEST_RUN_ENV" property="env" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />

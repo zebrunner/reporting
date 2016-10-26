@@ -69,6 +69,8 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setWorkItem(workItem);
 			setCiRunId(UUID.randomUUID().toString());
 			setKnownIssue(true);
+			setPlatform("p1");
+			setEnv("e1");
 		}
 	};
 
@@ -115,6 +117,8 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		TEST_RUN.setStatus(Status.FAILED);
 		TEST_RUN.setStartedBy(Initiator.SCHEDULER);
 		TEST_RUN.setKnownIssue(false);
+		TEST_RUN.setPlatform("p1");
+		TEST_RUN.setEnv("e1");
 		
 		testRunMapper.updateTestRun(TEST_RUN);
 
@@ -176,5 +180,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(testRun.getUpstreamJobBuildNumber(), TEST_RUN.getUpstreamJobBuildNumber(), "Upstream job build number must match");
 		assertEquals(testRun.getProject().getId(), TEST_RUN.getProject().getId(), "Project must match");
 		assertEquals(testRun.isKnownIssue(), TEST_RUN.isKnownIssue(), "Known issue must match");
+		assertEquals(testRun.getEnv(), TEST_RUN.getEnv(), "Env must match");
+		assertEquals(testRun.getPlatform(), TEST_RUN.getPlatform(), "Platform must match");
 	}
 }

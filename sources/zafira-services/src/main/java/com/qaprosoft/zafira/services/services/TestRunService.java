@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -44,6 +47,9 @@ public class TestRunService
 	
 	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private TestConfigService testConfigService;
 
 	@Autowired
 	private WorkItemService workItemService;
@@ -133,6 +139,28 @@ public class TestRunService
 		{
 			testRun.setCiRunId(UUID.randomUUID().toString());
 			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
+		}
+		
+		if(!StringUtils.isEmpty(testRun.getConfigXML()))
+		{
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+			{
+				if(!StringUtils.isEmpty(arg.getValue()))
+				{
+					if("env".equals(arg.getKey()))
+					{
+						testRun.setEnv(arg.getValue());
+					}
+					else if("browser".equals(arg.getKey()))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("mobile_device_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					{
+						testRun.setPlatform(arg.getValue() );
+					}
+				}
+			}
 		}
 		
 		// New test run
@@ -282,7 +310,12 @@ public class TestRunService
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		
-		return emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests, settingsService.getSettingByName(SettingType.JIRA_URL), showOnlyFailures), recipients);
+		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+		email.setShowOnlyFailures(showOnlyFailures);
+		email.setSuccessRate(calculateSuccessRate(testRun));
+		
+		return emailService.sendEmail(email, recipients);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
@@ -293,4 +326,10 @@ public class TestRunService
 		return configuration;
 	}
 	
+	private static int calculateSuccessRate(TestRun testRun)
+	{
+		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
+		double rate = (double) testRun.getPassed() / (double) total;
+		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
+	}
 }

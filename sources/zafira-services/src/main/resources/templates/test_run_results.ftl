@@ -9,6 +9,18 @@
                 <td style="width: 100px;">Environment:</td>
                 <td>${configuration['env']}</td>
             </tr>
+            <#if configuration['app_version'] && configuration['app_version'] != '' ??>
+            <tr>
+                <td>Version:</td>
+                <td>${configuration['app_version']} </td>
+            </tr>
+            </#if>
+            <#if configuration['mobile_device_name'] && configuration['mobile_device_name'] != '' ??>
+            <tr>
+                <td>Device:</td>
+                <td>${configuration['mobile_device_name']}</td>
+            </tr>
+            </#if>
             <#if configuration['browser']??>
             <tr>
                 <td>Browser:</td>
@@ -42,6 +54,10 @@
             <tr class="skip" style="color: #FFD700;">
                 <td>Skipped:</td>
                 <td>${testRun.skipped}</td>
+            </tr>
+            <tr>
+                <td>Success rate:</td>
+                <td>${successRate}%</td>
             </tr>
         </table>
     </div>

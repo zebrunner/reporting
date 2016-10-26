@@ -24,9 +24,9 @@
 				</div>
             </div>
             <div class="row results_header">
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
+            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
             	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
-            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Environment" data-ng-model="testRunSearchCriteria.environment"></div>
+            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
             	<div class="col-lg-1">
             		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
             		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
@@ -45,7 +45,7 @@
             	<div class="col-lg-12">No results</div>
             </div>
 			<div class="run_result row" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'modifiedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
-				<div class="col-lg-3">
+				<div class="col-lg-4">
 					<!-- input type="checkbox"
 							data-ng-model="isChecked"
 							data-ng-true-value="true"
@@ -60,10 +60,10 @@
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>
 				</div>
-				<div class="col-lg-2">
+				<div class="col-lg-1">
 					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
 				</div>
-				<div  class="col-lg-1">
+				<div  class="col-lg-1" align="center">
 					<span class="platform-icon {{getArgValue(testRun.configXML, 'browser')}} {{getArgValue(testRun.configXML, 'mobile_platform_name')}}"></span>
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
