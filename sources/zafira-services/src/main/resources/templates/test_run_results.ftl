@@ -7,24 +7,18 @@
         <table style="width: 1000px;">
             <tr>
                 <td style="width: 100px;">Environment:</td>
-                <td>${configuration['env']}</td>
+                <td>${testRun.env}</td>
             </tr>
-            <#if configuration['app_version'] && configuration['app_version'] != '' ??>
+            <#if configuration['app_version'] ??>
             <tr>
                 <td>Version:</td>
                 <td>${configuration['app_version']} </td>
             </tr>
             </#if>
-            <#if configuration['mobile_device_name'] && configuration['mobile_device_name'] != '' ??>
+            <#if testRun.platform??>
             <tr>
-                <td>Device:</td>
-                <td>${configuration['mobile_device_name']}</td>
-            </tr>
-            </#if>
-            <#if configuration['browser']??>
-            <tr>
-                <td>Browser:</td>
-                <td>${configuration['browser']}</td>
+                <td>Platform:</td>
+                <td>${testRun.platform}</td>
             </tr>
             </#if>
             <#if configuration['device']??>

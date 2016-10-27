@@ -14,7 +14,7 @@ from (
         FROM "zafira"."test_runs"
         where "test_runs"."config_xml" <> ''
  ) "a" inner join test_runs on "a".id = test_runs.id
-    where XMLSERIALIZE ( CONTENT "a".key AS text ) = '<key>mobile_device_name</key>'
+    where XMLSERIALIZE ( CONTENT "a".key AS text ) = '<key>mobile_platform_name</key>'
 ) as c(id, platform)
 where c.id::text = tr.id::text;
 

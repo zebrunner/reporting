@@ -155,7 +155,7 @@ public class TestRunService
 					{
 						testRun.setPlatform(arg.getValue());
 					}
-					else if("mobile_device_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
 					{
 						testRun.setPlatform(arg.getValue() );
 					}
