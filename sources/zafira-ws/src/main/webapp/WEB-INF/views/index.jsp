@@ -17,11 +17,11 @@
 	<body>
 	    <div id="wrapper">
 	        <!-- Navigation -->
-	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0" data-ng-controller="NavigationCtrl">
 	            <div class="navbar-header">
 	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.8 | client 1.8.2</small></a>
 	            </div>
-	            <ul class="nav navbar-top-links navbar-left" data-ng-controller="NavigationCtrl">
+	            <ul class="nav navbar-top-links navbar-left">
 		            <li class="dropdown">
 		                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-ng-click="loadProjects()">Project <span data-ng-show="project"> ({{project.name}})</span> <b class="caret"></b></a>
 		                    <ul class="dropdown-menu">
@@ -57,13 +57,29 @@
 	               	<li>
 	                    <a href="#/devices"><i class="fa fa-plug fa-fw"></i> Devices</a>
 	               	</li>
-	               	<li>
-	                    <a href="#/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
-	               	</li>
 	               	</sec:authorize>
 	               	<li>
-	               		<a href="<c:url value="/logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-	               	</li>
+	                    <a class="dropdown-toggle" data-toggle="dropdown" href="" aria-expanded="false">
+	                        <i class="fa fa-user-circle-o"></i> {{UtilService.truncate(currentUser.username, 15)}} <i class="fa fa-caret-down"></i>
+	                    </a>
+	                    <ul class="dropdown-menu dropdown-user">
+	                    	<sec:authorize access="hasAnyRole('ROLE_USER')">
+	                        <li>
+	                        	<a href="#/users/profile"><i class="fa fa-user fa-fw"></i> Profile</a>
+	                        </li>
+	                        </sec:authorize>
+	                        <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	                        <li>
+	                        	<a href="#/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
+	                        </li>
+	                        </sec:authorize>
+	                        <li class="divider"></li>
+	                        <li>
+								<a href="<c:url value="/logout" />"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+	                        </li>
+	                    </ul>
+	                    <!-- /.dropdown-user -->
+	                </li>
 	            </ul>
 	        </nav>
 	       

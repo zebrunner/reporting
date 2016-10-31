@@ -1,12 +1,13 @@
 <!-- CSS styles -->
 <link href="<spring:url value="/resources/img/favicon.ico" />" rel="icon" type="image/x-icon" />
 <link href="<spring:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7/css/font-awesome.min.css"-->
 <link href="<spring:url value="/resources/css/metisMenu.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/sb-admin-2.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/style.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/loading-bar.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/LineChart.min.css" />" rel="stylesheet" type="text/css" />
+<link href="<spring:url value="/resources/css/font-awesome.min.css" />" rel="stylesheet" type="text/css" />
 
 <!-- AngularJS core -->
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>
@@ -31,6 +32,59 @@
 <script src="<spring:url value='/resources/js/3rd_party/d3.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/LineChart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
+<script>
+function take (targetElem) {
+    var nodesToRecover = [];
+    var nodesToRemove = [];
+
+    var svgElem = targetElem.find('svg');
+
+    svgElem.each(function(index, node) {
+        var parentNode = node.parentNode;
+        var svg = parentNode.innerHTML;
+
+        var canvas = document.createElement('canvas');
+
+        canvg(canvas, svg);
+
+        nodesToRecover.push({
+            parent: parentNode,
+            child: node
+        });
+        parentNode.removeChild(node);
+
+        nodesToRemove.push({
+            parent: parentNode,
+            child: canvas
+        });
+
+        parentNode.appendChild(canvas);
+    });
+
+    html2canvas(targetElem, {
+        onrendered: function(canvas) {
+            var ctx = canvas.getContext('2d');
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
+
+            canvas.toBlob(function(blob) {
+                nodesToRemove.forEach(function(pair) {
+                    pair.parent.removeChild(pair.child);
+                });
+
+                nodesToRecover.forEach(function(pair) {
+                    pair.parent.appendChild(pair.child);
+                });
+                
+                $('body').append(canvas);
+                
+                //saveAs(blob, 'screenshot_'+ moment().format('YYYYMMDD_HHmmss')+'.png');
+            });
+        }
+    });
+}
+</script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>

@@ -1,14 +1,12 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import javax.validation.Valid;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.User;
@@ -28,6 +24,10 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.ws.dto.UserType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Users operations")
@@ -43,9 +43,17 @@ public class UsersController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView index()
+	public ModelAndView openIndexPage()
 	{
 		return new ModelAndView("users/index");
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "profile", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView openProfilePage()
+	{
+		return new ModelAndView("users/profile");
 	}
 
 	@ResponseStatusDetails
@@ -72,6 +80,14 @@ public class UsersController extends AbstractController
 	public @ResponseBody User getUser(@PathVariable(value="id") long id) throws ServiceException
 	{
 		return userService.getUserById(id);
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Object getCurrentUser() throws ServiceException
+	{
+		return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 	@ApiIgnore

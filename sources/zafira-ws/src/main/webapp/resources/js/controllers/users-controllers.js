@@ -110,3 +110,39 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	})();
 	
 }]);
+
+ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', 'UserService', function($scope, $rootScope, $http, $location, $modal, $route, UserService) {
+
+	$scope.user = {};
+	
+	$scope.updateUser = function(user){
+		$http.put('users', user).success(function(data) {
+			$route.reload();
+		}).error(function(data, status) {
+			alert('Failed to update user');
+		});
+	};
+	
+	$scope.updatePassword = function(newPassword, confirmPassword){
+		if(newPassword == confirmPassword)
+		{
+			$scope.user.password = newPassword;
+			$scope.updateUser($scope.user);
+		}
+		else
+		{
+			alert("Passwords does not match!");
+		}
+	};
+	
+	(function init(){
+		UserService.getCurrentUser().then(function(user) {
+			$http.get('users/' + user.id).success(function(data) {
+				$scope.user = data;
+			}).error(function(data, status) {
+				alert('Failed to load user');
+			});
+		});
+	})();
+	
+}]);

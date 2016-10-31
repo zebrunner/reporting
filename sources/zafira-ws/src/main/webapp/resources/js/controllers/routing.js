@@ -12,6 +12,12 @@ ZafiraApp.constant('ROUTES', [
 	}
 },
 {
+	url : '/users/profile',
+	config : {
+		templateUrl : 'users/profile'
+	}
+},
+{
 	url : '/tests/runs',
 	config : {
 		templateUrl : 'tests/runs/index'
