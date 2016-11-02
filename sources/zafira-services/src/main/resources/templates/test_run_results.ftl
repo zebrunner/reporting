@@ -62,9 +62,9 @@
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
             <tr>
                 <th width="10%" align="center">Result</th>
-                <th width="70%">Test name</th>
-                <th width="10%">Jira</th>
-                <th width="10%">Test files</th>
+                <th width="70%" align="center">Test name</th>
+                <th width="10%" align="center">Jira</th>
+                <th width="10%" align="center">Test files</th>
             </tr>
             <#list tests as test>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
