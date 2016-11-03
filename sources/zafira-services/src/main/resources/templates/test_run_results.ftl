@@ -67,7 +67,7 @@
                 <th width="10%" align="center">Jira</th>
                 <th width="10%" align="center">Test files</th>
             </tr>
-            <#list tests?sort_by("createdAt") as test>
+            <#list tests?sort_by("name") as test>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
 	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
