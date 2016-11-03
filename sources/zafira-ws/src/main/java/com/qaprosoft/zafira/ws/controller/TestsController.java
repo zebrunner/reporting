@@ -117,12 +117,11 @@ public class TestsController extends AbstractController
 	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException
 	{
 		Test test = testService.markTestAsPassed(id);
-		TestRun testRun = testRunService.recalculateTestRunResult(test.getTestRunId());
-		if(testRun != null) 
-		{
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
-		}
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		
 		return mapper.map(test, TestType.class);
 	}
 
@@ -187,7 +186,15 @@ public class TestsController extends AbstractController
 		{
 			workItem.setUser(new User(getPrincipalId()));
 		}
-		return testService.createTestKnownIssue(id, workItem);
+		workItem = testService.createTestKnownIssue(id, workItem);
+		
+		Test test = testService.getTestById(id);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		
+		return workItem;
 	}
 	
 	@ApiIgnore

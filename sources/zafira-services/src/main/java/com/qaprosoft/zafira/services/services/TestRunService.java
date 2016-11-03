@@ -205,15 +205,16 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun finishTestRun(long id) throws ServiceException
+	public TestRun calculateTestRunResult(long id) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)
 		{
 			throw new TestRunNotFoundException();
 		}
+		
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		testRun.setStatus(Status.PASSED);
+		testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
 		for(Test test : tests)
 		{
 			if(test.isKnownIssue())
@@ -271,31 +272,6 @@ public class TestRunService
 			}
 		}
 		return testNamesWithTests;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestRun recalculateTestRunResult(long testRunId) throws ServiceException
-	{
-		TestRun testRun = getTestRunByIdFull(testRunId);
-		if(testRun == null)
-		{
-			throw new TestRunNotFoundException();
-		}
-		
-		// Try to update test run status if all the rest passed
-		if(testRun.getStatus().equals(Status.FAILED))
-		{
-			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
-			{
-				if(test.getStatus().equals(Status.FAILED) || test.getStatus().equals(Status.SKIPPED))
-				{
-					return testRun;
-				}
-			}
-			testRun.setStatus(Status.PASSED);
-			updateTestRun(testRun);
-		}
-		return testRun;
 	}
 	
 	@Transactional(readOnly=true)

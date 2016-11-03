@@ -34,6 +34,9 @@ public class TestService
 	@Autowired
 	private TestCaseService testCaseService;
 	
+	@Autowired
+	private TestRunService testRunService;
+	
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
@@ -130,6 +133,8 @@ public class TestService
 			testCaseService.updateTestCase(testCase);
 		}
 		
+		testRunService.calculateTestRunResult(test.getTestRunId());
+		
 		return test;
 	}
 	
@@ -216,6 +221,7 @@ public class TestService
 		}
 		workItemService.createWorkItem(workItem);
 		testMapper.createTestWorkItem(test, workItem);
+		testRunService.calculateTestRunResult(test.getTestRunId());
 		return workItem;
 	}
 	
