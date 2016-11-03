@@ -25,7 +25,8 @@ public class Test extends AbstractEntity
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
 	private boolean knownIssue;
-	
+	private String owner;
+
 	public Test()
 	{
 		testConfig = new TestConfig();
@@ -151,19 +152,33 @@ public class Test extends AbstractEntity
 		this.testConfig = testConfig;
 	}
 
-	public List<WorkItem> getWorkItems() {
+	public List<WorkItem> getWorkItems()
+	{
 		return workItems;
 	}
 
-	public void setWorkItems(List<WorkItem> workItems) {
+	public void setWorkItems(List<WorkItem> workItems)
+	{
 		this.workItems = workItems;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
+	}
+
+	public String getOwner()
+	{
+		return owner;
+	}
+
+	public void setOwner(String owner)
+	{
+		this.owner = owner;
 	}
 }

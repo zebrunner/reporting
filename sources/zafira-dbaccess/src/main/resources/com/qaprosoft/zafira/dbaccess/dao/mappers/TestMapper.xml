@@ -57,6 +57,7 @@
 				T.LOG_URL AS TEST_LOG_URL,
 				T.RETRY AS TEST_RETRY,
 				T.KNOWN_ISSUE AS TEST_KNOWN_ISSUE,
+				TCU.USERNAME AS TEST_OWNER,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 
@@ -109,6 +110,15 @@
 				zafira.TEST_CONFIGS TC
 			ON 
 				T.TEST_CONFIG_ID = TC.ID
+			LEFT JOIN
+				zafira.TEST_CASES TCS
+			ON
+				T.TEST_CASE_ID = TCS.ID
+			LEFT JOIN
+				zafira.USERS TCU
+			ON
+				TCS.USER_ID = TCU.ID
+			
 		]]>
 	</sql>
 
@@ -264,6 +274,7 @@
 		<result column="TEST_LOG_URL" property="logURL" />
 		<result column="TEST_RETRY" property="retry" />
 		<result column="TEST_KNOWN_ISSUE" property="knownIssue" />
+		<result column="TEST_OWNER" property="owner" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 		

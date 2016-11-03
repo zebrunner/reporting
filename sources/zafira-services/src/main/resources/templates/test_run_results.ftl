@@ -62,11 +62,12 @@
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
             <tr>
                 <th width="10%" align="center">Result</th>
-                <th width="70%" align="center">Test name</th>
+                <th width="60%" align="center">Test name</th>
+                <th width="10%" align="center">Owner</th>
                 <th width="10%" align="center">Jira</th>
                 <th width="10%" align="center">Test files</th>
             </tr>
-            <#list tests as test>
+            <#list tests?sort_by("createdAt") as test>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
 	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
@@ -74,12 +75,15 @@
 	            		</td>
 	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			<span>${test.name}</span>
-	            			<#if test.status == 'FAILED'>
+	            			<#if test.status == 'FAILED' && test.message != ''>
 	            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
 	            			</#if>
-	            			<#if test.status == 'SKIPPED'>
+	            			<#if test.status == 'SKIPPED' && test.message != ''>
 	            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
 	            			</#if>
+	            		</td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<span>${test.owner}</span>
 	            		</td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
