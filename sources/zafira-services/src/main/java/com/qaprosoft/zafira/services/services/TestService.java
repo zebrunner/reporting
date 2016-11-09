@@ -84,6 +84,9 @@ public class TestService
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
+		existingTest.setDemoURL(test.getDemoURL());
+		existingTest.setLogURL(test.getLogURL());
+		
 		if(test.getMessage() != null)
 		{
 			existingTest.setMessage(test.getMessage());
