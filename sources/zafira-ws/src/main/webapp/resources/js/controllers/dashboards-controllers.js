@@ -241,4 +241,19 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		});
 	};
 	
+	$scope.sort = {
+        column: null,
+        descending: false
+    };
+    
+    $scope.changeSorting = function(column) {
+        var sort = $scope.sort;
+        if (sort.column == column) {
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+	
 }]);
