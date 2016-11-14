@@ -47,7 +47,7 @@
 					<span>{{testCase.createdAt | date:'MM/dd/yyyy'}}</span>
 					&nbsp;
 					<i data-ng-class="{'fa fa-lg fa-sort-desc': testCase.showDetails == false, 'fa fa-lg fa-sort-asc': testCase.showDetails == true}" aria-hidden="true" data-ng-click="testCase.showDetails = !testCase.showDetails; loadTests(testCase);" class="float_right pointer"></i>
-					<i data-ng-class="{'fa fa-sm fa-area-chart': true}" aria-hidden="true" data-ng-click="openPerformancePage(testCase)" class="float_right pointer" style="padding-right: 7%; padding-top: 5px;"></i>
+					<i data-ng-class="{'fa fa-sm fa-area-chart': true}" aria-hidden="true" data-ng-click="openPerformancePage(testCase)" class="float_right pointer" style="line-height: 20px; margin-right: 7px;"></i>
 				</div>
 				<div class="col-lg-12" data-ng-if="testCase.showDetails == true" style="margin-top: 10px;">
                     <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in tests[testCase.id] | orderBy:'id':true">

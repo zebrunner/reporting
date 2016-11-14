@@ -3,6 +3,7 @@
 ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route) {
 	
 	$scope.dashboardId = $location.search().id;
+	$scope.currentUserId = $location.search().userId;
 	
 	$scope.loadAllDashboards = function() {
 		$http.get('dashboards/all').success(function(dashboards) {
@@ -49,7 +50,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.loadWidget = function(widgets) {
 		var sqlAdapter = {};
 		sqlAdapter.sql = widgets.sql;
-		$http.post('widgets/sql' + ProjectProvider.getProjectQueryParam(), sqlAdapter).success(function(data) {
+		var params = ProjectProvider.getProjectQueryParam();
+		if($scope.currentUserId != null)
+		{
+			params = params != "" ? params + "&currentUserId=" + $scope.currentUserId : params + "?currentUserId=" + $scope.currentUserId;
+		}
+		$http.post('widgets/sql' + params, sqlAdapter).success(function(data) {
 			for(var j = 0; j < data.length; j++)
 			{
 				if(data[j].CREATED_AT)
@@ -151,6 +157,11 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				
 				$scope.isNew = isNew;
 				$scope.dashboard = dashboard;
+				if($scope.isNew)
+				{
+					$scope.dashboard.type = 'GENERAL';
+				}
+				
 				
 				$scope.createDashboard = function(dashboard){
 					$http.post('dashboards', dashboard).success(function(data) {

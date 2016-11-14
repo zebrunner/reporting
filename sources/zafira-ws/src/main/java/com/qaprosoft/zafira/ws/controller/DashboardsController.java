@@ -1,9 +1,11 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,15 +48,27 @@ public class DashboardsController extends AbstractController
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
-		dashboard.setType(Type.GENERAL);
 		return dashboardService.createDashboard(dashboard);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = true) @RequestParam(value="type", defaultValue="GENERAL", required=false) String type) throws ServiceException
+	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = true) @RequestParam(value="type", required=false) String type) throws ServiceException
 	{
-		return dashboardService.getAllDashboardsByType(Type.valueOf(type));
+		List<Dashboard> dashboards = new ArrayList<>();
+		if(StringUtils.isEmpty(type))
+		{
+			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.GENERAL));
+			if(isAdmin())
+			{
+				dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
+			}
+		}
+		else
+		{
+			dashboards = dashboardService.getAllDashboardsByType(Type.valueOf(type));
+		}
+		return dashboards;
 	}
 
 	@ResponseStatus(HttpStatus.OK)

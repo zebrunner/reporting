@@ -11,6 +11,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	
 	$scope.totalResults = 0;
 	$scope.users = [];
+	$scope.pefrDashboardId = null;
 	
 	$scope.loadUsers = function(page, pageSize){
 		
@@ -100,6 +101,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			});
 		}
 	};
+
 	
 	$scope.resetSearchCriteria = function(){
 		$scope.usersSearchCriteria = angular.copy(DEFAULT_SC);
@@ -107,6 +109,12 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	
 	(function init(){
 		$scope.loadUsers(1);
+		$http.get('dashboards/all?type=USER_PERFORMANCE').success(function(dashboards) {
+			if(dashboards.length > 0)
+			{
+				$scope.pefrDashboardId = dashboards[0].id;
+			}
+		});
 	})();
 	
 }]);

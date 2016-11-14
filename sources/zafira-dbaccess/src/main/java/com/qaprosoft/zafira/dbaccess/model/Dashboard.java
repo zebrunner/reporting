@@ -13,7 +13,7 @@ public class Dashboard extends AbstractEntity
 	private Integer position;
 
 	public enum Type {
-		GENERAL, PERFORMANCE;
+		GENERAL, PERFORMANCE, USER_PERFORMANCE;
 	}
 
 	public String getTitle()

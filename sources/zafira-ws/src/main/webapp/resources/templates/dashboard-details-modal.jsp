@@ -15,6 +15,17 @@
 			<input type="text" class="form-control" data-ng-model="dashboard.title" required></input>
 		</div>
 		<div class="form-group">
+			<label>Type</label>
+			<select class="form-control validation" data-ng-model="dashboard.type" required data-ng-if="isNew">
+				<option value="GENERAL">General</option>
+				<option value="USER_PERFORMANCE">User performance</option>
+			</select>
+			<select class="form-control validation" data-ng-model="dashboard.type" required data-ng-if="!isNew" disabled>
+				<option value="GENERAL">General</option>
+				<option value="USER_PERFORMANCE">User performance</option>
+			</select>
+		</div>
+		<div class="form-group">
 			<label>Position</label> 
 			<input type="number" class="form-control" data-ng-model="dashboard.position" required></input>
 		</div>
