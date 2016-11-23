@@ -332,6 +332,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			},
 			controller : function($scope, $modalInstance, testRun){
 				
+				$scope.title = testRun.testSuite.name;
+				$scope.subjectRequired = false;
+				$scope.textRequired = false;
+				
 				$scope.testRun = testRun;
 				$scope.email = {};
 				

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services.emails;
 
+import java.io.File;
 import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.model.Device;
@@ -36,5 +37,16 @@ public class GridStatusEmail implements IEmailMessage
 	public String getTemplate()
 	{
 		return TEMPLATE;
+	}
+
+	@Override
+	public File getAttachment() 
+	{
+		return null;
+	}
+
+	@Override
+	public String getText() {
+		return null;
 	}
 }

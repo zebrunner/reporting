@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route) {
+ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', '$cookieStore', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route, $cookieStore) {
 	
 	$scope.dashboardId = $location.search().id;
 	$scope.currentUserId = $location.search().userId;
@@ -266,5 +266,36 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
             sort.descending = false;
         }
     };
+    
+    $scope.openEmailModal = function(){
+		$modal.open({
+			templateUrl : 'resources/templates/email-details-modal.jsp',
+			controller : function($scope, $modalInstance){
+				
+				$scope.title = "Zafira Dashboard";
+				$scope.subjectRequired = true;
+				$scope.textRequired = true;
+				
+				$scope.email = {};
+				$scope.email.subject = "Zafira Dashboard";
+				$scope.email.text = "See dashboad in atttachment!";
+				$scope.email.data = {};
+				$scope.email.data["hostname"] = document.location.hostname;
+				$scope.email.data["href"] = document.location.href;
+				
+				$scope.sendEmail = function(id){
+					$modalInstance.close(0);
+					$http.post('dashboards/email', $scope.email).success(function() {
+						alert('Email was successfully sent!');
+					}).error(function(data, status) {
+						alert('Failed to send email');
+					});
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
+	};
 	
 }]);

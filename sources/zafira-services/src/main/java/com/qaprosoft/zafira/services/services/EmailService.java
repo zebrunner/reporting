@@ -40,11 +40,17 @@ public class EmailService
 		{
 			public void prepare(MimeMessage mimeMessage) throws Exception
 			{
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage);
+				boolean hasAttachment = message.getAttachment() != null;
+				
+				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachment);
 				msg.setSubject(message.getSubject());
 				msg.setTo(recipients);
 				msg.setFrom(mailUser);
 				msg.setText(text, true);
+				if(hasAttachment)
+				{
+					msg.addAttachment("attachment", message.getAttachment());
+				}
 			}
 		};
 		Runnable task = new AsynSendEmailTask(preparator);
