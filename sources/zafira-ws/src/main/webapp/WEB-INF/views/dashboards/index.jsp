@@ -12,8 +12,10 @@
          		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
          		<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
          			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal({}, true)"> <i class="fa fa-plus-circle"></i> new</button>
-         		</sec:authorize></h2><br/>
+         		</sec:authorize>
          		<button class="btn btn-xs btn-primary" data-ng-click="openEmailModal()"> <i class="fa fa-envelope-o"></i> send as email</button>
+         		</h2><br/>
+         		
          </div>
     </div>
     <div class="row">
