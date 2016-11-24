@@ -205,7 +205,7 @@ select option[value="Android"] {
 background-image:url(../img/key.png);
 }
 
-li.pointer, i.pointer {
+li.pointer, i.pointer, th.pointer {
 	cursor: pointer;
 }
 

@@ -2,7 +2,10 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem.Type;
 
 public interface WorkItemMapper
 {
@@ -10,13 +13,17 @@ public interface WorkItemMapper
 
 	WorkItem getWorkItemById(long id);
 
-	WorkItem getWorkItemByJiraId(String jiraId);
+	WorkItem getWorkItemByJiraIdAndType(@Param("jiraId") String jiraId, @Param("type") Type type);
 	
-	List<WorkItem> getWorkItemsByUsername(String userName);
+	WorkItem getWorkItemByTestCaseIdAndHashCode(@Param("testCaseId") long testCaseId, @Param("hashCode") int hashCode);
+	
+	List<WorkItem> getWorkItemsByTestCaseIdAndType(@Param("testCaseId") long testCaseId, @Param("type") Type type);
 	
 	void updateWorkItem(WorkItem workItem);
 
 	void deleteWorkItemById(long id);
 
 	void deleteWorkItem(WorkItem workItem);
+	
+	void deleteKnownIssuesByTestId(long id);
 }

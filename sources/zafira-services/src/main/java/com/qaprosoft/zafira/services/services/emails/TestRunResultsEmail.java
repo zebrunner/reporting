@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.dbaccess.model.Setting;
+import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
 import com.qaprosoft.zafira.dbaccess.model.config.Argument;
@@ -18,6 +20,9 @@ public class TestRunResultsEmail implements IEmailMessage
 	private Map<String, String> configuration = new HashMap<String, String>();
 	private TestRun testRun;
 	private List<Test> tests;
+	private String jiraURL;
+	private boolean showOnlyFailures = false;
+	private int successRate;
 	
 	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests)
 	{
@@ -58,11 +63,40 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		this.tests = tests;
 	}
+	
+	public String getJiraURL() {
+		return jiraURL;
+	}
+
+	public void setJiraURL(String jiraURL) {
+		this.jiraURL = jiraURL;
+	}
+	
+	public void setJiraURL(Setting setting) {
+		this.jiraURL = setting != null ? setting.getValue() : "";
+	}
+	
+	public boolean isShowOnlyFailures() {
+		return showOnlyFailures;
+	}
+
+	public void setShowOnlyFailures(boolean showOnlyFailures) {
+		this.showOnlyFailures = showOnlyFailures;
+	}
+
+	public int getSuccessRate() {
+		return successRate;
+	}
+
+	public void setSuccessRate(int successRate) {
+		this.successRate = successRate;
+	}
 
 	@Override
 	public String getSubject()
 	{
-		return String.format(SUBJECT, testRun.getStatus().name(), testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(), configuration.get("env"));
+		String status = Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() ? "PASSED (known issues)" : testRun.getStatus().name();
+		return String.format(SUBJECT, status, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(), configuration.get("env"));
 	}
 
 	@Override

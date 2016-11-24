@@ -4,8 +4,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,7 +11,9 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper;
+import com.qaprosoft.zafira.dbaccess.model.User;
 import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem.Type;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -28,23 +28,20 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
+			User user = new User();
+			user.setId(1L);
+			
 			setJiraId("JIRA-123");
+			setType(Type.BUG);
+			setDescription("d1");
+			setHashCode(1);
+			setUser(user);
+			setTestCaseId(1L);
 		}
 	};
 
 	@Autowired
 	private WorkItemMapper workItemMapper;
-
-	@Test(enabled = ENABLED)
-	public void createWorkItem1()
-	{
-		List<WorkItem> wi = workItemMapper.getWorkItemsByUsername("szagriychuk");
-		for(WorkItem w : wi)
-		{
-			System.out.println(w.getJiraId());
-		}
-		System.out.println();
-	}
 	
 	
 	@Test(enabled = ENABLED)
@@ -74,7 +71,7 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	{ "createWorkItem" })
 	public void getWorkItemByJiraId()
 	{
-		checkWorkItem(workItemMapper.getWorkItemByJiraId(WORK_ITEM.getJiraId()));
+		checkWorkItem(workItemMapper.getWorkItemByJiraIdAndType(WORK_ITEM.getJiraId(), Type.BUG));
 	}
 
 	@Test(enabled = ENABLED, dependsOnMethods =
@@ -82,6 +79,11 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	public void updateWorkItem()
 	{
 		WORK_ITEM.setJiraId("JIRA-3344");
+		WORK_ITEM.setType(Type.TASK);
+		WORK_ITEM.setDescription("d2");
+		WORK_ITEM.setHashCode(2);
+		WORK_ITEM.getUser().setId(2L);
+		WORK_ITEM.setTestCaseId(2L);
 		
 		workItemMapper.updateWorkItem(WORK_ITEM);
 
@@ -120,5 +122,10 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 	private void checkWorkItem(WorkItem workItem)
 	{
 		assertEquals(workItem.getJiraId(), WORK_ITEM.getJiraId(), "Jira ID must match");
+		assertEquals(workItem.getHashCode(), WORK_ITEM.getHashCode(), "Hash code must match");
+		assertEquals(workItem.getDescription(), WORK_ITEM.getDescription(), "Description must match");
+		assertEquals(workItem.getType(), WORK_ITEM.getType(), "Type must match");
+		assertEquals(workItem.getUser().getId(), WORK_ITEM.getUser().getId(), "User must match");
+		assertEquals(workItem.getTestCaseId(), WORK_ITEM.getTestCaseId(), "Test case id must match");
 	}
 }

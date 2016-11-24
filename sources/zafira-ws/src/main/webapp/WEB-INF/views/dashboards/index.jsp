@@ -49,13 +49,13 @@
                      	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
                      		<thead>
 	                     		<tr>
-	                     			<th data-ng-repeat="column in widget.model.columns">
-	                     				{{column}}
+	                     			<th class="pointer" data-ng-repeat="column in widget.model.columns" data-ng-click="changeSorting(column)">
+	                     				{{column}}&nbsp;<i class="fa fa-sort"></i>
 	                     			</th>
 	                     		</tr>
                      		</thead>
                      		<tbody>
-	                     		<tr data-ng-repeat="row in widget.data.dataset">
+	                     		<tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
 	                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
 	                     		</tr>
 	                     	</tbody>

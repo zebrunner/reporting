@@ -1,17 +1,20 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.concurrent.Executors;
+
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
 
 import freemarker.template.Configuration;
@@ -25,14 +28,14 @@ public class EmailService
 	private String mailUser;
 	
 	@Autowired
-	private JavaMailSender mailSender;
-	
-	@Autowired
 	private Configuration freemarkerConfiguration;
 	
+	@Autowired
+	private AutowireCapableBeanFactory autowireizer;
 	
-	public void sendEmail(final IEmailMessage message, final String... recipients)
+	public String sendEmail(final IEmailMessage message, final String... recipients) throws ServiceException
 	{
+		final String text = getFreeMarkerTemplateContent(message);
 		MimeMessagePreparator preparator = new MimeMessagePreparator()
 		{
 			public void prepare(MimeMessage mimeMessage) throws Exception
@@ -41,10 +44,13 @@ public class EmailService
 				msg.setSubject(message.getSubject());
 				msg.setTo(recipients);
 				msg.setFrom(mailUser);
-				msg.setText(getFreeMarkerTemplateContent(message), true);
+				msg.setText(text, true);
 			}
 		};
-		mailSender.send(preparator);
+		Runnable task = new AsynSendEmailTask(preparator);
+		autowireizer.autowireBean(task);
+		Executors.newSingleThreadExecutor().execute(task);
+		return text;
 	}
 	
 	

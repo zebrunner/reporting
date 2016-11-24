@@ -20,7 +20,7 @@
 				</div>
 				<div class="form-group">
 					<label>Value</label> 
-					<input name="value" type="text" class="form-control validation" data-ng-model="setting.value" required/>
+					<input name="value" type="text" class="form-control validation" data-ng-model="setting.value"/>
 				</div>
 			</form>
 		</div>

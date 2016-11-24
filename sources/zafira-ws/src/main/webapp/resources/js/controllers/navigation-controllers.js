@@ -1,9 +1,13 @@
 'use strict';
 
-ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', '$modal', 'ProjectProvider', '$window', function($scope, $rootScope, $http, $location, $cookieStore, $route, $modal, ProjectProvider, $window) {
+ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', '$modal', 'ProjectProvider', '$window', 'UtilService', 'UserService', function($scope, $rootScope, $http, $location, $cookieStore, $route, $modal, ProjectProvider, $window, UtilService, UserService) {
 
+	$scope.UtilService = UtilService;
+	
 	$scope.project = null;
 	$scope.projects = [];
+	
+	$scope.currentUser = null;
 	
 	$scope.loadProjects = function(){
 		$http.get('config/projects').success(function(projects) {
@@ -47,7 +51,10 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 	};
 	
 	(function init(){
-		$scope.project = $cookieStore.get("project");
+		$scope.project = ProjectProvider.getProject();
+		UserService.getCurrentUser().then(function(user) {
+			$scope.currentUser = user;
+		});
 	})();
 	
 }]);

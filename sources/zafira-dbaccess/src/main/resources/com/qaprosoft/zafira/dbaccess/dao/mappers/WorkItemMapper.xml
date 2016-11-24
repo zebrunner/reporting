@@ -5,9 +5,28 @@
 
 	<insert id="createWorkItem" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.WORK_ITEMS (JIRA_ID)
+			INSERT INTO zafira.WORK_ITEMS (JIRA_ID, HASH_CODE, 
+		]]>
+		<if test="type != user">	
+			TYPE, 
+		</if>	
+		<if test="null != user">	
+			USER_ID, 
+		</if>
+		<![CDATA[
+		DESCRIPTION, TEST_CASE_ID)
 			VALUES (
-				#{jiraId}
+				#{jiraId},
+				#{hashCode},
+		]]>
+		<if test="null != type">
+			#{type},
+		</if>	
+		<if test="null != user">
+			#{user.id},
+		</if>
+		<![CDATA[
+				#{description}, #{testCaseId}
 			)
 		]]>
 	</insert>
@@ -15,41 +34,65 @@
 	<sql id="getWorkItem">
 		<![CDATA[
 			SELECT distinct
-				J.ID AS WORK_ITEM_ID,
-				J.JIRA_ID AS WORK_ITEM_JIRA_ID,
-				J.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
-				J.CREATED_AT AS WORK_ITEM_CREATED_AT
+				WI.ID AS WORK_ITEM_ID,
+				WI.JIRA_ID AS WORK_ITEM_JIRA_ID,
+				WI.TYPE AS WORK_ITEM_TYPE,
+				WI.HASH_CODE AS WORK_ITEM_HASH_CODE,
+				WI.DESCRIPTION AS WORK_ITEM_DESCRIPTION,
+				WI.TEST_CASE_ID AS WORK_ITEM_TEST_CASE_ID,
+				WI.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
+				WI.CREATED_AT AS WORK_ITEM_CREATED_AT,
+				
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.PASSWORD AS USER_PASSWORD,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT
 			FROM
-				zafira.WORK_ITEMS J
+				zafira.WORK_ITEMS WI
+			LEFT JOIN 
+				zafira.USERS U
+			ON
+				WI.USER_ID = U.ID
 		]]>
 	</sql>
 
 	<select id="getWorkItemById" resultMap="WorkItemResultMap">
 		<include refid="getWorkItem" />
 		<![CDATA[
-			WHERE J.ID = #{id};
-		]]>
-	</select>
-
-	<select id="getWorkItemByJiraId" resultMap="WorkItemResultMap">
-		<include refid="getWorkItem" />
-		<![CDATA[
-			WHERE J.JIRA_ID = #{jiraId};
+			WHERE WI.ID = #{id};
 		]]>
 	</select>
 	
-	<select id="getWorkItemsByUsername" resultMap="WorkItemResultMap">
+	<select id="getWorkItemsByTestCaseIdAndType" resultMap="WorkItemResultMap">
 		<include refid="getWorkItem" />
 		<![CDATA[
-			INNER JOIN zafira.TEST_WORK_ITEMS TWI
-			ON J.ID = TWI.WORK_ITEM_ID
-			INNER JOIN zafira.TESTS T
-			ON TWI.TEST_ID = T.ID
-			INNER JOIN zafira.TEST_CASES TC
-			ON T.TEST_CASE_ID = TC.ID
-			INNER JOIN zafira.USERS U
-			ON U.ID = TC.USER_ID
-			WHERE U.USERNAME = #{userName};
+			WHERE WI.TEST_CASE_ID = #{testCaseId} AND WI.TYPE = #{type};
+		]]>
+	</select>
+
+	<select id="getWorkItemByJiraIdAndType" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE 
+				WI.JIRA_ID = #{jiraId} AND WI.TYPE = #{type}
+			ORDER BY 
+				WI.ID DESC
+			LIMIT 1; 
+		]]>
+	</select>
+	
+	<select id="getWorkItemByTestCaseIdAndHashCode" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE 
+				WI.TEST_CASE_ID = #{testCaseId} AND WI.HASH_CODE = #{hashCode}
+			ORDER BY 
+				WI.ID DESC
+			LIMIT 1;
 		]]>
 	</select>
 
@@ -58,7 +101,18 @@
 			UPDATE
 			    zafira.WORK_ITEMS
 			SET
-				JIRA_ID = #{jiraId}
+				JIRA_ID = #{jiraId},
+				HASH_CODE = #{hashCode},
+		]]>	
+		<if test="null != type">
+				TYPE = #{type},
+		</if>
+		<if test="null != user">
+				USER_ID = #{user.id},
+		</if>
+		<![CDATA[
+				DESCRIPTION = #{description},
+				TEST_CASE_ID = #{testCaseId}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -70,7 +124,7 @@
 			WHERE ID = #{id}
 		]]>
 	</sql>
-
+	
 	<delete id="deleteWorkItem">
 		<include refid="deleteWorkItem" />
 	</delete>
@@ -78,12 +132,38 @@
 	<delete id="deleteWorkItemById">
 		<include refid="deleteWorkItem" />
 	</delete>
+	
+	<delete id="deleteKnownIssuesByTestId">
+		<![CDATA[
+			DELETE
+			FROM 
+				zafira.TEST_WORK_ITEMS
+			WHERE 
+				ID IN (
+			SELECT 
+				TWI.ID 
+			FROM 
+				zafira.TEST_WORK_ITEMS TWI 
+			INNER JOIN 
+				zafira.WORK_ITEMS WI 
+			ON 
+				WI.ID = TWI.WORK_ITEM_ID
+			WHERE TWI.TEST_ID = #{id} AND WI.TYPE = 'BUG'); 
+		]]>
+	</delete>
 
 	<resultMap type="com.qaprosoft.zafira.dbaccess.model.WorkItem" id="WorkItemResultMap" autoMapping="false">
 		<id column="WORK_ITEM_ID" property="id" />
 		<result column="WORK_ITEM_JIRA_ID" property="jiraId" />
+		<result column="WORK_ITEM_TYPE" property="type" />
+		<result column="WORK_ITEM_HASH_CODE" property="hashCode" />
+		<result column="WORK_ITEM_DESCRIPTION" property="description" />
+		<result column="WORK_ITEM_TEST_CASE_ID" property="testCaseId" />
 		<result column="WORK_ITEM_MODIFIED_AT" property="modifiedAt" />
 		<result column="WORK_ITEM_CREATED_AT" property="createdAt" />
+					
+		<association property="user" javaType="com.qaprosoft.zafira.dbaccess.model.User" 
+					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper.UserResultMap" />
 	</resultMap>
 
 </mapper>

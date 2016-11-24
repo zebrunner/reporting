@@ -93,7 +93,7 @@ public class TestRunsController extends AbstractController
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
-		TestRun testRun = testRunService.finishTestRun(id);
+		TestRun testRun = testRunService.calculateTestRunResult(id);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
@@ -183,9 +183,9 @@ public class TestRunsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}/email", method = RequestMethod.POST)
-	public void sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email) throws ServiceException, JAXBException
+	@RequestMapping(value="{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter) throws ServiceException, JAXBException
 	{
-		testRunService.sendTestRunResultsEmail(id, email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 }

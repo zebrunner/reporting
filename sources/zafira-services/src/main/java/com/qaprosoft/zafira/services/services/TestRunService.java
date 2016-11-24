@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,10 +28,12 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.config.Argument;
 import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 
@@ -42,22 +46,19 @@ public class TestRunService
 	private TestRunMapper testRunMapper;
 	
 	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private JobsService jobsService;
-	
-	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private TestConfigService testConfigService;
 
 	@Autowired
 	private WorkItemService workItemService;
 	
 	@Autowired
-	private TestConfigService testConfigService;
+	private EmailService emailService;
 	
 	@Autowired
-	private EmailService emailService;
+	private SettingsService settingsService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
@@ -140,6 +141,28 @@ public class TestRunService
 			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
 		}
 		
+		if(!StringUtils.isEmpty(testRun.getConfigXML()))
+		{
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+			{
+				if(!StringUtils.isEmpty(arg.getValue()))
+				{
+					if("env".equals(arg.getKey()))
+					{
+						testRun.setEnv(arg.getValue());
+					}
+					else if("browser".equals(arg.getKey()))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					{
+						testRun.setPlatform(arg.getValue() );
+					}
+				}
+			}
+		}
+		
 		// New test run
 		if(testRun.getId() == null || testRun.getId() == 0)
 		{
@@ -182,19 +205,23 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun finishTestRun(long id) throws ServiceException
+	public TestRun calculateTestRunResult(long id) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)
 		{
 			throw new TestRunNotFoundException();
 		}
+		
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		testRun.setStatus(Status.PASSED);
+		testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
 		for(Test test : tests)
 		{
-			if(test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.FAILED) ||
-			   test.getStatus().equals(com.qaprosoft.zafira.dbaccess.model.Status.SKIPPED))
+			if(test.isKnownIssue())
+			{
+				testRun.setKnownIssue(true);
+			}
+			if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
 			{
 				testRun.setStatus(Status.FAILED);
 				break;
@@ -247,33 +274,8 @@ public class TestRunService
 		return testNamesWithTests;
 	}
 	
-	@Transactional(rollbackFor = Exception.class)
-	public TestRun recalculateTestRunResult(long testRunId) throws ServiceException
-	{
-		TestRun testRun = getTestRunByIdFull(testRunId);
-		if(testRun == null)
-		{
-			throw new TestRunNotFoundException();
-		}
-		
-		// Try to update test run status if all the rest passed
-		if(testRun.getStatus().equals(Status.FAILED))
-		{
-			for(Test test : testService.getTestsByTestRunId(testRun.getId()))
-			{
-				if(test.getStatus().equals(Status.FAILED) || test.getStatus().equals(Status.SKIPPED))
-				{
-					return testRun;
-				}
-			}
-			testRun.setStatus(Status.PASSED);
-			updateTestRun(testRun);
-		}
-		return testRun;
-	}
-	
 	@Transactional(readOnly=true)
-	public void sendTestRunResultsEmail(final Long testRunId, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -284,7 +286,12 @@ public class TestRunService
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		
-		emailService.sendEmail(new TestRunResultsEmail(configuration, testRun, tests), recipients);
+		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+		email.setShowOnlyFailures(showOnlyFailures);
+		email.setSuccessRate(calculateSuccessRate(testRun));
+		
+		return emailService.sendEmail(email, recipients);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
@@ -295,4 +302,10 @@ public class TestRunService
 		return configuration;
 	}
 	
+	private static int calculateSuccessRate(TestRun testRun)
+	{
+		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
+		double rate = (double) testRun.getPassed() / (double) total;
+		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
+	}
 }

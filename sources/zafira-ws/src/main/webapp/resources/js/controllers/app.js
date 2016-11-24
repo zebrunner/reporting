@@ -16,7 +16,7 @@ ZafiraApp.directive('ngReallyClick', [ function() {
 
 ZafiraApp.service('UtilService', function() {
 	this.truncate = function(fullStr, strLen) {
-		if (fullStr.length <= strLen) return fullStr;
+		if (fullStr == null || fullStr.length <= strLen) return fullStr;
 	    var separator = '...';
 	    var sepLen = separator.length,
 	        charsToShow = strLen - sepLen,
@@ -26,6 +26,30 @@ ZafiraApp.service('UtilService', function() {
 	           separator + 
 	           fullStr.substr(fullStr.length - backChars);
     };
+});
+
+ZafiraApp.factory('UserService', function($http) {
+	var userService = {
+			getCurrentUser : function() {
+			var promise = $http.get('users/current').then(function(rs) {
+				return rs.data;
+			});
+			return promise;
+		}
+	};
+	return userService;
+});
+
+ZafiraApp.factory('SettingsService', function($http) {
+	var settingsService = {
+			getSetting : function(name) {
+			var promise = $http.get('settings/' + name).then(function(rs) {
+				return rs.data;
+			});
+			return promise;
+		}
+	};
+	return settingsService;
 });
 
 ZafiraApp.provider('ProjectProvider', function() {

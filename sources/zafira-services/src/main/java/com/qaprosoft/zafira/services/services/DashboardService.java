@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
+import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
 import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
@@ -20,6 +21,10 @@ public class DashboardService
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard createDashboard(Dashboard dashboard) throws ServiceException
 	{
+		if(Type.USER_PERFORMANCE.equals(dashboard.getType()) && getAllDashboardsByType(Type.USER_PERFORMANCE).size() > 0)
+		{
+			throw new ServiceException("Unable to create multiple dashboards of type: " + Type.USER_PERFORMANCE);
+		}
 		dashboardMapper.createDashboard(dashboard);
 		return dashboard;
 	}

@@ -1,9 +1,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,21 +21,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.Test;
 import com.qaprosoft.zafira.dbaccess.model.TestMetric;
 import com.qaprosoft.zafira.dbaccess.model.TestRun;
+import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem;
+import com.qaprosoft.zafira.dbaccess.model.WorkItem.Type;
 import com.qaprosoft.zafira.dbaccess.model.push.TestPush;
 import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.WorkItemService;
 import com.qaprosoft.zafira.ws.dto.TestType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Tests operations")
@@ -58,6 +62,9 @@ public class TestsController extends AbstractController
 	
 	@Autowired
 	private TestRunService testRunService;
+	
+	@Autowired
+	private WorkItemService workItemService;
 	
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
@@ -110,12 +117,11 @@ public class TestsController extends AbstractController
 	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException
 	{
 		Test test = testService.markTestAsPassed(id);
-		TestRun testRun = testRunService.recalculateTestRunResult(test.getTestRunId());
-		if(testRun != null) 
-		{
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
-		}
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		
 		return mapper.map(test, TestType.class);
 	}
 
@@ -155,5 +161,55 @@ public class TestsController extends AbstractController
 	public @ResponseBody SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) throws ServiceException
 	{
 		return testService.searchTests(sc);
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/issues", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<WorkItem> getTestKnownIssues(@PathVariable(value="id") long id) throws ServiceException
+	{
+		List<WorkItem> issues = new ArrayList<>();
+		Test test = testService.getTestById(id);
+		if(test != null)
+		{
+			issues = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), Type.BUG);
+		}
+		return issues;
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/issues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem createTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
+	{
+		if(getPrincipalId() > 0)
+		{
+			workItem.setUser(new User(getPrincipalId()));
+		}
+		workItem = testService.createTestKnownIssue(id, workItem);
+		
+		Test test = testService.getTestById(id);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		
+		return workItem;
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem updateTestKnownIssue(@RequestBody WorkItem workItem) throws ServiceException
+	{
+		return workItemService.updateWorkItem(workItem);
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="issues/{id}", method = RequestMethod.DELETE)
+	public void deleteTestKnownIssue(@PathVariable(value="id") long id) throws ServiceException
+	{
+		workItemService.deleteWorkItemById(id);
 	}
 }

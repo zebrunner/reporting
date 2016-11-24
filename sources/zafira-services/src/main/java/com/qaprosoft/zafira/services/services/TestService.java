@@ -1,7 +1,9 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,9 @@ public class TestService
 	@Autowired
 	private TestCaseService testCaseService;
 	
+	@Autowired
+	private TestRunService testRunService;
+	
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
@@ -46,8 +51,11 @@ public class TestService
 			{
 				for(String jiraId : jiraIds)
 				{
-					WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-					testMapper.createTestWorkItem(test, workItem);
+					if(!StringUtils.isEmpty(jiraId))
+					{
+						WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+						testMapper.createTestWorkItem(test, workItem);
+					}
 				}
 			}
 		}
@@ -57,7 +65,9 @@ public class TestService
 			test.setMessage(null);
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
+			test.setKnownIssue(false);
 			updateTest(test);
+			workItemService.deleteKnownIssuesByTestId(test.getId());
 		}
 		return test;
 	}
@@ -74,9 +84,27 @@ public class TestService
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
+		existingTest.setDemoURL(test.getDemoURL());
+		existingTest.setLogURL(test.getLogURL());
+		
 		if(test.getMessage() != null)
 		{
 			existingTest.setMessage(test.getMessage());
+		}
+		
+		if(Status.FAILED.equals(test.getStatus()))
+		{
+			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
+			if(knownIssue != null)
+			{
+				existingTest.setKnownIssue(true);
+				testMapper.createTestWorkItem(existingTest, knownIssue);
+				if(existingTest.getWorkItems() == null)
+				{
+					existingTest.setWorkItems(new ArrayList<WorkItem>());
+				}
+				existingTest.getWorkItems().add(knownIssue);
+			}
 		}
 		testMapper.updateTest(existingTest);
 		
@@ -107,6 +135,8 @@ public class TestService
 			testCase.setStatus(test.getStatus());
 			testCaseService.updateTestCase(testCase);
 		}
+		
+		testRunService.calculateTestRunResult(test.getTestRunId());
 		
 		return test;
 	}
@@ -180,5 +210,25 @@ public class TestService
 		results.setResults(testMapper.searchTests(sc));
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
+	{
+		Test test = getTestById(testId);
+		if(test != null)
+		{
+			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+			test.setKnownIssue(true);
+			updateTest(test);
+		}
+		workItemService.createWorkItem(workItem);
+		testMapper.createTestWorkItem(test, workItem);
+		testRunService.calculateTestRunResult(test.getTestRunId());
+		return workItem;
+	}
+	
+	private int getTestMessageHashCode(String message){
+		return message != null ? message.replaceAll("\\d+", "*").hashCode() : 0;
 	}
 }

@@ -7,12 +7,18 @@
         <table style="width: 1000px;">
             <tr>
                 <td style="width: 100px;">Environment:</td>
-                <td>${configuration['env']}</td>
+                <td>${testRun.env}</td>
             </tr>
-            <#if configuration['browser']??>
+            <#if configuration['app_version'] ??>
             <tr>
-                <td>Browser:</td>
-                <td>${configuration['browser']}</td>
+                <td>Version:</td>
+                <td>${configuration['app_version']} </td>
+            </tr>
+            </#if>
+            <#if testRun.platform??>
+            <tr>
+                <td>Platform:</td>
+                <td>${testRun.platform}</td>
             </tr>
             </#if>
             <#if configuration['device']??>
@@ -28,7 +34,7 @@
             <tr>
                 <td>Test job URL:</td>
                 <td>
-                    <a href="${testRun.job.jobURL}/${testRun.buildNumber}">${testRun.job.jobURL}/${testRun.buildNumber}</a>
+                    <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}">${testRun.job.jobURL}/${testRun.buildNumber?c}</a>
                 </td>
             </tr>
             <tr class="pass" style="color: #66C266;">
@@ -43,51 +49,65 @@
                 <td>Skipped:</td>
                 <td>${testRun.skipped}</td>
             </tr>
+            <tr>
+                <td>Success rate:</td>
+                <td>${successRate}%</td>
+            </tr>
         </table>
     </div>
+    <br/>
 	<div id="results">
         <h2 style="margin: 0;">Test results:</h2>
         <hr/>
         <table cellspacing="0" cellpadding="0" style="width: 100%;">
             <tr>
                 <th width="10%" align="center">Result</th>
-                <th width="75%">Test name</th>
-                <th width="5%">Jira</th>
-                <th width="10%">Test files</th>
+                <th width="60%" align="center">Test name</th>
+                <th width="10%" align="center">Owner</th>
+                <th width="10%" align="center">Jira</th>
+                <th width="10%" align="center">Test files</th>
             </tr>
-            <#list tests as test>
-            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			${test.status}
-            		</td>
-            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			<span>${test.name}</span>
-            			<#if test.status == 'FAILED'>
-            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
-            			</#if>
-            			<#if test.status == 'SKIPPED'>
-            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
-            			</#if>
-            		</td>
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                        <#list test.workItems as workItem>
-                            <#if workItem.jiraId??>
-                                <span>${workItem.jiraId}</span>
-                            </#if>
-                        </#list>
-                    </td>
-            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-            			<#if test.demoURL??>
-            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
-            			</#if>
-            			<#if test.demoURL?? && test.logURL??>
-            				<span> or </span>
-            			</#if>
-            			<#if test.logURL??>
-            				<a href='${test.logURL}' style='color: white;'>Log</a>
-            			</#if>
-            		</td>
-            	</tr>
+            <#list tests?sort_by("name") as test>
+            	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
+	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			${test.status}
+	            		</td>
+	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<span>${test.name}</span>
+	            			<#if test.status == 'FAILED' && test.message?? && test.message != ''>
+	            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            			</#if>
+	            			<#if test.status == 'SKIPPED' && test.message?? && test.message != ''>
+	            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            			</#if>
+	            		</td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<span>${test.owner}</span>
+	            		</td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	                        <#list test.workItems as workItem>
+	                            <#if workItem.type == 'BUG'>
+	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+	                            </#if>
+	                            <#if workItem.type == 'TASK'>
+	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+	                            </#if>
+	                        </#list>
+	                    </td>
+	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+	            			<#if test.demoURL??>
+	            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
+	            			</#if>
+	            			<#if test.demoURL?? && test.logURL??>
+	            				<span> or </span>
+	            			</#if>
+	            			<#if test.logURL??>
+	            				<a href='${test.logURL}' style='color: white;'>Log</a>
+	            			</#if>
+	            		</td>
+	            	</tr>
+            	</#if>
             </#list>
 		</table>
 	</div>

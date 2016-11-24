@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE)
 			VALUES (
 				#{name},
 			    #{status},
@@ -18,7 +18,8 @@
 			    #{demoURL},
 			    #{logURL},
 			    #{retry},
-			    #{testConfig.id}
+			    #{testConfig.id},
+			    #{knownIssue}
 			)
 		]]>
 	</insert>
@@ -55,13 +56,28 @@
 				T.DEMO_URL AS TEST_DEMO_URL,
 				T.LOG_URL AS TEST_LOG_URL,
 				T.RETRY AS TEST_RETRY,
+				T.KNOWN_ISSUE AS TEST_KNOWN_ISSUE,
+				TCU.USERNAME AS TEST_OWNER,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 
 				WI.ID AS WORK_ITEM_ID,
 				WI.JIRA_ID AS WORK_ITEM_JIRA_ID,
-				WI.CREATED_AT AS WORK_ITEM_MODIFIED_AT,
-				WI.MODIFIED_AT AS WORK_ITEM_CREATED_AT,
+				WI.TYPE AS WORK_ITEM_TYPE,
+				WI.HASH_CODE AS WORK_ITEM_HASH_CODE,
+				WI.DESCRIPTION AS WORK_ITEM_DESCRIPTION,
+				WI.TEST_CASE_ID AS WORK_ITEM_TEST_CASE_ID,
+				WI.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
+				WI.CREATED_AT AS WORK_ITEM_CREATED_AT,
+				
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.PASSWORD AS USER_PASSWORD,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT,
 				
 				TC.ID AS TEST_TEST_CONFIG_ID,
 				TC.URL AS TEST_TEST_CONFIG_URL,
@@ -80,12 +96,29 @@
 				zafira.TESTS T
 			LEFT JOIN
 				zafira.TEST_WORK_ITEMS TWI
-            ON TWI.TEST_ID = T.ID
+            ON 
+            	TWI.TEST_ID = T.ID
 			LEFT JOIN
 				zafira.WORK_ITEMS WI
-            ON WI.ID = TWI.WORK_ITEM_ID
-			INNER JOIN zafira.TEST_CONFIGS TC
-				ON T.TEST_CONFIG_ID = TC.ID
+            ON 
+            	WI.ID = TWI.WORK_ITEM_ID
+            LEFT JOIN
+				zafira.USERS U
+            ON 
+            	WI.USER_ID = U.ID
+			INNER JOIN 
+				zafira.TEST_CONFIGS TC
+			ON 
+				T.TEST_CONFIG_ID = TC.ID
+			LEFT JOIN
+				zafira.TEST_CASES TCS
+			ON
+				T.TEST_CASE_ID = TCS.ID
+			LEFT JOIN
+				zafira.USERS TCU
+			ON
+				TCS.USER_ID = TCU.ID
+			
 		]]>
 	</sql>
 
@@ -198,7 +231,8 @@
             ]]>
 		</if>
 		<![CDATA[
-				RETRY = #{retry}
+				RETRY = #{retry},
+				KNOWN_ISSUE = #{knownIssue} 
 			WHERE
 			    ID = #{id}
 		]]>
@@ -239,6 +273,8 @@
 		<result column="TEST_DEMO_URL" property="demoURL" />
 		<result column="TEST_LOG_URL" property="logURL" />
 		<result column="TEST_RETRY" property="retry" />
+		<result column="TEST_KNOWN_ISSUE" property="knownIssue" />
+		<result column="TEST_OWNER" property="owner" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 		

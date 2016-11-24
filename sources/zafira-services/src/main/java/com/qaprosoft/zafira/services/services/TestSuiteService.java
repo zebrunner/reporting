@@ -14,9 +14,6 @@ public class TestSuiteService
 	@Autowired
 	private TestSuiteMapper testSuiteMapper;
 	
-	@Autowired
-	private UserService userService;
-	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestSuite(TestSuite testSuite) throws ServiceException
 	{
