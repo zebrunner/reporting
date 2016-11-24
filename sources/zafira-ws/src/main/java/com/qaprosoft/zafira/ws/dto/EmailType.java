@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.ws.dto;
 
-import java.util.Map;
-
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +12,6 @@ public class EmailType extends AbstractType
 	private String recipients;
 	private String subject;
 	private String text;
-	private Map<String, String> data;
 	
 	public String getSubject() {
 		return subject;
@@ -40,13 +37,5 @@ public class EmailType extends AbstractType
 	public void setRecipients(String recipients)
 	{
 		this.recipients = recipients;
-	}
-
-	public Map<String, String> getData() {
-		return data;
-	}
-
-	public void setData(Map<String, String> data) {
-		this.data = data;
 	}
 }

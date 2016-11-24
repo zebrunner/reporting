@@ -1,31 +1,41 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.WebDriverUtil;
 
@@ -34,7 +44,7 @@ public class SeleniumService
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
 	
-	private static final Dimension SCREEN_DIMENSION = new Dimension(1200, 800);
+	private static final Dimension SCREEN_DIMENSION = new Dimension(1366, 768);
 	
 	private static final String MAC_PHANTOMJS = "classpath:phantomjs/phantomjs-macos";
 	
@@ -45,6 +55,9 @@ public class SeleniumService
 	@Autowired
 	private ResourceLoader resourceLoader;
 
+	/**
+	 * Initializes PhantomJS binary according to OS.
+	 */
 	@PostConstruct
 	public void init() 
 	{
@@ -81,24 +94,43 @@ public class SeleniumService
 		}
 	}
 
-	public File captureScreenshoot(String url, String domain, String sessionId) throws ServiceException 
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator) throws ServiceException 
 	{
-		if(StringUtils.isEmpty(url) || StringUtils.isEmpty(domain) || StringUtils.isEmpty(sessionId))
+		List<Attachment> attachments = new ArrayList<>();
+		
+		if(urls == null || StringUtils.isEmpty(auth))
 		{
-			throw new ServiceException("To capture screenshot specify: url, domain, sessionId");
+			throw new ServiceException("To capture screenshot specify: urls, auth");
 		}
 		
 		WebDriver wd = null;
-		File screenshot = null;
 		try
 		{
 			wd = new PhantomJSDriver();
 			wd.manage().window().setSize(SCREEN_DIMENSION);
-			wd.manage().addCookie(new Cookie.Builder("JSESSIONID", sessionId).domain(normalizeDomain(domain)).build());
-			wd.get(url);
-			WebDriverUtil.pause(10, TimeUnit.SECONDS);
-			WebDriverUtil.waitForJSandJQueryToLoad(wd);
-			screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
+			
+			authorize(wd, auth, domain, urls.get(0));
+			
+			for(String url : urls)
+			{
+				wd.get(url);
+				WebDriverUtil.pause(10, TimeUnit.SECONDS);
+				WebDriverUtil.waitForJSandJQueryToLoad(wd);
+				
+				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
+				String name = screenshot.getName();
+				
+				if(titleLocator != null)
+				{
+					name = wd.findElement(titleLocator).getAttribute("value");
+				}
+				
+				if(areaLocator != null)
+				{
+					cropRegion(wd, screenshot, areaLocator);
+				}
+				attachments.add(new Attachment(name, screenshot));
+			}
 		}
 		catch(Exception e)
 		{
@@ -108,7 +140,16 @@ public class SeleniumService
 		{
 			if(wd != null) wd.quit();
 		}
-		return screenshot;
+		return attachments;
+	}
+	
+	private void cropRegion(WebDriver wd, File screenshot, By regionLocator) throws IOException
+	{
+		BufferedImage  imagr = ImageIO.read(screenshot);
+		WebElement area = wd.findElement(regionLocator);
+		Point point = area.getLocation();
+		BufferedImage eleScreenshot= imagr.getSubimage(point.getX(), point.getY(), area.getSize().getWidth(), area.getSize().getHeight());
+		ImageIO.write(eleScreenshot, "png", screenshot);
 	}
 	
 	private String normalizeDomain(String domain)
@@ -119,5 +160,23 @@ public class SeleniumService
 			domain = "." + sd[sd.length - 2] + "." + sd[sd.length - 1];
 		}
 		return domain;
+	}
+	
+	private void authorize(WebDriver wd, String auth, String domain, String url) throws InterruptedException
+	{
+		if(auth.startsWith("Basic"))
+		{
+			auth = new String(Base64.decodeBase64(auth.replace("Basic ", "").getBytes()));
+			wd.get(url);
+			wd.findElement(By.id("username")).sendKeys(auth.split(":")[0]);
+			wd.findElement(By.id("password")).sendKeys(auth.split(":")[1]);
+			wd.findElement(By.tagName("button")).click();
+			WebDriverUtil.pause(3, TimeUnit.SECONDS);
+		}
+		else
+		{
+			wd.manage().addCookie(new Cookie.Builder("JSESSIONID", auth).domain(normalizeDomain(domain)).build());
+		}
+		
 	}
 }

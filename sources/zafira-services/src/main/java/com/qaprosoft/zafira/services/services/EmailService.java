@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
@@ -40,16 +41,19 @@ public class EmailService
 		{
 			public void prepare(MimeMessage mimeMessage) throws Exception
 			{
-				boolean hasAttachment = message.getAttachment() != null;
+				boolean hasAttachments = message.getAttachments() != null;
 				
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachment);
+				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
 				msg.setSubject(message.getSubject());
 				msg.setTo(recipients);
 				msg.setFrom(mailUser);
 				msg.setText(text, true);
-				if(hasAttachment)
+				if(hasAttachments)
 				{
-					msg.addAttachment("attachment", message.getAttachment());
+					for(Attachment attachment : message.getAttachments())
+					{
+						msg.addAttachment(attachment.getName(), attachment.getFile());
+					}
 				}
 			}
 		};

@@ -1,10 +1,10 @@
 package com.qaprosoft.zafira.services.services.emails;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.dbaccess.model.Setting;
 import com.qaprosoft.zafira.dbaccess.model.Status;
 import com.qaprosoft.zafira.dbaccess.model.Test;
@@ -107,7 +107,7 @@ public class TestRunResultsEmail implements IEmailMessage
 	}
 	
 	@Override
-	public File getAttachment() 
+	public List<Attachment> getAttachments() 
 	{
 		return null;
 	}

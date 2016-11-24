@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +8,7 @@ import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
 import com.qaprosoft.zafira.dbaccess.model.Widget;
@@ -32,7 +33,7 @@ import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SeleniumService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
-import com.qaprosoft.zafira.ws.dto.EmailType;
+import com.qaprosoft.zafira.ws.dto.DashboardEmailType;
 
 import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
@@ -130,13 +131,18 @@ public class DashboardsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendDashboardByEmail(@RequestBody @Valid EmailType email) throws ServiceException, JAXBException
+	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Authorization", required=false) String auth, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
 	{
-		File attachment = seleniumService.captureScreenshoot(email.getData().get("href"), email.getData().get("hostname"), RequestContextHolder.currentRequestAttributes().getSessionId());
-		if(attachment == null)
+		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
+															 email.getHostname(), 
+															 auth != null ? auth : RequestContextHolder.currentRequestAttributes().getSessionId(),
+															 By.id("dashboard_content"),
+															 By.id("dashboard_title"));
+		if(attachments.size() == 0)
 		{
-			throw new ServiceException("Unable to create dashboard screenshot");
+			throw new ServiceException("Unable to create dashboard screenshots");
 		}
-		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachment), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		
+		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 }

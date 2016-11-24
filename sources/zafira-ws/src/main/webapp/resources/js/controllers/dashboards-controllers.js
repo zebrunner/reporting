@@ -277,11 +277,10 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.textRequired = true;
 				
 				$scope.email = {};
-				$scope.email.subject = "Zafira Dashboard";
-				$scope.email.text = "See dashboad in atttachment!";
-				$scope.email.data = {};
-				$scope.email.data["hostname"] = document.location.hostname;
-				$scope.email.data["href"] = document.location.href;
+				$scope.email.subject = "Zafira Dashboards";
+				$scope.email.text = "This is auto-generated email, please do not reply!";
+				$scope.email.hostname = document.location.hostname;
+				$scope.email.urls = [document.location.href];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);

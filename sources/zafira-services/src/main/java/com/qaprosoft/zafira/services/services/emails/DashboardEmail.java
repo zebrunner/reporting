@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.services.services.emails;
 
-import java.io.File;
+import java.util.List;
+
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 
 public class DashboardEmail implements IEmailMessage
 {
@@ -8,13 +10,13 @@ public class DashboardEmail implements IEmailMessage
 	
 	private String subject;
 	private String text;
-	private File attachment;
+	private List<Attachment> attachments;
 	
-	public DashboardEmail(String subject, String text, File attachment)
+	public DashboardEmail(String subject, String text, List<Attachment> attachments)
 	{
 		this.subject = subject;
 		this.text = text;
-		this.attachment = attachment;
+		this.attachments = attachments;
 	}
 
 	@Override
@@ -30,9 +32,9 @@ public class DashboardEmail implements IEmailMessage
 	}
 
 	@Override
-	public File getAttachment() 
+	public List<Attachment> getAttachments() 
 	{
-		return attachment;
+		return attachments;
 	}
 
 	@Override
