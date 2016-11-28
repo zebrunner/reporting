@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', function($scope, $rootScope, $http, $location, $modal, $route) {
+ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', 'DashboardService', function($scope, $rootScope, $http, $location, $modal, $route, DashboardService) {
 
 	const DEFAULT_SC = {
 			'page' : 1,
@@ -109,11 +109,8 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	
 	(function init(){
 		$scope.loadUsers(1);
-		$http.get('dashboards/all?type=USER_PERFORMANCE').success(function(dashboards) {
-			if(dashboards.length > 0)
-			{
-				$scope.pefrDashboardId = dashboards[0].id;
-			}
+		DashboardService.getUserPerformanceDashboardId().then(function(dashboardId) {
+			$scope.pefrDashboardId = dashboardId;
 		});
 	})();
 	

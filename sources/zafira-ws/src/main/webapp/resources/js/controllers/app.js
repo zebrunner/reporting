@@ -40,6 +40,25 @@ ZafiraApp.factory('UserService', function($http) {
 	return userService;
 });
 
+ZafiraApp.factory('DashboardService', function($http) {
+	var dashboardService = {
+			getUserPerformanceDashboardId : function() {
+			var promise = $http.get('dashboards/all?type=USER_PERFORMANCE').then(function(rs) {
+				if(rs.data.length > 0)
+				{
+					return rs.data[0].id;
+				}
+				else
+				{
+					return null;
+				}
+			});
+			return promise;
+		}
+	};
+	return dashboardService;
+});
+
 ZafiraApp.factory('SettingsService', function($http) {
 	var settingsService = {
 			getSetting : function(name) {

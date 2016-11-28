@@ -67,6 +67,9 @@
 	                        <li>
 	                        	<a href="#/users/profile"><i class="fa fa-user fa-fw"></i> Profile</a>
 	                        </li>
+	                        <li data-ng-if="pefrDashboardId">
+	                        	<a href="#/dashboards?id={{pefrDashboardId}}&userId={{currentUser.id}}"><i class="fa fa-sm fa-area-chart fa-fw"></i> Performance</a>
+	                        </li>
 	                        </sec:authorize>
 	                        <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	                        <li>

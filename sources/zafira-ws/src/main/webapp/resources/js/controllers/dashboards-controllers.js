@@ -6,7 +6,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.currentUserId = $location.search().userId;
 	
 	$scope.loadAllDashboards = function() {
-		$http.get('dashboards/all').success(function(dashboards) {
+		$http.get('dashboards/all' + ($scope.currentUserId != null ? '?userId=' + $scope.currentUserId : '')).success(function(dashboards) {
 			$scope.dashboards = dashboards;
 			if($scope.dashboardId == null && $scope.dashboards.length > 0)
 			{

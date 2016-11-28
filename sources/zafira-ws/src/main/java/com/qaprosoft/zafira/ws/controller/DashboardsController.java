@@ -68,21 +68,23 @@ public class DashboardsController extends AbstractController
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = true) @RequestParam(value="type", required=false) String type) throws ServiceException
+	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = false) @RequestParam(value="type", required=false) String type, @ApiParam(value = "User id", required = false) @RequestParam(value="userId", required=false) Long userId) throws ServiceException
 	{
 		List<Dashboard> dashboards = new ArrayList<>();
 		if(StringUtils.isEmpty(type))
 		{
 			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.GENERAL));
-			if(isAdmin())
-			{
-				dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
-			}
 		}
 		else
 		{
 			dashboards = dashboardService.getAllDashboardsByType(Type.valueOf(type));
 		}
+		
+		if(isAdmin() || userId == getPrincipalId())
+		{
+			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
+		}
+		
 		return dashboards;
 	}
 

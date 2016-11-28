@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', '$modal', 'ProjectProvider', '$window', 'UtilService', 'UserService', function($scope, $rootScope, $http, $location, $cookieStore, $route, $modal, ProjectProvider, $window, UtilService, UserService) {
+ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$cookieStore', '$route', '$modal', 'ProjectProvider', '$window', 'UtilService', 'UserService', 'DashboardService', function($scope, $rootScope, $http, $location, $cookieStore, $route, $modal, ProjectProvider, $window, UtilService, UserService, DashboardService) {
 
 	$scope.UtilService = UtilService;
 	
@@ -8,6 +8,8 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 	$scope.projects = [];
 	
 	$scope.currentUser = null;
+	
+	$scope.pefrDashboardId = null;
 	
 	$scope.loadProjects = function(){
 		$http.get('config/projects').success(function(projects) {
@@ -55,6 +57,8 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 		UserService.getCurrentUser().then(function(user) {
 			$scope.currentUser = user;
 		});
+		DashboardService.getUserPerformanceDashboardId().then(function(dashboardId) {
+			$scope.pefrDashboardId = dashboardId;
+		});
 	})();
-	
 }]);
