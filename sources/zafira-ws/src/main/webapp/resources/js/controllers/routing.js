@@ -6,6 +6,12 @@ ZafiraApp.constant('ROUTES', [
 	}
 },
 {
+	url : '/certification',
+	config : {
+		templateUrl : 'certification'
+	}
+},
+{
 	url : '/users',
 	config : {
 		templateUrl : 'users/index'

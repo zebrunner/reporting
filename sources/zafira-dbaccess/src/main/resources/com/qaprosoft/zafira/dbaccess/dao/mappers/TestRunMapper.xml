@@ -149,6 +149,13 @@
 		]]>
 	</select>
 	
+	<select id="getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.UPSTREAM_JOB_ID = #{jobId} AND TR.UPSTREAM_JOB_BUILD_NUMBER = #{buildNumber};
+		]]>
+	</select>
+	
 	<select id="searchTestRuns" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">

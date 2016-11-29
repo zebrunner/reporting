@@ -230,3 +230,10 @@ td.no-results {
 .settings-line {
 	line-height: 25px;
 }
+
+
+.zoom_img img:hover{
+	-moz-transform:scale(2); 
+	-webkit-transform:scale(2);
+	-o-transform:scale(2);
+}

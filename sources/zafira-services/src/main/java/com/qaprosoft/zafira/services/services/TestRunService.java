@@ -102,6 +102,12 @@ public class TestRunService
 		return testRunMapper.getTestRunsByStatusAndStartedBefore(status, startedBefore);
 	}
 	
+	@Transactional(readOnly = true)
+	public List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(Long jobId, Integer buildNumber) throws ServiceException
+	{
+		return testRunMapper.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(jobId, buildNumber);
+	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun updateTestRun(TestRun testRun) throws ServiceException
 	{

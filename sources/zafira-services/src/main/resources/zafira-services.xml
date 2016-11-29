@@ -77,4 +77,19 @@
             </set>
         </property>
     </bean>
+    
+    <bean id="amazonCredentials" class="com.amazonaws.auth.BasicAWSCredentials">
+		<constructor-arg index="0" value="${zafira.amazon.accessKey}" />
+		<constructor-arg index="1" value="${zafira.amazon.secretKey}" />
+	</bean>
+
+	<bean id="amazonConfig" class="com.amazonaws.ClientConfiguration">
+		<property name="maxConnections" value="100" />
+		<property name="protocol" value="HTTP" />
+	</bean>
+
+	<bean class="com.amazonaws.services.s3.AmazonS3Client">
+		<constructor-arg index="0" ref="amazonCredentials" />
+		<constructor-arg index="1" ref="amazonConfig" />
+	</bean>
 </beans>
