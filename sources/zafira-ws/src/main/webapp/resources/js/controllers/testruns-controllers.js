@@ -181,8 +181,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		{
 			$scope.testRunSearchCriteria.id = $scope.testRunId;
 		}
+		else
+		{
+			$scope.testRunSearchCriteria = ProjectProvider.initProject($scope.testRunSearchCriteria);
+		}
 		
-		$http.post('tests/runs/search', ProjectProvider.initProject($scope.testRunSearchCriteria)).success(function(data) {
+		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
 			
 			$scope.testRuns = {};
 			
