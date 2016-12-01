@@ -58,7 +58,7 @@
 				  	<b>{{testRun.testSuite.name}}</b>
 				</div>
 				<div class="col-lg-4">
-					<a href="{{testRun.jenkinsURL}}">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>
+					<a href="{{testRun.jenkinsURL}}" target="_blank">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>
 				</div>
 				<div class="col-lg-1">
 					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
