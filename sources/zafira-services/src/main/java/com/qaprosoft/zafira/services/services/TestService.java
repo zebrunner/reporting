@@ -136,7 +136,7 @@ public class TestService
 			testCaseService.updateTestCase(testCase);
 		}
 		
-		testRunService.calculateTestRunResult(test.getTestRunId());
+		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		
 		return test;
 	}
@@ -224,7 +224,7 @@ public class TestService
 		}
 		workItemService.createWorkItem(workItem);
 		testMapper.createTestWorkItem(test, workItem);
-		testRunService.calculateTestRunResult(test.getTestRunId());
+		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		return workItem;
 	}
 	

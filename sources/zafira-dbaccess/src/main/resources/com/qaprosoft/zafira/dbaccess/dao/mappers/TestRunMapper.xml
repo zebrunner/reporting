@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV)
+			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV, STARTED_AT, ELAPSED, ETA)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -36,7 +36,10 @@
 				#{startedBy},
 				#{knownIssue},
 				#{platform},
-				#{env}
+				#{env},
+				#{startedAt},
+				#{elapsed},
+				#{eta}
 			)
 		]]>
 	</insert>
@@ -62,6 +65,9 @@
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
 				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
+				TR.ELAPSED AS TEST_RUN_ELAPSED, 
+				TR.ETA AS TEST_RUN_ETA, 
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
 				
@@ -95,6 +101,9 @@
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
 				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
+				TR.ELAPSED AS TEST_RUN_ELAPSED, 
+				TR.ETA AS TEST_RUN_ETA, 
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
@@ -167,6 +176,11 @@
 			<if test="null != testSuite">
 	            <![CDATA[
 	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteId">
+	            <![CDATA[
+	               AND TS.ID = #{testSuiteId}
 	            ]]>
 			</if>
 			<if test="null != executionURL">
@@ -242,6 +256,11 @@
 			<if test="null != testSuite">
 	            <![CDATA[
 	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteId">
+	            <![CDATA[
+	               AND TS.ID = #{testSuiteId}
 	            ]]>
 			</if>
 			<if test="null != executionURL">
@@ -340,7 +359,10 @@
 			    STARTED_BY = #{startedBy},
 			    KNOWN_ISSUE = #{knownIssue},
 			    PLATFORM = #{platform},
-			    ENV = #{env}
+			    ENV = #{env},
+			    STARTED_AT = #{startedAt},
+				ELAPSED = #{elapsed},
+				ETA = #{eta}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -389,6 +411,9 @@
 		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_RUN_PLATFORM" property="platform" />
 		<result column="TEST_RUN_ENV" property="env" />
+		<result column="TEST_RUN_STARTED_AT" property="startedAt" />
+		<result column="TEST_RUN_ELAPSED" property="elapsed" />
+		<result column="TEST_RUN_ETA" property="eta" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />

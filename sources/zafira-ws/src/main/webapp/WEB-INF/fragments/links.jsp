@@ -16,6 +16,8 @@
 <script src="<spring:url value='/resources/js/angular/angular-cookies.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-timer-all.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-timer.min.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
 <script src="<spring:url value='/resources/js/3rd_party/sockjs-1.1.1.min.js'/>" type="text/javascript"></script>

@@ -3,6 +3,9 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +19,8 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +174,11 @@ public class TestRunService
 			}
 		}
 		
+		// Initialize starting time
+		testRun.setStartedAt(Calendar.getInstance().getTime());
+		testRun.setElapsed(null);
+		testRun.setEta(calculateETA(testRun));
+		
 		// New test run
 		if(testRun.getId() == null || testRun.getId() == 0)
 		{
@@ -211,7 +221,7 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun calculateTestRunResult(long id) throws ServiceException
+	public TestRun calculateTestRunResult(long id, boolean updateElapsedTime) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)
@@ -233,6 +243,14 @@ public class TestRunService
 				break;
 			}
 		}
+		
+		if(updateElapsedTime && testRun.getStartedAt() != null)
+		{
+			LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
+			LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
+			testRun.setElapsed(Seconds.secondsBetween(startedAt, finishedAt).getSeconds());
+		}
+		
 		updateTestRun(testRun);
 		return testRun;
 	}
@@ -314,4 +332,38 @@ public class TestRunService
 		double rate = (double) testRun.getPassed() / (double) total;
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
 	}
+	
+	private Integer calculateETA(TestRun testRun) throws ServiceException
+	{
+		Integer eta = null;
+		
+		try
+		{
+			TestRunSearchCriteria sc = new TestRunSearchCriteria();
+			sc.setTestSuiteId(testRun.getTestSuite().getId());
+			sc.setPageSize(25);
+			
+			List<Integer> elapsed = new ArrayList<>();
+			for(TestRun tr : searchTestRuns(sc).getResults())
+			{
+				if(tr.getElapsed() != null)
+				{
+					elapsed.add(tr.getElapsed());
+				}
+			}
+			Collections.sort(elapsed);
+			
+			if(elapsed.size() > 0)
+			{
+				eta = elapsed.size() > 2 ? elapsed.get(elapsed.size() / 2) : (elapsed.get(elapsed.size() - 1));
+			}
+		}
+		catch(Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		
+		return eta;
+	}
+	
 }
