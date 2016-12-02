@@ -1,11 +1,14 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,13 +21,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard;
 import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
 import com.qaprosoft.zafira.dbaccess.model.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
+import com.qaprosoft.zafira.services.services.EmailService;
+import com.qaprosoft.zafira.services.services.SeleniumService;
+import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
+import com.qaprosoft.zafira.ws.dto.DashboardEmailType;
 
 import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
@@ -37,37 +46,45 @@ public class DashboardsController extends AbstractController
 	@Autowired
 	private DashboardService dashboardService;
 	
+	@Autowired
+	private SeleniumService seleniumService;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView index()
+	public ModelAndView index() throws IOException, InterruptedException, ServiceException
 	{
 		return new ModelAndView("dashboards/index");
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard, @RequestHeader(value="Project", required=false) String project) throws ServiceException, IOException, InterruptedException
 	{
 		return dashboardService.createDashboard(dashboard);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = true) @RequestParam(value="type", required=false) String type) throws ServiceException
+	public @ResponseBody List<Dashboard> getAllDashboards(@ApiParam(value = "Type of the dashboard", required = false) @RequestParam(value="type", required=false) String type, @ApiParam(value = "User id", required = false) @RequestParam(value="userId", required=false) Long userId) throws ServiceException
 	{
 		List<Dashboard> dashboards = new ArrayList<>();
 		if(StringUtils.isEmpty(type))
 		{
 			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.GENERAL));
-			if(isAdmin())
-			{
-				dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
-			}
 		}
 		else
 		{
 			dashboards = dashboardService.getAllDashboardsByType(Type.valueOf(type));
 		}
+		
+		if(isAdmin() || userId == getPrincipalId())
+		{
+			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
+		}
+		
 		return dashboards;
 	}
 
@@ -111,5 +128,23 @@ public class DashboardsController extends AbstractController
 	public @ResponseBody Widget updateDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
 	{
 		return dashboardService.updateDashboardWidget(dashboardId, widget);
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Authorization", required=false) String auth, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
+	{
+		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
+															 email.getHostname(), 
+															 auth != null ? auth : RequestContextHolder.currentRequestAttributes().getSessionId(),
+															 By.id("dashboard_content"),
+															 By.id("dashboard_title"));
+		if(attachments.size() == 0)
+		{
+			throw new ServiceException("Unable to create dashboard screenshots");
+		}
+		
+		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 }

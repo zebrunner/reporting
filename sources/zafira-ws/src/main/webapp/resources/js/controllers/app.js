@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer' ]);
 
 ZafiraApp.directive('ngReallyClick', [ function() {
 	return {
@@ -38,6 +38,25 @@ ZafiraApp.factory('UserService', function($http) {
 		}
 	};
 	return userService;
+});
+
+ZafiraApp.factory('DashboardService', function($http) {
+	var dashboardService = {
+			getUserPerformanceDashboardId : function() {
+			var promise = $http.get('dashboards/all?type=USER_PERFORMANCE').then(function(rs) {
+				if(rs.data.length > 0)
+				{
+					return rs.data[0].id;
+				}
+				else
+				{
+					return null;
+				}
+			});
+			return promise;
+		}
+	};
+	return dashboardService;
 });
 
 ZafiraApp.factory('SettingsService', function($http) {

@@ -7,63 +7,69 @@
 
 <div data-ng-controller="DashboardsCtrl">
 	<div class="row">
-         <div class="col-lg-12">
+         <div class="col-lg-10">
          	<h2>
          		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
          		<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
          			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal({}, true)"> <i class="fa fa-plus-circle"></i> new</button>
-         		</sec:authorize></h2><br/>
+         		</sec:authorize>
+         		<button class="btn btn-xs btn-primary" data-ng-click="openEmailModal()"> <i class="fa fa-envelope-o"></i> send as email</button>
+         		</h2><br/>
+         		
          </div>
     </div>
-    <div class="row">
-         <div class="col-lg-12">
-         	<ul class="nav nav-pills">
-         		<li data-ng-class="{'active': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
-         			<a href="" data-ng-click="switchDashboard(dashboard.id)">
-         				<span>{{dashboard.title}}</span>
-	         			<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-	         				&nbsp;
-	                    	<span><i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardDetailsModal(dashboard, false)"></i></span>
-	                    </sec:authorize>
-         			</a>
-         		</li>
-         	</ul>
-         </div>
-    </div>
-    <br/>
-	<div class="row">
-        <div class="col-lg-{{widget.size}}" data-ng-repeat="widget in dashboard.widgets | orderBy:'position'">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    {{widget.title}}
-                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-                    <i class="float_right fa fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
-                	</sec:authorize>
-                </div>
-                <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
-                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
-                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
-                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
-                     </div>
-                     <div class="table-responsive" data-ng-if="widget.type == 'table'">
-                     	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
-                     		<thead>
-	                     		<tr>
-	                     			<th class="pointer" data-ng-repeat="column in widget.model.columns" data-ng-click="changeSorting(column)">
-	                     				{{column}}&nbsp;<i class="fa fa-sort"></i>
-	                     			</th>
-	                     		</tr>
-                     		</thead>
-                     		<tbody>
-	                     		<tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
-	                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
-	                     		</tr>
-	                     	</tbody>
-                     	</table>
-                     </div>
-                </div>
-            </div>
-        </div>
+    <div id="dashboard_content">
+	    <div class="row">
+	         <div class="col-lg-12">
+	         	<ul class="nav nav-pills">
+	         		<li data-ng-class="{'active': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
+	         			<a href="" data-ng-click="switchDashboard(dashboard.id)">
+	         				<span>{{dashboard.title}}</span>
+		         			<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+		         				&nbsp;
+		                    	<span><i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardDetailsModal(dashboard, false)"></i></span>
+		                    </sec:authorize>
+	         			</a>
+	         		</li>
+	         	</ul>
+	         </div>
+	    </div>
+	    <br/>
+		<div class="row">
+			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
+	        <div class="col-lg-{{widget.size}}" data-ng-repeat="widget in dashboard.widgets | orderBy:'position'">
+	            <div class="panel panel-default">
+	                <div class="panel-heading">
+	                    {{widget.title}}
+	                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	                    <i class="float_right fa fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
+	                	</sec:authorize>
+	                </div>
+	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
+	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
+	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
+	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
+	                     </div>
+	                     <div class="table-responsive" data-ng-if="widget.type == 'table'">
+	                     	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
+	                     		<thead>
+		                     		<tr>
+		                     			<th class="pointer" data-ng-repeat="column in widget.model.columns" data-ng-click="changeSorting(column)">
+		                     				{{column}}&nbsp;<i class="fa fa-sort"></i>
+		                     			</th>
+		                     		</tr>
+	                     		</thead>
+	                     		<tbody>
+		                     		<tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
+		                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
+		                     		</tr>
+		                     	</tbody>
+	                     	</table>
+	                     </div>
+	                </div>
+	            </div>
+	        </div>
+		</div>
 	</div>
 	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	<div class="row">

@@ -31,6 +31,12 @@
                 <td>Finished:</td>
                 <td>${testRun.modifiedAt?string["HH:mm yyyy.MM.dd"]}</td>
             </tr>
+            <#if elapsed??>
+            <tr>
+                <td>Elapsed:</td>
+                <td>${elapsed}</td>
+            </tr>
+            </#if>
             <tr>
                 <td>Test job URL:</td>
                 <td>

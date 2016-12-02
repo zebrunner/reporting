@@ -1,12 +1,12 @@
 'use strict';
 
-ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route) {
+ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', '$cookieStore', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route, $cookieStore) {
 	
 	$scope.dashboardId = $location.search().id;
 	$scope.currentUserId = $location.search().userId;
 	
 	$scope.loadAllDashboards = function() {
-		$http.get('dashboards/all').success(function(dashboards) {
+		$http.get('dashboards/all' + ($scope.currentUserId != null ? '?userId=' + $scope.currentUserId : '')).success(function(dashboards) {
 			$scope.dashboards = dashboards;
 			if($scope.dashboardId == null && $scope.dashboards.length > 0)
 			{
@@ -266,5 +266,35 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
             sort.descending = false;
         }
     };
+    
+    $scope.openEmailModal = function(){
+		$modal.open({
+			templateUrl : 'resources/templates/email-details-modal.jsp',
+			controller : function($scope, $modalInstance){
+				
+				$scope.title = "Zafira Dashboard";
+				$scope.subjectRequired = true;
+				$scope.textRequired = true;
+				
+				$scope.email = {};
+				$scope.email.subject = "Zafira Dashboards";
+				$scope.email.text = "This is auto-generated email, please do not reply!";
+				$scope.email.hostname = document.location.hostname;
+				$scope.email.urls = [document.location.href];
+				
+				$scope.sendEmail = function(id){
+					$modalInstance.close(0);
+					$http.post('dashboards/email', $scope.email).success(function() {
+						alert('Email was successfully sent!');
+					}).error(function(data, status) {
+						alert('Failed to send email');
+					});
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
+	};
 	
 }]);

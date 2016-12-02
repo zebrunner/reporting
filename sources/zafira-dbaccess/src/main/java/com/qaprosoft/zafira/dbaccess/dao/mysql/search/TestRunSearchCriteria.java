@@ -7,6 +7,7 @@ import java.util.Date;
 public class TestRunSearchCriteria extends SearchCriteria
 {
 	private Long id;
+	private Long testSuiteId;
 	private String testSuite;
 	private String executionURL;
 	private String environment;
@@ -28,6 +29,16 @@ public class TestRunSearchCriteria extends SearchCriteria
 	public void setId(Long id)
 	{
 		this.id = id;
+	}
+
+	public Long getTestSuiteId()
+	{
+		return testSuiteId;
+	}
+
+	public void setTestSuiteId(Long testSuiteId)
+	{
+		this.testSuiteId = testSuiteId;
 	}
 
 	public String getTestSuite()

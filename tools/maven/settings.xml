@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
 	<profiles>
@@ -17,13 +17,13 @@
 				<zafira.tomcat.ws.path>/zafira</zafira.tomcat.ws.path>
 				<zafira.ws.url>http://localhost:8080</zafira.ws.url>
 				<zafira.integrationTest.host>${zafira.url}</zafira.integrationTest.host>
-				
+
 				<zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
 				<zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
 				<zafira.db.jdbc.user>{user}</zafira.db.jdbc.user>
 				<zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
 				<zafira.db.c3p0.maxPoolSize>2</zafira.db.c3p0.maxPoolSize>
-				
+
 				<zafira.grid.enabled>false</zafira.grid.enabled>
 				<zafira.grid.stf.url>{url}</zafira.grid.stf.url>
 				<zafira.grid.stf.token>{token}</zafira.grid.stf.token>
@@ -31,11 +31,15 @@
 				<zafira.grid.pubnub.pub_key>{key}</zafira.grid.pubnub.pub_key>
 				<zafira.grid.pubnub.sub_key>{key}</zafira.grid.pubnub.sub_key>
 				<zafira.grid.pubnub.channel>grid</zafira.grid.pubnub.channel>
-				
+
 				<mail.host>smtp.gmail.com</mail.host>
-        			<mail.port>587</mail.port>
+        <mail.port>587</mail.port>
 				<mail.user>{user}</mail.user>
-        			<mail.pass>{pass}</mail.pass>
+        <mail.pass>{pass}</mail.pass>
+
+        <zafira.amazon.accessKey></zafira.amazon.accessKey>
+        <zafira.amazon.secretKey></zafira.amazon.secretKey>
+        <zafira.amazon.bucket></zafira.amazon.bucket>
 			</properties>
 		</profile>
 	</profiles>

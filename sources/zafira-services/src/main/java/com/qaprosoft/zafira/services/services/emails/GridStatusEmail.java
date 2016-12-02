@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.services.services.emails;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
 import com.qaprosoft.zafira.dbaccess.model.Device;
 
 public class GridStatusEmail implements IEmailMessage
@@ -36,5 +37,16 @@ public class GridStatusEmail implements IEmailMessage
 	public String getTemplate()
 	{
 		return TEMPLATE;
+	}
+
+	@Override
+	public List<Attachment> getAttachments() 
+	{
+		return null;
+	}
+
+	@Override
+	public String getText() {
+		return null;
 	}
 }

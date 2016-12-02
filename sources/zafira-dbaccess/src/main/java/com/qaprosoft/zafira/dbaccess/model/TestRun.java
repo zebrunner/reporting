@@ -1,5 +1,11 @@
 package com.qaprosoft.zafira.dbaccess.model;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import org.joda.time.LocalDateTime;
+import org.joda.time.Seconds;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -31,11 +37,13 @@ public class TestRun extends AbstractEntity
 	private boolean knownIssue;
 	private String env;
 	private String platform;
-	
+	private Date startedAt;
+	private Integer elapsed;
+	private Integer eta;
+
 	private Integer passed;
 	private Integer failed;
 	private Integer skipped;
-	
 
 	public User getUser()
 	{
@@ -47,11 +55,13 @@ public class TestRun extends AbstractEntity
 		this.user = user;
 	}
 
-	public TestSuite getTestSuite() {
+	public TestSuite getTestSuite()
+	{
 		return testSuite;
 	}
 
-	public void setTestSuite(TestSuite testSuite) {
+	public void setTestSuite(TestSuite testSuite)
+	{
 		this.testSuite = testSuite;
 	}
 
@@ -124,7 +134,7 @@ public class TestRun extends AbstractEntity
 	{
 		this.job = job;
 	}
-	
+
 	public Integer getBuildNumber()
 	{
 		return buildNumber;
@@ -215,27 +225,75 @@ public class TestRun extends AbstractEntity
 		this.project = project;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
 	}
 
-	public String getEnv() {
+	public String getEnv()
+	{
 		return env;
 	}
 
-	public void setEnv(String env) {
+	public void setEnv(String env)
+	{
 		this.env = env;
 	}
 
-	public String getPlatform() {
+	public String getPlatform()
+	{
 		return platform;
 	}
 
-	public void setPlatform(String platform) {
+	public void setPlatform(String platform)
+	{
 		this.platform = platform;
+	}
+
+	public Date getStartedAt()
+	{
+		return startedAt;
+	}
+
+	public void setStartedAt(Date startedAt)
+	{
+		this.startedAt = startedAt;
+	}
+
+	public Integer getElapsed()
+	{
+		return elapsed;
+	}
+
+	public void setElapsed(Integer elapsed)
+	{
+		this.elapsed = elapsed;
+	}
+
+	public Integer getEta()
+	{
+		return eta;
+	}
+
+	public void setEta(Integer eta)
+	{
+		this.eta = eta;
+	}
+	
+	public Integer getCountdown()
+	{
+		Integer countdown = null;
+		if(Status.IN_PROGRESS.equals(this.status) && this.startedAt != null && this.eta != null)
+		{
+			LocalDateTime from = new LocalDateTime(this.startedAt.getTime());
+			LocalDateTime to = new LocalDateTime(Calendar.getInstance().getTime());
+			countdown = Math.max(0, this.eta - Seconds.secondsBetween(from, to).getSeconds());
+		}
+		return countdown;
 	}
 }

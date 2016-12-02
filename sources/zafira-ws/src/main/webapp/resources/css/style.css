@@ -230,3 +230,25 @@ td.no-results {
 .settings-line {
 	line-height: 25px;
 }
+
+
+.zoom_img img:hover{
+	-moz-transform:scale(2); 
+	-webkit-transform:scale(2);
+	-o-transform:scale(2);
+}
+
+.progressbar_container {
+	overflow:hidden; 
+	position:relative
+}
+
+.progressbar_bg {
+	z-index: 1; 
+	height: 3px; 
+	position: absolute; 
+	background: #337ab7; 
+	left: 0px; 
+	top: 0px; 
+	opacity: 0.2;
+}
