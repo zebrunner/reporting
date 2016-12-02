@@ -144,6 +144,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		UserService.getCurrentUser().then(function(user) {
 			$http.get('users/' + user.id).success(function(data) {
 				$scope.user = data;
+				$scope.user.password = null;
 			}).error(function(data, status) {
 				alert('Failed to load user');
 			});
