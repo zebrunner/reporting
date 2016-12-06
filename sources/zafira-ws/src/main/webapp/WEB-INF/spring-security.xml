@@ -5,15 +5,19 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 	<security:authentication-manager>
+	
 		<security:authentication-provider>
 			<security:user-service>
 				<security:user name="admin" password="avatei16" authorities="ROLE_ADMIN" />
 			</security:user-service>
 		</security:authentication-provider>
+		
 		<security:authentication-provider user-service-ref="userAuthService">
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
+		
 		<security:authentication-provider ref="ldapAuthProvider"  />
+		
 	</security:authentication-manager>
 
 	<bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
@@ -46,8 +50,11 @@
 	
 	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
 		<constructor-arg index="0" ref="bindAuthenticator" />
-		<constructor-arg index="1" ref="ldapAuthoritiesPopulator" />
+		<!--  constructor-arg index="1" ref="ldapAuthoritiesPopulator" / --> 
+		<property name="userDetailsContextMapper" ref="customUserDetailsContextMapper" />
 	</bean>
+	
+	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.CustomUserDetailsContextMapper" />
 	
 	<bean id="ldapAuthoritiesPopulator" class="com.qaprosoft.zafira.ws.security.CustomLdapAuthoritiesPopulator" />
 	
