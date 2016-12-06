@@ -97,7 +97,7 @@
 		<phantomjsdriver.version>1.3.0</phantomjsdriver.version>
 		<selenium-java.version>2.53.0</selenium-java.version>
 
-		<aws-java-sdk.version>1.10.30</aws-java-sdk.version>	
+		<aws-java-sdk.version>1.10.30</aws-java-sdk.version>
 	</properties>
 
 	<modules>
@@ -252,6 +252,11 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-taglibs</artifactId>
+				<version>${spring-security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-ldap</artifactId>
 				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
