@@ -42,7 +42,7 @@
 	</bean>
 	
 	<!-- LDAP configuration -->
-	<security:ldap-server id="contextSource" url="ldap://${ldap.server}:${ldap.port}/" manager-dn="${ldap.manager.user}" manager-password="${ldap.manager.password}"/>
+	<security:ldap-server id="contextSource" url="ldap://${zafira.ldap.server}:${zafira.ldap.port}/" manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>
 	
 	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
 		<constructor-arg index="0" ref="bindAuthenticator" />
