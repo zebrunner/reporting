@@ -51,7 +51,7 @@
 	
 	<bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
 		<constructor-arg ref="contextSource" />
-		<constructor-arg value="DC=company,DC=com" />
+		<constructor-arg value="DC=Corp,DC=tlcinternal,DC=us" />
 		<property name="searchSubtree" value="true" />
 		<property name="ignorePartialResultException" value="true" />
 		<property name="groupSearchFilter" value="(member={0})" />
@@ -63,7 +63,7 @@
 	</bean>
 	
 	<bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-		<constructor-arg index="0" value="DC=company,DC=com" />
+		<constructor-arg index="0" value="DC=Corp,DC=tlcinternal,DC=us" />
 		<constructor-arg index="1" value="(sAMAccountName={0})" />
 		<constructor-arg index="2" ref="contextSource" />
 		<property name="searchSubtree" value="true" />
