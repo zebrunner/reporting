@@ -49,14 +49,7 @@
 		<constructor-arg index="1" ref="ldapAuthoritiesPopulator" />
 	</bean>
 	
-	<bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
-		<constructor-arg ref="contextSource" />
-		<constructor-arg value="${zafira.ldap.dn}" />
-		<property name="searchSubtree" value="true" />
-		<property name="defaultRole" value="ROLE_USER" />
-		<property name="ignorePartialResultException" value="true" />
-		<property name="groupSearchFilter" value="(member={0})" />
-	</bean>
+	<bean id="ldapAuthoritiesPopulator" class="com.qaprosoft.zafira.ws.security.CustomLdapAuthoritiesPopulator" />
 	
 	<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
 		<constructor-arg ref="contextSource" />
