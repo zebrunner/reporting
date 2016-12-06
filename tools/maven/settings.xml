@@ -40,6 +40,11 @@
         <zafira.amazon.accessKey></zafira.amazon.accessKey>
         <zafira.amazon.secretKey></zafira.amazon.secretKey>
         <zafira.amazon.bucket></zafira.amazon.bucket>
+
+        <zafira.ldap.server></zafira.ldap.server>
+        <zafira.ldap.port></zafira.ldap.port>
+        <zafira.ldap.manager.user></zafira.ldap.manager.user>
+        <zafira.ldap.manager.password></zafira.ldap.manager.password>
 			</properties>
 		</profile>
 	</profiles>
