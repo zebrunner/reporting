@@ -31,6 +31,7 @@
 				<zafira.grid.pubnub.pub_key>{key}</zafira.grid.pubnub.pub_key>
 				<zafira.grid.pubnub.sub_key>{key}</zafira.grid.pubnub.sub_key>
 				<zafira.grid.pubnub.channel>grid</zafira.grid.pubnub.channel>
+        <zafira.grid.logging.enabled>false</zafira.grid.logging.enabled>
 
 				<mail.host>smtp.gmail.com</mail.host>
         <mail.port>587</mail.port>

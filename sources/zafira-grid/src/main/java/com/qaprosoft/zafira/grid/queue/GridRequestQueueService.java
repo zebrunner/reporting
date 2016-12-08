@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubException;
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import com.qaprosoft.zafira.dbaccess.model.Event;
+import com.qaprosoft.zafira.dbaccess.model.Event.Type;
 import com.qaprosoft.zafira.dbaccess.model.stf.RemoteConnectUserDevice;
+import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 import com.qaprosoft.zafira.grid.queue.matchers.IDeviceMatcher;
 import com.qaprosoft.zafira.grid.queue.models.GridRequest;
 import com.qaprosoft.zafira.grid.queue.models.GridResponse;
+import com.qaprosoft.zafira.services.services.EventService;
 import com.qaprosoft.zafira.services.services.stf.STFService;
 
 @Service
@@ -37,6 +41,9 @@ public class GridRequestQueueService
 	
 	@Autowired
 	private STFService stfService;
+	
+	@Autowired
+	private EventService eventService;
 	
 	@Autowired
 	@Qualifier("deviceMatcher")
@@ -66,9 +73,11 @@ public class GridRequestQueueService
 						{
 						case CONNECT:
 							connectDevice(rq);
+							eventService.markEventReceived(Type.REQUEST_DEVICE_CONNECT, rq.getGridSessionId(), rq.getTestId());
 							break;
 						case DISCONNECT:
 							disconnectDevice(rq);
+							eventService.markEventReceived(Type.REQUEST_DEVICE_DISCONNECT, rq.getGridSessionId(), rq.getTestId());
 							break;	
 						}
 					}
@@ -98,6 +107,7 @@ public class GridRequestQueueService
 								stfService.disconnectDevice(serial);
 							}
 							devicesInUse.remove(gridSessionId);
+							eventService.logEvent(new Event(Type.HEARTBEAT_TIMEOUT, gridSessionId));
 							LOGGER.info("Disconnecting devices by timeout for suite: " + gridSessionId);
 						}
 					}
@@ -138,7 +148,9 @@ public class GridRequestQueueService
 							devicesInUse.put(rq.getGridSessionId(), new ArrayList<String>());
 						}
 						devicesInUse.get(rq.getGridSessionId()).add(device.getSerial());
-						publishMessage(new GridResponse(rq.getTestId(), device, true));
+						GridResponse rs = new GridResponse(rq.getTestId(), device, true);
+						publishMessage(rs);
+						eventService.logEvent(new Event(Type.CONNECT_DEVICE, rq.getGridSessionId(), rq.getTestId(), new Gson().toJson(rs)));
 						LOGGER.info(String.format("Found device %s for test %s.", device.getSerial(), rq.getTestId()));
 						return;
 					}
@@ -147,7 +159,9 @@ public class GridRequestQueueService
 			if(!deviceFound)
 			{
 				pendingConnections.remove(rq.getTestId());
-				publishMessage(new GridResponse(rq.getTestId(), false));
+				GridResponse rs = new GridResponse(rq.getTestId(), false);
+				publishMessage(rs);
+				eventService.logEvent(new Event(Type.DEVICE_NOT_FOUND, rq.getGridSessionId(), rq.getTestId(), new Gson().toJson(rs)));
 				LOGGER.info("Unable to find device for test: " + rq.getTestId());
 			}
 		}
@@ -159,13 +173,20 @@ public class GridRequestQueueService
 	
 	private synchronized void disconnectDevice(GridRequest rq)
 	{
-		stfService.disconnectDevice(rq.getSerial());
-		pendingConnections.remove(rq.getTestId());
-		if(devicesInUse.containsKey(rq.getGridSessionId()))
+		if(!pendingConnections.containsKey(rq.getTestId()))
 		{
-			devicesInUse.get(rq.getGridSessionId()).remove(rq.getSerial());
+			stfService.disconnectDevice(rq.getSerial());
+			if(devicesInUse.containsKey(rq.getGridSessionId()))
+			{
+				devicesInUse.get(rq.getGridSessionId()).remove(rq.getSerial());
+			}
+			eventService.logEvent(new Event(Type.DISCONNECT_DEVICE, rq.getGridSessionId(), rq.getTestId(), new Gson().toJson(rq)));
+			LOGGER.info(String.format("Disconnecting device %s from test %s.", rq.getSerial(), rq.getTestId()));
 		}
-		LOGGER.info(String.format("Disconnecting device %s from test %s.", rq.getSerial(), rq.getTestId()));
+		else
+		{
+			pendingConnections.remove(rq.getTestId());
+		}
 	}
 	
 	private void publishMessage(GridResponse rs)
