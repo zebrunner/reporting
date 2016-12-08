@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.ws.dto;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,6 +33,9 @@ public class TestRunType extends AbstractType
 	private String workItem;
 	private Project project;
 	private boolean knownIssue;
+	private Date startedAt;
+	private Integer elapsed;
+	private Integer eta;
 
 	public String getCiRunId()
 	{
@@ -51,7 +56,7 @@ public class TestRunType extends AbstractType
 	{
 		this.testSuiteId = testSuiteId;
 	}
-	
+
 	public Status getStatus()
 	{
 		return status;
@@ -182,11 +187,43 @@ public class TestRunType extends AbstractType
 		this.project = project;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
+	}
+
+	public Date getStartedAt()
+	{
+		return startedAt;
+	}
+
+	public void setStartedAt(Date startedAt)
+	{
+		this.startedAt = startedAt;
+	}
+
+	public Integer getElapsed()
+	{
+		return elapsed;
+	}
+
+	public void setElapsed(Integer elapsed)
+	{
+		this.elapsed = elapsed;
+	}
+
+	public Integer getEta()
+	{
+		return eta;
+	}
+
+	public void setEta(Integer eta)
+	{
+		this.eta = eta;
 	}
 }
