@@ -16,7 +16,8 @@
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
 		
-		<security:authentication-provider ref="ldapAuthProvider"  />
+		<!-- Comment out to use LDAP (make sure LDAP configuration specified in maven profile) -->
+		<!-- security:authentication-provider ref="ldapAuthProvider"  / -->
 		
 	</security:authentication-manager>
 
@@ -49,14 +50,11 @@
 	<security:ldap-server id="contextSource" url="ldap://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>
 	
 	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-		<constructor-arg index="0" ref="bindAuthenticator" />
-		<!--  constructor-arg index="1" ref="ldapAuthoritiesPopulator" / --> 
+		<constructor-arg ref="bindAuthenticator" />
 		<property name="userDetailsContextMapper" ref="customUserDetailsContextMapper" />
 	</bean>
 	
 	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.CustomUserDetailsContextMapper" />
-	
-	<bean id="ldapAuthoritiesPopulator" class="com.qaprosoft.zafira.ws.security.CustomLdapAuthoritiesPopulator" />
 	
 	<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
 		<constructor-arg ref="contextSource" />
