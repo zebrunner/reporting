@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.client.model;
 
+import java.util.Date;
 
 public class TestRunType extends AbstractType
 {
@@ -12,7 +13,7 @@ public class TestRunType extends AbstractType
 	{
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
-	
+
 	private String ciRunId;
 	private Long testSuiteId;
 	private Status status;
@@ -28,8 +29,11 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private boolean knownIssue;
-	
-	public TestRunType(String ciRunId,Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
+	private Date startedAt;
+	private Integer elapsed;
+	private Integer eta;
+
+	public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
 		this.ciRunId = ciRunId;
@@ -45,8 +49,9 @@ public class TestRunType extends AbstractType
 		this.workItem = workItem;
 	}
 
-	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
-			Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber, Initiator startedBy, String workItem)
+	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
+			String configXML, Long jobId, Long upstreamJobId, Integer upstreamJobBuildNumber, Integer buildNumber,
+			Initiator startedBy, String workItem)
 	{
 		this.ciRunId = ciRunId;
 		this.testSuiteId = testSuiteId;
@@ -61,9 +66,9 @@ public class TestRunType extends AbstractType
 		this.startedBy = startedBy;
 		this.workItem = workItem;
 	}
-	
-	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit, String configXML,
-			Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
+
+	public TestRunType(String ciRunId, Long testSuiteId, String scmURL, String scmBranch, String scmCommit,
+			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
 		this.ciRunId = ciRunId;
 		this.testSuiteId = testSuiteId;
@@ -96,7 +101,7 @@ public class TestRunType extends AbstractType
 	{
 		this.testSuiteId = testSuiteId;
 	}
-	
+
 	public Status getStatus()
 	{
 		return status;
@@ -217,12 +222,43 @@ public class TestRunType extends AbstractType
 		this.userId = userId;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
 	}
-}	
 
+	public Date getStartedAt()
+	{
+		return startedAt;
+	}
+
+	public void setStartedAt(Date startedAt)
+	{
+		this.startedAt = startedAt;
+	}
+
+	public Integer getElapsed()
+	{
+		return elapsed;
+	}
+
+	public void setElapsed(Integer elapsed)
+	{
+		this.elapsed = elapsed;
+	}
+
+	public Integer getEta()
+	{
+		return eta;
+	}
+
+	public void setEta(Integer eta)
+	{
+		this.eta = eta;
+	}
+}
