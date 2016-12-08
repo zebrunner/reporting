@@ -24,6 +24,13 @@ public class EventType extends AbstractType
 		this.type = type;
 		this.testRunId = testRunId;
 	}
+	
+	public EventType(Type type, String testRunId, String testId)
+	{
+		this.type = type;
+		this.testRunId = testRunId;
+		this.testId = testId;
+	}
 
 	public EventType(Type type, String testRunId, String testId, String data)
 	{
