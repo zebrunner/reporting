@@ -165,7 +165,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 		return response;
 	}

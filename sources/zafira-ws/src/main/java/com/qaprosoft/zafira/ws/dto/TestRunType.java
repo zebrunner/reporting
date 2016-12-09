@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.ws.dto;
 
-import java.util.Date;
-
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,7 +31,6 @@ public class TestRunType extends AbstractType
 	private String workItem;
 	private Project project;
 	private boolean knownIssue;
-	private Date startedAt;
 	private Integer elapsed;
 	private Integer eta;
 
@@ -195,16 +192,6 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
-	}
-
-	public Date getStartedAt()
-	{
-		return startedAt;
-	}
-
-	public void setStartedAt(Date startedAt)
-	{
-		this.startedAt = startedAt;
 	}
 
 	public Integer getElapsed()

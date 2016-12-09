@@ -75,10 +75,6 @@
 			<b>knownIssue</b>
 		</field>
 		<field>
-			<a>startedAt</a>
-			<b>startedAt</b>
-		</field>
-		<field>
 			<a>elapsed</a>
 			<b>elapsed</b>
 		</field>

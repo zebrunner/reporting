@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.client.model;
 
-import java.util.Date;
-
 public class TestRunType extends AbstractType
 {
 	public enum Status
@@ -29,7 +27,6 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private boolean knownIssue;
-	private Date startedAt;
 	private Integer elapsed;
 	private Integer eta;
 
@@ -230,16 +227,6 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
-	}
-
-	public Date getStartedAt()
-	{
-		return startedAt;
-	}
-
-	public void setStartedAt(Date startedAt)
-	{
-		this.startedAt = startedAt;
 	}
 
 	public Integer getElapsed()
