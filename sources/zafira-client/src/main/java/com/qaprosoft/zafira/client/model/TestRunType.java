@@ -27,8 +27,6 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private boolean knownIssue;
-	private Integer elapsed;
-	private Integer eta;
 
 	public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
@@ -227,25 +225,5 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
-	}
-
-	public Integer getElapsed()
-	{
-		return elapsed;
-	}
-
-	public void setElapsed(Integer elapsed)
-	{
-		this.elapsed = elapsed;
-	}
-
-	public Integer getEta()
-	{
-		return eta;
-	}
-
-	public void setEta(Integer eta)
-	{
-		this.eta = eta;
 	}
 }

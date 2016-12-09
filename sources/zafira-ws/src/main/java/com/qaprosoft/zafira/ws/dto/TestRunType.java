@@ -31,8 +31,6 @@ public class TestRunType extends AbstractType
 	private String workItem;
 	private Project project;
 	private boolean knownIssue;
-	private Integer elapsed;
-	private Integer eta;
 
 	public String getCiRunId()
 	{
@@ -192,25 +190,5 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
-	}
-
-	public Integer getElapsed()
-	{
-		return elapsed;
-	}
-
-	public void setElapsed(Integer elapsed)
-	{
-		this.elapsed = elapsed;
-	}
-
-	public Integer getEta()
-	{
-		return eta;
-	}
-
-	public void setEta(Integer eta)
-	{
-		this.eta = eta;
 	}
 }

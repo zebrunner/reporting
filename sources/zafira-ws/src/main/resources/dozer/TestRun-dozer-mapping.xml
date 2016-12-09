@@ -74,13 +74,5 @@
 			<a>knownIssue</a>
 			<b>knownIssue</b>
 		</field>
-		<field>
-			<a>elapsed</a>
-			<b>elapsed</b>
-		</field>
-		<field>
-			<a>eta</a>
-			<b>eta</b>
-		</field>
 	</mapping>
 </mappings>
