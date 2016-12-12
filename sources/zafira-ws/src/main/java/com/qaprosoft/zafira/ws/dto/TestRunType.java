@@ -51,7 +51,7 @@ public class TestRunType extends AbstractType
 	{
 		this.testSuiteId = testSuiteId;
 	}
-	
+
 	public Status getStatus()
 	{
 		return status;
@@ -182,11 +182,13 @@ public class TestRunType extends AbstractType
 		this.project = project;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
 	}
 }

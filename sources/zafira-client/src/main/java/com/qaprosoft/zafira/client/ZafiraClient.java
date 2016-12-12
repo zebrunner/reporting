@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.qaprosoft.zafira.client.model.EmailType;
+import com.qaprosoft.zafira.client.model.EventType;
 import com.qaprosoft.zafira.client.model.JobType;
 import com.qaprosoft.zafira.client.model.TestCaseType;
 import com.qaprosoft.zafira.client.model.TestRunType;
@@ -42,6 +43,8 @@ public class ZafiraClient
 	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
 	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
 	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s";
+	private static final String EVENTS_PATH = "/events";
+	private static final String EVENTS_RECEIVED_PATH = "/events/received";
 
 	private String serviceURL;
 	private Client client;
@@ -162,7 +165,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 		return response;
 	}
@@ -403,6 +406,40 @@ public class ZafiraClient
 		return response;
 	}
 	
+	public Response<EventType> logEvent(EventType event)
+	{
+		Response<EventType> response = new Response<EventType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + EVENTS_PATH);
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, event);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(EventType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+		return response;
+	}
+	
+	public void markEventReceived(EventType event)
+	{
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + EVENTS_RECEIVED_PATH);
+			initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, event);
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
 	public class Response<T>
 	{
 		private int status;
@@ -457,10 +494,5 @@ public class ZafiraClient
 	{
 		this.project = project;
 		return this;
-	}
-	
-	public static void main(String[] args) {
-		ZafiraClient zc = new ZafiraClient("http://localhost:8081/zafira-ws", "admin", "avatei16");
-		zc.sendTestRunReport(58L, "hursevich@gmail.com", true);
 	}
 }

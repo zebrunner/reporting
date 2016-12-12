@@ -177,7 +177,7 @@ public class TestRunService
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
-		testRun.setEta(calculateETA(testRun));
+		// testRun.setEta(calculateETA(testRun));
 		
 		// New test run
 		if(testRun.getId() == null || testRun.getId() == 0)

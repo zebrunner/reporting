@@ -25,6 +25,11 @@ public class SecuredUser implements UserDetails
 	private String lastName;
 	private String role;
 
+	public SecuredUser(String userName, String role)
+	{
+		this.userName = userName;
+		this.role = role;
+	}
 
 	public SecuredUser(long id, String userName, String password, String email, String firstName, String lastName, String role)
 	{

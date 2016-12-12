@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.EventMapper">
+
+	<insert id="createEvent" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO zafira.EVENTS (TYPE, TEST_RUN_ID, TEST_ID, DATA, RECEIVED)
+			VALUES (
+				#{type},
+			    #{testRunId},
+			    #{testId},
+				#{data},
+				#{received}
+			)
+		]]>
+	</insert>
+	
+	<sql id="getEvent">
+		<![CDATA[
+			SELECT
+				E.ID AS EVENT_ID,
+				E.TYPE AS EVENT_TYPE,
+				E.TEST_RUN_ID AS EVENT_TEST_RUN_ID,
+				E.TEST_ID AS EVENT_TEST_ID,
+				E.DATA AS EVENT_DATA,
+				E.RECEIVED AS EVENT_RECEIVED,
+				E.MODIFIED_AT AS EVENT_MODIFIED_AT,
+				E.CREATED_AT AS EVENT_CREATED_AT
+			FROM
+				zafira.EVENTS E
+		]]>
+	</sql>
+
+	<select id="getEventById" resultMap="EventResultMap">
+		<include refid="getEvent" />
+		<![CDATA[
+			WHERE E.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getEventByTypeAndTestRunIdAndTestId" resultMap="EventResultMap">
+		<include refid="getEvent" />
+		<![CDATA[
+			WHERE E.TYPE = #{type} AND E.TEST_RUN_ID = #{testRunId} AND E.TEST_ID = #{testId}
+			ORDER BY E.CREATED_AT DESC
+			LIMIT 1
+		]]>
+	</select>
+
+	<update id="updateEvent">
+		<![CDATA[
+			UPDATE
+			    zafira.EVENTS
+		]]>
+			<set>
+				<if test="null != type">
+		            <![CDATA[
+		               TYPE = #{type},
+		            ]]>
+				</if>
+				<if test="null != testRunId">
+		            <![CDATA[
+		               TEST_RUN_ID = #{testRunId},
+		            ]]>
+				</if>
+				<if test="null != testId">
+		            <![CDATA[
+		               TEST_ID = #{testId},
+		            ]]>
+				</if>
+				<if test="null != data">
+		            <![CDATA[
+		              DATA = #{data},
+		            ]]>
+				</if>
+				<if test="null != received">
+		            <![CDATA[
+		               RECEIVED = #{received}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[	    
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteEvent">
+		<![CDATA[
+			DELETE FROM zafira.EVENTS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteEventById">
+		<include refid="deleteEvent" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Event" id="EventResultMap" autoMapping="false">
+		<id column="EVENT_ID" property="id" />
+		<result column="EVENT_TYPE" property="type" />
+		<result column="EVENT_TEST_RUN_ID" property="testRunId" />
+		<result column="EVENT_TEST_ID" property="testId" />
+		<result column="EVENT_DATA" property="data" />
+		<result column="EVENT_RECEIVED" property="received" />
+		<result column="EVENT_MODIFIED_AT" property="modifiedAt" />
+		<result column="EVENT_CREATED_AT" property="createdAt" />
+	</resultMap>
+	
+</mapper>
