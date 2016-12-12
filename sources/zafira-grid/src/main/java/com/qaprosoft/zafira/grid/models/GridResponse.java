@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.grid.queue.models;
+package com.qaprosoft.zafira.grid.models;
 
 import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 

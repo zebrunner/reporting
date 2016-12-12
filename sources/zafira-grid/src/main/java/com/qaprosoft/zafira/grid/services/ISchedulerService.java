@@ -1,8 +1,10 @@
-package com.qaprosoft.zafira.grid.service;
+package com.qaprosoft.zafira.grid.services;
 
 public interface ISchedulerService
 {
 	 public void executeGridRequestQueueTask();
 	 
 	 public void executeGridHealthCheckTask();
+	 
+	 public void executePubNubHealthCheckTask();
 }

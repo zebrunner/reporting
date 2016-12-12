@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.grid.queue.models;
+package com.qaprosoft.zafira.grid.models;
 
 import java.util.ArrayList;
 import java.util.List;

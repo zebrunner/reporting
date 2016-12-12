@@ -1,7 +1,7 @@
-package com.qaprosoft.zafira.grid.queue.matchers;
+package com.qaprosoft.zafira.grid.matchers;
 
 import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
-import com.qaprosoft.zafira.grid.queue.models.GridRequest;
+import com.qaprosoft.zafira.grid.models.GridRequest;
 
 public class DeviceByModelMatcher implements IDeviceMatcher
 {

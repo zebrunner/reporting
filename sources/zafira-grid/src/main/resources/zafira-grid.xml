@@ -27,8 +27,11 @@
 		
 	<bean id="gridHealthCheckTask"
 		class="com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask" />
+		
+		<bean id="pubNubHealthCheckTask"
+		class="com.qaprosoft.zafira.grid.tasks.PubNubHealthCheckTask" />
 
-	<bean id="schedulerService" class="com.qaprosoft.zafira.grid.service.impl.SchedulerService" />
+	<bean id="schedulerService" class="com.qaprosoft.zafira.grid.services.impl.SchedulerService" />
 
 	<!-- Job Details -->
 	<bean id="gridRequestQueueProcessorTaskJobDetail"
@@ -41,6 +44,12 @@
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="schedulerService" />
 		<property name="targetMethod" value="executeGridHealthCheckTask" />
+	</bean>
+	
+	<bean id="pubNubHealthCheckTaskJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="schedulerService" />
+		<property name="targetMethod" value="executePubNubHealthCheckTask" />
 	</bean>
 
 	<!-- Triggers -->
@@ -57,31 +66,46 @@
 		<property name="cronExpression"
 			value="${zafira.batch.jobs.gridHealthCheck.trigger.cronExpression}" />
 	</bean>
+	
+	<bean id="pubNubHealthCheckTaskTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="pubNubHealthCheckTaskJobDetail" />
+		<property name="cronExpression"
+			value="${zafira.batch.jobs.pubNubHealthCheck.trigger.cronExpression}" />
+	</bean>
 
 	<bean id="springScheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
 				<ref bean="gridRequestQueueProcessorTaskJobDetail" />
+				<ref bean="gridHealthCheckTaskJobDetail" />
+				<ref bean="pubNubHealthCheckTaskJobDetail" />
 			</list>
 		</property>
 		<property name="triggers">
 			<list>
 				<ref bean="gridRequestQueueProcessorTaskTrigger" />
 				<ref bean="gridHealthCheckTaskTrigger" />
+				<ref bean="pubNubHealthCheckTaskTrigger" />
 			</list>
 		</property>
-	</bean>
-
-	<bean id="gridRequestQueueService" class="com.qaprosoft.zafira.grid.queue.GridRequestQueueService">
-		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
-		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
-		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
 	</bean>
 
 	<bean id="messageJsonifier" class="com.fasterxml.jackson.databind.ObjectMapper">
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
 
-	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.queue.matchers.DeviceByModelMatcher" />
+	<bean id="pubNubService" class="com.qaprosoft.zafira.grid.services.impl.PubNubService">
+		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
+		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
+		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
+	</bean>
+	
+	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.matchers.DeviceByModelMatcher" />
+	
+	<bean id="gridRequestQueueService" class="com.qaprosoft.zafira.grid.services.impl.GridRequestQueueService">
+		<constructor-arg index="0" ref="pubNubService" />
+		<constructor-arg index="1" ref="deviceMatcher" />
+	</bean>
 </beans>
