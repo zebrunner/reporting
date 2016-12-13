@@ -24,6 +24,10 @@ public class PubNubService
 	
 	private final String GRID_UUID = UUID.randomUUID().toString();
 	
+	private final Integer RECONNECT_INTERVAL = 15000;
+	
+	private final Integer RECONNECT_RETRIES = 100;
+	
 	private Pubnub pubnub;
 	
 	private String pKey;
@@ -46,6 +50,9 @@ public class PubNubService
 		this.channel = channel;
 		
 		this.pubnub = new Pubnub(this.pKey, this.sKey);
+		this.pubnub.setResumeOnReconnect(true);
+		this.pubnub.setMaxRetries(RECONNECT_RETRIES);
+		this.pubnub.setRetryInterval(RECONNECT_INTERVAL);
 		this.pubnub.setUUID(GRID_UUID);
 	}
 	
@@ -69,8 +76,7 @@ public class PubNubService
 			@Override
 			public void errorCallback(String channel, PubnubError error) 
 			{
-				LOGGER.info("Reconnecting PubNub due to error: " + error.getErrorString());
-				pubnub.disconnectAndResubscribe();
+				LOGGER.info("PubNub problem: " + error.getErrorString());
 				eventService.logEvent(new Event(Type.PUBNUB_RECONNECT, GRID_UUID));
 			}
 		});
