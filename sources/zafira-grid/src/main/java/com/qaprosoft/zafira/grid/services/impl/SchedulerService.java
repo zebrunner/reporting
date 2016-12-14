@@ -8,6 +8,7 @@ import com.qaprosoft.zafira.grid.services.ISchedulerService;
 import com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask;
 import com.qaprosoft.zafira.grid.tasks.GridRequestQueueProcessorTask;
 import com.qaprosoft.zafira.grid.tasks.PubNubHealthCheckTask;
+import com.qaprosoft.zafira.grid.tasks.UsbDeviceHealthCheckTask;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 public class SchedulerService implements ISchedulerService
@@ -22,6 +23,9 @@ public class SchedulerService implements ISchedulerService
 	
 	@Autowired
 	private PubNubHealthCheckTask pubNubHealthCheckTask;
+	
+	@Autowired
+	private UsbDeviceHealthCheckTask usbDeviceHealthCheck;
 	
 	@Override
 	public void executeGridRequestQueueTask() 
@@ -59,6 +63,19 @@ public class SchedulerService implements ISchedulerService
 		} catch (ServiceException e)
 		{
 			LOGGER.error("Error in pubNubHealthCheckTask:" + e);
+		}
+	}
+
+	@Override
+	public void executeUsbDeviceHealthCheck()
+	{
+		try
+		{
+			LOGGER.info("Running usbDeviceHealthCheck");	
+			usbDeviceHealthCheck.runTask();
+		} catch (ServiceException e)
+		{
+			LOGGER.error("Error in usbDeviceHealthCheck:" + e);
 		}
 	}
 }
