@@ -61,9 +61,9 @@ public class SeleniumService
 	@PostConstruct
 	public void init() 
 	{
+		InputStream is = null;
 		try
 		{
-			InputStream is = null;
 			if (SystemUtils.IS_OS_MAC) 
 			{
 				is = resourceLoader.getResource(MAC_PHANTOMJS).getInputStream();
@@ -91,6 +91,10 @@ public class SeleniumService
 		catch(Exception e)
 		{
 			LOGGER.error("Failed to initialize PhantomJS: " + e.getMessage());
+		}
+		finally
+		{
+			IOUtils.closeQuietly(is);
 		}
 	}
 

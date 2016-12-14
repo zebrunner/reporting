@@ -1,12 +1,20 @@
 package com.qaprosoft.zafira.grid.tasks;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 
 import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -24,18 +32,37 @@ public class UsbDeviceHealthCheckTask
 	@Autowired
 	private STFService stfService;
 	
+	@Autowired
+	private ResourceLoader resourceLoader;
+	
 	private String sshPath;
 	
-	public UsbDeviceHealthCheckTask() throws URISyntaxException
+	@PostConstruct
+	public void init() 
 	{
+		InputStream is = null;
 		try
 		{
-			URL resource = UsbDeviceHealthCheckTask.class.getResource("/usbreset.sh");
-			this.sshPath = Paths.get(resource.toURI()).toString();
+			is = resourceLoader.getResource("classpath:usbreset.sh").getInputStream();
+			
+			File bin = new File("usbreset.sh");
+			FileUtils.copyInputStreamToFile(is, bin);
+			IOUtils.closeQuietly(is);
+			
+			Set<PosixFilePermission> perms = new HashSet<>();
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+			perms.add(PosixFilePermission.OWNER_READ);
+			Files.setPosixFilePermissions(bin.toPath(), perms);
+			
+			this.sshPath = bin.getAbsolutePath();
 		}
 		catch(Exception e)
 		{
 			LOGGER.error("Unable to load usbreset.sh: " + e.getMessage());
+		}
+		finally
+		{
+			IOUtils.closeQuietly(is);
 		}
 	}
 	
