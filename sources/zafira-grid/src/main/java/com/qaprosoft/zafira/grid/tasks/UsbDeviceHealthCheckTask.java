@@ -54,7 +54,7 @@ public class UsbDeviceHealthCheckTask
 				}
 				catch(Exception e)
 				{
-					LOGGER.error("Unable to run usbreset.sh: " + e.getMessage());
+					LOGGER.error("Unable to run usbreset.sh: " + e.getMessage(), e);
 				}
 			}
 		}
