@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,23 @@ public class TestRunsController extends AbstractController
 		TestRun testRun = testRunService.startTestRun(mapper.map(tr, TestRun.class));
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		return mapper.map(testRun, TestRunType.class);
+	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Update test run config", nickname = "updateTestRun", code = 200, httpMethod = "PUT",
+			notes = "Updates new test run config.", response = TestRunType.class, responseContainer = "TestRunType")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType updateTestRun(@RequestBody TestRunType tr) throws ServiceException, MappingException, JAXBException
+	{
+		TestRun testRun = testRunService.getTestRunById(tr.getId());
+		if(testRun == null && !StringUtils.isEmpty(tr.getConfigXML()))
+		{
+			throw new ServiceException("Test run not found by id: " + tr.getId());
+		}
+		testRun.setConfigXML(tr.getConfigXML());
+		testRunService.updateTestRun(testRun);
 		return mapper.map(testRun, TestRunType.class);
 	}
 

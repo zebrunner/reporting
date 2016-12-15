@@ -7,4 +7,6 @@ public interface ISchedulerService
 	 public void executeGridHealthCheckTask();
 	 
 	 public void executePubNubHealthCheckTask();
+	 
+	 public void executeUsbDeviceHealthCheck();
 }
