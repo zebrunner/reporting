@@ -170,6 +170,27 @@ public class ZafiraClient
 		return response;
 	}
 	
+	public Response<TestRunType> updateTestRun(TestRunType testRun)
+	{
+		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, testRun);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(TestRunType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
+		return response;
+	}
+	
 	public Response<TestRunType> finishTestRun(long id)
 	{
 		Response<TestRunType> response = new Response<TestRunType>(0, null);

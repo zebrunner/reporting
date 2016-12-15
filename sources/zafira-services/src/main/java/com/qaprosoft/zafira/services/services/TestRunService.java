@@ -333,6 +333,7 @@ public class TestRunService
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
 	}
 	
+	@SuppressWarnings("unused")
 	private Integer calculateETA(TestRun testRun) throws ServiceException
 	{
 		Integer eta = null;
