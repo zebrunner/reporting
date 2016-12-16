@@ -28,6 +28,11 @@ public class TestRunType extends AbstractType
 	private Long userId;
 	private boolean knownIssue;
 
+	public TestRunType(long id)
+	{
+		super.setId(id);
+	}
+			
 	public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{
