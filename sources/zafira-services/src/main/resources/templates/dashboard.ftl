@@ -10,7 +10,7 @@
             <#list attachments as attachment>
                 <tr>
                     <td>
-                        <img src='cid:${attachment.name}'>
+                        <img src='cid:${attachment.name?replace(' ', '_')}' style="size: 100%">
                     </td>
                 </tr>
             </#list>
