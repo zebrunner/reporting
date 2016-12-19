@@ -50,7 +50,7 @@ public class EmailService
 					for(Attachment attachment : message.getAttachments())
 					{
 						msg.addAttachment(attachment.getName(), attachment.getFile());
-						msg.addInline(attachment.getName(), attachment.getFile());
+						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
 					}
 				}
 			}
