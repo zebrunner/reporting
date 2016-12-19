@@ -1,9 +1,10 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.concurrent.Executors;
-
-import javax.mail.internet.MimeMessage;
-
+import com.qaprosoft.zafira.dbaccess.model.Attachment;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
+import freemarker.template.Configuration;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,12 +14,8 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
-
-import freemarker.template.Configuration;
+import javax.mail.internet.MimeMessage;
+import java.util.concurrent.Executors;
 
 @Service
 public class EmailService
@@ -53,6 +50,7 @@ public class EmailService
 					for(Attachment attachment : message.getAttachments())
 					{
 						msg.addAttachment(attachment.getName(), attachment.getFile());
+						msg.addInline(attachment.getName(), attachment.getFile());
 					}
 				}
 			}
