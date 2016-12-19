@@ -7,7 +7,12 @@
         <table style="width: 1000px;">
             <tr>
                 <td style="width: 100px;">Environment:</td>
-                <td>${testRun.env}</td>
+                <td>
+                    ${testRun.env}
+                    <#if configuration['url']?? && (configuration['url'] != 'NULL') && (configuration['url'] != '')>
+                         - <a href="${configuration['url']}">${configuration['url']}</a>
+                    </#if>
+                </td>
             </tr>
             <#if configuration['app_version'] ??>
             <tr>
@@ -15,11 +20,29 @@
                 <td>${configuration['app_version']} </td>
             </tr>
             </#if>
-            <#if testRun.platform??>
-            <tr>
+            <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']??>
                 <td>Platform:</td>
-                <td>${testRun.platform}</td>
-            </tr>
+                <td>
+                    <#if configuration['mobile_device_name']?? && (configuration['mobile_device_name'] != 'NULL') && (configuration['mobile_device_name'] != '')>
+                        ${configuration['mobile_device_name']}
+                    </#if>
+
+                    <#if configuration['mobile_platform_name']?? && (configuration['mobile_platform_name'] != 'NULL') && (configuration['mobile_platform_name'] != '') >
+                         - ${configuration['mobile_platform_name']}
+                    </#if>
+
+                    <#if configuration['mobile_platform_version']?? && (configuration['mobile_platform_version'] != 'NULL') && (configuration['mobile_platform_version'] != '') >
+                        ${configuration['mobile_platform_version']}
+                    </#if>
+
+                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
+                    ${configuration['browser']}
+                    </#if>
+
+                    <#if (configuration['browser_version'])?? && (configuration['browser_version'] != "*") && (configuration['browser_version'] != 'NULL') && (configuration['browser_version'] != "")>
+                        - ${configuration['browser_version']}
+                    </#if>
+                </td>
             </#if>
             <#if configuration['device']??>
             <tr>
@@ -40,7 +63,9 @@
             <tr>
                 <td>Test job URL:</td>
                 <td>
-                    <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}">${testRun.job.jobURL}/${testRun.buildNumber?c}</a>
+                    <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
+                        <a href="${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}">${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}</a>
+                    </#if>
                 </td>
             </tr>
             <tr class="pass" style="color: #66C266;">
