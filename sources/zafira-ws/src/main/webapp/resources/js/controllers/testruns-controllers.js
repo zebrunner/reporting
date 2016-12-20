@@ -256,9 +256,14 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	$scope.openEmailModal($itemScope.testRun);
     }];
 	
+	const COMMENT = ['Comment', function ($itemScope) {
+	  	$scope.openCommentsModal($itemScope.testRun);
+    }];
+	
 	$scope.adminMenuOptions = [
       OPEN_TEST_RUN,
       COPY_TEST_RUN_LINK,
+      COMMENT,
       SEND_EMAIL,
       null,
       DELETE_TEST_RUN
@@ -267,6 +272,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.userMenuOptions = [
       OPEN_TEST_RUN,
       COPY_TEST_RUN_LINK,
+      COMMENT,
       SEND_EMAIL
     ];
 	// -----------------------------------------------------------
@@ -349,6 +355,35 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 						alert('Email was successfully sent!');
 					}).error(function(data, status) {
 						alert('Failed to send email');
+					});
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		});
+	};
+	
+	$scope.openCommentsModal = function(testRun){
+		$modal.open({
+			templateUrl : 'resources/templates/comments-modal.jsp',
+			resolve : {
+				'testRun' : function(){
+					return testRun;
+				}
+			},
+			controller : function($scope, $modalInstance, testRun){
+				
+				$scope.title = testRun.testSuite.name;
+				$scope.testRun = testRun;
+				
+				$scope.addComment = function(){
+					var rq = {};
+					rq.comment = $scope.testRun.comments;
+					$http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).success(function() {
+						$modalInstance.close(0);
+					}).error(function(data, status) {
+						alert('Failed to add comment!');
 					});
 				};
 				$scope.cancel = function(){

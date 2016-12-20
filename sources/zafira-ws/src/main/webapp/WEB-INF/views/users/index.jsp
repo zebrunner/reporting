@@ -21,11 +21,14 @@
 				</div>
             </div>
 			<div class="row results_header">
-            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="ID" data-ng-model="usersSearchCriteria.id"></div>
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.userName"></div>
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Email" data-ng-model="usersSearchCriteria.email"></div>
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="First/Last name" data-ng-model="usersSearchCriteria.firstLastName"></div>
-            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="usersSearchCriteria.date"></div>
+            	<form data-ng-submit="loadUsers(1)">
+	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="ID" data-ng-model="usersSearchCriteria.id"></div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.userName"></div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Email" data-ng-model="usersSearchCriteria.email"></div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="First/Last name" data-ng-model="usersSearchCriteria.firstLastName"></div>
+	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="usersSearchCriteria.date"></div>
+            	<input type="submit" data-ng-hide="true" />
+            	</form>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>

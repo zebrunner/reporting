@@ -24,22 +24,25 @@
 				</div>
             </div>
             <div class="row results_header">
-            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
-            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
-            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
-            	<div class="col-lg-1">
-            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
-            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
-            			<option value="" disabled selected>Platform</option>
-            			<option value="Android">Android</option>
-            			<option value="iOS">iOS</option>
-            			<option value="chrome">chrome</option>
-            			<option value="firefox">firefox</option>
-            			<option value="safari">safari</option>
-            			<option value="ie">ie</option>
-            		</select>
-            	</div>
-            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunSearchCriteria.date"></div>
+            	<form data-ng-submit="loadTestRuns(1)">
+	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
+	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
+	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
+	            	<div class="col-lg-1">
+	            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
+	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
+	            			<option value="" disabled selected>Platform</option>
+	            			<option value="Android">Android</option>
+	            			<option value="iOS">iOS</option>
+	            			<option value="chrome">chrome</option>
+	            			<option value="firefox">firefox</option>
+	            			<option value="safari">safari</option>
+	            			<option value="ie">ie</option>
+	            		</select>
+	            	</div>
+	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunSearchCriteria.date"></div>
+	            	<input type="submit" data-ng-hide="true" />
+            	</form>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>
@@ -58,7 +61,7 @@
 							name="{{testRun.id}}"
 							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/ -->
 					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
-				  	<b>{{testRun.testSuite.name}}</b>
+				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
 				</div>
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>

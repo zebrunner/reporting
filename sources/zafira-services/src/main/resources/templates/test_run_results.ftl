@@ -68,6 +68,12 @@
                     </#if>
                 </td>
             </tr>
+            <#if testRun.comments??>
+            <tr>
+                <td>Comments:</td>
+                <td>${testRun.comments}</td>
+            </tr>
+            </#if>
             <tr class="pass" style="color: #66C266;">
                 <td>Passed: </td>
                 <td>${testRun.passed}</td>
