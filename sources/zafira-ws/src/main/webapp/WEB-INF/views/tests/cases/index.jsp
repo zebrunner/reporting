@@ -21,11 +21,14 @@
 				</div>
             </div>
 			<div class="row results_header">
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass"></div>
-            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod"></div>
-            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile"></div>
-            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName"></div>
-            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date"></div>
+				<form data-ng-submit="loadTestCases(1)">
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass"></div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod"></div>
+	            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile"></div>
+	            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName"></div>
+	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date"></div>
+            		<input type="submit" data-ng-hide="true" />
+            	</form>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>

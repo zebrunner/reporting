@@ -35,6 +35,7 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.ws.dto.CommentType;
 import com.qaprosoft.zafira.ws.dto.EmailType;
 import com.qaprosoft.zafira.ws.dto.TestRunType;
 import com.qaprosoft.zafira.ws.dto.TestType;
@@ -205,5 +206,13 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter) throws ServiceException, JAXBException
 	{
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/comment", method = RequestMethod.POST)
+	public void commentTestRun(@PathVariable(value="id") long id, @RequestBody @Valid CommentType comment) throws ServiceException, JAXBException
+	{
+		testRunService.addComment(id, comment.getComment());
 	}
 }

@@ -367,4 +367,15 @@ public class TestRunService
 		return eta;
 	}
 	
+	@Transactional
+	public void addComment(long id, String comment) throws ServiceException
+	{
+		TestRun testRun = getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test run found by ID: " + id);
+		}
+		testRun.setComments(comment);
+		updateTestRun(testRun);
+	}
 }

@@ -40,6 +40,7 @@ public class TestRun extends AbstractEntity
 	private Date startedAt;
 	private Integer elapsed;
 	private Integer eta;
+	private String comments;
 
 	private Integer passed;
 	private Integer failed;
@@ -285,6 +286,16 @@ public class TestRun extends AbstractEntity
 		this.eta = eta;
 	}
 	
+	public String getComments()
+	{
+		return comments;
+	}
+
+	public void setComments(String comments)
+	{
+		this.comments = comments;
+	}
+
 	public Integer getCountdown()
 	{
 		Integer countdown = null;
