@@ -31,22 +31,23 @@
 				<zafira.grid.pubnub.pub_key>{key}</zafira.grid.pubnub.pub_key>
 				<zafira.grid.pubnub.sub_key>{key}</zafira.grid.pubnub.sub_key>
 				<zafira.grid.pubnub.channel>grid</zafira.grid.pubnub.channel>
-        <zafira.grid.logging.enabled>false</zafira.grid.logging.enabled>
+				<zafira.grid.logging.enabled>false</zafira.grid.logging.enabled>
 
 				<mail.host>smtp.gmail.com</mail.host>
-        <mail.port>587</mail.port>
+				<mail.port>587</mail.port>
 				<mail.user>{user}</mail.user>
-        <mail.pass>{pass}</mail.pass>
+				<mail.pass>{pass}</mail.pass>
 
-        <zafira.amazon.accessKey></zafira.amazon.accessKey>
-        <zafira.amazon.secretKey></zafira.amazon.secretKey>
-        <zafira.amazon.bucket></zafira.amazon.bucket>
+				<zafira.amazon.accessKey></zafira.amazon.accessKey>
+				<zafira.amazon.secretKey></zafira.amazon.secretKey>
+				<zafira.amazon.bucket></zafira.amazon.bucket>
 
-        <zafira.ldap.server></zafira.ldap.server>
-        <zafira.ldap.port></zafira.ldap.port>
-        <zafira.ldap.dn></zafira.ldap.dn>
-        <zafira.ldap.manager.user></zafira.ldap.manager.user>
-        <zafira.ldap.manager.password></zafira.ldap.manager.password>
+				<zafira.ldap.server></zafira.ldap.server>
+				<zafira.ldap.port></zafira.ldap.port>
+				<zafira.ldap.dn></zafira.ldap.dn>
+				<zafira.ldap.search_filter></zafira.ldap.search_filter>
+				<zafira.ldap.manager.user></zafira.ldap.manager.user>
+				<zafira.ldap.manager.password></zafira.ldap.manager.password>
 			</properties>
 		</profile>
 	</profiles>
