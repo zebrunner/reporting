@@ -1,20 +1,16 @@
 package com.qaprosoft.zafira.services.services.emails;
 
+import com.qaprosoft.zafira.dbaccess.model.*;
+import com.qaprosoft.zafira.dbaccess.model.config.Argument;
+import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
-import com.qaprosoft.zafira.dbaccess.model.Setting;
-import com.qaprosoft.zafira.dbaccess.model.Status;
-import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
-import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
-
 public class TestRunResultsEmail implements IEmailMessage
 {
-	private static final String SUBJECT = "%s: %s (%s) on %s";
+	private static final String SUBJECT = "%s: %s %s (%s) on %s %s";
 	private static final String TEMPLATE = "test_run_results.ftl";
 
 	private Map<String, String> configuration = new HashMap<String, String>();
@@ -117,8 +113,38 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		String status = Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() ? "PASSED (known issues)"
 				: testRun.getStatus().name();
-		return String.format(SUBJECT, status, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
-				configuration.get("env"));
+		String appVersion = argumentIsPresent("app_version")? configuration.get("app_version") + " - ": "";
+		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
+				configuration.get("env"), buildPlatformInfo());
+	}
+
+	private boolean argumentIsPresent(String arg, String... ignoreValues) {
+		if("".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
+			return false;
+		}
+		for(String ignoreValue: ignoreValues) {
+			if(configuration.get(arg).equals(ignoreValue)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private String buildPlatformInfo() {
+		String platformInfo = "%s %s %s";
+		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
+		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
+		String locale = argumentIsPresent("locale", "en_US")? configuration.get("locale"): "";
+		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
+		if(!platformInfo.replaceAll(" ", "").equals("()")) {
+			platformInfo = platformInfo.trim();
+			if(platformInfo.lastIndexOf("  ") != -1) {
+				platformInfo = platformInfo.substring(0, platformInfo.lastIndexOf(" ")) + platformInfo.substring(platformInfo.lastIndexOf(" ") + 1);
+			}
+			platformInfo = "(" + platformInfo + ")";
+			return platformInfo;
+		}
+		return "";
 	}
 
 	@Override

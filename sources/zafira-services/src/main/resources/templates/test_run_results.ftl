@@ -36,19 +36,13 @@
                     </#if>
 
                     <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
-                    ${configuration['browser']}
+                        ${configuration['browser']}
                     </#if>
 
                     <#if (configuration['browser_version'])?? && (configuration['browser_version'] != "*") && (configuration['browser_version'] != 'NULL') && (configuration['browser_version'] != "")>
                         - ${configuration['browser_version']}
                     </#if>
                 </td>
-            </#if>
-            <#if configuration['device']??>
-            <tr>
-                <td>Device:</td>
-                <td>${configuration['device']}</td>
-            </tr>
             </#if>
             <tr>
                 <td>Finished:</td>
@@ -64,7 +58,10 @@
                 <td>Test job URL:</td>
                 <td>
                     <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                        <a href="${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}">${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}</a>
+                        <a href="${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}">Zafira</a>
+                    </#if>
+                    <#if testRun.job??>
+                         / <a href="${testRun.job.jobURL}/${testRun.id?c}/eTAF_Report">Jenkins</a>
                     </#if>
                 </td>
             </tr>
@@ -88,8 +85,30 @@
             </tr>
             <tr>
                 <td>Success rate:</td>
-                <td>${successRate}%</td>
+                <td>
+                    ${successRate}%
+                    <#if successRate?number != 100>
+                         <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/rebuild/parameterized">(Rebuild)</a>
+                    </#if>
+                </td>
+
             </tr>
+            <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en'>
+            <tr>
+                <td>Language: </td>
+                <td>
+                    ${configuration['language']}
+                </td>
+            </tr>
+            </#if>
+            <#if configuration['locale']?? && configuration['locale'] != '' && configuration['locale'] != 'en_US' && configuration['locale'] != 'en'>
+                <tr>
+                    <td>Locale: </td>
+                    <td>
+                        ${configuration['locale']}
+                    </td>
+                </tr>
+            </#if>
         </table>
     </div>
     <br/>
