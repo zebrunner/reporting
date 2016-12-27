@@ -61,7 +61,11 @@
                         <a href="${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}">Zafira</a>
                     </#if>
                     <#if testRun.job??>
-                         / <a href="${testRun.job.jobURL}/${testRun.id?c}/eTAF_Report">Jenkins</a>
+                        <#if testRun.job.jobURL?last_index_of('/') != testRun.job.jobURL?length - 1>
+                            / <a href="${testRun.job.jobURL}/${testRun.buildNumber?c}/eTAF_Report">Jenkins</a>
+                        <#else>
+                            / <a href="${testRun.job.jobURL}${testRun.buildNumber?c}/eTAF_Report">Jenkins</a>
+                        </#if>
                     </#if>
                 </td>
             </tr>
