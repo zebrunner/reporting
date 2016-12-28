@@ -20,12 +20,23 @@
             	<div class="col-lg-9" align="right">
             		<span>Found: {{totalResults}}&nbsp;</span>
 					<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadTestRuns(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+					<a href="" data-ng-click="loadTestRuns(1); disableRealTimeEvents();">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
 				</div>
             </div>
             <div class="row results_header">
-            	<form data-ng-submit="loadTestRuns(1)">
-	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
+            	<form data-ng-submit="loadTestRuns(1); disableRealTimeEvents();">
+            		<div class="col-lg-1">
+	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
+	            			<option value="" disabled selected>Status</option>
+	            			<option value="PASSED">PASSED</option>
+	            			<option value="FAILED">FAILED</option>
+	            			<option value="SKIPPED">SKIPPED</option>
+	            			<option value="ABORTED">ABORTED</option>
+	            			<option value="IN_PROGRESS">IN_PROGRESS</option>
+	            			<option value="UNKNOWN">UNKNOWN</option>
+	            		</select>
+	            	</div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
 	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
 	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
 	            	<div class="col-lg-1">

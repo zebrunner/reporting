@@ -221,6 +221,11 @@
 	               AND TR.PROJECT_ID = #{project.id}
 	            ]]>
 			</if>
+			<if test="null != status">
+	            <![CDATA[
+	               AND TR.STATUS = #{status}
+	            ]]>
+			</if>
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
@@ -299,6 +304,11 @@
 			<if test="null != project and null != project.id">
 	            <![CDATA[
 	               AND TR.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
+			<if test="null != status">
+	            <![CDATA[
+	               AND TR.STATUS = #{status}
 	            ]]>
 			</if>
 		</trim>

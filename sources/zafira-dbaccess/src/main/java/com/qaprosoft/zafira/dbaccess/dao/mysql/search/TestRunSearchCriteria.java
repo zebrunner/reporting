@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.qaprosoft.zafira.dbaccess.model.Status;
+
 public class TestRunSearchCriteria extends SearchCriteria
 {
 	private Long id;
@@ -15,6 +17,7 @@ public class TestRunSearchCriteria extends SearchCriteria
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
+	private Status status;
 	
 	public TestRunSearchCriteria()
 	{
@@ -121,4 +124,13 @@ public class TestRunSearchCriteria extends SearchCriteria
 		this.toDate = new SimpleDateFormat("MM-dd-yyyy").parse(toDate);
 	}
 
+	public Status getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(Status status)
+	{
+		this.status = status;
+	}
 }

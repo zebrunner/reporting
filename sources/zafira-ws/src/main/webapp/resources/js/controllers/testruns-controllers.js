@@ -470,6 +470,14 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
         }
     });
 	
+	$scope.disableRealTimeEvents = function(){
+		if($scope.showRealTimeEvents)
+		{
+			alert("Real-time events disabled as soon as you apply search criteria!");
+			$scope.showRealTimeEvents = false;
+		}
+	};
+	
 	(function init(){
 		if($cookieStore.get("showRealTimeEvents") != null)
 		{
