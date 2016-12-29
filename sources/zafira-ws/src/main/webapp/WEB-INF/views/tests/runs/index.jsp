@@ -58,7 +58,7 @@
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>
             </div>
-			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'modifiedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
+			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'startedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
 				<timer countdown="testRun.countdown" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
 					<div class="progressbar_bg" style="width:{{progressBar}}%"></div>
 				</timer>
@@ -87,7 +87,7 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
-						<span class="time">{{testRun.modifiedAt | date:'MM/dd HH:mm'}}</span>
+						<span class="time">{{testRun.startedAt | date:'MM/dd HH:mm'}}</span>
 						&nbsp;
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
