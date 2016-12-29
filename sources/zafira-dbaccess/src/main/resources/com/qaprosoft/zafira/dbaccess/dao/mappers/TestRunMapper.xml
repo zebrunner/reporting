@@ -203,7 +203,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date = #{date}::date
+	               AND TR.STARTED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != fromDate">
@@ -288,7 +288,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date = #{date}::date
+	               AND TR.STARTED_AT::date = #{date}::date
 	            ]]>
 			</if>
 			<if test="null != fromDate">
