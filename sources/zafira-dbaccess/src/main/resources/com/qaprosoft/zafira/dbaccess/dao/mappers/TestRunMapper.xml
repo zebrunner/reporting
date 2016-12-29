@@ -203,7 +203,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.STARTED_AT::date = #{date}::date
+	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
 	            ]]>
 			</if>
 			<if test="null != fromDate">
@@ -288,7 +288,8 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.STARTED_AT::date = #{date}::date
+	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+	               
 	            ]]>
 			</if>
 			<if test="null != fromDate">

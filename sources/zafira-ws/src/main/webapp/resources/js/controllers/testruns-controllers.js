@@ -186,11 +186,6 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$scope.testRunSearchCriteria = ProjectProvider.initProject($scope.testRunSearchCriteria);
 		}
 		
-		if($scope.testRunDate)
-		{
-			$scope.testRunSearchCriteria.date = new Date($scope.testRunDate);
-		}
-		
 		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
 			
 			$scope.testRuns = {};
@@ -297,7 +292,6 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			'page' : 1,
 			'pageSize' : 25
 		};
-		$scope.testRunDate = null;
 	};
 	
 	$scope.populateSearchQuery = function(){

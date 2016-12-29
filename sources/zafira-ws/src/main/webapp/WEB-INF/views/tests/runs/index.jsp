@@ -51,7 +51,7 @@
 	            			<option value="ie">ie</option>
 	            		</select>
 	            	</div>
-	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunDate"></div>
+	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunSearchCriteria.date"></div>
 	            	<input type="submit" data-ng-hide="true" />
             	</form>
             </div>
