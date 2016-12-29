@@ -73,7 +73,8 @@ public class UsbDeviceHealthCheckTask
 		{
 			if(!(device.getPresent() && device.getReady()))
 			{
-				LOGGER.info(device.getModel() + " - disconnected, trying to reset USB...");
+				LOGGER.info(device.getModel() + " (" + device.getSerial() + ") - disconnected, trying to reset USB...");
+				LOGGER.info("Running script: " + this.sshPath);
 				try
 				{
 					ProcessBuilder pb = new ProcessBuilder(this.sshPath, device.getSerial());
