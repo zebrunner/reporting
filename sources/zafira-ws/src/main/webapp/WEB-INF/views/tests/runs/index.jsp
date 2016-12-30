@@ -107,6 +107,7 @@
                     			<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
                     			<span class="float_right" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" style="margin: 0 5px;">|</span>
                     			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="openKnownIssueModal(test)">Mark as known issue</a>
+                    			<span data-ng-if="test.testConfig.device" class="disabled"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}} </span>
                     		</div>
                             <div class="result_error" data-ng-if="test.message && test.status == 'FAILED'">
                             	<show-more text="test.message" limit="100"></show-more>

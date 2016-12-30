@@ -252,3 +252,7 @@ td.no-results {
 	top: 0px; 
 	opacity: 0.2;
 }
+
+.disabled {
+	color: grey;
+}
