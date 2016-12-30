@@ -203,7 +203,7 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date = #{date}::date
+	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
 	            ]]>
 			</if>
 			<if test="null != fromDate">
@@ -219,6 +219,11 @@
 			<if test="null != project and null != project.id">
 	            <![CDATA[
 	               AND TR.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
+			<if test="null != status">
+	            <![CDATA[
+	               AND TR.STATUS = #{status}
 	            ]]>
 			</if>
 		</trim>
@@ -283,7 +288,8 @@
 			</if>
 			<if test="null != date">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date = #{date}::date
+	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+	               
 	            ]]>
 			</if>
 			<if test="null != fromDate">
@@ -299,6 +305,11 @@
 			<if test="null != project and null != project.id">
 	            <![CDATA[
 	               AND TR.PROJECT_ID = #{project.id}
+	            ]]>
+			</if>
+			<if test="null != status">
+	            <![CDATA[
+	               AND TR.STATUS = #{status}
 	            ]]>
 			</if>
 		</trim>

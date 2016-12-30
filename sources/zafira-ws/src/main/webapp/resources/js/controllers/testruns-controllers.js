@@ -2,6 +2,8 @@
 
 ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, $cookieStore) {
 
+	var OFFSET = new Date().getTimezoneOffset()*60*1000;
+	
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
 	
@@ -184,6 +186,11 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		else
 		{
 			$scope.testRunSearchCriteria = ProjectProvider.initProject($scope.testRunSearchCriteria);
+		}
+		
+		if($scope.testRunSearchCriteria.date)
+		{
+			$scope.testRunSearchCriteria.date = new Date(Date.parse($scope.testRunSearchCriteria.date) + OFFSET);
 		}
 		
 		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
@@ -469,6 +476,14 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
         	$scope.disconnectWebsocket();
         }
     });
+	
+	$scope.disableRealTimeEvents = function(){
+		if($scope.showRealTimeEvents)
+		{
+			alert("Real-time events disabled as soon as you apply search criteria!");
+			$scope.showRealTimeEvents = false;
+		}
+	};
 	
 	(function init(){
 		if($cookieStore.get("showRealTimeEvents") != null)

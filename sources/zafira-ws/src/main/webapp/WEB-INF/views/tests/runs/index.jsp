@@ -20,12 +20,23 @@
             	<div class="col-lg-9" align="right">
             		<span>Found: {{totalResults}}&nbsp;</span>
 					<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadTestRuns(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+					<a href="" data-ng-click="loadTestRuns(1); disableRealTimeEvents();">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
 				</div>
             </div>
             <div class="row results_header">
-            	<form data-ng-submit="loadTestRuns(1)">
-	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
+            	<form data-ng-submit="loadTestRuns(1); disableRealTimeEvents();">
+            		<div class="col-lg-1">
+	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
+	            			<option value="" disabled selected>Status</option>
+	            			<option value="PASSED">PASSED</option>
+	            			<option value="FAILED">FAILED</option>
+	            			<option value="SKIPPED">SKIPPED</option>
+	            			<option value="ABORTED">ABORTED</option>
+	            			<option value="IN_PROGRESS">IN_PROGRESS</option>
+	            			<option value="UNKNOWN">UNKNOWN</option>
+	            		</select>
+	            	</div>
+	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
 	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
 	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
 	            	<div class="col-lg-1">
@@ -47,7 +58,7 @@
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>
             </div>
-			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'modifiedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
+			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'startedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
 				<timer countdown="testRun.countdown" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
 					<div class="progressbar_bg" style="width:{{progressBar}}%"></div>
 				</timer>
@@ -62,6 +73,8 @@
 							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/ -->
 					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
 				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
+					<br/>
+					<small>{{getArgValue(testRun.configXML, 'app_version')}}</small>
 				</div>
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>
@@ -74,7 +87,7 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
-						<span class="time">{{testRun.modifiedAt | date:'MM/dd HH:mm'}}</span>
+						<span class="time">{{testRun.startedAt | date:'MM/dd HH:mm'}}</span>
 						&nbsp;
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
