@@ -177,7 +177,7 @@ public class TestRunService
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
-		// testRun.setEta(calculateETA(testRun));
+		testRun.setEta(calculateETA(testRun));
 		
 		// New test run
 		if(testRun.getId() == null || testRun.getId() == 0)
@@ -333,7 +333,6 @@ public class TestRunService
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
 	}
 	
-	@SuppressWarnings("unused")
 	private Integer calculateETA(TestRun testRun) throws ServiceException
 	{
 		Integer eta = null;

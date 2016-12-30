@@ -17,7 +17,7 @@
 <script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer-all.min.js'/>" type="text/javascript"></script>
-<script src="<spring:url value='/resources/js/angular/angular-timer.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-timer.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
 <script src="<spring:url value='/resources/js/3rd_party/sockjs-1.1.1.min.js'/>" type="text/javascript"></script>
@@ -34,59 +34,6 @@
 <script src="<spring:url value='/resources/js/3rd_party/d3.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/LineChart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
-<script>
-function take (targetElem) {
-    var nodesToRecover = [];
-    var nodesToRemove = [];
-
-    var svgElem = targetElem.find('svg');
-
-    svgElem.each(function(index, node) {
-        var parentNode = node.parentNode;
-        var svg = parentNode.innerHTML;
-
-        var canvas = document.createElement('canvas');
-
-        canvg(canvas, svg);
-
-        nodesToRecover.push({
-            parent: parentNode,
-            child: node
-        });
-        parentNode.removeChild(node);
-
-        nodesToRemove.push({
-            parent: parentNode,
-            child: canvas
-        });
-
-        parentNode.appendChild(canvas);
-    });
-
-    html2canvas(targetElem, {
-        onrendered: function(canvas) {
-            var ctx = canvas.getContext('2d');
-            ctx.webkitImageSmoothingEnabled = false;
-            ctx.mozImageSmoothingEnabled = false;
-            ctx.imageSmoothingEnabled = false;
-
-            canvas.toBlob(function(blob) {
-                nodesToRemove.forEach(function(pair) {
-                    pair.parent.removeChild(pair.child);
-                });
-
-                nodesToRecover.forEach(function(pair) {
-                    pair.parent.appendChild(pair.child);
-                });
-                
-                $('body').append(canvas);
-                
-                //saveAs(blob, 'screenshot_'+ moment().format('YYYYMMDD_HHmmss')+'.png');
-            });
-        }
-    });
-}
-</script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>

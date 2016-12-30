@@ -20,11 +20,11 @@
             	<div class="col-lg-9" align="right">
             		<span>Found: {{totalResults}}&nbsp;</span>
 					<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadTestRuns(1); disableRealTimeEvents();">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+					<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
 				</div>
             </div>
             <div class="row results_header">
-            	<form data-ng-submit="loadTestRuns(1); disableRealTimeEvents();">
+            	<form data-ng-submit="loadTestRuns(1);">
             		<div class="col-lg-1">
 	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
 	            			<option value="" disabled selected>Status</option>
@@ -51,7 +51,7 @@
 	            			<option value="ie">ie</option>
 	            		</select>
 	            	</div>
-	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testRunSearchCriteria.date"></div>
+	            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt"></div>
 	            	<input type="submit" data-ng-hide="true" />
             	</form>
             </div>
@@ -59,7 +59,7 @@
             	<div class="col-lg-12">No results</div>
             </div>
 			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'startedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="adminMenuOptions"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="userMenuOptions"</sec:authorize>>
-				<timer countdown="testRun.countdown" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
+				<timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
 					<div class="progressbar_bg" style="width:{{progressBar}}%"></div>
 				</timer>
 				<div class="col-lg-4">
@@ -71,7 +71,10 @@
 							value="{{testRun.id}}" 
 							name="{{testRun.id}}"
 							data-ng-show="testRun.status != 'IN_PROGRESS' && testRunId == null" onclick="event.cancelBubble=true;"/ -->
-					<img data-ng-if="testRun.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>
+					<img src="<c:url value="/resources/img/pending.gif" />" class="pending" data-ng-if="testRun.status == 'IN_PROGRESS'"/>
+					<timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
+						<small>{{progressBar}}%</small>
+					</timer>
 				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
 					<br/>
 					<small>{{getArgValue(testRun.configXML, 'app_version')}}</small>
@@ -97,7 +100,7 @@
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
-                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':false">
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':true">
                     	<div class="col-lg-10">
                     		<div class="clearfix">
                     			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 

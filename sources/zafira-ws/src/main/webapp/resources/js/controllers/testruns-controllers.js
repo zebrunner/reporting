@@ -50,10 +50,11 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
 	 if(event.type == 'TEST_RUN')
 	 {
-		if($scope.testRunId && $scope.testRunId != event.testRun.id)
+		if(($scope.testRunId && $scope.testRunId != event.testRun.id) || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null))
 		{
 			return;
 		}
+		
 		$scope.addTestRun(event.testRun);
 		$scope.$apply();
 	 }
@@ -188,9 +189,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$scope.testRunSearchCriteria = ProjectProvider.initProject($scope.testRunSearchCriteria);
 		}
 		
-		if($scope.testRunSearchCriteria.date)
+		if($scope.startedAt)
 		{
-			$scope.testRunSearchCriteria.date = new Date(Date.parse($scope.testRunSearchCriteria.date) + OFFSET);
+			$scope.testRunSearchCriteria.date = new Date(Date.parse($scope.startedAt) + OFFSET);
 		}
 		
 		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
@@ -299,6 +300,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			'page' : 1,
 			'pageSize' : 25
 		};
+		$scope.startedAt = null;
 	};
 	
 	$scope.populateSearchQuery = function(){
@@ -465,32 +467,17 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}, function () {});
 	};
 	
-	$scope.$watch('showRealTimeEvents', function() {
+	$scope.$watch('showRealTimeEvents', function() 
+	{
 		$cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
-        if($scope.showRealTimeEvents)
-        {
-        	$scope.initWebsocket();
-        }
-        else
-        {
-        	$scope.disconnectWebsocket();
-        }
     });
-	
-	$scope.disableRealTimeEvents = function(){
-		if($scope.showRealTimeEvents)
-		{
-			alert("Real-time events disabled as soon as you apply search criteria!");
-			$scope.showRealTimeEvents = false;
-		}
-	};
 	
 	(function init(){
 		if($cookieStore.get("showRealTimeEvents") != null)
 		{
 			$scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
 		}
-		
+		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
 		SettingsService.getSetting("JIRA_URL").then(function(setting) {
