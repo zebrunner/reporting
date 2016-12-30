@@ -97,7 +97,7 @@
                 </td>
 
             </tr>
-            <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en'>
+            <#if configuration['language']?? && configuration['language'] != '' && configuration['language'] != 'en_US' && configuration['language'] != 'en' && configuration['language'] != 'US'>
             <tr>
                 <td>Language: </td>
                 <td>
@@ -105,7 +105,7 @@
                 </td>
             </tr>
             </#if>
-            <#if configuration['locale']?? && configuration['locale'] != '' && configuration['locale'] != 'en_US' && configuration['locale'] != 'en'>
+            <#if configuration['locale']?? && configuration['locale'] != '' && configuration['locale'] != 'en_US' && configuration['locale'] != 'en' && configuration['locale'] != 'US'>
                 <tr>
                     <td>Locale: </td>
                     <td>

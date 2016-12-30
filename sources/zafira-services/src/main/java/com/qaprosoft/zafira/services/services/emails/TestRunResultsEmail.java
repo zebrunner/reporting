@@ -134,7 +134,7 @@ public class TestRunResultsEmail implements IEmailMessage
 		String platformInfo = "%s %s %s";
 		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
 		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
-		String locale = argumentIsPresent("locale", "en_US")? configuration.get("locale"): "";
+		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
 		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
 		if(!platformInfo.replaceAll(" ", "").equals("()")) {
 			platformInfo = platformInfo.trim();
