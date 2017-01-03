@@ -136,10 +136,14 @@
 	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			<span>${test.name}</span>
 	            			<#if test.status == 'FAILED' && test.message?? && test.message != ''>
-	            				<div style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            				<pre style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
+	            					${test.message?trim}
+	            				</pre>
 	            			</#if>
 	            			<#if test.status == 'SKIPPED' && test.message?? && test.message != ''>
-	            				<div style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px;">${test.message}</div>
+	            				<pre style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
+	            					${test.message?trim}
+	            				</pre>
 	            			</#if>
 	            		</td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
