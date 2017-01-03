@@ -43,17 +43,18 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.loadDashboardData = function(dashboard) {
 		for(var i = 0; i < dashboard.widgets.length; i++)
 		{
-			$scope.loadWidget(dashboard.widgets[i]);
+			$scope.loadWidget(dashboard.title, dashboard.widgets[i]);
 		}
 	};
 	
-	$scope.loadWidget = function(widgets) {
+	$scope.loadWidget = function(dashboardName, widget) {
 		var sqlAdapter = {};
-		sqlAdapter.sql = widgets.sql;
+		sqlAdapter.sql = widget.sql;
 		var params = ProjectProvider.getProjectQueryParam();
+		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
 		if($scope.currentUserId != null)
 		{
-			params = params != "" ? params + "&currentUserId=" + $scope.currentUserId : params + "?currentUserId=" + $scope.currentUserId;
+			params = params + "&currentUserId=" + $scope.currentUserId;
 		}
 		$http.post('widgets/sql' + params, sqlAdapter).success(function(data) {
 			for(var j = 0; j < data.length; j++)
@@ -63,9 +64,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					data[j].CREATED_AT = new Date(data[j].CREATED_AT);
 				}
 			}
-			widgets.model = JSON.parse(widgets.model);
-			widgets.data = {};
-			widgets.data.dataset = data;
+			widget.model = JSON.parse(widget.model);
+			widget.data = {};
+			widget.data.dataset = data;
 		});
 	};
 	

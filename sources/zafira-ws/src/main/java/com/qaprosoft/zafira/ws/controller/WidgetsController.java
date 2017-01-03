@@ -54,10 +54,11 @@ public class WidgetsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project, @RequestParam(value="currentUserId", required=false) String currentUserId) throws ServiceException
+	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project, @RequestParam(value="currentUserId", required=false) String currentUserId, @RequestParam(value="dashboardName", required=false) String dashboardName) throws ServiceException
 	{
 		return widgetService.executeSQL(sql.getSql()
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
+				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName())));
 	}
