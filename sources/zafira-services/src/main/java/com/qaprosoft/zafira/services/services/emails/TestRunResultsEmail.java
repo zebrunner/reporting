@@ -114,12 +114,13 @@ public class TestRunResultsEmail implements IEmailMessage
 		String status = Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() ? "PASSED (known issues)"
 				: testRun.getStatus().name();
 		String appVersion = argumentIsPresent("app_version")? configuration.get("app_version") + " - ": "";
+		String platformInfo = buildPlatformInfo();
 		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
-				configuration.get("env"), buildPlatformInfo());
+				configuration.get("env"), platformInfo);
 	}
 
 	private boolean argumentIsPresent(String arg, String... ignoreValues) {
-		if("".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
+		if(configuration.get(arg) == null || "".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
 			return false;
 		}
 		for(String ignoreValue: ignoreValues) {
@@ -136,15 +137,15 @@ public class TestRunResultsEmail implements IEmailMessage
 		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
 		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
 		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
-		if(!platformInfo.replaceAll(" ", "").equals("()")) {
-			platformInfo = platformInfo.trim();
-			if(platformInfo.lastIndexOf("  ") != -1) {
-				platformInfo = platformInfo.substring(0, platformInfo.lastIndexOf(" ")) + platformInfo.substring(platformInfo.lastIndexOf(" ") + 1);
-			}
-			platformInfo = "(" + platformInfo + ")";
-			return platformInfo;
+		platformInfo = platformInfo.trim();
+		while(platformInfo.indexOf("  ") != -1) {
+			platformInfo = platformInfo.replaceFirst("  ", " ");
 		}
-		return "";
+		platformInfo = "(" + platformInfo + ")";
+		if(!platformInfo.equals("()"))
+			return platformInfo;
+		else
+			return "";
 	}
 
 	@Override
