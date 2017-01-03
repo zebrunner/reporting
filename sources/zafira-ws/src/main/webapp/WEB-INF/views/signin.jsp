@@ -18,31 +18,28 @@
 		<title>Zafira</title>
 	</head>
 	<body class="signin">
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<div id="signin-form">
-					<spring:url var="actionUrl" value="/login" />
-					<form:form modelAttribute="signinForm" action="${actionUrl}" method="POST">
-						<fieldset style="border: none;">
-							<div class="title">Zafira</div>
-							<c:if test="${signinForm.signinFailed == true}">
-								<div class="errors">Invalid credentials</div>
-							</c:if>
-							<span>Username</span><br />
-							<span  class="username">
-								<input type="text" name="username" id="username" />
-							</span><br />
-							<span>Password</span><br />
-							<span class="password">
-								<input type="password" name="password" id="password" />
-							</span><br />
-							<a class="button">
-								<button type="submit">Signin</button>
-							</a>
-						</fieldset>
-					</form:form>
-				</div>
-			</div>
+		<div id="signin-form"> 
+			<spring:url var="actionUrl" value="/login" />
+			<form:form modelAttribute="signinForm" action="${actionUrl}" method="POST">
+				<fieldset style="border: none;">
+					<div class="title">Zafira</div>
+					<c:if test="${signinForm.signinFailed == true}">
+						<div class="errors">Invalid credentials</div>
+					</c:if>
+					<span>Username</span><br />
+					<span  class="username">
+						<input type="text" name="username" id="username"/>
+					</span><br />
+					<span>Password</span><br />
+					<span class="password">
+						<input type="password" name="password" id="password" />
+					</span><br />
+					<a class="button">
+						<button type="submit">Signin</button>
+					</a>
+				</fieldset>
+			</form:form>
 		</div>
+	
 	</body>
 </html>
