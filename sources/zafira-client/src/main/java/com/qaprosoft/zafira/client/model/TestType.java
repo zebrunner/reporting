@@ -3,19 +3,19 @@ package com.qaprosoft.zafira.client.model;
 import java.util.List;
 import java.util.Map;
 
-
 public class TestType extends AbstractType
 {
 	public enum Status
 	{
 		IN_PROGRESS, PASSED, FAILED, SKIPPED;
 	}
-	
+
 	private String name;
 	private Status status;
 	private String testArgs;
 	private Long testRunId;
 	private Long testCaseId;
+	private String testGroup;
 	private String message;
 	private Long startTime;
 	private Long finishTime;
@@ -26,12 +26,13 @@ public class TestType extends AbstractType
 	private String configXML;
 	private Map<String, Long> testMetrics;
 	private boolean knownIssue;
-	
+
 	public TestType()
 	{
 	}
 
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, String demoURL,
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime,
+			String demoURL,
 			String logURL, List<String> workItems, int retry, String configXML)
 	{
 		this.name = name;
@@ -46,7 +47,7 @@ public class TestType extends AbstractType
 		this.retry = retry;
 		this.configXML = configXML;
 	}
-	
+
 	public TestType(long id, Status status, String message, Long finishTime)
 	{
 		super.setId(id);
@@ -195,11 +196,23 @@ public class TestType extends AbstractType
 		this.testMetrics = testMetrics;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
+	}
+
+	public String getTestGroup()
+	{
+		return testGroup;
+	}
+
+	public void setTestGroup(String testGroup)
+	{
+		this.testGroup = testGroup;
 	}
 }
