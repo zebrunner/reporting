@@ -127,7 +127,15 @@
                 <th width="10%" align="center">Jira</th>
                 <th width="10%" align="center">Test files</th>
             </tr>
-            <#list tests?sort_by("id") as test>
+            <#assign testList = tests?sort_by("id")>
+            <#list testList?sort_by("testNotNullGroup") as test>
+                <#assign currentGroup = test.testNotNullGroup>
+                <#if currentGroup != previousGroup!''>
+                    <td colspan="5" style="background-color: gray;border: 1px solid white;padding: 5px;color: white;background-position: initial initial;background-repeat: initial initial;">
+                        ${currentGroup}
+                    </td>
+                </#if>
+                <#assign previousGroup = currentGroup>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
 	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>

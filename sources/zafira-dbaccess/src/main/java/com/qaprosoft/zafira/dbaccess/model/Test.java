@@ -16,6 +16,7 @@ public class Test extends AbstractEntity
 	private String testArgs;
 	private Long testRunId;
 	private Long testCaseId;
+    private String testGroup;
 	private String message;
 	private Date startTime;
 	private Date finishTime;
@@ -82,7 +83,19 @@ public class Test extends AbstractEntity
 		this.testCaseId = testCaseId;
 	}
 
-	public String getMessage()
+    public String getTestGroup() {
+        return testGroup;
+    }
+
+    public String getNotNullTestGroup() {
+        return testGroup == null? "n/a": testGroup;
+    }
+
+    public void setTestGroup(String testGroup) {
+        this.testGroup = testGroup;
+    }
+
+    public String getMessage()
 	{
 		return message;
 	}
