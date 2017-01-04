@@ -229,12 +229,12 @@
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
-				ORDER BY TR.MODIFIED_AT ASC
+				ORDER BY TR.STARTED_AT ASC
 			]]>
 		</if>
 		<if test="sortOrder.toString() == 'DESC'">
 			<![CDATA[
-				ORDER BY TR.MODIFIED_AT DESC
+				ORDER BY TR.STARTED_AT DESC
 			]]>
 		</if>
 		<![CDATA[
