@@ -30,7 +30,10 @@
 			<a>testCaseId</a>
 			<b>testCaseId</b>
 		</field>
-		
+		<field>
+			<a>testGroup</a>
+			<b>testGroup</b>
+		</field>
 		<field>
 			<a>message</a>
 			<b>message</b>

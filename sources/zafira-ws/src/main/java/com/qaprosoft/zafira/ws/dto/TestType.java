@@ -21,6 +21,7 @@ public class TestType extends AbstractType
 	private Long testRunId;
 	@NotNull
 	private Long testCaseId;
+	private String testGroup;
 	private String message;
 	private Date startTime;
 	private Date finishTime;
@@ -172,11 +173,23 @@ public class TestType extends AbstractType
 		this.testMetrics = testMetrics;
 	}
 
-	public boolean isKnownIssue() {
+	public boolean isKnownIssue()
+	{
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue) {
+	public void setKnownIssue(boolean knownIssue)
+	{
 		this.knownIssue = knownIssue;
+	}
+
+	public String getTestGroup()
+	{
+		return testGroup;
+	}
+
+	public void setTestGroup(String testGroup)
+	{
+		this.testGroup = testGroup;
 	}
 }
