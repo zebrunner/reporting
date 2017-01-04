@@ -6,7 +6,7 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 		$http.get('devices/list').success(function(data) {
 			$scope.devices = data;
 		}).error(function(data, status) {
-			alert('Devices list is not retrieved!');
+			alertify.error('Devices list is not retrieved!');
 		});
 	};
 	
@@ -14,7 +14,7 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 		$http.put('devices/sync').success(function(data) {
 			$route.reload();
 		}).error(function(data, status) {
-			alert('Devices not synced!');
+			alertify.error('Devices not synced!');
 		});
 	};
 	
@@ -39,7 +39,7 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Device is not created!');
+						alertify.error('Device is not created!');
 					});
 				};
 				
@@ -48,7 +48,7 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Device is not updated!');
+						alertify.error('Device is not updated!');
 					});
 				};
 				
@@ -57,7 +57,7 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Device is not deleted!');
+						alertify.error('Device is not deleted!');
 					});
 				};
 				

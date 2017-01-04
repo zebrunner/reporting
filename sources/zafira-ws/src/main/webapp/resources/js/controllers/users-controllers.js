@@ -54,7 +54,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 							$http.put('users', user).success(function(data) {
 								$route.reload();
 							}).error(function(data, status) {
-								alert('Failed to update user');
+								alertify.error('Failed to update user');
 							});
 							$modalInstance.close(0);
 						};
@@ -63,7 +63,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 							$http.delete('users/' + user.id).success(function() {
 								$route.reload();
 							}).error(function(data, status) {
-								alert('Failed to delete user');
+								alertify.error('Failed to delete user');
 							});
 							$modalInstance.close(0);
 						};
@@ -89,7 +89,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 						$http.put('users', user).success(function(data) {
 							$route.reload();
 						}).error(function(data, status) {
-							alert('Failed to update user');
+							alertify.error('Failed to update user');
 						});
 						$modalInstance.close(0);
 					};
@@ -124,7 +124,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		$http.put('users', user).success(function(data) {
 			$route.reload();
 		}).error(function(data, status) {
-			alert('Failed to update user');
+			alertify.error('Failed to update user');
 		});
 	};
 	
@@ -136,7 +136,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}
 		else
 		{
-			alert("Passwords does not match!");
+			alertify.error("Passwords does not match!");
 		}
 	};
 	
@@ -146,7 +146,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.user = data;
 				$scope.user.password = null;
 			}).error(function(data, status) {
-				alert('Failed to load user');
+				alertify.error('Failed to load user');
 			});
 		});
 	})();

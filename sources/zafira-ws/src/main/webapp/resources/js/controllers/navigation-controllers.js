@@ -40,7 +40,7 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 				$scope.createProject = function(project){
 					$http.post('projects', project).success(function(data) {
 					}).error(function(data, status) {
-						alert('Failed to create project');
+						alertify.error('Failed to create project');
 					});
 					$modalInstance.close(0);
 				};

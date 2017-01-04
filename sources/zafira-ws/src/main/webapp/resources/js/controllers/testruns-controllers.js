@@ -111,7 +111,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$http.delete('tests/runs/' + id).success(function() {
 				$scope.loadTestRuns($scope.testRunSearchCriteria.page);
 			}).error(function(data, status) {
-				alert('Failed to delete test run');
+				alertify.error('Failed to delete test run');
 			});
 		}
 	};
@@ -361,9 +361,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
 					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).success(function() {
-						alert('Email was successfully sent!');
+						alertify.success('Email was successfully sent!');
 					}).error(function(data, status) {
-						alert('Failed to send email');
+						alertify.error('Failed to send email');
 					});
 				};
 				$scope.cancel = function(){
@@ -392,7 +392,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).success(function() {
 						$modalInstance.close(0);
 					}).error(function(data, status) {
-						alert('Failed to add comment!');
+						alertify.error('Failed to add comment!');
 					});
 				};
 				$scope.cancel = function(){
@@ -420,7 +420,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 						$scope.getKnownIssues();
 						$modalInstance.close(true);
 					}).error(function(data, status) {
-						alert('Failed to create new known issue');
+						alertify.error('Failed to create new known issue');
 					});
 				};
 				
@@ -428,7 +428,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$http.delete('tests/issues/' + id).success(function() {
 						$scope.getKnownIssues();
 					}).error(function(data, status) {
-						alert('Failed to delete known issue');
+						alertify.error('Failed to delete known issue');
 					});
 				};
 				
@@ -436,7 +436,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$http.get('tests/' + test.id + '/issues').success(function(issues) {
 						$scope.knownIssues = issues;
 					}).error(function(data, status) {
-						alert('Failed to load known issues');
+						alertify.error('Failed to load known issues');
 					});
 				};
 				
