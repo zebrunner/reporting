@@ -128,8 +128,8 @@
                 <th width="10%" align="center">Test files</th>
             </tr>
             <#assign testList = tests?sort_by("id")>
-            <#list testList?sort_by("testNotNullGroup") as test>
-                <#assign currentGroup = test.testNotNullGroup>
+            <#list testList?sort_by("notNullTestGroup") as test>
+                <#assign currentGroup = test.notNullTestGroup>
                 <#if currentGroup != previousGroup!''>
                     <td colspan="5" style="background-color: gray;border: 1px solid white;padding: 5px;color: white;background-position: initial initial;background-repeat: initial initial;">
                         ${currentGroup}
