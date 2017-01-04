@@ -1,23 +1,18 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.model.*;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.Status;
-import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.TestCase;
-import com.qaprosoft.zafira.dbaccess.model.TestConfig;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TestService
@@ -229,6 +224,6 @@ public class TestService
 	}
 	
 	private int getTestMessageHashCode(String message){
-		return message != null ? message.replaceAll("\\d+", "*").hashCode() : 0;
+		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
 	}
 }
