@@ -5,13 +5,14 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE)
 			VALUES (
 				#{name},
 			    #{status},
 			    #{testArgs},
 			    #{testRunId},
 			    #{testCaseId},
+			    #{testGroup},
 			    #{message},
 			    #{startTime},
 			    #{finishTime},
@@ -50,6 +51,7 @@
 				T.TEST_ARGS AS TEST_TEST_ARGS,
 				T.TEST_RUN_ID AS TEST_TEST_RUN_ID,
 				T.TEST_CASE_ID AS TEST_TEST_CASE_ID,
+				T.TEST_GROUP AS TEST_TEST_GROUP,
 				T.MESSAGE AS TEST_MESSAGE,
 				T.START_TIME AS TEST_START_TIME,
 				T.FINISH_TIME AS TEST_FINISH_TIME,
@@ -219,6 +221,7 @@
 				TEST_ARGS = #{testArgs},
 				TEST_RUN_ID = #{testRunId},
 				TEST_CASE_ID = #{testCaseId},
+				TEST_GROUP = #{testGroup},
 				MESSAGE = #{message},
 				START_TIME = #{startTime},
 				FINISH_TIME = #{finishTime},
@@ -267,6 +270,7 @@
 		<result column="TEST_TEST_ARGS" property="testArgs" />
 		<result column="TEST_TEST_RUN_ID" property="testRunId" />
 		<result column="TEST_TEST_CASE_ID" property="testCaseId" />
+		<result column="TEST_TEST_GROUP" property="testGroup"/>
 		<result column="TEST_MESSAGE" property="message" />
 		<result column="TEST_START_TIME" property="startTime" />
 		<result column="TEST_FINISH_TIME" property="finishTime" />

@@ -50,6 +50,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setTestArgs("<xml>");
 			setTestCaseId(1L);
 			setTestRunId(3L);
+			setTestGroup("g1");
 			setMessage("Hm....");
 			setStartTime(new Date());
 			setFinishTime(new Date());
@@ -97,6 +98,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setTestArgs("<xml/>");
 		TEST.setTestCaseId(2L);
 		TEST.setTestRunId(11L);
+		TEST.setTestGroup("g2");
 		TEST.setMessage("Aha!");
 		TEST.setLogURL("http://2");
 		TEST.setDemoURL("http://2");
@@ -152,6 +154,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getStatus(), TEST.getStatus(), "Status must match");
 		assertEquals(test.getTestArgs(), TEST.getTestArgs(), "Test args must match");
 		assertEquals(test.getTestCaseId(), TEST.getTestCaseId(), "Test case ID must match");
+		assertEquals(test.getTestGroup(), TEST.getTestGroup(), "Test group must match");
 		assertEquals(test.getTestRunId(), TEST.getTestRunId(), "Test run ID must match");
 		assertEquals(test.getMessage(), TEST.getMessage(), "Message must match");
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
