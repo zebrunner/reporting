@@ -8,10 +8,7 @@
 <link href="<spring:url value="/resources/css/loading-bar.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/LineChart.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/font-awesome.min.css" />" rel="stylesheet" type="text/css" />
-
-<link href="<spring:url value="/resources/js/alertify/css/alertify.min.css" />" rel="stylesheet" type="text/css" />
-
-<script src="<spring:url value='/resources/js/alertify/alertify.min.js'/>" type="text/javascript"></script>
+<link href="<spring:url value="/resources/css/alertify.min.css" />" rel="stylesheet" type="text/css" />
 
 <!-- AngularJS core -->
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>
@@ -38,6 +35,7 @@
 <script src="<spring:url value='/resources/js/3rd_party/d3.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/LineChart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/alertify.min.js'/>" type="text/javascript"></script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>

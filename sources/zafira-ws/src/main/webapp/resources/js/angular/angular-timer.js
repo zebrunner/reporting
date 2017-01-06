@@ -323,9 +323,9 @@ var timerModule = angular.module('timer', [])
         	  
             $scope.progressBar = progressBarService.calculateProgressBar($scope.startTime, $scope.millis, $scope.endTime, $scope.countdownattr, $scope.eta);
 
-            if($scope.progressBar === 100){
-              $scope.displayProgressActive = ''; //No more Bootstrap active effect
-            }
+//            if($scope.progressBar === 100){
+//              $scope.displayProgressActive = ''; //No more Bootstrap active effect
+//            }
           }
         };
 
