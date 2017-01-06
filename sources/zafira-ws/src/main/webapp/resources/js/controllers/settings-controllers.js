@@ -6,7 +6,7 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 		$http.get('settings/list').success(function(data) {
 			$scope.settings = data;
 		}).error(function(data, status) {
-			alert('Settings list is not retrieved!');
+			alertify.error('Settings list is not retrieved!');
 		});
 	};
 	
@@ -31,7 +31,7 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Setting is not created!');
+						alertify.error('Setting is not created!');
 					});
 				};
 				
@@ -40,7 +40,7 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Setting is not updated!');
+						alertify.error('Setting is not updated!');
 					});
 				};
 				
@@ -49,7 +49,7 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 						$modalInstance.close(0);
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Setting is not deleted!');
+						alertify.error('Setting is not deleted!');
 					});
 				};
 				

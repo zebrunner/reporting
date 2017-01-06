@@ -113,7 +113,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.post('dashboards/' + dashboardId + '/widgets', widget).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to add widget');
+						alertify.error('Failed to add widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -122,7 +122,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.delete('dashboards/' + dashboardId + '/widgets/' + widget.id).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to delete widget');
+						alertify.error('Failed to delete widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -131,7 +131,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.put('dashboards/' + dashboardId + '/widgets', {"id" : widget.id, "size" : widget.size, "position": widget.position}).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to update widget');
+						alertify.error('Failed to update widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -168,7 +168,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.post('dashboards', dashboard).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to create dashboard');
+						alertify.error('Failed to create dashboard');
 					});
 					$modalInstance.close(0);
 				};
@@ -177,7 +177,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.put('dashboards', dashboard).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to update dashboard');
+						alertify.error('Failed to update dashboard');
 					});
 					$modalInstance.close(0);
 				};
@@ -186,7 +186,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.delete('dashboards/' + dashboard.id).success(function() {
 						window.open($location.$$absUrl.split("?")[0], '_self');
 					}).error(function(data, status) {
-						alert('Failed to delete dashboard');
+						alertify.error('Failed to delete dashboard');
 					});
 					$modalInstance.close(0);
 				};
@@ -223,7 +223,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.post('widgets', widget).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to create widget');
+						alertify.error('Failed to create widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -232,7 +232,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.put('widgets', widget).success(function(data) {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to update widget');
+						alertify.error('Failed to update widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -241,7 +241,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.delete('widgets/' + widget.id).success(function() {
 						$route.reload();
 					}).error(function(data, status) {
-						alert('Failed to delete widget');
+						alertify.error('Failed to delete widget');
 					});
 					$modalInstance.close(0);
 				};
@@ -286,9 +286,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
 					$http.post('dashboards/email', $scope.email).success(function() {
-						alert('Email was successfully sent!');
+						alertify.success('Email was successfully sent!');
 					}).error(function(data, status) {
-						alert('Failed to send email');
+						alertify.error('Failed to send email');
 					});
 				};
 				$scope.cancel = function(){

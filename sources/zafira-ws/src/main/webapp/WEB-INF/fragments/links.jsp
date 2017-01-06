@@ -9,6 +9,10 @@
 <link href="<spring:url value="/resources/css/LineChart.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/font-awesome.min.css" />" rel="stylesheet" type="text/css" />
 
+<link href="<spring:url value="/resources/js/alertify/css/alertify.min.css" />" rel="stylesheet" type="text/css" />
+
+<script src="<spring:url value='/resources/js/alertify/alertify.min.js'/>" type="text/javascript"></script>
+
 <!-- AngularJS core -->
 <script src="<spring:url value='/resources/js/angular/angular.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-animate.min.js'/>" type="text/javascript"></script>

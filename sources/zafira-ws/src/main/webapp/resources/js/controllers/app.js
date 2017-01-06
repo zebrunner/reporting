@@ -1,5 +1,7 @@
 var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer' ]);
 
+alertify.set('notifier','position', 'top-right');
+
 ZafiraApp.directive('ngReallyClick', [ function() {
 	return {
 		restrict : 'A',
