@@ -37,7 +37,7 @@
 	            		</select>
 	            	</div>
 	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
-	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Execution URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
+	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
 	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
 	            	<div class="col-lg-1">
 	            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
@@ -80,7 +80,7 @@
 					<small>{{getArgValue(testRun.configXML, 'app_version')}}</small>
 				</div>
 				<div class="col-lg-4">
-					<a href="{{testRun.jenkinsURL}}" target="_blank">{{UtilService.truncate(testRun.jenkinsURL, 50)}}</a>
+					<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
 				</div>
 				<div class="col-lg-1">
 					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
@@ -90,8 +90,9 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
-						<span class="time">{{testRun.startedAt | date:'MM/dd HH:mm'}}</span>
-						<a href="{{testRun.jenkinsURL + '/rebuild/parameterized'}}" target="_blank" class="float_right">Rerun</a>
+						<span class="time">
+							<time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+						</span>
 						<br/>
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
@@ -100,7 +101,18 @@
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
-                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:'id':true">
+                    <div class="row">
+						<div class="col-lg-1">
+							<div class="pointer" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+						<div class="col-lg-10">
+							<div class="pointer" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+						<div class="col-lg-1">
+							<div class="pointer" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started at&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+					</div>
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse">
                     	<div class="col-lg-10">
                     		<div class="clearfix">
                     			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 

@@ -1,9 +1,0 @@
-{
-  "name": "example-ng-hide",
-  "files": [
-    "index-production.html",
-    "glyphicons.css",
-    "animations.css",
-    "protractor.js"
-  ]
-}

@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer', 'angularMoment' ]);
 
 alertify.set('notifier','position', 'bottom-right');
 
