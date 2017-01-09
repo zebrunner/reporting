@@ -5,7 +5,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
 	$scope.predicate = 'startTime';
-	$scope.reverse = true;
+	$scope.reverse = false;
 	
 	$scope.UtilService = UtilService;
 	$scope.testRunId = $location.search().id;
