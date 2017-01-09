@@ -19,7 +19,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0" data-ng-controller="NavigationCtrl">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#/dashboard">Zafira <small>server 1.8 | client 1.8.9</small></a>
+	                <a class="navbar-brand" href="#!/dashboard">Zafira <small>server 1.8 | client 1.8.9</small></a>
 	            </div>
 	            <ul class="nav navbar-top-links navbar-left">
 		            <li class="dropdown">
@@ -42,20 +42,20 @@
 	            <ul class="nav navbar-top-links navbar-right">
 
 	                <li>
-	                    <a href="#/dashboards"><i class="fa fa-pie-chart fa-fw"></i> Dashboards</a>
+	                    <a href="#!/dashboards"><i class="fa fa-pie-chart fa-fw"></i> Dashboards</a>
 	               	</li>
 	               	<li>
-	                    <a href="#/tests/runs"><i class="fa fa-play-circle fa-fw"></i> Test runs</a>
+	                    <a href="#!/tests/runs"><i class="fa fa-play-circle fa-fw"></i> Test runs</a>
 	               	</li>
 	               	<li>
-	                    <a href="#/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
+	                    <a href="#!/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
 	               	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	               	<li>
-	                    <a href="#/users"><i class="fa fa-user fa-fw"></i> Users</a>
+	                    <a href="#!/users"><i class="fa fa-user fa-fw"></i> Users</a>
 	               	</li>
 	               	<li>
-	                    <a href="#/devices"><i class="fa fa-plug fa-fw"></i> Devices</a>
+	                    <a href="#!/devices"><i class="fa fa-plug fa-fw"></i> Devices</a>
 	               	</li>
 	               	</sec:authorize>
 	               	<li>
@@ -65,15 +65,15 @@
 	                    <ul class="dropdown-menu dropdown-user">
 	                    	<sec:authorize access="hasAnyRole('ROLE_USER')">
 	                        <li>
-	                        	<a href="#/users/profile"><i class="fa fa-user fa-fw"></i> Profile</a>
+	                        	<a href="#!/users/profile"><i class="fa fa-user fa-fw"></i> Profile</a>
 	                        </li>
 	                        <li data-ng-if="pefrDashboardId">
-	                        	<a href="#/dashboards?id={{pefrDashboardId}}&userId={{currentUser.id}}"><i class="fa fa-sm fa-area-chart fa-fw"></i> Performance</a>
+	                        	<a href="#!/dashboards?id={{pefrDashboardId}}&userId={{currentUser.id}}"><i class="fa fa-sm fa-area-chart fa-fw"></i> Performance</a>
 	                        </li>
 	                        </sec:authorize>
 	                        <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	                        <li>
-	                        	<a href="#/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
+	                        	<a href="#!/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
 	                        </li>
 	                        </sec:authorize>
 	                        <li class="divider"></li>

@@ -31,7 +31,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
   	  $scope.stomp = Stomp.over(sockJS);
   	  //stomp.debug = null;
   	  $scope.stomp.connect({}, function() {
-  		$scope.stomp.subscribe("/topic/tests", function(data) 
+  		$scope.stomp.subscribe("/topic/tests", function(data)
   	      {
   	        	$scope.getMessage(data.body);
   	      });
@@ -108,9 +108,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.deleteTestRun = function(id){
 		if(confirm("Do you really want to delete test run?"))
 		{
-			$http.delete('tests/runs/' + id).success(function() {
+			$http.delete('tests/runs/' + id).then(function successCallback(data) {
 				$scope.loadTestRuns($scope.testRunSearchCriteria.page);
-			}).error(function(data, status) {
+			}, function errorCallback(data) {
 				alertify.error('Failed to delete test run');
 			});
 		}
@@ -194,7 +194,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$scope.testRunSearchCriteria.date = new Date(Date.parse($scope.startedAt) + OFFSET);
 		}
 		
-		$http.post('tests/runs/search', $scope.testRunSearchCriteria).success(function(data) {
+		$http.post('tests/runs/search', $scope.testRunSearchCriteria).then(function successCallback(data) {
+
+			var data = data.data;
 			
 			$scope.testRuns = {};
 			
@@ -211,7 +213,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			{
 				$scope.loadTests($scope.testRunId);
 			}
-		}).error(function() {
+		}, function errorCallback(data) {
 			console.error('Failed to search test runs');
 		});
 	};
@@ -219,7 +221,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.loadTests = function(testRunId){
 		$scope.lastTestRunOpened = testRunId;
 		$scope.testSearchCriteria.testRunId = testRunId;
-		$http.post('tests/search', $scope.testSearchCriteria).success(function(data) {
+		$http.post('tests/search', $scope.testSearchCriteria).then(function successCallback(data) {
+			var data = data.data;
 			$scope.userSearchResult = data;
 			$scope.testSearchCriteria.page = data.page;
 			$scope.testSearchCriteria.pageSize = data.pageSize;
@@ -229,7 +232,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.addTest(data.results[i], false);
 			}
 			
-		}).error(function() {
+		}, function errorCallback(data) {
 			console.error('Failed to search tests');
 		});
 	};
@@ -335,8 +338,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	};
 	
 	$scope.markTestAsPassed = function(id){
-		$http.post('tests/' + id + '/passed').success(function(data) {
-		}).error(function() {
+		$http.post('tests/' + id + '/passed').then(function successCallback(data) {
+		}, function errorCallback(data) {
 			console.error('Failed to mark test as passed!');
 		});
 	};
@@ -360,9 +363,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
-					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).success(function() {
+					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
 						alertify.success('Email was successfully sent!');
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to send email');
 					});
 				};
@@ -389,9 +392,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.addComment = function(){
 					var rq = {};
 					rq.comment = $scope.testRun.comments;
-					$http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).success(function() {
+					$http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).then(function successCallback(data) {
 						$modalInstance.close(0);
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to add comment!');
 					});
 				};
@@ -415,27 +418,27 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.knownIssues = {};
 				
 				$scope.createKnownIssue = function(){
-					$http.post('tests/' + test.id + '/issues', $scope.newKnownIssue).success(function() {
+					$http.post('tests/' + test.id + '/issues', $scope.newKnownIssue).then(function successCallback(data) {
 						$scope.initNewKnownIssue();
 						$scope.getKnownIssues();
 						$modalInstance.close(true);
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to create new known issue');
 					});
 				};
 				
 				$scope.deleteKnownIssue = function(id){
-					$http.delete('tests/issues/' + id).success(function() {
+					$http.delete('tests/issues/' + id).then(function successCallback(data) {
 						$scope.getKnownIssues();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to delete known issue');
 					});
 				};
 				
 				$scope.getKnownIssues = function(){
-					$http.get('tests/' + test.id + '/issues').success(function(issues) {
-						$scope.knownIssues = issues;
-					}).error(function(data, status) {
+					$http.get('tests/' + test.id + '/issues').then(function successCallback(issues) {
+						$scope.knownIssues = issues.data;
+					}, function errorCallback(data) {
 						alertify.error('Failed to load known issues');
 					});
 				};
@@ -480,8 +483,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
-		SettingsService.getSetting("JIRA_URL").then(function(setting) {
+		SettingsService.getSetting("JIRA_URL").then(function successCallback(setting) {
 			$scope.jiraURL = setting;
+		}, function errorCallback(data) {
+			console.error(data);
 		});
 	})();
 	
@@ -490,7 +495,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 ZafiraApp.controller('TestRunsCompareCtrl', [ '$scope', '$rootScope', '$http', '$routeParams', function($scope, $rootScope, $http, $routeParams) {
 	
 	$scope.initCompareMatrix = function(){
-		$http.get('tests/runs/' + $routeParams.ids + '/compare').success(function(matrix) {
+		$http.get('tests/runs/' + $routeParams.ids + '/compare').then(function successCallback(matrix) {
+			var matrix = matrix.data;
 			$scope.matrix = matrix;
 			$scope.testNames = [];
 			for(var id in matrix)

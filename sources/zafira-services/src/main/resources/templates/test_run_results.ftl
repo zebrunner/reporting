@@ -58,7 +58,7 @@
                 <td>Test job URL:</td>
                 <td>
                     <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                        <a href="${configuration['zafira_service_url']}/#/tests/runs?id=${testRun.id?c}">Zafira</a>
+                        <a href="${configuration['zafira_service_url']}/#!/tests/runs?id=${testRun.id?c}">Zafira</a>
                     </#if>
                     <#if testRun.job??>
                         <#if testRun.job.jobURL?last_index_of('/') != testRun.job.jobURL?length - 1>

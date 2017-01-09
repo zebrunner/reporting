@@ -25,15 +25,15 @@
 				<div class="form-group">
 					<label>Enabled</label>
 					<select class="form-control validation" data-ng-model="device.enabled" required>
-						<option value="true">TRUE</option>
-						<option value="false">FALSE</option>
+						<option data-ng-value="true">TRUE</option>
+						<option data-ng-value="false">FALSE</option>
 					</select>
 				</div>
 				<div class="form-group">
 					<label>Last status</label>
 					<select class="form-control validation" data-ng-model="device.lastStatus" required>
-						<option value="true">CONNECTED</option>
-						<option value="false">DISCONNECTED</option>
+						<option data-ng-value="true">CONNECTED</option>
+						<option data-ng-value="false">DISCONNECTED</option>
 					</select>
 				</div>
 			</form>

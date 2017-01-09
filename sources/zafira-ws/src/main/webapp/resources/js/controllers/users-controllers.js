@@ -21,12 +21,13 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			$scope.usersSearchCriteria.pageSize = pageSize;
 		}
 		
-		$http.post('users/search', $scope.usersSearchCriteria).success(function(data) {
+		$http.post('users/search', $scope.usersSearchCriteria).then(function successCallback(data) {
+			var data = data.data;
 			$scope.usersSearchCriteria.page = data.page;
 			$scope.usersSearchCriteria.pageSize = data.pageSize;
 			$scope.users = data.results;
 			$scope.totalResults = data.totalResults;
-		}).error(function() {
+		}, function errorCallback(data) {
 			console.error('Failed to search users');
 		});
 	};
@@ -34,7 +35,8 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	$scope.openUserDetailsModal = function(id){
 		if(id)
 		{
-			$http.get('users/' + id).success(function(user) {
+			$http.get('users/' + id).then(function successCallback(user) {
+				var user = user.data;
 				$modal.open({
 					templateUrl : 'resources/templates/user-details-modal.jsp',
 					resolve : {
@@ -51,18 +53,18 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 						$scope.user = user;
 		
 						$scope.updateUser = function(user){
-							$http.put('users', user).success(function(data) {
+							$http.put('users', user).then(function successCallback(data) {
 								$route.reload();
-							}).error(function(data, status) {
+							}, function errorCallback(data) {
 								alertify.error('Failed to update user');
 							});
 							$modalInstance.close(0);
 						};
 						
 						$scope.deleteUser = function(user){
-							$http.delete('users/' + user.id).success(function() {
+							$http.delete('users/' + user.id).then(function successCallback(data) {
 								$route.reload();
-							}).error(function(data, status) {
+							}, function errorCallback(data) {
 								alertify.error('Failed to delete user');
 							});
 							$modalInstance.close(0);
@@ -73,7 +75,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 						};
 					}
 				});
-			}).error(function() {
+			}, function errorCallback(data) {
 				console.error('Failed to load user');
 			});
 		}
@@ -86,9 +88,9 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 					$scope.user = {};
 	
 					$scope.updateUser = function(user){
-						$http.put('users', user).success(function(data) {
+						$http.put('users', user).then(function successCallback(data) {
 							$route.reload();
-						}).error(function(data, status) {
+						}, function errorCallback(data) {
 							alertify.error('Failed to update user');
 						});
 						$modalInstance.close(0);
@@ -121,9 +123,9 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.user = {};
 	
 	$scope.updateUser = function(user){
-		$http.put('users', user).success(function(data) {
+		$http.put('users', user).then(function successCallback(data) {
 			$route.reload();
-		}).error(function(data, status) {
+		}, function errorCallback(data) {
 			alertify.error('Failed to update user');
 		});
 	};
@@ -142,10 +144,10 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	(function init(){
 		UserService.getCurrentUser().then(function(user) {
-			$http.get('users/' + user.id).success(function(data) {
-				$scope.user = data;
+			$http.get('users/' + user.id).then(function successCallback(data) {
+				$scope.user = data.data;
 				$scope.user.password = null;
-			}).error(function(data, status) {
+			}, function errorCallback(data) {
 				alertify.error('Failed to load user');
 			});
 		});

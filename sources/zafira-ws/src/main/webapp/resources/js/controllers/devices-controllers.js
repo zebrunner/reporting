@@ -3,17 +3,17 @@
 ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '$modal', function($scope, $http, $location, $route, $modal) {
 	
 	$scope.listDevices = function(){
-		$http.get('devices/list').success(function(data) {
-			$scope.devices = data;
-		}).error(function(data, status) {
+		$http.get('devices/list').then(function successCallback(data) {
+			$scope.devices = data.data;
+		}, function errorCallbackerror(data) {
 			alertify.error('Devices list is not retrieved!');
 		});
 	};
 	
 	$scope.syncDevices = function(){
-		$http.put('devices/sync').success(function(data) {
+		$http.put('devices/sync').then(function successCallback(data) {
 			$route.reload();
-		}).error(function(data, status) {
+		}, function errorCallback(data) {
 			alertify.error('Devices not synced!');
 		});
 	};
@@ -35,28 +35,28 @@ ZafiraApp.controller('DevicesCtrl', [ '$scope', '$http','$location', '$route', '
 				}
 				
 				$scope.create = function(){
-					$http.post('devices', $scope.device).success(function(data) {
+					$http.post('devices', $scope.device).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Device is not created!');
 					});
 				};
 				
 				$scope.update = function(device){
-					$http.put('devices', device).success(function(data) {
+					$http.put('devices', device).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Device is not updated!');
 					});
 				};
 				
 				$scope.delete = function(device){
-					$http.delete('devices/' + device.id).success(function(data) {
+					$http.delete('devices/' + device.id).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Device is not deleted!');
 					});
 				};

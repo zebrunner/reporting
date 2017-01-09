@@ -3,9 +3,9 @@
 ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', '$modal', function($scope, $http, $location, $route, $modal) {
 	
 	$scope.listSettings = function(){
-		$http.get('settings/list').success(function(data) {
-			$scope.settings = data;
-		}).error(function(data, status) {
+		$http.get('settings/list').then(function successCallback(data) {
+			$scope.settings = data.data;
+		}, function errorCallback(data) {
 			alertify.error('Settings list is not retrieved!');
 		});
 	};
@@ -27,28 +27,28 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 				}
 				
 				$scope.create = function(){
-					$http.post('settings', $scope.setting).success(function(data) {
+					$http.post('settings', $scope.setting).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Setting is not created!');
 					});
 				};
 				
 				$scope.update = function(setting){
-					$http.put('settings', setting).success(function(data) {
+					$http.put('settings', setting).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Setting is not updated!');
 					});
 				};
 				
 				$scope.delete = function(setting){
-					$http.delete('settings/' + setting.id).success(function(data) {
+					$http.delete('settings/' + setting.id).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Setting is not deleted!');
 					});
 				};

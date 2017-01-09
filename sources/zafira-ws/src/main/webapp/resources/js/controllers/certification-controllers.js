@@ -8,9 +8,9 @@ ZafiraApp.controller('CertificationCtrl', [ '$scope', '$http','$location', '$rou
 	$scope.upstreamJobBuildNumber = $location.search().upstreamJobBuildNumber;
 	
 	$scope.loadCertificationDetails = function(){
-		$http.get('certification/details?upstreamJobId=' + $scope.upstreamJobId + "&upstreamJobBuildNumber=" + $scope.upstreamJobBuildNumber).success(function(data) {
-			$scope.certificationDetails = data
-		}).error(function(data, status) {
+		$http.get('certification/details?upstreamJobId=' + $scope.upstreamJobId + "&upstreamJobBuildNumber=" + $scope.upstreamJobBuildNumber).then(function successCallback(data){
+			$scope.certificationDetails = data.data;
+		}, function errorCallback(data){
 			alertify.error('Certification details not loaded!');
 		});
 	};

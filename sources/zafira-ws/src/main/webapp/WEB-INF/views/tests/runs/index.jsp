@@ -100,7 +100,7 @@
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
-                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':true">
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:'id':true">
                     	<div class="col-lg-10">
                     		<div class="clearfix">
                     			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 
@@ -128,7 +128,7 @@
 				</div>
 			</div>
 			<div style="padding: 5px 15px;">
-				<a href="#/tests/runs/{{compareQueryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
+				<a href="#!/tests/runs/{{compareQueryString}}/compare" class="float_left" data-ng-show="testRunsToCompare.length > 1" target="blank">Compare</a>
 				<paging class="float_right"
 					  page="testRunSearchCriteria.page" 
 					  page-size="testRunSearchCriteria.pageSize" 

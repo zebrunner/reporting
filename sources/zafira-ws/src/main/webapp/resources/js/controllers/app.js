@@ -64,9 +64,11 @@ ZafiraApp.factory('DashboardService', function($http) {
 ZafiraApp.factory('SettingsService', function($http) {
 	var settingsService = {
 			getSetting : function(name) {
-			var promise = $http.get('settings/' + name).then(function(rs) {
+			var promise = $http.get('settings/' + name).then(function successCallback(rs) {
 				return rs.data;
-			});
+			}, function errorCallback(data) {
+                log(data);
+            });
 			return promise;
 		}
 	};

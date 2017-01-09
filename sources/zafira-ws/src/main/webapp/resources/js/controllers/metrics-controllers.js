@@ -9,7 +9,8 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 	$scope.timeStep = $scope.timeSteps[1];
 	
 	$scope.loadAllDashboards = function() {
-		$http.get('dashboards/all?type=PERFORMANCE').success(function(data) {
+		$http.get('dashboards/all?type=PERFORMANCE').then(function successCallback(data) {
+			var data = data.data;
 			$scope.loadWidget(data[0].widgets[0], $scope.timeStep);
 		});
 	};
@@ -18,7 +19,8 @@ ZafiraApp.controller('TestMetricsListCtrl', [ '$scope', '$rootScope', '$http' ,'
 		var sqlAdapter = {};
 		var testCaseSql = widgets.sql.replace('#{test_case_id}', $routeParams.id);
 		sqlAdapter.sql = testCaseSql.replace('#{time_step}', $scope.convertInterval());
-		$http.post('widgets/sql' + ProjectProvider.getProjectQueryParam(), sqlAdapter).success(function(data) {
+		$http.post('widgets/sql' + ProjectProvider.getProjectQueryParam(), sqlAdapter).then(function successCallback(data) {
+			var data = data.data;
 			$scope.populateEnvsAndOperations(data);
 			$scope.widgets.model = JSON.parse(widgets.model);
 			$scope.widgets.data = data;

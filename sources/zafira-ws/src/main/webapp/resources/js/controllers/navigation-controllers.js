@@ -12,17 +12,17 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 	$scope.pefrDashboardId = null;
 	
 	$scope.loadProjects = function(){
-		$http.get('config/projects').success(function(projects) {
-			$scope.projects = projects;
-		}).error(function() {
+		$http.get('config/projects').then(function successCallback(projects) {
+			$scope.projects = projects.data;
+		}, function errorCallback(projects) {
 			console.error('Failed to load projects');
 		});
 	};
 	
 	$scope.createProject = function(newProject){
-		$http.post('projects').success(function(newProject) {
+		$http.post('projects').then(function successCallback(newProject) {
 			
-		}).error(function() {
+		}, function errorCallback(newProject) {
 			console.error('Failed to load projects');
 		});
 	};
@@ -38,8 +38,8 @@ ZafiraApp.controller('NavigationCtrl', [ '$scope', '$rootScope', '$http' ,'$loca
 			controller : function($scope, $modalInstance){
 				$scope.project = {};
 				$scope.createProject = function(project){
-					$http.post('projects', project).success(function(data) {
-					}).error(function(data, status) {
+					$http.post('projects', project).then(function successCallback(data) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to create project');
 					});
 					$modalInstance.close(0);

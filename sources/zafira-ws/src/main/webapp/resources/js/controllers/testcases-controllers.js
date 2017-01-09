@@ -27,7 +27,8 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 			$scope.testCasesSearchCriteria.pageSize = pageSize;
 		}
 		
-		$http.post('tests/cases/search', ProjectProvider.initProject($scope.testCasesSearchCriteria)).success(function(data) {
+		$http.post('tests/cases/search', ProjectProvider.initProject($scope.testCasesSearchCriteria)).then(function successCallback(data) {
+			var data = data.data;
 			$scope.testCasesSearchCriteria.page = data.page;
 			$scope.testCasesSearchCriteria.pageSize = data.pageSize;
 			$scope.testCases = data.results;
@@ -36,7 +37,7 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 				$scope.testCases[i].showDetails = false;
 			}
 			$scope.totalResults = data.totalResults;
-		}).error(function() {
+		}, function errorCallback(data) {
 			console.error('Failed to search test cases');
 		});
 	};
@@ -46,9 +47,9 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 		{
 			$scope.testsSearchCriteria.testCaseId = testCase.id;
 			
-			$http.post('tests/search', $scope.testsSearchCriteria).success(function(data) {
-				$scope.tests[testCase.id] = data.results;
-			}).error(function() {
+			$http.post('tests/search', $scope.testsSearchCriteria).then(function successCallback(data) {
+				$scope.tests[testCase.id] = data.data.results;
+			}, function errorCallback(data) {
 				console.error('Failed to search tests');
 			});
 		}

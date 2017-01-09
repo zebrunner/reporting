@@ -6,15 +6,15 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.currentUserId = $location.search().userId;
 	
 	$scope.loadAllDashboards = function() {
-		$http.get('dashboards/all' + ($scope.currentUserId != null ? '?userId=' + $scope.currentUserId : '')).success(function(dashboards) {
-			$scope.dashboards = dashboards;
+		$http.get('dashboards/all' + ($scope.currentUserId != null ? '?userId=' + $scope.currentUserId : '')).then(function successCallback(dashboards) {
+			$scope.dashboards = dashboards.data;
 			if($scope.dashboardId == null && $scope.dashboards.length > 0)
 			{
 				$scope.dashboard = $scope.dashboards[0];
 				$scope.dashboard.active = true;
 				$scope.loadDashboardData($scope.dashboard);
 			}
-			else if($scope.dashboardId != null && dashboards.length > 0)
+			else if($scope.dashboardId != null && $scope.dashboards.length > 0)
 			{
 				for(var i = 0; i < $scope.dashboards.length; i++)
 				{
@@ -29,10 +29,10 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			}
 		});
 	};
-	
+
 	$scope.loadAllWidgets = function() {
-		$http.get('widgets/all').success(function(widgets) {
-			$scope.widgets = widgets;
+		$http.get('widgets/all').then(function successCallback(widgets) {
+			$scope.widgets = widgets.data;
 		});
 	};
 	
@@ -56,7 +56,8 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		{
 			params = params + "&currentUserId=" + $scope.currentUserId;
 		}
-		$http.post('widgets/sql' + params, sqlAdapter).success(function(data) {
+		$http.post('widgets/sql' + params, sqlAdapter).then(function successCallback(data) {
+			var data = data.data;
 			for(var j = 0; j < data.length; j++)
 			{
 				if(data[j].CREATED_AT)
@@ -110,27 +111,27 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				}
 				
 				$scope.addDashboardWidget = function(widget){
-					$http.post('dashboards/' + dashboardId + '/widgets', widget).success(function(data) {
+					$http.post('dashboards/' + dashboardId + '/widgets', widget).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to add widget');
 					});
 					$modalInstance.close(0);
 				};
 				
 				$scope.deleteDashboardWidget = function(widget){
-					$http.delete('dashboards/' + dashboardId + '/widgets/' + widget.id).success(function(data) {
+					$http.delete('dashboards/' + dashboardId + '/widgets/' + widget.id).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to delete widget');
 					});
 					$modalInstance.close(0);
 				};
 				
 				$scope.updateDashboardWidget = function(widget){
-					$http.put('dashboards/' + dashboardId + '/widgets', {"id" : widget.id, "size" : widget.size, "position": widget.position}).success(function(data) {
+					$http.put('dashboards/' + dashboardId + '/widgets', {"id" : widget.id, "size" : widget.size, "position": widget.position}).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to update widget');
 					});
 					$modalInstance.close(0);
@@ -165,27 +166,27 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				
 				
 				$scope.createDashboard = function(dashboard){
-					$http.post('dashboards', dashboard).success(function(data) {
+					$http.post('dashboards', dashboard).then(function successCallback(data){
 						$route.reload();
-					}).error(function(data, status) {
+					},function errorCallback(data){
 						alertify.error('Failed to create dashboard');
 					});
 					$modalInstance.close(0);
 				};
 
 				$scope.updateDashboard = function(dashboard){
-					$http.put('dashboards', dashboard).success(function(data) {
+					$http.put('dashboards', dashboard).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to update dashboard');
 					});
 					$modalInstance.close(0);
 				};
 				
 				$scope.deleteDashboard = function(dashboard){
-					$http.delete('dashboards/' + dashboard.id).success(function() {
+					$http.delete('dashboards/' + dashboard.id).then(function successCallback(data) {
 						window.open($location.$$absUrl.split("?")[0], '_self');
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to delete dashboard');
 					});
 					$modalInstance.close(0);
@@ -220,27 +221,27 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				}
 
 				$scope.createWidget = function(widget){
-					$http.post('widgets', widget).success(function(data) {
+					$http.post('widgets', widget).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to create widget');
 					});
 					$modalInstance.close(0);
 				};
 
 				$scope.updateWidget = function(widget){
-					$http.put('widgets', widget).success(function(data) {
+					$http.put('widgets', widget).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to update widget');
 					});
 					$modalInstance.close(0);
 				};
 				
 				$scope.deleteWidget = function(widget){
-					$http.delete('widgets/' + widget.id).success(function() {
+					$http.delete('widgets/' + widget.id).then(function successCallback(data) {
 						$route.reload();
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to delete widget');
 					});
 					$modalInstance.close(0);
@@ -285,9 +286,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
-					$http.post('dashboards/email', $scope.email).success(function() {
+					$http.post('dashboards/email', $scope.email).then(function successCallback(data) {
 						alertify.success('Email was successfully sent!');
-					}).error(function(data, status) {
+					}, function errorCallback(data) {
 						alertify.error('Failed to send email');
 					});
 				};

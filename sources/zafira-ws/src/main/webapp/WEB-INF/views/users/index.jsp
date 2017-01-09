@@ -53,7 +53,7 @@
 					<span data-ng-if="user.password == '' || user.password == null" class="label arrowed arrowed-in-right label-danger">inactive</span>
 					&nbsp;
 					<i class="float_right fa fa-gear pointer" style="line-height: 20px; margin-left: 7px;" data-ng-click="openUserDetailsModal(user.id)"></i>
-					<a data-ng-if="pefrDashboardId" href="#/dashboards?id={{pefrDashboardId}}&userId={{user.id}}" aria-hidden="true" class="fa fa-sm fa-area-chart float_right pointer " style="line-height: 20px; color: black;"></a>
+					<a data-ng-if="pefrDashboardId" href="#!/dashboards?id={{pefrDashboardId}}&userId={{user.id}}" aria-hidden="true" class="fa fa-sm fa-area-chart float_right pointer " style="line-height: 20px; color: black;"></a>
 				</div>
 			</div>
 			<paging class="float_right"
