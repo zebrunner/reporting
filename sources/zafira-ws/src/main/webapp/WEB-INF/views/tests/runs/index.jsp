@@ -90,7 +90,9 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
-						<span class="time">{{testRun.startedAt | date:'MM/dd HH:mm'}}</span>
+						<span class="time">
+							<time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+						</span>
 						<a href="{{testRun.jenkinsURL + '/rebuild/parameterized'}}" target="_blank" class="float_right">Rerun</a>
 						<br/>
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
@@ -100,7 +102,18 @@
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
-                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in testRun.tests | orderBy:'id':true">
+                    <div class="row">
+						<div class="col-lg-1">
+							<div class="pointer" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+						<div class="col-lg-10">
+							<div class="pointer" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+						<div class="col-lg-1">
+							<div class="pointer" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started at&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+					</div>
+                    <div class="row test_result" data-ng-class="test.status" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse">
                     	<div class="col-lg-10">
                     		<div class="clearfix">
                     			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 

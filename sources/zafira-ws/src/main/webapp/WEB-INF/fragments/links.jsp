@@ -19,6 +19,7 @@
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer-all.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/angular/angular-moment.min.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
 <script src="<spring:url value='/resources/js/3rd_party/sockjs-1.1.1.min.js'/>" type="text/javascript"></script>
@@ -36,6 +37,7 @@
 <script src="<spring:url value='/resources/js/3rd_party/LineChart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/alertify.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/moment.min.js'/>" type="text/javascript"></script>
 
 <!-- Controllers -->
 <script src="<spring:url value='/resources/js/controllers/app.js'/>" type="text/javascript"></script>
