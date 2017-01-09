@@ -15,6 +15,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	$scope.showRealTimeEvents = false;
 	
+	$scope.project = ProjectProvider.getProject();
+	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
 		'pageSize' : 20
@@ -50,7 +52,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
 	 if(event.type == 'TEST_RUN')
 	 {
-		if(($scope.testRunId && $scope.testRunId != event.testRun.id) || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null))
+		if(($scope.testRunId && $scope.testRunId != event.testRun.id) 
+		|| ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
+		|| ($scope.project != null && $scope.project.id != event.testRun.project.id))
 		{
 			return;
 		}

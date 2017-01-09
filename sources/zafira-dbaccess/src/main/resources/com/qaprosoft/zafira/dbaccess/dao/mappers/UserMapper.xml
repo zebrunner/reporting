@@ -75,17 +75,8 @@
 	            ]]>
 			</if>
 		</trim>
-		<if test="sortOrder.toString() == 'ASC'">
-			<![CDATA[
-				ORDER BY U.USERNAME ASC
-			]]>
-		</if>
-		<if test="sortOrder.toString() == 'DESC'">
-			<![CDATA[
-				ORDER BY U.USERNAME DESC
-			]]>
-		</if>
 		<![CDATA[
+			ORDER BY CASE WHEN U.PASSWORD IS NULL OR U.PASSWORD = '' THEN 0 ELSE 1 END DESC, U.USERNAME
 			LIMIT #{pageSize} OFFSET #{offset}
 		]]>
 	</select>

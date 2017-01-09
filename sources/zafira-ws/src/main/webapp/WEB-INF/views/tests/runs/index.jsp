@@ -91,12 +91,12 @@
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
 						<span class="time">{{testRun.startedAt | date:'MM/dd HH:mm'}}</span>
-						&nbsp;
+						<a href="{{testRun.jenkinsURL + '/rebuild/parameterized'}}" target="_blank" class="float_right">Rerun</a>
+						<br/>
 						<span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
 						<span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}</span>
 						<span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
-						&nbsp;
-						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="showDetails(testRun.id)"  class="float_right pointer"></i>
+						<i data-ng-class="{'fa fa-lg fa-sort-desc': testRun.showDetails == false, 'fa fa-lg fa-sort-asc': testRun.showDetails == true}" aria-hidden="true" data-ng-click="showDetails(testRun.id)"  class="float_right pointer" style="margin-top: 5px;"></i>
 					</div>
 				</div>
 				<div class="col-lg-12" data-ng-if="testRun.showDetails == true" style="margin-top: 10px;">
