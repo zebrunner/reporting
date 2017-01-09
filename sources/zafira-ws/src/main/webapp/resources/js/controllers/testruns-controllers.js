@@ -246,6 +246,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
         window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
     }];
 	
+	const REBUILD = ['Rebuild', function ($itemScope) {
+        window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+    }];
+	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
 	  	var node = document.createElement('pre');
   	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
@@ -281,6 +285,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
       COMMENT,
       SEND_EMAIL,
       null,
+      REBUILD,
+      null,
       DELETE_TEST_RUN
     ];
 	
@@ -288,7 +294,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
       OPEN_TEST_RUN,
       COPY_TEST_RUN_LINK,
       COMMENT,
-      SEND_EMAIL
+      SEND_EMAIL,
+      null,
+      REBUILD
     ];
 	// -----------------------------------------------------------
 	
