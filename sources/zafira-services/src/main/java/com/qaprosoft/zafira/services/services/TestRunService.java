@@ -3,9 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,7 +175,7 @@ public class TestRunService
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
-		testRun.setEta(calculateETA(testRun));
+		testRun.setEta(testRunMapper.getTestRunEtaByTestSuiteId(testRun.getTestSuite().getId()));
 		
 		// New test run
 		if(testRun.getId() == null || testRun.getId() == 0)
@@ -331,39 +329,6 @@ public class TestRunService
 		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
 		double rate = (double) testRun.getPassed() / (double) total;
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
-	}
-	
-	private Integer calculateETA(TestRun testRun) throws ServiceException
-	{
-		Integer eta = null;
-		
-		try
-		{
-			TestRunSearchCriteria sc = new TestRunSearchCriteria();
-			sc.setTestSuiteId(testRun.getTestSuite().getId());
-			sc.setPageSize(25);
-			
-			List<Integer> elapsed = new ArrayList<>();
-			for(TestRun tr : searchTestRuns(sc).getResults())
-			{
-				if(tr.getElapsed() != null)
-				{
-					elapsed.add(tr.getElapsed());
-				}
-			}
-			Collections.sort(elapsed);
-			
-			if(elapsed.size() > 0)
-			{
-				eta = elapsed.size() > 2 ? elapsed.get(elapsed.size() / 2) : (elapsed.get(elapsed.size() - 1));
-			}
-		}
-		catch(Exception e)
-		{
-			LOGGER.error(e.getMessage());
-		}
-		
-		return eta;
 	}
 	
 	@Transactional

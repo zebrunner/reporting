@@ -35,5 +35,7 @@ public interface TestRunMapper
 	
 	Integer getTestRunsSearchCount(TestRunSearchCriteria sc);
 	
+	Integer getTestRunEtaByTestSuiteId(long testRunId);
+	
 	List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(@Param("jobId") Long jobId, @Param("buildNumber") Integer buildNumber);
 }

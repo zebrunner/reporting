@@ -76,8 +76,14 @@ img.pending {
 	float: left;
 }
 
-.result_error {
+.result_error.FAILED {
 	background: #ffb3b3; 
+	padding: 8px; 
+	margin: 5px 0;
+}
+
+.result_error.SKIPPED {
+	background: #ffe680; 
 	padding: 8px; 
 	margin: 5px 0;
 }

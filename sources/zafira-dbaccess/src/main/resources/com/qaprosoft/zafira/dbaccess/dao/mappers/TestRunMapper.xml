@@ -314,6 +314,27 @@
 			</if>
 		</trim>
     </select>
+    
+    <select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
+	    <![CDATA[
+	    	SELECT 
+	    		avg(ELAPSED)::int AS ETA
+			FROM (
+			 SELECT 
+			 	TR.ELAPSED AS ELAPSED, 
+			 	row_number() OVER (ORDER BY TR.ELAPSED) AS hi, 
+			 	count(*) OVER () + 1 - row_number() OVER (ORDER BY TR.ELAPSED) AS lo
+			 FROM 
+			 	zafira.TEST_RUNS TR
+			 WHERE 
+			 	TR.TEST_SUITE_ID = #{testSuiteId} AND TR.ELAPSED IS NOT NULL
+			 ORDER BY TR.STARTED_AT DESC
+			 	LIMIT 50 OFFSET 0
+			) qs
+			WHERE hi IN (lo-1,lo,lo+1);
+	    			
+	    ]]>
+	</select>
 	
 	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
