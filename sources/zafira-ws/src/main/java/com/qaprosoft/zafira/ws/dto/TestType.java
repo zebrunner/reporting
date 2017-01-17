@@ -32,6 +32,7 @@ public class TestType extends AbstractType
 	private String configXML;
 	private Map<String, Long> testMetrics;
 	private boolean knownIssue;
+	private boolean needRerun;
 
 	public String getName()
 	{
@@ -191,5 +192,15 @@ public class TestType extends AbstractType
 	public void setTestGroup(String testGroup)
 	{
 		this.testGroup = testGroup;
+	}
+
+	public boolean isNeedRerun()
+	{
+		return needRerun;
+	}
+
+	public void setNeedRerun(boolean needRerun)
+	{
+		this.needRerun = needRerun;
 	}
 }

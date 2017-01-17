@@ -66,7 +66,7 @@ public class TestCasesController extends AbstractController
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestCase> searchTestCases(@RequestBody TestCaseSearchCriteria sc) throws ServiceException
 	{
-		return testCaseService.searchTestRuns(sc);
+		return testCaseService.searchTestCases(sc);
 	}
 
 	@ResponseStatusDetails

@@ -27,6 +27,7 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private boolean knownIssue;
+	private boolean classMode;
 
 	public TestRunType(long id)
 	{
@@ -230,5 +231,15 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
+	}
+
+	public boolean isClassMode()
+	{
+		return classMode;
+	}
+
+	public void setClassMode(boolean classMode)
+	{
+		this.classMode = classMode;
 	}
 }

@@ -84,7 +84,7 @@ public class TestCaseService
 	}
 	
 	@Transactional(readOnly = true)
-	public SearchResult<TestCase> searchTestRuns(TestCaseSearchCriteria sc) throws ServiceException
+	public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) throws ServiceException
 	{
 		SearchResult<TestCase> results = new SearchResult<TestCase>();
 		results.setPage(sc.getPage());

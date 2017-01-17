@@ -74,5 +74,9 @@
 			<a>knownIssue</a>
 			<b>knownIssue</b>
 		</field>
+		<field>
+			<a>classMode</a>
+			<b>classMode</b>
+		</field>
 	</mapping>
 </mappings>

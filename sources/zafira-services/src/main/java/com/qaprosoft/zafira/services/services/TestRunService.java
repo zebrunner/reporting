@@ -39,7 +39,6 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
-
 @Service
 public class TestRunService
 {
@@ -250,6 +249,7 @@ public class TestRunService
 		}
 		
 		updateTestRun(testRun);
+		testService.updateTestRerunFlags(testRun, tests);
 		return testRun;
 	}
 	

@@ -26,6 +26,7 @@ public class Test extends AbstractEntity
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
 	private boolean knownIssue;
+	private boolean needRerun;
 	private String owner;
 
 	public Test()
@@ -193,5 +194,15 @@ public class Test extends AbstractEntity
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
+	}
+
+	public boolean isNeedRerun()
+	{
+		return needRerun;
+	}
+
+	public void setNeedRerun(boolean needRerun)
+	{
+		this.needRerun = needRerun;
 	}
 }

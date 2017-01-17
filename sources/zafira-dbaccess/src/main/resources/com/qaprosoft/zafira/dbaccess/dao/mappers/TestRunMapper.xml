@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS)
+			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, CLASS_MODE)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -40,7 +40,8 @@
 				#{startedAt},
 				#{elapsed},
 				#{eta},
-				#{comments}
+				#{comments},
+				#{classMode}
 			)
 		]]>
 	</insert>
@@ -70,6 +71,7 @@
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
 				TR.ETA AS TEST_RUN_ETA,
 				TR.COMMENTS AS TEST_RUN_COMMENTS, 
+				TR.CLASS_MODE AS TEST_RUN_CLASS_MODE,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
 				
@@ -106,7 +108,8 @@
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
 				TR.ETA AS TEST_RUN_ETA, 
-				TR.COMMENTS AS TEST_RUN_COMMENTS, 
+				TR.COMMENTS AS TEST_RUN_COMMENTS,
+				TR.CLASS_MODE AS TEST_RUN_CLASS_MODE, 
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
@@ -398,7 +401,8 @@
 			    STARTED_AT = #{startedAt},
 				ELAPSED = #{elapsed},
 				ETA = #{eta},
-				COMMENTS = #{comments}
+				COMMENTS = #{comments},
+				CLASS_MODE = #{classMode}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -451,6 +455,7 @@
 		<result column="TEST_RUN_ELAPSED" property="elapsed" />
 		<result column="TEST_RUN_ETA" property="eta" />
 		<result column="TEST_RUN_COMMENTS" property="comments" />
+		<result column="TEST_RUN_CLASS_MODE" property="classMode" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />

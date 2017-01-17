@@ -139,6 +139,15 @@
 	               AND TC.ID = #{id}
 	            ]]>
 			</if>
+			<if test="null != ids">
+	            <![CDATA[
+	               AND TC.ID IN
+	            ]]>
+	            <foreach item="id" index="index" collection="ids"
+					open="(" separator="," close=")">
+					#{id}
+				</foreach>
+			</if>
 			<if test="null != testClass">
 	            <![CDATA[
 	               AND LOWER(TC.TEST_CLASS) LIKE LOWER(CONCAT('%', #{testClass}, '%'))

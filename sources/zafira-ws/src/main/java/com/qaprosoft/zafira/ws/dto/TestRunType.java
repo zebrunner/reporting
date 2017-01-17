@@ -31,6 +31,7 @@ public class TestRunType extends AbstractType
 	private String workItem;
 	private Project project;
 	private boolean knownIssue;
+	private boolean classMode;
 
 	public String getCiRunId()
 	{
@@ -190,5 +191,15 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
+	}
+
+	public boolean isClassMode()
+	{
+		return classMode;
+	}
+
+	public void setClassMode(boolean classMode)
+	{
+		this.classMode = classMode;
 	}
 }

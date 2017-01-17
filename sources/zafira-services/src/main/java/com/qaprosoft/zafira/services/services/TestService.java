@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.model.*;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -12,11 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TestService
 {
+	private static final String INV_COUNT = "InvCount";
+	
 	@Autowired
 	private TestMapper testMapper;
 	
@@ -223,7 +228,70 @@ public class TestService
 		return workItem;
 	}
 	
-	private int getTestMessageHashCode(String message){
+	@Transactional(rollbackFor = Exception.class)
+	public void updateTestRerunFlags(TestRun testRun, List<Test> tests) throws ServiceException
+	{
+		List<Long> allTestCaseIds = new ArrayList<>();
+		List<Long> failedTestCaseIds = new ArrayList<>();
+		
+		for(Test test : tests)
+		{
+			allTestCaseIds.add(test.getTestCaseId());
+			
+			if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+			{
+				failedTestCaseIds.add(test.getTestCaseId());
+				if(!test.isNeedRerun())
+				{
+					test.setNeedRerun(true);
+					updateTest(test);
+				}
+			}
+			else
+			{
+				if(test.isNeedRerun())
+				{
+					test.setNeedRerun(false);
+					updateTest(test);
+				}
+			}
+			// Data-providers without TUID
+			if(test.getName().contains(INV_COUNT) && !test.isNeedRerun())
+			{
+				test.setNeedRerun(true);
+				updateTest(test);
+			}
+		}
+		
+		if(testRun.isClassMode() && !Status.PASSED.equals(testRun))
+		{
+			TestCaseSearchCriteria sc = new TestCaseSearchCriteria();
+			sc.setIds(allTestCaseIds);
+			
+			Map<Long, String> idToClass = new HashMap<>();
+			List<String> failedTestClasses = new ArrayList<>();
+			for(TestCase tc : testCaseService.searchTestCases(sc).getResults())
+			{
+				idToClass.put(tc.getId(), tc.getTestClass());
+				if(failedTestCaseIds.contains(tc.getId()))
+				{
+					failedTestClasses.add(tc.getTestClass());
+				}
+			}
+			
+			for(Test test : tests)
+			{
+				if(failedTestClasses.contains(idToClass.get(test.getTestCaseId())) && !test.isNeedRerun())
+				{
+					test.setNeedRerun(true);
+					updateTest(test);
+				}
+			}
+		}
+	}
+	
+	private int getTestMessageHashCode(String message)
+	{
 		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
 	}
 }

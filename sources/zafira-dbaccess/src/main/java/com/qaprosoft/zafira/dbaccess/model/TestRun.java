@@ -35,6 +35,7 @@ public class TestRun extends AbstractEntity
 	private Initiator startedBy;
 	private Project project;
 	private boolean knownIssue;
+	private boolean classMode;
 	private String env;
 	private String platform;
 	private Date startedAt;
@@ -294,6 +295,16 @@ public class TestRun extends AbstractEntity
 	public void setComments(String comments)
 	{
 		this.comments = comments;
+	}
+	
+	public boolean isClassMode()
+	{
+		return classMode;
+	}
+
+	public void setClassMode(boolean classMode)
+	{
+		this.classMode = classMode;
 	}
 
 	public Integer getCountdown()
