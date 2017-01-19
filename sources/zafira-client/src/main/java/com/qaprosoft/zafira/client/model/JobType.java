@@ -1,14 +1,12 @@
 package com.qaprosoft.zafira.client.model;
 
-
-
 public class JobType extends AbstractType
 {
 	private String name;
 	private String jobURL;
 	private String jenkinsHost;
 	private Long userId;
-	
+
 	public JobType(String name, String jobURL, String jenkinsHost, Long userId)
 	{
 		this.name = name;

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.client.model.config;
+package com.qaprosoft.zafira.client.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +11,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "arg" })
 @XmlRootElement(name = "config")
-public class Configuration
+public class ConfigurationType
 {
-	protected List<Argument> arg;
+	protected List<ArgumentType> arg;
 
-	public List<Argument> getArg()
+	public List<ArgumentType> getArg()
 	{
 		if (arg == null)
 		{
-			arg = new ArrayList<Argument>();
+			arg = new ArrayList<ArgumentType>();
 		}
 		return this.arg;
 	}
 }
+

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.client.model.config;
+package com.qaprosoft.zafira.client.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "key", "value" })
-public class Argument
+public class ArgumentType
 {
 	@XmlElement(required = true)
 	protected String key;
@@ -19,11 +19,11 @@ public class Argument
 	@XmlElement(required = true)
 	protected String value;
 	
-	public Argument()
+	public ArgumentType()
 	{
 	}
 
-	public Argument(String key, String value)
+	public ArgumentType(String key, String value)
 	{
 		this.key = key;
 		this.value = value;

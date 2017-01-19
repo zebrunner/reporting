@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.client.model;
 
-
 public class UserType extends AbstractType
 {
 	private String userName;

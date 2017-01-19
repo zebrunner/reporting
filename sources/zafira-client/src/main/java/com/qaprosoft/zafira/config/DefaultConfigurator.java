@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +7,22 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.client.model.config.Configuration;
+import com.qaprosoft.zafira.client.model.ConfigurationType;
 
+/**
+ * Default implementation of Zafira {@link IConfigurator} used for more deep integration with test frameworks.
+ * It should be enough to use default configurator to get base reporting functionality.
+ * 
+ * @author akhursevich
+ */
 public class DefaultConfigurator implements IConfigurator
 {
 	private static final String ANONYMOUS = "anonymous";
 	
 	@Override
-	public Configuration getConfiguration()
+	public ConfigurationType getConfiguration()
 	{
-		return new Configuration();
+		return new ConfigurationType();
 	}
 
 	@Override

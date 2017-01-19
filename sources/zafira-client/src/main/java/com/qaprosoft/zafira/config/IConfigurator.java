@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.listener;
+package com.qaprosoft.zafira.config;
 
 import java.util.List;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.client.model.config.Configuration;
+import com.qaprosoft.zafira.client.model.ConfigurationType;
 
 /**
  * Interface provided to perform better integration with Zafira reporting tool.
@@ -15,7 +15,7 @@ import com.qaprosoft.zafira.client.model.config.Configuration;
  */
 public interface IConfigurator
 {
-	Configuration getConfiguration();
+	ConfigurationType getConfiguration();
 	
 	String getOwner(ISuite suite);
 	

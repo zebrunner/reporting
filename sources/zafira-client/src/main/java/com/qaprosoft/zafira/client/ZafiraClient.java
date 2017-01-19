@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.client;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -13,9 +14,12 @@ import com.qaprosoft.zafira.client.model.EventType;
 import com.qaprosoft.zafira.client.model.JobType;
 import com.qaprosoft.zafira.client.model.TestCaseType;
 import com.qaprosoft.zafira.client.model.TestRunType;
+import com.qaprosoft.zafira.client.model.TestRunType.Initiator;
 import com.qaprosoft.zafira.client.model.TestSuiteType;
 import com.qaprosoft.zafira.client.model.TestType;
+import com.qaprosoft.zafira.client.model.TestType.Status;
 import com.qaprosoft.zafira.client.model.UserType;
+import com.qaprosoft.zafira.config.CIConfig;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -24,6 +28,8 @@ import com.sun.jersey.core.util.Base64;
 public class ZafiraClient
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraClient.class);
+	
+	private static final String ANONYMOUS = "anonymous";
 	
 	private static final Integer TIMEOUT = 15 * 1000;
 	
@@ -515,5 +521,329 @@ public class ZafiraClient
 	{
 		this.project = project;
 		return this;
+	}
+	
+	/**
+	 * Registers user in Zafira, it may be a new one or existing returned by service.
+	 * 
+	 * @param userName - in general LDAP user name
+	 * @param email
+	 * @param firstName
+	 * @param lastName
+	 * @return registered user
+	 */
+	public UserType registerUser(String userName, String email, String firstName, String lastName) 
+	{
+		if (StringUtils.isEmpty(userName) || userName.equals("$BUILD_USER_ID"))
+		{
+			userName = ANONYMOUS;
+		}
+		userName = userName.toLowerCase();
+		
+		String userDetails = "userName: %s, email: %s, firstName: %s, lastName: %s";
+		LOGGER.debug("User details for registration:" + String.format(userDetails, userName, email, firstName, lastName));
+		
+		UserType user = new UserType(userName, email, firstName, lastName);
+		Response<UserType> response = createUser(user);
+		user = response.getObject();
+
+		if (user == null) 
+		{
+			throw new RuntimeException("Unable to register user '" + userName + "' for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered user details:" + String.format(userDetails, user.getUserName(), user.getEmail(), user.getFirstName(), user.getLastName()));
+		}
+		return user;
+	}
+	
+	/**
+	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
+	 * 
+	 * @param suiteId
+	 * @param ownerId
+	 * @param testClass
+	 * @param testMethod
+	 * @return registred test case
+	 */
+	public TestCaseType registerTestCase(long suiteId, long ownerId, String testClass, String testMethod) 
+	{
+		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, ownerId);
+		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %s, userId: %s";
+		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+		Response<TestCaseType> response = createTestCase(testCase);
+		testCase = response.getObject();
+		if (testCase == null) 
+		{
+			throw new RuntimeException("Unable to register test case '"
+					+ String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId) + "' for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+		}
+		return testCase;
+	}
+	
+	/**
+	 * Registers test work items.
+	 * 
+	 * @param testId
+	 * @param workItems
+	 * @return test for which we registers work items.
+	 */
+	public TestType registerWorkItems(Long testId, List<String> workItems) 
+	{
+		TestType test = null;
+		if(workItems != null && workItems.size() > 0)
+		{
+			Response<TestType> response = createTestWorkItems(testId, workItems);
+			test = response.getObject();
+		}
+		return test;
+	}
+	
+	/**
+	 * Registers test suite in Zafira, it may be a new one or existing returned by service.
+	 * 
+	 * @param suiteName - test suite name
+	 * @param fileName - TestNG xml file name
+	 * @param userId - suite owner user id
+	 * @return created test suite
+	 */
+	public TestSuiteType registerTestSuite(String suiteName, String fileName, Long userId) 
+	{
+		TestSuiteType testSuite = new TestSuiteType(suiteName, fileName, userId);
+		String testSuiteDetails = "suiteName: %s, fileName: %s, userId: %s";
+		LOGGER.debug("Test Suite details for registration:" + String.format(testSuiteDetails, suiteName, fileName, userId));
+		
+		Response<TestSuiteType> response = createTestSuite(testSuite);
+		testSuite = response.getObject();
+
+		if (testSuite == null) 
+		{
+			throw new RuntimeException("Unable to register test suite '" + suiteName + "' for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test suite details:" + String.format(testSuiteDetails, testSuite.getName(), testSuite.getFileName(), testSuite.getUserId()));
+		}
+		return testSuite;
+	}
+	
+	/**
+	 * Registers job in Zafira, it may be a new one or existing returned by service.
+	 * 
+	 * @param jobUrl - CI job URL
+	 * @param userId - job owner user id 
+	 * @return created job
+	 */
+	public JobType registerJob(String jobUrl, Long userId) 
+	{
+		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
+		String jenkinsHost = StringUtils.EMPTY;
+		if(jobUrl.contains("/view/"))
+		{
+			jenkinsHost = jobUrl.split("/view/")[0];
+		}
+		else if(jobUrl.contains("/job/"))
+		{
+			jenkinsHost = jobUrl.split("/job/")[0];
+		}
+		
+		String jobDetails = "jobName: %s, jenkinsHost: %s, userId: %s";
+		LOGGER.debug("Job details for registration:" + String.format(jobDetails, jobName, jenkinsHost, userId));
+		
+		JobType job = new JobType(jobName, jobUrl, jenkinsHost, userId);
+		Response<JobType> response = createJob(job);
+		job = response.getObject();
+
+		if (job == null) 
+		{
+			throw new RuntimeException("Unable to register job for zafira service: " + serviceURL);
+		} else 
+		{
+			LOGGER.debug("Registered job details:" + String.format(jobDetails, job.getName(), job.getJenkinsHost(), job.getUserId()));
+		}
+
+		return job;
+	}
+	
+	/**
+	 * Registers new test run triggered by human.
+	 * 
+	 * @param testSuiteId
+	 * @param userId
+	 * @param configXML
+	 * @param jobId
+	 * @param ciConfig
+	 * @param startedBy
+	 * @param workItem
+	 * @param classMode
+	 * @return created test run
+	 */
+	public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	{
+		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
+		testRun.setClassMode(classMode);
+		String testRunDetails = "testSuiteId: %s, userId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, buildNumber: %s, startedBy: %s, workItem";
+		LOGGER.debug("Test Run details for registration:" + String.format(testRunDetails, testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
+		
+		Response<TestRunType> response = startTestRun(testRun);
+		testRun = response.getObject();
+		if (testRun == null) 
+		{
+			throw new RuntimeException("Unable to register test run '" + String.format(testRunDetails, testSuiteId, userId,
+					ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem) + "' for zafira service: " + serviceURL);
+		} else {
+			LOGGER.debug("Registered test run details:" 
+							+ String.format(testRunDetails, testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
+		}
+		return testRun;
+	}
+
+	/**
+	 * Registers new test run triggered by scheduler.
+	 * 
+	 * @param testSuiteId
+	 * @param configXML
+	 * @param jobId
+	 * @param ciConfig
+	 * @param startedBy
+	 * @param workItem
+	 * @param classMode
+	 * @return created test run
+	 */
+	public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	{
+		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
+		testRun.setClassMode(classMode);
+		String testRunDetails = "testSuiteId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, buildNumber: %s, startedBy: %s, workItem";
+		LOGGER.debug("Test Run details for registration:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
+
+		Response<TestRunType> response = startTestRun(testRun);
+		testRun = response.getObject();
+		if (testRun == null) 
+		{
+			throw new RuntimeException("Unable to register test run '"
+							+ String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem)
+							+ "' for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test run details:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
+		}
+		return testRun;
+	}
+
+	/**
+	 * Registers new test run triggered by upstream job.
+	 * 
+	 * @param testSuiteId
+	 * @param configXML
+	 * @param jobId
+	 * @param parentJobId
+	 * @param ciConfig
+	 * @param startedBy
+	 * @param workItem
+	 * @param classMode
+	 * @return created test run
+	 */
+	public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	{
+		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, parentJobId, ciConfig.getCiParentBuild(),
+				ciConfig.getCiBuild(), startedBy, workItem);
+		testRun.setClassMode(classMode);
+		String testRunDetails = "testSuiteId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, parentJobId: %s, parentBuildNumber: %s, buildNumber: %s, startedBy: %s, workItem";
+		LOGGER.debug("Test Run details for registration:"
+				+ String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem));
+
+		Response<TestRunType> response = startTestRun(testRun);
+		testRun = response.getObject();
+		if (testRun == null) 
+		{
+			throw new RuntimeException("Unable to register test run '"
+					+ String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem) 
+							+ "' for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test run details:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId,parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem));
+		}
+		return testRun;
+	}
+	
+	/**
+	 * Finalizes test run calculating test results.
+	 * 
+	 * @param testRun
+	 * @return updated test run
+	 */
+	public TestRunType registerTestRunResults(TestRunType testRun)
+	{
+		updateTestRun(testRun); 
+		Response<TestRunType> response = finishTestRun(testRun.getId());
+		return response.getObject();
+	}
+	
+	/**
+	 * Registers test run in Zafira.
+	 * 
+	 * @param name
+	 * @param group
+	 * @param status
+	 * @param testArgs
+	 * @param testRunId
+	 * @param testCaseId
+	 * @param demoURL
+	 * @param logURL
+	 * @param retry
+	 * @return registered test
+	 */
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, String demoURL, String logURL, int retry, String configXML)
+	{
+		Long startTime = new Date().getTime();
+
+		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, demoURL: %s, logURL: %s, retry: %d";
+
+		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, null, retry, configXML);
+		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+
+		test.setTestGroup(group);
+		Response<TestType> response = startTest(test);
+		test = response.getObject();
+		if (test == null) 
+		{
+			throw new RuntimeException("Unable to register test '" + String.format(testDetails, name, status, testArgs,
+					testRunId, testCaseId, startTime, demoURL, logURL, retry) + "' startup for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+		}
+		return test;
+	}
+	
+	/**
+	 * Registers test re-run in Zafira.
+	 * 
+	 * @param test
+	 * @return registered test
+	 */
+	public TestType registerTestRestart(TestType test) 
+	{
+		String testName = test.getName();
+		Response<TestType> response = startTest(test);
+		test = response.getObject();
+		if (test == null) 
+		{
+			throw new RuntimeException("Unable to register test '" + testName + "' restart for zafira service: " + serviceURL);
+		} 
+		else 
+		{
+			LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + test.getStartTime());
+		}
+		return test;
 	}
 }
