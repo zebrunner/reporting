@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -34,18 +35,18 @@ import org.testng.SkipException;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
-import com.qaprosoft.zafira.client.model.ConfigurationType;
-import com.qaprosoft.zafira.client.model.JobType;
-import com.qaprosoft.zafira.client.model.TestCaseType;
-import com.qaprosoft.zafira.client.model.TestRunType;
-import com.qaprosoft.zafira.client.model.TestRunType.Initiator;
-import com.qaprosoft.zafira.client.model.TestSuiteType;
-import com.qaprosoft.zafira.client.model.TestType;
-import com.qaprosoft.zafira.client.model.TestType.Status;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.db.TestRun.Initiator;
+import com.qaprosoft.zafira.models.dto.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
 import com.qaprosoft.zafira.config.IConfigurator;
-import com.qaprosoft.zafira.client.model.UserType;
+import com.qaprosoft.zafira.models.dto.UserType;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
@@ -219,7 +220,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				}
 				
 				startedTest.setFinishTime(null);
-				startedTest.setStartTime(new Date().getTime());
+				startedTest.setStartTime(new Date());
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
@@ -357,7 +358,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	{
 		long threadId = Thread.currentThread().getId();
 		TestType test = testByThread.get(threadId);
-		final long finishTime = new Date().getTime();
+		final Date finishTime = new Date();
 		
 		String testName = configurator.getTestName(result);
 		LOGGER.debug("testName registered with current thread is: " + testName);

@@ -6,8 +6,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.qaprosoft.zafira.dbaccess.model.Device;
-import com.qaprosoft.zafira.dbaccess.model.Setting;
+import com.qaprosoft.zafira.models.db.Device;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DeviceService;

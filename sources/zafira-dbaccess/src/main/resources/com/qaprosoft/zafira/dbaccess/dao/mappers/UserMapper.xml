@@ -170,7 +170,7 @@
 		<include refid="deleteUser" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.User" id="UserResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
 		<id column="USER_ID" property="id" />
 		<result column="USER_USERNAME" property="userName" />
 		<result column="USER_PASSWORD" property="password" />

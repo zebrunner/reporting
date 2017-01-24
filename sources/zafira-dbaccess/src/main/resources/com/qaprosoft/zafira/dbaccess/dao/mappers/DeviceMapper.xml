@@ -74,7 +74,7 @@
 		<include refid="deleteDevice" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Device" id="DeviceResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Device" id="DeviceResultMap" autoMapping="false">
 		<id column="DEVICE_ID" property="id" />
 		<result column="DEVICE_MODEL" property="model" />
 		<result column="DEVICE_SERIAL" property="serial" />

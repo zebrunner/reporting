@@ -94,7 +94,7 @@
 	</delete>
 	
 	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Widget" id="WidgetResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Widget" id="WidgetResultMap" autoMapping="false">
 		<id column="WIDGET_ID" property="id" />
 		<result column="WIDGET_TITLE" property="title" />
 		<result column="WIDGET_SQL" property="sql" />

@@ -3,7 +3,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.models.db.User;
 
 public interface UserMapper
 {

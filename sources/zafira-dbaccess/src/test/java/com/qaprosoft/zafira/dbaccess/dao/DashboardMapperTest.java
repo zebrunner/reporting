@@ -15,8 +15,8 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper;
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
-import com.qaprosoft.zafira.dbaccess.model.Widget;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Widget;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

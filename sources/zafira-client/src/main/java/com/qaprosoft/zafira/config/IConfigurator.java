@@ -6,7 +6,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.client.model.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
  * Interface provided to perform better integration with Zafira reporting tool.

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.EventMapper;
-import com.qaprosoft.zafira.dbaccess.model.Event;
-import com.qaprosoft.zafira.dbaccess.model.Event.Type;
+import com.qaprosoft.zafira.models.db.Event;
+import com.qaprosoft.zafira.models.db.Event.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

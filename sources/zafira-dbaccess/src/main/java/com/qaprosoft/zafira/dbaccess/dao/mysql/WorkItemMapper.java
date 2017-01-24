@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem.Type;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
 
 public interface WorkItemMapper
 {

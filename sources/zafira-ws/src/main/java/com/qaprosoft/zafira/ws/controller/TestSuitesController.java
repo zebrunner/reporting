@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.dbaccess.model.TestSuite;
+import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestSuiteService;
-import com.qaprosoft.zafira.ws.dto.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller

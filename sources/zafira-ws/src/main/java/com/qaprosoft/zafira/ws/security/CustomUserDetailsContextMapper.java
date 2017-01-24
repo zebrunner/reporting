@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 
-import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
 

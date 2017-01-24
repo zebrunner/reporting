@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
-import com.qaprosoft.zafira.dbaccess.model.Widget;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 
 import java.util.List;

@@ -15,7 +15,7 @@
 	<name>Zafira :: Web Service</name>
 
 	<dependencies>
-		
+
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-conf</artifactId>
@@ -23,6 +23,10 @@
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qaprosoft</groupId>
+			<artifactId>zafira-models</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
@@ -113,7 +117,7 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-springsecurity3</artifactId>

@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.ws.dto.UserType</class-a>
-		<class-b>com.qaprosoft.zafira.dbaccess.model.User</class-b>
+		<class-a>com.qaprosoft.zafira.models.dto.UserType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.User</class-b>
 
 		<field>
 			<a>id</a>

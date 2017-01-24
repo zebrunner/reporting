@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.TestCase;
+import com.qaprosoft.zafira.models.db.TestCase;
 
 
 public interface TestCaseMapper

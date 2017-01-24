@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestSuiteMapper;
-import com.qaprosoft.zafira.dbaccess.model.TestSuite;
+import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

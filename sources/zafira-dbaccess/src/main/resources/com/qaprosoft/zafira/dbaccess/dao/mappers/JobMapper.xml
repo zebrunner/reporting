@@ -99,7 +99,7 @@
 		<include refid="deleteJob" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Job" id="JobResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Job" id="JobResultMap" autoMapping="false">
 		<id column="JOB_ID" property="id" />
 		<result column="JOB_USER_ID" property="user.id" />
 		<result column="JOB_NAME" property="name" />

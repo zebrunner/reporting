@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.dbaccess.model.Device;
+import com.qaprosoft.zafira.models.db.Device;
 
 public interface DeviceMapper
 {

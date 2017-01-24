@@ -24,16 +24,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
-import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
-import com.qaprosoft.zafira.dbaccess.model.Widget;
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Dashboard.Type;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SeleniumService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
-import com.qaprosoft.zafira.ws.dto.DashboardEmailType;
+import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 
 import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;

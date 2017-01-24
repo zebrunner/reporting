@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.dbaccess.model.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.SettingsService.SettingType;

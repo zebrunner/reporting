@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.services.UserService;
 
 @Component

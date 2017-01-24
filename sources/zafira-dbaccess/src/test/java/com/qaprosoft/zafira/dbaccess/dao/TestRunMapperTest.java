@@ -15,15 +15,15 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
-import com.qaprosoft.zafira.dbaccess.model.Job;
-import com.qaprosoft.zafira.dbaccess.model.Project;
-import com.qaprosoft.zafira.dbaccess.model.Status;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.TestRun.Initiator;
-import com.qaprosoft.zafira.dbaccess.model.TestSuite;
-import com.qaprosoft.zafira.dbaccess.model.User;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.TestRun.Initiator;
+import com.qaprosoft.zafira.models.db.TestSuite;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.config.Argument;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

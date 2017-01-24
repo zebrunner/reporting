@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.services.services.emails;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
+import com.qaprosoft.zafira.models.db.Attachment;
 
 public interface IEmailMessage
 {

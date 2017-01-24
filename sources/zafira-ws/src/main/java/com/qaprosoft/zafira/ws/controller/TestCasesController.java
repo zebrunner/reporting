@@ -23,12 +23,12 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.Project;
-import com.qaprosoft.zafira.dbaccess.model.TestCase;
+import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestCaseService;
-import com.qaprosoft.zafira.ws.dto.TestCaseType;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller

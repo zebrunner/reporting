@@ -99,7 +99,7 @@
 		<include refid="deleteTestSuite" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.TestSuite" id="TestSuiteResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestSuite" id="TestSuiteResultMap" autoMapping="false">
 		<id column="TEST_SUITE_ID" property="id" />
 		<result column="TEST_SUITE_USER_ID" property="user.id" />
 		<result column="TEST_SUITE_NAME" property="name" />

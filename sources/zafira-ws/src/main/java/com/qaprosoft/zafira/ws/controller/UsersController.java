@@ -19,10 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
-import com.qaprosoft.zafira.ws.dto.UserType;
+import com.qaprosoft.zafira.models.dto.UserType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

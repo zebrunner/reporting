@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
-import com.qaprosoft.zafira.dbaccess.model.TestMetric;
+import com.qaprosoft.zafira.models.db.TestMetric;
 
 public interface TestMetricMapper
 {

@@ -18,9 +18,9 @@ import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.ws.dto.errors.Error;
-import com.qaprosoft.zafira.ws.dto.errors.ErrorCode;
-import com.qaprosoft.zafira.ws.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.models.dto.errors.Error;
+import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
+import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 public abstract class AbstractController

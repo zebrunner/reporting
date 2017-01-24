@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestConfigMapper;
-import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.TestConfig;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
-import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

@@ -72,7 +72,7 @@
 		<include refid="deleteSetting" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Setting" id="SettingResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Setting" id="SettingResultMap" autoMapping="false">
 		<id column="SETTING_ID" property="id" />
 		<result column="SETTING_NAME" property="name" />
 		<result column="SETTING_VALUE" property="value" />

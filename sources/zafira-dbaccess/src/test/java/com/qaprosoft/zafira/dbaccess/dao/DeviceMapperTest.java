@@ -10,7 +10,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DeviceMapper;
-import com.qaprosoft.zafira.dbaccess.model.Device;
+import com.qaprosoft.zafira.models.db.Device;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

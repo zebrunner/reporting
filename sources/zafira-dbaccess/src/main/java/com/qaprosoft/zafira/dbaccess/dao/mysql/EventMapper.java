@@ -2,8 +2,8 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.dbaccess.model.Event;
-import com.qaprosoft.zafira.dbaccess.model.Event.Type;
+import com.qaprosoft.zafira.models.db.Event;
+import com.qaprosoft.zafira.models.db.Event.Type;
 
 public interface EventMapper
 {

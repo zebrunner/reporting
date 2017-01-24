@@ -27,18 +27,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.Test;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.push.TestRunPush;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.ws.dto.CommentType;
-import com.qaprosoft.zafira.ws.dto.EmailType;
-import com.qaprosoft.zafira.ws.dto.TestRunType;
-import com.qaprosoft.zafira.ws.dto.TestType;
+import com.qaprosoft.zafira.models.dto.CommentType;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

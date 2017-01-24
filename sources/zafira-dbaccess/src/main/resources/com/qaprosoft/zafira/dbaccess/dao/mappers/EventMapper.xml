@@ -97,7 +97,7 @@
 		<include refid="deleteEvent" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Event" id="EventResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Event" id="EventResultMap" autoMapping="false">
 		<id column="EVENT_ID" property="id" />
 		<result column="EVENT_TYPE" property="type" />
 		<result column="EVENT_TEST_RUN_ID" property="testRunId" />

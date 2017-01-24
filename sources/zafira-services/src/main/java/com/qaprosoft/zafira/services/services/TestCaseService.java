@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.Status;
-import com.qaprosoft.zafira.dbaccess.model.TestCase;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

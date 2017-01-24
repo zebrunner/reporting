@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

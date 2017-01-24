@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
+import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;

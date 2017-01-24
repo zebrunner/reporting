@@ -6,9 +6,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.Status;
-import com.qaprosoft.zafira.dbaccess.model.TestRun;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 
 
 public interface TestRunMapper

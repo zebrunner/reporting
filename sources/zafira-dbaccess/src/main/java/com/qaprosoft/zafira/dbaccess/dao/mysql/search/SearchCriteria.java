@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
-import com.qaprosoft.zafira.dbaccess.model.Project;
+import com.qaprosoft.zafira.models.db.Project;
 
 public class SearchCriteria
 {

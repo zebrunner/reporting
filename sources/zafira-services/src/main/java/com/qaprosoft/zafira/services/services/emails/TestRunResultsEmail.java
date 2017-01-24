@@ -1,8 +1,8 @@
 package com.qaprosoft.zafira.services.services.emails;
 
-import com.qaprosoft.zafira.dbaccess.model.*;
-import com.qaprosoft.zafira.dbaccess.model.config.Argument;
-import com.qaprosoft.zafira.dbaccess.model.config.Configuration;
+import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
 
 import java.util.HashMap;
 import java.util.List;

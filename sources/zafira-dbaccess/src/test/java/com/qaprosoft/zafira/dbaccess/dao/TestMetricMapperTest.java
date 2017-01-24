@@ -10,7 +10,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMetricMapper;
-import com.qaprosoft.zafira.dbaccess.model.TestMetric;
+import com.qaprosoft.zafira.models.db.TestMetric;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

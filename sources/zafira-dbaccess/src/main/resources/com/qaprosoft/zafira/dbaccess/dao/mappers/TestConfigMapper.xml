@@ -141,7 +141,7 @@
 		<include refid="deleteTestConfig" />
 	</delete>
 	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.TestConfig" id="TestConfigResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestConfig" id="TestConfigResultMap" autoMapping="false">
 		<id column="TEST_CONFIG_ID" property="id" />
 		<result column="TEST_CONFIG_URL" property="url" />
 		<result column="TEST_CONFIG_ENV" property="env" />

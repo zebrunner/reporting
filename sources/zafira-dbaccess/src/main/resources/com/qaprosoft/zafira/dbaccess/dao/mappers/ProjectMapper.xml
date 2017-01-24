@@ -68,7 +68,7 @@
 		<include refid="deleteProject" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Project" id="ProjectResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Project" id="ProjectResultMap" autoMapping="false">
 		<id column="PROJECT_ID" property="id" />
 		<result column="PROJECT_NAME" property="name" />
 		<result column="PROJECT_DESCRIPTION" property="description" />

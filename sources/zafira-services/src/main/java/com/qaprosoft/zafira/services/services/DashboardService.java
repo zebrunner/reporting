@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
-import com.qaprosoft.zafira.dbaccess.model.Dashboard;
-import com.qaprosoft.zafira.dbaccess.model.Dashboard.Type;
-import com.qaprosoft.zafira.dbaccess.model.Widget;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Dashboard.Type;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

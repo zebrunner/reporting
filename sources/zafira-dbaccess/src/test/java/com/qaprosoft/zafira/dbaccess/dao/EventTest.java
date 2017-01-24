@@ -13,8 +13,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.EventMapper;
-import com.qaprosoft.zafira.dbaccess.model.Event;
-import com.qaprosoft.zafira.dbaccess.model.Event.Type;
+import com.qaprosoft.zafira.models.db.Event;
+import com.qaprosoft.zafira.models.db.Event.Type;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

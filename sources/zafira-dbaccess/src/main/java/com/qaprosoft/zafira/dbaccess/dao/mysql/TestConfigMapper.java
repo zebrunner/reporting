@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.dbaccess.model.TestConfig;
+import com.qaprosoft.zafira.models.db.TestConfig;
 
 public interface TestConfigMapper
 {

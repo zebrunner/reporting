@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem;
-import com.qaprosoft.zafira.dbaccess.model.WorkItem.Type;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

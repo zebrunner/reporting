@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import com.qaprosoft.zafira.dbaccess.model.Attachment;
+import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.WebDriverUtil;
 

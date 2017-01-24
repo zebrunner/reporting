@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMetricMapper;
-import com.qaprosoft.zafira.dbaccess.model.TestMetric;
+import com.qaprosoft.zafira.models.db.TestMetric;
 
 @Service
 public class TestMetricService

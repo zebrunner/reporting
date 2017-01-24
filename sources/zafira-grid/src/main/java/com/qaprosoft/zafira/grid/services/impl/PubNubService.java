@@ -13,8 +13,8 @@ import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
-import com.qaprosoft.zafira.dbaccess.model.Event;
-import com.qaprosoft.zafira.dbaccess.model.Event.Type;
+import com.qaprosoft.zafira.models.db.Event;
+import com.qaprosoft.zafira.models.db.Event.Type;
 import com.qaprosoft.zafira.services.services.EventService;
 
 @Service

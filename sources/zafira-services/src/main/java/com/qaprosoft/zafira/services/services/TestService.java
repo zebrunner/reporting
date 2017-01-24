@@ -4,7 +4,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.model.*;
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import org.apache.commons.lang3.StringUtils;

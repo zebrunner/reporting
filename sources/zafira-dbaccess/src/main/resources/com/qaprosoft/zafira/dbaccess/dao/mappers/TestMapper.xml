@@ -266,7 +266,7 @@
 		]]>
 	</delete>
 	
-	<resultMap type="com.qaprosoft.zafira.dbaccess.model.Test" id="TestResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Test" id="TestResultMap" autoMapping="false">
 		<id column="TEST_ID" property="id" />
 		<result column="TEST_NAME" property="name" />
 		<result column="TEST_STATUS" property="status" />
@@ -300,7 +300,7 @@
 		<result column="TEST_TEST_CONFIG_MODIFIED_AT" property="testConfig.modifiedAt" />
 		<result column="TEST_TEST_CONFIG_CREATED_AT" property="testConfig.createdAt" />
 
-		<collection property="workItems" ofType="com.qaprosoft.zafira.dbaccess.model.WorkItem"
+		<collection property="workItems" ofType="com.qaprosoft.zafira.models.db.WorkItem"
 					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper.WorkItemResultMap"/>
 	</resultMap>
 	

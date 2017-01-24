@@ -7,7 +7,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.client.model.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
  * Default implementation of Zafira {@link IConfigurator} used for more deep integration with test frameworks.
