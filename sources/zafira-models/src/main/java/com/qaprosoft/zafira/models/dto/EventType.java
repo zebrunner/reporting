@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class EventType extends AbstractType
 {
+	private static final long serialVersionUID = 4274518265225235313L;
+
 	public enum Type
 	{
 		REQUEST_DEVICE_CONNECT, CONNECT_DEVICE, REQUEST_DEVICE_DISCONNECT, DISCONNECT_DEVICE, DEVICE_WAIT_TIMEOUT, DEVICE_NOT_FOUND, HEARTBEAT_TIMEOUT

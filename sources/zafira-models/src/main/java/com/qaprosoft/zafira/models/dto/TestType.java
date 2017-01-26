@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Status;
@@ -13,6 +14,7 @@ import com.qaprosoft.zafira.models.db.Status;
 @JsonInclude(Include.NON_NULL)
 public class TestType extends AbstractType
 {	
+	private static final long serialVersionUID = 7777895715362820880L;
 	@NotNull
 	private String name;
 	private Status status;
@@ -23,8 +25,8 @@ public class TestType extends AbstractType
 	private Long testCaseId;
 	private String testGroup;
 	private String message;
-	private Date startTime;
-	private Date finishTime;
+	private Long startTime;
+	private Long finishTime;
 	private String demoURL;
 	private String logURL;
 	private List<String> workItems;
@@ -34,7 +36,11 @@ public class TestType extends AbstractType
 	private boolean knownIssue;
 	private boolean needRerun;
 
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Date startTime,
+	public TestType() {
+		
+	}
+	
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime,
 			String demoURL,
 			String logURL, List<String> workItems, int retry, String configXML)
 	{
@@ -111,22 +117,22 @@ public class TestType extends AbstractType
 		this.message = message;
 	}
 
-	public Date getStartTime()
+	public Long getStartTime()
 	{
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime)
+	public void setStartTime(Long startTime)
 	{
 		this.startTime = startTime;
 	}
 
-	public Date getFinishTime()
+	public Long getFinishTime()
 	{
 		return finishTime;
 	}
 
-	public void setFinishTime(Date finishTime)
+	public void setFinishTime(Long finishTime)
 	{
 		this.finishTime = finishTime;
 	}

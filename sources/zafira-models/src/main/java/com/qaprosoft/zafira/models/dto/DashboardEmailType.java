@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DashboardEmailType extends EmailType
 {
+	private static final long serialVersionUID = 4407281347247491977L;
 	private List<String> urls;
 	private String hostname;
 

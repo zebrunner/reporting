@@ -9,6 +9,7 @@ import com.qaprosoft.zafira.models.db.Project;
 @JsonInclude(Include.NON_NULL)
 public class TestCaseType extends AbstractType
 {
+	private static final long serialVersionUID = 4361075320159665047L;
 	@NotNull
 	private String testClass;
 	@NotNull
@@ -20,6 +21,10 @@ public class TestCaseType extends AbstractType
 	private Long userId;
 	private Project project;
 
+	public TestCaseType() {
+		
+	}
+	
 	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long userId)
 	{
 		this.testClass = testClass;

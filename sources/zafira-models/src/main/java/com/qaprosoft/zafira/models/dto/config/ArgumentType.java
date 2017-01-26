@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.models.dto.config;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,8 +10,10 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "key", "value" })
-public class ArgumentType
+public class ArgumentType implements Serializable
 {
+	private static final long serialVersionUID = 4556102912902781429L;
+
 	@XmlElement(required = true)
 	protected String key;
 

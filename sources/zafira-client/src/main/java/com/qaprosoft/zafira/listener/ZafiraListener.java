@@ -220,7 +220,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				}
 				
 				startedTest.setFinishTime(null);
-				startedTest.setStartTime(new Date());
+				startedTest.setStartTime(new Date().getTime());
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
@@ -358,7 +358,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	{
 		long threadId = Thread.currentThread().getId();
 		TestType test = testByThread.get(threadId);
-		final Date finishTime = new Date();
+		final Long finishTime = new Date().getTime();
 		
 		String testName = configurator.getTestName(result);
 		LOGGER.debug("testName registered with current thread is: " + testName);

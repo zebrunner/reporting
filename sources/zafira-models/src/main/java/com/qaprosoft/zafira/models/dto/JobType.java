@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class JobType extends AbstractType
 {
+	private static final long serialVersionUID = 4123576956700125643L;
 	@NotNull
 	private String name;
 	@NotNull
@@ -17,6 +18,10 @@ public class JobType extends AbstractType
 	@NotNull
 	private Long userId;
 
+	public JobType() {
+		
+	}
+	
 	public JobType(String name, String jobURL, String jenkinsHost, Long userId)
 	{
 		this.name = name;

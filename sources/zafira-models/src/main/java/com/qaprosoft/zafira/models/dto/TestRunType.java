@@ -11,6 +11,7 @@ import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType
 {
+	private static final long serialVersionUID = -1687311347861782118L;
 	private String ciRunId;
 	@NotNull
 	private Long testSuiteId;
@@ -33,6 +34,10 @@ public class TestRunType extends AbstractType
 	private boolean knownIssue;
 	private boolean classMode;
 
+	public TestRunType() {
+		
+	}
+	
 	public TestRunType(String ciRunId, Long testSuiteId, Long userId, String scmURL, String scmBranch, String scmCommit,
 			String configXML, Long jobId, Integer buildNumber, Initiator startedBy, String workItem)
 	{

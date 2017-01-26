@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class UserType extends AbstractType
 {
+	private static final long serialVersionUID = -6663692781158665080L;
 	@NotNull
 	private String userName;
 	private String password;
@@ -15,6 +16,10 @@ public class UserType extends AbstractType
 	private String firstName;
 	private String lastName;
 
+	public UserType() {
+		
+	}
+	
 	public UserType(String userName, String email, String firstName, String lastName)
 	{
 		this.userName = userName;

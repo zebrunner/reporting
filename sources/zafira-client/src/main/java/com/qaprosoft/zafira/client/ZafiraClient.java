@@ -9,18 +9,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.EventType;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.UserType;
-import com.qaprosoft.zafira.config.CIConfig;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -843,7 +842,7 @@ public class ZafiraClient
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + test.getStartTime());
+			LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + new Date(test.getStartTime()));
 		}
 		return test;
 	}
