@@ -4,7 +4,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -35,18 +34,18 @@ import org.testng.SkipException;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
-import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
-import com.qaprosoft.zafira.models.dto.JobType;
-import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.db.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
 import com.qaprosoft.zafira.config.IConfigurator;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.Initiator;
+import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.UserType;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
