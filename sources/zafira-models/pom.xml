@@ -15,7 +15,6 @@
 	<name>Zafira :: Models</name>
 
 	<dependencies>
-	
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -109,18 +108,5 @@
 			<artifactId>jstl</artifactId>
 		</dependency>
 	</dependencies>
-	
-	<distributionManagement>
-		<repository>
-			<id>deploymentRepo</id>
-			<name>Releases</name>
-			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>deploymentRepo</id>
-			<name>Snapshots</name>
-			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 </project>

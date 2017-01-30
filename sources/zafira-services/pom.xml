@@ -33,7 +33,7 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -79,7 +79,7 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -103,12 +103,12 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
@@ -121,22 +121,22 @@
 			<groupId>com.owlike</groupId>
 			<artifactId>genson</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.pubnub</groupId>
 			<artifactId>pubnub</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smack</artifactId>
@@ -145,7 +145,7 @@
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smackx</artifactId>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>com.codeborne</groupId>
 		    <artifactId>phantomjsdriver</artifactId>
@@ -154,7 +154,7 @@
 		    <groupId>org.seleniumhq.selenium</groupId>
 		    <artifactId>selenium-java</artifactId>
 		</dependency>
-		
+
 		<dependency>
 		  	<groupId>com.amazonaws</groupId>
 		  	<artifactId>aws-java-sdk</artifactId>
@@ -167,6 +167,14 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-deploy-plugin</artifactId>
+			  <version>2.7</version>
+			  <configuration>
+			    <skip>true</skip>
+			  </configuration>
 			</plugin>
 		</plugins>
 	</build>

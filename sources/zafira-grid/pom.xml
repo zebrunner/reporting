@@ -90,17 +90,17 @@
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.owlike</groupId>
 			<artifactId>genson</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.pubnub</groupId>
 			<artifactId>pubnub</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -121,6 +121,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-deploy-plugin</artifactId>
+			  <version>2.7</version>
+			  <configuration>
+			    <skip>true</skip>
+			  </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

@@ -59,22 +59,8 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement>
-		<repository>
-			<id>deploymentRepo</id>
-			<name>Releases</name>
-			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>deploymentRepo</id>
-			<name>Snapshots</name>
-			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<build>
 		<finalName>${project.artifactId}</finalName>
-
 		<resources>
 			<resource>
 				<directory>src/main/filtered-resources</directory>
@@ -85,30 +71,5 @@
 				<filtering>false</filtering>
 			</resource>
 		</resources>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${source.version}</source>
-					<target>${target.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 </project>
