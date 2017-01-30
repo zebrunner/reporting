@@ -90,7 +90,7 @@
 
 		<smack.version>3.2.1</smack.version>
 
-		<jersey.version>1.19.3</jersey.version>
+		<jersey.version>1.18.2</jersey.version>
 		<genson.version>0.99</genson.version>
 
 		<freemarker.version>2.3.23</freemarker.version>
