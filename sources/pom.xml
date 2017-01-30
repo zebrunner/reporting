@@ -102,7 +102,7 @@
 		<commons-configuration2.version>2.1</commons-configuration2.version>
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
 
-		<zafira.version>${project.groupId}</zafira.version>
+		<zafira.version>${project.version}</zafira.version>
 	</properties>
 
 	<modules>
@@ -121,7 +121,7 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-conf</artifactId>
-				<version>${project.version}</version>
+				<version>${zafira.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -136,22 +136,22 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-dbaccess</artifactId>
-				<version>${project.version}</version>
+				<version>${zafira.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-services</artifactId>
-				<version>${project.version}</version>
+				<version>${zafira.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-ws</artifactId>
-				<version>${project.version}</version>
+				<version>${zafira.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-batch-services</artifactId>
-				<version>${project.version}</version>
+				<version>${zafira.version}</version>
 			</dependency>
 
 			<dependency>

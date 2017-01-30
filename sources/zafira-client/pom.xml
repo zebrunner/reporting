@@ -8,8 +8,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<!-- groupId>com.qaprosoft</groupId>
-	<version>${zafira_client_version}</version-->
 	<artifactId>zafira-client</artifactId>
 	<packaging>jar</packaging>
 
