@@ -1,12 +1,10 @@
 package com.qaprosoft.zafira.models.dto;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Status;
