@@ -5,7 +5,7 @@
 
 	<groupId>com.qaprosoft</groupId>
 	<artifactId>zafira</artifactId>
-	<version>2.0</version>
+	<version>${zafira.version}</version>
 	<packaging>pom</packaging>
 
 	<name>Zafira :: Root project</name>
@@ -101,8 +101,6 @@
 		<aws-java-sdk.version>1.10.30</aws-java-sdk.version>
 		<commons-configuration2.version>2.1</commons-configuration2.version>
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
-
-		<zafira.version>${project.version}</zafira.version>
 	</properties>
 
 	<modules>
@@ -121,37 +119,37 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-conf</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-models</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-client</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-dbaccess</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-services</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-ws</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>zafira-batch-services</artifactId>
-				<version>${zafira.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
