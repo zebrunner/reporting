@@ -22,3 +22,4 @@ hs_err_pid*
 /sources/zafira-dbaccess/test-output
 /sources/zafira-dbaccess/.classpath
 /sources/zafira-client/com
+/sources/zafira-ws/phantomjs*
