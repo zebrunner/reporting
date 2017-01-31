@@ -8,9 +8,21 @@
 <div class="view-wrapper" data-ng-controller="SettingsCtrl">
 	<div class="row">
         <div class="col-lg-12">
-         	<h2><i class="fa fa-gear fa-fw"></i> Settings <button class="btn btn-xs btn-success" data-ng-click="openSettingsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+         	<h2><i class="fa fa-gear fa-fw"></i> Settings</h2>
     	</div>
     </div>
+	<md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+		<md-fab-trigger>
+			<md-button aria-label="menu" class="md-fab" md-visible="tooltipVisible">
+				<i class="fa fa-bars" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-trigger>
+		<md-fab-actions>
+			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openSettingsModal()">
+				<i class="fa fa-plus" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="row results_header">

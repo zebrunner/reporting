@@ -57,7 +57,9 @@ ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', 
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	(function init(){

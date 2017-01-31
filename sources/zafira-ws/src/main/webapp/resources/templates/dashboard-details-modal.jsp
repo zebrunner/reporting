@@ -6,7 +6,10 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
-	<h3>Dashboard settings <button data-ng-if="dashboard.id" class="btn btn-xs btn-danger" data-ng-really-message="Do you really want to delete dashboard?" data-ng-really-click="deleteDashboard(dashboard)"> <i class="fa fa-times-circle"></i> delete</button></h3>
+	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
+	<h3>Dashboard settings
+
+	</h3>
 </div>
 <div class="modal-body">
 	<form name="dashboardForm">
@@ -32,13 +35,11 @@
 	</form>
 </div>
 <div class="modal-footer">
+	<button data-ng-if="dashboard.id" class="btn btn-danger" data-ng-really-message="Do you really want to delete dashboard?" data-ng-really-click="deleteDashboard(dashboard)">Delete</button>
 	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
     	Create
     </button>
 	<button data-ng-if="!isNew" class="btn btn-success" data-ng-click="updateDashboard(dashboard)"  data-ng-disabled="dashboardForm.$invalid">
     	Save
-    </button>
-    <button class="btn btn-primary" data-ng-click="cancel()">
-    	Cancel
     </button>
 </div>

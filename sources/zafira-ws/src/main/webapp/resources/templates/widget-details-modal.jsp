@@ -6,7 +6,9 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
-	<h3>Widget settings <button data-ng-if="widget.id" class="btn btn-xs btn-danger" data-ng-really-message="Do you really want to delete widget?" data-ng-really-click="deleteWidget(widget)"> <i class="fa fa-times-circle"></i> delete</button></h3>
+	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
+	<h3>Widget settings
+	</h3>
 </div>
 <div class="modal-body">
 	<form name="widgetForm">
@@ -33,13 +35,11 @@
 	</form>
 </div>
 <div class="modal-footer">
+	<button data-ng-if="widget.id" class="btn btn-danger" data-ng-really-message="Do you really want to delete widget?" data-ng-really-click="deleteWidget(widget)">Delete</button>
 	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createWidget(widget)"  data-ng-disabled="widgetForm.$invalid">
     	Create
     </button>
 	<button data-ng-if="!isNew" class="btn btn-success" data-ng-click="updateWidget(widget)"  data-ng-disabled="widgetForm.$invalid">
     	Save
-    </button>
-    <button class="btn btn-primary" data-ng-click="cancel()">
-    	Cancel
     </button>
 </div>

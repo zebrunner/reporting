@@ -262,3 +262,25 @@ td.no-results {
 .disabled {
 	color: grey;
 }
+
+button.md-fab.md-mini:not(#reset-button):not(#search-button) {
+	background-color: lightgray;
+}
+
+#main-fab {
+	position: fixed;
+}
+
+#dashboard_content button {
+	text-transform: none;
+	margin: 1px;
+}
+
+.cancel-button {
+	float: right;
+	margin: 6px;
+}
+
+.fa.cancel-button {
+	font-size: 130%;
+}

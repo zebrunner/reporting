@@ -1,10 +1,10 @@
 'use strict';
 
 ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', '$cookieStore', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route, $cookieStore) {
-	
+
 	$scope.dashboardId = $location.search().id;
 	$scope.currentUserId = $location.search().userId;
-	
+
 	$scope.loadAllDashboards = function() {
 		$http.get('dashboards/all' + ($scope.currentUserId != null ? '?userId=' + $scope.currentUserId : '')).then(function successCallback(dashboards) {
 			$scope.dashboards = dashboards.data;
@@ -141,7 +141,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	$scope.openDashboardDetailsModal = function(dashboard, isNew){
@@ -196,7 +198,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	$scope.openWidgetDetailsModal = function(widget, isNew){
@@ -251,7 +255,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	$scope.sort = {
@@ -296,7 +302,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 }]);

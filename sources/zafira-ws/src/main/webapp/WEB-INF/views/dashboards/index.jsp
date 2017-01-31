@@ -10,27 +10,38 @@
          <div class="col-lg-10">
          	<h2>
          		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
-         		<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-         			<button class="btn btn-xs btn-success" data-ng-click="openDashboardDetailsModal({}, true)"> <i class="fa fa-plus-circle"></i> new</button>
-         		</sec:authorize>
-         		<button class="btn btn-xs btn-primary" data-ng-click="openEmailModal()"> <i class="fa fa-envelope-o"></i> send as email</button>
          		</h2><br/>
-         		
-         </div>
-    </div>
+
+		 </div>
+	</div>
+	 <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+		 <md-fab-trigger>
+			 <md-button aria-label="menu" class="md-fab" md-visible="tooltipVisible">
+				 <i class="fa fa-bars" aria-hidden="true"></i>
+			 </md-button>
+		 </md-fab-trigger>
+		 <md-fab-actions>
+			 <md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openEmailModal()">
+				 <i class="fa fa-envelope-o" aria-hidden="true"></i>
+			 </md-button>
+			 <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+				 <md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openDashboardDetailsModal(dashboard, false)">
+					 <i class="fa fa-gear pointer"></i>
+				 </md-button>
+				 <md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openDashboardDetailsModal({}, true)">
+					 <i class="fa fa-plus" aria-hidden="true"></i>
+				 </md-button>
+			 </sec:authorize>
+		 </md-fab-actions>
+	 </md-fab-speed-dial>
     <div id="dashboard_content">
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
-	         		<li data-ng-class="{'active': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'">
-	         			<a href="" data-ng-click="switchDashboard(dashboard.id)">
-	         				<span>{{dashboard.title}}</span>
-		         			<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-		         				&nbsp;
-		                    	<span><i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDashboardDetailsModal(dashboard, false)"></i></span>
-		                    </sec:authorize>
-	         			</a>
-	         		</li>
+					<md-button data-ng-class="{'md-raised md-primary': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'"
+							   data-ng-click="switchDashboard(dashboard.id)">
+						{{dashboard.title}}
+					</md-button>
 	         	</ul>
 	         </div>
 	    </div>
