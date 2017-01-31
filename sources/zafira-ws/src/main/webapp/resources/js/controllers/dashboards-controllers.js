@@ -43,9 +43,24 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.loadDashboardData = function(dashboard) {
 		for(var i = 0; i < dashboard.widgets.length; i++)
 		{
-			$scope.loadWidget(dashboard.title, dashboard.widgets[i]);
+			if(dashboard.widgets[i].type != 'sql')
+				$scope.loadWidget(dashboard.title, dashboard.widgets[i]);
 		}
 	};
+	
+	$scope.loadTriggerWidgetData = function (dashboard, widget) {
+        $scope.loadWidget(dashboard.title, widget);
+    }
+
+    var graphBoxIgnoreValues = ['table', 'sql'];
+
+    $scope.isGraphBox = function (widget) {
+		for(var i = 0; i < graphBoxIgnoreValues.length; i++) {
+			if(widget.type == graphBoxIgnoreValues[i])
+				return false;
+		}
+		return true;
+    }
 	
 	$scope.loadWidget = function(dashboardName, widget) {
 		var sqlAdapter = {};

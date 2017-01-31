@@ -56,7 +56,7 @@
 	                    <i class="float_right fa fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
 	                	</sec:authorize>
 	                </div>
-	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
+	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : isGraphBox(widget)}">
 	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
 	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
 	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
@@ -77,6 +77,25 @@
 		                     	</tbody>
 	                     	</table>
 	                     </div>
+						<div class="table-responsive" data-ng-if="widget.type == 'sql'">
+							<md-button class="md-fab md-mini md-primary refresh-button" ng-click="loadTriggerWidgetData(dashboard, widget)" style="position: absolute; right: 24px">
+								<i class="fa fa-refresh" aria-hidden="true"></i>
+							</md-button>
+							<table class="table table-striped table-bordered table-hover" style="width: 100%;">
+								<thead>
+								<tr>
+									<th class="pointer" data-ng-repeat="column in widget.model.columns">
+										{{column}}
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr data-ng-repeat="row in widget.data.dataset">
+									<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
 	                </div>
 	            </div>
 	        </div>

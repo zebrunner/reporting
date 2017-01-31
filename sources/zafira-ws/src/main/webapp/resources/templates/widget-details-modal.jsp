@@ -22,6 +22,7 @@
 				<option value="linechart">Line chart</option>
 				<option value="piechart">Pie chart</option>
 				<option value="table">Table</option>
+				<option value="sql">Sql</option>
 			</select>
 		</div>
 		<div class="form-group">
