@@ -436,11 +436,11 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 
 			ci = new CIConfig();
 			ci.setCiRunId(config.getString("ci_run_id", UUID.randomUUID().toString()));
-			ci.setCiUrl(StringUtils.removeEnd(config.getString("ci_url", "http://localhost:8080/job/unavailable"), "/"));
-			ci.setCiBuild(config.getInteger("ci_build", 0));
+			ci.setCiUrl(config.getString("ci_url", "http://localhost:8080/job/unavailable"));
+			ci.setCiBuild(config.getString("ci_build", null));
 			ci.setCiBuildCause(config.getString("ci_build_cause", "MANUALTRIGGER"));
 			ci.setCiParentUrl(config.getString("ci_parent_url", null));
-			ci.setCiParentBuild(config.getInteger("ci_parent_build", 0));
+			ci.setCiParentBuild(config.getString("ci_parent_build", null));
 			ci.setCiUserId(config.getString("ci_user_id", ANONYMOUS));
 			ci.setCiUserFirstName(config.getString("ci_user_first_name", null));
 			ci.setCiUserLastName(config.getString("ci_user_last_name", null));

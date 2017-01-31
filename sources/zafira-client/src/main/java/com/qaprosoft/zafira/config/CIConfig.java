@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.config;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Simple configuration bean that represent CI configuration properties used to initialize Zafira test runs.
  * 
@@ -41,7 +43,7 @@ public class CIConfig
 
 	public void setCiUrl(String ciUrl)
 	{
-		this.ciUrl = ciUrl;
+		this.ciUrl = StringUtils.removeEnd(ciUrl, "/");
 	}
 
 	public Integer getCiBuild()
@@ -49,9 +51,9 @@ public class CIConfig
 		return ciBuild;
 	}
 
-	public void setCiBuild(Integer ciBuild)
+	public void setCiBuild(String ciBuild)
 	{
-		this.ciBuild = ciBuild;
+		this.ciBuild = StringUtils.isEmpty(ciBuild) ? 0 : Integer.valueOf(ciBuild);
 	}
 
 	public BuildCasue getCiBuildCause()
@@ -71,7 +73,7 @@ public class CIConfig
 
 	public void setCiParentUrl(String ciParentUrl)
 	{
-		this.ciParentUrl = ciParentUrl;
+		this.ciParentUrl = StringUtils.removeEnd(ciParentUrl, "/");;
 	}
 
 	public Integer getCiParentBuild()
@@ -79,9 +81,9 @@ public class CIConfig
 		return ciParentBuild;
 	}
 
-	public void setCiParentBuild(Integer ciParentBuild)
+	public void setCiParentBuild(String ciParentBuild)
 	{
-		this.ciParentBuild = ciParentBuild;
+		this.ciParentBuild = StringUtils.isEmpty(ciParentBuild) ? 0 : Integer.valueOf(ciParentBuild);
 	}
 
 	public String getCiUserId()
