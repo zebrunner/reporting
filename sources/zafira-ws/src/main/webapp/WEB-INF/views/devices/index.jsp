@@ -8,9 +8,25 @@
 <div class="view-wrapper" data-ng-controller="DevicesCtrl">
 	<div class="row">
         <div class="col-lg-12">
-         	<h2><i class="fa fa-plug fa-fw"></i> Devices <button class="btn btn-xs btn-success" data-ng-click="openDeviceModal()"> <i class="fa fa-plus-circle"></i> new</button> <button class="btn btn-xs btn-primary" data-ng-really-message="Do you really want to sync all devices with STF?" data-ng-really-click="syncDevices()"> <i class="fa fa-refresh"></i> sync</button></h2>
+         	<h2><i class="fa fa-plug fa-fw"></i> Devices</h2>
     	</div>
     </div>
+	<md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+		<md-fab-trigger>
+			<md-button aria-label="menu" class="md-fab" md-visible="tooltipVisible">
+				<i class="fa fa-bars" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-trigger>
+
+		<md-fab-actions>
+			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-really-message="Do you really want to sync all devices with STF?" data-ng-really-click="syncDevices()">
+				<i class="fa fa-refresh"></i>
+			</md-button>
+			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openDeviceModal()">
+				<i class="fa fa-plus" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="row results_header">

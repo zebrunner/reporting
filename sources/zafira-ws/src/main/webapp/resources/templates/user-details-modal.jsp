@@ -6,7 +6,9 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
-	<h3>User details <button data-ng-if="user.id" class="btn btn-xs btn-danger" data-ng-really-message="Do you really want to delete user?" data-ng-really-click="deleteUser(user)"> <i class="fa fa-times-circle"></i> delete</button></h3>
+	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
+	<h3>User details
+	</h3>
 </div>
 <div class="modal-body">
 	<form name="userForm">
@@ -33,10 +35,8 @@
 	</form>
 </div>
 <div class="modal-footer">
+	<button data-ng-if="user.id" class="btn btn-danger" data-ng-really-message="Do you really want to delete user?" data-ng-really-click="deleteUser(user)">Delete</button>
 	<button class="btn btn-success" data-ng-click="updateUser(user)"  data-ng-disabled="userForm.$invalid">
     	Save
-    </button>
-    <button class="btn btn-primary" data-ng-click="cancel()">
-    	Cancel
     </button>
 </div>

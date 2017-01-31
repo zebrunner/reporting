@@ -1,120 +1,148 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngAnimate', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer', 'angularMoment' ]);
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngMaterial', 'ngAria', 'ngAnimate',  'ngMessages', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer', 'angularMoment' ])
+
+.config(function($mdThemingProvider) {
+    $mdThemingProvider.definePalette('z-pallet', {
+        '50': '337ab7',
+        '100': '337ab7',
+        '200': '337ab7',
+        '300': '337ab7',
+        '400': '337ab7',
+        '500': '337ab7',
+        '600': '337ab7',
+        '700': '337ab7',
+        '800': '337ab7',
+        '900': '337ab7',
+        'A100': '337ab7',
+        'A200': '337ab7',
+        'A400': '337ab7',
+        'A700': '337ab7',
+        'contrastDefaultColor': 'light',    // whether, by default, text (contrast)
+                                            // on this palette should be dark or light
+
+        'contrastDarkColors': ['50', '100', //hues which contrast should be 'dark' by default
+            '200', '300', '400', 'A100'],
+        'contrastLightColors': undefined    // could also specify this if default was 'dark'
+    });
+    $mdThemingProvider.theme('default')
+        .primaryPalette('z-pallet')
+        .accentPalette('z-pallet');
+});
 
 alertify.set('notifier','position', 'bottom-right');
 
 ZafiraApp.directive('ngReallyClick', [ function() {
-	return {
-		restrict : 'A',
-		link : function(scope, element, attrs) {
-			element.bind('click', function() {
-				var message = attrs.ngReallyMessage;
-				if (message && confirm(message)) {
-					scope.$apply(attrs.ngReallyClick);
-				}
-			});
-		}
-	}
+    return {
+        restrict : 'A',
+        link : function(scope, element, attrs) {
+            element.bind('click', function() {
+                var message = attrs.ngReallyMessage;
+                if (message && confirm(message)) {
+                    scope.$apply(attrs.ngReallyClick);
+                }
+            });
+        }
+    }
 }]);
 
 ZafiraApp.service('UtilService', function() {
-	this.truncate = function(fullStr, strLen) {
-		if (fullStr == null || fullStr.length <= strLen) return fullStr;
-	    var separator = '...';
-	    var sepLen = separator.length,
-	        charsToShow = strLen - sepLen,
-	        frontChars = Math.ceil(charsToShow/2),
-	        backChars = Math.floor(charsToShow/2);
-	    return fullStr.substr(0, frontChars) + 
-	           separator + 
-	           fullStr.substr(fullStr.length - backChars);
+    this.truncate = function(fullStr, strLen) {
+        if (fullStr == null || fullStr.length <= strLen) return fullStr;
+        var separator = '...';
+        var sepLen = separator.length,
+            charsToShow = strLen - sepLen,
+            frontChars = Math.ceil(charsToShow/2),
+            backChars = Math.floor(charsToShow/2);
+        return fullStr.substr(0, frontChars) +
+            separator +
+            fullStr.substr(fullStr.length - backChars);
     };
 });
 
 ZafiraApp.factory('UserService', function($http) {
-	var userService = {
-			getCurrentUser : function() {
-			var promise = $http.get('users/current').then(function(rs) {
-				return rs.data;
-			});
-			return promise;
-		}
-	};
-	return userService;
+    var userService = {
+        getCurrentUser : function() {
+            var promise = $http.get('users/current').then(function(rs) {
+                return rs.data;
+            });
+            return promise;
+        }
+    };
+    return userService;
 });
 
 ZafiraApp.factory('DashboardService', function($http) {
-	var dashboardService = {
-			getUserPerformanceDashboardId : function() {
-			var promise = $http.get('dashboards/all?type=USER_PERFORMANCE').then(function(rs) {
-				if(rs.data.length > 0)
-				{
-					return rs.data[0].id;
-				}
-				else
-				{
-					return null;
-				}
-			});
-			return promise;
-		}
-	};
-	return dashboardService;
+    var dashboardService = {
+        getUserPerformanceDashboardId : function() {
+            var promise = $http.get('dashboards/all?type=USER_PERFORMANCE').then(function(rs) {
+                if(rs.data.length > 0)
+                {
+                    return rs.data[0].id;
+                }
+                else
+                {
+                    return null;
+                }
+            });
+            return promise;
+        }
+    };
+    return dashboardService;
 });
 
 ZafiraApp.factory('SettingsService', function($http) {
-	var settingsService = {
-			getSetting : function(name) {
-			var promise = $http.get('settings/' + name).then(function successCallback(rs) {
-				return rs.data;
-			}, function errorCallback(data) {
+    var settingsService = {
+        getSetting : function(name) {
+            var promise = $http.get('settings/' + name).then(function successCallback(rs) {
+                return rs.data;
+            }, function errorCallback(data) {
                 log(data);
             });
-			return promise;
-		}
-	};
-	return settingsService;
+            return promise;
+        }
+    };
+    return settingsService;
 });
 
 ZafiraApp.provider('ProjectProvider', function() {
     this.$get = function($cookieStore) {
         return {
             initProject: function(sc) {
-            	if($cookieStore.get("project") != null)
-            	{
-            		sc.project = $cookieStore.get("project");
-            	}
+                if($cookieStore.get("project") != null)
+                {
+                    sc.project = $cookieStore.get("project");
+                }
                 return sc;
             },
             getProject: function() {
-            	return $cookieStore.get("project");
+                return $cookieStore.get("project");
             },
             setProject: function(project) {
-            	$cookieStore.put("project", project);
+                $cookieStore.put("project", project);
             },
             getProjectQueryParam: function(sc) {
-            	var query = "";
-            	if($cookieStore.get("project") != null)
-            	{
-            		query = "?project=" + $cookieStore.get("project").name;
-            	}
-                return query; 
+                var query = "";
+                if($cookieStore.get("project") != null)
+                {
+                    query = "?project=" + $cookieStore.get("project").name;
+                }
+                return query;
             }
         }
     };
 });
 
 angular.module('ZafiraApp').filter('orderObjectBy', function() {
-	  return function(items, field, reverse) {
-	    var filtered = [];
-	    angular.forEach(items, function(item) {
-	      filtered.push(item);
-	    });
-	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
-	    });
-	    if(reverse) filtered.reverse();
-	    return filtered;
-	  };
+    return function(items, field, reverse) {
+        var filtered = [];
+        angular.forEach(items, function(item) {
+            filtered.push(item);
+        });
+        filtered.sort(function (a, b) {
+            return (a[field] > b[field] ? 1 : -1);
+        });
+        if(reverse) filtered.reverse();
+        return filtered;
+    };
 });
 
 ZafiraApp.directive('showMore', [function() {
@@ -130,7 +158,7 @@ ZafiraApp.directive('showMore', [function() {
 
         link: function(scope, iElement, iAttrs) {
 
-            
+
             scope.end = scope.limit;
             scope.isShowMore = true;
             scope.largeText = true;
@@ -214,9 +242,9 @@ ZafiraApp.directive('contextMenu', ["$parse", "$q", "$sce", function ($parse, $q
         "use strict";
         // nestedMenu is either an Array or a Promise that will return that array.
         var nestedMenu = angular.isArray(item[1]) || (item[1] && angular.isFunction(item[1].then))
-          ? item[1] : angular.isArray(item[2]) || (item[2] && angular.isFunction(item[2].then))
-          ? item[2] : angular.isArray(item[3]) || (item[3] && angular.isFunction(item[3].then))
-          ? item[3] : null;
+            ? item[1] : angular.isArray(item[2]) || (item[2] && angular.isFunction(item[2].then))
+                ? item[2] : angular.isArray(item[3]) || (item[3] && angular.isFunction(item[3].then))
+                    ? item[3] : null;
 
         // if html property is not defined, fallback to text, otherwise use default text
         // if first item in the item array is a function then invoke .call()
@@ -440,8 +468,8 @@ ZafiraApp.directive('contextMenu', ["$parse", "$q", "$sce", function ($parse, $q
     };
 
     function isTouchDevice() {
-      return 'ontouchstart' in window        // works on most browsers
-          || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+        return 'ontouchstart' in window        // works on most browsers
+            || navigator.maxTouchPoints;       // works on IE10/11 and Surface
     };
 
     return function ($scope, element, attrs) {
@@ -452,10 +480,10 @@ ZafiraApp.directive('contextMenu', ["$parse", "$q", "$sce", function ($parse, $q
         element.on(openMenuEvent, function (event) {
             event.stopPropagation();
             event.preventDefault();
-            
+
             // Don't show context menu if on touch device and element is draggable
             if(isTouchDevice() && element.attr('draggable') === 'true') {
-              return false;
+                return false;
             }
 
             $scope.$apply(function () {

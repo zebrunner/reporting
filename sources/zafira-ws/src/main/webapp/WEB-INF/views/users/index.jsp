@@ -8,9 +8,21 @@
 <div data-ng-controller="UsersListCtrl">
 	<div class="row">
          <div class="col-lg-12">
-         	<h2><i class="fa fa-user fa-fw"></i> Users <button class="btn btn-xs btn-success" data-ng-click="openUserDetailsModal()"> <i class="fa fa-plus-circle"></i> new</button></h2>
+         	<h2><i class="fa fa-user fa-fw"></i> Users</h2>
     	</div>
     </div>
+	<md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+		<md-fab-trigger>
+			<md-button aria-label="menu" class="md-fab" md-visible="tooltipVisible">
+				<i class="fa fa-bars" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-trigger>
+		<md-fab-actions>
+			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openUserDetailsModal()">
+				<i class="fa fa-plus" aria-hidden="true"></i>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="row" align="right">

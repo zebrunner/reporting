@@ -6,6 +6,7 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
+	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
 	<h3>
 		{{title}}
 	</h3>
@@ -25,8 +26,5 @@
 <div class="modal-footer">
 	<button class="btn btn-success" data-ng-click="addComment()" data-ng-disabled="commentForm.$invalid">
     	Save
-    </button>
-     <button class="btn btn-primary" data-ng-click="cancel()">
-    	Cancel
     </button>
 </div>

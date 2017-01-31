@@ -388,7 +388,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	$scope.openCommentsModal = function(testRun){
@@ -417,7 +419,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$modalInstance.close(0);
 				};
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 	};
 	
 	$scope.openKnownIssueModal = function(test){
@@ -475,7 +479,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					$scope.getKnownIssues();
 				})();
 			}
-		});
+		}).result.then(function(data) {
+        }, function () {
+        });
 		
 		modalInstance.result.then(function (result) {
 		    if(result == true)
@@ -505,7 +511,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		});
 	})();
 	
-}]);
+}]).config(function($compileProvider) {
+    $compileProvider.preAssignBindingsEnabled(true);
+});
 
 ZafiraApp.controller('TestRunsCompareCtrl', [ '$scope', '$rootScope', '$http', '$routeParams', function($scope, $rootScope, $http, $routeParams) {
 	

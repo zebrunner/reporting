@@ -6,8 +6,9 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
+	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
 	<h3>
-		Setting details <button data-ng-if="setting.id" class="btn btn-xs btn-danger" data-ng-really-message="Do you really want to delete setting?" data-ng-really-click="delete(setting)"> <i class="fa fa-times-circle"></i> delete</button>
+		Setting details
 	</h3>
 </div>
 <div class="modal-body">
@@ -27,13 +28,11 @@
 	</div>
 </div>
 <div class="modal-footer">
+	<button data-ng-if="setting.id" class="btn btn-danger" data-ng-really-message="Do you really want to delete setting?" data-ng-really-click="delete(setting)">Delete</button>
 	<button class="btn btn-success" data-ng-if="!setting.id" data-ng-click="create()" data-ng-disabled="createForm.$invalid">
     	Create
     </button>
     <button class="btn btn-success"  data-ng-if="setting.id" data-ng-click="update(setting)" data-ng-disabled="createForm.$invalid">
     	Save
-    </button>
-    <button class="btn btn-primary" data-ng-click="cancel()">
-    	Cancel
     </button>
 </div>
