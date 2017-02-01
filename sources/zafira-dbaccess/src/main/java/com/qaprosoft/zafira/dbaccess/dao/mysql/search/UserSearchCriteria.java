@@ -9,6 +9,7 @@ public class UserSearchCriteria extends SearchCriteria
 	private String firstLastName;
 	private String email;
 	private Date date;
+	private String groupName;
 
 	public Long getId()
 	{
@@ -58,5 +59,13 @@ public class UserSearchCriteria extends SearchCriteria
 	public void setFirstLastName(String firstLastName)
 	{
 		this.firstLastName = firstLastName;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

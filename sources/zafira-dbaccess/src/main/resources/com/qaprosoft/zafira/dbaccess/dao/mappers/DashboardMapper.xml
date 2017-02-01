@@ -106,7 +106,7 @@
     
     <!-- Dashboard widgets -->
     
-    <insert id="addDashboardWidget">
+    <insert id="addDashboardWidget" useGeneratedKeys="true">
         <![CDATA[
             INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE)
             VALUES (
@@ -147,5 +147,83 @@
             WHERE ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widget.id})
         ]]>
     </update>
+
+    <insert id="createDashboardAttribute" useGeneratedKeys="true" keyProperty="attribute.id">
+        <![CDATA[
+			INSERT INTO zafira.DASHBOARD_ATTRIBUTES (KEY, VALUE, DASHBOARD_ID)
+			VALUES (
+				#{attribute.key},
+				#{attribute.value},
+				#{dashboardId}
+			)
+		]]>
+    </insert>
+
+    <sql id="getAttributes">
+        <![CDATA[
+			SELECT
+				DA.ID AS DASHBOARD_ATTRIBUTE_ID,
+				DA.KEY AS DASHBOARD_ATTRIBUTE_KEY,
+				DA.VALUE AS DASHBOARD_ATTRIBUTE_VALUE
+			FROM
+				zafira.DASHBOARD_ATTRIBUTES DA
+            LEFT JOIN
+                zafira.DASHBOARDS D
+            ON
+                DA.DASHBOARD_ID = D.ID
+		]]>
+    </sql>
+
+    <select id="getAttributesByDashboardId" resultMap="AttributeResultMap">
+        <include refid="getAttributes" />
+        <![CDATA[
+			WHERE
+			  D.ID = #{dashboardId}
+		]]>
+    </select>
+
+    <select id="getAttributeById" resultMap="AttributeResultMap">
+        <include refid="getAttributes" />
+        <![CDATA[
+			WHERE
+			  DA.ID = #{attributeId}
+		]]>
+    </select>
+
+    <delete id="deleteDashboardAttributeById">
+        DELETE
+        FROM
+        zafira.DASHBOARD_ATTRIBUTES
+        WHERE
+        ID = #{id}
+    </delete>
+
+    <update id="updateAttribute">
+        <![CDATA[
+            UPDATE
+              zafira.DASHBOARD_ATTRIBUTES
+        ]]>
+        <set>
+            <if test="null != key">
+                <![CDATA[
+                    KEY = #{key},
+                ]]>
+            </if>
+            <if test="null != value">
+                <![CDATA[
+                    VALUE = #{value}
+                ]]>
+            </if>
+        </set>
+        <![CDATA[
+            WHERE ID = #{id}
+        ]]>
+    </update>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.Attribute" id="AttributeResultMap" autoMapping="false">
+        <id column="DASHBOARD_ATTRIBUTE_ID" property="id" />
+        <result column="DASHBOARD_ATTRIBUTE_KEY" property="key" />
+        <result column="DASHBOARD_ATTRIBUTE_VALUE" property="value"/>
+    </resultMap>
 
 </mapper>

@@ -3,6 +3,8 @@ package com.qaprosoft.zafira.models.db;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import java.util.List;
+
 @JsonInclude(Include.NON_NULL)
 public class User extends AbstractEntity
 {
@@ -13,6 +15,7 @@ public class User extends AbstractEntity
 	private String email;
 	private String firstName;
 	private String lastName;
+	private List<Group> groupList;
 
 	public User()
 	{
@@ -76,5 +79,13 @@ public class User extends AbstractEntity
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+
+	public List<Group> getGroupList() {
+		return groupList;
+	}
+
+	public void setGroupList(List<Group> groupList) {
+		this.groupList = groupList;
 	}
 }

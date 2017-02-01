@@ -8,9 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
+import com.qaprosoft.zafira.dbaccess.utils.Sort;
+import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.qaprosoft.zafira.models.db.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
@@ -42,6 +47,15 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
                     setType("wt1");
                 }
             });
+        }
+    };
+
+    private static final Attribute ATTRIBUTE = new Attribute()
+    {
+        private static final long serialVersionUID = 1L;
+        {
+            setKey("k1" + KeyGenerator.getKey());
+            setValue("v1");
         }
     };
 
@@ -97,14 +111,16 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "updateDashboard"})
     public void getDashboardByType() {
-        List<Dashboard> dashboards = dashboardMapper.getAllDashboardsByType(Dashboard.Type.GENERAL);
+        Sort sort = new Sort();
+        List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboardsByType(Dashboard.Type.GENERAL));
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getAllDashboards()
     {
-        List<Dashboard> dashboards = dashboardMapper.getAllDashboards();
+        Sort sort = new Sort();
+        List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboards());
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
 
@@ -139,6 +155,35 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     {
         dashboardMapper.deleteDashboardById((DASHBOARD.getId()));
         assertNull(dashboardMapper.getDashboardById(DASHBOARD.getId()));
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"deleteDashboardById"})
+    public void createDashboardAttribute() {
+        dashboardMapper.createDashboard(DASHBOARD);
+        dashboardMapper.createDashboardAttribute(DASHBOARD.getId(), ATTRIBUTE);
+        Assert.assertNotNull(ATTRIBUTE.getId(), "");
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"createDashboardAttribute"})
+    public void getAttributesByDashboardId() {
+        List<Attribute> attributeList = dashboardMapper.getAttributesByDashboardId(DASHBOARD.getId());
+        Assert.assertEquals(ATTRIBUTE.getId(), attributeList.get(attributeList.size() - 1).getId());
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"getAttributesByDashboardId"})
+    public void updateAttribute() {
+        ATTRIBUTE.setKey("k1" + KeyGenerator.getKey());
+        ATTRIBUTE.setValue("v2");
+        dashboardMapper.updateAttribute(ATTRIBUTE);
+        Attribute attribute = dashboardMapper.getAttributeById(ATTRIBUTE.getId());
+        Assert.assertEquals(ATTRIBUTE.getKey(), attribute.getKey(), "");
+        Assert.assertEquals(ATTRIBUTE.getValue(), attribute.getValue(), "");
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"updateAttribute"})
+    public void deleteDashboardAttributeById() {
+        dashboardMapper.deleteDashboardAttributeById(ATTRIBUTE.getId());
+        Assert.assertNull(dashboardMapper.getAttributeById(ATTRIBUTE.getId()), "");
     }
 
     private void checkDashboard(Dashboard dashboard)

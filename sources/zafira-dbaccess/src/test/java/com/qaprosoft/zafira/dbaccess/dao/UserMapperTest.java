@@ -1,17 +1,21 @@
 package com.qaprosoft.zafira.dbaccess.dao;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNull;
-
+import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
-import com.qaprosoft.zafira.models.db.User;
+import java.util.List;
+
+import static org.testng.Assert.*;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")
@@ -22,11 +26,20 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 	 */
 	private static final boolean ENABLED = false;
 
+	private static final Group GROUP = new Group()
+	{
+		private static final long serialVersionUID = 1L;
+		{
+			setName("n1" + KeyGenerator.getKey());
+			setRole(Role.USER);
+		}
+	};
+
 	private static final User USER = new User()
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			setUserName("elton");
+			setUserName("elton" + KeyGenerator.getKey());
 			setFirstName("Elton");
 			setLastName("John");
 			setEmail("e.jhon@gmail.com");
@@ -35,6 +48,9 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 
 	@Autowired
 	private UserMapper userMapper;
+
+	@Autowired
+	private GroupMapper groupMapper;
 
 	@Test(enabled = ENABLED)
 	public void createUser()
@@ -70,7 +86,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 	{ "createUser" })
 	public void updateUser()
 	{
-		USER.setUserName("eric");
+		USER.setUserName("eric" + KeyGenerator.getKey());
 		USER.setFirstName("Eric");
 		USER.setLastName("Clapton");
 		USER.setEmail("e.clapton@gmail.com");
@@ -107,6 +123,30 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		userMapper.deleteUserById((USER.getId()));
 
 		assertNull(userMapper.getUserById(USER.getId()));
+	}
+
+	@Test(enabled = ENABLED, dependsOnMethods =
+			{ "createUser" })
+	public void addUserToGroup() {
+		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
+		userSearchCriteria.setGroupName(GROUP.getName());
+		USER.setUserName("n1" + KeyGenerator.getKey());
+		userMapper.createUser(USER);
+		groupMapper.createGroup(GROUP);
+		userMapper.addUserToGroup(USER.getId(), GROUP.getId());
+		List<User> userList = userMapper.searchUsers(userSearchCriteria);
+		Assert.assertEquals(userList.get(0).getGroupList().get(0).getId(), GROUP.getId());
+		Assert.assertEquals(userList.get(0).getId(), USER.getId(), "");
+	}
+
+	@Test(enabled = ENABLED && DELETE_ENABLED, dependsOnMethods =
+			{ "createUser", "addUserToGroup"}, expectedExceptions =
+			{ IndexOutOfBoundsException.class })
+	public void deleteUserFromGroup() {
+		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
+		userSearchCriteria.setGroupName(GROUP.getName());
+		userMapper.deleteUserFromGroup(USER.getId(), GROUP.getId());
+		userMapper.searchUsers(userSearchCriteria).get(0);
 	}
 
 	private void checkUser(User user)

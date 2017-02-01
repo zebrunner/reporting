@@ -25,10 +25,23 @@
 				U.FIRST_NAME AS USER_FIRST_NAME,
 				U.LAST_NAME AS USER_LAST_NAME,
 				U.EMAIL AS USER_EMAIL,
+				G.ID AS GROUP_ID,
+				G.NAME AS GROUP_NAME,
+				G.ROLE AS GROUP_ROLE,
+				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
+				G.CREATED_AT AS GROUP_CREATED_AT,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT
 			FROM
 				zafira.USERS U
+			LEFT JOIN
+				zafira.USER_GROUPS UG
+			ON
+				U.ID = UG.USER_ID
+			LEFT JOIN
+				zafira.GROUPS G
+			ON
+				UG.GROUP_ID = G.ID
 		]]>
 	</sql>
 
@@ -74,6 +87,11 @@
 	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
+			<if test="null != groupName">
+				<![CDATA[
+	               AND LOWER(G.NAME) LIKE LOWER(CONCAT(#{groupName}, '%'))
+	            ]]>
+			</if>
 		</trim>
 		<![CDATA[
 			ORDER BY CASE WHEN U.PASSWORD IS NULL OR U.PASSWORD = '' THEN 0 ELSE 1 END DESC, U.USERNAME
@@ -112,6 +130,11 @@
 			<if test="null != date">
 	            <![CDATA[
 	               AND U.CREATED_AT::date = #{date}::date
+	            ]]>
+			</if>
+			<if test="null != groupId">
+				<![CDATA[
+	               AND LOWER(G.ID) LIKE LOWER(CONCAT(#{groupId}, '%'))
 	            ]]>
 			</if>
 		</trim>
@@ -179,6 +202,25 @@
 		<result column="USER_EMAIL" property="email" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
+		<collection property="groupList" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
 	</resultMap>
+
+	<insert id="addUserToGroup">
+		<![CDATA[
+			INSERT INTO zafira.USER_GROUPS (USER_ID, GROUP_ID)
+			VALUES (
+				#{userId},
+				#{groupId}
+			)
+		]]>
+	</insert>
+
+	<delete id="deleteUserFromGroup">
+		DELETE
+		FROM
+			zafira.USER_GROUPS
+		WHERE
+			ID = (SELECT ID FROM zafira.USER_GROUPS WHERE USER_ID = #{userId} AND GROUP_ID = #{groupId})
+	</delete>
 
 </mapper>

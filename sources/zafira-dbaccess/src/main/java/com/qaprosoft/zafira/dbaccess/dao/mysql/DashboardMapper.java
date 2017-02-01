@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
 import org.apache.ibatis.annotations.Param;
@@ -25,4 +26,14 @@ public interface DashboardMapper
 	void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 
 	List<Dashboard> getAllDashboardsByType(Dashboard.Type type);
+
+	List<Attribute> getAttributesByDashboardId(long dashboardId);
+
+	Attribute getAttributeById(long attributeId);
+
+	void createDashboardAttribute(@Param("dashboardId") long dashboardId, @Param("attribute") Attribute attribute);
+
+	void updateAttribute(Attribute attribute);
+
+	void deleteDashboardAttributeById(long attributeId);
 }
