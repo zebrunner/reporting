@@ -34,23 +34,23 @@
 		</div>
 		<div data-ng-if="!isNew">
 			<label>Attributes</label> 
-			<div class="row attribute">
-				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
-				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
+			<div class="row attribute" data-ng-repeat="attribute in dashboard.attributes">
+				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control" data-ng-model="attribute.key"></input></div>
+				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control" data-ng-model="attribute.value"></input></div>
 				<div class="col-lg-2">
-					<button type="button" class="btn btn-default btn-circle green">
+					<button type="button" class="btn btn-default btn-circle green" data-ng-click="updateAttribute(attribute)">
 						<i class="fa fa-floppy-o"></i>
                     </button>
-                    <button type="button" class="btn btn-default btn-circle red">
+                    <button type="button" class="btn btn-default btn-circle red" data-ng-click="deleteAttribute(attribute)">
 						<i class="fa fa-trash"></i>
                     </button>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
-				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
+				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control" data-ng-model="newAttribute.key"></input></div>
+				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control" data-ng-model="newAttribute.value"></input></div>
 				<div class="col-lg-2">
-					<button type="button" class="btn btn-default btn-circle blue">
+					<button type="button" class="btn btn-default btn-circle blue" data-ng-click="createAttribute(newAttribute)">
 						<i class="fa fa-plus"></i>
                     </button>
 				</div>
