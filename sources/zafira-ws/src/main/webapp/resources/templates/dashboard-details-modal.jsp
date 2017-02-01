@@ -32,6 +32,30 @@
 			<label>Position</label> 
 			<input type="number" class="form-control" data-ng-model="dashboard.position" required></input>
 		</div>
+		<div data-ng-if="!isNew">
+			<label>Attributes</label> 
+			<div class="row" style="margin-bottom: 10px;">
+				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
+				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
+				<div class="col-lg-2">
+					<button type="button" class="btn btn-default btn-circle" style="border-color: green;">
+						<i class="fa fa-floppy-o" style="color: green;"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-circle" style="border-color: red;">
+						<i class="fa fa-trash" style="color: red;"></i>
+                    </button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
+				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
+				<div class="col-lg-2">
+					<button type="button" class="btn btn-default btn-circle">
+						<i class="fa fa-plus"></i>
+                    </button>
+				</div>
+			</div>
+		</div>
 	</form>
 </div>
 <div class="modal-footer">

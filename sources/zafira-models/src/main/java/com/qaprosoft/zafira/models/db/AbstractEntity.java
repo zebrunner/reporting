@@ -5,8 +5,6 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * AbstractEntity - base for all domains.
  * 
@@ -18,10 +16,8 @@ public abstract class AbstractEntity implements Serializable
 
 	private Long id;
 	@Transient
-	@JsonIgnore
 	private Date modifiedAt;
 	@Transient
-	@JsonIgnore
 	private Date createdAt;
 
 	public Long getId()
