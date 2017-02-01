@@ -284,3 +284,25 @@ button.md-fab.md-mini:not(#reset-button):not(#search-button) {
 .fa.cancel-button {
 	font-size: 130%;
 }
+
+.row.attribute {
+	margin-bottom: 10px;
+}
+
+button.green {
+	border-color: #449d44;
+	color: #449d44;
+	outline: none;
+}
+
+button.red {
+	border-color: #d9534f;
+	color: #d9534f;
+	outline: none;
+}
+
+button.blue {
+	border-color: #337ab7;
+	color: #337ab7;
+	outline: none;
+}

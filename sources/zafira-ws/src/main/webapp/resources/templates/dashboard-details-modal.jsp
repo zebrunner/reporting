@@ -6,7 +6,7 @@
 <%@ include file="/WEB-INF/fragments/taglibs.jsp" %>
 
 <div class="modal-header">
-	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
+	<i class="fa fa-times cancel-button" aria-hidden="true" data-ng-click="cancel()"></i>
 	<h3>Dashboard settings
 
 	</h3>
@@ -34,15 +34,15 @@
 		</div>
 		<div data-ng-if="!isNew">
 			<label>Attributes</label> 
-			<div class="row" style="margin-bottom: 10px;">
+			<div class="row attribute">
 				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
 				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
 				<div class="col-lg-2">
-					<button type="button" class="btn btn-default btn-circle" style="border-color: green;">
-						<i class="fa fa-floppy-o" style="color: green;"></i>
+					<button type="button" class="btn btn-default btn-circle green">
+						<i class="fa fa-floppy-o"></i>
                     </button>
-                    <button type="button" class="btn btn-default btn-circle" style="border-color: red;">
-						<i class="fa fa-trash" style="color: red;"></i>
+                    <button type="button" class="btn btn-default btn-circle red">
+						<i class="fa fa-trash"></i>
                     </button>
 				</div>
 			</div>
@@ -50,7 +50,7 @@
 				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control"></input></div>
 				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control"></input></div>
 				<div class="col-lg-2">
-					<button type="button" class="btn btn-default btn-circle">
+					<button type="button" class="btn btn-default btn-circle blue">
 						<i class="fa fa-plus"></i>
                     </button>
 				</div>
