@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -25,15 +26,16 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Dashboard.Type;
 import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SeleniumService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
-import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 
 import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
@@ -146,5 +148,30 @@ public class DashboardsController extends AbstractController
 		}
 		
 		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+	}
+	
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Attribute> createDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
+	{
+		// Add service call
+		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"), attribute);
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="attributes", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Attribute> updateDashboardAttribute(@RequestBody Attribute attribute)
+	{
+		// Add service call
+		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"));
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="attributes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Attribute> deleteDashboardAttribute()
+	{
+		// Add service call
+		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"));
 	}
 }

@@ -161,11 +161,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				
 				$scope.isNew = isNew;
 				$scope.dashboard = dashboard;
+				$scope.newAttribute = {};
+				
 				if($scope.isNew)
 				{
 					$scope.dashboard.type = 'GENERAL';
 				}
-				
 				
 				$scope.createDashboard = function(dashboard){
 					$http.post('dashboards', dashboard).then(function successCallback(data){
@@ -192,6 +193,32 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 						alertify.error('Failed to delete dashboard');
 					});
 					$modalInstance.close(0);
+				};
+				
+				// Dashboard attributes
+				$scope.createAttribute = function(attribute){
+					$http.post('dashboards/' + dashboard.id + '/attributes', attribute).then(function successCallback(rs){
+						$scope.dashboard.attributes = rs.data;
+						$scope.newAttribute = {};
+					},function errorCallback(rs){
+						alertify.error('Failed to create dashboard attribute');
+					});
+				};
+
+				$scope.updateAttribute = function(attribute){
+					$http.put('dashboards/attributes', attribute).then(function successCallback(rs) {
+						$scope.dashboard.attributes = rs.data;
+					}, function errorCallback(rs) {
+						alertify.error('Failed to update dashboard attribute');
+					});
+				};
+				
+				$scope.deleteAttribute = function(attribute){
+					$http.delete('dashboards/attributes/' + attribute.id).then(function successCallback(data) {
+						$scope.dashboard.attributes = rs.data;
+					}, function errorCallback(rs) {
+						alertify.error('Failed to delete dashboard attribute');
+					});
 				};
 				
 				$scope.cancel = function(){
