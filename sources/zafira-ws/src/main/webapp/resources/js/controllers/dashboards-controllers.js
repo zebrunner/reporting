@@ -178,6 +178,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				};
 
 				$scope.updateDashboard = function(dashboard){
+					dashboard.widgets = null;
 					$http.put('dashboards', dashboard).then(function successCallback(data) {
 						$route.reload();
 					}, function errorCallback(data) {
