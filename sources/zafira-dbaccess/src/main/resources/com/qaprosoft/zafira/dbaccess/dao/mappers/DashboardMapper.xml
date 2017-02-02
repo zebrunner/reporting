@@ -31,7 +31,10 @@
 				DW.SIZE AS DASHBOARD_WIDGET_SIZE,
 				W.TYPE AS WIDGET_TYPE,
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
-				W.CREATED_AT AS WIDGET_CREATED_AT
+				W.CREATED_AT AS WIDGET_CREATED_AT,
+				DA.ID AS DASHBOARD_ATTRIBUTE_ID,
+				DA.KEY AS DASHBOARD_ATTRIBUTE_KEY,
+				DA.VALUE AS DASHBOARD_ATTRIBUTE_VALUE
 			FROM
 				zafira.DASHBOARDS D
             LEFT JOIN
@@ -42,6 +45,10 @@
                 zafira.WIDGETS W
             ON
                 DW.WIDGET_ID = W.ID
+            LEFT JOIN
+                zafira.DASHBOARD_ATTRIBUTES DA
+            ON
+                D.ID = DA.DASHBOARD_ID
 		]]>
     </sql>
 	
@@ -102,6 +109,8 @@
         <result column="DASHBOARD_CREATED_AT" property="createdAt" />
         <collection property="widgets" ofType="com.qaprosoft.zafira.models.db.Widget"
                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper.WidgetResultMap"/>
+        <collection property="attributes" ofType="com.qaprosoft.zafira.models.db.Attribute"
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper.AttributeResultMap"/>
     </resultMap>
     
     <!-- Dashboard widgets -->
