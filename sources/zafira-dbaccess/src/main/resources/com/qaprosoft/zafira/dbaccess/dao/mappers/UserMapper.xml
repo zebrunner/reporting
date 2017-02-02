@@ -132,9 +132,9 @@
 	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
-			<if test="null != groupId">
+			<if test="null != groupName">
 				<![CDATA[
-	               AND LOWER(G.ID) LIKE LOWER(CONCAT(#{groupId}, '%'))
+	               AND LOWER(G.NAME) LIKE LOWER(CONCAT(#{groupName}, '%'))
 	            ]]>
 			</if>
 		</trim>
