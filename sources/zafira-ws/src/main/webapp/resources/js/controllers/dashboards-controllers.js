@@ -200,6 +200,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					$http.post('dashboards/' + dashboard.id + '/attributes', attribute).then(function successCallback(rs){
 						$scope.dashboard.attributes = rs.data;
 						$scope.newAttribute = {};
+						alertify.success('Dashboard attribute created');
 					},function errorCallback(rs){
 						alertify.error('Failed to create dashboard attribute');
 					});
@@ -208,6 +209,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.updateAttribute = function(attribute){
 					$http.put('dashboards/' + dashboard.id + '/attributes', attribute).then(function successCallback(rs) {
 						$scope.dashboard.attributes = rs.data;
+						alertify.success('Dashboard attribute updated');
 					}, function errorCallback(rs) {
 						alertify.error('Failed to update dashboard attribute');
 					});
@@ -216,6 +218,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.deleteAttribute = function(attribute){
 					$http.delete('dashboards/' + dashboard.id + '/attributes/' + attribute.id).then(function successCallback(rs) {
 						$scope.dashboard.attributes = rs.data;
+						alertify.success('Dashboard attribute removed');
 					}, function errorCallback(rs) {
 						alertify.error('Failed to delete dashboard attribute');
 					});
