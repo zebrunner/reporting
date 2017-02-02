@@ -110,7 +110,7 @@
         <collection property="widgets" ofType="com.qaprosoft.zafira.models.db.Widget"
                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper.WidgetResultMap"/>
         <collection property="attributes" ofType="com.qaprosoft.zafira.models.db.Attribute"
-                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper.AttributeResultMap"/>
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper.AttributeResultMap"/>
     </resultMap>
     
     <!-- Dashboard widgets -->
