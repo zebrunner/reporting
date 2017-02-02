@@ -1,16 +1,17 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Dashboard.Type;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class DashboardService
@@ -81,23 +82,28 @@ public class DashboardService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public List<Attribute> getAttributesByDashboardId(long dashboardId) {
+	public List<Attribute> getAttributesByDashboardId(long dashboardId) 
+	{
 		return dashboardMapper.getAttributesByDashboardId(dashboardId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Attribute createDashboardAttribute(long dashboardId, Attribute attribute) {
-		return dashboardMapper.createDashboardAttribute(dashboardId, attribute);
+	public Attribute createDashboardAttribute(long dashboardId, Attribute attribute) 
+	{
+		dashboardMapper.createDashboardAttribute(dashboardId, attribute);
+		return attribute;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Attribute updateAttribute(Attribute attribute) {
+	public Attribute updateAttribute(Attribute attribute)
+	{
 		dashboardMapper.updateAttribute(attribute);
 		return attribute;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteDashboardAttributeById(long attributeId) {
+	public void deleteDashboardAttributeById(long attributeId) 
+	{
 		dashboardMapper.deleteDashboardAttributeById(attributeId);
 	}
 }

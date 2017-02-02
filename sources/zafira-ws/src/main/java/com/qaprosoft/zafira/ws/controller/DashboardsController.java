@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -155,23 +154,23 @@ public class DashboardsController extends AbstractController
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Attribute> createDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
-		// Add service call
-		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"), attribute);
+		dashboardService.createDashboardAttribute(dashboardId, attribute);
+		return dashboardService.getAttributesByDashboardId(dashboardId);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="attributes", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Attribute> updateDashboardAttribute(@RequestBody Attribute attribute)
+	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Attribute> updateDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
-		// Add service call
-		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"));
+		dashboardService.updateAttribute(attribute);
+		return dashboardService.getAttributesByDashboardId(dashboardId);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="attributes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Attribute> deleteDashboardAttribute()
+	@RequestMapping(value="{dashboardId}/attributes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Attribute> deleteDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="id") long id)
 	{
-		// Add service call
-		return Arrays.asList(new Attribute("env", "DEMO"), new Attribute("browser", "chrome"));
+		dashboardService.deleteDashboardAttributeById(id);
+		return dashboardService.getAttributesByDashboardId(dashboardId);
 	}
 }
