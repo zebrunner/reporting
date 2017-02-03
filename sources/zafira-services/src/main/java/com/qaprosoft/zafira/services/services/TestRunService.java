@@ -227,7 +227,7 @@ public class TestRunService
 		}
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/32)
+		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
 		if(finishTestRun || !Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
 			testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);

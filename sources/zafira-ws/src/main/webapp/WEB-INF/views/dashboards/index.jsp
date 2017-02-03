@@ -34,7 +34,7 @@
 			 </sec:authorize>
 		 </md-fab-actions>
 	 </md-fab-speed-dial>
-    <div id="dashboard_content">
+    <div>
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
@@ -46,7 +46,7 @@
 	         </div>
 	    </div>
 	    <br/>
-		<div class="row">
+		<div class="row" id="dashboard_content">
 			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
 	        <div class="col-lg-{{widget.size}}" data-ng-repeat="widget in dashboard.widgets | orderBy:'position'">
 	            <div class="panel panel-default">
