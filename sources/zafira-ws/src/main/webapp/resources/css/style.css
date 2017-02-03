@@ -306,3 +306,7 @@ button.blue {
 	color: #337ab7;
 	outline: none;
 }
+
+.search_controls {
+	margin-top: 8px;
+}

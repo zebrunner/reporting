@@ -38,6 +38,7 @@ public class TestRun extends AbstractEntity
 	private boolean classMode;
 	private String env;
 	private String platform;
+	private String appVersion;
 	private Date startedAt;
 	private Integer elapsed;
 	private Integer eta;
@@ -305,6 +306,16 @@ public class TestRun extends AbstractEntity
 	public void setClassMode(boolean classMode)
 	{
 		this.classMode = classMode;
+	}
+	
+	public String getAppVersion()
+	{
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion)
+	{
+		this.appVersion = appVersion;
 	}
 
 	public Integer getCountdown()

@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, CLASS_MODE)
+			STARTED_BY, KNOWN_ISSUE, PLATFORM, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, CLASS_MODE)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -36,6 +36,7 @@
 				#{startedBy},
 				#{knownIssue},
 				#{platform},
+				#{appVersion},
 				#{env},
 				#{startedAt},
 				#{elapsed},
@@ -66,6 +67,7 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
@@ -104,6 +106,7 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
@@ -204,6 +207,11 @@
 	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
 	            ]]>
 			</if>
+			<if test="null != appVersion">
+	            <![CDATA[
+	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
+	            ]]>
+			</if>
 			<if test="null != date">
 	            <![CDATA[
 	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
@@ -287,6 +295,11 @@
 			<if test="null != platform">
 	            <![CDATA[
 	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
+	            ]]>
+			</if>
+			<if test="null != appVersion">
+	            <![CDATA[
+	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -397,6 +410,7 @@
 			    STARTED_BY = #{startedBy},
 			    KNOWN_ISSUE = #{knownIssue},
 			    PLATFORM = #{platform},
+			    APP_VERSION = #{appVersion},
 			    ENV = #{env},
 			    STARTED_AT = #{startedAt},
 				ELAPSED = #{elapsed},
@@ -450,6 +464,7 @@
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
 		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_RUN_PLATFORM" property="platform" />
+		<result column="TEST_RUN_APP_VERSION" property="appVersion" />
 		<result column="TEST_RUN_ENV" property="env" />
 		<result column="TEST_RUN_STARTED_AT" property="startedAt" />
 		<result column="TEST_RUN_ELAPSED" property="elapsed" />
