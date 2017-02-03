@@ -67,7 +67,7 @@ public class GroupMapperTest extends AbstractTestNGSpringContextTests {
     @Test(enabled = ENABLED, dependsOnMethods = {"createGroup", "getGroupById", "getAllGroups", "updateGroup"})
     public void deleteGroupById()
     {
-        groupMapper.deleteGroup(GROUP);
+        groupMapper.deleteGroup(GROUP.getId());
         assertNull(groupMapper.getGroupById(GROUP.getId()));
     }
 

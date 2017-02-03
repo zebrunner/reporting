@@ -9,5 +9,5 @@ public interface GroupMapper {
     Group getGroupById(long id);
     List<Group> getAllGroups();
     void updateGroup(Group group);
-    void deleteGroup(Group group);
+    void deleteGroup(long id);
 }
