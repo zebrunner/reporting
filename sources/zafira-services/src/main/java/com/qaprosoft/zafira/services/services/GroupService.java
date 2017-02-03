@@ -32,6 +32,11 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public Integer getGroupsCount() throws ServiceException {
+        return groupMapper.getGroupsCount();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public Group updateGroup(Group group) throws ServiceException {
         groupMapper.updateGroup(group);
         return group;

@@ -6,6 +6,7 @@ import com.qaprosoft.zafira.models.db.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -22,14 +23,14 @@ public class GroupMapperTest extends AbstractTestNGSpringContextTests {
     /**
      * Turn this on to enable this test
      */
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     private static final Group GROUP = new Group()
     {
         private static final long serialVersionUID = 1L;
         {
             setName("n1" + KeyGenerator.getKey());
-            setRole(Role.USER);
+            setRole(Role.ROLE_USER);
         }
     };
 
@@ -54,10 +55,17 @@ public class GroupMapperTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createGroup"})
+    public void getGroupsCount()
+    {
+        Integer count = groupMapper.getGroupsCount();
+        Assert.assertNotNull(count, "");
+    }
+
+    @Test(enabled = ENABLED, dependsOnMethods = {"createGroup"})
     public void updateGroup()
     {
         GROUP.setName("m2" + KeyGenerator.getKey());
-        GROUP.setRole(Group.Role.ADMIN);
+        GROUP.setRole(Group.Role.ROLE_ADMIN);
 
         groupMapper.updateGroup(GROUP);
 

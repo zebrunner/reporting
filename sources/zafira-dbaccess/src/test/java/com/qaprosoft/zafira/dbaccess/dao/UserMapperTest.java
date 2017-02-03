@@ -31,7 +31,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		private static final long serialVersionUID = 1L;
 		{
 			setName("n1" + KeyGenerator.getKey());
-			setRole(Role.USER);
+			setRole(Role.ROLE_USER);
 		}
 	};
 

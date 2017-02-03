@@ -10,4 +10,5 @@ public interface GroupMapper {
     List<Group> getAllGroups();
     void updateGroup(Group group);
     void deleteGroup(long id);
+    Integer getGroupsCount();
 }

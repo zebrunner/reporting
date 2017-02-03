@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -49,6 +50,24 @@ public class GroupController {
     List<Group> getAllGroups() throws ServiceException
     {
         return groupService.getAllGroups();
+    }
+
+    @ApiIgnore
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value="count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Integer getGroupsCount() throws ServiceException
+    {
+        return groupService.getGroupsCount();
+    }
+
+    @ApiIgnore
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value="roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    List<Group.Role> getRoles() throws ServiceException
+    {
+        return Arrays.asList(Group.Role.values());
     }
 
     @ApiIgnore
