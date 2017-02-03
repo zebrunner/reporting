@@ -19,9 +19,9 @@
 		<div class="form-group">
 			<label>Size</label> 
 			<select class="form-control validation" data-ng-model="widget.size" required>
-				<option value=4>S</option>
-				<option value=8>M</option>
-				<option value=12>L</option>
+				<option data-ng-value=4>S</option>
+				<option data-ng-value=8>M</option>
+				<option data-ng-value=12>L</option>
 			</select>
 		</div>
 		<div class="form-group">
