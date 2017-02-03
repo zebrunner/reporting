@@ -1,16 +1,15 @@
 package com.qaprosoft.zafira.services.services;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasypt.util.password.PasswordEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import org.apache.commons.lang3.StringUtils;
+import org.jasypt.util.password.PasswordEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService
@@ -76,6 +75,18 @@ public class UserService
 	public void deleteUser(long id) throws ServiceException
 	{
 		userMapper.deleteUserById(id);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public User addUserToGroup(User user, long groupId) throws ServiceException {
+		userMapper.addUserToGroup(user.getId(), groupId);
+		return userMapper.getUserById(user.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public User deleteUserFromGroup(User user, long groupId) throws ServiceException {
+		userMapper.deleteUserFromGroup(user.getId(), groupId);
+		return userMapper.getUserById(user.getId());
 	}
 	
 	@Transactional(readOnly = true)
