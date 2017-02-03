@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', 'DashboardService', function($scope, $rootScope, $http, $location, $modal, $route, DashboardService) {
+ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', 'DashboardService', '$q', '$timeout', function($scope, $rootScope, $http, $location, $modal, $route, DashboardService, $q, $timeout) {
 
 	const DEFAULT_SC = {
 			'page' : 1,
@@ -107,6 +107,132 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
             });
 		}
 	};
+
+    $scope.openGroupDetailsModal = function(){
+		$modal.open({
+			templateUrl : 'resources/templates/group-details-modal.jsp',
+			controller : function($scope, $modalInstance){
+
+				$scope.group = {};
+				$scope.groups = [];
+				loadRoles();
+				getGroupsCount();
+				getAllGroups();
+
+				$scope.showGroups = false;
+
+                $scope.createGroup = function(group){
+                    $http.post('groups', group).then(function successCallback(data) {
+                    	getAllGroups();
+                    	$scope.group.name = "";
+                    	$scope.group.role = "";
+                    	$scope.count ++;
+                    	alertify.success("Group " + group.name + " was created");
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to create group');
+                    });
+                };
+
+                $scope.getGroupById = function(id){
+                    $http.get('groups/' + id).then(function successCallback(data) {
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to get group ' + id);
+                    });
+                };
+
+                 function getAllGroups(){
+                    $http.get('groups/all').then(function successCallback(data) {
+                    	$scope.groups = data.data;
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to load groups');
+                    });
+                };
+
+                function getGroupsCount() {
+                    $http.get('groups/count').then(function successCallback(data) {
+                        $scope.count = data.data;
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to load groups');
+                    });
+                };
+
+                function loadRoles(){
+                    $http.get('groups/roles').then(function successCallback(data) {
+                    	$scope.roles = data.data;
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to load roles');
+                    });
+                };
+
+				$scope.updateGroup = function(group){
+					$http.put('groups', group).then(function successCallback(data) {
+					}, function errorCallback(data) {
+						alertify.error('Failed to update group');
+					});
+				};
+
+				$scope.deleteGroup = function(id){
+					$http.delete('groups/' + id).then(function successCallback(data) {
+                        alertify.success("Group was deleted");
+                        getAllGroups();
+                        $scope.count--;
+					}, function errorCallback(data) {
+						alertify.error('Failed to delete group');
+					});
+				};
+
+                var pendingSearch, cancelSearch = angular.noop;
+                var lastSearch;
+
+                $scope.usersSearchCriteria = {};
+
+                $scope.users = [];
+
+                function querySearch (query) {
+                    $scope.usersSearchCriteria.userName = query;
+                    return $http.post('users/search', $scope.usersSearchCriteria/*, {params: {q: query}}*/)
+                        .then(function(response){
+                            return response.data.results;
+                        })
+                }
+
+                $scope.delayedUsersSearch = function(criteria) {
+                    if ( !pendingSearch || !debounceSearch() )  {
+                        cancelSearch();
+
+                        return pendingSearch = $q(function(resolve, reject) {
+                            cancelSearch = reject;
+                            $timeout(function() {
+                                resolve( querySearch(criteria) );
+                                refreshDebounce();
+                            }, Math.random() * 500, true)
+                        });
+                    }
+
+                    return pendingSearch;
+                }
+
+                function refreshDebounce() {
+                    lastSearch = 0;
+                    pendingSearch = null;
+                    cancelSearch = angular.noop;
+                }
+
+                function debounceSearch() {
+                    var now = new Date().getMilliseconds();
+                    lastSearch = lastSearch || now;
+
+                    return ((now - lastSearch) < 300);
+                }
+
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		}).result.then(function(data) {
+        }, function () {
+        });
+    };
 
 	
 	$scope.resetSearchCriteria = function(){

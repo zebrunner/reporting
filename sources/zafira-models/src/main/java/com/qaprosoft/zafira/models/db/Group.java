@@ -8,7 +8,7 @@ public class Group extends AbstractEntity {
     private Role role;
 
     public enum Role {
-        USER, ADMIN
+        ROLE_USER, ROLE_ADMIN
     }
 
     public String getName() {

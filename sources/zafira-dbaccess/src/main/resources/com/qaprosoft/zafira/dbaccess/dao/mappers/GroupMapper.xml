@@ -25,6 +25,19 @@
 		]]>
     </sql>
 
+    <sql id="getCount">
+        <![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				zafira.GROUPS G
+		]]>
+    </sql>
+
+    <select id="getGroupsCount" resultType="java.lang.Integer">
+        <include refid="getCount" />
+    </select>
+
     <select id="getAllGroups" resultMap="GroupResultMap">
         <include refid="getGroup" />
     </select>
