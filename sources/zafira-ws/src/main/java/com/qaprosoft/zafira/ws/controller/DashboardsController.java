@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -136,11 +137,17 @@ public class DashboardsController extends AbstractController
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Authorization", required=false) String auth, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
 	{
+		Dimension dimension = null;
+		if(!StringUtils.isEmpty(email.getDimension()))
+		{
+			String [] dimensions = email.getDimension().toLowerCase().split("x");
+			dimension = new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1]));
+		}
 		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
 															 email.getHostname(), 
 															 auth != null ? auth : RequestContextHolder.currentRequestAttributes().getSessionId(),
 															 By.id("dashboard_content"),
-															 By.id("dashboard_title"));
+															 By.id("dashboard_title"), dimension);
 		if(attachments.size() == 0)
 		{
 			throw new ServiceException("Unable to create dashboard screenshots");
