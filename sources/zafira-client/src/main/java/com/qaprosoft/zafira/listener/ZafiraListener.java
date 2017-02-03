@@ -340,6 +340,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				group = group.substring(0, group.lastIndexOf("."));
 				
 				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), null, null, configurator.getRunCount(result), convertToXML(configurator.getConfiguration()));
+				testByThread.put(Thread.currentThread().getId(), test);
 			}
 			
 			Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.SKIPPED, getFullStackTrace(result)));
