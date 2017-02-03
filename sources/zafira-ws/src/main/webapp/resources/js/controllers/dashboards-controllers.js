@@ -43,13 +43,14 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.loadDashboardData = function(dashboard) {
 		for(var i = 0; i < dashboard.widgets.length; i++)
 		{
-			$scope.loadWidget(dashboard.title, dashboard.widgets[i]);
+			$scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes);
 		}
 	};
 	
-	$scope.loadWidget = function(dashboardName, widget) {
+	$scope.loadWidget = function(dashboardName, widget, attributes) {
 		var sqlAdapter = {};
 		sqlAdapter.sql = widget.sql;
+		sqlAdapter.attributes = attributes;
 		var params = ProjectProvider.getProjectQueryParam();
 		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
 		if($scope.currentUserId != null)

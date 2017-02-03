@@ -1,20 +1,31 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.models.db.Widget;
-import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.WidgetService;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
+import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
+import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.WidgetService;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
@@ -56,11 +67,21 @@ public class WidgetsController extends AbstractController
 	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project, @RequestParam(value="currentUserId", required=false) String currentUserId, @RequestParam(value="dashboardName", required=false) String dashboardName) throws ServiceException
 	{
-		return widgetService.executeSQL(sql.getSql()
+		String query = sql.getSql()
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
-				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName())));
+				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
+		
+		if(sql.getAttributes() != null)
+		{
+			for(Attribute attribute : sql.getAttributes())
+			{
+				query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
+			}
+		}
+		
+		return widgetService.executeSQL(query);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
