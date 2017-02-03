@@ -44,7 +44,7 @@ public class SeleniumService
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
 	
-	private static final Dimension SCREEN_DIMENSION = new Dimension(1366, 768);
+	private static final Dimension DEFAULT_SCREEN_DIMENSION = new Dimension(1920, 1080);
 	
 	private static final String MAC_PHANTOMJS = "classpath:phantomjs/phantomjs-macos";
 	
@@ -98,7 +98,7 @@ public class SeleniumService
 		}
 	}
 
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator) throws ServiceException 
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException 
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -111,7 +111,8 @@ public class SeleniumService
 		try
 		{
 			wd = new PhantomJSDriver();
-			wd.manage().window().setSize(SCREEN_DIMENSION);
+			
+			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 			
 			authorize(wd, auth, domain, urls.get(0));
 			

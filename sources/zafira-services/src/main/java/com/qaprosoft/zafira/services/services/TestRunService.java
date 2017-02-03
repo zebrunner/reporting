@@ -218,7 +218,7 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun calculateTestRunResult(long id, boolean updateElapsedTime) throws ServiceException
+	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)
@@ -227,21 +227,25 @@ public class TestRunService
 		}
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
-		for(Test test : tests)
+		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
+		if(finishTestRun || !Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			if(test.isKnownIssue())
+			testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
+			for(Test test : tests)
 			{
-				testRun.setKnownIssue(true);
-			}
-			if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
-			{
-				testRun.setStatus(Status.FAILED);
-				break;
+				if(test.isKnownIssue())
+				{
+					testRun.setKnownIssue(true);
+				}
+				if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+				{
+					testRun.setStatus(Status.FAILED);
+					break;
+				}
 			}
 		}
 		
-		if(updateElapsedTime && testRun.getStartedAt() != null)
+		if(finishTestRun && testRun.getStartedAt() != null)
 		{
 			LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
 			LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
