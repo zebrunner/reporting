@@ -34,6 +34,8 @@ public class TestService
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 	
+	private static final String INV_COUNT = "InvCount";
+	
 	@Autowired
 	private TestMapper testMapper;
 	
@@ -255,6 +257,7 @@ public class TestService
 						if(!test.isNeedRerun())
 						{
 							test.setNeedRerun(true);
+							// TODO: SQL performance improvements
 							updateTest(test);
 						}
 					}
@@ -309,7 +312,17 @@ public class TestService
 
 						case METHOD_MODE:
 							String methodName = testCasesById.get(test.getTestCaseId()).getTestMethod();
-							testCasesToRerun.addAll(testCasesByMethod.get(methodName));
+							
+							if(test.getName().contains(INV_COUNT))
+							{
+								testCasesToRerun.addAll(testCasesByMethod.get(methodName));
+							}
+							else if(!test.isNeedRerun())
+							{
+								test.setNeedRerun(true);
+								updateTest(test);
+							}
+							
 							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
 							{
 								for(String method : test.getDependsOnMethods().split(StringUtils.SPACE))
@@ -327,6 +340,7 @@ public class TestService
 					if(testCasesToRerun.contains(test.getTestCaseId()) && !test.isNeedRerun())
 					{
 						test.setNeedRerun(true);
+						// TODO: SQL performance improvements
 						updateTest(test);
 					}
 				}
