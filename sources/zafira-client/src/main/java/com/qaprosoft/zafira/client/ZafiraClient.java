@@ -818,7 +818,7 @@ public class ZafiraClient
 			StringBuilder sb = new StringBuilder();
 			for(String method : Arrays.asList(dependsOnMethods))
 			{
-				sb.append(method + StringUtils.EMPTY);
+				sb.append(StringUtils.substringAfterLast(method, ".") + StringUtils.SPACE);
 			}
 			test.setDependsOnMethods(sb.toString());
 		}

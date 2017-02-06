@@ -312,7 +312,7 @@ public class TestService
 							testCasesToRerun.addAll(testCasesByMethod.get(methodName));
 							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
 							{
-								for(String method : test.getDependsOnMethods().split(StringUtils.EMPTY))
+								for(String method : test.getDependsOnMethods().split(StringUtils.SPACE))
 								{
 									testCasesToRerun.addAll(testCasesByMethod.get(method));
 								}
