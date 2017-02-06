@@ -244,19 +244,10 @@ public class TestService
 	}
 	
 	@Transactional
-	public void updateTestsNeedRerun(List<Long> testIds, boolean needRerun)
-	{
-		if(testIds != null && testIds.size() > 0)
-		{
-			testMapper.updateTestsNeedRerun(testIds, false);
-		}
-	}
-	
-	@Transactional
 	public void updateTestRerunFlags(TestRun testRun, List<Test> tests)
 	{
 		List<Long> testIds = getTestIds(tests);
-		updateTestsNeedRerun(testIds, false);
+		testMapper.updateTestsNeedRerun(testIds, false);
 		
 		try
 		{
@@ -265,7 +256,7 @@ public class TestService
 			{
 				if(!Status.PASSED.equals(testRun.getStatus()))
 				{
-					updateTestsNeedRerun(testIds, true);
+					testMapper.updateTestsNeedRerun(testIds, true);
 				}
 			}
 			else
@@ -324,7 +315,7 @@ public class TestService
 							}
 							else if(!test.isNeedRerun())
 							{
-								updateTestsNeedRerun(Arrays.asList(test.getId()), true);
+								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
 							}
 							
 							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
@@ -342,12 +333,12 @@ public class TestService
 				testIds = new ArrayList<>();
 				for(Test test : tests)
 				{
-					if(testCasesToRerun.contains(test.getTestCaseId()) && !test.isNeedRerun())
+					if(testCasesToRerun.contains(test.getTestCaseId()))
 					{
 						testIds.add(test.getId());
 					}
 				}
-				updateTestsNeedRerun(testIds, true);
+				testMapper.updateTestsNeedRerun(testIds, true);
 			}
 		}
 		catch(Exception e) 

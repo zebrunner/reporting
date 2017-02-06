@@ -256,10 +256,17 @@
 			WHERE 
 				ID IN
 		]]>
-		<foreach item="id" index="index" collection="ids" open="("
-				separator="," close=")">
-				#{id}
-		</foreach>
+		<if test="null != ids and ids.size > 0">
+			<foreach item="id" index="index" collection="ids" open="("
+					separator="," close=")">
+					#{id}
+			</foreach>
+		</if>
+		<if test="null == ids or ids.size == 0">
+			<![CDATA[
+				(-1)
+			]]>
+		</if>
 	</update>	    
 
 	<sql id="deleteTest">
