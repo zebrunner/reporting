@@ -246,6 +246,21 @@
 			    ID = #{id}
 		]]>
 	</update>
+	
+	<update id="updateTestsNeedRerun">
+		<![CDATA[
+			UPDATE
+			    zafira.TESTS
+			SET
+				NEED_RERUN = #{rerun}
+			WHERE 
+				ID IN
+		]]>
+		<foreach item="id" index="index" collection="ids" open="("
+				separator="," close=")">
+				#{id}
+		</foreach>
+	</update>	    
 
 	<sql id="deleteTest">
 		<![CDATA[

@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -243,8 +244,20 @@ public class TestService
 	}
 	
 	@Transactional
+	public void updateTestsNeedRerun(List<Long> testIds, boolean needRerun)
+	{
+		if(testIds != null && testIds.size() > 0)
+		{
+			testMapper.updateTestsNeedRerun(testIds, false);
+		}
+	}
+	
+	@Transactional
 	public void updateTestRerunFlags(TestRun testRun, List<Test> tests)
 	{
+		List<Long> testIds = getTestIds(tests);
+		updateTestsNeedRerun(testIds, false);
+		
 		try
 		{
 			// In case of SUITE_MODE we are rerunning all tests if test run status not PASSED 
@@ -252,15 +265,7 @@ public class TestService
 			{
 				if(!Status.PASSED.equals(testRun.getStatus()))
 				{
-					for(Test test : tests)
-					{
-						if(!test.isNeedRerun())
-						{
-							test.setNeedRerun(true);
-							// TODO: SQL performance improvements
-							updateTest(test);
-						}
-					}
+					updateTestsNeedRerun(testIds, true);
 				}
 			}
 			else
@@ -319,8 +324,7 @@ public class TestService
 							}
 							else if(!test.isNeedRerun())
 							{
-								test.setNeedRerun(true);
-								updateTest(test);
+								updateTestsNeedRerun(Arrays.asList(test.getId()), true);
 							}
 							
 							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
@@ -335,15 +339,15 @@ public class TestService
 					}
 				}
 				
+				testIds = new ArrayList<>();
 				for(Test test : tests)
 				{
 					if(testCasesToRerun.contains(test.getTestCaseId()) && !test.isNeedRerun())
 					{
-						test.setNeedRerun(true);
-						// TODO: SQL performance improvements
-						updateTest(test);
+						testIds.add(test.getId());
 					}
 				}
+				updateTestsNeedRerun(testIds, true);
 			}
 		}
 		catch(Exception e) 
@@ -355,5 +359,15 @@ public class TestService
 	private int getTestMessageHashCode(String message)
 	{
 		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
+	}
+	
+	public List<Long> getTestIds(List<Test> tests)
+	{
+		List<Long> testIds = new ArrayList<>();
+		for(Test test : tests)
+		{
+			testIds.add(test.getId());
+		}
+		return testIds;
 	}
 }

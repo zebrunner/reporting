@@ -311,7 +311,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	public void onTestSkipped(ITestResult result)
 	{
 		if(!ZAFIRA_ENABLED) return;
-		
+		// Test is skipped as ALREADY_PASSED
 		if (result.getThrowable() != null && result.getThrowable().getMessage() != null && result.getThrowable().getMessage().startsWith("ALREADY_PASSED")) 
 		{
 			return;
@@ -324,6 +324,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			// When test is skipped as dependent, reinit test from scratch.
 			if (test == null) 
 			{
+				test = registeredTests.get(configurator.getTestName(result));
+				if(test != null && !test.isNeedRerun())
+				{
+					return;
+				}
+				
 				// That's definitely the case with skipped dependent method
 				String testName = configurator.getTestName(result);
 				
