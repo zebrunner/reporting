@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
 import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

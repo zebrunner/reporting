@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.GroupService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;

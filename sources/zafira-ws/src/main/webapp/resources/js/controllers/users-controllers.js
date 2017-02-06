@@ -115,6 +115,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
 				$scope.group = {};
 				$scope.groups = [];
+				$scope.group.users = [];
 				loadRoles();
 				getGroupsCount();
 				getAllGroups();
@@ -181,48 +182,36 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 					});
 				};
 
-                var pendingSearch, cancelSearch = angular.noop;
-                var lastSearch;
+                $scope.addUserToGroup = function(user, group){
+                    $http.put('users/group/' + group.id, user).then(function successCallback(data) {
+                    	alertify.success("User " + user.userName + " was added to group " + group.name);
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to add user to group');
+                    });
+                };
+
+                $scope.deleteUserFromGroup = function(user, group){
+                    $http.delete('users/group/' + group.id + "/" + user.id).then(function successCallback(data) {
+                        alertify.success("User was deleted from group");
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to delete user from group');
+                    });
+                };
+
+                $scope.users_all = [];
 
                 $scope.usersSearchCriteria = {};
+                $scope.asyncContacts = [];
+                $scope.filterSelected = true;
 
-                $scope.users = [];
+                $scope.querySearch = querySearch;
 
-                function querySearch (query) {
-                    $scope.usersSearchCriteria.userName = query;
-                    return $http.post('users/search', $scope.usersSearchCriteria/*, {params: {q: query}}*/)
+                function querySearch (criteria) {
+                    $scope.usersSearchCriteria.userName = criteria;
+                    return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
                         .then(function(response){
-                            return response.data.results;
-                        })
-                }
-
-                $scope.delayedUsersSearch = function(criteria) {
-                    if ( !pendingSearch || !debounceSearch() )  {
-                        cancelSearch();
-
-                        return pendingSearch = $q(function(resolve, reject) {
-                            cancelSearch = reject;
-                            $timeout(function() {
-                                resolve( querySearch(criteria) );
-                                refreshDebounce();
-                            }, Math.random() * 500, true)
+                        	return response.data.results;
                         });
-                    }
-
-                    return pendingSearch;
-                }
-
-                function refreshDebounce() {
-                    lastSearch = 0;
-                    pendingSearch = null;
-                    cancelSearch = angular.noop;
-                }
-
-                function debounceSearch() {
-                    var now = new Date().getMilliseconds();
-                    lastSearch = lastSearch || now;
-
-                    return ((now - lastSearch) < 300);
                 }
 
 				$scope.cancel = function(){

@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
+
 import java.util.List;
 
 public interface GroupMapper {

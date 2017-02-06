@@ -26,7 +26,7 @@
     </form>
     <div class="form-group">
         <label>Groups({{count}})</label>
-        <div data-ng-hide="groups.length == 0" class="modal-body ng-scope" style="overflow-y: scroll; height: 200px;">
+        <div data-ng-hide="groups.length == 0" class="modal-body ng-scope" style="overflow-y: scroll; height: 200px; border: 1px solid #cccccc">
             <div class="row ng-scope" data-ng-repeat="group in groups | orderBy:'name'">
                 <div class="col-lg-12">
                     <b class="ng-binding">{{group.name}}</b>
@@ -36,18 +36,32 @@
                     </button>
                 </div>
                 <div class="col-lg-12">
-                    <md-contact-chips
-                            data-ng-model="users"
-                            md-search-text="searchText"
-                            md-items="user in querySearch(searchText)"
-                            md-contacts="delayedUsersSearch($query)"
-                            md-contact-name="userName"
-                            md-contact-email="email"
-                            md-require-match="true"
-                            md-highlight-flags="i"
-                            filter-selected="true"
-                            placeholder="add user">
-                    </md-contact-chips>
+                    <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
+                            <md-chips ng-model="group.userList"
+                                      placeholder="add user"
+                                      secondary-placeholder="add user"
+                                      md-autocomplete-snap
+                                      md-require-match="true"
+                                    md-on-add="addUserToGroup($chip, group)"
+                            md-on-remove="deleteUserFromGroup($chip, group)">
+                                <md-chip-template>
+                                    {{$chip.userName}}
+                                </md-chip-template>
+                                <md-autocomplete
+                                        md-search-text="searchText"
+                                        md-items="user in querySearch(searchText)"
+                                        md-item-text="user.userName"
+                                        md-selected-item="currentUser"
+                                        md-autoselect>
+                                    <md-item-template>
+                                        <span>{{user.userName}}</span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No users matching "{{searchText}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                            </md-chips>
+                    </md-content>
                 </div>
                 <hr>
             </div>

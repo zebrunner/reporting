@@ -100,7 +100,7 @@ public class UsersController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException
 	{
 		return userService.addUserToGroup(user, id);
@@ -108,9 +108,9 @@ public class UsersController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="/group/{id}", method = RequestMethod.DELETE)
-	public void deleteUserFromGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException
+	@RequestMapping(value="group/{groupId}/{userId}", method = RequestMethod.DELETE)
+	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId, @PathVariable(value = "userId") long userId) throws ServiceException
 	{
-		userService.deleteUserFromGroup(user, id);
+		userService.deleteUserFromGroup(groupId, userId);
 	}
 }

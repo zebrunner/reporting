@@ -18,7 +18,7 @@
 			</md-button>
 		</md-fab-trigger>
 		<md-fab-actions>
-			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openGroupDetailsModal(users)">
+			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openGroupDetailsModal()">
 				<i class="fa fa-users" aria-hidden="true"></i>
 			</md-button>
 			<md-button aria-label="menu" class="md-fab md-raised md-mini" data-ng-click="openUserDetailsModal()">

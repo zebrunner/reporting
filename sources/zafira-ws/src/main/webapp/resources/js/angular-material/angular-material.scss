@@ -1,14 +1,12 @@
-// Function
-//-- Must be defined before variables
-@function rem($multiplier) {
-  $font-size: 10px;
-  @return $multiplier * $font-size;
-}
-
 // Typography
 // ------------------------------
 $font-family: Roboto, 'Helvetica Neue', sans-serif !default;
 $font-size:   10px !default;
+
+//-- Must be defined before $font-size.
+@function rem($multiplier) {
+  @return $multiplier * $font-size;
+}
 
 $display-4-font-size-base: rem(11.20) !default;
 $display-3-font-size-base: rem(5.600) !default;
@@ -458,6 +456,22 @@ $checkbox-border-width: 2px !default;
   }
 }
 
+@mixin dense($prop, $normal, $dense) {
+  #{$prop}: $normal;
+  .md-dense > &:not(.md-dense-disabled),
+  .md-dense :not(.md-dense-disabled) &:not(.md-dense-disabled) {
+    #{$prop}: $dense;
+  }
+}
+
+@mixin dense-rtl($prop, $ltr-normal, $rtl-normal, $ltr-dense, $rtl-dense) {
+  @include rtl($prop, $ltr-normal, $rtl-normal);
+  .md-dense > &:not(.md-dense-disabled),
+  .md-dense :not(.md-dense-disabled) &:not(.md-dense-disabled) {
+    @include rtl($prop, $ltr-dense, $rtl-dense);
+  }
+}
+
 html, body {
   height: 100%;
   position: relative;
@@ -900,14 +914,14 @@ input {
     $value : #{$i * 5 + '%'};
 
     .#{$flexName}-#{$i * 5} {
-      flex: 1 1 #{$value};
+      flex: 1 1 100%;
       max-width: #{$value};
       max-height: 100%;
       box-sizing: border-box;
     }
 
     .layout-row > .#{$flexName}-#{$i * 5} {
-      flex: 1 1 #{$value};
+      flex: 1 1 100%;
       max-width: #{$value};
       max-height: 100%;
       box-sizing: border-box;
@@ -917,7 +931,7 @@ input {
     }
 
     .layout-column > .#{$flexName}-#{$i * 5} {
-      flex: 1 1 #{$value};
+      flex: 1 1 100%;
       max-width: 100%;
       max-height: #{$value};
       box-sizing: border-box;
@@ -934,7 +948,7 @@ input {
 	  }
 
     .layout#{$name}-row > .#{$flexName}-#{$i * 5} {
-      flex: 1 1 #{$value};
+      flex: 1 1 100%;
       max-width: #{$value};
       max-height: 100%;
       box-sizing: border-box;
@@ -944,7 +958,7 @@ input {
     }
 
     .layout#{$name}-column > .#{$flexName}-#{$i * 5} {
-      flex: 1 1 #{$value};
+      flex: 1 1 100%;
       max-width: 100%;
       max-height: #{$value};
       box-sizing: border-box;
@@ -956,8 +970,8 @@ input {
   }
 
   .layout#{$name}-row {
-    > .#{$flexName}-33   , > .#{$flexName}-33     {  flex: 1 1 33.33%;  max-width: 33.33%;  max-height: 100%; box-sizing: border-box; }
-    > .#{$flexName}-66   , > .#{$flexName}-66     {  flex: 1 1 66.66%;  max-width: 66.66%;  max-height: 100%; box-sizing: border-box; }
+    > .#{$flexName}-33   , > .#{$flexName}-33     {  flex: 1 1 100%;  max-width: 33.33%;  max-height: 100%; box-sizing: border-box; }
+    > .#{$flexName}-66   , > .#{$flexName}-66     {  flex: 1 1 100%;  max-width: 66.66%;  max-height: 100%; box-sizing: border-box; }
 
     // Bug workaround for http://crbug.com/546034 - flex issues on Chrome 48
     > .flex                                       { min-width: 0;   }
@@ -965,8 +979,8 @@ input {
   }
 
   .layout#{$name}-column {
-    > .#{$flexName}-33   , > .#{$flexName}-33     {  flex: 1 1 33.33%;  max-width: 100%;  max-height: 33.33%; box-sizing: border-box; }
-    > .#{$flexName}-66   , > .#{$flexName}-66     {  flex: 1 1 66.66%;  max-width: 100%;  max-height: 66.66%; box-sizing: border-box; }
+    > .#{$flexName}-33   , > .#{$flexName}-33     {  flex: 1 1 100%;  max-width: 100%;  max-height: 33.33%; box-sizing: border-box; }
+    > .#{$flexName}-66   , > .#{$flexName}-66     {  flex: 1 1 100%;  max-width: 100%;  max-height: 66.66%; box-sizing: border-box; }
 
     // Bug workaround for http://crbug.com/546034 - flex issues on Chrome 48
     > .flex                                       { min-height: 0;   }
@@ -1207,38 +1221,79 @@ input {
     @include layout-for-name($name);
 }
 
-$autocomplete-option-height: 48px !default;
-
-@keyframes md-autocomplete-list-out {
-  0% {
-    animation-timing-function: linear;
-  }
-  50% {
-    opacity: 0;
-    height: 40px;
-    animation-timing-function: ease-in;
-  }
-  100% {
-    height: 0;
-    opacity: 0;
-  }
+.md-panel-outer-wrapper {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
-@keyframes md-autocomplete-list-in {
-  0% {
-    opacity: 0;
-    height: 0;
-    animation-timing-function: ease-out;
-  }
-  50% {
-    opacity: 0;
-    height: 40px;
-  }
-  100% {
+._md-panel-hidden {
+  display: none;
+}
+
+._md-panel-fullscreen {
+  border-radius: 0;
+  left: 0;
+  min-height: 100%;
+  min-width: 100%;
+  position: fixed;
+  top: 0;
+}
+
+// Only used when no animations are present.
+._md-panel-shown .md-panel {
+  opacity: 1;
+  transition: none;
+}
+
+.md-panel {
+  opacity: 0;
+  position: fixed;
+
+  &._md-panel-shown {
+    // Only used when custom animations are present.
+    // Overridden by the default animations.
     opacity: 1;
-    height: 40px;
+    transition: none;
+  }
+
+  &._md-panel-animate-enter {
+    opacity: 1;
+    transition: $material-enter;
+  }
+
+  &._md-panel-animate-leave {
+    opacity: 1;
+    transition: $material-leave;
+  }
+
+  &._md-panel-animate-scale-out,
+  &._md-panel-animate-fade-out {
+    opacity: 0;
+  }
+
+  &._md-panel-backdrop {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+
+  &._md-opaque-enter {
+    opacity: .48;
+    transition: opacity $material-enter-duration $material-enter-timing-function;
+  }
+
+  &._md-opaque-leave {
+    transition: opacity $material-leave-duration $material-leave-timing-function;
   }
 }
+
+// The default item height is also specified in the JavaScript.
+$md-autocomplete-item-height: 48px !default;
+$md-autocomplete-clear-size: 30px !default;
+$md-autocomplete-input-offset: 20px !default;
 
 md-autocomplete {
   border-radius: 2px;
@@ -1258,19 +1313,29 @@ md-autocomplete {
     height: auto;
 
     md-input-container {
-      padding-bottom: 0px;
+      padding-bottom: 0;
     }
     md-autocomplete-wrap {
       height: auto;
     }
-    button {
-      position: absolute;
-      top: auto;
-      bottom: 0;
-      right: 0;
-      width: 30px;
-      height: 30px;
+
+    .md-show-clear-button {
+
+      button {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: $md-autocomplete-input-offset;
+        width: $md-autocomplete-clear-size;
+        height: $md-autocomplete-clear-size;
+      }
+
+      input {
+        // Add padding to the end of the input to avoid overlapping with the clear button.
+        @include rtl-prop(padding-right, padding-left, $md-autocomplete-clear-size, 0);
+      }
     }
+
   }
   md-autocomplete-wrap {
 
@@ -1288,9 +1353,9 @@ md-autocomplete {
 
     md-input-container, input {
       // Layout [flex]
-      flex:1 1 0%;
-      box-sizing:border-box;
-      min-width :0;
+      flex: 1 1 0%;
+      box-sizing: border-box;
+      min-width : 0;
     }
 
     md-progress-linear {
@@ -1338,12 +1403,12 @@ md-autocomplete {
     line-height: 40px;
     height: 40px;
   }
-  button {
+  .md-show-clear-button button {
     position: relative;
     line-height: 20px;
     text-align: center;
-    width: 30px;
-    height: 30px;
+    width: $md-autocomplete-clear-size;
+    height: $md-autocomplete-clear-size;
     cursor: pointer;
     border: none;
     border-radius: 50%;
@@ -1410,25 +1475,28 @@ md-autocomplete {
 .md-virtual-repeat-container.md-autocomplete-suggestions-container {
   position: absolute;
   box-shadow: 0 2px 5px rgba(black, 0.25);
-  height: 41px * 5.5;
-  max-height: 41px * 5.5;
   z-index: $z-index-tooltip;
+
+  // Expand the virtualRepeatContainer as much as the max-height from the JavaScript allows.
+  // This is necessary for the virtualRepeatContainer to be able to grow back.
+  height: 100%;
 }
 
 .md-virtual-repeat-container.md-not-found {
-  height: 48px;
+  height: $md-autocomplete-item-height;
 }
 
 .md-autocomplete-suggestions {
   margin: 0;
   list-style: none;
   padding: 0;
+
   li {
     font-size: 14px;
     overflow: hidden;
     padding: 0 15px;
-    line-height: $autocomplete-option-height;
-    height: $autocomplete-option-height;
+    line-height: $md-autocomplete-item-height;
+    height: $md-autocomplete-item-height;
     transition: background 0.15s linear;
     margin: 0;
     white-space: nowrap;
@@ -1452,247 +1520,18 @@ md-autocomplete {
   }
 }
 
-// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
-//             - Animate background-color opacity only for `.md-opaque` styles
+// Material Design Button
+// https://material.google.com/components/buttons.html
 
-md-backdrop {
-  transition: opacity 450ms;
-
-  position: absolute;
-  top:0;
-  bottom:0;
-  left: 0;
-  right: 0;
-
-  z-index: $z-index-backdrop;
-
-  &.md-menu-backdrop {
-    position: fixed !important;
-    z-index: $z-index-menu - 1;
-  }
-  &.md-select-backdrop {
-    z-index: $z-index-dialog + 1;
-    transition-duration: 0;
-  }
-  &.md-dialog-backdrop {
-    z-index: $z-index-dialog - 1;
-  }
-  &.md-bottom-sheet-backdrop {
-    z-index: $z-index-bottom-sheet - 1;
-  }
-  &.md-sidenav-backdrop {
-    z-index: $z-index-sidenav - 1;
-  }
-
-
-  &.md-click-catcher {
-    position: absolute;
-  }
-
-  &.md-opaque {
-
-    opacity: .48;
-
-    &.ng-enter {
-      opacity: 0;
-    }
-    &.ng-enter.md-opaque.ng-enter-active {
-      opacity: .48;
-    }
-    &.ng-leave {
-      opacity: .48;
-      transition: opacity 400ms;
-    }
-    &.ng-leave.md-opaque.ng-leave-active {
-      opacity: 0;
-    }
-  }
-
-}
-
-
-$bottom-sheet-horizontal-padding: 2 * $baseline-grid !default;
-$bottom-sheet-vertical-padding: 1 * $baseline-grid !default;
-$bottom-sheet-icon-after-margin: 4 * $baseline-grid !default;
-$bottom-sheet-list-item-height: 6 * $baseline-grid !default;
-$bottom-sheet-hidden-bottom-padding: 80px !default;
-$bottom-sheet-header-height: 7 * $baseline-grid !default;
-$bottom-sheet-grid-font-weight: 400 !default;
-
-md-bottom-sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: $bottom-sheet-vertical-padding $bottom-sheet-horizontal-padding $bottom-sheet-vertical-padding + $bottom-sheet-hidden-bottom-padding $bottom-sheet-horizontal-padding;
-  z-index: $z-index-bottom-sheet;
-
-  border-top-width: 1px;
-  border-top-style: solid;
-
-  transform: translate3d(0, $bottom-sheet-hidden-bottom-padding, 0);
-  transition: $swift-ease-out;
-  transition-property: transform;
-
-  &.md-has-header {
-    padding-top: 0;
-  }
-
-  &.ng-enter {
-    opacity: 0;
-    transform: translate3d(0, 100%, 0);
-  }
-
-  &.ng-enter-active {
-    opacity: 1;
-    display: block;
-    transform: translate3d(0, $bottom-sheet-hidden-bottom-padding, 0) !important;
-  }
-
-
-  &.ng-leave-active {
-    transform: translate3d(0, 100%, 0) !important;
-    transition: $swift-ease-in;
-  }
-
-  .md-subheader {
-    background-color: transparent;
-    font-family: $font-family;
-    line-height: $bottom-sheet-header-height;
-    padding: 0;
-    white-space: nowrap;
-  }
-
-  md-inline-icon {
-    display: inline-block;
-    height: 24px;
-    width: 24px;
-    fill: #444;
-  }
-
-  md-list-item {
-    display: flex;
-    outline: none;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &.md-list {
-    md-list-item {
-      padding: 0;
-      align-items: center;
-      height: $bottom-sheet-list-item-height;
-
-    }
-  }
-
-
-
-  &.md-grid {
-    padding-left: 3 * $baseline-grid;
-    padding-right: 3 * $baseline-grid;
-    padding-top: 0;
-
-    md-list {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      transition: all 0.5s;
-      align-items: center;
-    }
-
-    md-list-item {
-      flex-direction: column;
-      align-items: center;
-      transition: all 0.5s;
-
-      height: 12 * $baseline-grid;
-
-      margin-top: $baseline-grid;
-      margin-bottom: $baseline-grid;
-
-      /* Mixin for how many grid items to show per row */
-      @mixin grid-items-per-row($num, $alignEdges: false) {
-        $width: 100% / $num;
-        flex: 1 1 $width;
-        max-width: $width;
-
-        @if $alignEdges {
-          &:nth-of-type(#{$num}n + 1) {
-            align-items: flex-start;
-          }
-          &:nth-of-type(#{$num}n) {
-            align-items: flex-end;
-          }
-        }
-      }
-
-      @media (max-width: $layout-breakpoint-sm) {
-        @include grid-items-per-row(3, true);
-      }
-
-      @media (min-width: $layout-breakpoint-sm) and (max-width: $layout-breakpoint-md - 1) {
-        @include grid-items-per-row(4);
-      }
-
-      @media (min-width: $layout-breakpoint-md) and (max-width: $layout-breakpoint-lg - 1) {
-        @include grid-items-per-row(6);
-      }
-
-      @media (min-width: $layout-breakpoint-lg) {
-        @include grid-items-per-row(7);
-      }
-
-      // Override of the IE11 fix from @mixin ie11-min-height-flexbug, line 109 mixins.scss
-      &::before {
-        display: none;
-      }
-
-      .md-list-item-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 6 * $baseline-grid;
-        padding-bottom: 2 * $baseline-grid;
-      }
-
-      .md-grid-item-content {
-        border: 1px solid transparent;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 10 * $baseline-grid;
-      }
-
-      .md-grid-text {
-        font-weight: $bottom-sheet-grid-font-weight;
-        line-height: 2 * $baseline-grid;
-        font-size: 2 * $baseline-grid - 3;
-        margin: 0;
-        white-space: nowrap;
-        width: 8 * $baseline-grid;
-        text-align: center;
-        text-transform: none;
-        padding-top: 1 * $baseline-grid;
-      }
-    }
-  }
-}
-
-// IE only
-@media screen and (-ms-high-contrast: active) {
-  md-bottom-sheet {
-    border: 1px solid #fff;
-  }
-}
-
-$button-border-radius: 3px !default;
+$button-border-radius: 2px !default;
 $button-fab-border-radius: 50% !default;
 $button-icon-border-radius: $button-fab-border-radius !default;
 
+$button-font-size: $body-font-size-base !default;
+$button-font-size-dense: $body-font-size-base * 13/14 !default;
+
 $button-line-height: rem(3.60) !default;
+$button-line-height-dense: rem(3.20) !default;
 $button-margin: rem(0.600) rem(0.800) !default;
 $button-min-width: rem(8.800) !default;
 $button-padding: 0 $button-left-right-padding !default;
@@ -1721,9 +1560,9 @@ button.md-button::-moz-focus-inner {
   cursor: pointer;
 
   /** Alignment adjustments */
-  min-height: $button-line-height;
+  @include dense(min-height, $button-line-height, $button-line-height-dense);
   min-width: $button-min-width;
-  line-height: $button-line-height;
+  @include dense(line-height, $button-line-height, $button-line-height-dense);
 
   vertical-align: middle;
   align-items: center;
@@ -1748,7 +1587,7 @@ button.md-button::-moz-focus-inner {
   /* Uppercase text content */
   text-transform: uppercase;
   font-weight: 500;
-  font-size: $body-font-size-base;
+  @include dense(font-size, $button-font-size, $button-font-size-dense);
   font-style: inherit;
   font-variant: inherit;
   font-family: inherit;
@@ -1943,6 +1782,242 @@ button.md-button.md-fab {
   }
 }
 
+$bottom-sheet-horizontal-padding: 2 * $baseline-grid !default;
+$bottom-sheet-vertical-padding: 1 * $baseline-grid !default;
+$bottom-sheet-icon-after-margin: 4 * $baseline-grid !default;
+$bottom-sheet-list-item-height: 6 * $baseline-grid !default;
+$bottom-sheet-hidden-bottom-padding: 80px !default;
+$bottom-sheet-header-height: 7 * $baseline-grid !default;
+$bottom-sheet-grid-font-weight: 400 !default;
+
+md-bottom-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: $bottom-sheet-vertical-padding $bottom-sheet-horizontal-padding $bottom-sheet-vertical-padding + $bottom-sheet-hidden-bottom-padding $bottom-sheet-horizontal-padding;
+  z-index: $z-index-bottom-sheet;
+
+  border-top-width: 1px;
+  border-top-style: solid;
+
+  transform: translate3d(0, $bottom-sheet-hidden-bottom-padding, 0);
+  transition: $swift-ease-out;
+  transition-property: transform;
+
+  &.md-has-header {
+    padding-top: 0;
+  }
+
+  &.ng-enter {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  &.ng-enter-active {
+    opacity: 1;
+    display: block;
+    transform: translate3d(0, $bottom-sheet-hidden-bottom-padding, 0) !important;
+  }
+
+
+  &.ng-leave-active {
+    transform: translate3d(0, 100%, 0) !important;
+    transition: $swift-ease-in;
+  }
+
+  .md-subheader {
+    background-color: transparent;
+    font-family: $font-family;
+    line-height: $bottom-sheet-header-height;
+    padding: 0;
+    white-space: nowrap;
+  }
+
+  md-inline-icon {
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    fill: #444;
+  }
+
+  md-list-item {
+    display: flex;
+    outline: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &.md-list {
+    md-list-item {
+      padding: 0;
+      align-items: center;
+      height: $bottom-sheet-list-item-height;
+
+    }
+  }
+
+
+
+  &.md-grid {
+    padding-left: 3 * $baseline-grid;
+    padding-right: 3 * $baseline-grid;
+    padding-top: 0;
+
+    md-list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      transition: all 0.5s;
+      align-items: center;
+    }
+
+    md-list-item {
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.5s;
+
+      height: 12 * $baseline-grid;
+
+      margin-top: $baseline-grid;
+      margin-bottom: $baseline-grid;
+
+      /* Mixin for how many grid items to show per row */
+      @mixin grid-items-per-row($num, $alignEdges: false) {
+        $width: 100% / $num;
+        flex: 1 1 $width;
+        max-width: $width;
+
+        @if $alignEdges {
+          &:nth-of-type(#{$num}n + 1) {
+            align-items: flex-start;
+          }
+          &:nth-of-type(#{$num}n) {
+            align-items: flex-end;
+          }
+        }
+      }
+
+      @media (max-width: $layout-breakpoint-sm) {
+        @include grid-items-per-row(3, true);
+      }
+
+      @media (min-width: $layout-breakpoint-sm) and (max-width: $layout-breakpoint-md - 1) {
+        @include grid-items-per-row(4);
+      }
+
+      @media (min-width: $layout-breakpoint-md) and (max-width: $layout-breakpoint-lg - 1) {
+        @include grid-items-per-row(6);
+      }
+
+      @media (min-width: $layout-breakpoint-lg) {
+        @include grid-items-per-row(7);
+      }
+
+      // Override of the IE11 fix from @mixin ie11-min-height-flexbug, line 109 mixins.scss
+      &::before {
+        display: none;
+      }
+
+      .md-list-item-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 6 * $baseline-grid;
+        padding-bottom: 2 * $baseline-grid;
+      }
+
+      .md-grid-item-content {
+        border: 1px solid transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 10 * $baseline-grid;
+      }
+
+      .md-grid-text {
+        font-weight: $bottom-sheet-grid-font-weight;
+        line-height: 2 * $baseline-grid;
+        font-size: 2 * $baseline-grid - 3;
+        margin: 0;
+        white-space: nowrap;
+        width: 8 * $baseline-grid;
+        text-align: center;
+        text-transform: none;
+        padding-top: 1 * $baseline-grid;
+      }
+    }
+  }
+}
+
+// IE only
+@media screen and (-ms-high-contrast: active) {
+  md-bottom-sheet {
+    border: 1px solid #fff;
+  }
+}
+
+// !!Important - Theme-based Background-color can be configured in backdrop-theme.scss
+//             - Animate background-color opacity only for `.md-opaque` styles
+
+md-backdrop {
+  transition: opacity 450ms;
+
+  position: absolute;
+  top:0;
+  bottom:0;
+  left: 0;
+  right: 0;
+
+  z-index: $z-index-backdrop;
+
+  &.md-menu-backdrop {
+    position: fixed !important;
+    z-index: $z-index-menu - 1;
+  }
+  &.md-select-backdrop {
+    z-index: $z-index-dialog + 1;
+    transition-duration: 0;
+  }
+  &.md-dialog-backdrop {
+    z-index: $z-index-dialog - 1;
+  }
+  &.md-bottom-sheet-backdrop {
+    z-index: $z-index-bottom-sheet - 1;
+  }
+  &.md-sidenav-backdrop {
+    z-index: $z-index-sidenav - 1;
+  }
+
+
+  &.md-click-catcher {
+    position: absolute;
+  }
+
+  &.md-opaque {
+
+    opacity: .48;
+
+    &.ng-enter {
+      opacity: 0;
+    }
+    &.ng-enter.md-opaque.ng-enter-active {
+      opacity: .48;
+    }
+    &.ng-leave {
+      opacity: .48;
+      transition: opacity 400ms;
+    }
+    &.ng-leave.md-opaque.ng-leave-active {
+      opacity: 0;
+    }
+  }
+
+}
+
+
 $card-padding: 16px !default;
 $card-box-shadow: $whiteframe-shadow-1dp !default;
 
@@ -1982,6 +2057,11 @@ md-card {
 
       md-icon {
         padding: 8px;
+        > svg {
+          // Safari workaround for any SVG with padded parent
+          height: inherit;
+          width: inherit;
+        }
       }
 
       & + md-card-header-text {
@@ -2163,6 +2243,102 @@ md-card {
     height: auto;
   }
 }
+
+
+//$checkbox-width: 20px !default;
+//$checkbox-height: $checkbox-width !default;
+//$checkbox-border-radius: 2px !default;
+//$checkbox-border-width: 2px !default;
+//
+// ^^ defined in variables.scss
+//
+$checkbox-margin: 16px !default;
+$checkbox-text-margin: 10px !default;
+$checkbox-top: 12px !default;
+
+.md-inline-form {
+  md-checkbox {
+    margin: 19px 0 18px;
+  }
+}
+
+md-checkbox {
+  box-sizing: border-box;
+  display: inline-block;
+  margin-bottom: $checkbox-margin;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  position: relative;
+  min-width: $checkbox-width;
+  min-height: $checkbox-width;
+  @include rtl(margin-left, 0, $checkbox-margin);
+  @include rtl(margin-right, $checkbox-margin, 0);
+
+  &:last-of-type {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  &.md-focused:not([disabled]) {
+    .md-container:before {
+      left: -8px;
+      top: -8px;
+      right: -8px;
+      bottom: -8px;
+    }
+
+    &:not(.md-checked) {
+      .md-container:before {
+        background-color: rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  &.md-align-top-left > div.md-container {
+    top: $checkbox-top;
+  }
+
+  @include checkbox-container;
+
+  .md-label {
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    user-select: text;
+
+    @include rtl(margin-left, $checkbox-text-margin + $checkbox-width, 0);
+    @include rtl(margin-right, 0, $checkbox-text-margin + $checkbox-width);
+
+  }
+}
+
+md-content {
+
+  display: block;
+  position: relative;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &[md-scroll-y] {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  &[md-scroll-x] {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  &[md-scroll-xy] {
+  }
+
+  @media print {
+    overflow: visible !important;
+  }
+}
+
 
 
 $chip-font-size: rem(1.6) !default;
@@ -2376,101 +2552,153 @@ $contact-chip-name-width: rem(12) !default;
 }
 
 
-//$checkbox-width: 20px !default;
-//$checkbox-height: $checkbox-width !default;
-//$checkbox-border-radius: 2px !default;
-//$checkbox-border-width: 2px !default;
-//
-// ^^ defined in variables.scss
-//
-$checkbox-margin: 16px !default;
-$checkbox-text-margin: 10px !default;
-$checkbox-top: 12px !default;
+$dialog-padding: $baseline-grid * 3 !default;
 
-.md-inline-form {
-  md-checkbox {
-    margin: 19px 0 18px;
-  }
+.md-dialog-is-showing {
+  max-height: 100%;
 }
 
-md-checkbox {
-  box-sizing: border-box;
-  display: inline-block;
-  margin-bottom: $checkbox-margin;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
+.md-dialog-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: $z-index-dialog;
+  overflow: hidden;
+}
+
+md-dialog {
+
+  &.md-transition-in {
+    opacity: 1;
+    transition: $swift-ease-out;
+    transform: translate(0,0) scale(1.0);
+  }
+  &.md-transition-out {
+    opacity: 0;
+    transition: $swift-ease-out;
+    transform: translate(0,100%) scale(0.2);
+  }
+
+  opacity: 0;
+  min-width: 240px;
+  max-width: 80%;
+  max-height: 80%;
   position: relative;
-  min-width: $checkbox-width;
-  min-height: $checkbox-width;
-  @include rtl(margin-left, 0, $checkbox-margin);
-  @include rtl(margin-right, $checkbox-margin, 0);
+  overflow: auto; // stop content from leaking out of dialog parent and fix IE
 
-  &:last-of-type {
-    margin-left: 0;
-    margin-right: 0;
+  box-shadow: $whiteframe-shadow-13dp;
+
+  display: flex;
+  flex-direction: column;
+
+  &> form {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
   }
 
-  &.md-focused:not([disabled]) {
-    .md-container:before {
-      left: -8px;
-      top: -8px;
-      right: -8px;
-      bottom: -8px;
+  .md-dialog-content {
+    padding: $dialog-padding;
+  }
+
+  md-dialog-content {
+    order: 1;
+    flex-direction: column;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &:not([layout=row]) > *:first-child:not(.md-subheader) {
+      margin-top: 0;
     }
 
-    &:not(.md-checked) {
-      .md-container:before {
-        background-color: rgba(0, 0, 0, 0.12);
-      }
+    &:focus {
+      outline: none;
+    }
+
+    .md-subheader {
+      margin: 0;
+    }
+
+    .md-dialog-content-body {
+      width:100%;
+    }
+
+    .md-prompt-input-container {
+      width: 100%;
+      box-sizing: border-box;
     }
   }
 
-  &.md-align-top-left > div.md-container {
-    top: $checkbox-top;
-  }
-
-  @include checkbox-container;
-
-  .md-label {
+  .md-actions, md-dialog-actions {
+    display: flex;
+    order: 2;
     box-sizing: border-box;
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    white-space: normal;
-    user-select: text;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 0;
+    @include rtl(padding-right, $baseline-grid, $baseline-grid * 2);
+    @include rtl(padding-left, $baseline-grid * 2, $baseline-grid);
+    min-height: $baseline-grid * 6.5;
+    overflow: hidden;
 
-    @include rtl(margin-left, $checkbox-text-margin + $checkbox-width, 0);
-    @include rtl(margin-right, 0, $checkbox-text-margin + $checkbox-width);
+    .md-button {
+      margin-bottom: $baseline-grid;
+      @include rtl(margin-left, $baseline-grid, 0);
+      @include rtl(margin-right, 0, $baseline-grid);
+      margin-top: $baseline-grid;
+    }
+  }
+  &.md-content-overflow {
+    .md-actions, md-dialog-actions {
+      border-top-width: 1px;
+      border-top-style: solid;
+    }
+  }
 
+}
+
+@media screen and (-ms-high-contrast: active) {
+  md-dialog {
+    border: 1px solid #fff;
   }
 }
 
-md-content {
+@media (max-width: $layout-breakpoint-sm - 1) {
+  md-dialog.md-dialog-fullscreen {
+    min-height: 100%;
+    min-width: 100%;
+    border-radius: 0;
+  }
+}
 
+md-divider {
   display: block;
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  border-top-width: 1px;
+  border-top-style: solid;
+  margin: 0;
 
-  &[md-scroll-y] {
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  &[md-scroll-x] {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  &[md-scroll-xy] {
-  }
-
-  @media print {
-    overflow: visible !important;
+  &[md-inset] {
+    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
   }
 }
 
-
+.layout-row,
+.layout-xs-row, .layout-gt-xs-row,
+.layout-sm-row, .layout-gt-sm-row,
+.layout-md-row, .layout-gt-md-row,
+.layout-lg-row, .layout-gt-lg-row,
+.layout-xl-row {
+  & > md-divider {
+    border-top-width: 0;
+    border-right-width: 1px;
+    border-right-style: solid;
+  }
+}
 
 /** Styles for mdCalendar. */
 $md-calendar-cell-size: 44px !default;
@@ -2665,12 +2893,6 @@ md-datepicker {
   // Don't let linebreaks happen between the open icon-button and the input.
   white-space: nowrap;
   overflow: hidden;
-
-  // Leave room for the down-triangle button to "overflow" it's parent without modifying scrollLeft.
-  // This prevents the element from shifting right when opening via the triangle button.
-  @include rtl-prop(padding-right, padding-left, $md-datepicker-triangle-button-width / 2, 0);
-  @include rtl-prop(margin-right, margin-left, -$md-datepicker-triangle-button-width / 2, auto);
-
   vertical-align: middle;
 }
 
@@ -2720,10 +2942,16 @@ md-datepicker {
     }
 
     .md-datepicker-button {
-      // Prevents the button from wrapping around.
+      // Prevents the button from wrapping around, as well as it pushing
+      // down the error messages more than they should be.
       @include rtl(float, left, right);
-      margin-top: -$md-datepicker-border-bottom-gap / 2;
+      margin-top: $button-left-right-padding * -2;
+      top: $button-left-right-padding * 2 - $md-datepicker-border-bottom-gap / 2;
     }
+  }
+
+  .md-input {
+    float: none;
   }
 
   &._md-datepicker-has-calendar-icon {
@@ -2742,6 +2970,12 @@ md-datepicker {
   }
 }
 
+._md-datepicker-has-triangle-icon {
+  // Leave room for the down-triangle button to "overflow" it's parent without modifying scrollLeft.
+  // This prevents the element from shifting right when opening via the triangle button.
+  @include rtl-prop(padding-right, padding-left, $md-datepicker-triangle-button-width / 2, 0);
+  @include rtl-prop(margin-right, margin-left, -$md-datepicker-triangle-button-width / 2, auto);
+}
 
 // Container for the datepicker input.
 .md-datepicker-input-container {
@@ -2841,14 +3075,14 @@ md-datepicker {
 .md-datepicker-triangle-button {
   position: absolute;
   @include rtl-prop(right, left, 0, auto);
-  top: $md-date-arrow-size;
+  bottom: -$md-date-arrow-size / 2;
 
   // TODO(jelbourn): This position isn't great on all platforms.
-  @include rtl(transform, translateY(-25%) translateX(45%), translateY(-25%) translateX(-45%));
+  @include rtl(transform, translateX(45%), translateX(-45%));
 }
 
 // Need crazy specificity to override .md-button.md-icon-button.
-// Only apply this high specifiy to the property we need to override.
+// Only apply this high specificity to the property we need to override.
 .md-datepicker-triangle-button.md-button.md-icon-button {
   height: $md-datepicker-triangle-button-width;
   width: $md-datepicker-triangle-button-width;
@@ -2904,151 +3138,128 @@ md-datepicker[disabled] {
   }
 }
 
-$dialog-padding: $baseline-grid * 3 !default;
+$button-fab-width: rem(5.600) !default;
+$icon-button-margin: rem(0.600) !default;
 
-.md-dialog-is-showing {
-  max-height: 100%;
-}
+md-fab-toolbar {
+  $icon-delay: 200ms;
 
-.md-dialog-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: $z-index-dialog;
-  overflow: hidden;
-}
+  // Include the top/left/bottom/right fab positions
+  @include fab-all-positions();
 
-md-dialog {
+  display: block;
 
-  &.md-transition-in {
-    opacity: 1;
-    transition: $swift-ease-out;
-    transform: translate(0,0) scale(1.0);
-  }
-  &.md-transition-out {
-    opacity: 0;
-    transition: $swift-ease-out;
-    transform: translate(0,100%) scale(0.2);
-  }
-
-  opacity: 0;
-  min-width: 240px;
-  max-width: 80%;
-  max-height: 80%;
-  position: relative;
-  overflow: auto; // stop content from leaking out of dialog parent and fix IE
-
-  box-shadow: $whiteframe-shadow-13dp;
-
-  display: flex;
-  flex-direction: column;
-
-  &> form {
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-  }
-
-  .md-dialog-content {
-    padding: $dialog-padding;
-  }
-
-  md-dialog-content {
-    order: 1;
-    flex-direction: column;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-
-    &:not([layout=row]) > *:first-child:not(.md-subheader) {
-      margin-top: 0;
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    .md-subheader {
-      margin: 0;
-    }
-
-    .md-dialog-content-body {
-      width:100%;
-    }
-
-    .md-prompt-input-container {
-      width: 100%;
-      box-sizing: border-box;
-    }
-  }
-
-  .md-actions, md-dialog-actions {
-    display: flex;
-    order: 2;
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 0;
-    @include rtl(padding-right, $baseline-grid, $baseline-grid * 2);
-    @include rtl(padding-left, $baseline-grid * 2, $baseline-grid);
-    min-height: $baseline-grid * 6.5;
+  /*
+   * Closed styling
+   */
+  .md-fab-toolbar-wrapper {
+    display: block;
+    position: relative;
     overflow: hidden;
 
-    .md-button {
-      margin-bottom: $baseline-grid;
-      @include rtl(margin-left, $baseline-grid, 0);
-      @include rtl(margin-right, 0, $baseline-grid);
-      margin-top: $baseline-grid;
+    // Account for the size of the trigger plus its margin/shadow
+    height: $button-fab-width + ($icon-button-margin * 2);
+  }
+
+  md-fab-trigger {
+    position: absolute;
+    z-index: $z-index-fab;
+
+    button {
+      overflow: visible !important;
+    }
+
+    .md-fab-toolbar-background {
+      display: block;
+      position: absolute;
+      z-index: $z-index-fab + 1;
+
+      opacity: 1;
+      transition: $swift-ease-in;
+    }
+
+    md-icon {
+      position: relative;
+      z-index: $z-index-fab + 2;
+
+      opacity: 1;
+
+      // Hide the icon very quickly
+      transition: all $icon-delay ease-in;
     }
   }
-  &.md-content-overflow {
-    .md-actions, md-dialog-actions {
-      border-top-width: 1px;
-      border-top-style: solid;
+
+  &.md-left {
+    md-fab-trigger {
+      @include rtl-prop(right, left, 0, auto);
+    }
+
+    .md-toolbar-tools {
+      flex-direction: row-reverse;
+
+      > .md-button:first-child {
+        @include rtl-prop(margin-right, margin-left, 0.6rem, auto)
+      }
+
+      > .md-button:first-child {
+        @include rtl-prop(margin-left, margin-right, -0.8rem, auto);
+      }
+
+
+      > .md-button:last-child {
+        @include rtl-prop(margin-right, margin-left, 8px, auto);
+      }
+
     }
   }
 
-}
+  &.md-right {
+    md-fab-trigger {
+      @include rtl-prop(left, right, 0, auto);
+    }
 
-@media screen and (-ms-high-contrast: active) {
-  md-dialog {
-    border: 1px solid #fff;
+    .md-toolbar-tools {
+      flex-direction: row;
+    }
   }
-}
 
-@media (max-width: $layout-breakpoint-sm - 1) {
-  md-dialog.md-dialog-fullscreen {
-    min-height: 100%;
-    min-width: 100%;
-    border-radius: 0;
+  md-toolbar {
+    background-color: transparent !important;
+    pointer-events: none;
+    z-index: $z-index-fab + 3;
+
+    .md-toolbar-tools {
+      // Fix some spacing issues with the icons and the trigger
+      padding: 0 20px;
+      margin-top: 3px;
+    }
+
+    .md-fab-action-item {
+      opacity: 0;
+      transform: scale(0);
+      transition: $swift-ease-in;
+
+      // Cut the action item's animation time in half since we delay it in the JS
+      transition-duration: $swift-ease-in-duration / 2;
+    }
   }
-}
 
-md-divider {
-  display: block;
-  border-top-width: 1px;
-  border-top-style: solid;
-  margin: 0;
+  /*
+   * Hover styling
+   */
+  &.md-is-open {
+    md-fab-trigger > button {
+      box-shadow: none;
 
-  &[md-inset] {
-    @include rtl-prop(margin-left, margin-right, $baseline-grid * 10, auto);
-  }
-}
+      md-icon {
+        opacity: 0;
+      }
+    }
 
-.layout-row,
-.layout-xs-row, .layout-gt-xs-row,
-.layout-sm-row, .layout-gt-sm-row,
-.layout-md-row, .layout-gt-md-row,
-.layout-lg-row, .layout-gt-lg-row,
-.layout-xl-row {
-  & > md-divider {
-    border-top-width: 0;
-    border-right-width: 1px;
-    border-right-style: solid;
+    .md-fab-action-item {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 
@@ -3193,131 +3404,6 @@ md-fab-speed-dial {
 
       // Make the scale animation a bit faster since we are delaying each item
       transition-duration: $swift-ease-in-duration / 2.1;
-    }
-  }
-}
-
-$button-fab-width: rem(5.600) !default;
-$icon-button-margin: rem(0.600) !default;
-
-md-fab-toolbar {
-  $icon-delay: 200ms;
-
-  // Include the top/left/bottom/right fab positions
-  @include fab-all-positions();
-
-  display: block;
-
-  /*
-   * Closed styling
-   */
-  .md-fab-toolbar-wrapper {
-    display: block;
-    position: relative;
-    overflow: hidden;
-
-    // Account for the size of the trigger plus its margin/shadow
-    height: $button-fab-width + ($icon-button-margin * 2);
-  }
-
-  md-fab-trigger {
-    position: absolute;
-    z-index: $z-index-fab;
-
-    button {
-      overflow: visible !important;
-    }
-
-    .md-fab-toolbar-background {
-      display: block;
-      position: absolute;
-      z-index: $z-index-fab + 1;
-
-      opacity: 1;
-      transition: $swift-ease-in;
-    }
-
-    md-icon {
-      position: relative;
-      z-index: $z-index-fab + 2;
-
-      opacity: 1;
-
-      // Hide the icon very quickly
-      transition: all $icon-delay ease-in;
-    }
-  }
-
-  &.md-left {
-    md-fab-trigger {
-      @include rtl-prop(right, left, 0, auto);
-    }
-
-    .md-toolbar-tools {
-      flex-direction: row-reverse;
-
-      > .md-button:first-child {
-        @include rtl-prop(margin-right, margin-left, 0.6rem, auto)
-      }
-
-      > .md-button:first-child {
-        @include rtl-prop(margin-left, margin-right, -0.8rem, auto);
-      }
-
-
-      > .md-button:last-child {
-        @include rtl-prop(margin-right, margin-left, 8px, auto);
-      }
-
-    }
-  }
-
-  &.md-right {
-    md-fab-trigger {
-      @include rtl-prop(left, right, 0, auto);
-    }
-
-    .md-toolbar-tools {
-      flex-direction: row;
-    }
-  }
-
-  md-toolbar {
-    background-color: transparent !important;
-    pointer-events: none;
-    z-index: $z-index-fab + 3;
-
-    .md-toolbar-tools {
-      // Fix some spacing issues with the icons and the trigger
-      padding: 0 20px;
-      margin-top: 3px;
-    }
-
-    .md-fab-action-item {
-      opacity: 0;
-      transform: scale(0);
-      transition: $swift-ease-in;
-
-      // Cut the action item's animation time in half since we delay it in the JS
-      transition-duration: $swift-ease-in-duration / 2;
-    }
-  }
-
-  /*
-   * Hover styling
-   */
-  &.md-is-open {
-    md-fab-trigger > button {
-      box-shadow: none;
-
-      md-icon {
-        opacity: 0;
-      }
-    }
-
-    .md-fab-action-item {
-      opacity: 1;
-      transform: scale(1);
     }
   }
 }
@@ -4282,6 +4368,106 @@ md-list-item {
   }
 }
 
+md-toolbar {
+  &.md-menu-toolbar {
+    h2.md-toolbar-tools {
+      line-height: 1rem;
+      height: auto;
+      padding: 3.5 * $baseline-grid;
+      padding-bottom: 1.5 * $baseline-grid;
+    }
+  }
+
+  // Used to allow hovering from one menu to the
+  // next when inside of a toolbar.
+  &.md-has-open-menu {
+    position: relative;
+    z-index: $z-index-menu;
+  }
+}
+
+md-menu-bar {
+  padding: 0 2.5 * $baseline-grid;
+  display: block;
+  position: relative;
+  z-index: 2;
+  .md-menu {
+    display: inline-block;
+    padding: 0;
+    position: relative;
+  }
+  button {
+    font-size: rem(1.4);
+    padding: 0 1.25 * $baseline-grid;
+    margin: 0;
+    border: 0;
+    background-color: transparent;
+    height: 5 * $baseline-grid;
+  }
+
+  md-backdrop.md-menu-backdrop {
+    z-index: -2;
+  }
+}
+
+md-menu-content.md-menu-bar-menu.md-dense {
+  max-height: none;
+  padding: 2 * $baseline-grid 0;
+  md-menu-item.md-indent {
+    position: relative;
+    > md-icon {
+      position: absolute;
+      padding: 0;
+      width: 24px;
+      top: 0.75 * $baseline-grid;
+      @include rtl-prop(left, right, 3 * $baseline-grid, auto);
+    }
+    > .md-button, .md-menu > .md-button {
+      @include rtl(padding, 0 4 * $baseline-grid 0 8 * $baseline-grid, 0 8 * $baseline-grid 0 4 * $baseline-grid);
+    }
+  }
+  .md-button {
+    min-height: 0;
+    height: 4 * $baseline-grid;
+    span {
+      @include rtl(float, left, right);
+    }
+    span.md-alt-text {
+      @include rtl(float, right, left);
+      margin: 0 $baseline-grid;
+    }
+  }
+  md-menu-divider {
+    margin: $baseline-grid 0;
+  }
+
+  md-menu-item > .md-button, .md-menu > .md-button {
+    @include rtl(text-align, left, right);
+  }
+
+  .md-menu {
+    padding: 0;
+    > .md-button {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      text-transform: none;
+      font-weight: normal;
+      border-radius: 0px;
+      @include rtl-prop(padding-left, padding-right, 2 * $baseline-grid, 0);
+      &:after {
+        display: block;
+        content: '\25BC';
+        position: absolute;
+        top: 0px;
+        speak: none;
+        @include rtl(transform, rotate(270deg) scaleY(0.45) scaleX(0.9), rotate(90deg) scaleY(0.45) scaleX(0.9));
+        @include rtl-prop(right, left, 3.5 * $baseline-grid, auto);
+      }
+    }
+  }
+}
+
 $menu-border-radius: 2px !default;
 $max-visible-items: 6 !default;
 $menu-item-height: 6 * $baseline-grid !default;
@@ -4441,108 +4627,6 @@ md-toolbar {
 }
 
 
-md-toolbar {
-  &.md-menu-toolbar {
-    h2.md-toolbar-tools {
-      line-height: 1rem;
-      height: auto;
-      padding: 3.5 * $baseline-grid;
-      padding-bottom: 1.5 * $baseline-grid;
-    }
-  }
-
-  // Used to allow hovering from one menu to the
-  // next when inside of a toolbar.
-  &.md-has-open-menu {
-    position: relative;
-    z-index: $z-index-menu;
-  }
-}
-
-md-menu-bar {
-  padding: 0 2.5 * $baseline-grid;
-  display: block;
-  position: relative;
-  z-index: 2;
-  .md-menu {
-    display: inline-block;
-    padding: 0;
-    position: relative;
-  }
-  button {
-    font-size: rem(1.4);
-    padding: 0 1.25 * $baseline-grid;
-    margin: 0;
-    border: 0;
-    background-color: transparent;
-    height: 5 * $baseline-grid;
-  }
-
-  md-backdrop.md-menu-backdrop {
-    z-index: -2;
-  }
-}
-
-md-menu-content.md-menu-bar-menu.md-dense {
-  max-height: none;
-  padding: 2 * $baseline-grid 0;
-  md-menu-item.md-indent {
-    position: relative;
-    > md-icon {
-      position: absolute;
-      padding: 0;
-      width: 24px;
-      top: 0.75 * $baseline-grid;
-      @include rtl-prop(left, right, 3 * $baseline-grid, auto);
-    }
-    > .md-button, .md-menu > .md-button {
-      @include rtl(padding, 0 4 * $baseline-grid 0 8 * $baseline-grid, 0 8 * $baseline-grid 0 4 * $baseline-grid);
-    }
-  }
-  .md-button {
-    min-height: 0;
-    height: 4 * $baseline-grid;
-    display: flex;
-    span {
-      flex-grow: 1;
-    }
-    span.md-alt-text {
-      flex-grow: 0;
-      align-self: flex-end;
-      margin: 0 $baseline-grid;
-    }
-  }
-  md-menu-divider {
-    margin: $baseline-grid 0;
-  }
-
-  md-menu-item > .md-button, .md-menu > .md-button {
-    @include rtl(text-align, left, right);
-  }
-
-  .md-menu {
-    padding: 0;
-    > .md-button {
-      position: relative;
-      margin: 0;
-      width: 100%;
-      text-transform: none;
-      font-weight: normal;
-      border-radius: 0px;
-      @include rtl-prop(padding-left, padding-right, 2 * $baseline-grid, 0);
-      &:after {
-        display: block;
-        content: '\25BC';
-        position: absolute;
-        top: 0px;
-        speak: none;
-        @include rtl(transform, rotate(270deg) scaleY(0.45) scaleX(0.9), rotate(90deg) scaleY(0.45) scaleX(0.9));
-        @include rtl-prop(right, left, 3.5 * $baseline-grid, auto);
-      }
-    }
-  }
-}
-
 /** Matches "md-tabs md-tabs-wrapper" style. */
 $md-nav-bar-height: 48px;
 
@@ -4603,6 +4687,14 @@ md-nav-ink-bar {
     transition: left $duration $swift-ease-in-out-timing-function,
         right ($duration * $multiplier) $swift-ease-in-out-timing-function;
   }
+
+  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
+  // The ink bar has a transition duration applied, which means, that $ngAnimate delays the hide process.
+  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
+  &.ng-animate {
+    transition: none;
+  }
+
 }
 
 md-nav-extra-content {
@@ -4610,76 +4702,7 @@ md-nav-extra-content {
   padding-right: 12px;
 }
 
-.md-panel-outer-wrapper {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-._md-panel-hidden {
-  display: none;
-}
-
-._md-panel-fullscreen {
-  border-radius: 0;
-  left: 0;
-  min-height: 100%;
-  min-width: 100%;
-  position: fixed;
-  top: 0;
-}
-
-// Only used when no animations are present.
-._md-panel-shown .md-panel {
-  opacity: 1;
-  transition: none;
-}
-
-.md-panel {
-  opacity: 0;
-  position: fixed;
-
-  &._md-panel-shown {
-    // Only used when custom animations are present.
-    // Overridden by the default animations.
-    opacity: 1;
-    transition: none;
-  }
-
-  &._md-panel-animate-enter {
-    opacity: 1;
-    transition: $material-enter;
-  }
-
-  &._md-panel-animate-leave {
-    opacity: 1;
-    transition: $material-leave;
-  }
-
-  &._md-panel-animate-scale-out,
-  &._md-panel-animate-fade-out {
-    opacity: 0;
-  }
-
-  &._md-panel-backdrop {
-    height: 100%;
-    position: absolute;
-    width: 100%;
-  }
-
-  &._md-opaque-enter {
-    opacity: .48;
-    transition: opacity $material-enter-duration $material-enter-timing-function;
-  }
-
-  &._md-opaque-leave {
-    transition: opacity $material-leave-duration $material-leave-timing-function;
-  }
-}
-
-$progress-circular-indeterminate-duration: 2.9s !default;
+$progress-circular-indeterminate-duration: 1568.63ms !default;
 
 @keyframes indeterminate-rotate {
     0%       { transform: rotate(0deg); }
@@ -4916,191 +4939,6 @@ md-progress-linear {
 }
 
 
-
-$radio-width: 20px !default;
-$radio-height: $radio-width !default;
-$radio-text-margin: 10px !default;
-$radio-top-left: 12px !default;
-$radio-margin: 16px !default;
-
-@mixin md-radio-button-disabled {
-  cursor: default;
-
-  .md-container {
-    cursor: default;
-  }
-}
-
-md-radio-button {
-  box-sizing: border-box;
-  display: block;
-  margin-bottom: $radio-margin;
-  white-space: nowrap;
-  cursor: pointer;
-  position: relative;
-
-  // When the radio-button is disabled.
-  &[disabled] {
-    @include md-radio-button-disabled();
-  }
-
-  .md-container {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    box-sizing: border-box;
-    display: inline-block;
-    width: $radio-width;
-    height: $radio-width;
-    cursor: pointer;
-    @include rtl(left, 0, auto);
-    @include rtl(right, auto, 0);
-
-    .md-ripple-container {
-      position: absolute;
-      display: block;
-      width: auto;
-      height: auto;
-      left: -15px;
-      top: -15px;
-      right: -15px;
-      bottom: -15px;
-    }
-
-    &:before {
-      box-sizing: border-box;
-      background-color: transparent;
-      border-radius: 50%;
-      content: '';
-      position: absolute;
-      display: block;
-      height: auto;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      transition: all 0.5s;
-      width: auto;
-    }
-  }
-
-  &.md-align-top-left > div.md-container {
-     top: $radio-top-left;
-   }
-
-  .md-off {
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $radio-width;
-    height: $radio-width;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 50%;
-    transition: border-color ease 0.28s;
-  }
-
-  .md-on {
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: $radio-width;
-    height: $radio-width;
-    border-radius: 50%;
-    transition: transform ease 0.28s;
-    transform: scale(0);
-  }
-
-  &.md-checked .md-on {
-    transform: scale(0.50);
-  }
-
-  .md-label {
-    box-sizing: border-box;
-    position: relative;
-    display: inline-block;
-
-    @include rtl(margin-left, $radio-text-margin + $radio-width, 0);
-    @include rtl(margin-right, 0, $radio-text-margin + $radio-width);
-
-    vertical-align: middle;
-    white-space: normal;
-    pointer-events: none;
-    width: auto;
-  }
-}
-
-md-radio-group {
-  /** Layout adjustments for the radio group. */
-  &.layout-column,
-  &.layout-xs-column, &.layout-gt-xs-column,
-  &.layout-sm-column, &.layout-gt-sm-column,
-  &.layout-md-column, &.layout-gt-md-column,
-  &.layout-lg-column, &.layout-gt-lg-column,
-  &.layout-xl-column {
-    md-radio-button {
-      margin-bottom: $radio-margin;
-    }
-  }
-
-  &.layout-row,
-  &.layout-xs-row, &.layout-gt-xs-row,
-  &.layout-sm-row, &.layout-gt-sm-row,
-  &.layout-md-row, &.layout-gt-md-row,
-  &.layout-lg-row, &.layout-gt-lg-row,
-  &.layout-xl-row {
-    md-radio-button {
-      margin-top: 0;
-      margin-bottom: 0;
-      @include rtl(margin-left, 0, $radio-margin);
-      @include rtl(margin-right, $radio-margin, 0);
-
-      &:last-of-type {
-        margin-left: 0;
-        margin-right: 0;
-      }
-    }
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  &.md-focused {
-    .md-checked .md-container:before {
-      left: -8px;
-      top: -8px;
-      right: -8px;
-      bottom: -8px;
-    }
-  }
-
-  &[disabled] md-radio-button {
-    @include md-radio-button-disabled();
-  }
-}
-
-.md-inline-form {
-  md-radio-group {
-    margin: 18px 0 19px;
-    md-radio-button {
-      display: inline-block;
-      height: 30px;
-      padding: 2px;
-      box-sizing: border-box;
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-}
-
-@media screen and (-ms-high-contrast: active) {
-  md-radio-button.md-default-theme .md-on {
-    background-color: #fff;
-  }
-}
 
 $select-checkbox-border-radius: 2px !default;
 $select-checkbox-border-width: 2px !default;
@@ -5440,20 +5278,30 @@ md-sidenav {
     list-style: none;
   }
 
+  // Animation Comment Syntax: [mdLockedOpen]|[mdClosed]
+  // mdLockedOpen states: unlocked, locked, any
+  // mdClosed states: open, closed, any
+  // Default state: unlocked|open
+
+  // unlocked|closed
   &.md-closed {
     display: none;
   }
+
+  // any|open <=> any|closed
   &.md-closed-add,
   &.md-closed-remove {
     display: flex;
     transition: 0.2s ease-in all;
   }
 
+  // any|open <=> any|closed (animating)
   &.md-closed-add.md-closed-add-active,
   &.md-closed-remove.md-closed-remove-active {
     transition: $swift-ease-out;
   }
 
+  // unlocked|any <=> locked|any
   &.md-locked-open-add,
   &.md-locked-open-remove {
     position: static;
@@ -5461,34 +5309,50 @@ md-sidenav {
     transform: translate3d(0, 0, 0);
   }
 
+  // locked|any
   &.md-locked-open,
   &.md-locked-open.md-closed,
   &.md-locked-open.md-closed.md-sidenav-left,
-  &.md-locked-open.md-closed.md-sidenav-right,
+  &.md-locked-open.md-closed.md-sidenav-right {
+    position: static;
+    display: flex;
+    transform: translate3d(0, 0, 0);
+  }
+
+  // locked|closed => unlock|closed
   &.md-locked-open-remove.md-closed {
     position: static;
     display: flex;
     transform: translate3d(0, 0, 0);
   }
+
+  // unlocked|closed => locked|closed
+  &.md-closed.md-locked-open-add {
+    position: static;
+    display: flex;
+    transform: translate3d(0%, 0, 0);
+  }
+
+  // unlocked|closed => locked|closed (pre-animation)
+  &.md-closed.md-locked-open-add:not(.md-locked-open-add-active) {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  // unlocked|closed => locked|closed (animating)
+  &.md-closed.md-locked-open-add-active {
+    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
+                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
+  }
+
+  // locked|any => unlocked|any (animating)
   &.md-locked-open-remove-active {
     transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
                 min-width $swift-ease-in-duration $swift-ease-in-timing-function;
     width: 0 !important;
     min-width: 0 !important;
-  }
-
-  &.md-closed.md-locked-open-add {
-    width: 0 !important;
-    min-width: 0 !important;
-    transform: translate3d(0%, 0, 0);
-  }
-
-  &.md-closed.md-locked-open-add-active {
-    transition: width $swift-ease-in-duration $swift-ease-in-timing-function,
-                min-width $swift-ease-in-duration $swift-ease-in-timing-function;
-    width: $sidenav-mobile-width;
-    min-width: $sidenav-mobile-width;
-    transform: translate3d(0%, 0, 0);
   }
 
   @extend .md-sidenav-left;
@@ -5536,6 +5400,191 @@ md-sidenav {
   }
   .md-sidenav-right {
     border-left: 1px solid #fff;
+  }
+}
+
+$radio-width: 20px !default;
+$radio-height: $radio-width !default;
+$radio-text-margin: 10px !default;
+$radio-top-left: 12px !default;
+$radio-margin: 16px !default;
+
+@mixin md-radio-button-disabled {
+  cursor: default;
+
+  .md-container {
+    cursor: default;
+  }
+}
+
+md-radio-button {
+  box-sizing: border-box;
+  display: block;
+  margin-bottom: $radio-margin;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+
+  // When the radio-button is disabled.
+  &[disabled] {
+    @include md-radio-button-disabled();
+  }
+
+  .md-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+    display: inline-block;
+    width: $radio-width;
+    height: $radio-width;
+    cursor: pointer;
+    @include rtl(left, 0, auto);
+    @include rtl(right, auto, 0);
+
+    .md-ripple-container {
+      position: absolute;
+      display: block;
+      width: auto;
+      height: auto;
+      left: -15px;
+      top: -15px;
+      right: -15px;
+      bottom: -15px;
+    }
+
+    &:before {
+      box-sizing: border-box;
+      background-color: transparent;
+      border-radius: 50%;
+      content: '';
+      position: absolute;
+      display: block;
+      height: auto;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      transition: all 0.5s;
+      width: auto;
+    }
+  }
+
+  &.md-align-top-left > div.md-container {
+     top: $radio-top-left;
+   }
+
+  .md-off {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $radio-width;
+    height: $radio-width;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50%;
+    transition: border-color ease 0.28s;
+  }
+
+  .md-on {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $radio-width;
+    height: $radio-width;
+    border-radius: 50%;
+    transition: transform ease 0.28s;
+    transform: scale(0);
+  }
+
+  &.md-checked .md-on {
+    transform: scale(0.50);
+  }
+
+  .md-label {
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+
+    @include rtl(margin-left, $radio-text-margin + $radio-width, 0);
+    @include rtl(margin-right, 0, $radio-text-margin + $radio-width);
+
+    vertical-align: middle;
+    white-space: normal;
+    pointer-events: none;
+    width: auto;
+  }
+}
+
+md-radio-group {
+  /** Layout adjustments for the radio group. */
+  &.layout-column,
+  &.layout-xs-column, &.layout-gt-xs-column,
+  &.layout-sm-column, &.layout-gt-sm-column,
+  &.layout-md-column, &.layout-gt-md-column,
+  &.layout-lg-column, &.layout-gt-lg-column,
+  &.layout-xl-column {
+    md-radio-button {
+      margin-bottom: $radio-margin;
+    }
+  }
+
+  &.layout-row,
+  &.layout-xs-row, &.layout-gt-xs-row,
+  &.layout-sm-row, &.layout-gt-sm-row,
+  &.layout-md-row, &.layout-gt-md-row,
+  &.layout-lg-row, &.layout-gt-lg-row,
+  &.layout-xl-row {
+    md-radio-button {
+      margin-top: 0;
+      margin-bottom: 0;
+      @include rtl(margin-left, 0, $radio-margin);
+      @include rtl(margin-right, $radio-margin, 0);
+
+      &:last-of-type {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.md-focused {
+    .md-checked .md-container:before {
+      left: -8px;
+      top: -8px;
+      right: -8px;
+      bottom: -8px;
+    }
+  }
+
+  &[disabled] md-radio-button {
+    @include md-radio-button-disabled();
+  }
+}
+
+.md-inline-form {
+  md-radio-group {
+    margin: 18px 0 19px;
+    md-radio-button {
+      display: inline-block;
+      height: 30px;
+      padding: 2px;
+      box-sizing: border-box;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+@media screen and (-ms-high-contrast: active) {
+  md-radio-button.md-default-theme .md-on {
+    background-color: #fff;
   }
 }
 
@@ -6053,74 +6102,6 @@ md-slider-container {
   }
 }
 
-$subheader-line-height: 1em !default;
-$subheader-font-size: rem(1.4) !default;
-$subheader-padding: ($baseline-grid * 2) !default;
-$subheader-font-weight: 500 !default;
-$subheader-margin: 0 0 0 0 !default;
-$subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
-
-@keyframes subheaderStickyHoverIn {
-  0% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-  100% {
-    box-shadow: $subheader-sticky-shadow;
-  }
-}
-@keyframes subheaderStickyHoverOut {
-  0% {
-    box-shadow: $subheader-sticky-shadow;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-.md-subheader-wrapper {
-
-  &:not(.md-sticky-no-effect) {
-    .md-subheader {
-      margin: 0;
-    }
-
-    transition: 0.2s ease-out margin;
-
-    &.md-sticky-clone {
-      z-index: 2;
-    }
-
-    &[sticky-state="active"] {
-      margin-top: -2px;
-    }
-
-    &:not(.md-sticky-clone)[sticky-prev-state="active"] .md-subheader-inner:after {
-      animation: subheaderStickyHoverOut 0.3s ease-out both;
-    }
-  }
-
-}
-
-.md-subheader {
-  display: block;
-  font-size: $subheader-font-size;
-  font-weight: $subheader-font-weight;
-  line-height: $subheader-line-height;
-  margin: $subheader-margin;
-  position: relative;
-
-  .md-subheader-inner {
-    display: block;
-    padding: $subheader-padding;
-  }
-
-  .md-subheader-content {
-    display: block;
-    z-index: 1;
-    position: relative;
-  }
-}
-
 $switch-width: 36px !default;
 $switch-height: $baseline-grid * 3 !default;
 $switch-bar-height: 14px !default;
@@ -6167,8 +6148,13 @@ md-switch {
     height: $switch-height;
     position: relative;
     user-select: none;
-    @include rtl-prop(margin-right, margin-left, 8px, auto);
+    @include rtl-prop(margin-right, margin-left, 8px, 0px);
     float: left;
+  }
+
+  &.md-inverted .md-container {
+    @include rtl(margin-right, initial, 8px);
+    @include rtl(margin-left, 8px, initial);
   }
 
   // If the user moves his mouse off the switch, stil display grabbing cursor
@@ -6283,6 +6269,74 @@ md-switch {
   }
   md-switch.md-default-theme .md-thumb {
     background-color: #fff;
+  }
+}
+
+$subheader-line-height: 1em !default;
+$subheader-font-size: rem(1.4) !default;
+$subheader-padding: ($baseline-grid * 2) !default;
+$subheader-font-weight: 500 !default;
+$subheader-margin: 0 0 0 0 !default;
+$subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
+
+@keyframes subheaderStickyHoverIn {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  100% {
+    box-shadow: $subheader-sticky-shadow;
+  }
+}
+@keyframes subheaderStickyHoverOut {
+  0% {
+    box-shadow: $subheader-sticky-shadow;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.md-subheader-wrapper {
+
+  &:not(.md-sticky-no-effect) {
+    .md-subheader {
+      margin: 0;
+    }
+
+    transition: 0.2s ease-out margin;
+
+    &.md-sticky-clone {
+      z-index: 2;
+    }
+
+    &[sticky-state="active"] {
+      margin-top: -2px;
+    }
+
+    &:not(.md-sticky-clone)[sticky-prev-state="active"] .md-subheader-inner:after {
+      animation: subheaderStickyHoverOut 0.3s ease-out both;
+    }
+  }
+
+}
+
+.md-subheader {
+  display: block;
+  font-size: $subheader-font-size;
+  font-weight: $subheader-font-weight;
+  line-height: $subheader-line-height;
+  margin: $subheader-margin;
+  position: relative;
+
+  .md-subheader-inner {
+    display: block;
+    padding: $subheader-padding;
+  }
+
+  .md-subheader-content {
+    display: block;
+    z-index: 1;
+    position: relative;
   }
 }
 
@@ -6408,7 +6462,6 @@ md-tabs-wrapper {
   &.md-stretch-tabs {
     md-pagination-wrapper {
       width: 100%;
-      display: flex;
       flex-direction: row;
       md-tab-item {
         flex-grow: 1;
@@ -6445,16 +6498,14 @@ md-tabs-canvas {
 md-pagination-wrapper {
   @include pie-clearfix;
   height: $tabs-header-height;
-  display: block;
+  display: flex;
   transition: transform $swift-ease-in-out-duration $swift-ease-in-out-timing-function;
   position: absolute;
-  width: 999999px;
   @include rtl-prop(left, right, 0, auto);
   transform: translate3d(0, 0, 0);
   &.md-center-tabs {
     position: relative;
-    width: auto;
-    margin: 0 auto;
+    justify-content: center;
   }
 }
 
@@ -6469,7 +6520,7 @@ md-tabs-content-wrapper {
 }
 
 md-tab-content {
-  display: block;
+  display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -6506,8 +6557,12 @@ md-tab-content {
       visibility: hidden;
     }
   }
-  > div.ng-leave {
-    animation: 2 * $swift-ease-in-out-duration md-tab-content-hide;
+  > div {
+    flex: 1 0 100%;
+    min-width: 0;
+    &.ng-leave {
+      animation: 2 * $swift-ease-in-out-duration md-tab-content-hide;
+    }
   }
 }
 
@@ -6574,6 +6629,255 @@ md-toolbar + md-tabs {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+$tooltip-fontsize-lg: 10px !default;
+$tooltip-fontsize-sm: 14px !default;
+$tooltip-height-lg: 22px !default;
+$tooltip-height-sm: 32px !default;
+$tooltip-top-margin-lg: 14px !default;
+$tooltip-top-margin-sm: 24px !default;
+$tooltip-lr-padding-lg: 8px !default;
+$tooltip-lr-padding-sm: 16px !default;
+$tooltip-max-width: 32px !default;
+
+.md-tooltip {
+  pointer-events: none;
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 0;
+  font-weight: 500;
+  font-size: $tooltip-fontsize-sm;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: $tooltip-height-sm;
+  line-height: $tooltip-height-sm;
+  padding-right: $tooltip-lr-padding-sm;
+  padding-left: $tooltip-lr-padding-sm;
+  &.md-origin-top {
+    transform-origin: center bottom;
+    margin-top: -$tooltip-top-margin-sm;
+  }
+  &.md-origin-right {
+    transform-origin: left center;
+    margin-left: $tooltip-top-margin-sm;
+  }
+  &.md-origin-bottom {
+    transform-origin: center top;
+    margin-top: $tooltip-top-margin-sm;
+  }
+  &.md-origin-left {
+    transform-origin: right center;
+    margin-left: -$tooltip-top-margin-sm;
+  }
+
+  @media (min-width: $layout-breakpoint-sm) {
+    font-size: $tooltip-fontsize-lg;
+    height: $tooltip-height-lg;
+    line-height: $tooltip-height-lg;
+    padding-right: $tooltip-lr-padding-lg;
+    padding-left: $tooltip-lr-padding-lg;
+    &.md-origin-top { margin-top: -$tooltip-top-margin-lg; }
+    &.md-origin-right { margin-left: $tooltip-top-margin-lg; }
+    &.md-origin-bottom { margin-top: $tooltip-top-margin-lg; }
+    &.md-origin-left { margin-left: -$tooltip-top-margin-lg; }
+  }
+
+  &.md-show-add {
+    transform: scale(0);
+  }
+  &.md-show {
+    transition: $swift-ease-out;
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  &.md-hide {
+    transition: $swift-ease-in;
+    transition-duration: .1s;
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+// Standard/Desktop Heights
+$md-toolbar-height: $baseline-grid * 8 !default;
+$md-toolbar-medium-tall-height: 88px !default;
+$md-toolbar-tall-height: 128px !default;
+
+// Mobile device heights
+$md-toolbar-height-mobile-portrait: 56px !default;
+$md-toolbar-height-mobile-landscape: 48px !default;
+
+$md-toolbar-indent-margin: 64px !default;
+$md-toolbar-padding: 16px !default;
+
+$icon-button-margin-offset: rem(-0.800) !default;
+
+md-toolbar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  z-index: 2;
+
+  font-size: rem(2.0);
+  min-height: $md-toolbar-height;
+  width: 100%;
+
+  &._md-toolbar-transitions {
+    transition-duration: $swift-ease-in-out-duration;
+    transition-timing-function: $swift-ease-in-out-timing-function;
+    transition-property: background-color, fill, color;
+  }
+
+  &.md-whiteframe-z1-add, &.md-whiteframe-z1-remove {
+    transition: box-shadow $swift-ease-in-out-duration linear;
+  }
+
+  md-toolbar-filler {
+    width: 9 * $baseline-grid;
+  }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+
+  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
+  // The toolbar has a transition duration applied, which means, that $ngAnimate delays the hide process.
+  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
+  &.ng-animate {
+    transition: none;
+  }
+
+  &.md-tall {
+    height: $md-toolbar-tall-height;
+    min-height: $md-toolbar-tall-height;
+    max-height: $md-toolbar-tall-height;
+  }
+
+  &.md-medium-tall {
+    height: $md-toolbar-medium-tall-height;
+    min-height: $md-toolbar-medium-tall-height;
+    max-height: $md-toolbar-medium-tall-height;
+
+    .md-toolbar-tools {
+      height: 48px;
+      min-height: 48px;
+      max-height: 48px;
+    }
+  }
+
+  > .md-indent {
+    @include rtl-prop(margin-left, margin-right, $md-toolbar-indent-margin, auto);
+  }
+
+  ~ md-content {
+    > md-list {
+      padding: 0;
+
+      md-list-item:last-child {
+        md-divider {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.md-toolbar-tools {
+  font-size: $title-font-size-base;
+  letter-spacing: 0.005em;
+  box-sizing: border-box;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  width: 100%;
+  height: $md-toolbar-height;
+  max-height: $md-toolbar-height;
+  padding: 0 $md-toolbar-padding;
+  margin: 0;
+
+  h1, h2, h3 {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .fill-height {
+    display: flex;
+    align-items: center;
+  }
+  md-checkbox {
+    margin: inherit;
+  }
+  .md-button {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    &, &.md-icon-button md-icon {
+      transition-duration: $swift-ease-in-out-duration;
+      transition-timing-function: $swift-ease-in-out-timing-function;
+      transition-property: background-color, fill, color;
+
+      // Normally .md-button is already resetting the transition, when $ngAnimate looks for the duration,
+      // but in this case, the selector has a higher specificity than the `reset selector`, which means, that
+      // we need to reset the transition our self.
+      &.ng-animate {
+        transition: none;
+      }
+    }
+  }
+  &> .md-button:first-child {
+    @include rtl-prop(margin-left, margin-right, $icon-button-margin-offset, auto);
+  }
+  &> .md-button:last-child {
+    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
+  }
+
+  &> md-menu:last-child {
+    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
+    & > .md-button {
+      @include rtl-prop(margin-right, margin-left, 0, auto);
+    }
+  }
+
+  @media screen and (-ms-high-contrast: active) {
+    border-bottom: 1px solid #fff;
+  }
+}
+
+// Handle mobile portrait
+@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: portrait) {
+  md-toolbar {
+    min-height: $md-toolbar-height-mobile-portrait;
+  }
+
+  .md-toolbar-tools {
+    height: $md-toolbar-height-mobile-portrait;
+    max-height: $md-toolbar-height-mobile-portrait;
+  }
+}
+
+// Handle mobile landscape
+@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: landscape) {
+  md-toolbar {
+    min-height: $md-toolbar-height-mobile-landscape;
+  }
+
+  .md-toolbar-tools {
+    height: $md-toolbar-height-mobile-landscape;
+    max-height: $md-toolbar-height-mobile-landscape;
+  }
+}
+
 
 // See height set globally, depended on by buttons
 
@@ -6810,256 +7114,23 @@ md-toast {
   overflow: hidden !important;
 }
 
-// Standard/Desktop Heights
-$md-toolbar-height: $baseline-grid * 8 !default;
-$md-toolbar-medium-tall-height: 88px !default;
-$md-toolbar-tall-height: 128px !default;
-
-// Mobile device heights
-$md-toolbar-height-mobile-portrait: 56px !default;
-$md-toolbar-height-mobile-landscape: 48px !default;
-
-$md-toolbar-indent-margin: 64px !default;
-$md-toolbar-padding: 16px !default;
-
-$icon-button-margin-offset: rem(-0.800) !default;
-
-md-toolbar {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-
-  position: relative;
-  z-index: 2;
-
-  font-size: rem(2.0);
-  min-height: $md-toolbar-height;
-  width: 100%;
-
-  &._md-toolbar-transitions {
-    transition-duration: $swift-ease-in-out-duration;
-    transition-timing-function: $swift-ease-in-out-timing-function;
-    transition-property: background-color, fill, color;
-  }
-
-  &.md-whiteframe-z1-add, &.md-whiteframe-z1-remove {
-    transition: box-shadow $swift-ease-in-out-duration linear;
-  }
-
-  md-toolbar-filler {
-    width: 9 * $baseline-grid;
-  }
-
-  *,
-  *:before,
-  *:after {
-    box-sizing: border-box;
-  }
-
-  // By default $ngAnimate looks for transition durations on the element, when using ng-hide, ng-if, ng-show.
-  // The toolbar has a transition duration applied, which means, that $ngAnimate delays the hide process.
-  // To avoid this, we need to reset the transition, when $ngAnimate looks for the duration.
-  &.ng-animate {
-    transition: none;
-  }
-
-  &.md-tall {
-    height: $md-toolbar-tall-height;
-    min-height: $md-toolbar-tall-height;
-    max-height: $md-toolbar-tall-height;
-  }
-
-  &.md-medium-tall {
-    height: $md-toolbar-medium-tall-height;
-    min-height: $md-toolbar-medium-tall-height;
-    max-height: $md-toolbar-medium-tall-height;
-
-    .md-toolbar-tools {
-      height: 48px;
-      min-height: 48px;
-      max-height: 48px;
-    }
-  }
-
-  > .md-indent {
-    @include rtl-prop(margin-left, margin-right, $md-toolbar-indent-margin, auto);
-  }
-
-  ~ md-content {
-    > md-list {
-      padding: 0;
-
-      md-list-item:last-child {
-        md-divider {
-          display: none;
-        }
-      }
-    }
-  }
-}
-
-.md-toolbar-tools {
-  font-size: $title-font-size-base;
-  letter-spacing: 0.005em;
-  box-sizing: border-box;
-  font-weight: 400;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-
-  width: 100%;
-  height: $md-toolbar-height;
-  max-height: $md-toolbar-height;
-  padding: 0 $md-toolbar-padding;
-  margin: 0;
-
-  h1, h2, h3 {
-    font-size: inherit;
-    font-weight: inherit;
-    margin: inherit;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .fill-height {
-    display: flex;
-    align-items: center;
-  }
-  .md-button {
-    margin-top: 0;
-    margin-bottom: 0;
-
-    &, &.md-icon-button md-icon {
-      transition-duration: $swift-ease-in-out-duration;
-      transition-timing-function: $swift-ease-in-out-timing-function;
-      transition-property: background-color, fill, color;
-
-      // Normally .md-button is already resetting the transition, when $ngAnimate looks for the duration,
-      // but in this case, the selector has a higher specificity than the `reset selector`, which means, that
-      // we need to reset the transition our self.
-      &.ng-animate {
-        transition: none;
-      }
-    }
-  }
-  &> .md-button:first-child {
-    @include rtl-prop(margin-left, margin-right, $icon-button-margin-offset, auto);
-  }
-  &> .md-button:last-child {
-    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
-  }
-
-  &> md-menu:last-child {
-    @include rtl-prop(margin-right, margin-left, $icon-button-margin-offset, auto);
-    & > .md-button {
-      @include rtl-prop(margin-right, margin-left, 0, auto);
-    }
-  }
-
-  @media screen and (-ms-high-contrast: active) {
-    border-bottom: 1px solid #fff;
-  }
-}
-
-// Handle mobile portrait
-@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: portrait) {
-  md-toolbar {
-    min-height: $md-toolbar-height-mobile-portrait;
-  }
-
-  .md-toolbar-tools {
-    height: $md-toolbar-height-mobile-portrait;
-    max-height: $md-toolbar-height-mobile-portrait;
-  }
-}
-
-// Handle mobile landscape
-@media (min-width: 0) and (max-width: $layout-breakpoint-sm - 1) and (orientation: landscape) {
-  md-toolbar {
-    min-height: $md-toolbar-height-mobile-landscape;
-  }
-
-  .md-toolbar-tools {
-    height: $md-toolbar-height-mobile-landscape;
-    max-height: $md-toolbar-height-mobile-landscape;
-  }
-}
-
-
-$tooltip-fontsize-lg: rem(1) !default;
-$tooltip-fontsize-sm: rem(1.4) !default;
-$tooltip-height-lg: rem(2.2) !default;
-$tooltip-height-sm: rem(3.2) !default;
-$tooltip-top-margin-lg: rem(1.4) !default;
-$tooltip-top-margin-sm: rem(2.4) !default;
-$tooltip-lr-padding-lg: rem(0.8) !default;
-$tooltip-lr-padding-sm: rem(1.6) !default;
-$tooltip-max-width: rem(3.20) !default;
-
-md-tooltip {
-  position: absolute;
-  z-index: $z-index-tooltip;
+.md-truncate {
   overflow: hidden;
-  pointer-events: none;
-  border-radius: 4px;
+  white-space: nowrap;
 
-  font-weight: 500;
-  font-size: $tooltip-fontsize-sm;
-  @media (min-width: $layout-breakpoint-sm) {
-    font-size: $tooltip-fontsize-lg;
+  // Default overflow is ellipsis
+  text-overflow: ellipsis;
+
+  // Allow override to use clipping
+  &.md-clip {
+    text-overflow: clip;
   }
 
-  .md-content {
-    position: relative;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transform-origin: center top;
-    transform: scale(0);
-    opacity: 0;
-    height: $tooltip-height-sm;
-    line-height: $tooltip-height-sm;
-    padding-left: $tooltip-lr-padding-sm;
-    padding-right: $tooltip-lr-padding-sm;
-    @media (min-width: $layout-breakpoint-sm) {
-      height: $tooltip-height-lg;
-      line-height: $tooltip-height-lg;
-      padding-left: $tooltip-lr-padding-lg;
-      padding-right: $tooltip-lr-padding-lg;
-    }
-    &.md-show-add {
-      transition: $swift-ease-out;
-      transition-duration: .2s;
-      transform: scale(0);
-      opacity: 0;
-    }
-    &.md-show, &.md-show-add-active {
-      transform: scale(1);
-      opacity: 0.9;
-      transform-origin: center top;
-    }
-    &.md-show-remove {
-      transition: $swift-ease-out;
-      transition-duration: .2s;
-      &.md-show-remove-active {
-        transform: scale(0);
-        opacity: 0;
-      }
-    }
-  }
-
-  &.md-hide {
-    transition: $swift-ease-in;
-  }
-
-  &.md-show {
-    transition: $swift-ease-out;
-    pointer-events: auto;
+  // This is a flex-specific hack that forces the element to only take up available space.
+  &.flex {
+    width: 0;
   }
 }
-
 $virtual-repeat-scrollbar-width: 16px !default;
 
 .md-virtual-repeat-container {

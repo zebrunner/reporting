@@ -10,23 +10,23 @@
         "spec": "latest",
         "type": "tag"
       },
-      "C:\\Users\\bogdan\\AppData\\Roaming\\npm\\node_modules\\angular-cli"
+      "C:\\Users\\bogdan"
     ]
   ],
   "_from": "angular-material@latest",
-  "_id": "angular-material@1.1.1",
+  "_id": "angular-material@1.1.3",
   "_inCache": true,
   "_location": "/angular-material",
-  "_nodeVersion": "5.10.0",
+  "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
-    "host": "packages-16-east.internal.npmjs.com",
-    "tmp": "tmp/angular-material-1.1.1.tgz_1472843757134_0.5154407320078462"
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/angular-material-1.1.3.tgz_1485985603551_0.4688393264077604"
   },
   "_npmUser": {
     "name": "angularcore",
     "email": "angular-core+npm@google.com"
   },
-  "_npmVersion": "3.8.3",
+  "_npmVersion": "3.10.6",
   "_phantomChildren": {},
   "_requested": {
     "raw": "angular-material",
@@ -40,11 +40,11 @@
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/angular-material/-/angular-material-1.1.1.tgz",
-  "_shasum": "ed12f394ba71a9189d664115624f6787a7439af2",
+  "_resolved": "https://registry.npmjs.org/angular-material/-/angular-material-1.1.3.tgz",
+  "_shasum": "b466d53aaa42c1555766a1ded53a28baeb7b2fe6",
   "_shrinkwrap": null,
   "_spec": "angular-material",
-  "_where": "C:\\Users\\bogdan\\AppData\\Roaming\\npm\\node_modules\\angular-cli",
+  "_where": "C:\\Users\\bogdan",
   "bugs": {
     "url": "https://github.com/angular/material/issues"
   },
@@ -53,11 +53,11 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "ed12f394ba71a9189d664115624f6787a7439af2",
-    "tarball": "https://registry.npmjs.org/angular-material/-/angular-material-1.1.1.tgz"
+    "shasum": "b466d53aaa42c1555766a1ded53a28baeb7b2fe6",
+    "tarball": "https://registry.npmjs.org/angular-material/-/angular-material-1.1.3.tgz"
   },
   "format": "cjs",
-  "gitHead": "ec9b476051eef167c9b1522e1943f10545119bbe",
+  "gitHead": "a5a5a0de1454a93c71d6dc9c8e8aecbaa221b927",
   "homepage": "https://material.angularjs.org",
   "jspm": {
     "dependencies": {
@@ -107,5 +107,5 @@
     "url": "git://github.com/angular/material.git"
   },
   "scripts": {},
-  "version": "1.1.1"
+  "version": "1.1.3"
 }

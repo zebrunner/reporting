@@ -84,9 +84,9 @@ public class UserService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public User deleteUserFromGroup(User user, long groupId) throws ServiceException {
-		userMapper.deleteUserFromGroup(user.getId(), groupId);
-		return userMapper.getUserById(user.getId());
+	public User deleteUserFromGroup(long groupId, long userId) throws ServiceException {
+		userMapper.deleteUserFromGroup(userId, groupId);
+		return userMapper.getUserById(userId);
 	}
 	
 	@Transactional(readOnly = true)
