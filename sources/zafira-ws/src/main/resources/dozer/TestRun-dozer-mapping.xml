@@ -75,8 +75,8 @@
 			<b>knownIssue</b>
 		</field>
 		<field>
-			<a>classMode</a>
-			<b>classMode</b>
+			<a>driverMode</a>
+			<b>driverMode</b>
 		</field>
 	</mapping>
 </mappings>

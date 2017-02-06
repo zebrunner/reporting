@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,15 @@ public class TestCaseSearchCriteria extends SearchCriteria
 	public void setIds(List<Long> ids)
 	{
 		this.ids = ids;
+	}
+	
+	public void addId(Long id)
+	{
+		if(this.ids == null)
+		{
+			this.ids = new ArrayList<>();
+		}
+		this.ids.add(id);
 	}
 
 	public String getTestClass()

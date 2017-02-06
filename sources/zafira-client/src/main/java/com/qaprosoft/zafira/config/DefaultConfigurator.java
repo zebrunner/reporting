@@ -7,6 +7,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -68,9 +69,9 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
-	public boolean isClassMode()
+	public DriverMode getDriverMode()
 	{
-		return false;
+		return DriverMode.METHOD_MODE;
 	}
 
 	@Override

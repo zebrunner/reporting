@@ -18,6 +18,11 @@ public class TestRun extends AbstractEntity
 	{
 		SCHEDULER, UPSTREAM_JOB, HUMAN;
 	}
+	
+	public enum DriverMode
+	{
+		METHOD_MODE, CLASS_MODE, SUITE_MODE
+	}
 
 	private String ciRunId;
 	private User user;
@@ -35,7 +40,6 @@ public class TestRun extends AbstractEntity
 	private Initiator startedBy;
 	private Project project;
 	private boolean knownIssue;
-	private boolean classMode;
 	private String env;
 	private String platform;
 	private String appVersion;
@@ -43,6 +47,7 @@ public class TestRun extends AbstractEntity
 	private Integer elapsed;
 	private Integer eta;
 	private String comments;
+	private DriverMode driverMode;
 
 	private Integer passed;
 	private Integer failed;
@@ -298,16 +303,6 @@ public class TestRun extends AbstractEntity
 		this.comments = comments;
 	}
 	
-	public boolean isClassMode()
-	{
-		return classMode;
-	}
-
-	public void setClassMode(boolean classMode)
-	{
-		this.classMode = classMode;
-	}
-	
 	public String getAppVersion()
 	{
 		return appVersion;
@@ -316,6 +311,16 @@ public class TestRun extends AbstractEntity
 	public void setAppVersion(String appVersion)
 	{
 		this.appVersion = appVersion;
+	}
+	
+	public DriverMode getDriverMode()
+	{
+		return driverMode;
+	}
+
+	public void setDriverMode(DriverMode driverMode)
+	{
+		this.driverMode = driverMode;
 	}
 
 	public Integer getCountdown()

@@ -1,26 +1,38 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 
 @Service
 public class TestService
 {
-	private static final String INV_COUNT = "InvCount";
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 	
 	@Autowired
 	private TestMapper testMapper;
@@ -228,65 +240,101 @@ public class TestService
 		return workItem;
 	}
 	
-	@Transactional(rollbackFor = Exception.class)
-	public void updateTestRerunFlags(TestRun testRun, List<Test> tests) throws ServiceException
+	@Transactional
+	public void updateTestRerunFlags(TestRun testRun, List<Test> tests)
 	{
-		List<Long> allTestCaseIds = new ArrayList<>();
-		List<Long> failedTestCaseIds = new ArrayList<>();
-		
-		for(Test test : tests)
+		try
 		{
-			allTestCaseIds.add(test.getTestCaseId());
-			
-			if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+			// In case of SUITE_MODE we are rerunning all tests if test run status not PASSED 
+			if(DriverMode.SUITE_MODE.equals(testRun.getDriverMode()))
 			{
-				failedTestCaseIds.add(test.getTestCaseId());
-				if(!test.isNeedRerun())
+				if(!Status.PASSED.equals(testRun.getStatus()))
 				{
-					test.setNeedRerun(true);
-					updateTest(test);
+					for(Test test : tests)
+					{
+						if(!test.isNeedRerun())
+						{
+							test.setNeedRerun(true);
+							updateTest(test);
+						}
+					}
 				}
 			}
 			else
 			{
-				if(test.isNeedRerun())
+				// Look #Test implements comparable so that all SKIPPED and FAILED tests go first
+				Collections.sort(tests);
+				
+				TestCaseSearchCriteria sc = new TestCaseSearchCriteria();
+				for(Test test : tests)
 				{
-					test.setNeedRerun(false);
-					updateTest(test);
+					sc.addId(test.getTestCaseId());
 				}
-			}
-			// Data-providers without TUID
-			if(test.getName().contains(INV_COUNT) && !test.isNeedRerun())
-			{
-				test.setNeedRerun(true);
-				updateTest(test);
+				
+				Map<Long, TestCase> testCasesById = new HashMap<>();
+				Map<String, List<Long>> testCasesByClass = new HashMap<>();
+				Map<String, List<Long>> testCasesByMethod = new HashMap<>();
+				Set<Long> testCasesToRerun = new HashSet<>();
+				
+				for(TestCase tc : testCaseService.searchTestCases(sc).getResults())
+				{
+					testCasesById.put(tc.getId(), tc);
+					
+					if(!testCasesByClass.containsKey(tc.getTestClass()))
+					{
+						testCasesByClass.put(tc.getTestClass(), new ArrayList<Long>());
+					}
+					testCasesByClass.get(tc.getTestClass()).add(tc.getId());
+					
+					if(!testCasesByMethod.containsKey(tc.getTestMethod()))
+					{
+						testCasesByMethod.put(tc.getTestMethod(), new ArrayList<Long>());
+					}
+					testCasesByMethod.get(tc.getTestMethod()).add(tc.getId());
+				}
+				
+				for(Test test : tests)
+				{
+					if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+					{
+						switch (testRun.getDriverMode())
+						{
+						case SUITE_MODE:
+							// Do nothing
+							break;
+						case CLASS_MODE:
+							String className = testCasesById.get(test.getTestCaseId()).getTestClass();
+							testCasesToRerun.addAll(testCasesByClass.get(className));
+							break;
+
+						case METHOD_MODE:
+							String methodName = testCasesById.get(test.getTestCaseId()).getTestMethod();
+							testCasesToRerun.addAll(testCasesByMethod.get(methodName));
+							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
+							{
+								for(String method : test.getDependsOnMethods().split(StringUtils.EMPTY))
+								{
+									testCasesToRerun.addAll(testCasesByMethod.get(method));
+								}
+							}
+							break;
+						}
+					}
+				}
+				
+				for(Test test : tests)
+				{
+					if(testCasesToRerun.contains(test.getTestCaseId()) && !test.isNeedRerun())
+					{
+						test.setNeedRerun(true);
+						updateTest(test);
+					}
+				}
 			}
 		}
-		
-		if(testRun.isClassMode() && !Status.PASSED.equals(testRun))
+		catch(Exception e) 
 		{
-			TestCaseSearchCriteria sc = new TestCaseSearchCriteria();
-			sc.setIds(allTestCaseIds);
-			
-			Map<Long, String> idToClass = new HashMap<>();
-			List<String> failedTestClasses = new ArrayList<>();
-			for(TestCase tc : testCaseService.searchTestCases(sc).getResults())
-			{
-				idToClass.put(tc.getId(), tc.getTestClass());
-				if(failedTestCaseIds.contains(tc.getId()))
-				{
-					failedTestClasses.add(tc.getTestClass());
-				}
-			}
-			
-			for(Test test : tests)
-			{
-				if(failedTestClasses.contains(idToClass.get(test.getTestCaseId())) && !test.isNeedRerun())
-				{
-					test.setNeedRerun(true);
-					updateTest(test);
-				}
-			}
+			LOGGER.error("Unable to update test rerun flags: " + e.getMessage());
 		}
 	}
 	

@@ -50,9 +50,7 @@
 				<div class="col-lg-5"><input placeholder="key" type="text" class="form-control" data-ng-model="newAttribute.key"></input></div>
 				<div class="col-lg-5"><input placeholder="value" type="text" class="form-control" data-ng-model="newAttribute.value"></input></div>
 				<div class="col-lg-2" align="right">
-					<button type="button" class="btn btn-default btn-circle blue" data-ng-click="createAttribute(newAttribute)" data-ng-disabled="!newAttribute.key">
-						<i class="fa fa-plus"></i>
-                    </button>
+					<button type="button" class="btn btn-outline btn-success " data-ng-click="createAttribute(newAttribute)" data-ng-disabled="!newAttribute.key">New +</button>
 				</div>
 			</div>
 		</div>

@@ -3,11 +3,12 @@ package com.qaprosoft.zafira.models.db;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
-public class Test extends AbstractEntity
+public class Test extends AbstractEntity implements Comparable<Test>
 {
 	private static final long serialVersionUID = -915700504693067056L;
 
@@ -28,6 +29,7 @@ public class Test extends AbstractEntity
 	private boolean knownIssue;
 	private boolean needRerun;
 	private String owner;
+	private String dependsOnMethods;
 
 	public Test()
 	{
@@ -204,5 +206,28 @@ public class Test extends AbstractEntity
 	public void setNeedRerun(boolean needRerun)
 	{
 		this.needRerun = needRerun;
+	}
+
+	public String getDependsOnMethods()
+	{
+		return dependsOnMethods;
+	}
+
+	public void setDependsOnMethods(String dependsOnMethods)
+	{
+		this.dependsOnMethods = dependsOnMethods;
+	}
+
+	@Override
+	public int compareTo(Test test)
+	{
+		if(Arrays.asList(Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.client;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.EventType;
@@ -683,10 +685,10 @@ public class ZafiraClient
 	 * @param classMode
 	 * @return created test run
 	 */
-	public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
 	{
 		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
-		testRun.setClassMode(classMode);
+		testRun.setDriverMode(driverMode);
 		String testRunDetails = "testSuiteId: %s, userId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, buildNumber: %s, startedBy: %s, workItem";
 		LOGGER.debug("Test Run details for registration:" + String.format(testRunDetails, testSuiteId, userId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
 		
@@ -715,10 +717,10 @@ public class ZafiraClient
 	 * @param classMode
 	 * @return created test run
 	 */
-	public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
 	{
 		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, ciConfig.getCiBuild(), startedBy, workItem);
-		testRun.setClassMode(classMode);
+		testRun.setDriverMode(driverMode);
 		String testRunDetails = "testSuiteId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, buildNumber: %s, startedBy: %s, workItem";
 		LOGGER.debug("Test Run details for registration:" + String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, ciConfig.getCiBuild(), startedBy, workItem));
 
@@ -750,11 +752,11 @@ public class ZafiraClient
 	 * @param classMode
 	 * @return created test run
 	 */
-	public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, Initiator startedBy, String workItem, boolean classMode) 
+	public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
 	{
 		TestRunType testRun = new TestRunType(ciConfig.getCiRunId(), testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), configXML, jobId, parentJobId, ciConfig.getCiParentBuild(),
 				ciConfig.getCiBuild(), startedBy, workItem);
-		testRun.setClassMode(classMode);
+		testRun.setDriverMode(driverMode);
 		String testRunDetails = "testSuiteId: %s, scmURL: %s, scmBranch: %s, scmCommit: %s, jobId: %s, parentJobId: %s, parentBuildNumber: %s, buildNumber: %s, startedBy: %s, workItem";
 		LOGGER.debug("Test Run details for registration:"
 				+ String.format(testRunDetails, testSuiteId, ciConfig.getGitUrl(), ciConfig.getGitBranch(), ciConfig.getGitCommit(), jobId, parentJobId, ciConfig.getCiParentBuild(), ciConfig.getCiBuild(), startedBy, workItem));
@@ -801,7 +803,7 @@ public class ZafiraClient
 	 * @param retry
 	 * @return registered test
 	 */
-	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, String demoURL, String logURL, int retry, String configXML)
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, String demoURL, String logURL, int retry, String configXML, String [] dependsOnMethods)
 	{
 		Long startTime = new Date().getTime();
 
@@ -811,6 +813,16 @@ public class ZafiraClient
 		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
 
 		test.setTestGroup(group);
+		if(dependsOnMethods != null)
+		{
+			StringBuilder sb = new StringBuilder();
+			for(String method : Arrays.asList(dependsOnMethods))
+			{
+				sb.append(method + StringUtils.EMPTY);
+			}
+			test.setDependsOnMethods(sb.toString());
+		}
+		
 		Response<TestType> response = startTest(test);
 		test = response.getObject();
 		if (test == null) 
