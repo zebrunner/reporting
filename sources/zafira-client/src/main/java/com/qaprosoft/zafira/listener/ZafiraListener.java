@@ -319,17 +319,18 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		
 		try 
 		{
+			// Test skipped manually from test body
 			TestType test = testByThread.get(Thread.currentThread().getId());
+			// Test skipped when upstream failed
+			if(test == null)
+			{
+				// Try to identify test was already registered then do not report it twice as skipped
+				test = registeredTests.get(configurator.getTestName(result));
+			}
 			
 			// When test is skipped as dependent, reinit test from scratch.
 			if (test == null) 
 			{
-				test = registeredTests.get(configurator.getTestName(result));
-				if(test != null && !test.isNeedRerun())
-				{
-					return;
-				}
-				
 				// That's definitely the case with skipped dependent method
 				String testName = configurator.getTestName(result);
 				
