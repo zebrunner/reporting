@@ -23,7 +23,7 @@ public class GroupMapperTest extends AbstractTestNGSpringContextTests {
     /**
      * Turn this on to enable this test
      */
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     private static final Group GROUP = new Group()
     {

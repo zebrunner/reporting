@@ -167,6 +167,10 @@ public class TestRunService
 					{
 						testRun.setPlatform(arg.getValue() );
 					}
+					else if("app_version".equals(arg.getKey()))
+					{
+						testRun.setAppVersion(arg.getValue());
+					}
 				}
 			}
 		}

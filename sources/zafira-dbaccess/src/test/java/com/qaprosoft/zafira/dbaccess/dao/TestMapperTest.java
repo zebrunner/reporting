@@ -58,6 +58,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setDemoURL("http://1");
 			setTestConfig(testConfig);
 			setKnownIssue(true);
+			setDependsOnMethods("testLogin");
 		}
 	};
 
@@ -77,6 +78,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 	{
 		TestSearchCriteria sc = new TestSearchCriteria();
 		sc.setTestRunIds(Arrays.asList(TEST.getTestRunId()));
+		sc.setPageSize(Integer.MAX_VALUE);
 		List<Test> tests = testMapper.searchTests(sc);
 		int count = testMapper.getTestsSearchCount(sc);
 		Assert.assertEquals(tests.size(), count);
@@ -104,6 +106,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setDemoURL("http://2");
 		TEST.setTestConfig(new TestConfig(2L));
 		TEST.setKnownIssue(false);
+		TEST.setDependsOnMethods("testLogout");
 		
 		testMapper.updateTest(TEST);
 
@@ -160,6 +163,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
 		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
 		assertEquals(test.isKnownIssue(), TEST.isKnownIssue(), "Known issue must match");
+		assertEquals(test.getDependsOnMethods(), TEST.getDependsOnMethods(), "Depends on methods must match");
 		assertEquals(test.getTestConfig().getId(), TEST.getTestConfig().getId(), "Config ID must match");
 	}
 }

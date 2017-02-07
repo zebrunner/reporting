@@ -38,6 +38,7 @@ import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
@@ -151,18 +152,18 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 						ZAFIRA_RERUN_FAILURES = false;
 					}
 					// Register new test run
-					boolean classMode = configurator.isClassMode();
+					DriverMode driverMode = configurator.getDriverMode();
 					
 					switch (ci.getCiBuildCause())
 					{
 						case UPSTREAMTRIGGER:
-							this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, classMode);
+							this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, driverMode);
 							break;
 						case TIMERTRIGGER:
-							this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, classMode);
+							this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, driverMode);
 							break;
 						case MANUALTRIGGER:
-							this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID, classMode);
+							this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID, driverMode);
 							break;
 						default:
 							throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL + " due to the misses build cause: '" + ci.getCiBuildCause() + "'");
@@ -230,8 +231,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				
 				String group = result.getMethod().getTestClass().getName();
 				group = group.substring(0, group.lastIndexOf("."));
+				
+				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getDemoURL(result), configurator.getLogURL(result), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()));
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getDemoURL(result), configurator.getLogURL(result), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -308,7 +311,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	public void onTestSkipped(ITestResult result)
 	{
 		if(!ZAFIRA_ENABLED) return;
-		
+		// Test is skipped as ALREADY_PASSED
 		if (result.getThrowable() != null && result.getThrowable().getMessage() != null && result.getThrowable().getMessage().startsWith("ALREADY_PASSED")) 
 		{
 			return;
@@ -316,7 +319,14 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		
 		try 
 		{
+			// Test skipped manually from test body
 			TestType test = testByThread.get(Thread.currentThread().getId());
+			// Test skipped when upstream failed
+			if(test == null)
+			{
+				// Try to identify test was already registered then do not report it twice as skipped
+				test = registeredTests.get(configurator.getTestName(result));
+			}
 			
 			// When test is skipped as dependent, reinit test from scratch.
 			if (test == null) 
@@ -339,7 +349,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				String group = result.getMethod().getTestClass().getName();
 				group = group.substring(0, group.lastIndexOf("."));
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), null, null, configurator.getRunCount(result), convertToXML(configurator.getConfiguration()));
+				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
+				
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), null, null, configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				testByThread.put(Thread.currentThread().getId(), test);
 			}
 			
 			Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.SKIPPED, getFullStackTrace(result)));

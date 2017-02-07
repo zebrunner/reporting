@@ -21,6 +21,8 @@ public interface TestMapper
 	void deleteTestWorkItemByTestId(long testId);
 	
 	void updateTest(Test test);
+	
+	void updateTestsNeedRerun(@Param("ids") List<Long> ids, @Param("rerun") boolean needRerun);
 
 	void deleteTestById(long id);
 

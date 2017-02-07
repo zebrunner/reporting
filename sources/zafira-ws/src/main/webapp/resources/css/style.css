@@ -310,3 +310,7 @@ button.blue {
 body.modal-open .md-virtual-repeat-container.md-autocomplete-suggestions-container {
 	z-index: 5000;
 }
+
+.search_controls {
+	margin-top: 8px;
+}

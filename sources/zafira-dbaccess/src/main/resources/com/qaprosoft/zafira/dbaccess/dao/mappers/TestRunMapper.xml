@@ -11,7 +11,7 @@
 				PROJECT_ID, 
 			</if>
 			<![CDATA[
-			STARTED_BY, KNOWN_ISSUE, PLATFORM, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, CLASS_MODE)
+			STARTED_BY, KNOWN_ISSUE, PLATFORM, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, DRIVER_MODE)
 			VALUES (
 				#{ciRunId},
 				#{user.id},
@@ -36,12 +36,13 @@
 				#{startedBy},
 				#{knownIssue},
 				#{platform},
+				#{appVersion},
 				#{env},
 				#{startedAt},
 				#{elapsed},
 				#{eta},
 				#{comments},
-				#{classMode}
+				#{driverMode}
 			)
 		]]>
 	</insert>
@@ -66,12 +67,13 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
 				TR.ETA AS TEST_RUN_ETA,
 				TR.COMMENTS AS TEST_RUN_COMMENTS, 
-				TR.CLASS_MODE AS TEST_RUN_CLASS_MODE,
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
 				
@@ -104,12 +106,13 @@
 				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
 				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
 				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
 				TR.ENV AS TEST_RUN_ENV,
 				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
 				TR.ELAPSED AS TEST_RUN_ELAPSED, 
 				TR.ETA AS TEST_RUN_ETA, 
 				TR.COMMENTS AS TEST_RUN_COMMENTS,
-				TR.CLASS_MODE AS TEST_RUN_CLASS_MODE, 
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE, 
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
@@ -204,6 +207,11 @@
 	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
 	            ]]>
 			</if>
+			<if test="null != appVersion">
+	            <![CDATA[
+	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
+	            ]]>
+			</if>
 			<if test="null != date">
 	            <![CDATA[
 	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
@@ -287,6 +295,11 @@
 			<if test="null != platform">
 	            <![CDATA[
 	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
+	            ]]>
+			</if>
+			<if test="null != appVersion">
+	            <![CDATA[
+	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -397,12 +410,13 @@
 			    STARTED_BY = #{startedBy},
 			    KNOWN_ISSUE = #{knownIssue},
 			    PLATFORM = #{platform},
+			    APP_VERSION = #{appVersion},
 			    ENV = #{env},
 			    STARTED_AT = #{startedAt},
 				ELAPSED = #{elapsed},
 				ETA = #{eta},
 				COMMENTS = #{comments},
-				CLASS_MODE = #{classMode}
+				DRIVER_MODE = #{driverMode}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -450,12 +464,13 @@
 		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
 		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_RUN_PLATFORM" property="platform" />
+		<result column="TEST_RUN_APP_VERSION" property="appVersion" />
 		<result column="TEST_RUN_ENV" property="env" />
 		<result column="TEST_RUN_STARTED_AT" property="startedAt" />
 		<result column="TEST_RUN_ELAPSED" property="elapsed" />
 		<result column="TEST_RUN_ETA" property="eta" />
 		<result column="TEST_RUN_COMMENTS" property="comments" />
-		<result column="TEST_RUN_CLASS_MODE" property="classMode" />
+		<result column="TEST_RUN_DRIVER_MODE" property="driverMode" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />

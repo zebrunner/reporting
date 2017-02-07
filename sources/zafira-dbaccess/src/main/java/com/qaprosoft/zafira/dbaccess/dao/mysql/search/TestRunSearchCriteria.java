@@ -14,6 +14,7 @@ public class TestRunSearchCriteria extends SearchCriteria
 	private String executionURL;
 	private String environment;
 	private String platform;
+	private String appVersion;
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
@@ -132,5 +133,15 @@ public class TestRunSearchCriteria extends SearchCriteria
 	public void setStatus(Status status)
 	{
 		this.status = status;
+	}
+
+	public String getAppVersion()
+	{
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion)
+	{
+		this.appVersion = appVersion;
 	}
 }

@@ -28,22 +28,26 @@
 	</md-fab-speed-dial>
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="row" align="right">
-            	<div class="col-lg-12">
-            		<span>Found: {{totalResults}}&nbsp;</span>
-					<a href="" data-ng-click="resetSearchCriteria(); loadUsers(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadUsers(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-            </div>
 			<div class="row results_header">
-            	<form data-ng-submit="loadUsers(1)">
-	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="ID" data-ng-model="usersSearchCriteria.id"></div>
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.userName"></div>
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Email" data-ng-model="usersSearchCriteria.email"></div>
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="First/Last name" data-ng-model="usersSearchCriteria.firstLastName"></div>
-	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="usersSearchCriteria.date"></div>
-            	<input type="submit" data-ng-hide="true" />
-            	</form>
+				<div class="col-lg-12">
+					<div class="row">
+						<form data-ng-submit="loadUsers(1)">
+			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="ID" data-ng-model="usersSearchCriteria.id"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.userName"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Email" data-ng-model="usersSearchCriteria.email"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="First/Last name" data-ng-model="usersSearchCriteria.firstLastName"></div>
+			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="usersSearchCriteria.date"  style="min-width:95%"></div>
+		            		<input type="submit" data-ng-hide="true" />
+		            	</form>
+					</div>
+					<div class="row search_controls">
+						<div class="col-lg-12" align="right">
+		            		<span>Found: {{totalResults}}&nbsp;</span>
+							<a href="" data-ng-click="resetSearchCriteria(); loadUsers(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
+							<a href="" data-ng-click="loadUsers(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>

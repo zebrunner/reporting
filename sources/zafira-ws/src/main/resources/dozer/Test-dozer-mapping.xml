@@ -67,6 +67,10 @@
 			<a>needRerun</a>
 			<b>needRerun</b>
 		</field>
+		<field>
+			<a>dependsOnMethods</a>
+			<b>dependsOnMethods</b>
+		</field>
 		<field-exclude> 
 		  	<a>workItems</a> 
 		  	<b>workItems</b> 

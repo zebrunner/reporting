@@ -4,8 +4,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 
 @JsonInclude(Include.NON_NULL)
@@ -30,9 +30,9 @@ public class TestRunType extends AbstractType
 	private Initiator startedBy;
 	private Long userId;
 	private String workItem;
-	private Project project;
+	private ProjectType project;
 	private boolean knownIssue;
-	private boolean classMode;
+	private DriverMode driverMode;
 
 	public TestRunType() {
 		
@@ -227,12 +227,12 @@ public class TestRunType extends AbstractType
 		this.workItem = workItem;
 	}
 
-	public Project getProject()
+	public ProjectType getProject()
 	{
 		return project;
 	}
 
-	public void setProject(Project project)
+	public void setProject(ProjectType project)
 	{
 		this.project = project;
 	}
@@ -247,13 +247,13 @@ public class TestRunType extends AbstractType
 		this.knownIssue = knownIssue;
 	}
 
-	public boolean isClassMode()
+	public DriverMode getDriverMode()
 	{
-		return classMode;
+		return driverMode;
 	}
 
-	public void setClassMode(boolean classMode)
+	public void setDriverMode(DriverMode driverMode)
 	{
-		this.classMode = classMode;
+		this.driverMode = driverMode;
 	}
 }

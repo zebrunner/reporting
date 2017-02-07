@@ -13,22 +13,26 @@
     </div>
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="row" align="right">
-            	<div class="col-lg-12">
-            		<span>Found: {{totalResults}}&nbsp;</span>
-					<a href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadTestCases(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-            </div>
 			<div class="row results_header">
-				<form data-ng-submit="loadTestCases(1)">
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass"></div>
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod"></div>
-	            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile"></div>
-	            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName"></div>
-	            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date"></div>
-            		<input type="submit" data-ng-hide="true" />
-            	</form>
+				<div class="col-lg-12">
+					<div class="row">
+						<form data-ng-submit="loadTestCases(1)">
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName"></div>
+			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date" style="min-width:95%"></div>
+		            		<input type="submit" data-ng-hide="true" />
+		            	</form>
+					</div>
+					<div class="row search_controls" align="right">
+						<div class="col-lg-12">
+		            		<span>Found: {{totalResults}}&nbsp;</span>
+							<a href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
+							<a href="" data-ng-click="loadTestCases(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+						</div>
+					</div>
+				</div>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>

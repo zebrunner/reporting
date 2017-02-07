@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, NEED_RERUN)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, NEED_RERUN, DEPENDS_ON_METHODS)
 			VALUES (
 				#{name},
 			    #{status},
@@ -21,7 +21,8 @@
 			    #{retry},
 			    #{testConfig.id},
 			    #{knownIssue},
-			    #{needRerun}
+			    #{needRerun},
+			    #{dependsOnMethods}
 			)
 		]]>
 	</insert>
@@ -61,6 +62,7 @@
 				T.RETRY AS TEST_RETRY,
 				T.KNOWN_ISSUE AS TEST_KNOWN_ISSUE,
 				T.NEED_RERUN AS TEST_NEED_RERUN,
+				T.DEPENDS_ON_METHODS AS TEST_DEPENDS_ON_METHODS,
 				TCU.USERNAME AS TEST_OWNER,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
@@ -110,7 +112,7 @@
 				zafira.USERS U
             ON 
             	WI.USER_ID = U.ID
-			INNER JOIN 
+			LEFT JOIN 
 				zafira.TEST_CONFIGS TC
 			ON 
 				T.TEST_CONFIG_ID = TC.ID
@@ -238,11 +240,34 @@
 		<![CDATA[
 				RETRY = #{retry},
 				KNOWN_ISSUE = #{knownIssue},
-				NEED_RERUN = #{needRerun}
+				NEED_RERUN = #{needRerun},
+				DEPENDS_ON_METHODS = #{dependsOnMethods}
 			WHERE
 			    ID = #{id}
 		]]>
 	</update>
+	
+	<update id="updateTestsNeedRerun">
+		<![CDATA[
+			UPDATE
+			    zafira.TESTS
+			SET
+				NEED_RERUN = #{rerun}
+			WHERE 
+				ID IN
+		]]>
+		<if test="null != ids and ids.size > 0">
+			<foreach item="id" index="index" collection="ids" open="("
+					separator="," close=")">
+					#{id}
+			</foreach>
+		</if>
+		<if test="null == ids or ids.size == 0">
+			<![CDATA[
+				(-1)
+			]]>
+		</if>
+	</update>	    
 
 	<sql id="deleteTest">
 		<![CDATA[
@@ -282,6 +307,7 @@
 		<result column="TEST_RETRY" property="retry" />
 		<result column="TEST_KNOWN_ISSUE" property="knownIssue" />
 		<result column="TEST_NEED_RERUN" property="needRerun" />
+		<result column="TEST_DEPENDS_ON_METHODS" property="dependsOnMethods" />
 		<result column="TEST_OWNER" property="owner" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />

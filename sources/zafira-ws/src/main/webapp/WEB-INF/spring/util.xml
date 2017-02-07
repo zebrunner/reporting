@@ -34,6 +34,7 @@
 				<value>dozer/Job-dozer-mapping.xml</value>
 				<value>dozer/TestRun-dozer-mapping.xml</value>
 				<value>dozer/User-dozer-mapping.xml</value>
+				<value>dozer/Project-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

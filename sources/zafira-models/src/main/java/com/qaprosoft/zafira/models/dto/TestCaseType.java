@@ -4,7 +4,6 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Project;
 
 @JsonInclude(Include.NON_NULL)
 public class TestCaseType extends AbstractType
@@ -19,7 +18,7 @@ public class TestCaseType extends AbstractType
 	private Long testSuiteId;
 	@NotNull
 	private Long userId;
-	private Project project;
+	private ProjectType project;
 
 	public TestCaseType() {
 		
@@ -84,12 +83,12 @@ public class TestCaseType extends AbstractType
 		this.userId = userId;
 	}
 
-	public Project getProject()
+	public ProjectType getProject()
 	{
 		return project;
 	}
 
-	public void setProject(Project project)
+	public void setProject(ProjectType project)
 	{
 		this.project = project;
 	}

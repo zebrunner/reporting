@@ -6,6 +6,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -33,7 +34,7 @@ public interface IConfigurator
 	
 	int getRunCount(ITestResult test);
 	
-	boolean isClassMode();
+	DriverMode getDriverMode();
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
 }

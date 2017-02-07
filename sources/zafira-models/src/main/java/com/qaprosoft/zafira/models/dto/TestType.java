@@ -33,6 +33,7 @@ public class TestType extends AbstractType
 	private Map<String, Long> testMetrics;
 	private boolean knownIssue;
 	private boolean needRerun;
+	private String dependsOnMethods;
 
 	public TestType() {
 		
@@ -223,5 +224,15 @@ public class TestType extends AbstractType
 	public void setNeedRerun(boolean needRerun)
 	{
 		this.needRerun = needRerun;
+	}
+
+	public String getDependsOnMethods()
+	{
+		return dependsOnMethods;
+	}
+
+	public void setDependsOnMethods(String dependsOnMethods)
+	{
+		this.dependsOnMethods = dependsOnMethods;
 	}
 }

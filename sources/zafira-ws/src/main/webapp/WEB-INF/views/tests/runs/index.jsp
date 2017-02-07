@@ -13,47 +13,53 @@
     </div>
 	<div class="row">
 		<div class="col-lg-12">
-            <div class="row">
-            	<div class="col-lg-3">
-            		Enable real-time events <input type="checkbox" data-ng-model="showRealTimeEvents" />
-            	</div>
-            	<div class="col-lg-9" align="right">
-            		<span>Found: {{totalResults}}&nbsp;</span>
-					<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-					<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+		
+			<div class="row results_header">
+				<div class="col-lg-12">
+					<div class="row">
+						<form data-ng-submit="loadTestRuns(1);">
+		            		<div class="col-lg-1">
+			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
+			            			<option value="" disabled selected>Status</option>
+			            			<option value="PASSED">PASSED</option>
+			            			<option value="FAILED">FAILED</option>
+			            			<option value="SKIPPED">SKIPPED</option>
+			            			<option value="ABORTED">ABORTED</option>
+			            			<option value="IN_PROGRESS">IN_PROGRESS</option>
+			            			<option value="UNKNOWN">UNKNOWN</option>
+			            		</select>
+			            	</div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="App version" data-ng-model="testRunSearchCriteria.appVersion"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
+			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
+			            	<div class="col-lg-1">
+			            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
+			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
+			            			<option value="" disabled selected>Platform</option>
+			            			<option value="Android">Android</option>
+			            			<option value="iOS">iOS</option>
+			            			<option value="chrome">chrome</option>
+			            			<option value="firefox">firefox</option>
+			            			<option value="safari">safari</option>
+			            			<option value="ie">ie</option>
+			            		</select>
+			            	</div>
+			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%"></div>
+			            	<input type="submit" data-ng-hide="true" />
+		            	</form>
+					</div>
+					<div class="row search_controls">
+						<div class="col-lg-3">
+		            		Enable real-time events <input type="checkbox" data-ng-model="showRealTimeEvents" />
+		            	</div>
+		            	<div class="col-lg-9" align="right">
+		            		<span>Found: {{totalResults}}&nbsp;</span>
+							<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
+							<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+						</div>
+					</div>
 				</div>
-            </div>
-            <div class="row results_header">
-            	<form data-ng-submit="loadTestRuns(1);">
-            		<div class="col-lg-1">
-	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
-	            			<option value="" disabled selected>Status</option>
-	            			<option value="PASSED">PASSED</option>
-	            			<option value="FAILED">FAILED</option>
-	            			<option value="SKIPPED">SKIPPED</option>
-	            			<option value="ABORTED">ABORTED</option>
-	            			<option value="IN_PROGRESS">IN_PROGRESS</option>
-	            			<option value="UNKNOWN">UNKNOWN</option>
-	            		</select>
-	            	</div>
-	            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
-	            	<div class="col-lg-4"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
-	            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
-	            	<div class="col-lg-1">
-	            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
-	            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
-	            			<option value="" disabled selected>Platform</option>
-	            			<option value="Android">Android</option>
-	            			<option value="iOS">iOS</option>
-	            			<option value="chrome">chrome</option>
-	            			<option value="firefox">firefox</option>
-	            			<option value="safari">safari</option>
-	            			<option value="ie">ie</option>
-	            		</select>
-	            	</div>
-	            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt"></div>
-	            	<input type="submit" data-ng-hide="true" />
-            	</form>
             </div>
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>
