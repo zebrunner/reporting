@@ -31,6 +31,7 @@
                 <div class="col-lg-12">
                     <b class="ng-binding">{{group.name}}</b>
                     ({{group.role}})
+                    <span>({{group.userList.length}} users)</span>
                     <button type="button" class="btn btn-default btn-circle red" data-ng-click="deleteGroup(group.id)" style="float: right">
                         <i class="fa fa-trash"></i>
                     </button>
@@ -38,12 +39,10 @@
                 <div class="col-lg-12">
                     <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
                             <md-chips ng-model="group.userList"
-                                      placeholder="add user"
-                                      secondary-placeholder="add user"
                                       md-autocomplete-snap
                                       md-require-match="true"
-                                    md-on-add="addUserToGroup($chip, group)"
-                            md-on-remove="deleteUserFromGroup($chip, group)">
+                                      md-on-add="addUserToGroup($chip, group)"
+                                      md-on-remove="deleteUserFromGroup($chip, group)">
                                 <md-chip-template>
                                     {{$chip.userName}}
                                 </md-chip-template>
@@ -52,7 +51,8 @@
                                         md-items="user in querySearch(searchText)"
                                         md-item-text="user.userName"
                                         md-selected-item="currentUser"
-                                        md-autoselect>
+                                        md-autoselect
+                                        placeholder="add user">
                                     <md-item-template>
                                         <span>{{user.userName}}</span>
                                     </md-item-template>
