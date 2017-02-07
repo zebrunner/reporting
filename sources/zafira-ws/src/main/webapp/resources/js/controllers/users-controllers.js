@@ -74,12 +74,12 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 							$modalInstance.close(0);
 						};
 					}
-				});
+				}).result.then(function(data) {
+                }, function () {
+                });
 			}, function errorCallback(data) {
 				console.error('Failed to load user');
-			}).result.then(function(data) {
-            }, function () {
-            });
+			});
 		}
 		else
 		{
