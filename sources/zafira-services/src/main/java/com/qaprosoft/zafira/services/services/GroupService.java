@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -29,7 +31,16 @@ public class GroupService {
 
     @Transactional(rollbackFor = Exception.class)
     public List<Group> getAllGroups() throws ServiceException {
-        return groupMapper.getAllGroups();
+        List<Group> groupList = groupMapper.getAllGroups();
+        for(Group group: groupList) {
+            Collections.sort(group.getUserList(), new Comparator<User>() {
+                @Override
+                public int compare(User o1, User o2) {
+                    return o1.getUserName().compareTo(o2.getUserName());
+                }
+            });
+        }
+        return groupList;
     }
 
     @Transactional(rollbackFor = Exception.class)
