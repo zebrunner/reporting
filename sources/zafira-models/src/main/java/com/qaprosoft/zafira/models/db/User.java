@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
-public class User extends AbstractEntity
+public class User extends AbstractEntity implements Comparable<User>
 {
 	private static final long serialVersionUID = 2720141152633805371L;
 
@@ -87,5 +87,10 @@ public class User extends AbstractEntity
 
 	public void setGroupList(List<Group> groupList) {
 		this.groupList = groupList;
+	}
+
+	@Override
+	public int compareTo(User user) {
+		return userName.compareTo(user.getUserName());
 	}
 }
