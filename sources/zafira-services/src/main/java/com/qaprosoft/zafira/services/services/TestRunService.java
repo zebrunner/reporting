@@ -22,6 +22,7 @@ import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,9 @@ import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 public class TestRunService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
+	
+	@Value("${zafira.webservice.url}")
+	private String wsURL;
 	
 	@Autowired
 	private TestRunMapper testRunMapper;
@@ -313,6 +317,7 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
+		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		

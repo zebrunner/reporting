@@ -42,7 +42,7 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<span class="settings-line">{{setting.modifiedAt | date:'MM/dd/yyyy'}}</span>
-					<i class="float_right fa fa-gear pointer settings-line" data-ng-click="openSettingsModal(setting)"></i>
+					<i class="float_right fa fa-lg fa-gear action_button" data-ng-click="openSettingsModal(setting)"></i>
 				</div>
 			</div>
 		</div>

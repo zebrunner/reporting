@@ -116,7 +116,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		if(confirm("Do you really want to delete test run?"))
 		{
 			$http.delete('tests/runs/' + id).then(function successCallback(data) {
-				$scope.loadTestRuns($scope.testRunSearchCriteria.page);
+				delete $scope.testRuns[id];
+				alertify.success('Test run #' + id + ' removed');
+				//$scope.loadTestRuns($scope.testRunSearchCriteria.page);
 			}, function errorCallback(data) {
 				alertify.error('Failed to delete test run');
 			});

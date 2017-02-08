@@ -215,6 +215,15 @@ li.pointer, i.pointer, th.pointer, div.pointer {
 	cursor: pointer;
 }
 
+.action_button {
+	line-height: 20px
+	!important;
+}
+
+.separator10 {
+	margin-left: 10px;
+}
+
 .graph-box {
 	height: 350px; 
 	padding-bottom: 35px;

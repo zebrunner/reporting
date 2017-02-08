@@ -71,8 +71,8 @@
 					<span data-ng-if="user.password != '' && user.password != null" class="label arrowed arrowed-in-right label-success">active</span>
 					<span data-ng-if="user.password == '' || user.password == null" class="label arrowed arrowed-in-right label-danger">inactive</span>
 					&nbsp;
-					<i class="float_right fa fa-gear pointer" style="line-height: 20px; margin-left: 7px;" data-ng-click="openUserDetailsModal(user.id)"></i>
-					<a data-ng-if="pefrDashboardId" href="#!/dashboards?id={{pefrDashboardId}}&userId={{user.id}}" aria-hidden="true" class="fa fa-sm fa-area-chart float_right pointer " style="line-height: 20px; color: black;"></a>
+					<i class="float_right fa fa-lg fa-gear pointer" style="line-height: 20px; margin-left: 10px; color: #333;" data-ng-click="openUserDetailsModal(user.id)"></i>
+					<a data-ng-if="pefrDashboardId" href="#!/dashboards?id={{pefrDashboardId}}&userId={{user.id}}" aria-hidden="true" class="fa fa-lg fa-area-chart float_right pointer " style="line-height: 20px;  color: #333"></a>
 				</div>
 			</div>
 			<paging class="float_right"

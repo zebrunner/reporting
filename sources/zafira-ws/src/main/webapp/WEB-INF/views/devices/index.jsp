@@ -68,7 +68,7 @@
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<span>{{device.modifiedAt | date:'MM/dd/yyyy'}}</span>
-					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openDeviceModal(device)"></i>
+					<i class="float_right fa fa-lg fa-gear action_button" data-ng-click="openDeviceModal(device)"></i>
 				</div>
 			</div>
 		</div>

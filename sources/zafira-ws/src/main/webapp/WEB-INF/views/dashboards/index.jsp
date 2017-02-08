@@ -11,7 +11,6 @@
          	<h2>
          		<i class="fa fa-pie-chart fa-fw"></i> Dashboards
          		</h2><br/>
-
 		 </div>
 	</div>
 	 <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
@@ -33,7 +32,7 @@
 				 </md-button>
 			 </sec:authorize>
 		 </md-fab-actions>
-	 </md-fab-speed-dial>
+	</md-fab-speed-dial>
     <div>
 	    <div class="row">
 	         <div class="col-lg-12">
@@ -101,7 +100,7 @@
 				<div class="col-lg-2">
 					<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="openDashboardWidgetModal(widget, true)">Add widget to dashboard</button>
 				</div>
-				<div class="col-lg-2">
+				<div class="col-lg-2" style="padding-right: 3px;">
 					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openWidgetDetailsModal(widget, false)"></i>
 					<i class="float_right fa fa-copy pointer" style="line-height: 20px; margin-right: 5px;" data-ng-click="openWidgetDetailsModal(widget, true)"></i>
 				</div>
