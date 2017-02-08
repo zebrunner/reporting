@@ -33,12 +33,7 @@ public class GroupService {
     public List<Group> getAllGroups() throws ServiceException {
         List<Group> groupList = groupMapper.getAllGroups();
         for(Group group: groupList) {
-            Collections.sort(group.getUserList(), new Comparator<User>() {
-                @Override
-                public int compare(User o1, User o2) {
-                    return o1.getUserName().compareTo(o2.getUserName());
-                }
-            });
+            Collections.sort(group.getUserList());
         }
         return groupList;
     }
