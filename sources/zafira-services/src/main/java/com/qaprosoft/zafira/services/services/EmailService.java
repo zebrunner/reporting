@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
 import freemarker.template.Configuration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +50,7 @@ public class EmailService
 				{
 					for(Attachment attachment : message.getAttachments())
 					{
-						msg.addAttachment(attachment.getName(), attachment.getFile());
+						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
 						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
 					}
 				}
