@@ -82,7 +82,7 @@ public class DashboardsController extends AbstractController
 			dashboards = dashboardService.getAllDashboardsByType(Type.valueOf(type));
 		}
 		
-		if(isAdmin() || userId == getPrincipalId())
+		if(isAdmin() || (userId != null && userId.equals(getPrincipalId())))
 		{
 			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
 		}
