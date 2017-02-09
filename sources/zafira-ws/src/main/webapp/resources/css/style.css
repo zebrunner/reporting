@@ -242,11 +242,6 @@ td.no-results {
 	text-align: center;
 }
 
-.settings-line {
-	line-height: 25px;
-}
-
-
 .zoom_img img:hover{
 	-moz-transform:scale(2); 
 	-webkit-transform:scale(2);

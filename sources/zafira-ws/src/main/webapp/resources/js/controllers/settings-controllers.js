@@ -1,6 +1,8 @@
 'use strict';
 
-ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', '$modal', function($scope, $http, $location, $route, $modal) {
+ZafiraApp.controller('SettingsCtrl', [ '$scope', '$http','$location', '$route', '$modal', 'UtilService', function($scope, $http, $location, $route, $modal, UtilService) {
+	
+	$scope.UtilService = UtilService;
 	
 	$scope.listSettings = function(){
 		$http.get('settings/list').then(function successCallback(data) {

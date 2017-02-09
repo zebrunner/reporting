@@ -42,25 +42,25 @@
 	            <ul class="nav navbar-top-links navbar-right">
 
 	                <li>
-	                    <a href="#!/dashboards"><i class="fa fa-pie-chart fa-fw"></i> Dashboards</a>
+	                    <a href="#!/dashboards"><i class="fa fa-lg fa-pie-chart fa-fw"></i> Dashboards</a>
 	               	</li>
 	               	<li>
-	                    <a href="#!/tests/runs"><i class="fa fa-play-circle fa-fw"></i> Test runs</a>
+	                    <a href="#!/tests/runs"><i class="fa fa-lg fa-play-circle fa-fw"></i> Test runs</a>
 	               	</li>
 	               	<li>
-	                    <a href="#!/tests/cases"><i class="fa fa-check-square fa-fw"></i> Test cases</a>
+	                    <a href="#!/tests/cases"><i class="fa fa-lg fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
 	               	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	               	<li>
-	                    <a href="#!/users"><i class="fa fa-user fa-fw"></i> Users</a>
+	                    <a href="#!/users"><i class="fa fa-lg fa-user fa-fw"></i> Users</a>
 	               	</li>
 	               	<li>
-	                    <a href="#!/devices"><i class="fa fa-plug fa-fw"></i> Devices</a>
+	                    <a href="#!/devices"><i class="fa fa-lg fa-plug fa-fw"></i> Devices</a>
 	               	</li>
 	               	</sec:authorize>
 	               	<li>
 	                    <a class="dropdown-toggle" data-toggle="dropdown" href="" aria-expanded="false">
-	                        <i class="fa fa-user-circle-o"></i> {{UtilService.truncate(currentUser.username, 15)}} <i class="fa fa-caret-down"></i>
+	                        <i class="fa fa-lg fa-user-circle-o"></i> {{UtilService.truncate(currentUser.username, 15)}} <i class="fa fa-caret-down"></i>
 	                    </a>
 	                    <ul class="dropdown-menu dropdown-user">
 	                    	<sec:authorize access="hasAnyRole('ROLE_USER')">

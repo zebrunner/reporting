@@ -49,10 +49,10 @@
 				</div>
 				<div class="col-lg-2">
 				  	<span class="text-success" data-ng-if="device.enabled == true">
-						<i class="fa fa-check"></i>
+						<i class="fa fa-lg fa-check"></i>
 					</span>
 					<span class="text-danger" data-ng-if="device.enabled == false">
-						<i class="fa fa-times-circle"></i>
+						<i class="fa fa-lg fa-times-circle"></i>
 					</span>
 				</div>
 				<div class="col-lg-2">

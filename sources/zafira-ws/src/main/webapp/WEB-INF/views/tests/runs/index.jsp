@@ -55,8 +55,8 @@
 		            	</div>
 		            	<div class="col-lg-9" align="right">
 		            		<span>Found: {{totalResults}}&nbsp;</span>
-							<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-							<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+							<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
+							<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i></a>
 						</div>
 					</div>
 				</div>

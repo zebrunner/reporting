@@ -52,7 +52,7 @@
 	                <div class="panel-heading">
 	                    {{widget.title}}
 	                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-	                    <i class="float_right fa fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
+	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
 	                	</sec:authorize>
 	                </div>
 	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
@@ -101,8 +101,8 @@
 					<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="openDashboardWidgetModal(widget, true)">Add widget to dashboard</button>
 				</div>
 				<div class="col-lg-2" style="padding-right: 3px;">
-					<i class="float_right fa fa-gear pointer" style="line-height: 20px;" data-ng-click="openWidgetDetailsModal(widget, false)"></i>
-					<i class="float_right fa fa-copy pointer" style="line-height: 20px; margin-right: 5px;" data-ng-click="openWidgetDetailsModal(widget, true)"></i>
+					<i class="float_right fa fa-lg fa-gear pointer action_button separator10" data-ng-click="openWidgetDetailsModal(widget, false)"></i>
+					<i class="float_right fa fa-lg fa-copy pointer action_button" data-ng-click="openWidgetDetailsModal(widget, true)"></i>
 				</div>
 			</div>
 		</div>

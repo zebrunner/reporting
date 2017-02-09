@@ -28,8 +28,8 @@
 					<div class="row search_controls" align="right">
 						<div class="col-lg-12">
 		            		<span>Found: {{totalResults}}&nbsp;</span>
-							<a href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-times-circle"></i>&nbsp;</a>
-							<a href="" data-ng-click="loadTestCases(1)">Search&nbsp;<i class="fa fa-arrow-circle-right"></i></a>
+							<a href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
+							<a href="" data-ng-click="loadTestCases(1)">Search&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i></a>
 						</div>
 					</div>
 				</div>

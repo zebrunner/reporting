@@ -35,13 +35,13 @@
             </div>
 			<div class="run_result row" data-ng-repeat="setting in settings">
 				<div class="col-lg-5">
-				  	<b class="settings-line">{{setting.name}}</b>
+				  	<b>{{setting.name}}</b>
 				</div>
 				<div class="col-lg-5">
-				  	<input data-ng-value="setting.value" disabled style="width: 100%;" />
+				  	{{UtilService.truncate(setting.value, 60)}}
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
-					<span class="settings-line">{{setting.modifiedAt | date:'MM/dd/yyyy'}}</span>
+					<span>{{setting.modifiedAt | date:'MM/dd/yyyy'}}</span>
 					<i class="float_right fa fa-lg fa-gear action_button" data-ng-click="openSettingsModal(setting)"></i>
 				</div>
 			</div>
