@@ -20,8 +20,9 @@
 					<input name="value" type="text" class="form-control validation" data-ng-model="email.subject" required/>
 				</div>
 				<div class="form-group" data-ng-if="textRequired">
-					<label>Text</label> 
-					<textarea name="value" class="form-control validation" data-ng-model="email.text" required></textarea>
+					<label>Text</label>
+					<text-angular data-ng-model="email.text" options=""></text-angular> 
+					<!-- textarea name="value" class="form-control validation" data-ng-model="email.text" required></textarea -->
 				</div>
 				<div class="form-group">
 					<label>Recepients</label> 

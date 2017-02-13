@@ -9,6 +9,7 @@
 <link href="<spring:url value="/resources/css/LineChart.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/font-awesome.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/alertify.min.css" />" rel="stylesheet" type="text/css" />
+<link href="<spring:url value="/resources/css/textAngular.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/js/angular-material/angular-material.min.css" />" rel="stylesheet" type="text/css" />
 
 <!-- AngularJS core -->
@@ -18,13 +19,15 @@
 <script src="<spring:url value='/resources/js/angular/angular-messages.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-route.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-cookies.min.js'/>" type="text/javascript"></script>
-<script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script>
+<!--script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script-->
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer-all.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-moment.min.js'/>" type="text/javascript"></script>
 
 <!-- 3rd-party dependencies -->
+<script src="<spring:url value='/resources/js/3rd_party/textAngular-rangy.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/textAngular-sanitize.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/sockjs-1.1.1.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/stomp.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/jquery-2.0.3.min.js'/>" type="text/javascript"></script>
@@ -41,6 +44,8 @@
 <script src="<spring:url value='/resources/js/3rd_party/pie-chart.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/alertify.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/3rd_party/moment.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/textAngular.min.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/3rd_party/textAngularSetup.js'/>" type="text/javascript"></script>
 
 <!--Angular Material-->
 <script src="<spring:url value='/resources/js/angular-material/angular-material.min.js'/>" type="text/javascript"></script>
