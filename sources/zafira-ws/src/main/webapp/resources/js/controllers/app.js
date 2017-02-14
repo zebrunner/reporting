@@ -1,4 +1,4 @@
-var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngMaterial', 'ngAria', 'ngAnimate',  'ngMessages', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer', 'angularMoment' ])
+var ZafiraApp = angular.module('ZafiraApp', [ 'ngRoute', 'ngSanitize', 'chieffancypants.loadingBar', 'ngMaterial', 'ngAria', 'ngAnimate',  'ngMessages', 'bw.paging', 'ui.bootstrap.modal', 'ngCookies', 'n3-line-chart', 'n3-pie-chart', 'timer', 'angularMoment', 'textAngular' ])
 
 .config(function($mdThemingProvider) {
     $mdThemingProvider.definePalette('z-pallet', {
