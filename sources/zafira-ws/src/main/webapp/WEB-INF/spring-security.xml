@@ -35,7 +35,7 @@
 	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserAuthService" />
 
 	<security:http auto-config="true" use-expressions="true" entry-point-ref="apiUnauthorizedEntryPoint" disable-url-rewriting="false">
-		<security:access-denied-handler error-page="/403"/>
+		<security:access-denied-handler error-page="/errors/403"/>
 		<security:csrf disabled="true"/>
 		<security:form-login login-page="/signin" always-use-default-target="true" default-target-url="/" authentication-failure-url="/signin/failed" />
 		<security:logout logout-success-url="/signin" invalidate-session="true" />
