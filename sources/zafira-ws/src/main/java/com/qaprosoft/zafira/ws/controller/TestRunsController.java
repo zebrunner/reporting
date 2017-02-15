@@ -29,10 +29,12 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.ProjectService;
+import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.models.dto.CommentType;
@@ -59,6 +61,9 @@ public class TestRunsController extends AbstractController
 	
 	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private TestConfigService testConfigService;
 	
 	@Autowired
 	private ProjectService projectService;
@@ -102,6 +107,14 @@ public class TestRunsController extends AbstractController
 			throw new ServiceException("Test run not found by id: " + tr.getId());
 		}
 		testRun.setConfigXML(tr.getConfigXML());
+		// TODO: remove that ASAP from controller
+		for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+		{
+			if("app_version".equals(arg.getKey()))
+			{
+				testRun.setAppVersion(arg.getValue());
+			}
+		}
 		testRunService.updateTestRun(testRun);
 		return mapper.map(testRun, TestRunType.class);
 	}
