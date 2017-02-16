@@ -36,7 +36,9 @@
 					</span><br />
 					<a class="button">
 						<button type="submit">Signin</button>
-					</a>
+					</a><br><br>
+					<span><i>Note: Use LDAP 2.0 credentials</i></span><br>
+					<span><i>Note: qamon/password as alternate user</i></span><br>
 				</fieldset>
 			</form:form>
 		</div>

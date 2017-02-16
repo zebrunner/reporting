@@ -17,7 +17,7 @@
 		</security:authentication-provider>
 		
 		<!-- Comment out to use LDAP (make sure LDAP configuration specified in maven profile) -->
-		<!-- security:authentication-provider ref="ldapAuthProvider"  / -->
+		<security:authentication-provider ref="ldapAuthProvider"  />
 		
 	</security:authentication-manager>
 
