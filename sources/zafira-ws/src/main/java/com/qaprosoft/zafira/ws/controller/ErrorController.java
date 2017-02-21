@@ -13,17 +13,19 @@ import java.security.Principal;
 @Controller
 @ApiIgnore
 @RequestMapping("errors")
-public class ErrorController {
+public class ErrorController
+{
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/403", method = RequestMethod.GET)
+	public ModelAndView error403(Principal principal)
+	{
+		return new ModelAndView("errors/403");
+	}
 
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/403", method = RequestMethod.GET)
-    public ModelAndView error403(Principal principal) {
-        return new ModelAndView("errors/403");
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/404", method = RequestMethod.GET)
-    public ModelAndView error404(Principal principal) {
-        return new ModelAndView("errors/404");
-    }
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/404", method = RequestMethod.GET)
+	public ModelAndView error404(Principal principal)
+	{
+		return new ModelAndView("errors/404");
+	}
 }

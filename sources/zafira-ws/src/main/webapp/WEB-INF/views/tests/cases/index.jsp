@@ -58,16 +58,19 @@
 				</div>
 				<div class="col-lg-12" data-ng-if="testCase.showDetails == true" style="margin-top: 10px;">
                     <div class="row test_result" data-ng-class="test.status" data-ng-repeat="test in tests[testCase.id] | orderBy:'id':true">
-                    	<div class="col-lg-10">
+                    	<div class="col-md-10">
                     		<div><img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}}</div>
-                            <div class="result_error" data-ng-if="test.message && test.status == 'FAILED'">
+                            <div class="result_error {{test.status}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                             	<show-more text="test.message" limit="100"></show-more>
                             </div>
                     	</div>
-                    	<div class="col-lg-2">
-                    		<div class="float_right" data-ng-if="test.status != STARTED">
-                            	<span class="time">{{test.finishTime | date:'MM/dd HH:mm'}}</span>
-                            	&nbsp;
+                    	<div class="col-md-1 center" style="padding: 0;">
+                    		<span class="time">
+								<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+							</span>
+                    	</div>
+                    	<div class="col-md-1 center" style="padding: 0;">
+                    		<div data-ng-if="test.status != STARTED">
                             	<a data-ng-if="test.logURL && testRun.status != 'IN_PROGRESS' && test.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS' && test.status != 'IN_PROGRESS'">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,7 @@ public class WidgetsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		return widgetService.createWidget(widget);
@@ -51,6 +53,7 @@ public class WidgetsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
+	@Secured({"ROLE_ADMIN"})
 	public void deleteWidget(@PathVariable(value="id") long id) throws ServiceException
 	{
 		widgetService.deleteWidgetById(id);
@@ -58,6 +61,7 @@ public class WidgetsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
 	{
 		return widgetService.updateWidget(widget);

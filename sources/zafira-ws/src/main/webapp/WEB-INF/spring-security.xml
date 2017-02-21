@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:mvc="http://www.springframework.org/schema/mvc"
-	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
-		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-4.3.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 	<security:authentication-manager>
 	
@@ -38,6 +33,7 @@
 		<security:access-denied-handler error-page="/errors/403"/>
 		<security:csrf disabled="true"/>
 		<security:form-login login-page="/signin" always-use-default-target="true" default-target-url="/" authentication-failure-url="/signin/failed" />
+		<!--security:remember-me  user-service-ref="userAuthService"/ -->
 		<security:logout logout-success-url="/signin" invalidate-session="true" />
 		<security:http-basic />
 		<security:intercept-url pattern="/signin" access="permitAll"/>
@@ -45,50 +41,9 @@
 		<security:intercept-url pattern="/login" access="permitAll"/>
 		<security:intercept-url pattern="/resources/**" access="permitAll" />
 		<security:intercept-url pattern="/status" access="permitAll" />
-
-		<security:intercept-url pattern="/dashboards/**" access="isAuthenticated()" method="GET" />
-			<security:intercept-url pattern="/dashboards/email" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/dashboards/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/devices/index" access="hasRole('ROLE_ADMIN')" method="GET"/>
-			<security:intercept-url pattern="/devices/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/devices/**" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/events/**" access="isAuthenticated()" />
-		<security:intercept-url pattern="/groups/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/groups/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/users/index" access="hasRole('ROLE_ADMIN')" method="GET"/>
-			<security:intercept-url pattern="/users/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/users" access="isAuthenticated()" method="PUT"/>
-			<security:intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/certification/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/certification/**" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/config/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/config/**" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/" access="isAuthenticated()" />
-		<security:intercept-url pattern="/jobs/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/jobs/**" access="hasRole('ROLE_ADMIN')" />
-		<security:intercept-url pattern="/projects/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/projects/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/settings/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/settings/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/tests/*/passed" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/search" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/*/issues" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/issues" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/issues/**" access="isAuthenticated()"/>
-		<security:intercept-url pattern="/tests/cases/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/tests/cases/search" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/cases/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/tests/runs/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/tests/runs/search" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/runs/*/email" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/runs/*/comment" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/tests/runs/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/tests/**" access="hasRole('ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/widgets/**" access="isAuthenticated()" method="GET"/>
-			<security:intercept-url pattern="/widgets/sql" access="isAuthenticated()"/>
-			<security:intercept-url pattern="/widgets/**" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
 	</security:http>
-
+	
 	<bean id="apiUnauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.servlet.listeners.APIUnauthorizedEntryPoint">
 	    <constructor-arg  name="loginUrl" value="/signin"/>
 	</bean>

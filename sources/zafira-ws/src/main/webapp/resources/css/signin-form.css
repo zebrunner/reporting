@@ -50,11 +50,17 @@ body.signin {
 	height: 32px;
 }
 
-#signin-form input {
+#signin-form input[type=text],input[type=password] {
 	border: none;
 	background-color: #F8F8F8;
 	height: 30px;
 	width: 200px;
+}
+
+#signin-form input[type=checkbox] {
+	width: 20px; 
+	height: 20px; 
+	float: right;
 }
 
 #signin-form .errors {

@@ -11,12 +11,11 @@
 <style>
     #rest-error h1 {
         font-size: 72px;
-        vertical-align: middle;
         color: grey;
+        margin-top: 100px;
     }
     #rest-error h2 {
         font-size: 48px;
-        vertical-align: middle;
         color: grey;
     }
 </style>
@@ -26,7 +25,7 @@
 <body>
 <div id="rest-error" layout="column">
     <h1 align="center">404</h1>
-    <h2 align="center">Oops.. Not found!</h2>
+    <h2 align="center">Not Found</h2>
 </div>
 </body>
 </html>

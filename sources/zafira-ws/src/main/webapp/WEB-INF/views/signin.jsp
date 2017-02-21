@@ -34,6 +34,7 @@
 					<span class="password">
 						<input type="password" name="password" id="password" />
 					</span><br />
+					<!--p>Rember me <input type="checkbox" name="remember-me" /></p -->
 					<a class="button">
 						<button type="submit">Signin</button>
 					</a>

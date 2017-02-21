@@ -7,6 +7,7 @@ import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +18,7 @@ import java.util.List;
 @Controller
 @ApiIgnore
 @RequestMapping("settings")
+@Secured({"ROLE_ADMIN"})
 public class SettingsController extends AbstractController
 {
 	@Autowired
