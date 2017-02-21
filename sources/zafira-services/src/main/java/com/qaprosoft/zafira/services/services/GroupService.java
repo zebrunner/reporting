@@ -1,16 +1,15 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class GroupService {

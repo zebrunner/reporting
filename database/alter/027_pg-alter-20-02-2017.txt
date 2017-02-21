@@ -1,0 +1,3 @@
+SET SCHEMA 'zafira';
+
+CREATE INDEX test_runs_stated_at_index ON TEST_RUNS(STARTED_AT ASC NULLS LAST);

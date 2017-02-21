@@ -46,7 +46,8 @@ public class GridStatusEmail implements IEmailMessage
 	}
 
 	@Override
-	public String getText() {
+	public String getText() 
+	{
 		return null;
 	}
 }

@@ -54,6 +54,5 @@ public class STFService
 	public boolean disconnectDevice(String serial)
 	{
 		return stfClient.remoteDisconnectDevice(serial) && stfClient.returnDevice(serial);
-	}
-	
+	}	
 }
