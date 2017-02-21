@@ -22,13 +22,14 @@
 				<option value="linechart">Line chart</option>
 				<option value="piechart">Pie chart</option>
 				<option value="table">Table</option>
+				<option value="sql">SQL</option>
 			</select>
 		</div>
 		<div class="form-group">
 			<label>SQL</label> 
-			<textarea class="form-control" data-ng-model="widget.sql" rows="15"></textarea>
+			<textarea class="form-control" data-ng-model="widget.sql" rows="15" required></textarea>
 		</div>
-		<div class="form-group">
+		<div class="form-group" data-ng-if="'sql' != widget.type">
 			<label>Model</label> 
 			<textarea class="form-control" data-ng-model="widget.model" rows="15"></textarea>
 		</div>
