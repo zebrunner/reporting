@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.models.push;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.qaprosoft.zafira.models.db.Test;
 
 public class TestPush extends AbstractPush {
@@ -11,10 +9,12 @@ public class TestPush extends AbstractPush {
 	public TestPush(Test test) {
 		super(Type.TEST);
 		this.test = test;
-		if(!StringUtils.isEmpty(test.getMessage()))
+		if(test.getMessage() != null && !test.getMessage().isEmpty())
 		{
 			// To improve performance on JS side
-			this.test.setMessage(StringUtils.substring(test.getMessage(), 0, 255) + " ...");
+			String message = test.getMessage();
+			message = message.length() > 255 ? message.substring(0, 255) : message;
+			this.test.setMessage(message + " ...");
 		}
 	}
 

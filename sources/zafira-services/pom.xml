@@ -57,6 +57,10 @@
 		</dependency>
 
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
@@ -159,7 +163,21 @@
 		  	<groupId>com.amazonaws</groupId>
 		  	<artifactId>aws-java-sdk</artifactId>
 	  	</dependency>
-
+		
+		<dependency>
+		  <groupId>com.offbytwo.jenkins</groupId>
+		  <artifactId>jenkins-client</artifactId>
+		  <exclusions>
+	        <exclusion>
+	          <groupId>xml-apis</groupId>
+	          <artifactId>xml-apis</artifactId>
+	        </exclusion>
+	        <exclusion>
+	          <groupId>commons-beanutils</groupId>
+	          <artifactId>commons-beanutils</artifactId>
+	        </exclusion>
+	      </exclusions>
+		</dependency>
 	</dependencies>
 
 	<build>

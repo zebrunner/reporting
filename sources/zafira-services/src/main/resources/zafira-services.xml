@@ -41,10 +41,10 @@
 	</bean>
 	
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${mail.host}" />
-		<property name="port" value="${mail.port}" />
-		<property name="username" value="${mail.user}" />
-		<property name="password" value="${mail.pass}" />
+		<property name="host" value="${zafira.mail.host}" />
+		<property name="port" value="${zafira.mail.port}" />
+		<property name="username" value="${zafira.mail.user}" />
+		<property name="password" value="${zafira.mail.pass}" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="javaMailProperties">
 			<props>
@@ -92,4 +92,11 @@
 		<constructor-arg index="0" ref="amazonCredentials" />
 		<constructor-arg index="1" ref="amazonConfig" />
 	</bean>
+	
+	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.JenkinsService">
+		<constructor-arg index="0" value="${zafira.jenkins.url}" />
+		<constructor-arg index="1" value="${zafira.jenkins.username}" />
+		<constructor-arg index="2" value="${zafira.jenkins.password}" />
+	</bean>
+	
 </beans>

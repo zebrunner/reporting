@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, $cookieStore) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore) {
 
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
@@ -252,7 +252,22 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     }];
 	
 	const REBUILD = ['Rebuild', function ($itemScope) {
-        window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+		
+		ConfigService.getConfig("jenkins").then(function(jenkins) {
+			if(jenkins.enabled)
+			{
+				var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
+				$http.get('tests/runs/' + $itemScope.testRun.id + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
+					alertify.success('CI job is rebuilding, it may take some time before status is updated');
+				}, function errorCallback(data) {
+					alertify.error('Unable to rebuild CI job');
+				});
+			}
+			else
+			{
+				window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+			}
+		});
     }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
@@ -499,6 +514,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     });
 	
 	(function init(){
+		
+		console.log(ConfigService.getConfig("jenkins"));
+		
 		if($cookieStore.get("showRealTimeEvents") != null)
 		{
 			$scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
