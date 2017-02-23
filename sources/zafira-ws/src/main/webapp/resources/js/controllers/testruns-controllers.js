@@ -20,6 +20,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	$scope.project = ProjectProvider.getProject();
 	
+	$scope.showReset = false;
+	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
 		'pageSize' : 20
@@ -336,6 +338,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			'pageSize' : 25
 		};
 		$scope.startedAt = null;
+		$scope.showReset = false;
 	};
 	
 	$scope.populateSearchQuery = function(){

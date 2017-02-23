@@ -4,6 +4,8 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 
 	$scope.UtilService = UtilService;
 	
+	$scope.showReset = false;
+	
 	$scope.testCasesSearchCriteria = {
 		'page' : 1,
 		'pageSize' : 25
@@ -64,6 +66,7 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 			'page' : 1,
 			'pageSize' : 25
 		};
+		$scope.showReset = false;
 	};
 	
 	$scope.getClassName = function(fullName) {
