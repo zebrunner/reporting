@@ -6,6 +6,7 @@ import java.util.Date;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -31,6 +32,7 @@ public class TestRun extends AbstractEntity
 	private String scmURL;
 	private String scmBranch;
 	private String scmCommit;
+	@JsonIgnore
 	private String configXML;
 	private WorkItem workItem;
 	private Job job;

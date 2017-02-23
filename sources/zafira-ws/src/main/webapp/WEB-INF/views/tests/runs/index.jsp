@@ -83,16 +83,16 @@
 					</timer>
 				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
 					<br/>
-					<small>{{getArgValue(testRun.configXML, 'app_version')}}</small>
+					<small>{{testRun.appVersion}}</small>
 				</div>
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
 				</div>
 				<div class="col-lg-1">
-					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
+					<span class="badge">{{testRun.env}}</span>
 				</div>
 				<div  class="col-lg-1" align="center">
-					<span class="platform-icon {{getArgValue(testRun.configXML, 'browser')}} {{getArgValue(testRun.configXML, 'mobile_platform_name')}}"></span>
+					<span class="platform-icon {{testRun.platform}}"></span>
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
