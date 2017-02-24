@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
 
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
@@ -387,7 +387,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					return testRun;
 				}
 			},
-			controller : function($scope, $modalInstance, testRun){
+			controller : function($scope, $modalInstance, testRun, $mdConstant){
 				
 				$scope.title = testRun.testSuite.name;
 				$scope.subjectRequired = false;
@@ -395,9 +395,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				
 				$scope.testRun = testRun;
 				$scope.email = {};
+                $scope.email.recipients = [];
+                $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
+                    $scope.email.recipients = $scope.email.recipients.toString();
 					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
 						alertify.success('Email was successfully sent!');
 					}, function errorCallback(data) {
