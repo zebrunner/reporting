@@ -55,12 +55,12 @@
 	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
 	                	</sec:authorize>
 	                </div>
-	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : widget.type != 'table'}">
+	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : ['linechart', 'piechart'].includes(widget.type)}">
 	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
 	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
 	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
 	                     </div>
-	                     <div class="table-responsive" data-ng-if="widget.type == 'table'">
+	                     <div data-ng-if="widget.type == 'table'" class="table-responsive">
 	                     	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
 	                     		<thead>
 		                     		<tr>
@@ -76,6 +76,9 @@
 		                     	</tbody>
 	                     	</table>
 	                     </div>
+					     <div class="table-responsive" data-ng-if="widget.type == 'sql'">
+							<button type="button" class="btn btn-primary" data-ng-click="loadWidget(dashboard.title, widget, dashboard.attributes)">Run SQL query</button>
+						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -84,7 +87,7 @@
 	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
 	<div class="row">
 		<div class="col-lg-12">
-			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openWidgetDetailsModal({}, true)">Create new widget</button>
+			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openWidgetDetailsModal({model : '{}'}, true)">Create new widget</button>
 		</div>
 	</div>
 	<div class="row">

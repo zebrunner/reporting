@@ -43,7 +43,10 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 	$scope.loadDashboardData = function(dashboard) {
 		for(var i = 0; i < dashboard.widgets.length; i++)
 		{
-			$scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes);
+			if(!isSQLWidget(dashboard.widgets[i]))
+			{
+				$scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes);
+			}
 		}
 	};
 	
@@ -66,10 +69,28 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					data[j].CREATED_AT = new Date(data[j].CREATED_AT);
 				}
 			}
-			widget.model = JSON.parse(widget.model);
-			widget.data = {};
-			widget.data.dataset = data;
+			
+			if(!isSQLWidget(widget))
+			{
+				widget.model = JSON.parse(widget.model);
+				widget.data = {};
+				widget.data.dataset = data;
+			}
+			else
+			{
+				alertify.success('Query executed successfully');
+			}
+		}, function errorCallback(data) {
+			if(isSQLWidget(widget))
+			{
+				alertify.error('Query executed with failures');
+			}
 		});
+	};
+	
+	var isSQLWidget = function(widget)
+	{
+		return 'sql' == widget.type;
 	};
 	
 	(function init(){

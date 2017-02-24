@@ -267,7 +267,7 @@ td.no-results {
 	color: grey;
 }
 
-button.md-fab.md-mini:not(#reset-button):not(#search-button) {
+button.md-fab.md-mini:not(#reset-button):not(#search-button):not(.refresh-button) {
 	background-color: lightgray;
 }
 

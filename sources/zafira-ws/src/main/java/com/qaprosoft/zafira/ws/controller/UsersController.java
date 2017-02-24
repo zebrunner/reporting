@@ -13,6 +13,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,7 @@ public class UsersController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public ModelAndView openIndexPage()
 	{
 		return new ModelAndView("users/index");
@@ -53,6 +55,7 @@ public class UsersController extends AbstractController
 			notes = "Creates a new user.", response = UserType.class, responseContainer = "UserType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody UserType createUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
@@ -85,6 +88,7 @@ public class UsersController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
+	@Secured({"ROLE_ADMIN"})
 	public void deleteUser(@PathVariable(value="id") long id) throws ServiceException
 	{
 		userService.deleteUser(id);
@@ -101,6 +105,7 @@ public class UsersController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException
 	{
 		return userService.addUserToGroup(user, id);
@@ -109,6 +114,7 @@ public class UsersController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="group/{groupId}/{userId}", method = RequestMethod.DELETE)
+	@Secured({"ROLE_ADMIN"})
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId, @PathVariable(value = "userId") long userId) throws ServiceException
 	{
 		userService.deleteUserFromGroup(groupId, userId);

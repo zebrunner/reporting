@@ -58,6 +58,12 @@ ZafiraApp.constant('ROUTES', [
 	config : {
 		templateUrl : 'devices/index'
 	}
+},
+{
+	url : '/',
+	config : {
+		redirectTo: 'dashboards'
+	}
 }]);
 
 ZafiraApp.config([ '$routeProvider', 'ROUTES',
@@ -66,7 +72,7 @@ ZafiraApp.config([ '$routeProvider', 'ROUTES',
 			$routeProvider.when(value.url, value.config);
 		});
 		$routeProvider.otherwise({
-			redirectTo : ROUTES[0].url
+			templateUrl: 'errors/404'
 		});
 	}
 ]);
