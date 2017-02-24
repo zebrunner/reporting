@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', '$cookieStore', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route, $cookieStore) {
+ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$location', 'ProjectProvider', '$modal', '$route', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, ProjectProvider, $modal, $route, $cookieStore, $mdConstant) {
 
 	$scope.dashboardId = $location.search().id;
 	$scope.currentUserId = $location.search().userId;
@@ -331,7 +331,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
     $scope.openEmailModal = function(){
 		$modal.open({
 			templateUrl : 'resources/templates/email-details-modal.jsp',
-			controller : function($scope, $modalInstance){
+			controller : function($scope, $modalInstance, $mdConstant){
 				
 				$scope.title = "Zafira Dashboard";
 				$scope.subjectRequired = true;
@@ -342,9 +342,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.email.text = "This is auto-generated email, please do not reply!";
 				$scope.email.hostname = document.location.hostname;
 				$scope.email.urls = [document.location.href];
+				$scope.email.recipients = [];
+				$scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
+					$scope.email.recipients = $scope.email.recipients.toString();
 					$http.post('dashboards/email', $scope.email).then(function successCallback(data) {
 						alertify.success('Email was successfully sent!');
 					}, function errorCallback(data) {
