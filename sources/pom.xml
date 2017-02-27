@@ -13,8 +13,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<source.level>1.7</source.level>
-		<target.level>1.7</target.level>
+		<source.level>1.8</source.level>
+		<target.level>1.8</target.level>
 
 		<servlet-api.version>3.1.0</servlet-api.version>
 		<jsp-api.version>2.2</jsp-api.version>
