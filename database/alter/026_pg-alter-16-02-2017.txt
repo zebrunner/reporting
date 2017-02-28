@@ -18,7 +18,8 @@ CREATE TRIGGER update_timestamp_test_runs
 
 
 --there is no default timestamp trigger for some reason
---DROP TRIGGER update_timestamp_test_configs ON zafira.test_configs;
+DROP TRIGGER IF EXISTS update_timestamp_test_configs ON zafira.test_configs;
+DROP TRIGGER IF EXISTS update_timestamp_test_configs ON zafira.tests;
 
 --TEST_CONFIGS
 DROP INDEX IF EXISTS TEST_CONFIGS_PLATFORM_INDEX;

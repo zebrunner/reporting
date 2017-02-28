@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CIConfig
 {
-	public enum BuildCasue { UPSTREAMTRIGGER, TIMERTRIGGER, MANUALTRIGGER };
+	public enum BuildCasue { UPSTREAMTRIGGER, TIMERTRIGGER, MANUALTRIGGER, SCMTRIGGER };
 	
 	private String ciRunId;
 	private String ciUrl;
