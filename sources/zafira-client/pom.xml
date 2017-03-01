@@ -14,8 +14,8 @@
 	<name>Zafira :: Client</name>
 
 	<properties>
-		<source.version>1.7</source.version>
-		<target.version>1.7</target.version>
+		<source.version>1.8</source.version>
+		<target.version>1.8</target.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 	</properties>
 
@@ -40,10 +40,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>

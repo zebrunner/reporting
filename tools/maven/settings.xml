@@ -49,6 +49,10 @@
         <zafira.ldap.search_filter>sAMAccountName</zafira.ldap.search_filter>
         <zafira.ldap.manager.user></zafira.ldap.manager.user>
         <zafira.ldap.manager.password></zafira.ldap.manager.password>
+
+        <zafira.jenkins.url></zafira.jenkins.url>
+        <zafira.jenkins.username></zafira.jenkins.username>
+        <zafira.jenkins.password></zafira.jenkins.password>
 			</properties>
 		</profile>
 	</profiles>

@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class CertificationType
 {
 	private Set<String> platforms = new TreeSet<>();
@@ -17,7 +15,7 @@ public class CertificationType
 	
 	public void addScreenshot(String step, String platform, String url)
 	{
-		if(StringUtils.isEmpty(step))
+		if(step == null || step.isEmpty())
 		{
 			return;
 		}

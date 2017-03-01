@@ -34,6 +34,8 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.services.JenkinsService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
@@ -68,6 +70,9 @@ public class TestRunsController extends AbstractController
 	
 	@Autowired
 	private ProjectService projectService;
+	
+	@Autowired
+	private JenkinsService jenkinsService;
 	
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
@@ -230,5 +235,22 @@ public class TestRunsController extends AbstractController
 	public void commentTestRun(@PathVariable(value="id") long id, @RequestBody @Valid CommentType comment) throws ServiceException, JAXBException
 	{
 		testRunService.addComment(id, comment.getComment());
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/rerun", method = RequestMethod.GET)
+	public void rerunTestRun(@PathVariable(value="id") long id, @RequestParam(value="rerunFailures", required=false, defaultValue="false") boolean rerunFailures) throws ServiceException, JAXBException
+	{
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		
+		if(!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures))
+		{
+			throw new UnableToRebuildCIJobException();
+		}
 	}
 }

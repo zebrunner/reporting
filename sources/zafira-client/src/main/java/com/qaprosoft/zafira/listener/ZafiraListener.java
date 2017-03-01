@@ -160,6 +160,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 							this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, driverMode);
 							break;
 						case TIMERTRIGGER:
+						case SCMTRIGGER:
 							this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, driverMode);
 							break;
 						case MANUALTRIGGER:

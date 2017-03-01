@@ -17,18 +17,18 @@
 				<div class="col-lg-12">
 					<div class="row">
 						<form data-ng-submit="loadTestCases(1)">
-			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass"></div>
-			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod"></div>
-			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile"></div>
-			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName"></div>
-			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date" style="min-width:95%"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date" style="min-width:95%" data-ng-change="showReset = true"></div>
 		            		<input type="submit" data-ng-hide="true" />
 		            	</form>
 					</div>
 					<div class="row search_controls" align="right">
 						<div class="col-lg-12">
 		            		<span>Found: {{totalResults}}&nbsp;</span>
-							<a href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
+							<a data-ng-if="showReset" href="" data-ng-click="resetSearchCriteria(); loadTestCases(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
 							<a href="" data-ng-click="loadTestCases(1)">Search&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i></a>
 						</div>
 					</div>

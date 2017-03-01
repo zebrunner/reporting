@@ -55,7 +55,7 @@
 	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
 	                	</sec:authorize>
 	                </div>
-	                <div align="center" class="panel-body" data-ng-class="{'graph-box' : ['linechart', 'piechart'].includes(widget.type)}">
+	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
 	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
 	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
 	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>

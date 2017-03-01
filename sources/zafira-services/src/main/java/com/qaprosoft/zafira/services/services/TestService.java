@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,8 @@ public class TestService
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
 	
 	private static final String INV_COUNT = "InvCount";
+	
+	private static final String SPACE = " ";
 	
 	@Autowired
 	private TestMapper testMapper;
@@ -320,7 +322,7 @@ public class TestService
 							
 							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
 							{
-								for(String method : test.getDependsOnMethods().split(StringUtils.SPACE))
+								for(String method : test.getDependsOnMethods().split(SPACE))
 								{
 									testCasesToRerun.addAll(testCasesByMethod.get(method));
 								}

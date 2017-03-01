@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.models.dto.errors.Error;
+import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
+import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.models.dto.errors.Error;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
-import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 public abstract class AbstractController
@@ -100,5 +101,15 @@ public abstract class AbstractController
     public void handleMethodArgumentNotValidException(MethodArgumentNotValidException e) 
 	{
 		LOGGER.error(e.getMessage());
+    }
+	
+	@ExceptionHandler(UnableToRebuildCIJobException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleUnableToRebuildCIJobException(UnableToRebuildCIJobException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
+		return result;
     }
 }

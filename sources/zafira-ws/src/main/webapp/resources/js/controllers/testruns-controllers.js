@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', '$cookieStore', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, $cookieStore) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
 
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
@@ -19,6 +19,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	$scope.showRealTimeEvents = false;
 	
 	$scope.project = ProjectProvider.getProject();
+	
+	$scope.showReset = false;
 	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
@@ -252,7 +254,22 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     }];
 	
 	const REBUILD = ['Rebuild', function ($itemScope) {
-        window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+		
+		ConfigService.getConfig("jenkins").then(function(jenkins) {
+			if(jenkins.enabled)
+			{
+				var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
+				$http.get('tests/runs/' + $itemScope.testRun.id + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
+					alertify.success('CI job is rebuilding, it may take some time before status is updated');
+				}, function errorCallback(data) {
+					alertify.error('Unable to rebuild CI job');
+				});
+			}
+			else
+			{
+				window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+			}
+		});
     }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
@@ -321,6 +338,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			'pageSize' : 25
 		};
 		$scope.startedAt = null;
+		$scope.showReset = false;
 	};
 	
 	$scope.populateSearchQuery = function(){
@@ -369,7 +387,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 					return testRun;
 				}
 			},
-			controller : function($scope, $modalInstance, testRun){
+			controller : function($scope, $modalInstance, testRun, $mdConstant){
 				
 				$scope.title = testRun.testSuite.name;
 				$scope.subjectRequired = false;
@@ -377,9 +395,12 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				
 				$scope.testRun = testRun;
 				$scope.email = {};
+                $scope.email.recipients = [];
+                $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
+                    $scope.email.recipients = $scope.email.recipients.toString();
 					$http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
 						alertify.success('Email was successfully sent!');
 					}, function errorCallback(data) {
@@ -499,6 +520,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     });
 	
 	(function init(){
+		
+		console.log(ConfigService.getConfig("jenkins"));
+		
 		if($cookieStore.get("showRealTimeEvents") != null)
 		{
 			$scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");

@@ -131,6 +131,20 @@ ZafiraApp.provider('ProjectProvider', function() {
     };
 });
 
+ZafiraApp.factory('ConfigService', function($http) {
+    var configService = {
+        getConfig : function(name) {
+            var promise = $http.get('config/' + name).then(function successCallback(rs) {
+                return rs.data;
+            }, function errorCallback(data) {
+                log(data);
+            });
+            return promise;
+        }
+    };
+    return configService;
+});
+
 angular.module('ZafiraApp').filter('orderObjectBy', function() {
     return function(items, field, reverse) {
         var filtered = [];

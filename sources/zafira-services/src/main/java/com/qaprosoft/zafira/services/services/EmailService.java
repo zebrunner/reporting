@@ -23,7 +23,7 @@ public class EmailService
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
 	
-	@Value("${mail.user}")
+	@Value("${zafira.mail.user}")
 	private String mailUser;
 	
 	@Autowired

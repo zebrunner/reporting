@@ -7,6 +7,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			'pageSize' : 20
 	};
 	
+	$scope.showReset = false;
 	$scope.usersSearchCriteria = angular.copy(DEFAULT_SC);
 	
 	$scope.totalResults = 0;
@@ -226,6 +227,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 	
 	$scope.resetSearchCriteria = function(){
 		$scope.usersSearchCriteria = angular.copy(DEFAULT_SC);
+		$scope.showReset = false;
 	};
 	
 	(function init(){

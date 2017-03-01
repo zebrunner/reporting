@@ -19,8 +19,8 @@
 					<div class="row">
 						<form data-ng-submit="loadTestRuns(1);">
 		            		<div class="col-lg-1">
-			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;">
-			            			<option value="" disabled selected>Status</option>
+			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.status" style="padding: 0;" data-ng-change="showReset = true">
+			            			<option value="" disabled>Status</option>
 			            			<option value="PASSED">PASSED</option>
 			            			<option value="FAILED">FAILED</option>
 			            			<option value="SKIPPED">SKIPPED</option>
@@ -29,14 +29,13 @@
 			            			<option value="UNKNOWN">UNKNOWN</option>
 			            		</select>
 			            	</div>
-			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite"></div>
-			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="App version" data-ng-model="testRunSearchCriteria.appVersion"></div>
-			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL"></div>
-			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="App version" data-ng-model="testRunSearchCriteria.appVersion" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-1">
-			            		<!-- input type="text" class="form-control" placeholder="Platform" data-ng-model="testRunSearchCriteria.platform" -->
-			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;">
-			            			<option value="" disabled selected>Platform</option>
+			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;" data-ng-change="showReset = true">
+			            			<option value="" disabled>Platform</option>
 			            			<option value="Android">Android</option>
 			            			<option value="iOS">iOS</option>
 			            			<option value="chrome">chrome</option>
@@ -45,7 +44,7 @@
 			            			<option value="ie">ie</option>
 			            		</select>
 			            	</div>
-			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%"></div>
+			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%" data-ng-change="showReset = true"></div>
 			            	<input type="submit" data-ng-hide="true" />
 		            	</form>
 					</div>
@@ -55,7 +54,7 @@
 		            	</div>
 		            	<div class="col-lg-9" align="right">
 		            		<span>Found: {{totalResults}}&nbsp;</span>
-							<a href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
+							<a data-ng-if="showReset" href="" data-ng-click="resetSearchCriteria(); loadTestRuns(1);" class="clear-form danger">Reset&nbsp;<i class="fa fa-lg fa-times-circle"></i>&nbsp;</a>
 							<a href="" data-ng-click="loadTestRuns(1);">Search&nbsp;<i class="fa fa-lg fa-arrow-circle-right"></i></a>
 						</div>
 					</div>
@@ -83,16 +82,16 @@
 					</timer>
 				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
 					<br/>
-					<small>{{getArgValue(testRun.configXML, 'app_version')}}</small>
+					<small>{{testRun.appVersion}}</small>
 				</div>
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
 				</div>
 				<div class="col-lg-1">
-					<span class="badge">{{getArgValue(testRun.configXML, 'env')}}</span>
+					<span class="badge">{{testRun.env}}</span>
 				</div>
 				<div  class="col-lg-1" align="center">
-					<span class="platform-icon {{getArgValue(testRun.configXML, 'browser')}} {{getArgValue(testRun.configXML, 'mobile_platform_name')}}"></span>
+					<span class="platform-icon {{testRun.platform}}"></span>
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<div>
