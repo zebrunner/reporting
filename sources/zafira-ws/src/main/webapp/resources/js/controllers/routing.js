@@ -64,6 +64,12 @@ ZafiraApp.constant('ROUTES', [
 	config : {
 		redirectTo: 'dashboards'
 	}
+},
+{
+	url : '/views/:id',
+	config : {
+		templateUrl : 'views/index'
+	}
 }]);
 
 ZafiraApp.config([ '$routeProvider', 'ROUTES',

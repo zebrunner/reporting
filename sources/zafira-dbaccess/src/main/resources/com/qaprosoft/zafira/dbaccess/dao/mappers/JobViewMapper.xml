@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.JobViewMapper">
+
+    <insert id="createJobView" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+          INSERT
+         	 INTO zafira.JOB_VIEWS (VIEW_ID, JOB_ID, ENV, SIZE, POSITION)
+          VALUES (
+            #{viewId},
+            #{job.id},
+            #{env},
+            #{size},
+            #{position}
+          )
+        ]]>
+    </insert>
+
+    <sql id="getJobView">
+        <![CDATA[
+          SELECT
+	          JV.ID AS JOB_VIEW_ID,
+	          JV.ENV AS JOB_VIEW_ENV,
+	          JV.SIZE AS JOB_VIEW_SIZE,
+	          JV.POSITION AS JOB_VIEW_POSITION,
+	          JV.MODIFIED_AT AS JOB_VIEW_MODIFIED_AT,
+	          JV.CREATED_AT AS JOB_VIEW_CREATED_AT,
+	          J.ID AS JOB_ID,
+			  J.USER_ID AS JOB_USER_ID,
+			  J.NAME AS JOB_NAME,
+			  J.JOB_URL AS JOB_JOB_URL,
+			  J.JENKINS_HOST AS JOB_JENKINS_HOST,
+			  J.MODIFIED_AT AS JOB_MODIFIED_AT,
+			  J.CREATED_AT AS JOB_CREATED_AT
+          FROM
+	          zafira.JOB_VIEWS JV
+	      LEFT JOIN
+	          zafira.JOBS J
+	      ON
+          	JV.JOB_ID = J.ID
+        ]]>
+    </sql>
+
+    <select id="getJobViewById" resultMap="JobViewResultMap">
+        <include refid="getJobView"/>
+        <![CDATA[
+          WHERE
+          	V.ID = #{id}
+        ]]>
+    </select>
+    
+    <select id="getJobViewsByViewId" resultMap="JobViewResultMap">
+        <include refid="getJobView"/>
+        <![CDATA[
+          WHERE
+          	JV.VIEW_ID = #{viewId}
+        ]]>
+    </select>
+    
+     <select id="getJobViewsByViewIdAndEnv" resultMap="JobViewResultMap">
+        <include refid="getJobView"/>
+        <![CDATA[
+          WHERE
+          	JV.VIEW_ID = #{viewId} AND JV.ENV = #{env}
+        ]]>
+    </select>
+
+    <delete id="deleteJobViewById">
+        <![CDATA[
+          DELETE
+          	FROM zafira.JOB_VIEWS
+          WHERE
+          	ID = #{id}
+        ]]>
+    </delete>
+    
+    <delete id="deleteJobViewsByViewIdAndEnv">
+        <![CDATA[
+          DELETE
+          	FROM zafira.JOB_VIEWS
+          WHERE
+          	VIEW_ID = #{viewId} AND ENV = #{env}
+        ]]>
+    </delete>
+
+    <resultMap id="JobViewResultMap" type="com.qaprosoft.zafira.models.db.JobView" autoMapping="false">
+        <id property="id" column="JOB_VIEW_ID"/>
+        <result property="env" column="JOB_VIEW_ENV"/>
+        <result property="position" column="JOB_VIEW_POSITION"/>
+        <result property="size" column="JOB_VIEW_SIZE"/>
+        <result property="modifiedAt" column="JOB_VIEW_MODIFIED_AT" />
+		<result property="createdAt" column="JOB_VIEW_CREATED_AT" />
+        <association property="job" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper.JobResultMap"/>
+    </resultMap>
+
+</mapper>

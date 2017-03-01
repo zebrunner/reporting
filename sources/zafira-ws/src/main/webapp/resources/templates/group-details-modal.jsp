@@ -26,7 +26,7 @@
     </form>
     <div class="form-group">
         <label>Groups({{count}})</label>
-        <div data-ng-hide="groups.length == 0" class="modal-body ng-scope" style="overflow-y: scroll; height: 200px; border: 1px solid #cccccc">
+        <div data-ng-hide="groups.length == 0" class="modal-body ng-scope scrollable">
             <div class="row ng-scope" data-ng-repeat="group in groups | orderBy:'name'">
                 <div class="col-lg-12">
                     <b class="ng-binding">{{group.name}}</b>

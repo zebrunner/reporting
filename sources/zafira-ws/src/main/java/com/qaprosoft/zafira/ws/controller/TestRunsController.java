@@ -248,7 +248,7 @@ public class TestRunsController extends AbstractController
 			throw new TestRunNotFoundException();
 		}
 		
-		if(!jenkinsService.rerunJob(testRun.getJob().getName(), testRun.getBuildNumber(), rerunFailures))
+		if(!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures))
 		{
 			throw new UnableToRebuildCIJobException();
 		}

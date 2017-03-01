@@ -29,6 +29,10 @@
 				zafira.JOBS J
 		]]>
 	</sql>
+	
+	<select id="getAllJobs" resultMap="JobResultMap">
+		<include refid="getJob" />
+	</select>
 
 	<select id="getJobById" resultMap="JobResultMap">
 		<include refid="getJob" />
