@@ -62,3 +62,4 @@
 <script src="<spring:url value='/resources/js/controllers/devices-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/metrics-controllers.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/controllers/certification-controllers.js'/>" type="text/javascript"></script>
+<script src="<spring:url value='/resources/js/controllers/views-controllers.js'/>" type="text/javascript"></script>

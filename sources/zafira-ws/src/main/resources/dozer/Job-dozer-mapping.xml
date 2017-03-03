@@ -27,4 +27,52 @@
 			<b>user.id</b>
 		</field>
 	</mapping>
+	
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.models.dto.ViewType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.View</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>projectId</a>
+			<b>project.id</b>
+		</field>
+	</mapping>
+	
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.models.dto.JobViewType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.JobView</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>viewId</a>
+			<b>viewId</b>
+		</field>
+		<field>
+			<a>env</a>
+			<b>env</b>
+		</field>
+		<field>
+			<a>position</a>
+			<b>position</b>
+		</field>
+		<field>
+			<a>size</a>
+			<b>size</b>
+		</field>
+		<field>
+			<a>job</a>
+			<b>job</b>
+		</field>
+	</mapping>
 </mappings>

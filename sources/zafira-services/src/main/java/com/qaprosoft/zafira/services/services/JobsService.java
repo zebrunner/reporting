@@ -1,11 +1,15 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.JobViewMapper;
 import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.JobView;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -14,10 +18,19 @@ public class JobsService
 	@Autowired
 	private JobMapper jobMapper;
 	
+	@Autowired
+	private JobViewMapper jobViewMapper;
+	
 	@Transactional(rollbackFor = Exception.class)
 	public void createJob(Job job) throws ServiceException
 	{
 		jobMapper.createJob(job);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Job> getAllJobs() throws ServiceException
+	{
+		return jobMapper.getAllJobs();
 	}
 	
 	@Transactional(readOnly = true)
@@ -63,5 +76,30 @@ public class JobsService
 			newJob = job;
 		}
 		return newJob;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public JobView createJobView(JobView jobView) throws ServiceException
+	{
+		jobViewMapper.createJobView(jobView);
+		return jobView;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<JobView> getJobViewsByViewId(long viewId) throws ServiceException
+	{
+		return jobViewMapper.getJobViewsByViewId(viewId);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<JobView> getJobViewsByViewIdAndEnv(long viewId, String env) throws ServiceException
+	{
+		return jobViewMapper.getJobViewsByViewIdAndEnv(viewId, env);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteJobViews(long viewId, String env) throws ServiceException
+	{
+		jobViewMapper.deleteJobViewsByViewIdAndEnv(viewId, env);
 	}
 }
