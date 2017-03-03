@@ -420,7 +420,10 @@
 				(SELECT 
 					JOB_ID, MAX(STARTED_AT) AS STARTED_AT
 			     FROM 
-			    	zafira.TEST_RUNS GROUP BY JOB_ID) AS MAX 
+			    	zafira.TEST_RUNS
+			     WHERE 
+			     	STARTED_AT >= current_date - interval '1 week'
+			     GROUP BY JOB_ID) AS MAX 
 			USING 
 				(JOB_ID, STARTED_AT)
 			WHERE

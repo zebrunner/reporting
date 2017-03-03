@@ -47,6 +47,8 @@
         <![CDATA[
           WHERE
           	V.ID = #{id}
+          ORDER BY 
+          	JV.POSITION
         ]]>
     </select>
     
@@ -55,6 +57,8 @@
         <![CDATA[
           WHERE
           	JV.VIEW_ID = #{viewId}
+          ORDER BY 
+          	JV.POSITION
         ]]>
     </select>
     
@@ -63,6 +67,9 @@
         <![CDATA[
           WHERE
           	JV.VIEW_ID = #{viewId} AND JV.ENV = #{env}
+          ORDER BY 
+          	JV.POSITION
+          	
         ]]>
     </select>
 

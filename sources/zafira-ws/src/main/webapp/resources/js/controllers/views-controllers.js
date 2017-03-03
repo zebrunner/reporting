@@ -5,6 +5,8 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	$scope.view = {};
 	$scope.jobViews = {};
 	$scope.jobs = [];
+	$scope.jenkinsEnabled = false;
+	$scope.jobsSelected = [];
 	
 	$scope.loadView = function(){
 		$http.get('views/' + $routeParams.id).then(function successCallback(view) {
@@ -17,8 +19,9 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	$scope.loadJobViews = function(){
 		$http.get('jobs/views/' + $routeParams.id).then(function successCallback(jobViews) {
 			$scope.jobViews = jobViews.data;
+			console.log($scope.jobViews);
 		}, function errorCallback(data) {
-			console.error('Failed to load job views');
+			console.error('Failed to load jobs views');
 		});
 	};
 	
@@ -30,16 +33,18 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 		});
 	};
 	
-	$scope.deleteJobViews = function(env){
-		$http.delete('jobs/views/' + $routeParams.id + "?env=" + env).then(function successCallback() {
-			delete $scope.jobViews[env];
-			alertify.success('Job view deleted successfully');
-		}, function errorCallback(data) {
-			alertify.error('Failed to delete job view');
-		});
+	$scope.selectJob = function(id, isChecked) {		 
+		if(isChecked) {
+			$scope.jobsSelected.push(id);
+		} else {
+			var idx = $scope.jobsSelected.indexOf(id);
+			if(idx > -1){
+				$scope.jobsSelected.splice(idx, 1);
+			}
+		}          
 	};
 	
-	$scope.openJobsViewModal = function(env){
+	$scope.openJobsViewModal = function(jobView){
 		$modal.open({
 			templateUrl : 'resources/templates/jobs-view-details-modal.jsp',
 			resolve : {
@@ -49,41 +54,80 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 				'jobs' : function(){
 					return $scope.jobs;
 				},
-				'env' : function(){
-					return $scope.env;
+				'existingJobView' : function(){
+					return jobView;
 				}
 			},
-			controller : function($scope, $modalInstance, viewId, env, jobs){
+			controller : function($scope, $modalInstance, viewId, jobs, existingJobView){
+				
+				$scope.edit = existingJobView != null;
 				
 				$scope.jobs = jobs;
-				$scope.jobsView = {};
-				
-				var jobsSelected = [];
+				$scope.jobView = {};
+				$scope.jobViews = [];
+				$scope.jobsSelected = [];
 				
 				$scope.selectJob = function(id, isChecked) {		 
 					if(isChecked) {
-						jobsSelected.push(id);
+						$scope.jobsSelected.push(id);
 					} else {
-						var idx = jobsSelected.indexOf(id);
+						var idx = $scope.jobsSelected.indexOf(id);
 						if(idx > -1){
-							jobsSelected.splice(idx, 1);
+							$scope.jobsSelected.splice(idx, 1);
 						}
 					}          
 				};
 				
-				$scope.create = function(){
-					var jobsViews = [];
-					for(var i = 0; i < jobsSelected.length; i++)
+				if($scope.edit)
+				{
+					$scope.jobView.position = existingJobView.jobViews[0].position;
+					$scope.jobView.size = existingJobView.jobViews[0].size;
+					$scope.jobView.env = existingJobView.jobViews[0].env;
+					for(var i = 0; i < existingJobView.jobViews.length; i++)
 					{
-						var jobView = {'viewId': viewId, 'job': {'id': jobsSelected[i]}, 'env': $scope.jobsView.env, 'position': 0, 'size': $scope.jobsView.size};
-						jobsViews.push(jobView);
+						$scope.selectJob(existingJobView.jobViews[i].job.id, true);
 					}
-					$http.post('jobs/views', jobsViews).then(function successCallback(data) {
+				};
+				
+				$scope.createJobView = function(){
+					var jobsViews = [];
+					for(var i = 0; i < $scope.jobsSelected.length; i++)
+					{
+						var jobView = {'viewId': viewId, 'job': {'id': $scope.jobsSelected[i]}, 'env': $scope.jobView.env, 'position': $scope.jobView.position, 'size': $scope.jobView.size};
+						$scope.jobViews.push(jobView);
+					}
+					$http.post('jobs/views', $scope.jobViews).then(function successCallback(data) {
 						$modalInstance.close(0);
 						$route.reload();
 						alertify.success('Job view created successfully');
 					}, function errorCallback(data) {
 						alertify.error('Failed to create job view');
+					});
+				};
+				
+				$scope.updateJobView = function(env){
+					var jobsViews = [];
+					for(var i = 0; i < $scope.jobsSelected.length; i++)
+					{
+						var jobView = {'viewId': viewId, 'job': {'id': $scope.jobsSelected[i]}, 'env': $scope.jobView.env, 'position': $scope.jobView.position, 'size': $scope.jobView.size};
+						$scope.jobViews.push(jobView);
+					}
+					$http.put('jobs/views/' + viewId + "?env=" + env, $scope.jobViews).then(function successCallback(data) {
+						$modalInstance.close(0);
+						$route.reload();
+						alertify.success('Job view updated successfully');
+					}, function errorCallback(data) {
+						alertify.error('Failed to update job view');
+					});
+				};
+				
+				$scope.deleteJobView = function(env){
+					$http.delete('jobs/views/' + $routeParams.id + "?env=" + env).then(function successCallback() {
+						$modalInstance.close(0);
+						$route.reload();
+						alertify.success('Job view deleted successfully');
+					}, function errorCallback(data) {
+						alertify.error('Failed to delete job view');
 					});
 				};
 				
@@ -96,33 +140,41 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
         });
 	};
 	
+	$scope.rebuildJobs = function(testRunIds) {		 
+		var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
+		for(var i = 0; i < testRunIds.length; i++)
+		{
+			$http.get('tests/runs/' + testRunIds[i] + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
+				alertify.success('CI job is rebuilding, it may take some time before status is updated');
+			}, function errorCallback(data) {
+				alertify.error('Unable to rebuild CI job');
+			}); 
+		}
+	};
+	
 	// --------------------  Context menu ------------------------
 	const OPEN_TEST_RUN = ['Open', function ($itemScope) {
-        window.open($location.$$absUrl + "?id=" + $itemScope.jtr.testRuns[jobView.job.id].id, '_blank');
+		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+        window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
     }];
 	
 	const REBUILD = ['Rebuild', function ($itemScope) {
 		
-		ConfigService.getConfig("jenkins").then(function(jenkins) {
-			if(jenkins.enabled)
-			{
-				var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
-				$http.get('tests/runs/' + $itemScope.testRun.id + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
-					alertify.success('CI job is rebuilding, it may take some time before status is updated');
-				}, function errorCallback(data) {
-					alertify.error('Unable to rebuild CI job');
-				});
-			}
-			else
-			{
-				window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
-			}
-		});
+		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		if($scope.jenkinsEnabled)
+		{
+			$scope.rebuildJobs([testRun.id]);
+		}
+		else
+		{
+			window.open($itemScope.jobView.job.jobURL + "/" + testRun.buildNumber + '/rebuild/parameterized', '_blank');
+		}
     }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
+		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
 	  	var node = document.createElement('pre');
-  	    node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
+  	    node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id;
   	    document.body.appendChild(node);
   	    
   	    var selection = getSelection();
@@ -137,6 +189,8 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
   	    document.body.removeChild(node);
 	}];
 	
+	
+	
 	$scope.userMenuOptions = [
 	      OPEN_TEST_RUN,
 	      COPY_TEST_RUN_LINK,
@@ -148,5 +202,8 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 		$scope.loadView();
 		$scope.loadJobViews();
 		$scope.loadJobs();
+		ConfigService.getConfig("jenkins").then(function(jenkins) {
+			$scope.jenkinsEnabled = jenkins.enabled;
+		});
 	})();
 } ]);

@@ -2,12 +2,14 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.ws.rs.QueryParam;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,10 +85,27 @@ public class JobsController extends AbstractController
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="views/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
+	public @ResponseBody List<JobViewType> updateJobViews(@RequestBody @Valid List<JobViewType> jobViews, @PathVariable(value="id") long viewId, @QueryParam("env") String env) throws ServiceException
+	{
+		if(!CollectionUtils.isEmpty(jobViews))
+		{
+			jobsService.deleteJobViews(viewId, env);
+			for(JobViewType jobView : jobViews)
+			{
+				jobView = mapper.map(jobsService.createJobView(mapper.map(jobView, JobView.class)), JobViewType.class);
+			}
+		}
+		return jobViews;
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="views/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, JobTestRuns> getJobViews(@PathVariable(value="id") long id) throws ServiceException
 	{
-		Map<String, JobTestRuns> jobViews = new HashMap<>();
+		Map<String, JobTestRuns> jobViews = new LinkedHashMap<>();
 		for(JobView jobView : jobsService.getJobViewsByViewId(id))
 		{
 			if(!jobViews.containsKey(jobView.getEnv()))

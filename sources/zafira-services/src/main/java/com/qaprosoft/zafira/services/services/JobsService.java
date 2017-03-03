@@ -91,6 +91,12 @@ public class JobsService
 		return jobViewMapper.getJobViewsByViewId(viewId);
 	}
 	
+	@Transactional(readOnly = true)
+	public List<JobView> getJobViewsByViewIdAndEnv(long viewId, String env) throws ServiceException
+	{
+		return jobViewMapper.getJobViewsByViewIdAndEnv(viewId, env);
+	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteJobViews(long viewId, String env) throws ServiceException
 	{
