@@ -126,6 +126,14 @@ ZafiraApp.provider('ProjectProvider', function() {
                     query = "?project=" + $cookieStore.get("project").name;
                 }
                 return query;
+            },
+            getProjectIdQueryParam: function(sc) {
+                var query = "";
+                if($cookieStore.get("project") != null)
+                {
+                    query = "?projectId=" + $cookieStore.get("project").id;
+                }
+                return query;
             }
         }
     };

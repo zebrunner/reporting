@@ -114,6 +114,17 @@ public class TestRunService
 		return testRunMapper.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(jobId, buildNumber);
 	}
 	
+	@Transactional(readOnly = true)
+	public Map<Long, TestRun> getLatestJobTestRuns(String env, List<Long> jobIds) throws ServiceException
+	{
+		Map<Long, TestRun> jobTestRuns = new HashMap<>();
+		for(TestRun tr : testRunMapper.getLatestJobTestRuns(env, jobIds))
+		{
+			jobTestRuns.put(tr.getJob().getId(), tr);
+		}
+		return jobTestRuns;
+	}
+	
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun updateTestRun(TestRun testRun) throws ServiceException
 	{

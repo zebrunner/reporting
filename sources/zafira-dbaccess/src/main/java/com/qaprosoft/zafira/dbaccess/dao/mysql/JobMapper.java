@@ -1,10 +1,14 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import java.util.List;
+
 import com.qaprosoft.zafira.models.db.Job;
 
 public interface JobMapper
 {
 	void createJob(Job job);
+	
+	List<Job> getAllJobs();
 
 	Job getJobById(long id);
 

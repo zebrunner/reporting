@@ -19,7 +19,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0" data-ng-controller="NavigationCtrl">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#!/dashboard">Zafira <small>server 1.8 | client 1.8.9</small></a>
+	                <a class="navbar-brand" href="#!/dashboard">Zafira <small>server {{version.service}} | client {{version.client}}</small></a>
 	            </div>
 	            <ul class="nav navbar-top-links navbar-left">
 		            <li class="dropdown">
@@ -28,7 +28,7 @@
 		                    	<li class="pointer">
 		                            <a data-ng-click="setProject(null)" style="color: red;">Clear x</a>
 		                        </li>
-		                        <li data-ng-repeat="project in projects">
+		                        <li data-ng-repeat="project in projects | orderBy:'name'">
 		                            <a data-ng-click="setProject(project)">{{project.name}}</a>
 	                        	</li>
 	                        	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
@@ -45,8 +45,29 @@
 	                    <a href="#!/dashboards"><i class="fa fa-lg fa-pie-chart fa-fw"></i> Dashboards</a>
 	               	</li>
 	               	<li>
-	                    <a href="#!/tests/runs"><i class="fa fa-lg fa-play-circle fa-fw"></i> Test runs</a>
-	               	</li>
+	                    <a class="dropdown-toggle" data-toggle="dropdown" href="" aria-expanded="false" data-ng-click="loadViews()">
+	                        <i class="fa fa-lg fa-play-circle"></i> Test runs <i class="fa fa-caret-down"></i>
+	                    </a>
+	                    <ul class="dropdown-menu dropdown-user">
+	                        <li>
+	                        	<a href="#!/tests/runs">Show latest runs</a>
+	                        </li>
+	                        <li class="divider" data-ng-if="views.length > 0"></li>
+	                        <li data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
+	                            <a href="#!/views/{{view.id}}">{{view.name}} 
+	                            </a>
+	                            <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                            		<i style="position: absolute; right: 10px; top: 5px;" class="fa fa-gear fa-fw" data-ng-click="openViewDetailsModal(view)"></i>
+                            	</sec:authorize>
+                        	</li>
+	                        <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	                        	<li class="pointer">
+		                            <a data-ng-click="openViewDetailsModal()" style="color: green;">New +</a>
+		                        </li>
+	                        </sec:authorize>
+	                    </ul>
+	                    <!-- /.dropdown-user -->
+	                </li>
 	               	<li>
 	                    <a href="#!/tests/cases"><i class="fa fa-lg fa-check-square fa-fw"></i> Test cases</a>
 	               	</li>
