@@ -76,6 +76,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
    };
 	
 	$scope.addTest = function(test, isEvent) {
+		
+		test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
+		
 		var testRun = $scope.testRuns[test.testRunId];
 		if(testRun == null)
 		{

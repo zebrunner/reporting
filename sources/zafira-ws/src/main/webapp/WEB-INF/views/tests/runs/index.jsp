@@ -110,8 +110,11 @@
 						<div class="col-lg-1">
 							<div class="pointer" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;<i class="fa fa-sort"></i></div>
 						</div>
-						<div class="col-lg-10">
+						<div class="col-lg-9">
 							<div class="pointer" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;<i class="fa fa-sort"></i></div>
+						</div>
+						<div class="col-lg-1">
+							<div class="pointer" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;<i class="fa fa-sort"></i></div>
 						</div>
 						<div class="col-lg-1">
 							<div class="pointer" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started at&nbsp;<i class="fa fa-sort"></i></div>
