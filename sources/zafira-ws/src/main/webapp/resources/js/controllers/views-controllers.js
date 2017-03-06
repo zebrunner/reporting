@@ -19,7 +19,6 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	$scope.loadJobViews = function(){
 		$http.get('jobs/views/' + $routeParams.id).then(function successCallback(jobViews) {
 			$scope.jobViews = jobViews.data;
-			console.log($scope.jobViews);
 		}, function errorCallback(data) {
 			console.error('Failed to load jobs views');
 		});
@@ -140,7 +139,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
         });
 	};
 	
-	$scope.rebuildJobs = function(testRunIds) {		 
+	$scope.rebuildJobs = function(testRunIds) {
 		var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
 		for(var i = 0; i < testRunIds.length; i++)
 		{
@@ -150,17 +149,19 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 				alertify.error('Unable to rebuild CI job');
 			}); 
 		}
+		$scope.loadJobViews();
+		$scope.jobsSelected = [];
 	};
 	
 	// --------------------  Context menu ------------------------
 	const OPEN_TEST_RUN = ['Open', function ($itemScope) {
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
         window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
     }];
 	
 	const REBUILD = ['Rebuild', function ($itemScope) {
 		
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
 		if($scope.jenkinsEnabled)
 		{
 			$scope.rebuildJobs([testRun.id]);
@@ -172,7 +173,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
     }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
 	  	var node = document.createElement('pre');
   	    node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id;
   	    document.body.appendChild(node);

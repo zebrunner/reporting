@@ -3,8 +3,8 @@
 ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider) {
 
 	$scope.UtilService = UtilService;
-	
-	$scope.showReset = false;
+	$scope.testCaseId = $location.search().id;
+	$scope.showReset = $scope.testCaseId != null;
 	
 	$scope.testCasesSearchCriteria = {
 		'page' : 1,
@@ -28,8 +28,12 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 		{
 			$scope.testCasesSearchCriteria.pageSize = pageSize;
 		}
+		if($scope.testCaseId)
+		{
+			$scope.testCasesSearchCriteria.id = $scope.testCaseId;
+		}
 		
-		$http.post('tests/cases/search', ProjectProvider.initProject($scope.testCasesSearchCriteria)).then(function successCallback(data) {
+		return $http.post('tests/cases/search', ProjectProvider.initProject($scope.testCasesSearchCriteria)).then(function successCallback(data) {
 			var data = data.data;
 			$scope.testCasesSearchCriteria.page = data.page;
 			$scope.testCasesSearchCriteria.pageSize = data.pageSize;
@@ -39,6 +43,8 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 				$scope.testCases[i].showDetails = false;
 			}
 			$scope.totalResults = data.totalResults;
+			
+			
 		}, function errorCallback(data) {
 			console.error('Failed to search test cases');
 		});
@@ -67,6 +73,7 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 			'pageSize' : 25
 		};
 		$scope.showReset = false;
+		$scope.testCaseId = false;
 	};
 	
 	$scope.getClassName = function(fullName) {
@@ -75,7 +82,19 @@ ZafiraApp.controller('TestCasesListCtrl', [ '$scope', '$rootScope', '$http' ,'$l
 	};
 	
 	(function init(){
-		$scope.loadTestCases(1);
+		$scope.loadTestCases(1).then(function() {
+			if($scope.testCaseId)
+			{
+				for(var i = 0; i < $scope.testCases.length; i++)
+				{
+					if($scope.testCases[i].id == $scope.testCaseId)
+					{
+						$scope.testCases[i].showDetails = true;
+						$scope.loadTests($scope.testCases[i]);
+					}
+				}
+			}
+		});
 	})();
 	
 }]);
