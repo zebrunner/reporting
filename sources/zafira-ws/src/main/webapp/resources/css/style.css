@@ -324,3 +324,11 @@ body.modal-open .md-virtual-repeat-container.md-autocomplete-suggestions-contain
 	height: 200px; 
 	border: 1px solid #cccccc
 }
+
+span.light {
+	background: #aaa !important;
+}
+
+span.light_text {
+	color: #aaa !important;
+}

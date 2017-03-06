@@ -20,7 +20,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	
 	$scope.project = ProjectProvider.getProject();
 	
-	$scope.showReset = false;
+	$scope.showReset = $scope.testRunId != null;
 	
 	$scope.testRunSearchCriteria = {
 		'page' : 1,
@@ -396,7 +396,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.testRun = testRun;
 				$scope.email = {};
                 $scope.email.recipients = [];
-                $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE];
+                $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
@@ -520,8 +520,6 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     });
 	
 	(function init(){
-		
-		console.log(ConfigService.getConfig("jenkins"));
 		
 		if($cookieStore.get("showRealTimeEvents") != null)
 		{

@@ -154,13 +154,13 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	
 	// --------------------  Context menu ------------------------
 	const OPEN_TEST_RUN = ['Open', function ($itemScope) {
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
         window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
     }];
 	
 	const REBUILD = ['Rebuild', function ($itemScope) {
 		
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
 		if($scope.jenkinsEnabled)
 		{
 			$scope.rebuildJobs([testRun.id]);
@@ -172,7 +172,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
     }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
-		var testRun = $itemScope.jtr.testRuns[$itemScope.jobView.job.id];
+		var testRun = $itemScope.jobTestRuns.testRuns[$itemScope.jobView.job.id];
 	  	var node = document.createElement('pre');
   	    node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id;
   	    document.body.appendChild(node);
