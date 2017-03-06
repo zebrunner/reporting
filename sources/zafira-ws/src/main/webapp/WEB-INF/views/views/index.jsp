@@ -46,14 +46,17 @@
 							<span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobTestRuns.testRuns[jobView.job.id].skipped == 0, 'label-warning': jobTestRuns.testRuns[jobView.job.id].skipped > 0}">{{jobTestRuns.testRuns[jobView.job.id].skipped}}</span>
 						</div>
 					</div>
-					<div align="right">
-						<button type="button" class="btn btn-outline btn-success btn-xs" data-ng-click="rebuildJobs(jobsSelected)" data-ng-if="jobsSelected.length > 0 && jenkinsEnabled">Rebuild {{jobsSelected.length}} job(s)</button>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="row" data-ng-if="jobsSelected.length">
+		<div class="col-lg-12">
+			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="rebuildJobs(jobsSelected)">Rebuild {{jobsSelected.length}} job(s)</button>
+		</div>
+	</div>
 	<sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	<br/>
 	<div class="row">
 		<div class="col-lg-12">
 			<button type="button" class="btn btn-outline btn-success btn-lg btn-block" data-ng-click="openJobsViewModal()">Create job view</button>

@@ -19,7 +19,6 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	$scope.loadJobViews = function(){
 		$http.get('jobs/views/' + $routeParams.id).then(function successCallback(jobViews) {
 			$scope.jobViews = jobViews.data;
-			console.log($scope.jobViews);
 		}, function errorCallback(data) {
 			console.error('Failed to load jobs views');
 		});
@@ -140,7 +139,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
         });
 	};
 	
-	$scope.rebuildJobs = function(testRunIds) {		 
+	$scope.rebuildJobs = function(testRunIds) {
 		var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
 		for(var i = 0; i < testRunIds.length; i++)
 		{
@@ -150,6 +149,8 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 				alertify.error('Unable to rebuild CI job');
 			}); 
 		}
+		$scope.loadJobViews();
+		$scope.jobsSelected = [];
 	};
 	
 	// --------------------  Context menu ------------------------
