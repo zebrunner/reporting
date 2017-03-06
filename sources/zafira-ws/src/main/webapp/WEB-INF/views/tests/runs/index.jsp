@@ -88,7 +88,7 @@
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
 				</div>
 				<div class="col-lg-1">
-					<span class="badge">{{testRun.env}}</span>
+					<span class="badge light">{{testRun.env}}</span>
 				</div>
 				<div  class="col-lg-1" align="center">
 					<span class="platform-icon {{testRun.platform}}"></span>
@@ -120,11 +120,12 @@
                     <div class="row test_result" data-ng-class="test.status" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse">
                     	<div class="col-lg-10">
                     		<div class="clearfix">
-                    			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/> {{test.name}} 
+                    			<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>   <a href="#!/tests/cases?id={{test.testCaseId}}" target="_blank">{{test.name}}</a>
                     			<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
                     			<span class="float_right" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" style="margin: 0 5px;">|</span>
                     			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="openKnownIssueModal(test)">Mark as known issue</a>
-                    			<span data-ng-if="test.testConfig.device" class="disabled"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}} </span>
+                    			<span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                    			<span data-ng-if="test.testConfig.device" class="badge light"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                     		</div>
                             <div class="result_error {{test.status}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                             	<show-more text="test.message" limit="100"></show-more>

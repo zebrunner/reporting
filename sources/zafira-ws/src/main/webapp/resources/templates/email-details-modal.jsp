@@ -25,10 +25,9 @@
 					<!-- textarea name="value" class="form-control validation" data-ng-model="email.text" required></textarea -->
 				</div>
 				<div class="form-group">
-					<label>Recepients</label> 
+					<label>Recepients ({{email.recipients.length}})</label> 
 					<%--<input name="value" type="text" class="form-control validation" data-ng-model="email.recipients" required/>--%>
-					<md-chips ng-model="email.recipients" name="value" placeholder="Add recipient" md-separator-keys="keys">
-					</md-chips>
+					<md-chips ng-model="email.recipients" name="value" placeholder="Space separated" md-separator-keys="keys"></md-chips>
 				</div>
 			</form>
 		</div>
