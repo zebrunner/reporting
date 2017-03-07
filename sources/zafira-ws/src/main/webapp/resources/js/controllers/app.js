@@ -56,6 +56,10 @@ ZafiraApp.service('UtilService', function() {
             separator +
             fullStr.substr(fullStr.length - backChars);
     };
+    
+    this.isEmpty = function(obj) {
+    	return jQuery.isEmptyObject(obj);
+    };
 });
 
 ZafiraApp.factory('UserService', function($http) {
@@ -68,6 +72,22 @@ ZafiraApp.factory('UserService', function($http) {
         }
     };
     return userService;
+});
+
+ZafiraApp.factory('JenkinsService', function($http) {
+    var jenkinsService = {
+        rebuildTestRun : function(id, rerunFailures) {
+            var promise = $http.get('tests/runs/' + id + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
+				alertify.success('CI job is rebuilding, it may take some time before status is updated');
+				return data;
+            }, function errorCallback(data) {
+				alertify.error('Unable to rebuild CI job');
+				return data;
+			});
+            return promise;
+        }
+    };
+    return jenkinsService;
 });
 
 ZafiraApp.factory('DashboardService', function($http) {

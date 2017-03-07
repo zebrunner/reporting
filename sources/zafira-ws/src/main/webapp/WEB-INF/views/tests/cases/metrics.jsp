@@ -15,6 +15,9 @@
 			</h2>
 		</div>
 	</div>
+	<div class="run_result row" align="center" data-ng-if="operations.length == 0">
+    	<div class="col-lg-12">No test metrics available</div>
+    </div>
 	<div class="row">
 		<div class="col-lg-12" data-ng-repeat="operation in operations">
 			<h4>{{operation}}</h4>

@@ -422,7 +422,7 @@
 			     FROM 
 			    	zafira.TEST_RUNS
 			     WHERE 
-			     	STARTED_AT >= current_date - interval '1 week'
+			     	STARTED_AT >= current_date - interval '2 week'
 			     GROUP BY JOB_ID, ENV) AS MAX 
 			USING 
 				(JOB_ID, STARTED_AT)
