@@ -181,12 +181,9 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 		var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
 		if(id != null)
 		{
-			JenkinsService.rebuildTestRun(id, rerunFailures).then(function(rs){
-				if(rs.status == 200)
-				{
-					$scope.testRuns[id].status = 'IN_PROGRESS';
-				}
-			});
+			var testRun = $scope.testRuns[id];
+			testRun.rebuild = true;
+			$scope.rebuildTestRun(testRun);
 		}
 		else
 		{
@@ -195,18 +192,23 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 				for(var i = 0; i < $scope.jobViews[env].length; i++)
 				{
 					var testRun = $scope.jobViews[env][i].testRun;
-					if(testRun != null && testRun.rebuild)
-					{
-						testRun.rebuild = false;
-						JenkinsService.rebuildTestRun(testRun.id, rerunFailures).then(function(rs){
-							if(rs.status == 200)
-							{
-								$scope.testRuns[testRun.id].status = 'IN_PROGRESS';
-							}
-						});
-					}
+					$scope.rebuildTestRun(testRun);
 				}
 			}
+		}
+	};
+	
+	$scope.rebuildTestRun = function(testRun, rebuildJobs) 
+	{
+		if(testRun != null && testRun.rebuild)
+		{
+			testRun.rebuild = false;
+			JenkinsService.rebuildTestRun(testRun.id, rerunFailures).then(function(rs){
+				if(rs.status == 200)
+				{
+					testRun.status = 'IN_PROGRESS';
+				}
+			});
 		}
 	};
 	
