@@ -183,7 +183,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 		{
 			var testRun = $scope.testRuns[id];
 			testRun.rebuild = true;
-			$scope.rebuildTestRun(testRun);
+			$scope.rebuildTestRun(testRun, rerunFailures);
 		}
 		else
 		{
@@ -192,13 +192,13 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 				for(var i = 0; i < $scope.jobViews[env].length; i++)
 				{
 					var testRun = $scope.jobViews[env][i].testRun;
-					$scope.rebuildTestRun(testRun);
+					$scope.rebuildTestRun(testRun, rerunFailures);
 				}
 			}
 		}
 	};
 	
-	$scope.rebuildTestRun = function(testRun, rebuildJobs) 
+	$scope.rebuildTestRun = function(testRun, rerunFailures) 
 	{
 		if(testRun != null && testRun.rebuild)
 		{
