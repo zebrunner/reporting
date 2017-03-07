@@ -201,7 +201,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 						JenkinsService.rebuildTestRun(testRun.id, rerunFailures).then(function(rs){
 							if(rs.status == 200)
 							{
-								$scope.testRuns[id].status = 'IN_PROGRESS';
+								$scope.testRuns[testRun.id].status = 'IN_PROGRESS';
 							}
 						});
 					}
