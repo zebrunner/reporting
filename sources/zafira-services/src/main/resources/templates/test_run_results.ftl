@@ -5,6 +5,7 @@
         <h2 style="clear: both; margin: 0;">Summary:</h2>
         <hr/>
         <table style="width: 1000px;">
+           	<#if testRun.env??>
             <tr>
                 <td style="width: 100px;">Environment:</td>
                 <td>
@@ -14,6 +15,7 @@
                     </#if>
                 </td>
             </tr>
+            </#if>
             <#if configuration['app_version'] ??>
             <tr>
                 <td>Version:</td>
