@@ -14,13 +14,25 @@
 		<link href="<spring:url value="/resources/img/favicon.ico" />" rel="icon" type="image/x-icon" />
 		<link href="<spring:url value="/resources/css/signin-form.css" />" rel="stylesheet" type="text/css" />
 		<link href="<spring:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" type="text/css" />
+		
+		<script src="<spring:url value='/resources/js/3rd_party/jquery-2.0.3.min.js'/>" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				  $('#auth-form').submit(function() {
+				    var el = $(this);
+				    var hash = window.location.hash;
+				    if (hash) el.prop('action', el.prop('action') + '#' + unescape(hash.substring(1)));
+				    return true;
+				  });
+				});
+		</script>
 
 		<title>Zafira</title>
 	</head>
 	<body class="signin">
 		<div id="signin-form"> 
 			<spring:url var="actionUrl" value="/login" />
-			<form:form modelAttribute="signinForm" action="${actionUrl}" method="POST">
+			<form:form id="auth-form" modelAttribute="signinForm" action="${actionUrl}" method="POST">
 				<fieldset style="border: none;">
 					<div class="title">Zafira</div>
 					<c:if test="${signinForm.signinFailed == true}">
