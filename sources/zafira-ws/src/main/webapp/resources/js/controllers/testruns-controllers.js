@@ -53,6 +53,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	   }
    };
    
+   $scope.$on('$destroy', function() {
+	   $scope.disconnectWebsocket();
+	});
+   
    $scope.getMessage = function(message) {
 	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
 	 if(event.type == 'TEST_RUN')
