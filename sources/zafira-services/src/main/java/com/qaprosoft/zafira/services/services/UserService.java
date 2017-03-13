@@ -1,15 +1,17 @@
 package com.qaprosoft.zafira.services.services;
 
+import org.apache.commons.lang.StringUtils;
+import org.jasypt.util.password.PasswordEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import org.apache.commons.lang.StringUtils;
-import org.jasypt.util.password.PasswordEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService
@@ -53,6 +55,7 @@ public class UserService
 	}
 	
 	@Transactional(readOnly = true)
+	@Cacheable("users")
 	public User getUserByUserName(String userName) throws ServiceException
 	{
 		return userMapper.getUserByUserName(userName);

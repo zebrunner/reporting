@@ -53,6 +53,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	   }
    };
    
+   $scope.$on('$destroy', function() {
+	   $scope.disconnectWebsocket();
+	});
+   
    $scope.getMessage = function(message) {
 	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
 	 if(event.type == 'TEST_RUN')
@@ -89,10 +93,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		{
 			if(testRun.tests[test.id] != null)
 			{
-				$scope.updateTestRunResults(testRun.id, testRun.tests[test.id].status, -1);
+				$scope.updateTestRunResults(testRun, testRun.tests[test.id], -1);
 			}
 			testRun.tests[test.id] = test;
-			$scope.updateTestRunResults(testRun.id, test.status, 1);
+			$scope.updateTestRunResults(testRun, test, 1);
 		}
 		else
 		{
@@ -100,17 +104,21 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}
 	};
 	
-	$scope.updateTestRunResults = function(id, status, changeByAmount)
+	$scope.updateTestRunResults = function(testRun, test, changeByAmount)
 	{
-		switch(status) {
+		switch(test.status) {
 		case "PASSED":
-			$scope.testRuns[id].passed = $scope.testRuns[id].passed + changeByAmount;
+			testRun.passed = testRun.passed + changeByAmount;
 			break;
 		case "FAILED":
-			$scope.testRuns[id].failed = $scope.testRuns[id].failed + changeByAmount;
+			testRun.failed = testRun.failed + changeByAmount;
+			if(test.knownIssue)
+			{
+				testRun.failedAsKnown = testRun.failedAsKnown + changeByAmount;
+			}
 			break;
 		case "SKIPPED":
-			$scope.testRuns[id].skipped = $scope.testRuns[id].skipped + changeByAmount;
+			testRun.skipped = testRun.skipped + changeByAmount;
 			break;
 		default:
 			break;

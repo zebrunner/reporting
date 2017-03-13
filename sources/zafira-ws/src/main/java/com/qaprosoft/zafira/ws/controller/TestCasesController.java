@@ -3,10 +3,13 @@ package com.qaprosoft.zafira.ws.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.dozer.Mapper;
+import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -74,7 +77,7 @@ public class TestCasesController extends AbstractController
 			notes = "Creates a new test case or updates existing one.", response = TestCaseType.class, responseContainer = "TestCaseType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException
+	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, MappingException, ExecutionException
 	{
 		TestCase tc = mapper.map(testCase, TestCase.class);
 		tc.setProject(projectService.getProjectByName(projectName));
@@ -86,7 +89,7 @@ public class TestCasesController extends AbstractController
 			notes = "Creates new test cases or updates existing.", response = java.util.List.class, responseContainer = "TestCase")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException
+	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, ExecutionException
 	{
 		if(!ArrayUtils.isEmpty(tcs))
 		{
