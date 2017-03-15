@@ -27,7 +27,32 @@
 				<div class="form-group">
 					<label>Recepients ({{email.recipients.length}})</label> 
 					<%--<input name="value" type="text" class="form-control validation" data-ng-model="email.recipients" required/>--%>
-					<md-chips ng-model="email.recipients" name="value" placeholder="Space separated" md-separator-keys="keys"></md-chips>
+					<%--<md-chips ng-model="email.recipients" name="value" placeholder="Space separated" md-separator-keys="keys"></md-chips>--%>
+					<md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
+						<md-chips ng-model="users"
+								  md-autocomplete-snap
+								  md-transform-chip="checkAndTransformRecipient($chip)"
+								  md-on-remove="removeRecipient($chip)"
+								  md-separator-keys="keys">
+							<md-chip-template>
+								{{$chip.email}}
+							</md-chip-template>
+							<md-autocomplete
+									md-search-text="searchText"
+									md-items="user in querySearch(searchText)"
+									md-item-text="user.email"
+									md-selected-item="currentUser"
+									<%--md-autoselect--%>
+									placeholder="add email">
+								<md-item-template>
+									<span>{{user.email}}</span>
+								</md-item-template>
+								<md-not-found>
+									No users matching "{{searchText}}" were found.
+								</md-not-found>
+							</md-autocomplete>
+						</md-chips>
+					</md-content>
 				</div>
 			</form>
 		</div>

@@ -5,8 +5,9 @@
         <h2 style="clear: both; margin: 0;">Summary:</h2>
         <hr/>
         <table style="width: 1000px;">
+           	<#if testRun.env??>
             <tr>
-                <td style="width: 100px;">Environment:</td>
+                <td style="width: 120px;">Environment:</td>
                 <td>
                     ${testRun.env}
                     <#if configuration['url']?? && (configuration['url'] != 'NULL') && (configuration['url'] != '')>
@@ -14,6 +15,7 @@
                     </#if>
                 </td>
             </tr>
+            </#if>
             <#if configuration['app_version'] ??>
             <tr>
                 <td>Version:</td>
@@ -80,8 +82,8 @@
                 <td>${testRun.passed}</td>
             </tr>
             <tr class="fail" style="color: #FF5C33;">
-                <td>Failed:</td>
-                <td>${testRun.failed}</td>
+                <td>Failed (known issues):</td>
+                <td>${testRun.failed} (${testRun.failedAsKnown})</td>
             </tr>
             <tr class="skip" style="color: #FFD700;">
                 <td>Skipped:</td>

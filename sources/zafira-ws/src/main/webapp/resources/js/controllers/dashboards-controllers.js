@@ -343,7 +343,8 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.email.hostname = document.location.hostname;
 				$scope.email.urls = [document.location.href];
 				$scope.email.recipients = [];
-				$scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SEMICOLON, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
+				$scope.users = [];
+				$scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SEMICOLON, $mdConstant.KEY_CODE.SPACE];
 				
 				$scope.sendEmail = function(id){
 					$modalInstance.close(0);
@@ -354,6 +355,40 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 						alertify.error('Failed to send email');
 					});
 				};
+                $scope.users_all = [];
+
+                $scope.usersSearchCriteria = {};
+                $scope.asyncContacts = [];
+                $scope.filterSelected = true;
+
+                $scope.querySearch = querySearch;
+                function querySearch (criteria) {
+                    $scope.usersSearchCriteria.email = criteria;
+                    return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
+                        .then(function(response){
+                            return response.data.results;
+                        });
+                }
+                $scope.checkAndTransformRecipient = function (currentUser) {
+                    var user = {};
+					if(currentUser.userName == null) {
+						//user.userName = currentUser;
+						user.email = currentUser;
+						$scope.email.recipients.push(currentUser);
+						$scope.users.push(user);
+					} else {
+						user = currentUser;
+                        $scope.email.recipients.push(user.email);
+                        $scope.users.push(user);
+					}
+					return user;
+                }
+                $scope.removeRecipient = function (user) {
+                    var index = $scope.email.recipients.indexOf(user.email);
+                    if (index >= 0) {
+                        $scope.email.recipients.splice( index, 1 );
+                    }
+                }
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};

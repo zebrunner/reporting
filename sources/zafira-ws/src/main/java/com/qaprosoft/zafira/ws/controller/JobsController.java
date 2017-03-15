@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +71,19 @@ public class JobsController extends AbstractController
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="views/{id}/tests/runs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env, @RequestBody @Valid List<JobViewType> jobViews) throws ServiceException
+	{
+		List<Long> jobIds = new ArrayList<>();
+		for(JobViewType jobView : jobViews)
+		{
+			jobIds.add(jobView.getJob().getId());
+		}
+		return testRunService.getLatestJobTestRuns(env, jobIds);
+	}
+	
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="views", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException
@@ -103,28 +115,17 @@ public class JobsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="views/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, JobTestRuns> getJobViews(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody Map<String, List<JobViewType>> getJobViews(@PathVariable(value="id") long id) throws ServiceException
 	{
-		Map<String, JobTestRuns> jobViews = new LinkedHashMap<>();
+		Map<String, List<JobViewType>> jobViews = new LinkedHashMap<>();
 		for(JobView jobView : jobsService.getJobViewsByViewId(id))
 		{
 			if(!jobViews.containsKey(jobView.getEnv()))
 			{
-				jobViews.put(jobView.getEnv(), new JobTestRuns());
+				jobViews.put(jobView.getEnv(), new ArrayList<>());
 			}
-			jobViews.get(jobView.getEnv()).getJobViews().add(mapper.map(jobView, JobViewType.class));
+			jobViews.get(jobView.getEnv()).add(mapper.map(jobView, JobViewType.class));
 		}
-		
-		for(String env : jobViews.keySet())
-		{
-			List<Long> jobIds = new ArrayList<>();
-			for(JobViewType jv : jobViews.get(env).getJobViews())
-			{
-				jobIds.add(jv.getJob().getId());
-			}
-			jobViews.get(env).setTestRuns(testRunService.getLatestJobTestRuns(env, jobIds));
-		}
-		
 		return jobViews;
 	}
 	
@@ -134,31 +135,5 @@ public class JobsController extends AbstractController
 	public void deleteJobViews(@PathVariable(value="id") long viewId, @QueryParam("env") String env) throws ServiceException
 	{
 		jobsService.deleteJobViews(viewId, env);
-	}
-	
-	public class JobTestRuns
-	{
-		private List<JobViewType> jobViews = new ArrayList<>();
-		private Map<Long, TestRun> testRuns = new HashMap<>();
-
-		public List<JobViewType> getJobViews()
-		{
-			return jobViews;
-		}
-
-		public void setJobViews(List<JobViewType> jobViews)
-		{
-			this.jobViews = jobViews;
-		}
-
-		public Map<Long, TestRun> getTestRuns()
-		{
-			return testRuns;
-		}
-
-		public void setTestRuns(Map<Long, TestRun> testRuns)
-		{
-			this.testRuns = testRuns;
-		}
 	}
 }

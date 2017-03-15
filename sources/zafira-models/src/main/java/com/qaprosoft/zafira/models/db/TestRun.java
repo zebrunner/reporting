@@ -53,6 +53,7 @@ public class TestRun extends AbstractEntity
 
 	private Integer passed;
 	private Integer failed;
+	private Integer failedAsKnown;
 	private Integer skipped;
 
 	public User getUser()
@@ -213,6 +214,16 @@ public class TestRun extends AbstractEntity
 	public void setFailed(Integer failed)
 	{
 		this.failed = failed;
+	}
+
+	public Integer getFailedAsKnown()
+	{
+		return failedAsKnown;
+	}
+
+	public void setFailedAsKnown(Integer failedAsKnown)
+	{
+		this.failedAsKnown = failedAsKnown;
 	}
 
 	public Integer getSkipped()

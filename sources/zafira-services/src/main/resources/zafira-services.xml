@@ -71,9 +71,9 @@
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
-                <bean
-                  class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean"
-                  name="projects"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="projects"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="users"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="testCases"/>
             </set>
         </property>
     </bean>

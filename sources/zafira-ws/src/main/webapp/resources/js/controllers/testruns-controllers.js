@@ -53,6 +53,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	   }
    };
    
+   $scope.$on('$destroy', function() {
+	   $scope.disconnectWebsocket();
+	});
+   
    $scope.getMessage = function(message) {
 	 var event = JSON.parse(message.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
 	 if(event.type == 'TEST_RUN')
@@ -89,10 +93,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		{
 			if(testRun.tests[test.id] != null)
 			{
-				$scope.updateTestRunResults(testRun.id, testRun.tests[test.id].status, -1);
+				$scope.updateTestRunResults(testRun, testRun.tests[test.id], -1);
 			}
 			testRun.tests[test.id] = test;
-			$scope.updateTestRunResults(testRun.id, test.status, 1);
+			$scope.updateTestRunResults(testRun, test, 1);
 		}
 		else
 		{
@@ -100,17 +104,21 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}
 	};
 	
-	$scope.updateTestRunResults = function(id, status, changeByAmount)
+	$scope.updateTestRunResults = function(testRun, test, changeByAmount)
 	{
-		switch(status) {
+		switch(test.status) {
 		case "PASSED":
-			$scope.testRuns[id].passed = $scope.testRuns[id].passed + changeByAmount;
+			testRun.passed = testRun.passed + changeByAmount;
 			break;
 		case "FAILED":
-			$scope.testRuns[id].failed = $scope.testRuns[id].failed + changeByAmount;
+			testRun.failed = testRun.failed + changeByAmount;
+			if(test.knownIssue)
+			{
+				testRun.failedAsKnown = testRun.failedAsKnown + changeByAmount;
+			}
 			break;
 		case "SKIPPED":
-			$scope.testRuns[id].skipped = $scope.testRuns[id].skipped + changeByAmount;
+			testRun.skipped = testRun.skipped + changeByAmount;
 			break;
 		default:
 			break;
@@ -399,6 +407,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.testRun = testRun;
 				$scope.email = {};
                 $scope.email.recipients = [];
+                $scope.users = [];
                 $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 				
 				$scope.sendEmail = function(id){
@@ -410,6 +419,40 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 						alertify.error('Failed to send email');
 					});
 				};
+                $scope.users_all = [];
+
+                $scope.usersSearchCriteria = {};
+                $scope.asyncContacts = [];
+                $scope.filterSelected = true;
+
+                $scope.querySearch = querySearch;
+                function querySearch (criteria) {
+                    $scope.usersSearchCriteria.email = criteria;
+                    return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
+                        .then(function(response){
+                            return response.data.results;
+                        });
+                }
+                $scope.checkAndTransformRecipient = function (currentUser) {
+                    var user = {};
+                    if(currentUser.userName == null) {
+                        //user.userName = currentUser;
+                        user.email = currentUser;
+                        $scope.email.recipients.push(currentUser);
+                        $scope.users.push(user);
+                    } else {
+                        user = currentUser;
+                        $scope.email.recipients.push(user.email);
+                        $scope.users.push(user);
+                    }
+                    return user;
+                }
+                $scope.removeRecipient = function (user) {
+                    var index = $scope.email.recipients.indexOf(user.email);
+                    if (index >= 0) {
+                        $scope.email.recipients.splice( index, 1 );
+                    }
+                }
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};

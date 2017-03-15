@@ -115,6 +115,7 @@
 				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE, 
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.KNOWN_ISSUE = TRUE) AS TEST_RUN_FAILED_AS_KNOWN,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
@@ -422,7 +423,7 @@
 			     FROM 
 			    	zafira.TEST_RUNS
 			     WHERE 
-			     	STARTED_AT >= current_date - interval '1 week'
+			     	STARTED_AT >= current_date - interval '2 week'
 			     GROUP BY JOB_ID, ENV) AS MAX 
 			USING 
 				(JOB_ID, STARTED_AT)
@@ -526,6 +527,7 @@
 		<result column="TEST_RUN_DRIVER_MODE" property="driverMode" />
 		<result column="TEST_RUN_PASSED" property="passed" />
 		<result column="TEST_RUN_FAILED" property="failed" />
+		<result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
 		<result column="TEST_RUN_SKIPPED" property="skipped" />
 		<result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_RUN_CREATED_AT" property="createdAt" />
