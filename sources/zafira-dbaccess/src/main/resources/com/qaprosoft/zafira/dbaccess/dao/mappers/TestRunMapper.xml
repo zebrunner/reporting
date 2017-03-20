@@ -443,6 +443,7 @@
 			TR.ENV
 			FROM
 			zafira.TEST_RUNS TR
+			LIMIT 10000
 		]]>
 	</select>
 
