@@ -32,7 +32,13 @@
 			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testRunSearchCriteria.testSuite" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="App version" data-ng-model="testRunSearchCriteria.appVersion" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Job URL" data-ng-model="testRunSearchCriteria.executionURL" data-ng-change="showReset = true"></div>
-			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-1">
+								<%--<input type="text" class="form-control" placeholder="Env" data-ng-model="testRunSearchCriteria.environment" data-ng-change="showReset = true">--%>
+								<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.environment" style="padding: 0;" data-ng-change="showReset = true">
+									<option value="" disabled>Environment</option>
+									<option ng-repeat="env in environments" ng-value="env">{{env}}</option>
+								</select>
+							</div>
 			            	<div class="col-lg-1">
 			            		<select class="form-control icon-menu" data-ng-model="testRunSearchCriteria.platform" style="padding: 0;" data-ng-change="showReset = true">
 			            			<option value="" disabled>Platform</option>

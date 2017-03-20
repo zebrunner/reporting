@@ -72,6 +72,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private String 	ZAFIRA_PROJECT = null;
 	private String 	ZAFIRA_REPORT_EMAILS = null;
 	private boolean ZAFIRA_RERUN_FAILURES = false;
+	private boolean ZAFIRA_REPORT_SHOW_STACKTRACE = true;
+	private boolean ZAFIRA_REPORT_SHOW_FAILURES_ONLY = false;
 	private String 	ZAFIRA_CONFIGURATOR = null;
 	
 	private String JIRA_SUITE_ID = null;
@@ -367,7 +369,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		}
 	}
 	
-	private TestType populateTestResult(ITestResult result, Status status, String message)
+	private TestType populateTestResult(ITestResult result, Status status, String message) throws JAXBException
 	{
 		long threadId = Thread.currentThread().getId();
 		TestType test = testByThread.get(threadId);
@@ -384,6 +386,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		test.setDemoURL(configurator.getDemoURL(result));
 		test.setLogURL(configurator.getLogURL(result));
 		test.setTestMetrics(configurator.getTestMetrics(result));
+		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);
@@ -409,7 +412,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			// Reset configuration to store for example updated at run-time app_version etc
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
-			zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, false);
+			zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE);
 		} 
 		catch (Exception e) 
 		{
@@ -473,6 +476,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			ZAFIRA_PROJECT = config.getString("zafira_project");
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
 			ZAFIRA_RERUN_FAILURES = config.getBoolean("zafira_rerun_failures", false);
+			ZAFIRA_REPORT_SHOW_STACKTRACE = config.getBoolean("zafira_report_show_stacktrace", true);
+			ZAFIRA_REPORT_SHOW_FAILURES_ONLY = config.getBoolean("zafira_report_failures_only", false);
 			ZAFIRA_CONFIGURATOR = config.getString("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator");
 			
 			if(ZAFIRA_ENABLED)

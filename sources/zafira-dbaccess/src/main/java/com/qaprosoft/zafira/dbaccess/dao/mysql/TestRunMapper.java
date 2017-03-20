@@ -40,4 +40,6 @@ public interface TestRunMapper
 	List<TestRun> getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(@Param("jobId") Long jobId, @Param("buildNumber") Integer buildNumber);
 	
 	List<TestRun> getLatestJobTestRuns(@Param("env") String env, @Param("jobIds") List<Long> jobIds);
+
+	List<String> getEnvironments();
 }

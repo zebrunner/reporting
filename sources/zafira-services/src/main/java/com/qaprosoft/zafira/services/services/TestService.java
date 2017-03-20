@@ -90,7 +90,7 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Test finishTest(Test test) throws ServiceException
+	public Test finishTest(Test test, String configXML) throws ServiceException
 	{
 		Test existingTest = testMapper.getTestById(test.getId());
 		if(existingTest == null)
@@ -103,6 +103,7 @@ public class TestService
 		existingTest.setRetry(test.getRetry());
 		existingTest.setDemoURL(test.getDemoURL());
 		existingTest.setLogURL(test.getLogURL());
+		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
 		if(test.getMessage() != null)
 		{

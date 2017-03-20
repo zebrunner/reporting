@@ -18,6 +18,7 @@ public class TestRunResultsEmail implements IEmailMessage
 	private List<Test> tests;
 	private String jiraURL;
 	private boolean showOnlyFailures = false;
+	private boolean showStacktrace = true;
 	private int successRate;
 	private String elapsed;
 
@@ -91,6 +92,14 @@ public class TestRunResultsEmail implements IEmailMessage
 	public void setShowOnlyFailures(boolean showOnlyFailures)
 	{
 		this.showOnlyFailures = showOnlyFailures;
+	}
+
+	public boolean isShowStacktrace() {
+		return showStacktrace;
+	}
+
+	public void setShowStacktrace(boolean showStacktrace) {
+		this.showStacktrace = showStacktrace;
 	}
 
 	public int getSuccessRate()

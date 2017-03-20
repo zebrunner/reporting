@@ -224,9 +224,10 @@ public class TestRunsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter) throws ServiceException, JAXBException
+	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter,
+														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace) throws ServiceException, JAXBException
 	{
-		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
 	
 	@ApiIgnore
@@ -252,5 +253,13 @@ public class TestRunsController extends AbstractController
 		{
 			throw new UnableToRebuildCIJobException();
 		}
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="environments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<String> getEnvironments() throws ServiceException
+	{
+		return testRunService.getEnvironments();
 	}
 }

@@ -139,7 +139,7 @@
                 </#if>
                 <#assign previousGroup = currentGroup>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
-	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'>#FF5C33</#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
+	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			${test.status}
 	            		</td>
@@ -147,12 +147,20 @@
 	            			<span>${test.name}</span>
 	            			<#if test.status == 'FAILED' && test.message?? && test.message != ''>
 	            				<pre style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
-	            					${test.message?trim}
+	            					<#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
+                                        ${test.message?trim?substring(0, test.message?trim?index_of('\n'))}
+                                    <#else>
+                                        ${test.message?trim}
+                                    </#if>
 	            				</pre>
 	            			</#if>
 	            			<#if test.status == 'SKIPPED' && test.message?? && test.message != ''>
 	            				<pre style="background:#ffe4b5; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
-	            					${test.message?trim}
+                                    <#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
+                                        ${test.message?trim?substring(0, test.message?trim?index_of('\n'))}
+                                    <#else>
+                                        ${test.message?trim}
+                                    </#if>
 	            				</pre>
 	            			</#if>
 	            		</td>

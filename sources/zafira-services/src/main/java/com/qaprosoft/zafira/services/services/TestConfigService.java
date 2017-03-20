@@ -101,6 +101,18 @@ public class TestConfigService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public TestConfig updateTestConfig(long id, String configXML) throws ServiceException
+	{
+		TestConfig testConfig = getTestConfigById(id);
+		if(testConfig != null && StringUtils.isEmpty(configXML))
+		{
+			testConfig.init(readConfigArgs(configXML, false));
+			testConfigMapper.updateTestConfig(testConfig);
+		}
+		return testConfig;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public void deleteTestConfigById(long id) throws ServiceException
 	{
 		testConfigMapper.deleteTestConfigById(id);

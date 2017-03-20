@@ -341,6 +341,14 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			$scope.loadTests(id);
 		}
 	}
+
+	$scope.loadEnvironments = function () {
+		$http.get('tests/runs/environments').then(function successCallback(data) {
+			$scope.environments = data.data;
+		}, function errorCallback(data) {
+			alertify.error('Unable to get environments');
+		});
+    }
 	
 	$scope.resetSearchCriteria = function(){
 		$location.url($location.path());
@@ -574,6 +582,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		$scope.initWebsocket();
 		$scope.loadTestRuns(1);
 		$scope.populateSearchQuery();
+		$scope.loadEnvironments();
 		SettingsService.getSetting("JIRA_URL").then(function successCallback(setting) {
 			$scope.jiraURL = setting;
 		}, function errorCallback(data) {
