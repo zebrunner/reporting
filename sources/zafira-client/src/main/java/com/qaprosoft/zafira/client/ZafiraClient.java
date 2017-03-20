@@ -50,7 +50,7 @@ public class ZafiraClient
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
 	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
 	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
-	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s";
+	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s&showStacktrace=%s";
 	private static final String EVENTS_PATH = "/events";
 	private static final String EVENTS_RECEIVED_PATH = "/events/received";
 
@@ -241,12 +241,12 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<String> sendTestRunReport(long id, String recipients, boolean showOnlyFailures)
+	public Response<String> sendTestRunReport(long id, String recipients, boolean showOnlyFailures, boolean showStacktrace)
 	{
 		Response<String> response = new Response<String>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id, showOnlyFailures ? "failures" : "all"));
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id, showOnlyFailures ? "failures" : "all", showStacktrace ? "true" : "false"));
 			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.TEXT_HTML_TYPE).post(ClientResponse.class, new EmailType(recipients));
 			response.setStatus(clientRS.getStatus());

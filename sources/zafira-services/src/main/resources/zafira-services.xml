@@ -74,6 +74,7 @@
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="projects"/>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="users"/>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="testCases"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="environments"/>
             </set>
         </property>
     </bean>

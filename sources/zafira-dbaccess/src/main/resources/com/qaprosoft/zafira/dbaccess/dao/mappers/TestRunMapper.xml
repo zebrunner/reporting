@@ -436,6 +436,16 @@
 		</foreach>
 	</select>
 
+	<select id="getEnvironments" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			DISTINCT
+			TR.ENV
+			FROM
+			zafira.TEST_RUNS TR
+		]]>
+	</select>
+
 	<update id="updateTestRun">
 		<![CDATA[
 			UPDATE

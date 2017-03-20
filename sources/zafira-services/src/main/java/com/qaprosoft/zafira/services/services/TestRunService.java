@@ -15,6 +15,7 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.db.Project;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -320,7 +322,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -335,6 +337,7 @@ public class TestRunService
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
+		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		
 		return emailService.sendEmail(email, recipients);
@@ -365,5 +368,12 @@ public class TestRunService
 		}
 		testRun.setComments(comment);
 		updateTestRun(testRun);
+	}
+
+	@Transactional(readOnly = true)
+	@Cacheable("environments")
+	public List<String> getEnvironments() throws ServiceException
+	{
+		return testRunMapper.getEnvironments();
 	}
 }
