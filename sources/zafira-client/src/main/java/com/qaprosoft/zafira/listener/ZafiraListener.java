@@ -369,7 +369,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		}
 	}
 	
-	private TestType populateTestResult(ITestResult result, Status status, String message)
+	private TestType populateTestResult(ITestResult result, Status status, String message) throws JAXBException
 	{
 		long threadId = Thread.currentThread().getId();
 		TestType test = testByThread.get(threadId);
@@ -386,6 +386,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		test.setDemoURL(configurator.getDemoURL(result));
 		test.setLogURL(configurator.getLogURL(result));
 		test.setTestMetrics(configurator.getTestMetrics(result));
+		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);

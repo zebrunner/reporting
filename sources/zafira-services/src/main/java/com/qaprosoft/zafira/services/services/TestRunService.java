@@ -15,7 +15,6 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.db.Project;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;

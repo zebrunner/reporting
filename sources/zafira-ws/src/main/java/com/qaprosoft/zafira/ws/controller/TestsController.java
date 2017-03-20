@@ -89,7 +89,7 @@ public class TestsController extends AbstractController
 	public @ResponseBody TestType finishTest(@ApiParam(value = "Id of the test", required = true) @PathVariable(value="id") long id, @RequestBody TestType t) throws ServiceException
 	{
 		t.setId(id);
-		Test test = testService.finishTest(mapper.map(t, Test.class));
+		Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		
 		try
