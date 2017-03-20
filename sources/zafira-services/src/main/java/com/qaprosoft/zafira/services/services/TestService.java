@@ -103,7 +103,7 @@ public class TestService
 		existingTest.setRetry(test.getRetry());
 		existingTest.setDemoURL(test.getDemoURL());
 		existingTest.setLogURL(test.getLogURL());
-		existingTest.setTestConfig(testConfigService.updateTestConfig(test.getTestConfig().getId(), configXML));
+		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
 		if(test.getMessage() != null)
 		{
