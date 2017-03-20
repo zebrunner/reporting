@@ -343,7 +343,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	}
 
 	$scope.loadEnvironments = function () {
-		$http.get('tests/runs/environment/all').then(function successCallback(data) {
+		$http.get('tests/runs/environments').then(function successCallback(data) {
 			$scope.environments = data.data;
 		}, function errorCallback(data) {
 			alertify.error('Unable to get environments');
