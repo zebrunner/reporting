@@ -257,6 +257,35 @@ public class TestRunsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/build", method = RequestMethod.POST)
+	public void buildTestRun(@PathVariable(value = "id") long id, @RequestParam(value="buildWithParameters", required=false, defaultValue="true") boolean buildWithParameters,
+							 @RequestBody Map<String, String> jobParameters) throws ServiceException {
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+
+		if(!jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, buildWithParameters))
+		{
+			throw new UnableToRebuildCIJobException();
+		}
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/jobParameters", method = RequestMethod.GET)
+	public @ResponseBody Map<String, String> getjobParameters(@PathVariable(value = "id") long id) throws ServiceException {
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		return jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="environments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<String> getEnvironments() throws ServiceException
 	{

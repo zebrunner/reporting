@@ -143,7 +143,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     	if($scope.testRuns[testRun.id] == null)
     	{
     		testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
-    		testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL
+    		testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL;
     		testRun.tests = {};
     		$scope.testRuns[testRun.id] = testRun;
     	}
@@ -282,6 +282,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			}
 		});
     }];
+
+	const BUILD_NOW = ['Build now', function ($itemScope) {
+		$scope.openBuildNowModal($itemScope.testRun);
+    }];
 	
 	const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
 	  	var node = document.createElement('pre');
@@ -318,6 +322,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
       COMMENT,
       SEND_EMAIL,
       null,
+	  BUILD_NOW,
       REBUILD,
       null,
       DELETE_TEST_RUN
@@ -329,6 +334,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
       COMMENT,
       SEND_EMAIL,
       null,
+	  BUILD_NOW,
       REBUILD
     ];
 	// -----------------------------------------------------------
@@ -340,7 +346,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		{
 			$scope.loadTests(id);
 		}
-	}
+	};
 
 	$scope.loadEnvironments = function () {
 		$http.get('tests/runs/environments').then(function successCallback(data) {
@@ -348,7 +354,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		}, function errorCallback(data) {
 			alertify.error('Unable to get environments');
 		});
-    }
+    };
 	
 	$scope.resetSearchCriteria = function(){
 		$location.url($location.path());
@@ -397,6 +403,52 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			console.error('Failed to mark test as passed!');
 		});
 	};
+
+	$scope.openBuildNowModal = function (testRun) {
+        $modal.open({
+            templateUrl : 'resources/templates/build-details-modal.jsp',
+            resolve : {
+                'testRun' : function(){
+                    return testRun;
+                }
+            },
+            controller : function($scope, $modalInstance, testRun){
+
+                $scope.title = testRun.testSuite.name;
+                $scope.textRequired = false;
+
+                $scope.testRun = testRun;
+
+                $scope.buildNow = function(id){
+                    $modalInstance.close(0);
+                    $http.post('tests/runs/' + $scope.testRun.id + '/build', $scope.jobParameters).then(function successCallback(data) {
+                        alertify.success('Email was successfully sent!');
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to build job');
+                    });
+                };
+                $scope.jobParameters = {};
+                $scope.isJobParametersLoaded = false;
+                $scope.getJobParameters = function () {
+                    $http.get('tests/runs/' + $scope.testRun.id + '/jobParameters').then(function successCallback(data) {
+                    	$scope.jobParameters = data.data;
+                    	$scope.isJobParametersLoaded = true;
+                    }, function errorCallback(data) {
+                        $modalInstance.close(0);
+                        alertify.error('Failed to load job parameters');
+                    });
+                };
+                (function init(){
+                	$scope.getJobParameters();
+                })();
+                $scope.cancel = function(){
+                    $modalInstance.close(0);
+                };
+            }
+        }).result.then(function(data) {
+        }, function () {
+        });
+    };
 	
 	$scope.openEmailModal = function(testRun){
 		$modal.open({
@@ -454,13 +506,13 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
                         $scope.users.push(user);
                     }
                     return user;
-                }
+                };
                 $scope.removeRecipient = function (user) {
                     var index = $scope.email.recipients.indexOf(user.email);
                     if (index >= 0) {
                         $scope.email.recipients.splice( index, 1 );
                     }
-                }
+                };
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};
