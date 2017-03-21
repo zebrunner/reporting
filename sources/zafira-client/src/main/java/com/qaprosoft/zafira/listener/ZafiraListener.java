@@ -408,7 +408,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		if(!ZAFIRA_ENABLED) return;
 		
 		try 
-		{
+		{	
+			// Wait 5s until all tests finalizing
+			Thread.sleep(5 * 1000);
 			// Reset configuration to store for example updated at run-time app_version etc
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
