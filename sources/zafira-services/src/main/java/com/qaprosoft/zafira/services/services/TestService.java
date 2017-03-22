@@ -136,7 +136,7 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Test markTestAsPassed(long id) throws ServiceException
+	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
 		if(test == null)
@@ -231,7 +231,7 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
+	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(testId);
 		if(test != null)

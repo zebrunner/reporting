@@ -130,7 +130,7 @@ public class TestRunsController extends AbstractController
 			notes = "Finishes test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException, InterruptedException
 	{
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
@@ -227,7 +227,8 @@ public class TestRunsController extends AbstractController
 	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value="id") long id, @RequestBody @Valid EmailType email, @RequestParam(value="filter", defaultValue="all", required=false) String filter,
 														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace) throws ServiceException, JAXBException
 	{
-		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		String [] recipients = !StringUtils.isEmpty(email.getRecipients()) ? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[]{};
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
 	}
 	
 	@ApiIgnore

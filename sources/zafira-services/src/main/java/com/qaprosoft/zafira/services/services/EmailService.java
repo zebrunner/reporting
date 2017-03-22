@@ -35,30 +35,33 @@ public class EmailService
 	public String sendEmail(final IEmailMessage message, final String... recipients) throws ServiceException
 	{
 		final String text = getFreeMarkerTemplateContent(message);
-		MimeMessagePreparator preparator = new MimeMessagePreparator()
+		if(recipients != null && recipients.length > 0)
 		{
-			public void prepare(MimeMessage mimeMessage) throws Exception
+			MimeMessagePreparator preparator = new MimeMessagePreparator()
 			{
-				boolean hasAttachments = message.getAttachments() != null;
-				
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-				msg.setSubject(message.getSubject());
-				msg.setTo(recipients);
-				msg.setFrom(mailUser);
-				msg.setText(text, true);
-				if(hasAttachments)
+				public void prepare(MimeMessage mimeMessage) throws Exception
 				{
-					for(Attachment attachment : message.getAttachments())
+					boolean hasAttachments = message.getAttachments() != null;
+					
+					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+					msg.setSubject(message.getSubject());
+					msg.setTo(recipients);
+					msg.setFrom(mailUser);
+					msg.setText(text, true);
+					if(hasAttachments)
 					{
-						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+						for(Attachment attachment : message.getAttachments())
+						{
+							msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
+							msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+						}
 					}
 				}
-			}
-		};
-		Runnable task = new AsynSendEmailTask(preparator);
-		autowireizer.autowireBean(task);
-		Executors.newSingleThreadExecutor().execute(task);
+			};
+			Runnable task = new AsynSendEmailTask(preparator);
+			autowireizer.autowireBean(task);
+			Executors.newSingleThreadExecutor().execute(task);
+		}
 		return text;
 	}
 	
