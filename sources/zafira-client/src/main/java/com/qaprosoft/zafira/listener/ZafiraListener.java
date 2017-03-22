@@ -97,7 +97,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private Marshaller marshaller;
 	
 	@Override
-	public void onStart(ISuite suiteСontext)
+	public void onStart(ISuite suiteContext)
 	{
 		if(initializeZafira())
 		{
@@ -108,15 +108,15 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
 				
 				// Override project if specified in XML
-				String project = suiteСontext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
+				String project = suiteContext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
 				zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
 				
 				// Register user who initiated test run
 				this.user = zc.registerUser(ci.getCiUserId(), ci.getCiUserEmail(), ci.getCiUserFirstName(), ci.getCiUserLastName());
 		
 				// Register test suite along with suite owner
-				UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteСontext), null, null, null);
-				this.suite = zc.registerTestSuite(suiteСontext.getName(), FilenameUtils.getName(suiteСontext.getXmlSuite().getFileName()), suiteOwner.getId());
+				UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteContext), null, null, null);
+				this.suite = zc.registerTestSuite(suiteContext.getName(), FilenameUtils.getName(suiteContext.getXmlSuite().getFileName()), suiteOwner.getId());
 				
 				// Register job that triggers test run
 				this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
