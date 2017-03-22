@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +23,14 @@ public class UserService
 	@Autowired
 	private PasswordEncryptor passwordEncryptor;
 	
-	@CachePut(value="users")
+	@CacheEvict(value="users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void createUser(User user) throws ServiceException
 	{
 		userMapper.createUser(user);
 	}
 	
-	@CachePut(value="users")
+	@CacheEvict(value="users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public User createOrUpdateUser(User newUser) throws ServiceException
 	{
@@ -58,14 +57,14 @@ public class UserService
 		return userMapper.getUserById(id);
 	}
 	
-	@Transactional(readOnly = true)
 	@Cacheable("users")
+	@Transactional(readOnly = true)
 	public User getUserByUserName(String userName) throws ServiceException
 	{
 		return userMapper.getUserByUserName(userName);
 	}
 	
-	@CachePut(value="users")
+	@CacheEvict(value="users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public User updateUser(User user) throws ServiceException
 	{
@@ -73,14 +72,14 @@ public class UserService
 		return user;
 	}
 	
-	@CacheEvict(value="users")
+	@CacheEvict(value="users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUser(User user) throws ServiceException
 	{
 		userMapper.deleteUser(user);
 	}
 	
-	@CacheEvict(value="users")
+	@CacheEvict(value="users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUser(long id) throws ServiceException
 	{
