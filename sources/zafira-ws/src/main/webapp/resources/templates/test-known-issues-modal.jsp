@@ -26,7 +26,7 @@
 				<div class="form-group">
 					<label>Jira ID</label> 
 					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" required/>
-					<span style="color: red" data-ng-show="! isJiraIdExists">Jira ID does not exists!</span>
+					<span style="color: red" data-ng-show="! isJiraIdExists">Jira ID does not exist!</span>
 					<span style="color: red" data-ng-show="isJiraIdClosed">Jira ID is closed!</span>
 				</div>
 				<div class="form-group">

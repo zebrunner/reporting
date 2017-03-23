@@ -74,7 +74,7 @@ public class JiraService {
         return errorsMap;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         BasicCredentials credentials = new BasicCredentials("vdelendik", "P@ssw0rd1k66");
         JiraClient jiraClient = new JiraClient("https://jira.tlcinternal.com", credentials);
         Issue issue = null;
@@ -82,7 +82,7 @@ public class JiraService {
         try {
             issue = getI(jiraClient, "AUTO-2194");
             issue2 = jiraClient.getIssue("LMS-78110");
-            System.out.println(/*issue.getAssignee().getName() + " " + projectList.get(0) + " " + issueTypeList.get(0).getName() + " " + issue2.getSummary() + " " + */issue.getStatus().getName().equals("Closed"));
+            System.out.println(*//*issue.getAssignee().getName() + " " + projectList.get(0) + " " + issueTypeList.get(0).getName() + " " + issue2.getSummary() + " " + *//*issue.getStatus().getName().equals("Closed"));
         } catch (JiraException e) {
             System.out.println("Unable to initialize Jira issue " + e.getMessage());
         }
@@ -97,6 +97,6 @@ public class JiraService {
         } finally {
             return issue;
         }
-    }
+    }*/
 
 }
