@@ -75,7 +75,7 @@ public class JiraService {
     }
 
     /*public static void main(String[] args) {
-        BasicCredentials credentials = new BasicCredentials("vdelendik", "P@ssw0rd1k66");
+        BasicCredentials credentials = new BasicCredentials("", "");
         JiraClient jiraClient = new JiraClient("https://jira.tlcinternal.com", credentials);
         Issue issue = null;
         Issue issue2 = null;
