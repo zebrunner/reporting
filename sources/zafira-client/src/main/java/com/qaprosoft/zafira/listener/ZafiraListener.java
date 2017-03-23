@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.listener;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +22,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.MergeCombiner;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -59,6 +61,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
 	
 	private static final String ZAFIRA_PROPERTIES = "zafira.properties";
+	private static final String ZAFIRA_REPORT = "zafira-report.html";
 	
 	private static final String ANONYMOUS = "anonymous";
 	
@@ -71,6 +74,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private String 	ZAFIRA_PASSWORD = null;
 	private String 	ZAFIRA_PROJECT = null;
 	private String 	ZAFIRA_REPORT_EMAILS = null;
+	private String 	ZAFIRA_REPORT_FOLDER = null;
 	private boolean ZAFIRA_RERUN_FAILURES = false;
 	private boolean ZAFIRA_REPORT_SHOW_STACKTRACE = true;
 	private boolean ZAFIRA_REPORT_SHOW_FAILURES_ONLY = false;
@@ -93,7 +97,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private Marshaller marshaller;
 	
 	@Override
-	public void onStart(ISuite suiteСontext)
+	public void onStart(ISuite suiteContext)
 	{
 		if(initializeZafira())
 		{
@@ -104,15 +108,15 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
 				
 				// Override project if specified in XML
-				String project = suiteСontext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
+				String project = suiteContext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
 				zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
 				
 				// Register user who initiated test run
 				this.user = zc.registerUser(ci.getCiUserId(), ci.getCiUserEmail(), ci.getCiUserFirstName(), ci.getCiUserLastName());
 		
 				// Register test suite along with suite owner
-				UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteСontext), null, null, null);
-				this.suite = zc.registerTestSuite(suiteСontext.getName(), FilenameUtils.getName(suiteСontext.getXmlSuite().getFileName()), suiteOwner.getId());
+				UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteContext), null, null, null);
+				this.suite = zc.registerTestSuite(suiteContext.getName(), FilenameUtils.getName(suiteContext.getXmlSuite().getFileName()), suiteOwner.getId());
 				
 				// Register job that triggers test run
 				this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
@@ -408,18 +412,29 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		if(!ZAFIRA_ENABLED) return;
 		
 		try 
-		{
+		{	
 			// Reset configuration to store for example updated at run-time app_version etc
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
-			zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE);
+			
+			String report = zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
+			
+			if(!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
+			{
+				// Create report folder if not exist
+				File reportFolder = new File(String.format("%s/%s", System.getProperty("user.dir"), ZAFIRA_REPORT_FOLDER));
+				if(!reportFolder.exists()) reportFolder.mkdirs();
+				// Create report file
+				File reportFile = new File(String.format("%s/%s", ZAFIRA_REPORT_FOLDER,  ZAFIRA_REPORT));
+				reportFile.createNewFile();
+				FileUtils.writeStringToFile(reportFile, report);
+			}
 		} 
 		catch (Exception e) 
 		{
-			LOGGER.error("Undefined error during test run finish!", e);
+			LOGGER.error("Unable to finish test run correctly", e);
 		}
 	}
-	
 	
 	@Override
 	public void onStart(ITestContext context)
@@ -475,6 +490,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			ZAFIRA_PASSWORD = config.getString("zafira_password");
 			ZAFIRA_PROJECT = config.getString("zafira_project");
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
+			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
+			ZAFIRA_REPORT_FOLDER = StringUtils.removeStart(ZAFIRA_REPORT_FOLDER, "/");
+			ZAFIRA_REPORT_FOLDER = StringUtils.removeEnd(ZAFIRA_REPORT_FOLDER, "/");
 			ZAFIRA_RERUN_FAILURES = config.getBoolean("zafira_rerun_failures", false);
 			ZAFIRA_REPORT_SHOW_STACKTRACE = config.getBoolean("zafira_report_show_stacktrace", true);
 			ZAFIRA_REPORT_SHOW_FAILURES_ONLY = config.getBoolean("zafira_report_failures_only", false);

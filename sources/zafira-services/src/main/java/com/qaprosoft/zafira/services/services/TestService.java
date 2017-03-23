@@ -136,7 +136,7 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public Test markTestAsPassed(long id) throws ServiceException
+	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
 		if(test == null)
@@ -231,7 +231,7 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
+	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(testId);
 		if(test != null)
@@ -268,6 +268,7 @@ public class TestService
 				Collections.sort(tests);
 				
 				TestCaseSearchCriteria sc = new TestCaseSearchCriteria();
+				sc.setPageSize(Integer.MAX_VALUE);
 				for(Test test : tests)
 				{
 					sc.addId(test.getTestCaseId());
@@ -346,7 +347,8 @@ public class TestService
 		}
 		catch(Exception e) 
 		{
-			LOGGER.error("Unable to update test rerun flags: " + e.getMessage());
+			LOGGER.error("Unable to calculate rurun flags", e);
+			testMapper.updateTestsNeedRerun(testIds, true);
 		}
 	}
 	

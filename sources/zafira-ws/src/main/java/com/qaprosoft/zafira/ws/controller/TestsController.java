@@ -114,7 +114,7 @@ public class TestsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/passed", method = RequestMethod.POST)
-	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException, InterruptedException
 	{
 		Test test = testService.markTestAsPassed(id);
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
@@ -180,7 +180,7 @@ public class TestsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/issues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem createTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
+	public @ResponseBody WorkItem createTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		if(getPrincipalId() > 0)
 		{

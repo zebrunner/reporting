@@ -89,7 +89,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to send ping", e);
 		}
 		return isAvailable;
 	}
@@ -110,7 +110,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create user", e);
 		}
 		return response;
 	}
@@ -131,7 +131,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create job", e);
 		}
 		return response;
 	}
@@ -152,7 +152,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create test suite", e);
 		}
 		return response;
 	}
@@ -173,7 +173,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.error("Unable to start test run", e);
 		}
 		return response;
 	}
@@ -194,7 +194,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.error("Unable to update test run", e);
 		}
 		return response;
 	}
@@ -215,7 +215,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to finish test run", e);
 		}
 		return response;
 	}
@@ -236,7 +236,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to find test run by id", e);
 		}
 		return response;
 	}
@@ -257,7 +257,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to send test run report", e);
 		}
 		return response;
 	}
@@ -278,7 +278,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable find test run by CI run id", e);
 		}
 		return response;
 	}
@@ -299,7 +299,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to start test", e);
 		}
 		return response;
 	}
@@ -320,7 +320,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to finish test", e);
 		}
 		return response;
 	}
@@ -334,7 +334,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to finish test", e);
 		}
 	}
 	
@@ -347,7 +347,7 @@ public class ZafiraClient
 					.put(ClientResponse.class, test);
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to delete test duplicates", e);
 		}
 	}
 	
@@ -367,7 +367,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create test work items", e);
 		}
 		return response;
 	}
@@ -388,7 +388,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create test case", e);
 		}
 		return response;
 	}
@@ -409,7 +409,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to create test cases", e);
 		}
 		return response;
 	}
@@ -430,7 +430,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to find test run results", e);
 		}
 		return response;
 	}
@@ -451,7 +451,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to log event", e);
 		}
 		return response;
 	}
@@ -465,7 +465,7 @@ public class ZafiraClient
 					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, event);
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Unable to mark event received", e);
 		}
 	}
 	
