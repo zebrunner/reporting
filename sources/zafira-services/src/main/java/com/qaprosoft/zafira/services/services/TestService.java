@@ -53,6 +53,9 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private JiraService jiraService;
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -233,16 +236,17 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
 	{
-		Test test = getTestById(testId);
-		if(test != null)
-		{
-			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
-			test.setKnownIssue(true);
-			updateTest(test);
+		if(! jiraService.isIssueClosed(workItem.getJiraId())) {
+			Test test = getTestById(testId);
+			if (test != null) {
+				workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+				test.setKnownIssue(true);
+				updateTest(test);
+			}
+			workItemService.createWorkItem(workItem);
+			testMapper.createTestWorkItem(test, workItem);
+			testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		}
-		workItemService.createWorkItem(workItem);
-		testMapper.createTestWorkItem(test, workItem);
-		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		return workItem;
 	}
 	

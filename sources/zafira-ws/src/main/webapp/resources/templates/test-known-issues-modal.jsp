@@ -26,18 +26,22 @@
 				<div class="form-group">
 					<label>Jira ID</label> 
 					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" required/>
-					
+					<span style="color: red" data-ng-show="! isJiraIdExists">Jira ID does not exists!</span>
+					<span style="color: red" data-ng-show="isJiraIdClosed">Jira ID is closed!</span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
 					<textarea class="form-control validation" data-ng-model="newKnownIssue.description" required></textarea>
+				</div>
+				<div data-ng-hide="isConnectedToJira" layout="row" layout-sm="column" layout-align="space-around">
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
+	<button class="btn btn-success" data-ng-click="createExistsKnowIssue()" data-ng-disabled="knownIssueForm.$invalid">
     	Create
     </button>
 </div>
