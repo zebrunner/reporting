@@ -317,7 +317,7 @@ public class TestService
 							{
 								testCasesToRerun.addAll(testCasesByMethod.get(methodName));
 							}
-							else if(!test.isNeedRerun())
+							else
 							{
 								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
 							}
