@@ -30,12 +30,12 @@ public class TestRunResultsEmail implements IEmailMessage
 		}
 		this.testRun = testRun;
 		this.tests = tests;
-		if(testRun.getElapsed() != null)
+		if (testRun.getElapsed() != null)
 		{
 			int s = testRun.getElapsed() % 60;
 			int m = (testRun.getElapsed() / 60) % 60;
 			int h = (testRun.getElapsed() / (60 * 60)) % 24;
-			this.elapsed = String.format("%02d:%02d:%02d", h,m,s);
+			this.elapsed = String.format("%02d:%02d:%02d", h, m, s);
 		}
 	}
 
@@ -94,11 +94,13 @@ public class TestRunResultsEmail implements IEmailMessage
 		this.showOnlyFailures = showOnlyFailures;
 	}
 
-	public boolean isShowStacktrace() {
+	public boolean isShowStacktrace()
+	{
 		return showStacktrace;
 	}
 
-	public void setShowStacktrace(boolean showStacktrace) {
+	public void setShowStacktrace(boolean showStacktrace)
+	{
 		this.showStacktrace = showStacktrace;
 	}
 
@@ -111,7 +113,7 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		this.successRate = successRate;
 	}
-	
+
 	public String getElapsed()
 	{
 		return elapsed;
@@ -122,36 +124,44 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		String status = Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() ? "PASSED (known issues)"
 				: testRun.getStatus().name();
-		String appVersion = argumentIsPresent("app_version")? configuration.get("app_version") + " - ": "";
+		String appVersion = argumentIsPresent("app_version") ? configuration.get("app_version") + " - " : "";
 		String platformInfo = buildPlatformInfo();
-		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
-				configuration.get("env"), platformInfo);
+		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(),
+				testRun.getTestSuite().getFileName(), configuration.get("env"), platformInfo);
 	}
 
-	private boolean argumentIsPresent(String arg, String... ignoreValues) {
-		if(configuration.get(arg) == null || "".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
+	private boolean argumentIsPresent(String arg, String... ignoreValues)
+	{
+		if (configuration.get(arg) == null || "".equals(configuration.get(arg))
+				|| configuration.get(arg).equalsIgnoreCase("null"))
+		{
 			return false;
 		}
-		for(String ignoreValue: ignoreValues) {
-			if(configuration.get(arg).equals(ignoreValue)) {
+		for (String ignoreValue : ignoreValues)
+		{
+			if (configuration.get(arg).equals(ignoreValue))
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private String buildPlatformInfo() {
+	private String buildPlatformInfo()
+	{
 		String platformInfo = "%s %s %s";
-		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
-		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
-		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
+		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")
+				? configuration.get("mobile_platform_name") : "";
+		String browser = argumentIsPresent("browser") ? configuration.get("browser") : "";
+		String locale = argumentIsPresent("locale", "en_US", "en", "US") ? configuration.get("locale") : "";
 		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
 		platformInfo = platformInfo.trim();
-		while(platformInfo.indexOf("  ") != -1) {
+		while (platformInfo.indexOf("  ") != -1)
+		{
 			platformInfo = platformInfo.replaceFirst("  ", " ");
 		}
 		platformInfo = "(" + platformInfo + ")";
-		if(!platformInfo.equals("()"))
+		if (!platformInfo.equals("()"))
 			return platformInfo;
 		else
 			return "";
