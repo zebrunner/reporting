@@ -25,13 +25,13 @@
 			<form name="knownIssueForm" novalidate>
 				<div class="form-group">
 					<label>Jira ID</label> 
-					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" required/>
+					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-change="createExistsKnowIssue(true)" required/>
 					<span style="color: red" data-ng-show="! isJiraIdExists">Jira ID does not exist!</span>
 					<span style="color: red" data-ng-show="isJiraIdClosed">Jira ID is closed!</span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
-					<textarea class="form-control validation" data-ng-model="newKnownIssue.description" required></textarea>
+					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="descriptionFieldIsDisabled" required></textarea>
 				</div>
 				<div data-ng-hide="isConnectedToJira" layout="row" layout-sm="column" layout-align="space-around">
 					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
@@ -41,7 +41,7 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-success" data-ng-click="createExistsKnowIssue()" data-ng-disabled="knownIssueForm.$invalid">
+	<button class="btn btn-success" data-ng-click="createExistsKnowIssue(false)" data-ng-disabled="knownIssueForm.$invalid || descriptionFieldIsDisabled">
     	Create
     </button>
 </div>

@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$timeout', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function($scope, $timeout, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
 
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
@@ -582,30 +582,44 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
                 $scope.isJiraIdClosed = false;
                 $scope.checkMap = {};
                 $scope.isConnectedToJira = true;
+                $scope.descriptionFieldIsDisabled = true;
 
-				$scope.createExistsKnowIssue = function () {
-                    $scope.isConnectedToJira = false;
+				$scope.createExistsKnowIssue = function (isChangeAction) {
                     $scope.isJiraIdClosed = false;
-                    $http.get('tests/jira/' + $scope.newKnownIssue.jiraId + '/isExists').then(function successCallback(data) {
-                    	$scope.isJiraIdExists = data.data;
-                    	if($scope.isJiraIdExists) {
-                            $scope.isConnectedToJira = false;
-                            isKnowIssueClosed($scope.newKnownIssue.jiraId).then(function (rs) {
-								$scope.isJiraIdClosed = rs.data;
-                                if(! $scope.isJiraIdClosed) {
-                                    createKnownIssue($scope.newKnownIssue);
-                                }
-                                $scope.isConnectedToJira = true;
-                            });
-						}
-                        $scope.isConnectedToJira = true;
-                    }, function errorCallback(data) {
-                        $scope.isConnectedToJira = true;
-                        alertify.error('Failed to check that issue exists');
-                    });
+
+                    if($scope.newKnownIssue.jiraId && $scope.newKnownIssue.jiraId.length > 1) {
+                        $http.get('tests/jira/' + $scope.newKnownIssue.jiraId + '/isExists').then(function successCallback(data) {
+                            $scope.isJiraIdExists = data.data;
+                            $scope.isConnectedToJira = true;
+                            if ($scope.isJiraIdExists) {
+                                $scope.isConnectedToJira = false;
+                                getJiraIssue($scope.newKnownIssue.jiraId).then(function (rs) {
+                                    $scope.jiraIssue = rs.data;
+                                    $scope.isJiraIdClosed = rs.data.status.name == 'Closed';
+                                    if (!$scope.isJiraIdClosed) {
+                                        if (isChangeAction) {
+                                        	$scope.newKnownIssue.description = rs.data.description;
+                                            $scope.descriptionFieldIsDisabled = false;
+                                        } else {
+                                            createKnownIssue($scope.newKnownIssue);
+                                        }
+                                    } else {
+                                        if (isChangeAction) {
+                                            $scope.newKnownIssue.description = rs.data.description;
+                                            $scope.descriptionFieldIsDisabled = true;
+                                        }
+                                    }
+                                    $scope.isConnectedToJira = true;
+                                });
+                            }
+                        }, function errorCallback(data) {
+                            $scope.isConnectedToJira = true;
+                            alertify.error('Failed to check that issue exists');
+                        });
+                    }
                 };
 
-                var isKnowIssueClosed = function(jiraId) {
+                var isKnownIssueClosed = function(jiraId) {
                     var promise = $http.get('tests/jira/' + jiraId + '/isClosed').then(function successCallback(data) {
                         return data;
                     }, function errorCallback(data) {
@@ -615,12 +629,14 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
                     return promise;
                 };
 
-                $scope.getKnownIssueCheckMap = function () {
-                    $http.get('tests/jira/' + $scope.newKnownIssue.jiraId + '/check').then(function successCallback(data) {
-                        $scope.checkMap = data.data;
+                var getJiraIssue= function(jiraId) {
+                    var promise = $http.get('tests/jira/' + jiraId).then(function successCallback(data) {
+                        return data;
                     }, function errorCallback(data) {
-                        alertify.error('Failed to check that issue closed');
+                        alertify.error('Failed to get know issue from jira');
+                        return data;
                     });
+                    return promise;
                 };
 				
 				$scope.deleteKnownIssue = function(id){
@@ -649,7 +665,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.cancel = function(){
 					$modalInstance.close(false);
 				};
-				
+
 				
 				(function init(){
 					$scope.initNewKnownIssue();

@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.services.services.*;
+import net.rcarz.jiraclient.Issue;
 import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,9 +214,10 @@ public class TestsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="jira/{issue}/check", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Boolean> checkJiraIssue(@PathVariable(value = "issue") String issue) {
-		return jiraService.checkIssue(issue);
+	@RequestMapping(value="jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Issue getJiraIssue(@PathVariable(value = "issue") String issue) {
+		return jiraService.getIssue(issue);
 	}
 	
 	@ApiIgnore

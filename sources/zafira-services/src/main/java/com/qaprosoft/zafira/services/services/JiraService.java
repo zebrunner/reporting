@@ -63,20 +63,9 @@ public class JiraService {
         return getStatusName(ticket).equals("Closed");
     }
 
-    public Map<String, Boolean> checkIssue(String ticket) {
-        Map<String, Boolean> errorsMap = new HashMap<>();
-        Boolean isExists = false;
-        if((isExists = isIssueExists(ticket))) {
-            errorsMap.put("Closed", isIssueClosed(ticket));
-        } else {
-            errorsMap.put("IsExists", isExists);
-        }
-        return errorsMap;
-    }
-
     /*public static void main(String[] args) {
         BasicCredentials credentials = new BasicCredentials("", "");
-        JiraClient jiraClient = new JiraClient("https://jira.tlcinternal.com", credentials);
+        JiraClient jiraClient = new JiraClient("", credentials);
         Issue issue = null;
         Issue issue2 = null;
         try {
