@@ -187,7 +187,16 @@ public class TestService
 	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
-		return testMapper.getTestsByTestRunId(testRunId);
+		List<Test> tests =  testMapper.getTestsByTestRunId(testRunId);
+		for(Test test: tests) {
+			for(WorkItem workItem: test.getWorkItems()) {
+				if(workItem.isBlocker()) {
+					test.setBlocker(true);
+					break;
+				}
+			}
+		}
+		return tests;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -242,6 +251,9 @@ public class TestService
 				workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 				test.setKnownIssue(true);
 				updateTest(test);
+				if(workItem.isBlocker()) {
+					test.setBlocker(true);
+				}
 			}
 			workItemService.createWorkItem(workItem);
 			testMapper.createTestWorkItem(test, workItem);

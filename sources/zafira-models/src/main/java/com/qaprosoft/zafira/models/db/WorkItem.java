@@ -10,7 +10,7 @@ public class WorkItem extends AbstractEntity
 
 	private String jiraId;
 	private String description;
-	private boolean isBlocker;
+	private boolean blocker;
 	private Integer hashCode;
 	private Long testCaseId;
 	private User user;
@@ -58,11 +58,11 @@ public class WorkItem extends AbstractEntity
 	}
 
 	public boolean isBlocker() {
-		return isBlocker;
+		return blocker;
 	}
 
 	public void setBlocker(boolean blocker) {
-		isBlocker = blocker;
+		this.blocker = blocker;
 	}
 
 	public Integer getHashCode()

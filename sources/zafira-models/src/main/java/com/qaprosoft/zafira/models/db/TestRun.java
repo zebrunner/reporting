@@ -42,6 +42,7 @@ public class TestRun extends AbstractEntity
 	private Initiator startedBy;
 	private Project project;
 	private boolean knownIssue;
+	private boolean blocker;
 	private String env;
 	private String platform;
 	private String appVersion;
@@ -54,6 +55,7 @@ public class TestRun extends AbstractEntity
 	private Integer passed;
 	private Integer failed;
 	private Integer failedAsKnown;
+	private Integer failedAsBlocker;
 	private Integer skipped;
 
 	public User getUser()
@@ -226,6 +228,16 @@ public class TestRun extends AbstractEntity
 		this.failedAsKnown = failedAsKnown;
 	}
 
+	public Integer getFailedAsBlocker() {
+		return failedAsBlocker;
+	}
+
+	public void setFailedAsBlocker(Integer failedAsBlocker) {
+		this.failedAsBlocker = failedAsBlocker;
+		if(failedAsBlocker > 0)
+			setBlocker(true);
+	}
+
 	public Integer getSkipped()
 	{
 		return skipped;
@@ -254,6 +266,14 @@ public class TestRun extends AbstractEntity
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
+	}
+
+	public boolean isBlocker() {
+		return blocker;
+	}
+
+	public void setBlocker(boolean blocker) {
+		this.blocker = blocker;
 	}
 
 	public String getEnv()

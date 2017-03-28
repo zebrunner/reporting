@@ -116,6 +116,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$timeout', '$rootScope', '
 			{
 				testRun.failedAsKnown = testRun.failedAsKnown + changeByAmount;
 			}
+            if(test.blocker)
+            {
+                testRun.failedAsBlocker = testRun.failedAsBlocker + changeByAmount;
+            }
 			break;
 		case "SKIPPED":
 			testRun.skipped = testRun.skipped + changeByAmount;
@@ -564,18 +568,15 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$timeout', '$rootScope', '
 			controller : function($scope, $modalInstance, test){
 				
 				$scope.knownIssues = {};
-				var createKnownIssue = function(knowIssue){
-					var promise = $http.post('tests/' + test.id + '/issues', knowIssue).then(function successCallback(data) {
+				$scope.createKnownIssue = function(knowIssue){
+					$http.post('tests/' + test.id + '/issues', knowIssue).then(function successCallback(data) {
 						$scope.initNewKnownIssue();
 						$scope.getKnownIssues();
 						$modalInstance.close(true);
-                        alertify.success('A new know issue was created');
-						return data;
+                        alertify.success('A new know issue "' + knowIssue.jiraId + '" was created');
 					}, function errorCallback(data) {
 						alertify.error('Failed to create new known issue');
-						return data;
 					});
-					return promise;
 				};
 
                 $scope.isJiraIdExists = true;
@@ -601,7 +602,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$timeout', '$rootScope', '
                                         	$scope.newKnownIssue.description = rs.data.description;
                                             $scope.descriptionFieldIsDisabled = false;
                                         } else {
-                                            createKnownIssue($scope.newKnownIssue);
+                                            $scope.createKnownIssue($scope.newKnownIssue);
                                         }
                                     } else {
                                         if (isChangeAction) {

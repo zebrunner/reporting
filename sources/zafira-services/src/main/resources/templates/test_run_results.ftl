@@ -82,8 +82,8 @@
                 <td>${testRun.passed}</td>
             </tr>
             <tr class="fail" style="color: #FF5C33;">
-                <td>Failed (known issues):</td>
-                <td>${testRun.failed} (${testRun.failedAsKnown})</td>
+                <td>Failed|Known|Blockers:</td>
+                <td>${testRun.failed}|${testRun.failedAsKnown}|${testRun.failedAsBlocker}</td>
             </tr>
             <tr class="skip" style="color: #FFD700;">
                 <td>Skipped:</td>
@@ -139,7 +139,7 @@
                 </#if>
                 <#assign previousGroup = currentGroup>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
-	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
+	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true || test.blocker>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			${test.status}
 	            		</td>
@@ -170,7 +170,12 @@
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
 	                            <#if workItem.type == 'BUG'>
-	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>
+	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
+                                        <#if workItem.blocker?? && workItem.blocker>
+                                            <span>BLOCKER: </span>
+                                        </#if>
+                                        ${workItem.jiraId}
+                                    </a>
 	                            </#if>
 	                            <#if workItem.type == 'TASK'>
 	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #337ab7; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">${workItem.jiraId}</a>

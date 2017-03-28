@@ -86,7 +86,8 @@ public class TestRunService
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
-		results.setResults(testRunMapper.searchTestRuns(sc));
+		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+		results.setResults(testRuns);
 		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
 		return results;
 	}
@@ -257,7 +258,12 @@ public class TestRunService
 				{
 					testRun.setKnownIssue(true);
 				}
-				if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+				if(test.isBlocker())
+				{
+					testRun.setBlocker(true);
+				}
+				if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED)
+						|| (test.getStatus().equals(Status.FAILED) && test.isKnownIssue() && test.isBlocker()))
 				{
 					testRun.setStatus(Status.FAILED);
 					break;
@@ -332,6 +338,11 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		for(Test test: tests) {
+			if(test.getName().contains("testSaveFlowBlog")) {
+				System.out.println(test.isBlocker());
+			}
+		}
 		
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
