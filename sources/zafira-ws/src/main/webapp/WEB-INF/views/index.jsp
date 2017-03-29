@@ -19,7 +19,7 @@
 	        <!-- Navigation -->
 	        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0" data-ng-controller="NavigationCtrl">
 	            <div class="navbar-header">
-	                <a class="navbar-brand" href="#!/dashboard">Zafira <small>server {{version.service}} | client {{version.client}}</small></a>
+	                <a class="navbar-brand" href="#!/dashboards">Zafira <small>server {{version.service}} | client {{version.client}}</small></a>
 	            </div>
 	            <ul class="nav navbar-top-links navbar-left">
 		            <li class="dropdown">
