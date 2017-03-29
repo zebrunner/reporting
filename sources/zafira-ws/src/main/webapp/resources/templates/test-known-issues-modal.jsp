@@ -34,7 +34,7 @@
 					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="descriptionFieldIsDisabled" required></textarea>
 				</div>
 				<div>
-					<label>Is blocker?</label>
+					<label>Blocker</label>
 					<input type="checkbox" data-ng-model="newKnownIssue.blocker"/>
 				</div>
 				<div data-ng-hide="isConnectedToJira" layout="row" layout-sm="column" layout-align="space-around">

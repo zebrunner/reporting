@@ -107,7 +107,7 @@
 						</span>
 						<br/>
 						<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
-						<span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span data-ng-if="testRun.failedAsKnown > 0"> | {{testRun.failedAsKnown}}</span><span data-ng-if="testRun.blocker"> | {{testRun.failedAsBlocker}}</span></span>
+						<span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
 						<span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
 						<i data-ng-class="{'fa fa-lg fa-chevron-circle-down': testRun.showDetails == false, 'fa fa-lg fa-chevron-circle-up': testRun.showDetails == true}" aria-hidden="true" data-ng-click="showDetails(testRun.id)"  class="float_right action_button"></i>
 					</div>
