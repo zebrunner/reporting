@@ -245,20 +245,18 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException
 	{
-		if(! jiraService.isIssueClosed(workItem.getJiraId())) {
-			Test test = getTestById(testId);
-			if (test != null) {
-				workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
-				test.setKnownIssue(true);
-				updateTest(test);
-				if(workItem.isBlocker()) {
-					test.setBlocker(true);
-				}
+		Test test = getTestById(testId);
+		if (test != null) {
+			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+			test.setKnownIssue(true);
+			updateTest(test);
+			if(workItem.isBlocker()) {
+				test.setBlocker(true);
 			}
-			workItemService.createWorkItem(workItem);
-			testMapper.createTestWorkItem(test, workItem);
-			testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		}
+		workItemService.createWorkItem(workItem);
+		testMapper.createTestWorkItem(test, workItem);
+		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		return workItem;
 	}
 	

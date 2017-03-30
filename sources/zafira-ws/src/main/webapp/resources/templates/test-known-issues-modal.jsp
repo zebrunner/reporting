@@ -8,7 +8,9 @@
 <div class="modal-header">
 	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
 	<h3>
-		Known issues
+		Known issues <br/><span data-ng-class="{'success_text': isConnectedToJira == true, 'danger_text': isConnectedToJira == false}"
+								data-ng-show="isDataLoaded"><span data-ng-show="isConnectedToJira">Connected </span><span data-ng-hide="isConnectedToJira">Unconnected </span>to Jira</span>
+					 <span data-ng-show="!isDataLoaded || !isIssueFound"><md-progress-circular md-mode="indeterminate" md-diameter="20"></md-progress-circular></span>
 	</h3>
 </div>
 <div class="modal-body">
@@ -24,28 +26,26 @@
 		<div class="col-lg-12">
 			<form name="knownIssueForm" novalidate>
 				<div class="form-group">
-					<label>Jira ID</label> 
-					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-change="createExistsKnowIssue(true)" required/>
-					<span style="color: red" data-ng-show="! isJiraIdExists">Jira ID does not exist!</span>
-					<span style="color: red" data-ng-show="isJiraIdClosed">Jira ID is closed!</span>
+					<label>Jira ID</label>
+					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required/>
+					<span style="color: red" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' does not exist!</span>
+					<span style="color: red" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' is closed!</span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
-					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="descriptionFieldIsDisabled" required></textarea>
+					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
 				</div>
 				<div>
 					<label>Blocker</label>
 					<input type="checkbox" data-ng-model="newKnownIssue.blocker"/>
-				</div>
-				<div data-ng-hide="isConnectedToJira" layout="row" layout-sm="column" layout-align="space-around">
-					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+					<span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-success" data-ng-click="createExistsKnowIssue(false)" data-ng-disabled="knownIssueForm.$invalid || descriptionFieldIsDisabled">
+	<button class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
     	Create
     </button>
 </div>

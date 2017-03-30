@@ -200,24 +200,16 @@ public class TestsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="jira/{issue}/isExists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody boolean isJiraIssueExists(@PathVariable(value = "issue") String issue) {
-		return jiraService.isIssueExists(issue);
-	}
-
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="jira/{issue}/isClosed", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody boolean isJiraIssueClosed(@PathVariable(value = "issue") String issue) {
-		return jiraService.isIssueClosed(issue);
-	}
-
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Issue getJiraIssue(@PathVariable(value = "issue") String issue) {
+	public @ResponseBody Issue getJiraIssue(@PathVariable(value = "issue") String issue) {
 		return jiraService.getIssue(issue);
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="jira/connect", method = RequestMethod.GET)
+	public @ResponseBody boolean getConnectionToJira() {
+		return jiraService.isConnectedToJira();
 	}
 	
 	@ApiIgnore

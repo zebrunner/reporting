@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -31,7 +32,27 @@ public class JiraService {
         }
     }
 
+    public boolean isConnectedToJira() {
+        try {
+            jiraClient.getProjects().isEmpty();
+        } catch (JiraException e) {
+            return false;
+        }
+        return true;
+    }
+
     public Issue getIssue(String ticket) {
+        Issue issue = null;
+        try {
+            issue = jiraClient.getIssue(ticket);
+        } catch (JiraException e) {
+            LOGGER.error("Unable to initialize Jira issue '" + ticket + "' " + e.getMessage());
+        } finally {
+            return issue;
+        }
+    }
+
+    public Issue getIssueWithCheck(String ticket) {
         Issue issue = null;
         try {
             issue = jiraClient.getIssue(ticket);
@@ -54,7 +75,7 @@ public class JiraService {
     }
 
     public String getStatusName(String ticket) {
-        String status = getIssue(ticket).getStatus().getName();
+        String status = getIssueWithCheck(ticket).getStatus().getName();
         LOGGER.info("Status for ticket '" + ticket + "' is '" + status + "'");
         return status;
     }
@@ -71,9 +92,14 @@ public class JiraService {
         try {
             issue = getI(jiraClient, "AUTO-2194");
             issue2 = jiraClient.getIssue("LMS-78110");
-            System.out.println(*//*issue.getAssignee().getName() + " " + projectList.get(0) + " " + issueTypeList.get(0).getName() + " " + issue2.getSummary() + " " + *//*issue.getStatus().getName().equals("Closed"));
+            List<Project> projectList = jiraClient.getProjects();
+            System.out.println(issue.getAssignee().getName() + " " + issue2.getSummary() + " " + issue.getStatus().getName().equals("Closed") + " " + projectList.size());
         } catch (JiraException e) {
-            System.out.println("Unable to initialize Jira issue " + e.getMessage());
+            String s = e.getCause().toString();
+            if(s.matches("^java.net.UnknownHostException.*"))
+                System.out.println();
+            if(s.matches("^net.rcarz.jiraclient.RestException:\\s+401\\s+Unauthorized.*"))
+                System.out.println("Unable to initialize Jira issue " + e.getMessage() + s);
         }
     }
 
