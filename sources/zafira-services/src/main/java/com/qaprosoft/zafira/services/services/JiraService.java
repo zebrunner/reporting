@@ -34,7 +34,7 @@ public class JiraService {
 
     public boolean isConnectedToJira() {
         try {
-            jiraClient.getProjects().isEmpty();
+            jiraClient.getProjects();
         } catch (JiraException e) {
             return false;
         }
