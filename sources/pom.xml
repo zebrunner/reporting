@@ -103,6 +103,8 @@
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
 
 		<jenkins-client.version>0.3.7</jenkins-client.version>
+		
+		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
 	</properties>
 
 	<modules>
@@ -563,6 +565,12 @@
 			  <groupId>com.offbytwo.jenkins</groupId>
 			  <artifactId>jenkins-client</artifactId>
 			  <version>${jenkins-client.version}</version>
+			</dependency>
+			
+			<dependency>
+			  <groupId>in.ashwanthkumar</groupId>
+			  <artifactId>slack-java-webhook</artifactId>
+			  <version>${slack-java-webhook.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -55,6 +55,16 @@ public class TestRun extends AbstractEntity
 	private Integer failed;
 	private Integer failedAsKnown;
 	private Integer skipped;
+	
+	private boolean reviewed;
+
+	public boolean isReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(boolean reviewed) {
+		this.reviewed = reviewed;
+	}
 
 	public User getUser()
 	{

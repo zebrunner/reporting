@@ -33,6 +33,16 @@ public class TestRunType extends AbstractType
 	private ProjectType project;
 	private boolean knownIssue;
 	private DriverMode driverMode;
+	
+	private boolean reviewed;
+
+	public boolean isReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(boolean reviewed) {
+		this.reviewed = reviewed;
+	}
 
 	public TestRunType() {
 		

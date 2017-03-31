@@ -90,6 +90,18 @@ ZafiraApp.factory('JenkinsService', function($http) {
     return jenkinsService;
 });
 
+ZafiraApp.factory('SlackService', function($http) {
+    var slackService = {
+        triggerReviewNotif : function(id) {
+            var promise = $http.get('slack/triggerReviewNotif/' + id).then(function(rs) {
+                return null;
+            });
+            return promise;
+        }
+    };
+    return slackService;
+});
+
 ZafiraApp.factory('DashboardService', function($http) {
     var dashboardService = {
         getUserPerformanceDashboardId : function() {

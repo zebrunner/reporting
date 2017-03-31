@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
+ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$location','UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', 'SlackService', '$cookieStore', '$mdConstant', function($scope, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, SlackService, $cookieStore, $mdConstant) {
 
 	var OFFSET = new Date().getTimezoneOffset()*60*1000;
 	
@@ -150,6 +150,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     	else
     	{
     		$scope.testRuns[testRun.id].status = testRun.status;
+    		$scope.testRuns[testRun.id].reviewed = testRun.reviewed;
     	}
 	};
 	
@@ -312,31 +313,51 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	$scope.openEmailModal($itemScope.testRun);
     }];
 	
+	const SEND_SLACK_NOTIF = ['Send Reviewed to Slack', function ($itemScope) {
+	  	$scope.sendSlackNotif($itemScope.testRun);
+    }];
+	
 	const COMMENT = ['Comment', function ($itemScope) {
 	  	$scope.openCommentsModal($itemScope.testRun);
     }];
 	
-	$scope.adminMenuOptions = [
-      OPEN_TEST_RUN,
-      COPY_TEST_RUN_LINK,
-      COMMENT,
-      SEND_EMAIL,
-      null,
-	  BUILD_NOW,
-      REBUILD,
-      null,
-      DELETE_TEST_RUN
-    ];
+	$scope.buildAdminMenu = function(testRun){
+		var adminMenuOptions = [
+		                        OPEN_TEST_RUN,
+		                        COPY_TEST_RUN_LINK,
+		                        COMMENT,
+		                        SEND_EMAIL,
+		                        null,
+		                  	    BUILD_NOW,
+		                        REBUILD,
+		                        null,
+		                        DELETE_TEST_RUN
+		                      ];
+		if(testRun.reviewed == null || !testRun.reviewed)
+		{
+			var c = adminMenuOptions.length + 1;
+	        adminMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
+		}
+		return adminMenuOptions;
+	}
 	
-	$scope.userMenuOptions = [
-      OPEN_TEST_RUN,
-      COPY_TEST_RUN_LINK,
-      COMMENT,
-      SEND_EMAIL,
-      null,
-	  BUILD_NOW,
-      REBUILD
-    ];
+	$scope.buildUserMenu = function(testRun){
+		var userMenuOptions = [
+								OPEN_TEST_RUN,
+								COPY_TEST_RUN_LINK,
+								COMMENT,
+								SEND_EMAIL,
+								null,
+								BUILD_NOW,
+								REBUILD
+		                      ];
+		if(testRun.reviewed == null || !testRun.reviewed)
+		{
+			var c = userMenuOptions.length + 1;
+			userMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
+		}
+		return userMenuOptions;
+	}
 	// -----------------------------------------------------------
 	
 	$scope.showDetails = function(id) {
@@ -521,6 +542,17 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
         }, function () {
         });
 	};
+	
+	$scope.sendSlackNotif = function(testRun){
+		if(testRun.failed > 0 || testRun.skipped > 0)
+		{
+			alertify.error('Unable to mark as Reviewed test run with failed/skipped tests!');
+		}
+		else
+		{
+			SlackService.triggerReviewNotif(testRun.id);
+		}
+	}
 	
 	$scope.openCommentsModal = function(testRun){
 		$modal.open({
