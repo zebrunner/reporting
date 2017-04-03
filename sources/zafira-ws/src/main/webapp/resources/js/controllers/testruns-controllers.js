@@ -289,7 +289,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         $scope.openCommentsModal($itemScope.testRun);
     }];
 
-    $scope.adminMenuOptions = [
+    $scope.menuOptions = [
         OPEN_TEST_RUN,
         COPY_TEST_RUN_LINK,
         COMMENT,
@@ -311,6 +311,31 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         REBUILD
     ];
     // -----------------------------------------------------------
+
+    $scope.isConnectedToJenkins = false;
+    $scope.getJenkinsConnection = function() {
+        ConfigService.getConfig("jenkins").then(function (jenkins) {
+            $scope.isConnectedToJenkins = jenkins.connected;
+        });
+    };
+
+    $scope.initMenuOptions = function () {
+        var menuOptions = [];
+        menuOptions.push(OPEN_TEST_RUN);
+        menuOptions.push(COPY_TEST_RUN_LINK);
+        menuOptions.push(COMMENT);
+        menuOptions.push(SEND_EMAIL);
+        menuOptions.push(null);
+        if($scope.isConnectedToJenkins) {
+            menuOptions.push(BUILD_NOW);
+        }
+        menuOptions.push(REBUILD);
+        if($rootScope.currentRole == 'ROLE_ADMIN') {
+            menuOptions.push(null);
+            menuOptions.push(DELETE_TEST_RUN);
+        }
+        return menuOptions;
+    };
 
     $scope.showDetails = function (id) {
         var testRun = $scope.testRuns[id];
@@ -664,6 +689,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         $scope.loadTestRuns(1);
         $scope.populateSearchQuery();
         $scope.loadEnvironments();
+        $scope.getJenkinsConnection();
         SettingsService.getSetting("JIRA_URL").then(function successCallback(setting) {
             $scope.jiraURL = setting;
         }, function errorCallback(data) {
