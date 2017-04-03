@@ -332,3 +332,13 @@ span.light {
 span.light_text {
 	color: #aaa !important;
 }
+
+.success_text {
+	color: #337ab7;
+	font-size: 12px;
+}
+
+.danger_text {
+	color: #d9534f;
+	font-size: 12px;
+}

@@ -103,6 +103,9 @@
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
 
 		<jenkins-client.version>0.3.7</jenkins-client.version>
+
+		<jira-client.version>0.5</jira-client.version>
+		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 	</properties>
 
 	<modules>
@@ -563,6 +566,18 @@
 			  <groupId>com.offbytwo.jenkins</groupId>
 			  <artifactId>jenkins-client</artifactId>
 			  <version>${jenkins-client.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.rcarz</groupId>
+				<artifactId>jira-client</artifactId>
+				<version>${jira-client.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons-beanutils.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

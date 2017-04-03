@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.services.services.*;
+import net.rcarz.jiraclient.Issue;
 import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +34,6 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.TestMetricService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.WorkItemService;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -65,6 +63,9 @@ public class TestsController extends AbstractController
 	
 	@Autowired
 	private WorkItemService workItemService;
+
+	@Autowired
+	private JiraService jiraService;
 	
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
@@ -189,12 +190,32 @@ public class TestsController extends AbstractController
 		workItem = testService.createTestKnownIssue(id, workItem);
 		
 		Test test = testService.getTestById(id);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
-		
 		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+
+		if(workItem.isBlocker()) {
+			test.setBlocker(true);
+			testRun.setBlocker(true);
+		}
+
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
 		
 		return workItem;
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Issue getJiraIssue(@PathVariable(value = "issue") String issue) {
+		return jiraService.getIssue(issue);
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="jira/connect", method = RequestMethod.GET)
+	public @ResponseBody boolean getConnectionToJira() 
+	{
+		return jiraService.isConnected();
 	}
 	
 	@ApiIgnore

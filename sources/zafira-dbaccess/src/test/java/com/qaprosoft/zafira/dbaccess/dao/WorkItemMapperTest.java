@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
+import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,7 +35,8 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 			setJiraId("JIRA-123");
 			setType(Type.BUG);
 			setDescription("d1");
-			setHashCode(1);
+			setBlocker(true);
+			setHashCode(KeyGenerator.getKey());
 			setUser(user);
 			setTestCaseId(1L);
 		}
@@ -81,7 +83,8 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 		WORK_ITEM.setJiraId("JIRA-3344");
 		WORK_ITEM.setType(Type.TASK);
 		WORK_ITEM.setDescription("d2");
-		WORK_ITEM.setHashCode(2);
+		WORK_ITEM.setBlocker(false);
+		WORK_ITEM.setHashCode(KeyGenerator.getKey());
 		WORK_ITEM.getUser().setId(2L);
 		WORK_ITEM.setTestCaseId(2L);
 		
@@ -124,6 +127,7 @@ public class WorkItemMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(workItem.getJiraId(), WORK_ITEM.getJiraId(), "Jira ID must match");
 		assertEquals(workItem.getHashCode(), WORK_ITEM.getHashCode(), "Hash code must match");
 		assertEquals(workItem.getDescription(), WORK_ITEM.getDescription(), "Description must match");
+		assertEquals(workItem.isBlocker(), WORK_ITEM.isBlocker(), "Is blocker value must match");
 		assertEquals(workItem.getType(), WORK_ITEM.getType(), "Type must match");
 		assertEquals(workItem.getUser().getId(), WORK_ITEM.getUser().getId(), "User must match");
 		assertEquals(workItem.getTestCaseId(), WORK_ITEM.getTestCaseId(), "Test case id must match");

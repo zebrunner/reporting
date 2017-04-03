@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.JenkinsService;
+import com.qaprosoft.zafira.services.services.JiraService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.VersionService;
 
@@ -34,6 +35,9 @@ public class ConfigurationController extends AbstractController
 	
 	@Autowired
 	private JenkinsService jenkinsService;
+	
+	@Autowired
+	private JiraService jiraService;
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,10 +58,19 @@ public class ConfigurationController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "jenkins", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getJenkins() throws ServiceException
+	public @ResponseBody Map<String, Object> getJenkinsConfig() throws ServiceException
 	{
 		Map<String, Object> config = new HashMap<>();
-		config.put("enabled", jenkinsService.isRunning());
+		config.put("connected", jenkinsService.isConnected());
+		return config;
+	}
+	
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "jira", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getJiraConfig() throws ServiceException
+	{
+		Map<String, Object> config = new HashMap<>();
+		config.put("connected", jiraService.isConnected());
 		return config;
 	}
 }
