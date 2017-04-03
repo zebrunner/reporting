@@ -240,6 +240,30 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public TestRun abortTestRun(TestRun testRun) throws ServiceException
+	{
+		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
+		{
+			new InvalidTestRunException("Unable to abort test run!");
+		}
+		
+		testRun.setStatus(Status.ABORTED);
+		updateTestRun(testRun);
+		
+		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+		for(Test test : tests)
+		{
+			if(Status.IN_PROGRESS.equals(test.getStatus()))
+			{
+				testService.abortTest(test);
+			}
+		}
+		testService.updateTestRerunFlags(testRun, tests);
+		
+		return testRun;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException
 	{
 		TestRun testRun = getTestRunById(id);
@@ -294,21 +318,6 @@ public class TestRunService
 		
 		updateTestRun(testRun);
 		testService.updateTestRerunFlags(testRun, tests);
-		return testRun;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(long id) throws ServiceException
-	{
-		TestRun testRun = getTestRunById(id);
-		if(testRun == null)
-		{
-			throw new TestRunNotFoundException();
-		}
-		testRun.setStatus(Status.ABORTED);
-		updateTestRun(testRun);
-//		TODO: Replace by websocket.
-//		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	

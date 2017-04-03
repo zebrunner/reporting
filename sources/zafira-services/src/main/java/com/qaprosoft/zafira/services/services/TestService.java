@@ -137,6 +137,18 @@ public class TestService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public Test abortTest(Test test) throws ServiceException
+	{
+		if(test == null)
+		{
+			throw new TestNotFoundException();
+		}
+		test.setStatus(Status.ABORTED);
+		updateTest(test);
+		return test;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
@@ -303,7 +315,8 @@ public class TestService
 				
 				for(Test test : tests)
 				{
-					if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+					
+					if((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
 					{
 						switch (testRun.getDriverMode())
 						{

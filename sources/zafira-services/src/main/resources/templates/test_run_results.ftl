@@ -139,7 +139,7 @@
                 </#if>
                 <#assign previousGroup = currentGroup>
             	<#if !(showOnlyFailures == true && test.status == 'PASSED')>
-	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true || test.blocker>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
+	            	<tr style="background: <#if test.status == 'PASSED'>#66C266</#if><#if test.status == 'ABORTED'>#C5C5C5</#if><#if test.status == 'FAILED'><#if test.knownIssue?? && test.knownIssue != true || test.blocker>#FF5C33<#else>#D87A7A</#if></#if><#if test.status == 'SKIPPED'>#DEB887</#if>" >
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			${test.status}
 	            		</td>
