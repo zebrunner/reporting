@@ -27,6 +27,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
 	private boolean knownIssue;
+	private boolean blocker;
 	private boolean needRerun;
 	private String owner;
 	private String dependsOnMethods;
@@ -188,6 +189,14 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		this.knownIssue = knownIssue;
 	}
 
+	public boolean isBlocker() {
+		return blocker;
+	}
+
+	public void setBlocker(boolean blocker) {
+		this.blocker = blocker;
+	}
+
 	public String getOwner()
 	{
 		return owner;
@@ -221,7 +230,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	@Override
 	public int compareTo(Test test)
 	{
-		if(Arrays.asList(Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
+		if(Arrays.asList(Status.ABORTED, Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
 		{
 			return -1;
 		}

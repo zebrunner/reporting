@@ -32,6 +32,7 @@ public class TestType extends AbstractType
 	private String configXML;
 	private Map<String, Long> testMetrics;
 	private boolean knownIssue;
+	private boolean blocker;
 	private boolean needRerun;
 	private String dependsOnMethods;
 
@@ -204,6 +205,16 @@ public class TestType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
+	}
+
+	public boolean isBlocker()
+	{
+		return blocker;
+	}
+
+	public void setBlocker(boolean blocker)
+	{
+		this.blocker = blocker;
 	}
 
 	public String getTestGroup()

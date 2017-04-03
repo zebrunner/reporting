@@ -1,7 +1,6 @@
 <!-- CSS styles -->
 <link href="<spring:url value="/resources/img/favicon.ico" />" rel="icon" type="image/x-icon" />
 <link href="<spring:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet" type="text/css" />
-<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7/css/font-awesome.min.css"-->
 <link href="<spring:url value="/resources/css/metisMenu.min.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/sb-admin-2.css" />" rel="stylesheet" type="text/css" />
 <link href="<spring:url value="/resources/css/style.css" />" rel="stylesheet" type="text/css" />
@@ -19,7 +18,6 @@
 <script src="<spring:url value='/resources/js/angular/angular-messages.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-route.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-cookies.min.js'/>" type="text/javascript"></script>
-<!--script src="<spring:url value='/resources/js/angular/angular-sanitize.min.js'/>" type="text/javascript"></script-->
 <script src="<spring:url value='/resources/js/angular/angular-modal.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer-all.min.js'/>" type="text/javascript"></script>
 <script src="<spring:url value='/resources/js/angular/angular-timer.js'/>" type="text/javascript"></script>

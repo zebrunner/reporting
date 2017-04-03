@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -86,7 +87,8 @@ public class TestRunService
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
-		results.setResults(testRunMapper.searchTestRuns(sc));
+		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+		results.setResults(testRuns);
 		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
 		return results;
 	}
@@ -238,6 +240,30 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
+	public TestRun abortTestRun(TestRun testRun) throws ServiceException
+	{
+		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
+		{
+			new InvalidTestRunException("Unable to abort test run!");
+		}
+		
+		testRun.setStatus(Status.ABORTED);
+		updateTestRun(testRun);
+		
+		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+		for(Test test : tests)
+		{
+			if(Status.IN_PROGRESS.equals(test.getStatus()))
+			{
+				testService.abortTest(test);
+			}
+		}
+		testService.updateTestRerunFlags(testRun, tests);
+		
+		return testRun;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
 	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException
 	{
 		TestRun testRun = getTestRunById(id);
@@ -271,7 +297,11 @@ public class TestRunService
 				{
 					testRun.setKnownIssue(true);
 				}
-				if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+				if(test.isBlocker())
+				{
+					testRun.setBlocker(true);
+				}
+				if(Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
 				{
 					testRun.setStatus(Status.FAILED);
 					break;
@@ -288,21 +318,6 @@ public class TestRunService
 		
 		updateTestRun(testRun);
 		testService.updateTestRerunFlags(testRun, tests);
-		return testRun;
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(long id) throws ServiceException
-	{
-		TestRun testRun = getTestRunById(id);
-		if(testRun == null)
-		{
-			throw new TestRunNotFoundException();
-		}
-		testRun.setStatus(Status.ABORTED);
-		updateTestRun(testRun);
-//		TODO: Replace by websocket.
-//		notificationService.publish(xmppChannel, new TestRunPush(getTestRunByIdFull(testRun.getId())));
 		return testRun;
 	}
 	

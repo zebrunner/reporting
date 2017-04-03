@@ -28,9 +28,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
@@ -137,7 +139,35 @@ public class TestRunsController extends AbstractController
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
-
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "POST",
+			notes = "Aborts test run.", response = TestRunType.class, responseContainer = "TestRunType")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id", required = true) @RequestParam(value="id", required=false) Long id,
+												  @ApiParam(value = "Test run CI id", required = true) @RequestParam(value="ciRunId", required=false) String ciRunId) throws ServiceException, InterruptedException
+	{
+		if(id == null && ciRunId == null) 
+		{
+			throw new ServiceException("Id or CI run ID should be set!");
+		}
+		
+		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);;
+		testRunService.abortTestRun(testRun);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		
+		for(Test test : testService.getTestsByTestRunId(testRun.getId()))
+		{
+			if(Status.ABORTED.equals(test.getStatus()))
+			{
+				websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+			}
+		}
+		
+		return mapper.map(testRun, TestRunType.class);
+	}
+	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get test run", nickname = "getTestRun", code = 200, httpMethod = "GET",
 			notes = "Returns test run by id.", response = TestRunType.class, responseContainer = "TestRunType")

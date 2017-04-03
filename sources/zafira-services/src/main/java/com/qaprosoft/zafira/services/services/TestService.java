@@ -53,7 +53,7 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
@@ -83,6 +83,7 @@ public class TestService
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
 			test.setKnownIssue(false);
+			test.setBlocker(false);
 			updateTest(test);
 			workItemService.deleteKnownIssuesByTestId(test.getId());
 		}
@@ -133,6 +134,18 @@ public class TestService
 			testCaseService.updateTestCase(testCase);
 		}
 		return existingTest;
+	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public Test abortTest(Test test) throws ServiceException
+	{
+		if(test == null)
+		{
+			throw new TestNotFoundException();
+		}
+		test.setStatus(Status.ABORTED);
+		updateTest(test);
+		return test;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -234,10 +247,14 @@ public class TestService
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(testId);
-		if(test != null)
+		if (test != null) 
 		{
 			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 			test.setKnownIssue(true);
+			if(workItem.isBlocker()) 
+			{
+				test.setBlocker(true);
+			}
 			updateTest(test);
 		}
 		workItemService.createWorkItem(workItem);
@@ -298,7 +315,8 @@ public class TestService
 				
 				for(Test test : tests)
 				{
-					if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED))
+					
+					if((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
 					{
 						switch (testRun.getDriverMode())
 						{

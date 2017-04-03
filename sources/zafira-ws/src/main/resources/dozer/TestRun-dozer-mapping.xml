@@ -75,6 +75,10 @@
 			<b>knownIssue</b>
 		</field>
 		<field>
+			<a>blocker</a>
+			<b>blocker</b>
+		</field>
+		<field>
 			<a>driverMode</a>
 			<b>driverMode</b>
 		</field>

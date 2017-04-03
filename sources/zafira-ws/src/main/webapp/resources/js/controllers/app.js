@@ -62,10 +62,14 @@ ZafiraApp.service('UtilService', function() {
     };
 });
 
-ZafiraApp.factory('UserService', function($http) {
+ZafiraApp.factory('UserService', function($http, $rootScope) {
     var userService = {
         getCurrentUser : function() {
             var promise = $http.get('users/current').then(function(rs) {
+                var authorities = rs.data.authorities;
+                if(authorities.length == 1) {
+                    $rootScope.currentRole = rs.data.authorities[0].authority;
+                }
                 return rs.data;
             });
             return promise;

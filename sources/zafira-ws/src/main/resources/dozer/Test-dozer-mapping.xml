@@ -64,6 +64,10 @@
 			<b>knownIssue</b>
 		</field>
 		<field>
+			<a>blocker</a>
+			<b>blocker</b>
+		</field>
+		<field>
 			<a>needRerun</a>
 			<b>needRerun</b>
 		</field>
