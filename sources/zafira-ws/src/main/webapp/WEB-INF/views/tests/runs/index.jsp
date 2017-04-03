@@ -140,6 +140,7 @@
                     				<div class="col-sm-8">
                     					<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>   
                     					<a href="#!/tests/cases?id={{test.testCaseId}}" target="_blank">{{test.name}}</a>
+										<span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span>
                     				</div>
                     				<div class="col-sm-4">
 	                    				<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
@@ -162,7 +163,7 @@
                     	<div class="col-lg-1 center" style="padding: 0;">
                     		<span data-ng-repeat="issue in test.workItems">
                     			<a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding" style="background-color: #337ab7;">{{issue.jiraId}}</a>
-                    			<a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}"><span data-ng-if="issue.blocker">BLOCKER </span>{{issue.jiraId}}</a>
+                    			<a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                     		</span>
                     	</div>
                     	<div class="col-lg-1 center" style="padding: 0;">

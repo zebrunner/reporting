@@ -192,11 +192,6 @@ public class TestsController extends AbstractController
 		Test test = testService.getTestById(id);
 		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
 
-		if(workItem.isBlocker()) {
-			test.setBlocker(true);
-			testRun.setBlocker(true);
-		}
-
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
 		

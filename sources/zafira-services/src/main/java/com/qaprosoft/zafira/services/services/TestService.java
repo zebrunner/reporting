@@ -83,6 +83,7 @@ public class TestService
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
 			test.setKnownIssue(false);
+			test.setBlocker(false);
 			updateTest(test);
 			workItemService.deleteKnownIssuesByTestId(test.getId());
 		}
@@ -184,16 +185,7 @@ public class TestService
 	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
-		List<Test> tests =  testMapper.getTestsByTestRunId(testRunId);
-		for(Test test: tests) {
-			for(WorkItem workItem: test.getWorkItems()) {
-				if(workItem.isBlocker()) {
-					test.setBlocker(true);
-					break;
-				}
-			}
-		}
-		return tests;
+		return testMapper.getTestsByTestRunId(testRunId);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -247,11 +239,11 @@ public class TestService
 		{
 			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 			test.setKnownIssue(true);
-			updateTest(test);
 			if(workItem.isBlocker()) 
 			{
 				test.setBlocker(true);
 			}
+			updateTest(test);
 		}
 		workItemService.createWorkItem(workItem);
 		testMapper.createTestWorkItem(test, workItem);

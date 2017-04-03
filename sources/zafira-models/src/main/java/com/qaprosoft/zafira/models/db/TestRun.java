@@ -234,8 +234,6 @@ public class TestRun extends AbstractEntity
 
 	public void setFailedAsBlocker(Integer failedAsBlocker) {
 		this.failedAsBlocker = failedAsBlocker;
-		if(failedAsBlocker > 0)
-			setBlocker(true);
 	}
 
 	public Integer getSkipped()

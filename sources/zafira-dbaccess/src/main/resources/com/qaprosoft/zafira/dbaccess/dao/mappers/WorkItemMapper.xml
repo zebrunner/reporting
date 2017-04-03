@@ -14,7 +14,7 @@
 			USER_ID, 
 		</if>
 		<if test="null != blocker">
-			IS_BLOCKER,
+			BLOCKER,
 		</if>
 		<![CDATA[
 		DESCRIPTION, TEST_CASE_ID)
@@ -45,7 +45,7 @@
 				WI.TYPE AS WORK_ITEM_TYPE,
 				WI.HASH_CODE AS WORK_ITEM_HASH_CODE,
 				WI.DESCRIPTION AS WORK_ITEM_DESCRIPTION,
-				WI.IS_BLOCKER AS WORK_ITEM_IS_BLOCKER,
+				WI.BLOCKER AS WORK_ITEM_BLOCKER,
 				WI.TEST_CASE_ID AS WORK_ITEM_TEST_CASE_ID,
 				WI.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
 				WI.CREATED_AT AS WORK_ITEM_CREATED_AT,
@@ -118,7 +118,7 @@
 				USER_ID = #{user.id},
 		</if>
 		<if test="null != blocker">
-				IS_BLOCKER = #{blocker},
+				BLOCKER = #{blocker},
 		</if>
 		<![CDATA[
 				DESCRIPTION = #{description},
@@ -168,7 +168,7 @@
 		<result column="WORK_ITEM_TYPE" property="type" />
 		<result column="WORK_ITEM_HASH_CODE" property="hashCode" />
 		<result column="WORK_ITEM_DESCRIPTION" property="description" />
-		<result column="WORK_ITEM_IS_BLOCKER" property="blocker"/>
+		<result column="WORK_ITEM_BLOCKER" property="blocker"/>
 		<result column="WORK_ITEM_TEST_CASE_ID" property="testCaseId" />
 		<result column="WORK_ITEM_MODIFIED_AT" property="modifiedAt" />
 		<result column="WORK_ITEM_CREATED_AT" property="createdAt" />
