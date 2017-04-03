@@ -582,7 +582,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                             $scope.isIssueFound = true;
                             checkIssueStatus(issue);
                             if ($scope.isJiraIdExists) {
-                                $scope.newKnownIssue.description = issue.description;
+                                $scope.newKnownIssue.description = issue.summary;
                                 $scope.newKnownIssue.assigneeMessage = '(Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name + ')';
                             }
                         }, function errorCallback(data) {
@@ -615,6 +615,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     if ($scope.newKnownIssue.jiraId == null || !fieldIsChanged) {
                         $scope.isRightToSearch = false;
                     } else {
+                        $scope.isJiraIdExists = true;
+                        $scope.isJiraIdClosed = false;
                         $scope.isRightToSearch = true;
                         fieldIsChanged = false;
                     }
