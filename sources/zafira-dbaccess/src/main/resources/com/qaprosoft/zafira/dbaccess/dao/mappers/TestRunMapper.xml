@@ -204,12 +204,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND LOWER(TR.ENV) LIKE LOWER(CONCAT('%', #{environment}, '%'))
+	               AND TR.ENV = #{environment}
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
+	               AND TR.PLATFORM = #{platform}
 	            ]]>
 			</if>
 			<if test="null != appVersion">
@@ -294,12 +294,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND LOWER(TR.ENV) LIKE LOWER(CONCAT('%', #{environment}, '%'))
+	               AND TR.ENV = #{environment}
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND LOWER(TR.PLATFORM) LIKE LOWER(CONCAT('%', #{platform}, '%'))
+	               AND TR.PLATFORM = #{platform}
 	            ]]>
 			</if>
 			<if test="null != appVersion">
