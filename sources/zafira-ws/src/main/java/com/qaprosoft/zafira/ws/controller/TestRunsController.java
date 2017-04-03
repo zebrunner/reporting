@@ -145,8 +145,8 @@ public class TestRunsController extends AbstractController
 			notes = "Aborts test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id", required = true) @RequestParam(value="id", required=false) Long id,
-												  @ApiParam(value = "Test run CI id", required = true) @RequestParam(value="ciRunId", required=false) String ciRunId) throws ServiceException, InterruptedException
+	public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id") @RequestParam(value="id", required=false) Long id,
+												  @ApiParam(value = "Test run CI id") @RequestParam(value="ciRunId", required=false) String ciRunId) throws ServiceException, InterruptedException
 	{
 		if(id == null && ciRunId == null) 
 		{
