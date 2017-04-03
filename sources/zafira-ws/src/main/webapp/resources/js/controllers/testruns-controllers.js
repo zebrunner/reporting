@@ -242,7 +242,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
     const REBUILD = ['Rebuild', function ($itemScope) {
 
         ConfigService.getConfig("jenkins").then(function (jenkins) {
-            if (jenkins.enabled) {
+            if (jenkins.connected) {
                 var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
                 $http.get('tests/runs/' + $itemScope.testRun.id + '/rerun?rerunFailures=' + rerunFailures).then(function successCallback(data) {
                     alertify.success('CI job is rebuilding, it may take some time before status is updated');
@@ -535,16 +535,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.isFieldsDisabled = true;
                 $scope.isJiraIdExists = true;
                 $scope.isJiraIdClosed = false;
-
-                $scope.getJiraConnection = function () {
-                    $http.get('tests/jira/connect').then(function successCallback(data) {
-                        $scope.isConnectedToJira = data.data;
-                        $scope.isDataLoaded = true;
-                        $scope.isFieldsDisabled = false;
-                    }, function errorCallback(data) {
-                    });
-                };
-
+                
                 $scope.createKnownIssue = function () {
                     var knownIssue = $scope.newKnownIssue;
                     $http.post('tests/' + test.id + '/issues', knownIssue).then(function successCallback(data) {
@@ -640,9 +631,12 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     $modalInstance.close(false);
                 };
 
-
                 (function init() {
-                    $scope.getJiraConnection();
+                	ConfigService.getConfig("jira").then(function(jira) {
+                		$scope.isConnectedToJira = jira.connected;
+                        $scope.isDataLoaded = true;
+                        $scope.isFieldsDisabled = false;
+                	});
                     $scope.initNewKnownIssue();
                     $scope.getKnownIssues();
                 })();

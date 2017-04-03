@@ -8,9 +8,7 @@
 <div class="modal-header">
 	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
 	<h3>
-		Known issues <br/><span data-ng-class="{'success_text': isConnectedToJira == true, 'danger_text': isConnectedToJira == false}"
-								data-ng-show="isDataLoaded"><span data-ng-show="isConnectedToJira">Connected </span><span data-ng-hide="isConnectedToJira">Unconnected </span>to Jira</span>
-					 <span data-ng-show="!isDataLoaded || !isIssueFound"><md-progress-circular md-mode="indeterminate" md-diameter="20"></md-progress-circular></span>
+		Known issues
 	</h3>
 </div>
 <div class="modal-body">
@@ -27,9 +25,11 @@
 			<form name="knownIssueForm" novalidate>
 				<div class="form-group">
 					<label>Jira ID</label>
-					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required/>
-					<span style="color: red" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' does not exist!</span>
-					<span style="color: red" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' is closed!</span>
+					<span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
+					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+					<span class="danger" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' not found</span>
+					<span class="danger" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' closed</span>
+					<span data-ng-show="!isDataLoaded || !isIssueFound"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
@@ -38,7 +38,6 @@
 				<div>
 					<label>Blocker</label>
 					<input type="checkbox" data-ng-model="newKnownIssue.blocker"/>
-					<span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
 				</div>
 			</form>
 		</div>

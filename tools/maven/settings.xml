@@ -53,6 +53,10 @@
         <zafira.jenkins.url></zafira.jenkins.url>
         <zafira.jenkins.username></zafira.jenkins.username>
         <zafira.jenkins.password></zafira.jenkins.password>
+
+        <zafira.jira.url></zafira.jira.url>
+        <zafira.jira.username></zafira.jira.username>
+        <zafira.jira.password></zafira.jira.password>
 			</properties>
 		</profile>
 	</profiles>

@@ -213,8 +213,9 @@ public class TestsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="jira/connect", method = RequestMethod.GET)
-	public @ResponseBody boolean getConnectionToJira() {
-		return jiraService.isConnectedToJira();
+	public @ResponseBody boolean getConnectionToJira() 
+	{
+		return jiraService.isConnected();
 	}
 	
 	@ApiIgnore

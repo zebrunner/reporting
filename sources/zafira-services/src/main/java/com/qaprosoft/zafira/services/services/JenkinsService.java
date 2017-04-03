@@ -21,7 +21,7 @@ public class JenkinsService
 	private static Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
 	private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
-	
+
 	private JenkinsServer server;
 
 	public JenkinsService(String url, String username, String password)
@@ -30,97 +30,89 @@ public class JenkinsService
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
-				server = new JenkinsServer(new URI(url), username, password);
+				this.server = new JenkinsServer(new URI(url), username, password);
 			}
-		} 
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
 		}
 	}
 
-	public boolean isRunning()
-	{
-		boolean running = false;
-		try
-		{
-			running = server != null && server.isRunning();
-		}
-		catch (Exception e)
-		{
-			LOGGER.error("Unable to check if Jenkins is running:  " + e.getMessage());
-		}
-		return running;
-	}
-	
 	public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures)
 	{
 		boolean success = false;
 		try
 		{
 			JobWithDetails job = getJobWithDetails(ciJob);
-			
+
 			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
-			if(rerunFailures)
+			if (rerunFailures)
 			{
 				params.put("rerun_failures", "true");
 			}
 			QueueReference reference = job.build(params, true);
 			success = reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
 		}
 		return success;
 	}
 
-	public boolean buildJob(Job ciJob, Integer buildNumber, Map<String, String> jobParameters, boolean buildWithParameters) {
+	public boolean buildJob(Job ciJob, Integer buildNumber, Map<String, String> jobParameters,
+			boolean buildWithParameters)
+	{
 		boolean success = false;
-		if(buildWithParameters) {
+		if (buildWithParameters)
+		{
 			try
 			{
 				JobWithDetails job = getJobWithDetails(ciJob);
 				QueueReference reference = job.build(jobParameters, true);
 				success = reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
 			}
-		} else {
+		} else
+		{
 			success = rerunJob(ciJob, buildNumber, false);
 		}
 		return success;
 	}
 
-	public Map<String, String> getBuildParameters(Job ciJob, Integer buildNumber) {
+	public Map<String, String> getBuildParameters(Job ciJob, Integer buildNumber)
+	{
 		Map<String, String> jobParameters = null;
 		try
 		{
 			JobWithDetails job = getJobWithDetails(ciJob);
 			jobParameters = job.getBuildByNumber(buildNumber).details().getParameters();
 			jobParameters.put("ci_run_id", UUID.randomUUID().toString());
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			LOGGER.error("Unable to get job:  " + e.getMessage());
 		}
 		return jobParameters;
 	}
 
-	private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
+	private JobWithDetails getJobWithDetails(Job ciJob) throws IOException
+	{
 		JobWithDetails job = null;
-		if(ciJob.getJobURL().matches(FOLDER_REGEX))
+		if (ciJob.getJobURL().matches(FOLDER_REGEX))
 		{
 			String folderName = ciJob.getJobURL().split("/job/")[1];
 			Optional<FolderJob> folder = server.getFolderJob(server.getJob(folderName));
 			job = server.getJob(folder.get(), ciJob.getName());
-		}
-		else
+		} else
 		{
 			job = server.getJob(ciJob.getName());
 		}
 		return job;
+	}
+
+	public boolean isConnected()
+	{
+		return this.server != null && this.server.isRunning();
 	}
 }
