@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -276,8 +277,7 @@ public class TestRunService
 				{
 					testRun.setBlocker(true);
 				}
-				if((test.getStatus().equals(Status.FAILED) && !test.isKnownIssue()) || test.getStatus().equals(Status.SKIPPED)
-						|| (test.getStatus().equals(Status.FAILED) && test.isKnownIssue() && test.isBlocker()))
+				if(Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
 				{
 					testRun.setStatus(Status.FAILED);
 					break;
@@ -352,11 +352,6 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 		
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		for(Test test: tests) {
-			if(test.getName().contains("testSaveFlowBlog")) {
-				System.out.println(test.isBlocker());
-			}
-		}
 		
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
