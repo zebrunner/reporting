@@ -603,6 +603,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                             $scope.isJiraIdClosed = true;
                             break;
                         default:
+                            // Reset flags
                             $scope.isJiraIdExists = true;
                             $scope.isJiraIdClosed = false;
                             break;
@@ -615,8 +616,6 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     if ($scope.newKnownIssue.jiraId == null || !fieldIsChanged) {
                         $scope.isRightToSearch = false;
                     } else {
-                        $scope.isJiraIdExists = true;
-                        $scope.isJiraIdClosed = false;
                         $scope.isRightToSearch = true;
                         fieldIsChanged = false;
                     }
@@ -626,6 +625,10 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
                 $scope.onChangeAction = function () {
                     fieldIsChanged = true;
+                    // Reset flags
+                    $scope.isJiraIdExists = true;
+                    $scope.isJiraIdClosed = false;
+                    $scope.isIssueFound = false;
                 };
 
                 $interval(function () {
