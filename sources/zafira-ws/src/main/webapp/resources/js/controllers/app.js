@@ -97,7 +97,15 @@ ZafiraApp.factory('SlackService', function($http) {
                 return null;
             });
             return promise;
-        }
+        },
+	    isAvailable : function(id) {
+	        var promise = $http.get('slack/isAvailable/' + id).then(function successCallback(rs) {
+	        	return rs;
+	        }, function errorCallback(data) {
+				return null;
+			});
+	        return promise;
+	    }
     };
     return slackService;
 });

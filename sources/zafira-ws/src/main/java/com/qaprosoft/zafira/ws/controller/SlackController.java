@@ -46,10 +46,26 @@ public class SlackController extends AbstractController
 		TestRun tr = testRunService.getTestRunByIdFull(id);
 		if (!tr.isReviewed())
 		{
-			tr.setReviewed(true);
-			slackService.sendReviwedStatus(tr);
-			tr = testRunService.updateTestRun(tr);
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
+			boolean sent = slackService.sendReviwedStatus(tr);
+			if (sent)
+			{
+				tr.setReviewed(true);
+				tr = testRunService.updateTestRun(tr);
+				websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
+			}
 		}
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "isAvailable/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String isSlackAvailable(@PathVariable(value = "id") long id) throws ServiceException,
+			IOException, InterruptedException
+	{
+		TestRun tr = testRunService.getTestRunByIdFull(id);
+		if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null)
+		{
+			return "{\"available\" : true}";
+		}
+		return "{\"available\" : false}";
 	}
 }

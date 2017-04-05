@@ -5,14 +5,21 @@ import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.JenkinsService;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 
 @Service
 public class SlackService
@@ -30,45 +37,121 @@ public class SlackService
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
 
-	@Value("${zafira.slack.webhook_url}")
-	private String slackWebHook;
+	@Value("${zafira.slack.author}")
+	private String slackAuthor;
+
+	@Value("${zafira.slack.pic_path}")
+	private String slackPicPath;
 
 	@Autowired
 	private JenkinsService jenkinsService;
 
-	public void sendAutoStatus(TestRun tr) throws IOException
+	@Autowired
+	private SettingsService settingsService;
+
+	public void sendAutoStatus(TestRun tr) throws IOException, ServiceException
 	{
-		String elapsed = countElapsedInSMH(tr.getElapsed());
-		String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
-		String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
+		Slack s = prepareSlackInst(tr);
+		if (s != null)
+		{
+			String elapsed = countElapsedInSMH(tr.getElapsed());
+			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
+			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
 
-		String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
-		String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
-				tr.getFailedAsKnown(), tr.getSkipped());
+			String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
+			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
+					tr.getFailedAsKnown(), tr.getSkipped());
 
-		SlackAttachment attachment = new SlackAttachment("")
-				.preText(mainMsg)
-				.color(determineColor(tr))
-				.addField(new Field("Test Results", msgRes, false))
-				.fallback(mainMsg + "\n" + msgRes);
-		new Slack(slackWebHook).push(attachment);
+			SlackAttachment attachment = new SlackAttachment("")
+					.preText(mainMsg)
+					.color(determineColor(tr))
+					.addField(new Field("Test Results", msgRes, false))
+					.fallback(mainMsg + "\n" + msgRes);
+			s.push(attachment);
+		}
 	}
 
-	public void sendReviwedStatus(TestRun tr) throws IOException
+	/**
+	 * 
+	 * @param tr
+	 * @return 'true' if notification about review was successfully sent
+	 * @throws IOException
+	 * @throws ServiceException
+	 */
+	public boolean sendReviwedStatus(TestRun tr) throws IOException, ServiceException
 	{
-		String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
-		String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
+		Slack s = prepareSlackInst(tr);
+		if (s != null)
+		{
+			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
+			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
 
-		String mainMsg = String.format(REV_PATTERN, tr.getId(), buildRunInfo(tr), zafiraUrl, jenkinsUrl);
-		String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
-				tr.getFailedAsKnown(), tr.getSkipped());
+			String mainMsg = String.format(REV_PATTERN, tr.getId(), buildRunInfo(tr), zafiraUrl, jenkinsUrl);
+			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
+					tr.getFailedAsKnown(), tr.getSkipped());
 
-		SlackAttachment attachment = new SlackAttachment("")
-				.preText(mainMsg)
-				.color(determineColor(tr))
-				.addField(new Field("Test Results", msgRes, false))
-				.fallback(mainMsg + "\n" + msgRes);
-		new Slack(slackWebHook).push(attachment);
+			SlackAttachment attachment = new SlackAttachment("")
+					.preText(mainMsg)
+					.color(determineColor(tr))
+					.addField(new Field("Test Results", msgRes, false))
+					.fallback(mainMsg + "\n" + msgRes);
+			s.push(attachment);
+			return true;
+		}
+		return false;
+	}
+
+	private Slack prepareSlackInst(TestRun tr) throws ServiceException
+	{
+		Slack s = null;
+		String wH = getWebhook();
+		if (wH != null)
+		{
+			String channel = getChannelMapping(tr);
+			if (channel != null)
+			{
+				s = new Slack(wH);
+				s = s.sendToChannel(channel);
+				s.displayName(slackAuthor);
+				String iconPath = SlackService.class.getClassLoader().getResource(slackPicPath).getPath();
+				System.out.println(iconPath);
+				s.icon(iconPath);
+			}
+		}
+		return s;
+	}
+
+	public String getWebhook() throws ServiceException
+	{
+		String wH = null;
+		if (settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL) != null)
+		{
+			wH = settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL).getValue();
+		}
+		if (wH != null && !StringUtils.isEmpty(wH))
+		{
+			return wH;
+		}
+		return wH;
+	}
+
+	public String getChannelMapping(TestRun tr) throws ServiceException
+	{
+		List<Setting> sList = settingsService.getAllSettings();
+		String pattern = StringUtils.substringBeforeLast(SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
+		for (Setting s : sList)
+		{
+			if (s.getName().startsWith(pattern))
+			{
+				String v = s.getValue();
+				String jobs[] = v.split(";");
+				if (ArrayUtils.contains(jobs, tr.getJob().getName()))
+				{
+					return StringUtils.substringAfter(s.getName(), pattern + "_");
+				}
+			}
+		}
+		return null;
 	}
 
 	private String buildRunInfo(TestRun tr)
