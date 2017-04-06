@@ -1,0 +1,60 @@
+<section class="quickview-wrapper customizer hidden-sm hidden-xs"
+     id="quickview-customizer"
+     ng-controller="CustomizerCtrl" 
+     >
+    <a class="customizer-close" href="" data-toggle-quickview data-target="customizer"><span class="material-icons">close</span></a>
+    <a class="customizer-toggle" href="" data-toggle-quickview data-target="customizer"><span class="material-icons">settings</span></a>
+
+    <div class="quickview-inner" slim-scroll>
+        <div>
+            <p class="customizer-header">Customizer</p>
+            <p class="small no-margin">Customize and preview in real time.</p>
+
+            <div class="divider divider-lg divider-solid"></div>
+            <h4 class="section-header">Layout Options</h4>
+            <div class="divider divider"></div>
+
+            <p class="sub-title">Layout Style</p>
+            <div class="divider divider-sm"></div>
+            <md-radio-group class="ui-md-radio-group-inline" ng-model="main.layout">
+                <md-radio-button value="wide">Wide</md-radio-button>
+                <md-radio-button value="boxed">Boxed</md-radio-button>
+            </md-radio-group>
+
+            <div class="divider divider-dashed"></div>
+            <p class="sub-title">Menu Style</p>
+            <div class="divider divider-sm"></div>
+            <md-radio-group class="ui-md-radio-group-inline" ng-model="main.menu">
+                <md-radio-button value="vertical">Vertical</md-radio-button>
+                <md-radio-button value="horizontal">Horizontal</md-radio-button>
+            </md-radio-group>
+
+            <div class="divider divider-dashed"></div>
+            <p class="sub-title">Additional</p>
+            <div class="divider divider-sm"></div>
+            <md-checkbox ng-model="main.fixedHeader" aria-label="fixedHeader"> Fixed Top Header </md-checkbox>
+            <br>
+            <md-checkbox ng-model="main.fixedSidebar" aria-label="fixedSidebar"> Fixed Sidebar Menu </md-checkbox>
+
+            <div class="divider divider-dashed"></div>
+            <p>
+                <span class="sub-title">Page Transition: </span> 
+                <span class="space"></span>
+                <select ng-model="main.pageTransition"
+                        ng-options="ageTransitionOpt.name for ageTransitionOpt in pageTransitionOpts"></select>
+            </p>
+
+            <div class="divider divider-lg divider-solid"></div>
+            <h4 class="section-header">Color Options</h4>
+            <div class="divider"></div>
+
+            <section ng-include=" 'app/layout/customizer-color.html'"> </section>
+
+            <div class="divider divider-lg divider-solid"></div>
+            <div class="text-right">
+                <a target="_blank" ng-href="{{main.link}}">Download it Now</a>
+            </div>
+
+        </div>
+    </div>
+</section>

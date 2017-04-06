@@ -1,0 +1,96 @@
+<div class="page">
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Angular Form Wizard</h2>
+        </div>
+        <div class="col-md-12">
+            <section class="panel panel-default" ng-controller="WizardCtrl">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                                    
+                            <section class="ui-angular-wizard" >
+                                <md-button ng-click="stepToggle()" class="md-raised btn-w-md md-accent">Toggle Steps</md-button>
+                                <span>Click to toggle steps on and off dynamically</span>
+                                <div class="divider divider-lg"></div>
+                                <wizard on-finish="finished()" indicators-position="top">
+                                    <wz-step wz-title="Start" canexit="exitWithAPromise">
+                                        <h2>Start</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>Hey guys, welcome to the wizard :)</p>
+                                            <p>Here we will use a promise with a timeout to simulate an async server call. <strong>Give the wizard 1 second to progress</strong> after clicking next!</p>
+                                            <p>Otherwise, let's continue with the wizard. Please <a href="" wz-next>click here to continue</a></p>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button type="submit" wz-next class="md-raised btn-w-md md-primary">Next</md-button>
+                                        </div>
+                                    </wz-step>
+                                    <wz-step wz-title="Liking it" canexit="exitValidation">
+                                        <h2>Liking it</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>You're now in the second step of this wizard.</p>
+                                            <p><strong>This step is an example of using <em>canexit</em> validation with no server call, </strong></p>
+                                            <p>Toggle the value to true or false using the button below to see an example of being allowed to exit and being restricted.</p>
+                                            <md-button ng-click="exitToggle()" class="md-raised btn-w-md md-accent">Toggle Validation!</md-button>
+                                            <div class="callout callout-info">
+                                                <p>Value is currently: {{canExit}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button wz-previous="logStep()"  class="md-raised btn-w-md">BACK</md-button>
+                                            <md-button wz-next="logStep()" class="md-raised btn-w-md md-primary" ng-disabled="!canExit">NEXT</md-button>
+                                        </div>
+                                    </wz-step>
+                                    <wz-step wz-title="More steps" wz-disabled="{{!stepActive}}">
+                                        <h2>More steps</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>Click on the top navigation on Liking it to go back to that step for example</p>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button wz-previous="logStep()"  class="md-raised btn-w-md">BACK</md-button>
+                                            <md-button wz-next="logStep()" class="md-raised btn-w-md md-primary" ng-disabled="!canExit">NEXT</md-button>
+                                        </div>
+                                    </wz-step>
+                                    <wz-step wz-title="Even more">
+                                        <h2>Even More steps</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>I can't deal with so many steps. ARGH</p>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button wz-previous="logStep()"  class="md-raised btn-w-md">BACK</md-button>
+                                            <md-button wz-next="logStep()" class="md-raised btn-w-md md-primary">NEXT</md-button>
+                                        </div>
+                                    </wz-step>
+                                    <wz-step wz-title="Sup?">
+                                        <h2>Sup?</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>I don't even know what to write!</p>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button wz-previous="logStep()"  class="md-raised btn-w-md">BACK</md-button>
+                                            <md-button wz-next="logStep()" class="md-raised btn-w-md md-primary" >NEXT</md-button>
+                                        </div>
+                                    </wz-step>
+                                    <wz-step wz-title="Finish him">
+                                        <h2>Finish him</h2>
+                                        <div class="ui-wizard-content">
+                                            <p>Finally this ends!</p>
+                                        </div>
+                                        <div class="ui-wizard-actions">
+                                            <md-button ng-click="goBack()" class="md-raised btn-w-md md-accent">Restart</md-button>
+                                            <md-button wz-reset class="md-raised btn-w-md md-accent">Reset</md-button>
+                                            <md-button wz-previous="logStep()"  class="md-raised btn-w-md">BACK</md-button>
+                                            <md-button wz-next="logStep()" class="md-raised btn-w-md md-primary">Finish</md-button>
+                                        </div>
+                                    </wz-step>
+                                </wizard>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </section>     
+        </div>
+    </div>
+
+</div>

@@ -14,6 +14,12 @@ target
 */test-output
 *.bak
 hs_err_pid*
+node
+node_modules
+etc
+.tmp
+dist
+bower_components
 /sources/rapid-dbaccess/test-output
 /sources/rapid-services/test-output
 /sources/zafira-conf/.project

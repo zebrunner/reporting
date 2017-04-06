@@ -1,0 +1,121 @@
+.body-auth {
+    // #content {
+        background-color: $skin-gray;
+        // background: url('#{$image_path}/background/1.png') no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        background-size: cover; 
+    // }    
+}
+
+
+.btn-minimal {
+    color: $reverse;
+    color: rgba(255,255,255,.8);
+    background-color: transparent; 
+    border-color: $reverse;
+    border-color: rgba(255,255,255,.8);
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+        color: $reverse;
+        background-color: rgba(255,255,255,.1);
+    }
+    .open & {
+        &.dropdown-toggle {
+            color: $reverse;
+            background-color: rgba(255,255,255,.1);
+        }
+    }
+}
+
+
+.page-signin,
+.page-signup,
+.page-forgot {
+
+    // 
+    .wrapper {
+        padding: 0 10px;
+    }
+
+    .main-body {
+        max-width: 480px;
+        margin: 10px auto;
+    }
+    .body-inner {
+        position: relative;
+        padding: 20px;
+        &:before {
+            z-index: -1;
+            content: ' ';
+            line-height: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: $brand-primary;
+            height: 220px;
+        }
+    }
+    .additional-info {
+        text-align: center;
+        font-size: $font-size-small;
+        a {
+            color: $bright;
+        }
+        .divider-h {
+            border-right: 1px solid $bright;
+            margin: 0 15px;
+        }
+    }
+
+
+    h1 {
+        font-weight: normal;
+        color: $brand-primary;
+        font-size: 38px;
+        margin-bottom: 40px;
+        a {
+            color: $brand-primary;
+        }
+    }
+
+    .card {
+        @extend .z-depth-2;
+        .card-content {
+            padding: 30px 20px;
+        }
+    }
+
+    .ui-input-group {
+        .form-control {
+            color: $gray;
+        }
+    }
+
+    .form-group {
+        position: relative;
+        margin: 0;
+    }
+
+    .wrapper {
+        margin-top: 50px;
+        @media (min-width: $screen-sm) {
+            margin-top: 150px;
+        }
+    }
+
+    .logo {
+        font-size: 26px;
+        font-weight: normal;
+        // text-transform: uppercase;
+        a {
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+}

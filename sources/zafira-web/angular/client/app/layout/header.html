@@ -1,0 +1,101 @@
+<header class="top-header clearfix">
+    <div ui-preloader></div>
+
+    <!-- Logo -->
+    <div class="logo"
+         ng-class="{ 'bg-dark': ['11','31'].indexOf(main.skin) >= 0,
+                     'bg-white': main.skin === '21',
+                     'bg-primary': ['12','22','32'].indexOf(main.skin) >= 0,
+                     'bg-success': ['13','23','33'].indexOf(main.skin) >= 0,
+                     'bg-info': ['14','24','34'].indexOf(main.skin) >= 0,
+                     'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
+                     'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
+        <a href="#!/">
+            <span class="logo-icon material-icons">dashboard</span>
+            <span class="logo-text">{{main.brand}}</span>
+        </a>
+    </div>
+
+    <!-- needs to be put after logo to make it work -->
+    <div class="menu-button" toggle-off-canvas>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </div>
+
+    <div class="top-nav">
+        <ul class="nav-left list-unstyled">
+            <li><md-button class="header-btn toggle-min" data-toggle-nav-collapsed-min aria-label="toggle-nav-collapsed-min"><i class="material-icons">menu</i></md-button></li>
+            <li>
+                <md-menu md-position-mode="left bottom">
+                    <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
+                        <i class="material-icons">email</i>
+                        <span class="badge">3</span>
+                    </md-button>
+                    <md-menu-content class="top-header-dropdown" width="4">
+                        <md-list class="md-dense">
+                            <md-list-item class="md-2-line" ng-click="null">
+                                <md-icon class="material-icons">mail_outline</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3>New mail from David</h3>
+                                    <p>5 minutes ago</p>
+                                </div>
+                            </md-list-item>
+                            <md-list-item class="md-2-line" ng-click="null">
+                                <md-icon class="material-icons">chat_bubble_outline</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3>Message from Jane</h3>
+                                    <p>15 minutes ago</p>
+                                </div>
+                            </md-list-item>
+                            <md-list-item class="md-2-line" ng-click="null">
+                                <md-icon class="material-icons">person_outline</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3>New member John joined</h3>
+                                    <p>1 hour ago</p>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </md-menu-content>
+                </md-menu>
+            </li>
+            <li class="search-box visible-md visible-lg">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="material-icons">search</i></span>
+                    <input type="text" class="form-control" placeholder="{{ 'SEARCH' | translate }}">
+                    <span class="input-bar"></span>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="nav-right pull-right list-unstyled">
+            <li>
+                <md-menu md-position-mode="target-right target">
+                    <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
+                        <img src="assets/images/g1.jpg" alt="" class="img-circle img30_30">
+                    </md-button>
+                    <md-menu-content class="top-header-dropdown" width="3">
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/"><md-icon class="material-icons">assignment</md-icon><span data-translate="DASHBOARD"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/page/profile"><md-icon class="material-icons">lock_outline</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/page/signin"><md-icon class="material-icons">keyboard_tab</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </li>
+            <li class="hidden-xs hidden-sm" data-ng-controller="LangCtrl as ctrl">
+                <md-menu md-position-mode="target-right target">
+                    <md-button class="active-flag" aria-label="menu" ng-click="$mdMenu.open($event)">
+                        <div class="flag flags-{{activeLang}}"></div>
+                    </md-button>
+                    <md-menu-content width="3" class="langs">
+                        <md-menu-item ng-repeat="lang in langs">
+                            <md-button ng-click="setLang(lang)">
+                                <div class="flag flags-{{lang}}"></div>
+                                <span class="lang-text" >{{lang}}</span>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </li>
+        </ul>
+    </div>
+</header>

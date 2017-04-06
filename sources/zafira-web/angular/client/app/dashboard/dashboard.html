@@ -1,0 +1,170 @@
+<div class="page page-dashboard" data-ng-controller="DashboardCtrl">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default panel-minimal">
+                <div class="divider divider-md"></div>
+                <div class="panel-heading">Traffic</div>
+                <div class="panel-body">
+                    <div data-echarts data-options="combo.options" style="height: 400px;"></div>
+                    <div class="divider divider-lg"></div>
+                    <div class="row">
+                        <div class="col-md-3 box-stats">
+                            <span class="box-desc">Views</span>
+                            <p class="box-num">4,268</p>
+                            <div data-echarts data-options="smline1.options" class="sm-charts" style="height: 50px; width:100px;"></div>
+                        </div>
+                        <div class="col-md-3 box-stats">
+                            <span class="box-desc">Clickthroughs</span>
+                            <p class="box-num">3,239</p>
+                            <div data-echarts data-options="smline2.options" class="sm-charts" style="height: 50px; width:100px;"></div>
+                        </div>
+                        <div class="col-md-3 box-stats">
+                            <span class="box-desc">Vistors</span>
+                            <p class="box-num">2,922</p>
+                            <div data-echarts data-options="smline3.options" class="sm-charts" style="height: 50px; width:100px;"></div>
+                        </div>
+                        <div class="col-md-3 box-stats no-border">
+                            <span class="box-desc">Users</span>
+                            <p class="box-num">1,093</p>
+                            <div data-echarts data-options="smline4.options" class="sm-charts" style="height: 50px; width:100px;"></div>
+                        </div>
+                    </div>
+                    <div class="divider divider-lg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body padding-lg">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="panel">
+                                <div class="panel-heading text-center">Engagement</div>
+                                <div class="divider divider-lg"></div>
+                                <div class="panel-body">
+                                    <div class="row text-center metrics">
+                                        <div class="col-xs-6 col-md-3">
+                                            <span class="metric">5.6M</span>
+                                            <span class="metric-info">Session</span>
+                                        </div>
+                                        <div class="col-xs-6 col-md-3">
+                                            <span class="metric">4.8M</span>
+                                            <span class="metric-info">Users</span>
+                                        </div>                                
+                                        <div class="col-xs-6 col-md-3">
+                                            <span class="metric">5:06</span>
+                                            <span class="metric-info">Session Duration</span>
+                                        </div>
+                                        <div class="col-xs-6 col-md-3">
+                                            <span class="metric">6.24</span>
+                                            <span class="metric-info">Page Views</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div data-echarts data-options="pie.options" style="height: 180px;"></div>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="col-lg-4">
+                            <section class="panel">
+                                <div class="panel-heading">Statistics</div>
+                                <div class="divider divider-md"></div>
+                                <div class="panel-body">
+                                    <div class="divider divider-md"></div>
+                                    <div class="progressbar-container">
+                                        <md-progress-linear md-mode="determinate" value="34" class="md-progressbar brand-success"></md-progress-linear>
+                                        <p class="desc">Bounce Rate <span class="pull-right color-success">34%</span></p>
+                                    </div>
+                                    <div class="progressbar-container">
+                                        <md-progress-linear md-mode="determinate" value="68" class="md-progressbar brand-info"></md-progress-linear>
+                                        <p class="desc">New Visists <span class="pull-right color-info">68%</span></p>
+                                    </div>
+                                    <div class="progressbar-container">
+                                        <md-progress-linear md-mode="determinate" value="48" class="md-progressbar brand-danger"></md-progress-linear>
+                                        <p class="desc">Search Traffic <span class="pull-right color-danger">48%</span></p>
+                                    </div>
+                                    <div class="progressbar-container">
+                                        <md-progress-linear md-mode="determinate" value="77" class="md-progressbar brand-warning"></md-progress-linear>
+                                        <p class="desc">Modern Browsers <span class="pull-right color-warning">77%</span></p>
+                                    </div>
+                                    <div class="progressbar-container">
+                                        <md-progress-linear md-mode="determinate" value="55" class="md-progressbar brand-primary"></md-progress-linear>
+                                        <p class="desc">Returning <span class="pull-right color-primary">55%</span></p>
+                                    </div>                                      
+                                </div>
+                            </section>
+                        </div>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+       <!-- Stats -->
+        <div class="col-lg-3 col-xsm-6">
+            <div class="panel panel-box">
+                <div class="panel-top">
+                    <i class="material-icons color-success">airplanemode_active</i>
+                </div>
+                <div class="panel-info">
+                    <span data-translate="GROWTH"></span>
+                </div>
+                <div class="panel-bottom bg-light">
+                    <span>36 <span class="size-h4">%</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xsm-6">
+            <div class="panel panel-box">
+                <div class="panel-top">
+                    <i class="material-icons color-info">supervisor_account</i>
+                </div>
+                <div class="panel-info">
+                    <span data-translate="NEW_USERS"></span>
+                </div>
+                <div class="panel-bottom bg-light">
+                    <span>22 <span class="size-h4">%</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xsm-6">
+            <div class="panel panel-box">
+                <div class="panel-top">
+                    <i class="material-icons color-warning">attach_money</i>
+                </div>
+                <div class="panel-info">
+                    <span data-translate="PROFIT"></span>
+                </div>
+                <div class="panel-bottom bg-light">
+                    <span>37 <span class="size-h4">k</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xsm-6">
+            <div class="panel panel-box">
+                <div class="panel-top">
+                    <i class="material-icons color-danger">shopping_cart</i>
+                </div>
+                <div class="panel-info">
+                    <span data-translate="SALES"></span>
+                </div>
+                <div class="panel-bottom bg-light">
+                    <span>21 <span class="size-h4">k</span></span>
+                </div>
+            </div>
+        </div>
+        <!-- end stats -->          
+    </div>
+
+</div>
+    

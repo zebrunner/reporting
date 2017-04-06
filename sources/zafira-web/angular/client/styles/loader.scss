@@ -1,0 +1,16 @@
+// Shared variables and mixins
+@import 
+    "global/var"                        // global variables
+,   "global/var-extra"                  // extra global variables
+;
+
+#loader-container {
+    background: #EDF0F1 url('#{$image_path}/audio.svg') no-repeat center center;
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99999;
+}

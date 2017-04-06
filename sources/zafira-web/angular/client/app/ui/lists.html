@@ -1,0 +1,253 @@
+<div class="page">
+
+    <div class="row ui-section" ng-controller="ListCtrl" ng-cloak>
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Material List</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <md-list>
+                                <md-subheader class="md-no-sticky">Single Action Checkboxes</md-subheader>
+                                <md-list-item ng-repeat="topping in toppings">
+                                    <p> {{ topping.name }} </p>
+                                    <md-checkbox class="md-secondary" ng-model="topping.wanted"></md-checkbox>
+                                </md-list-item>
+                            </md-list>                           
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <md-list class="ui-material-list">
+                                <md-subheader class="md-no-sticky">Clickable Items with Secondary Controls</md-subheader>
+                                <md-list-item ng-click="navigateTo(setting.extraScreen, $event)" ng-repeat="setting in settings">
+                                    <md-icon class="material-icons">{{setting.icon}}</md-icon>
+                                    <p> {{ setting.name }} </p>
+                                    <md-switch class="md-secondary" ng-model="setting.enabled"></md-switch>
+                                </md-list-item>
+                                <md-list-item ng-click="navigateTo('data usage', $event)">
+                                    <md-icon class="material-icons">refresh</md-icon>
+                                    <p>Data Usage</p>
+                                </md-list-item>
+                            </md-list>                           
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <md-list class="ui-material-list">
+                                <md-subheader class="md-no-sticky">Checkbox with Secondary Action</md-subheader>
+                                <md-list-item ng-repeat="message in messages">
+                                    <md-checkbox ng-model="message.selected"></md-checkbox>
+                                    <p>{{message.title}}</p>
+                                    <md-icon class="md-secondary material-icons" ng-click="doSecondaryAction($event)" aria-label="Chat">comment</md-icon>
+                                </md-list-item>
+                            </md-list>
+                        </div>
+                    </div>                 
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <md-list>
+                                <md-subheader class="md-no-sticky">Avatar with Secondary Action Icon</md-subheader>
+                                <md-list-item ng-repeat="person in people" ng-click="goToPerson(person.name, $event)">
+                                    <img alt="" src="assets/images/g1.jpg" class="img-circle img40_40 md-avatar">
+                                    <p>{{ person.name }}</p>
+                                    <md-icon ng-click="doSecondaryAction($event)" aria-label="Open Chat" class="md-secondary material-icons" ng-class="{'md-primary': person.newMessage}">comment</md-icon>
+                                </md-list-item>
+                            </md-list>                          
+                        </div>
+                    </div>                 
+                </div>
+            </div> 
+
+        </div>
+    </div>
+
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">List Group</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <ul class="list-group no-margin">
+                                <li class="list-group-item">Cras justo odio</li>
+                                <li class="list-group-item">Dapibus ac facilisis in</li>
+                                <li class="list-group-item">Morbi leo risus</li>
+                                <li class="list-group-item">Porta ac consectetur ac</li>
+                                <li class="list-group-item">Vestibulum at eros</li>
+                            </ul>
+                            <span class="panel-label">Normal</span>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <div class="panel panel-default no-margin">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <span class="badge">14</span>
+                                        Cras justo odio
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="badge badge-warning">2</span>
+                                        Dapibus ac facilisis in
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="badge badge-info">1</span>
+                                        Morbi leo risus
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="badge badge-success">3</span>
+                                        Vestibulum at eros
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span class="badge badge-danger">5</span>
+                                        Porta ac consectetur ac
+                                    </li>
+                                </ul>
+                            </div>
+                            <span class="panel-label">With Badges</span>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <div class="list-group no-margin">
+                                <a href="javascript:;" class="list-group-item active"> Cras justo odio </a>
+                                <a href="javascript:;" class="list-group-item">Dapibus ac facilisis in</a>
+                                <a href="javascript:;" class="list-group-item">Morbi leo risus</a>
+                                <a href="javascript:;" class="list-group-item">Porta ac consectetur ac</a>
+                                <a href="javascript:;" class="list-group-item">Vestibulum at eros</a>
+                            </div>
+                            <span class="panel-label">Linked items</span>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <div class="panel panel-default no-margin">
+                                <div class="list-group">
+                                    <a href="javascript:;" class="list-group-item disabled">
+                                        Cras justo odio
+                                    </a>
+                                    <a href="javascript:;" class="list-group-item">Dapibus ac facilisis in</a>
+                                    <a href="javascript:;" class="list-group-item">Morbi leo risus</a>
+                                    <a href="javascript:;" class="list-group-item">Porta ac consectetur ac</a>
+                                    <a href="javascript:;" class="list-group-item">Vestibulum at eros</a>
+                                </div>
+                            </div>
+                            <span class="panel-label">Disabled items</span>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Divider</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <div class="media-list media-divider-full">
+                                <div class="media">
+                                    <a class="media-left" href="javascript:;">
+                                        <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">Media heading</h4>
+                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce cfelis in faucibus.</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <a class="media-left" href="javascript:;">
+                                        <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">Media heading</h4>
+                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at. Donec lacinia congue felis in faucibus.</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <a class="media-left" href="javascript:;">
+                                        <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">Media heading</h4>
+                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus    Donec lacinia congue felis in faucibus.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="panel-label">Full Bleed</span>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default panel-labeled">
+                        <div class="panel-body">
+                            <div class="media-list media-divider-inset">
+                                <div class="media">
+                                    <a class="media-left" href="javascript:;">
+                                        <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">Media heading</h4>
+                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce cfelis in faucibus.</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <a class="media-left" href="javascript:;">
+                                        <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">Media heading</h4>
+                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at. Donec lacinia congue felis in faucibus.</p>
+                                    </div>
+                                    <div class="media">
+                                        <a class="media-left" href="javascript:;">
+                                            <img alt="" src="assets/images/g1.jpg" class="img-circle img64_64">
+                                        </a>
+                                        <div class="media-body">
+                                            <h4 class="media-heading">Media heading</h4>
+                                            <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus    Donec lacinia congue felis in faucibus.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="panel-label">Inset</span>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

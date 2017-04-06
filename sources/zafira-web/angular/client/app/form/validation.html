@@ -1,0 +1,468 @@
+<div class="page page-form">
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Material Login Form</h2>
+        </div>
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body padding-xl form-validation" data-ng-controller="MaterialLoginCtrl" ng-cloak>
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-3">
+
+                            <form name="material_login_form" class="md-form-login form-validation" data-ng-submit="submitForm()">
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label>Email</label>
+                                        <md-icon class="material-icons">mail_outline</md-icon>
+                                        <input required 
+                                               type="email"
+                                               name="email" 
+                                               ng-model="user.email"
+                                               ng-pattern="/^.+@.+\..+$/" />
+                                        <div ng-messages="material_login_form.email.$error" multiple ng-if='material_login_form.email.$dirty'>
+                                            <div ng-message="required">This is required.</div>
+                                            <div ng-message="pattern">It must be an e-mail address.</div>
+                                        </div>
+                                    </md-input-container>
+
+                                    <md-input-container class="md-block">
+                                        <label>Password</label>
+                                        <md-icon class="material-icons">lock_outline</md-icon>
+                                        <input required 
+                                               type="password"
+                                               name="password" 
+                                               ng-model="user.password">
+                                        <div ng-messages="material_login_form.password.$error" multiple ng-if='material_login_form.password.$dirty'>
+                                            <div ng-message="required">This is required.</div>
+                                        </div>
+                                    </md-input-container>                                        
+                                    <md-button type="submit"
+                                               class="md-raised btn-w-md md-primary"
+                                               data-ng-disabled="!canSubmit()">Login</md-button>
+                                    <md-button class="btn-w-md"
+                                               data-ng-disabled="!canRevert()"
+                                               data-ng-click="revert()">Revert</md-button>
+
+                                    <div class="divider"></div>
+                                    <div class="callout callout-info">
+                                        <p>Login button will be active only when all fields are valid.</p>
+                                        <p>Revert button will be active only when one or more fields is changed.</p>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="alert alert-info" data-ng-show="showInfoOnSubmit">This is just for demo. In real project, you will submit form with AJAX :)</div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Material Sign up Form</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body padding-xl" data-ng-controller="MaterialSignUpCtrl">
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-3">
+
+                            <form name="material_signup_form" class="form-validation" data-ng-submit="submitForm()">
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label>Username</label>
+                                        <md-icon class="material-icons">perm_identity</md-icon>
+                                        <input required 
+                                               type="text"
+                                               name="name" 
+                                               ng-model="user.name">
+                                        <div ng-messages="material_signup_form.name.$error" multiple ng-if='material_signup_form.name.$dirty'>
+                                            <div ng-message="required">This is required.</div>
+                                            <div ng-message="pattern">It must be an e-mail address.</div>
+                                        </div>
+                                    </md-input-container>
+
+                                    <md-input-container class="md-block">
+                                        <label>Email</label>
+                                        <md-icon class="material-icons">mail_outline</md-icon>
+                                        <input required 
+                                               type="email"
+                                               name="email" 
+                                               ng-model="user.email"
+                                               ng-pattern="/^.+@.+\..+$/" />
+                                        <div ng-messages="material_signup_form.email.$error" multiple ng-if='material_signup_form.email.$dirty'>
+                                            <div ng-message="required">This is required.</div>
+                                            <div ng-message="pattern">It must be an e-mail address.</div>
+                                        </div>
+                                    </md-input-container>
+
+                                    <md-input-container class="md-block">
+                                        <label>Password</label>
+                                        <md-icon class="material-icons">lock_outline</md-icon>
+                                        <input required 
+                                               type="password"
+                                               name="password" 
+                                               ng-model="user.password">
+                                        <div ng-messages="material_signup_form.password.$error" multiple ng-if='material_signup_form.password.$dirty'>
+                                            <div ng-message="required">This is required.</div>
+                                        </div>
+                                    </md-input-container>                                        
+                                    <md-button type="submit"
+                                               class="md-raised btn-w-md md-primary btn-w-md"
+                                               data-ng-disabled="!canSubmit()">Sign Up</md-button>
+                                    <md-button class="btn-w-md"
+                                               data-ng-disabled="!canRevert()"
+                                               data-ng-click="revert()">Revert</md-button>
+
+                                    <div class="divider"></div>
+                                    <div class="callout callout-info">
+                                        <p>Sign up button will be active only when all fields are valid.</p>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="alert alert-info" data-ng-show="showInfoOnSubmit">This is just for demo. In real project, you will submit form with AJAX :)</div>
+                                </fieldset>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Constraints</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-default" data-ng-controller="FormConstraintsCtrl">
+                <div class="panel-body">
+                    <form name="form_constraints" class="form-validation" novalidate data-ng-submit="submitForm()">
+                        <div class="form-group">
+                            <label for="">Required</label>
+                            <input type="text"
+                                   class="form-control"
+                                   required
+                                   data-ng-model="form.required_input"
+                            >
+                            <br>
+                            <textarea class="form-control"
+                                      rows="10"
+                                      required
+                                      data-ng-model="form.required_textarea"></textarea>
+                            <br>
+                            <input  type="checkbox"
+                                    id="required_checkbox"
+                                    required
+                                    data-ng-model="form.required_checkbox"> 
+                            <label for="required_checkbox">You need to agree to the Policy</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Min length 3 </label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+                                    data-ng-minlength=3
+                                    data-ng-model="form.minlength"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Max length 10</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+                                    data-ng-maxlength=10
+                                    data-ng-model="form.maxlength"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Length from 3 to 10</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+                                    data-ng-minlength=3
+                                    data-ng-maxlength=10
+                                    data-ng-model="form.length_rage"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="">Type something</label>
+                                    <input  type="text"
+                                            class="form-control"
+                                            required
+                                            name="type_something"
+                                            data-ng-trim='false'
+                                            data-ng-model="form.type_something"
+                                    >                        
+                                    <span></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">Confirm type</label>
+                                    <input  type="text"
+                                            class="form-control"
+                                            required
+                                            name="confirm_type"
+                                            data-ng-trim='false'
+                                            data-ng-model="form.confirm_type"
+                                            data-match="form.type_something"
+                                    >                        
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Equal to "foo"</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+                                    data-ng-model="form.foo"
+                                    data-ng-pattern="/^foo$/"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input    type="email"
+                                    class="form-control"
+                                    required
+                                    data-ng-model="form.email"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Url</label>
+                            <input  type="url"
+                                    class="form-control"
+                                    required
+                                    data-ng-model="form.url"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Must be a number</label>
+                            <input  type="number"
+                                    class="form-control"
+                                    required
+                                    name="form.num"
+                                    data-ng-model="form.num"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Number min value 3 </label>
+                            <input  type="number"
+                                    class="form-control"
+                                    required
+                                    data-min=3
+                                    data-ng-model="form.minVal"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Number max value 20</label>
+                            <input  type="number"
+                                    class="form-control"
+                                    required
+                                    data-max=20
+                                    data-ng-model="form.maxVal"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Number value between 3 and 20</label>
+                            <input  type="number"
+                                    class="form-control"
+                                    required
+                                    data-min=3
+                                    data-max=20
+                                    data-ng-model="form.valRange"
+                            >
+                            <span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Match a pattern, e.g. hex color code</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    placeholder="Hex color code here, like #e5e5e5, or #fff"
+                                    required
+                                    data-ng-pattern="/^#(?:[0-9a-fA-F]{3}){1,2}$/"
+                                    data-ng-model="form.pattern"
+                            >
+                            <span></span>
+                        </div>
+
+                        <button type="submit"
+                                ui-wave
+                                class="btn btn-primary btn-w-md"
+                                data-ng-disabled="!canSubmit()"
+                                >Submit</button>
+                        <button class="btn btn-default btn-w-md"
+                                ui-wave
+                                data-ng-disabled="!canRevert()"
+                                data-ng-click="revert()"
+                        >Revert Changes</button>
+                        <div class="callout callout-info">
+                            <p>Submit button will be active only when all fields are valid.</p>
+                            <p>Revert button will be active only when one or more fields is changed.</p>
+                        </div>
+                        <div class="alert alert-info" data-ng-show="showInfoOnSubmit">Congrats! You successfully submit the form :)</div>                 
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Login Form</h2>
+        </div>
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body padding-xl" data-ng-controller="SigninCtrl">
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-3">
+                            <form name="form_signin" class="form-horizontal form-validation" data-ng-submit="submitForm()">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label for="">Email</label>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <input type="email"
+                                                     class="form-control"
+                                                     required
+                                                     data-ng-model="user.email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label for="">Password</label>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <input type="password"
+                                                     class="form-control"
+                                                     required
+                                                     data-ng-model="user.password">
+                                        </div>
+                                    </div>
+                                    <md-button type="submit"
+                                               class="md-raised btn-w-md md-primary"
+                                               data-ng-disabled="!canSubmit()">Submit</md-button>
+                                    <md-button class="btn-w-md"
+                                               data-ng-disabled="!canRevert()"
+                                               data-ng-click="revert()">Revert</md-button>
+                                    <div class="divider"></div>
+                                    <div class="callout callout-info">
+                                        <p>Submit button will be active only when all fields are valid.</p>
+                                        <p>Revert button will be active only when one or more fields is changed.</p>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="alert alert-info" data-ng-show="showInfoOnSubmit">This is just for demo. In real project, you will submit form with AJAX :)</div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Sign up Form</h2>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body padding-xl" data-ng-controller="SignupCtrl">
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-3">
+                            <form name="form_signup" class="form-horizontal form-validation" data-ng-submit="submitForm()">
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label for="">User Name</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input  type="text"
+                                                class="form-control"
+                                                placeholder="Min length 2, Max length 30"
+                                                data-ng-model="user.name"
+                                                required
+                                                data-ng-minlength="2"
+                                                data-ng-maxlength="30">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label for="">Email</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="email"
+                                                 placeholder="Email"
+                                                 class="form-control"
+                                                 data-ng-model="user.email"
+                                                 required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label for="">Password</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="password"
+                                                 class="form-control"
+                                                 placeholder="min length 6"
+                                                 data-ng-model="user.password"
+                                                 required
+                                                 data-ng-minlength="6">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label for="">Age</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <input type="number"
+                                                 class="form-control"
+                                                 placeholder="Min value 0, max value 100"
+                                                 data-ng-model="user.age"
+                                                 required
+                                                 data-min="0"
+                                                 data-max="100">
+                                    </div>
+                                </div>
+                                <md-button type="submit"
+                                           class="md-raised md-primary btn-block btn-lg"
+                                           data-ng-disabled="!canSubmit()">Sign up</md-button>                                
+                                <div class="callout callout-info">
+                                    <p>Submit button will be active only when all fields are valid.</p>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="alert alert-info" data-ng-show="showInfoOnSubmit">This is just for demo. In real project, you will submit form with AJAX :)</div>                 
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

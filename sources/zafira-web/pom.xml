@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<parent>
+    <groupId>com.qaprosoft</groupId>
+    <artifactId>zafira</artifactId>
+    <version>2.0</version>
+</parent>
+<artifactId>zafira-web</artifactId>
+<packaging>pom</packaging>
+<name>Zafira :: Web</name>
+<dependencies/>
+<build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+        <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <configuration>
+                <workingDirectory>angular</workingDirectory>
+                <installDirectory>angular</installDirectory>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>install node and npm</id>
+                    <goals>
+                        <goal>install-node-and-npm</goal>
+                    </goals>
+                    <phase>generate-resources</phase>
+                    <configuration>
+                        <nodeVersion>v7.1.0</nodeVersion>
+                        <npmVersion>3.10.9</npmVersion>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>npm install</id>
+                    <goals>
+                        <goal>npm</goal>
+                    </goals>
+                    <phase>generate-resources</phase>
+                </execution>
+                <execution>
+                    <id>bower install</id>
+                    <goals>
+                        <goal>bower</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>install</arguments>
+                    </configuration>
+                    <phase>generate-resources</phase>
+                </execution>
+                <execution>
+                    <id>gulp build</id>
+                    <goals>
+                        <goal>gulp</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>build</arguments>
+                    </configuration>
+                    <phase>generate-resources</phase>
+                </execution>
+                <execution>
+                    <id>gulp war</id>
+                    <goals>
+                        <goal>gulp</goal>
+                    </goals>
+                    <configuration>
+                        <arguments>war</arguments>
+                    </configuration>
+                    <phase>generate-resources</phase>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+                <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.tomcat.maven</groupId>
+            <artifactId>tomcat7-maven-plugin</artifactId>
+            <configuration>
+                <charset>UTF-8</charset>
+                <uriEncoding>UTF-8</uriEncoding>
+                <path>/zafira</path>
+                <server>TomcatServer</server>
+                <ignorePackaging>true</ignorePackaging>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+</project>

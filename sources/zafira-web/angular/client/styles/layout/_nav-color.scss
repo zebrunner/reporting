@@ -1,0 +1,227 @@
+
+// Sidebar - Color
+.nav-container {
+    &:before {
+        content: '';
+        height: 100%;
+        position: absolute;
+        right: 0;
+        width: 2px;
+        z-index: 2;
+    }
+
+    &.bg-white {
+        &:before {
+            box-shadow: inset -1px 0 1px rgba(255, 255, 255, 0.3);
+        }
+        .nav {
+
+            a {
+                color: $text-color;
+            }
+
+            .nav-title {
+                color: #999;
+            }
+
+            .nav-divider {
+                border-color: $gray-lighter;
+            }
+
+            > li {
+                &:hover {
+                    > a {
+                        background-color: $light_bg_link_hover_bg;
+                        color: $light_bg_link_hover_color;
+                        > .icon-has-ul { color: $light_bg_link_hover_color; }
+                    }
+                    > .icon-has-ul-h { color: $light_bg_link_hover_color; }
+                }
+                &.active {
+                    > a {
+                        // background-color: $light_bg_link_active_bg;
+                        color: $light_bg_link_active_color;
+                        > .icon-has-ul { color: $light_bg_link_active_color; }
+                    }                        
+                }
+
+                // overrides Bootstrap 
+                > a:focus {
+                    background-color: $light_bg_link_hover_bg;
+                }
+            }
+
+            // sub menu
+            ul {
+                background-color: $light_bg_sub_nav_bg;
+
+                > li {
+                    &:hover,
+                    &.active {
+                        > a {
+                            color: $brand-primary;
+                        }
+                    }
+                    // &.active {
+                    //     > a {
+                    //         background-color: darken($sub_nav_bg, 5%);
+                    //     }
+                    // }           
+                }
+            }
+        }
+
+        // Vertical NAV only
+        &.nav-vertical {
+            .nav {
+                > li {
+                    // border-bottom: 1px solid rgba(0,0,0,.06);
+                    &.open {
+                        > a {
+                            background-color: $light_bg_link_open_bg;
+                            color: $light_bg_link_open_color;
+                        }
+                        > .icon-has-ul,
+                        > .icon-has-ul-h { color: $light_bg_link_open_color; }               
+                    }
+                }
+            }
+        }        
+    }
+
+    &.bg-dark {
+        background-color: $dark;
+        &:before {
+            box-shadow: inset -1px 0 1px rgba(0, 0, 0, 0.3);
+        }
+        .nav {
+
+            a {
+                color: #ccc;
+                color: rgba(255,255,255,.5);
+            }
+
+            .nav-title {
+                color: #666;
+            }
+
+            .nav-divider {
+                border-color: darken($dark, 5%);
+            }
+
+
+            > li {
+                &:hover {
+                    > a {
+                        background-color: $dark_bg_link_hover_bg;
+                        color: $dark_bg_link_hover_color;
+                        > .icon-has-ul { color: $dark_bg_link_hover_color; }
+                    }
+                    > .icon-has-ul-h { color: $dark_bg_link_hover_color; }
+                }
+                &.active {
+                    > a {
+                        // background-color: $dark_bg_link_active_bg;
+                        color: $dark_bg_link_active_color;
+                    }                        
+                    > .icon-has-ul { color: $dark_bg_link_active_color; }
+                }
+                // overrides Bootstrap 
+                > a:focus {
+                    background-color: $dark_bg_link_hover_bg;
+                }
+            }
+
+            // sub menu
+            ul {
+                background-color: $dark_bg_sub_nav_bg;
+
+                > li {
+                    &:hover,
+                    &.active {
+                        > a {
+                            color: $dark_bg_sub_link_active_color;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // Vertical NAV only
+        &.nav-vertical {
+            .nav {
+                > li {
+                    // border-bottom: 1px solid rgba(255,255,255, 0.05);
+                    &.open {
+                        > a {
+                            background-color: $dark_bg_link_open_bg;
+                            color: $dark_bg_link_open_color;
+                            > .icon-has-ul { color: $dark_bg_link_open_color; }
+                        }
+                        > .icon-has-ul-h { color: $dark_bg_link_open_color; }
+                    }
+                }
+            }
+        }  
+
+    }
+
+}
+
+
+@media (min-width: $screen-sm) {
+    .app.nav-collapsed-min {
+
+        .nav-container {
+
+            &.bg-white {
+                .nav {
+                    > li {
+                        &:hover {
+                            a {
+                                background-color: $light_bg_link_active_bg;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.bg-dark {
+                .nav {
+                    > li {
+                        &:hover {
+                            a {
+                                background-color: $dark_bg_link_active_bg;
+                            }
+                        }
+                    }
+                }                
+            }
+        }
+    }
+
+}
+
+
+// make '.open' class effective mobile only
+@media (max-width: $screen-sm-max ) { 
+    .nav-horizontal {
+        .nav {
+            > li {
+                &.open {
+                    > a {
+                        // background-color: $link_active_bg;
+                        color: $brand-primary;
+                    }
+                    > i { color: $brand-primary; }                
+                }
+
+            }
+        }
+    }
+}
+// Horizontal nav is desktop only
+@media (min-width: $screen-sm-min) {
+
+}

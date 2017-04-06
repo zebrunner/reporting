@@ -1,0 +1,707 @@
+
+<section class="page-form-ele page" ng-controller="FormCtrl">
+
+
+    <div class="row ui-section" ng-controller="InputCtrl" >
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Input</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+
+                            <div layout="column" ng-cloak class="md-inline-form inputdemoBasicUsage">
+                                <div layout-padding>
+                                    <form name="userForm">
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Company (Disabled)</label>
+                                                <input ng-model="user.company" disabled>
+                                            </md-input-container>
+                                            <md-datepicker ng-model="user.submissionDate" md-placeholder="Enter date"></md-datepicker>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>First name</label>
+                                                <input ng-model="user.firstName">
+                                            </md-input-container>
+                                            <md-input-container flex>
+                                                <label>Last Name</label>
+                                                <input ng-model="theMax">
+                                            </md-input-container>
+                                        </div>
+                                        <md-input-container class="md-block">
+                                            <label>Address</label>
+                                            <input ng-model="user.address">
+                                        </md-input-container>
+                                        <md-input-container md-no-float class="md-block">
+                                            <input ng-model="user.address2" placeholder="Address 2">
+                                        </md-input-container>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>City</label>
+                                                <input ng-model="user.city">
+                                            </md-input-container>
+                                            <md-input-container flex>
+                                                <label>State</label>
+                                                <md-select ng-model="user.state">
+                                                    <md-option ng-repeat="state in states" value="{{state.abbrev}}">
+                                                        {{state.abbrev}}
+                                                    </md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                            <md-input-container flex>
+                                                <label>Postal Code</label>
+                                                <input name="postalCode" ng-model="user.postalCode" placeholder="12345"
+                                                             required ng-pattern="/^[0-9]{5}$/" md-maxlength="5">
+                                                <div ng-messages="userForm.postalCode.$error" role="alert" multiple>
+                                                    <div ng-message="required" class="my-message">You must supply a postal code.</div>
+                                                    <div ng-message="pattern" class="my-message">That doesn't look like a valid postal
+                                                        code.
+                                                    </div>
+                                                    <div ng-message="md-maxlength" class="my-message">
+                                                        Don't use the long version silly...we don't need to be that specific...
+                                                    </div>
+                                                </div>
+                                            </md-input-container>
+                                        </div>
+                                        <md-input-container class="md-block">
+                                            <label>Biography</label>
+                                            <textarea ng-model="user.biography" columns="1" md-maxlength="150"></textarea>
+                                        </md-input-container>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>    
+        </div>
+    </div>
+
+
+    <div class="row ui-section" ng-controller="RadioCtrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Radio Button</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <h4>Basic Usage</h4>
+                            <div class="divider divider-xl"></div>
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Radio buttons</strong>
+                                <md-radio-group class="ui-md-radio-group-inline" ng-model="radio.group1">
+                                    <md-radio-button value="Apple">Apple</md-radio-button>
+                                    <md-radio-button value="Banana">Banana</md-radio-button>
+                                    <md-radio-button value="Mango">Mango</md-radio-button>
+                                </md-radio-group>                                    
+                            </p>
+
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Disabled</strong>
+                                <md-radio-group class="ui-md-radio-group-inline" ng-model="radio.group2">
+                                    <md-radio-button ng-repeat="d in radioData" ng-value="d.value" ng-disabled=" d.isDisabled "> {{ d.label }} </md-radio-button>
+                                </md-radio-group>                                
+                            </p>
+
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Colors</strong>
+                                <md-radio-group class="ui-md-radio-group-inline" ng-model="radio.group3">
+                                    <md-radio-button value="Default">Default</md-radio-button>
+                                    <md-radio-button class="md-primary" value="Primary">Primary</md-radio-button>
+                                    <md-radio-button class="md-warn" value="Warn">Warn</md-radio-button>
+                                </md-radio-group>                                
+                            </p>
+
+                            <div class="divider divider-xl"></div>
+                            <h4>Multi Column</h4>
+                            <div class="radioButtondemoMultiColumn">
+                                <div class="divider divider-md"></div>
+                                <md-divider ></md-divider>
+                                <md-radio-group ng-model="selectedIndex" >
+                                    <div ng-repeat='person in contacts' class="row">
+                                        <div flex layout='row' layout-padding layout-align="start center" >
+                                            <div flex style="max-width:200px;">
+                                                {{person.title}}
+                                            </div>
+                                            <md-radio-button flex
+                                                    ng-value="person.id"
+                                                    class="md-primary"
+                                                    style="margin-top: 16px;" >
+                                                {{person.fullName}}
+                                            </md-radio-button>
+                                        </div>
+                                    </div>
+                                </md-radio-group>
+                                <md-divider></md-divider>
+
+                                <div class="callout callout-info">
+                                    <span> Selected User</span>: <span class="md-checked">{{selectedUser()}} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+    <div class="row ui-section" ng-controller="CheckboxCtrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Checkbox</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <h4>Basic Usage</h4>
+                            <div class="divider divider-xl"></div>
+
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Checkbox</strong>
+                                <md-checkbox ng-model="checkbox.cb1" aria-label="Checkbox 1"> {{ checkbox.cb1 }} </md-checkbox>
+                                <md-checkbox ng-model="checkbox.cb2" aria-label="Checkbox 2" ng-true-value="'yup'" ng-false-value="'nope'" class="md-warn">{{ checkbox.cb2 }} </md-checkbox>
+                                <md-checkbox md-no-ink aria-label="Checkbox No Ink" ng-model="checkbox.cb5" class="md-primary">No Ink </md-checkbox>
+                            </p>
+                            <div class="divider"></div>
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Disabled</strong>
+                                <md-checkbox ng-disabled="true" aria-label="Disabled checkbox" ng-model="checkbox.cb3"> Checkbox: Disabled </md-checkbox>
+                                <md-checkbox ng-disabled="true" aria-label="Disabled checked checkbox" ng-model="checkbox.cb4" ng-init="checkbox.cb4=true"> Checkbox: Disabled, Checked </md-checkbox>                                    
+                            </p>
+
+                            <div class="divider"></div>
+                            <p>
+                                <strong style="display: inline-block; width: 100px;">Colors</strong>
+                                <md-checkbox ng-model="checkbox.cb6" aria-label="Default"> Default </md-checkbox>
+                                <md-checkbox ng-model="checkbox.cb7" class="md-primary" aria-label="Pimary"> Pimary </md-checkbox>
+                                <md-checkbox ng-model="checkbox.cb8" class="md-warn" aria-label="Warn"> Warn </md-checkbox>
+                            </p>   
+
+
+                            <div class="divider divider-lg divider-dashed"></div>
+
+                            <h4>Syncing</h4>
+                            <div class="divider divider-xl"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div layout="row" layout-wrap flex>
+                                        <div flex="50" ng-repeat="item in items">
+                                            <md-checkbox ng-checked="exists(item, selected)" ng-click="toggle(item, selected)">
+                                                {{ item }} <span ng-if="exists(item, selected)">selected</span>
+                                            </md-checkbox>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div layout="row" layout-wrap flex>
+                                        <div ng-repeat="item in items" class="standard" flex="50">
+                                            <label>
+                                                <input type="checkbox" ng-checked="exists(item, selected)"
+                                                             ng-click="toggle(item, selected)"/>
+                                                {{ item }}
+                                            </label>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                            <div class="callout callout-info">
+                                <span>Selected Items: {{selected | json}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+    <!-- Material Switch -->
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Material Switch</h2>
+        </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-4" style="margin-top: 15px;">Normal Switches</div>
+                                    <div class="col-sm-8">
+                                        <md-switch ng-model="switchData.cb1" aria-label="Switch 1"> Switch 1: {{ switchData.cb1 }} </md-switch>
+                                        <md-switch ng-model="switchData.cb2" aria-label="Switch 2" ng-true-value="'yup'" ng-false-value="'nope'"> Switch 2 {{ switchData.cb2 }} </md-switch>
+                                        <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink"> Switch (md-primary): No Ink </md-switch>
+                                    </div>
+                                </div>    
+                                <div class="divider divider-dashed divider-lg pull-in"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style="margin-top: 15px;">Radio Switch</div>
+                                    <div class="col-sm-8">
+                                        <md-switch ng-disabled="true" aria-label="Disabled switch" ng-model="disabledModel"> Switch (Disabled) </md-switch>
+                                        <md-switch ng-disabled="true" aria-label="Disabled active switch" ng-model="switchData.cb4"> Switch (Disabled, Active) </md-switch>
+                                    </div>
+                                </div>
+
+                                <div class="divider divider-dashed divider-lg pull-in"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4" style="margin-top: 15px;">Switch Colors</div>
+                                    <div class="col-sm-8">
+                                        <md-switch ng-model="switchData.color1" aria-label="Default"> Default </md-switch>
+                                        <md-switch ng-model="switchData.color2" aria-label="Primary" class="md-primary"> Primary </md-switch>
+                                        <md-switch ng-model="switchData.color3" aria-label="Warn" class="md-warn"> Warn </md-switch>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>         
+        </div>
+    </div>
+    <!-- end Material Switch -->
+
+
+    <div class="row ui-section" data-ng-controller="SelectDemo as ctrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Select</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Basic Select</h4>
+                                <md-input-container class="full-width">
+                                    <label>States</label>
+                                    <md-select ng-model="ctrl.userState" aria-label="select">
+                                        <md-option ng-repeat="state in ctrl.states" value="{{state.abbrev}}"> {{state.abbrev}} </md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Option Groups</h4>
+                                <md-input-container class="full-width">
+                                    <label>Food</label>
+                                    <md-select ng-model="ctrl.topping" aria-label="select">
+                                        <md-optgroup label="Meats">                                    
+                                            <md-option ng-value="topping.name" ng-repeat="topping in toppings | filter: {category: 'meat' }">{{topping.name}}</md-option>
+                                        </md-optgroup>
+                                        <md-optgroup label="Veggies">
+                                            <md-option ng-value="topping.name" ng-repeat="topping in toppings | filter: {category: 'veg' }">{{topping.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </div>
+
+                    </div>          
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+    <div class="row ui-section" ng-controller="MaterialDatepickerCtrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Datepicker</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>Standard date-picker</p>
+                                    <div class="divider"></div>
+                                    <md-datepicker ng-model="myDate" md-placeholder="Enter date"></md-datepicker>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>Disabled date-picker</p>
+                                    <div class="divider"></div>
+                                    <md-datepicker ng-model="myDate" md-placeholder="Enter date" disabled></md-datepicker>
+                                </div>
+                            </div>
+
+                            <div class="divider divider-lg divider-dashed"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>Date-picker with min date and max date</p>
+                                    <div class="divider"></div>
+                                    <md-datepicker ng-model="myDate" md-placeholder="Enter date"
+                                            md-min-date="minDate" md-max-date="maxDate"></md-datepicker>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <p>With ngMessages</p>
+                                    <div class="divider"></div>
+                                    <form name="myForm">
+                                        <md-datepicker name="dateField" ng-model="myDate" md-placeholder="Enter date"
+                                                required md-min-date="minDate" md-max-date="maxDate"></md-datepicker>
+                                        <div class="validation-messages" ng-messages="myForm.dateField.$error">
+                                            <div ng-message="required">This date is required!</div>
+                                            <div ng-message="mindate">Date is too early!</div>
+                                            <div ng-message="maxdate">Date is too late!</div>
+                                        </div>
+                                    </form>                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+    <div class="row ui-section" ng-controller="MaterialAutocompleteCtrl as ctrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Autocomplete</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+
+                            <h4>Basic Usage </h4>
+                            <div class="divider divider-md"></div>
+                            <form ng-submit="$event.preventDefault()">
+                                <p>Search for matches from local or remote data sources.</p>
+                                <md-autocomplete
+                                        ng-disabled="ctrl.isDisabled"
+                                        md-no-cache="ctrl.noCache"
+                                        md-selected-item="ctrl.selectedItem"
+                                        md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+                                        md-search-text="ctrl.searchText"
+                                        md-selected-item-change="ctrl.selectedItemChange(item)"
+                                        md-items="item in ctrl.querySearch(ctrl.searchText)"
+                                        md-item-text="item.display"
+                                        md-min-length="0"
+                                        placeholder="What is your favorite US state?">
+                                    <md-item-template>
+                                        <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No states matching "{{ctrl.searchText}}" were found.
+                                        <a ng-click="ctrl.newState(ctrl.searchText)">Create a new one!</a>
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <br/>
+                                <md-checkbox ng-model="ctrl.simulateQuery">Simulate query for results?</md-checkbox>
+                                <md-checkbox ng-model="ctrl.noCache">Disable caching of queries?</md-checkbox>
+                                <md-checkbox ng-model="ctrl.isDisabled">Disable the input?</md-checkbox>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+
+    <!-- Material Slider -->
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Slider</h2> </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-lg-6">
+                    <section class="panel panel-default">
+                        <div class="panel-body padding-xl">
+                            <h4>
+                                RGB <span ng-attr-style="border: 1px solid #333; background: rgb({{color.red}},{{color.green}},{{color.blue}})">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            </h4>
+                            <div layout>
+                                <div flex="10" layout layout-align="center center">
+                                    <span>R</span>
+                                </div>
+                                <md-slider flex min="0" max="255" ng-model="color.red" aria-label="red" class="md-warn" id="red-slider" class></md-slider>
+                                <div flex="20" layout layout-align="center center">
+                                    <input type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider">
+                                </div>
+                            </div>
+                            <div layout>
+                                <div flex="10" layout layout-align="center center">
+                                    <span>G</span>
+                                </div>
+                                <md-slider flex ng-model="color.green" min="0" max="255" aria-label="green" id="green-slider" class="md-green"></md-slider>
+                                <div flex="20" layout layout-align="center center">
+                                    <input type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
+                                </div>
+                            </div>
+                            <div layout>
+                                <div flex="10" layout layout-align="center center">
+                                    <span>B</span>
+                                </div>
+                                <md-slider flex ng-model="color.blue" min="0" max="255" aria-label="blue" id="blue-slider" class="md-primary"></md-slider>
+                                <div flex="20" layout layout-align="center center">
+                                    <input type="number" ng-model="color.blue" aria-label="blue" aria-controls="blue-slider">
+                                </div>
+                            </div>
+                        </div>
+                    </section>                    
+            </div>
+            <div class="col-lg-6">
+                <section class="panel panel-default">
+                    <div class="panel-body padding-xl">
+                        <h4>Rating: {{rating}}/5 - demo of theming classes</h4>
+                        <div layout>
+                            <div flex="10" layout layout-align="center center">
+                                <span>default</span>
+                            </div>
+                            <md-slider flex md-discrete ng-model="rating1" step="1" min="1" max="5" aria-label="rating"></md-slider>
+                        </div>
+                        <div layout>
+                            <div flex="10" layout layout-align="center center">
+                                <span>md-warn</span>
+                            </div>
+                            <md-slider flex class="md-warn" md-discrete ng-model="rating2" step="1" min="1" max="5" aria-label="rating"></md-slider>
+                        </div>
+                        <div layout>
+                            <div flex="10" layout layout-align="center center">
+                                <span>md-primary</span>
+                            </div>
+                            <md-slider flex class="md-primary" md-discrete ng-model="rating3" step="1" min="1" max="5" aria-label="rating"></md-slider>
+                        </div>                        
+                    </div>
+                </section>                    
+            </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <section class="panel panel-default">
+                        <div class="panel-body padding-xl">
+                            <h4>Disabled</h4>
+                            <md-slider ng-model="disabled1" ng-disabled="true" aria-label="Disabled 1"></md-slider>
+                            <md-slider ng-model="disabled2" ng-disabled="true" aria-label="Disabled 2"></md-slider>
+                        </div>
+                    </section>                     
+                </div>
+                <div class="col-lg-6">
+                    <section class="panel panel-default">
+                        <div class="panel-body padding-xl">
+                            <h4>Disabled, Discrete</h4>
+                            <md-slider ng-model="disabled1" ng-disabled="true" step="3" md-discrete min="0" max="10" aria-label="Disabled discrete 1"></md-slider>
+                            <md-slider ng-model="disabled2" ng-disabled="true" step="10" md-discrete aria-label="Disabled discrete 2"></md-slider>
+                        </div>
+                    </section>                     
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Material Slider -->
+
+
+    <div class="row ui-section" ng-controller="ChipsBasicDemoCtrl as ctrl">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Material Chips</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default" ng-cloak>
+                <div class="panel-body padding-xl">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Default</h4>
+                            <md-chips ng-model="ctrl.fruitNames" readonly="ctrl.readonly"></md-chips>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Use Placeholders</h4>
+                            <md-chips
+                                    ng-model="ctrl.tags"
+                                    readonly="ctrl.readonly"
+                                    placeholder="Enter a tag"
+                                    delete-button-label="Remove Tag"
+                                    delete-hint="Press delete to remove tag"
+                                    secondary-placeholder="+Tag"></md-chips>                       
+                        </div>
+                    </div>
+                </div>
+            </section>         
+        </div>
+    </div>
+
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix">
+            <h2 class="section-header">Inputs, Input Variants, Textarea</h2>
+        </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body padding-lg">
+                    <form class="form-horizontal">
+
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Normal input</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Rounded input</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-round">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="label-focus" class="col-sm-2">Label focus</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="label-focus">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">With help</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control">
+                                <span class="help-block">Some help text goes here.</span>
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Password</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Placeholder</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="placeholder goes here">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Disabled</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" disabled value="disabled">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Predefined value</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" value="http://">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input with icons</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control">
+                                <span class="icon fa fa-star"></span>
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input primary</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-primary">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input info</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-info">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input success</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-success">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input warning</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-warning">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input error</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-danger">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Control sizing</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-lg">
+                                <div class="divider"></div>
+                                <input type="text" class="form-control">
+                                <div class="divider"></div>
+                                <input type="text" class="form-control input-sm">
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Input Group</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">@</span>
+                                    <input type="text" class="form-control" placeholder="Username">
+                                </div>
+                                <div class="divider"></div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control">
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="text" class="form-control">
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><input type="checkbox"></span>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="divider"></div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><input type="radio"></span>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Button addons</label>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">Go!</button>
+                                            </span>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">Go!</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider divider-dashed divider-lg pull-in"></div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-2">Textarea</label>
+                            <div class="col-sm-10">
+                                <textarea name="" id="" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</section>

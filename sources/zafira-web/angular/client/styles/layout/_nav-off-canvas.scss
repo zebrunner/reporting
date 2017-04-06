@@ -1,0 +1,29 @@
+
+
+@media (max-width: $screen-sm-max) {
+    .on-canvas {
+        #header {
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 12; // so that dropdown is on top of off-canvas nav
+        }
+
+        #nav-container {
+            display: block;
+            position: fixed;
+            top: $header_height * 2;
+            bottom: 0;
+            float: none;
+        }
+
+        .main-container {
+            overflow: hidden;
+            #content {
+                margin-left: 220px;
+                margin-right: -220px;
+            }
+        }
+
+    }
+}

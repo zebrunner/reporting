@@ -1,0 +1,79 @@
+body {
+    background: $main_container_bg;
+}
+
+
+.body-auth,
+.body-err {
+    &.app > .main-container:before {
+        background: none;
+    }
+
+    // when it's normal nav
+    @media (min-width: $screen-sm) {
+        .page-signin,
+        .page-signup,
+        .page-forgot,
+        .page-err {
+            margin-right: 220px;
+        }
+    }
+    // when it's collapsed nav
+    &.nav-collapsed-min {
+        @media (min-width: $screen-sm) {
+            .page-signin,
+            .page-signup,
+            .page-forgot,
+            .page-err {
+                margin-right: 60px;
+            }
+        }
+    }
+    // when it's horizontal nav
+    .nav-horizontal + .content-container {
+        @media (min-width: $screen-sm) {
+            .page-signin,
+            .page-signup,
+            .page-forgot,
+            .page-err {
+                margin-right: 0;
+            }
+        }          
+    }
+}
+
+// fullscreen, hide header and sidebar
+.body-wide {
+
+    #header,
+    #nav-container {
+        display: none;
+    }
+
+    > .main-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #content {
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        // bottom: 0;
+        // margin: 0;
+        padding-bottom: 0;
+        // padding-bottom: 50px;
+    }
+
+    // 
+    &.on-canvas .main-container #content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+
