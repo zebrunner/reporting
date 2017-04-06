@@ -152,6 +152,9 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     		$scope.testRuns[testRun.id].status = testRun.status;
     		$scope.testRuns[testRun.id].reviewed = testRun.reviewed;
     	}
+    	SlackService.isAvailable(testRun.id).then(function successCallback(rs){
+    		$scope.testRuns[testRun.id].isSlackAvailable = rs.data.available;
+		});
 	};
 	
 	$scope.getArgValue = function(xml, key){
@@ -333,10 +336,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		                        null,
 		                        DELETE_TEST_RUN
 		                      ];
-		SlackService.isAvailable(testRun.id).then(function successCallback(rs){
-			$scope.isSlackAvailable = rs.data.available;
-		});
-		if($scope.isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
+		
+		if(testRun.isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
 		{
 			var c = adminMenuOptions.length + 1;
 	        adminMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
@@ -354,8 +355,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 								BUILD_NOW,
 								REBUILD
 		                      ];
-		var isSlackAvailable = SlackService.isAvailable(testRun.id);
-		if(isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
+		if($testRun.isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
 		{
 			var c = userMenuOptions.length + 1;
 			userMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
