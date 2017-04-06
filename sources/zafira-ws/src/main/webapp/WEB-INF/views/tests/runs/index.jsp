@@ -86,13 +86,11 @@
 					<timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
 						<small>{{progressBar}}%</small>
 					</timer>
-				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i></b>
+				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i>
+						<span data-ng-if="testRun.reviewed" class="label label-success">reviewed</span>
+					</b>
 					<br/>
 					<small>{{testRun.appVersion}}</small>
-					<div data-ng-if="testRun.reviewed">
-						<br/>
-						<span class="label label-success">reviewed</span>
-					</div>
 				</div>
 				<div class="col-lg-4">
 					<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>

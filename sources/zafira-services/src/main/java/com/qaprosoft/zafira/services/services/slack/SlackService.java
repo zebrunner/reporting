@@ -26,13 +26,13 @@ public class SlackService
 {
 
 	private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
-	private final static String MAIN_PATTERN = "Test run #%1$d has been completed after %2$s\n"
+	private final static String MAIN_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n"
+			+ "%4$s\n"
+			+ "<%5$s|Open in Zafira>  |  <%6$s|Open in Jenkins>";
+
+	private final static String REV_PATTERN = "Test run #%1$d has been reviewed. Status: %2$s\n"
 			+ "%3$s\n"
 			+ "<%4$s|Open in Zafira>  |  <%5$s|Open in Jenkins>";
-
-	private final static String REV_PATTERN = "Test run #%1$d has been reviewed\n"
-			+ "%2$s\n"
-			+ "<%3$s|Open in Zafira>  |  <%4$s|Open in Jenkins>";
 
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
@@ -56,9 +56,10 @@ public class SlackService
 		{
 			String elapsed = countElapsedInSMH(tr.getElapsed());
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
-			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
+			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
+			String status = tr.getStatus().toString();
 
-			String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
+			String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, status, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
 			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
 					tr.getFailedAsKnown(), tr.getSkipped());
 
@@ -84,9 +85,10 @@ public class SlackService
 		if (s != null)
 		{
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
-			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber() + "/eTAF_Report";
+			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
+			String status = tr.getStatus().toString();
 
-			String mainMsg = String.format(REV_PATTERN, tr.getId(), buildRunInfo(tr), zafiraUrl, jenkinsUrl);
+			String mainMsg = String.format(REV_PATTERN, tr.getId(), status, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
 			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
 					tr.getFailedAsKnown(), tr.getSkipped());
 
@@ -112,10 +114,8 @@ public class SlackService
 			{
 				s = new Slack(wH);
 				s = s.sendToChannel(channel);
-				s.displayName(slackAuthor);
-				String iconPath = SlackService.class.getClassLoader().getResource(slackPicPath).getPath();
-				System.out.println(iconPath);
-				s.icon(iconPath);
+				s = s.displayName(slackAuthor);
+				s = s.icon(slackPicPath);
 			}
 		}
 		return s;
