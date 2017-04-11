@@ -62,10 +62,21 @@ ZafiraApp.service('UtilService', function() {
     };
 });
 
-ZafiraApp.factory('UserService', function($http) {
+ZafiraApp.factory('UserService', function($http, $rootScope) {
     var userService = {
         getCurrentUser : function() {
             var promise = $http.get('users/current').then(function(rs) {
+                var authorities = rs.data.authorities;
+                if(authorities.length == 1) {
+                    $rootScope.currentRole = authorities[0].authority;
+                } else {
+                    for(var i = 0; i < authorities.length; i++) {
+                        $rootScope.currentRole = authorities[i].authority;
+                        if($rootScope.currentRole == 'ROLE_ADMIN') {
+                            break;
+                        }
+                    }
+                }
                 return rs.data;
             });
             return promise;

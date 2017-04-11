@@ -37,7 +37,7 @@ img.pending {
 }
 
 .result_ABORTED {
-	border-left: solid 8px #f0ad4e;
+	border-left: solid 8px #aaaaaa;
 }
 
 .result_SKIPPED {
@@ -66,6 +66,10 @@ img.pending {
 
 .test_result.SKIPPED {
 	border-left: solid 5px #f0ad4e;
+}
+
+.test_result.ABORTED {
+	border-left: solid 5px #aaaaaa;
 }
 
 .float_right {
@@ -331,4 +335,14 @@ span.light {
 
 span.light_text {
 	color: #aaa !important;
+}
+
+.success_text {
+	color: #337ab7;
+	font-size: 12px;
+}
+
+.danger_text {
+	color: #d9534f;
+	font-size: 12px;
 }

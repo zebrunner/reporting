@@ -10,7 +10,7 @@ ZafiraApp.controller('JobViewsCtrl', [ '$scope', '$http','$location', '$route', 
 	$scope.UtilService = UtilService;
 	
 	ConfigService.getConfig("jenkins").then(function(jenkins) {
-		$scope.jenkinsEnabled = jenkins.enabled;
+		$scope.jenkinsEnabled = jenkins.connected;
 	});
 	
 	$scope.loadView = function(){

@@ -69,7 +69,7 @@
             <div class="run_result row" align="center" data-ng-show="totalResults == 0">
             	<div class="col-lg-12">No results</div>
             </div>
-			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'startedAt':true" <sec:authorize access="hasAnyRole('ROLE_ADMIN')">context-menu="buildAdminMenu(testRun)"</sec:authorize> <sec:authorize access="hasAnyRole('ROLE_USER')">context-menu="buildUserMenu(testRun)"</sec:authorize>>
+			<div class="run_result row progressbar_container" data-ng-class="'result_' + testRun.status" data-ng-repeat="(id, testRun) in testRuns | orderObjectBy:'startedAt':true" context-menu="initMenuOptions()">
 				<timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
 					<div class="progressbar_bg" style="width:{{progressBar}}%"></div>
 				</timer>
@@ -89,6 +89,7 @@
 				  	<b>{{testRun.testSuite.name}} <i data-ng-if="testRun.comments" data-ng-click="openCommentsModal(testRun)" class="fa fa-commenting-o" aria-hidden="true"></i>
 						<span data-ng-if="testRun.reviewed" class="label label-success">reviewed</span>
 					</b>
+					<span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
 					<br/>
 					<small>{{testRun.appVersion}}</small>
 				</div>
@@ -108,7 +109,7 @@
 						</span>
 						<br/>
 						<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
-						<span title="Failed (known issues)" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span data-ng-if="testRun.failedAsKnown > 0"> ({{testRun.failedAsKnown}})</span></span>
+						<span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
 						<span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
 						<i data-ng-class="{'fa fa-lg fa-chevron-circle-down': testRun.showDetails == false, 'fa fa-lg fa-chevron-circle-up': testRun.showDetails == true}" aria-hidden="true" data-ng-click="showDetails(testRun.id)"  class="float_right action_button"></i>
 					</div>
@@ -141,6 +142,7 @@
                     				<div class="col-sm-8">
                     					<img data-ng-if="test.status == 'IN_PROGRESS'" src="<c:url value="/resources/img/pending.gif" />" class="pending"/>   
                     					<a href="#!/tests/cases?id={{test.testCaseId}}" target="_blank">{{test.name}}</a>
+										<span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span>
                     				</div>
                     				<div class="col-sm-4">
 	                    				<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>

@@ -24,13 +24,20 @@
 		<div class="col-lg-12">
 			<form name="knownIssueForm" novalidate>
 				<div class="form-group">
-					<label>Jira ID</label> 
-					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" required/>
-					
+					<label>Jira ID</label>
+					<span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
+					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+					<span class="danger" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' not found</span>
+					<span class="danger" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' closed</span>
+					<span data-ng-show="!isDataLoaded || !isIssueFound"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
-					<textarea class="form-control validation" data-ng-model="newKnownIssue.description" required></textarea>
+					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
+				</div>
+				<div>
+					<label>Blocker</label>
+					<input type="checkbox" data-ng-model="newKnownIssue.blocker"/>
 				</div>
 			</form>
 		</div>

@@ -345,8 +345,18 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				$scope.email.recipients = [];
 				$scope.users = [];
 				$scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SEMICOLON, $mdConstant.KEY_CODE.SPACE];
-				
+
+                var currentText;
+
 				$scope.sendEmail = function(id){
+                    if($scope.users.length == 0) {
+                        if(currentText != null && currentText.length != 0) {
+                            $scope.email.recipients.push(currentText);
+                        } else {
+                            alertify.error('Add a recipient!')
+                            return;
+                        }
+                    }
 					$modalInstance.close(0);
 					$scope.email.recipients = $scope.email.recipients.toString();
 					$http.post('dashboards/email', $scope.email).then(function successCallback(data) {
@@ -362,12 +372,21 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
                 $scope.filterSelected = true;
 
                 $scope.querySearch = querySearch;
+                var stopCriteria = '########';
                 function querySearch (criteria) {
                     $scope.usersSearchCriteria.email = criteria;
-                    return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
-                        .then(function(response){
-                            return response.data.results;
-                        });
+                    currentText = criteria;
+                    if(!criteria.includes(stopCriteria)) {
+                        stopCriteria = '########';
+                        return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
+                            .then(function (response) {
+                                if (response.data.results.length == 0) {
+                                    stopCriteria = criteria;
+                                }
+                                return response.data.results;
+                            });
+                    }
+                    return "";
                 }
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};

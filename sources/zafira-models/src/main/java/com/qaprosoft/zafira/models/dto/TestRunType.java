@@ -32,6 +32,7 @@ public class TestRunType extends AbstractType
 	private String workItem;
 	private ProjectType project;
 	private boolean knownIssue;
+	private boolean blocker;
 	private DriverMode driverMode;
 	
 	private boolean reviewed;
@@ -255,6 +256,16 @@ public class TestRunType extends AbstractType
 	public void setKnownIssue(boolean knownIssue)
 	{
 		this.knownIssue = knownIssue;
+	}
+
+	public boolean isBlocker()
+	{
+		return blocker;
+	}
+
+	public void setBlocker(boolean blocker)
+	{
+		this.blocker = blocker;
 	}
 
 	public DriverMode getDriverMode()
