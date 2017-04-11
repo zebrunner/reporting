@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '$http', '$location', 'UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function ($scope, $interval, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
+ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '$http', '$location', 'UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', 'SlackService', '$cookieStore', '$mdConstant', function ($scope, $interval, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, SlackService, $cookieStore, $mdConstant) {
 
     var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -138,7 +138,11 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         }
         else {
             $scope.testRuns[testRun.id].status = testRun.status;
+            $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
         }
+    	ConfigService.getConfig("slack/" + testRun.id).then(function successCallback(rs){
+    		$scope.testRuns[testRun.id].isSlackAvailable = rs.available;
+		});
     };
 
     $scope.getArgValue = function (xml, key) {
@@ -285,31 +289,14 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         $scope.openEmailModal($itemScope.testRun);
     }];
 
-    const COMMENT = ['Comment', function ($itemScope) {
-        $scope.openCommentsModal($itemScope.testRun);
+    const SEND_SLACK_NOTIF = ['Notify in Slack', function ($itemScope) {
+		SlackService.triggerReviewNotif($itemScope.testRun.id);
+    }];
+	
+	const MARK_REVIEWED = ['Mark as reviewed', function ($itemScope) {
+	  	$scope.openCommentsModal($itemScope.testRun);
     }];
 
-    $scope.menuOptions = [
-        OPEN_TEST_RUN,
-        COPY_TEST_RUN_LINK,
-        COMMENT,
-        SEND_EMAIL,
-        null,
-        BUILD_NOW,
-        REBUILD,
-        null,
-        DELETE_TEST_RUN
-    ];
-
-    $scope.userMenuOptions = [
-        OPEN_TEST_RUN,
-        COPY_TEST_RUN_LINK,
-        COMMENT,
-        SEND_EMAIL,
-        null,
-        BUILD_NOW,
-        REBUILD
-    ];
     // -----------------------------------------------------------
 
     $scope.isConnectedToJenkins = false;
@@ -319,12 +306,16 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
     };
 
-    $scope.initMenuOptions = function () {
+    $scope.initMenuOptions = function (testRun) {
         var menuOptions = [];
         menuOptions.push(OPEN_TEST_RUN);
         menuOptions.push(COPY_TEST_RUN_LINK);
-        menuOptions.push(COMMENT);
+        menuOptions.push(MARK_REVIEWED);
         menuOptions.push(SEND_EMAIL);
+        if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
+		{
+        	menuOptions.push(SEND_SLACK_NOTIF);
+		}
         menuOptions.push(null);
         if($scope.isConnectedToJenkins) {
             menuOptions.push(BUILD_NOW);
@@ -531,36 +522,51 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
     };
 
-    $scope.openCommentsModal = function (testRun) {
-        $modal.open({
-            templateUrl: 'resources/templates/comments-modal.jsp',
-            resolve: {
-                'testRun': function () {
-                    return testRun;
-                }
-            },
-            controller: function ($scope, $modalInstance, testRun) {
-
-                $scope.title = testRun.testSuite.name;
-                $scope.testRun = testRun;
-
-                $scope.addComment = function () {
-                    var rq = {};
-                    rq.comment = $scope.testRun.comments;
-                    $http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).then(function successCallback(data) {
-                        $modalInstance.close(0);
-                    }, function errorCallback(data) {
-                        alertify.error('Failed to add comment!');
-                    });
-                };
-                $scope.cancel = function () {
-                    $modalInstance.close(0);
-                };
-            }
-        }).result.then(function (data) {
+    $scope.openCommentsModal = function(testRun){
+		$modal.open({
+			templateUrl : 'resources/templates/comments-modal.jsp',
+			resolve : {
+				'testRun' : function(){
+					return testRun;
+				}
+			},
+			controller : function($scope, $modalInstance, testRun){
+				
+				$scope.title = testRun.testSuite.name;
+				$scope.testRun = testRun;
+				
+				$scope.markReviewed = function(){
+					var rq = {};
+					rq.comment = $scope.testRun.comments;
+					if((rq.comment == null || rq.comment == "") && (testRun.failed > 0 || testRun.skipped > 0))
+					{
+						alertify.error('Unable to mark as Reviewed test run with failed/skipped tests without leaving some comment!');
+					}
+					else
+					{
+						$http.post('tests/runs/' + $scope.testRun.id + '/markReviewed', rq).then(function successCallback() {
+							$modalInstance.close(0);
+							alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
+							if ($scope.testRun.isSlackAvailable)
+							{
+								if(confirm("Would you like to post latest test run status to slack?"))
+								{
+									SlackService.triggerReviewNotif($scope.testRun.id);
+								}
+							}
+						}, function errorCallback(data) {
+							alertify.error('Failed to mark test run as reviewed. ' + data);
+						});
+					}
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		}).result.then(function(data) {
         }, function () {
         });
-    };
+	};
 
     $scope.openKnownIssueModal = function (test) {
         var modalInstance = $modal.open({

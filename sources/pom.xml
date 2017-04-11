@@ -103,9 +103,11 @@
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
 
 		<jenkins-client.version>0.3.7</jenkins-client.version>
-
+		
 		<jira-client.version>0.5</jira-client.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
+		
+		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
 	</properties>
 
 	<modules>
@@ -567,7 +569,7 @@
 			  <artifactId>jenkins-client</artifactId>
 			  <version>${jenkins-client.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>net.rcarz</groupId>
 				<artifactId>jira-client</artifactId>
@@ -578,6 +580,12 @@
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>in.ashwanthkumar</groupId>
+				<artifactId>slack-java-webhook</artifactId>
+				<version>${slack-java-webhook.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

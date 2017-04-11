@@ -178,7 +178,7 @@
 	        </exclusion>
 	      </exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>net.rcarz</groupId>
 			<artifactId>jira-client</artifactId>
@@ -199,6 +199,11 @@
 					<artifactId>commons-collections</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+		  <groupId>in.ashwanthkumar</groupId>
+		  <artifactId>slack-java-webhook</artifactId>
 		</dependency>
 	</dependencies>
 
