@@ -316,7 +316,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	$scope.openEmailModal($itemScope.testRun);
     }];
 	
-	const SEND_SLACK_NOTIF = ['Send status to Slack', function ($itemScope) {
+	const SEND_SLACK_NOTIF = ['Notify in Slack', function ($itemScope) {
 		SlackService.triggerReviewNotif($itemScope.testRun.id);
     }];
 	

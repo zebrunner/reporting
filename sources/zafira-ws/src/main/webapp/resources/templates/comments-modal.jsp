@@ -8,7 +8,7 @@
 <div class="modal-header">
 	<i class="fa fa-times cancel-button" aria-hidden="true" ng-click="cancel()"></i>
 	<h3>
-		{{title}}
+		'{{title}}' review
 	</h3>
 </div>
 <div class="modal-body">
