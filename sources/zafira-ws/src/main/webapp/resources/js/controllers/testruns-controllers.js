@@ -306,7 +306,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
     };
 
-    $scope.initMenuOptions = function () {
+    $scope.initMenuOptions = function (testRun) {
         var menuOptions = [];
         menuOptions.push(OPEN_TEST_RUN);
         menuOptions.push(COPY_TEST_RUN_LINK);
