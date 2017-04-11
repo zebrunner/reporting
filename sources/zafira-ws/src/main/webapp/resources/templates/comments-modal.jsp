@@ -24,7 +24,7 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-success" data-ng-click="addComment()" data-ng-disabled="commentForm.$invalid">
-    	Save
+	<button class="btn btn-success" data-ng-click="markReviewed()" data-ng-disabled="commentForm.$invalid">
+    	Mark as reviewed
     </button>
 </div>

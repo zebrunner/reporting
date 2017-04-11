@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import springfox.documentation.annotations.ApiIgnore;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.slack.SlackService;
@@ -25,8 +23,6 @@ import com.qaprosoft.zafira.services.services.slack.SlackService;
 @Controller
 @ApiIgnore
 @RequestMapping("slack")
-@Secured(
-{ "ROLE_ADMIN" })
 public class SlackController extends AbstractController
 {
 	@Autowired
@@ -44,28 +40,7 @@ public class SlackController extends AbstractController
 			IOException, InterruptedException
 	{
 		TestRun tr = testRunService.getTestRunByIdFull(id);
-		if (!tr.isReviewed())
-		{
-			boolean sent = slackService.sendReviwedStatus(tr);
-			if (sent)
-			{
-				tr.setReviewed(true);
-				tr = testRunService.updateTestRun(tr);
-				websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
-			}
-		}
+		slackService.sendReviwedStatus(tr);
 	}
 
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "isAvailable/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String isSlackAvailable(@PathVariable(value = "id") long id) throws ServiceException,
-			IOException, InterruptedException
-	{
-		TestRun tr = testRunService.getTestRunByIdFull(id);
-		if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null)
-		{
-			return "{\"available\" : true}";
-		}
-		return "{\"available\" : false}";
-	}
 }

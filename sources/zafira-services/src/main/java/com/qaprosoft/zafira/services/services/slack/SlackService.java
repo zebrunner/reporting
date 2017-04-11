@@ -97,6 +97,10 @@ public class SlackService
 					.color(determineColor(tr))
 					.addField(new Field("Test Results", msgRes, false))
 					.fallback(mainMsg + "\n" + msgRes);
+			if (tr.getComments() != null)
+			{
+				attachment.addField(new Field("Comments", tr.getComments(), false));
+			}
 			s.push(attachment);
 			return true;
 		}

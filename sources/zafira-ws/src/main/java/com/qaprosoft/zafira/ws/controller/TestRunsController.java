@@ -240,10 +240,16 @@ public class TestRunsController extends AbstractController
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}/comment", method = RequestMethod.POST)
-	public void commentTestRun(@PathVariable(value="id") long id, @RequestBody @Valid CommentType comment) throws ServiceException, JAXBException
+	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
+	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
+			throws ServiceException, JAXBException
 	{
 		testRunService.addComment(id, comment.getComment());
+
+		TestRun tr = testRunService.getTestRunByIdFull(id);
+		tr.setReviewed(true);
+		tr = testRunService.updateTestRun(tr);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
 	}
 	
 	@ApiIgnore

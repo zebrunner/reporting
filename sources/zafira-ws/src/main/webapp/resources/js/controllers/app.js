@@ -93,19 +93,14 @@ ZafiraApp.factory('JenkinsService', function($http) {
 ZafiraApp.factory('SlackService', function($http) {
     var slackService = {
         triggerReviewNotif : function(id) {
-            var promise = $http.get('slack/triggerReviewNotif/' + id).then(function(rs) {
+            var promise = $http.get('slack/triggerReviewNotif/' + id).then(function successCallback(rs) {
+            	alertify.success('Notification was sent to Slack!');
                 return null;
-            });
+            }, function errorCallback(data) {
+    			alertify.error('Notification was not sent to Slack!' + data);
+    		});
             return promise;
-        },
-	    isAvailable : function(id) {
-	        var promise = $http.get('slack/isAvailable/' + id).then(function successCallback(rs) {
-	        	return rs;
-	        }, function errorCallback(data) {
-				return null;
-			});
-	        return promise;
-	    }
+        }
     };
     return slackService;
 });

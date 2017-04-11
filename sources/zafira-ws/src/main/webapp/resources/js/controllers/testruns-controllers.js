@@ -152,8 +152,8 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
     		$scope.testRuns[testRun.id].status = testRun.status;
     		$scope.testRuns[testRun.id].reviewed = testRun.reviewed;
     	}
-    	SlackService.isAvailable(testRun.id).then(function successCallback(rs){
-    		$scope.testRuns[testRun.id].isSlackAvailable = rs.data.available;
+    	ConfigService.getConfig("slack/" + testRun.id).then(function successCallback(rs){
+    		$scope.testRuns[testRun.id].isSlackAvailable = rs.available;
 		});
 	};
 	
@@ -316,11 +316,11 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 	  	$scope.openEmailModal($itemScope.testRun);
     }];
 	
-	const SEND_SLACK_NOTIF = ['Send Reviewed to Slack', function ($itemScope) {
-	  	$scope.sendSlackNotif($itemScope.testRun);
+	const SEND_SLACK_NOTIF = ['Send status to Slack', function ($itemScope) {
+		SlackService.triggerReviewNotif($itemScope.testRun.id);
     }];
 	
-	const COMMENT = ['Comment', function ($itemScope) {
+	const MARK_REVIEWED = ['Mark as reviewed', function ($itemScope) {
 	  	$scope.openCommentsModal($itemScope.testRun);
     }];
 	
@@ -328,7 +328,7 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		var adminMenuOptions = [
 		                        OPEN_TEST_RUN,
 		                        COPY_TEST_RUN_LINK,
-		                        COMMENT,
+		                        MARK_REVIEWED,
 		                        SEND_EMAIL,
 		                        null,
 		                  	    BUILD_NOW,
@@ -337,10 +337,10 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		                        DELETE_TEST_RUN
 		                      ];
 		
-		if(testRun.isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
+		if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
 		{
 			var c = adminMenuOptions.length + 1;
-	        adminMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
+			adminMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
 		}
 		return adminMenuOptions;
 	}
@@ -349,13 +349,13 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 		var userMenuOptions = [
 								OPEN_TEST_RUN,
 								COPY_TEST_RUN_LINK,
-								COMMENT,
+								MARK_REVIEWED,
 								SEND_EMAIL,
 								null,
 								BUILD_NOW,
 								REBUILD
 		                      ];
-		if($testRun.isSlackAvailable && (testRun.reviewed == null || !testRun.reviewed))
+		if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
 		{
 			var c = userMenuOptions.length + 1;
 			userMenuOptions.splice(4, 0, SEND_SLACK_NOTIF);
@@ -547,17 +547,6 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
         });
 	};
 	
-	$scope.sendSlackNotif = function(testRun){
-		if(testRun.failed > 0 || testRun.skipped > 0)
-		{
-			alertify.error('Unable to mark as Reviewed test run with failed/skipped tests!');
-		}
-		else
-		{
-			SlackService.triggerReviewNotif(testRun.id);
-		}
-	}
-	
 	$scope.openCommentsModal = function(testRun){
 		$modal.open({
 			templateUrl : 'resources/templates/comments-modal.jsp',
@@ -571,14 +560,29 @@ ZafiraApp.controller('TestRunsListCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 				$scope.title = testRun.testSuite.name;
 				$scope.testRun = testRun;
 				
-				$scope.addComment = function(){
+				$scope.markReviewed = function(){
 					var rq = {};
 					rq.comment = $scope.testRun.comments;
-					$http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).then(function successCallback(data) {
-						$modalInstance.close(0);
-					}, function errorCallback(data) {
-						alertify.error('Failed to add comment!');
-					});
+					if((rq.comment == null || rq.comment == "") && (testRun.failed > 0 || testRun.skipped > 0))
+					{
+						alertify.error('Unable to mark as Reviewed test run with failed/skipped tests without leaving some comment!');
+					}
+					else
+					{
+						$http.post('tests/runs/' + $scope.testRun.id + '/markReviewed', rq).then(function successCallback() {
+							$modalInstance.close(0);
+							alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
+							if ($scope.testRun.isSlackAvailable)
+							{
+								if(confirm("Would you like to post latest test run status to slack?"))
+								{
+									SlackService.triggerReviewNotif($scope.testRun.id);
+								}
+							}
+						}, function errorCallback(data) {
+							alertify.error('Failed to mark test run as reviewed. ' + data);
+						});
+					}
 				};
 				$scope.cancel = function(){
 					$modalInstance.close(0);
