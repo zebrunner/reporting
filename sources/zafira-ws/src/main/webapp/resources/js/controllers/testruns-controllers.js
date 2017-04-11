@@ -412,7 +412,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.buildNow = function (id) {
                     $modalInstance.close(0);
                     $http.post('tests/runs/' + $scope.testRun.id + '/build', $scope.jobParameters).then(function successCallback(data) {
-                        alertify.success('Email was successfully sent!');
+                        alertify.success('CI job is building, it may take some time before status is updated');
                     }, function errorCallback(data) {
                         alertify.error('Failed to build job');
                     });
