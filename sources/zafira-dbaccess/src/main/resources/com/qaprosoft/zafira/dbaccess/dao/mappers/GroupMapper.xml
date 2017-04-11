@@ -110,7 +110,7 @@
 
         <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
         <result column="GROUP_CREATED_AT" property="createdAt" />
-        <collection property="userList" ofType="com.qaprosoft.zafira.models.db.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.UserResultMap"/>
+        <collection property="users" ofType="com.qaprosoft.zafira.models.db.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.UserResultMap"/>
     </resultMap>
 
     <resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">

@@ -126,7 +126,7 @@ ZafiraApp.factory('SettingsService', function($http) {
             var promise = $http.get('settings/' + name).then(function successCallback(rs) {
                 return rs.data;
             }, function errorCallback(data) {
-                log(data);
+                console.log(data);
             });
             return promise;
         }
@@ -176,7 +176,7 @@ ZafiraApp.factory('ConfigService', function($http) {
             var promise = $http.get('config/' + name).then(function successCallback(rs) {
                 return rs.data;
             }, function errorCallback(data) {
-                log(data);
+                console.log(data);
             });
             return promise;
         }

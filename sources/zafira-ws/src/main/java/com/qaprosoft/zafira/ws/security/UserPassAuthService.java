@@ -10,26 +10,31 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.services.UserService;
 
 @Component
-public class UserAuthService implements UserDetailsService
+public class UserPassAuthService implements UserDetailsService
 {
 	@Autowired
 	private UserService userService;
 
 	@Override
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
 		User user = null;
 		try
 		{
-			user = userService.getUserByUserName(userName);
+			user = userService.getUserByUserName(username);
 			if (user == null)
 			{
-				throw new Exception("Invalid user name " + userName);
+				throw new Exception("Invalid user name " + username);
 			}
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			throw new UsernameNotFoundException("User not found", e);
 		}
-		return new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), "ROLE_USER");
+		return new SecuredUser(user.getId(), 
+							   user.getUserName(), user.getPassword(), 
+							   user.getEmail(), 
+							   user.getFirstName(), user.getLastName(), 
+							   user.getRoles());
 	}
 }

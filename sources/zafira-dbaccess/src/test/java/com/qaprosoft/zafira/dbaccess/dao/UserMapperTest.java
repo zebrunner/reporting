@@ -135,7 +135,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		groupMapper.createGroup(GROUP);
 		userMapper.addUserToGroup(USER.getId(), GROUP.getId());
 		List<User> userList = userMapper.searchUsers(userSearchCriteria);
-		Assert.assertEquals(userList.get(0).getGroupList().get(0).getId(), GROUP.getId());
+		Assert.assertEquals(userList.get(0).getGroups().get(0).getId(), GROUP.getId());
 		Assert.assertEquals(userList.get(0).getId(), USER.getId(), "");
 	}
 

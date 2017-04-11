@@ -202,7 +202,7 @@
 		<result column="USER_EMAIL" property="email" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
-		<collection property="groupList" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
+		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
 	</resultMap>
 
 	<insert id="addUserToGroup">

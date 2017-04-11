@@ -217,6 +217,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
 				$scope.cancel = function(){
 					$modalInstance.close(0);
+					$route.reload();
 				};
 			}
 		}).result.then(function(data) {

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -110,6 +111,16 @@ public abstract class AbstractController
 	{
 		ErrorResponse result = new ErrorResponse();
 		result.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
+		return result;
+    }
+	
+	@ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.UNAUTHORIZED));
 		return result;
     }
 }

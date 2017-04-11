@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.qaprosoft.zafira.models.db.Group.Role;
+
 /**
  * SecuredUser
  * 
- * @author Alex Khursevich
+ * @author akhursevich
  */
 public class SecuredUser implements UserDetails
 {
@@ -23,34 +26,37 @@ public class SecuredUser implements UserDetails
 	private String email;
 	private String firstName;
 	private String lastName;
-	private String role;
+	private List<GrantedAuthority> authorities = new ArrayList<>();
 
-	public SecuredUser(String userName, String role)
+	public SecuredUser(String userName, List<Role> roles)
 	{
 		this.userName = userName;
-		this.role = role;
+		for(Role role : roles)
+		{
+			authorities.add(new SimpleGrantedAuthority(role.name()));
+		}
+		
+		// TODO: Remove when ready global user role setup
+		if(CollectionUtils.isEmpty(roles))
+		{
+			authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.name()));
+		}
 	}
 
-	public SecuredUser(long id, String userName, String password, String email, String firstName, String lastName, String role)
+	public SecuredUser(long id, String userName, String password, String email, String firstName, String lastName, List<Role> roles)
 	{
+		this(userName, roles);
 		this.id = id;
-		this.userName = userName;
 		this.password = password;
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.role = role;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities()
 	{
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		if(role != null)
-		{
-			authorities.add(new SimpleGrantedAuthority(role));
-		}
-		return authorities;
+		return this.authorities;
 	}
 
 	public long getId()
@@ -92,11 +98,6 @@ public class SecuredUser implements UserDetails
 	public boolean isEnabled()
 	{
 		return true;
-	}
-
-	public String getRole()
-	{
-		return role;
 	}
 
 	public String getEmail()

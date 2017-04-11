@@ -22,49 +22,28 @@ public class UserService
 
 	@Autowired
 	private PasswordEncryptor passwordEncryptor;
-	
-	@CacheEvict(value="users", allEntries=true)
-	@Transactional(rollbackFor = Exception.class)
-	public void createUser(User user) throws ServiceException
-	{
-		userMapper.createUser(user);
-	}
-	
-	@CacheEvict(value="users", allEntries=true)
-	@Transactional(rollbackFor = Exception.class)
-	public User createOrUpdateUser(User newUser) throws ServiceException
-	{
-		if(!StringUtils.isEmpty(newUser.getPassword()))
-		{
-			newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
-		}
-		User user = getUserByUserName(newUser.getUserName());
-		if(user == null)
-		{
-			createUser(newUser);
-		}
-		else
-		{
-			newUser.setId(user.getId());
-			updateUser(newUser);
-		}
-		return newUser;
-	}
-	
+
 	@Transactional(readOnly = true)
 	public User getUserById(long id) throws ServiceException
 	{
 		return userMapper.getUserById(id);
 	}
-	
-	@Cacheable("users")
+
+	@Cacheable(value = "users")
 	@Transactional(readOnly = true)
 	public User getUserByUserName(String userName) throws ServiceException
 	{
 		return userMapper.getUserByUserName(userName);
 	}
 	
-	@CacheEvict(value="users", allEntries=true)
+	@CacheEvict(value = "users", allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	public void createUser(User user) throws ServiceException
+	{
+		userMapper.createUser(user);
+	}
+
+	@CacheEvict(value = "users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public User updateUser(User user) throws ServiceException
 	{
@@ -72,32 +51,55 @@ public class UserService
 		return user;
 	}
 	
-	@CacheEvict(value="users", allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	public User createOrUpdateUser(User newUser) throws ServiceException
+	{
+		if (!StringUtils.isEmpty(newUser.getPassword()))
+		{
+			newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
+		}
+		User user = getUserByUserName(newUser.getUserName());
+		if (user == null)
+		{
+			createUser(newUser);
+		} else
+		{
+			newUser.setId(user.getId());
+			updateUser(newUser);
+		}
+		return newUser;
+	}
+
+	@CacheEvict(value = "users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUser(User user) throws ServiceException
 	{
 		userMapper.deleteUser(user);
 	}
-	
-	@CacheEvict(value="users", allEntries=true)
+
+	@CacheEvict(value = "users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUser(long id) throws ServiceException
 	{
 		userMapper.deleteUserById(id);
 	}
 
+	@CacheEvict(value = "users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
-	public User addUserToGroup(User user, long groupId) throws ServiceException {
+	public User addUserToGroup(User user, long groupId) throws ServiceException
+	{
 		userMapper.addUserToGroup(user.getId(), groupId);
 		return userMapper.getUserById(user.getId());
 	}
 
+	@CacheEvict(value = "users", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
-	public User deleteUserFromGroup(long groupId, long userId) throws ServiceException {
+	public User deleteUserFromGroup(long groupId, long userId) throws ServiceException
+	{
 		userMapper.deleteUserFromGroup(userId, groupId);
 		return userMapper.getUserById(userId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException
 	{
@@ -108,5 +110,10 @@ public class UserService
 		results.setResults(userMapper.searchUsers(sc));
 		results.setTotalResults(userMapper.getUserSearchCount(sc));
 		return results;
+	}
+	
+	public boolean checkPassword(String plain, String encrypted)
+	{
+		return passwordEncryptor.checkPassword(plain, encrypted);
 	}
 }

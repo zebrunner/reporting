@@ -1,5 +1,6 @@
-package com.qaprosoft.zafira.ws.security;
+package com.qaprosoft.zafira.ws.security.ldap;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -12,23 +13,23 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
+import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 @Component
-public class CustomUserDetailsContextMapper implements UserDetailsContextMapper
+public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 {
-	private Logger LOGGER = Logger.getLogger(CustomUserDetailsContextMapper.class);
+	private Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
 	
 	private static final String ANONYMOUS = "ananymous";
-	private static final String ROLE = "ROLE_USER";
 	
 	@Autowired
 	private UserService userService;
 
 	@Override
-	public UserDetails mapUserFromContext(DirContextOperations operations, String userName,
-			Collection<? extends GrantedAuthority> authorities)
+	public UserDetails mapUserFromContext(DirContextOperations operations, String userName, Collection<? extends GrantedAuthority> authorities)
 	{
 		User user = null;
 		try
@@ -42,7 +43,7 @@ public class CustomUserDetailsContextMapper implements UserDetailsContextMapper
 		{
 			LOGGER.error(e.getMessage());
 		}
-		return user != null ? new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), ROLE) : new SecuredUser(userName, ROLE);
+		return user != null ? new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getRoles()) : new SecuredUser(userName, Arrays.asList(Role.ROLE_USER));
 	}
 
 	@Override

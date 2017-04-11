@@ -6,6 +6,8 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
 @JsonSerialize(using = ErrorCodeSerializer.class)
 public enum ErrorCode
 {
+	UNAUTHORIZED(1),
+	
 	JOB_NOT_FOUND(1000),
 	INVALID_TEST_RUN(1001),
 	TEST_RUN_NOT_FOUND(1002),

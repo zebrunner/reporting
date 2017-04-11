@@ -31,14 +31,14 @@
                 <div class="col-lg-12">
                     <b class="ng-binding">{{group.name}}</b>
                     ({{group.role}})
-                    <span>({{group.userList.length}} users)</span>
+                    <span>({{group.users.length}} users)</span>
                     <button type="button" class="btn btn-default btn-circle red" data-ng-click="deleteGroup(group.id)" style="float: right">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
                 <div class="col-lg-12">
                     <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
-                            <md-chips ng-model="group.userList"
+                            <md-chips ng-model="group.users"
                                       md-autocomplete-snap
                                       md-require-match="true"
                                       md-on-add="addUserToGroup($chip, group)"

@@ -58,6 +58,7 @@
 				</div>
 				<div class="col-lg-3">
 					<b>{{user.userName}}</b>
+					<span data-ng-repeat="group in user.groups" class="badge" style="margin-left: 5px;">{{group.name}}</span>
 				</div>
 				<div class="col-lg-3">
 					<span>{{user.email}}</span>
