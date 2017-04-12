@@ -2,8 +2,6 @@ package com.qaprosoft.zafira.models.dto.auth;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -14,7 +12,6 @@ public class AuthTokenType implements Serializable
 	
 	private String type;
 	private String accessToken;
-	@NotNull
 	private String refreshToken;
 	private int expiresIn;
 	

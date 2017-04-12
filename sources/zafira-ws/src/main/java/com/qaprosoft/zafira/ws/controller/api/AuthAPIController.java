@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
+import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -72,14 +73,14 @@ public class AuthAPIController extends AbstractController
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid AuthTokenType authToken) throws BadCredentialsException
+	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken) throws BadCredentialsException
 	{
+		AuthTokenType authToken = null;
 		try
 		{
-			User tokenUser = jwtService.parseRefreshToken(authToken.getRefreshToken());
-			
-			User user = userService.getUserById(tokenUser.getId());
-			if(user == null || !user.getPassword().equals(tokenUser.getPassword()))
+			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
+			User user = userService.getUserById(jwtUser.getId());
+			if(user == null || !user.getPassword().equals(jwtUser.getPassword()))
 			{
 				throw new Exception("User password changed");
 			}

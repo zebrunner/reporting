@@ -42,7 +42,7 @@ public class JWTProcessingFilter extends GenericFilterBean
 	{
 		HttpServletRequest request = (HttpServletRequest) rq;
 		String auth = request.getHeader(AUTHORIZATION);
-		if (!StringUtils.isEmpty(auth) || auth.startsWith(BEARER))
+		if (!StringUtils.isEmpty(auth) && auth.startsWith(BEARER))
 		{
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(StringUtils.removeStart(auth, BEARER), StringUtils.EMPTY);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));

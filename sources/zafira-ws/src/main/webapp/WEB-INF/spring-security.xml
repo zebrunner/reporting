@@ -24,6 +24,7 @@
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint">
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
+		<security:csrf disabled="true"/>
 		<security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
 	</security:http>
 
