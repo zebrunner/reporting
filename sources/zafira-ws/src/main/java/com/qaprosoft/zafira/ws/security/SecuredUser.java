@@ -21,16 +21,13 @@ public class SecuredUser implements UserDetails
 	private static final long serialVersionUID = 1024356863633107004L;
 
 	private long id;
-	private String userName;
+	private String username;
 	private String password;
-	private String email;
-	private String firstName;
-	private String lastName;
 	private List<GrantedAuthority> authorities = new ArrayList<>();
 
-	public SecuredUser(String userName, List<Role> roles)
+	public SecuredUser(String username, List<Role> roles)
 	{
-		this.userName = userName;
+		this.username = username;
 		for(Role role : roles)
 		{
 			authorities.add(new SimpleGrantedAuthority(role.name()));
@@ -42,15 +39,12 @@ public class SecuredUser implements UserDetails
 			authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.name()));
 		}
 	}
-
-	public SecuredUser(long id, String userName, String password, String email, String firstName, String lastName, List<Role> roles)
+	
+	public SecuredUser(long id, String username, String password, List<Role> roles)
 	{
-		this(userName, roles);
+		this(username, roles);
 		this.id = id;
 		this.password = password;
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
 	}
 
 	@Override
@@ -67,7 +61,7 @@ public class SecuredUser implements UserDetails
 	@Override
 	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
 	@Override
@@ -98,20 +92,5 @@ public class SecuredUser implements UserDetails
 	public boolean isEnabled()
 	{
 		return true;
-	}
-
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public String getFirstName()
-	{
-		return firstName;
-	}
-
-	public String getLastName()
-	{
-		return lastName;
 	}
 }

@@ -29,21 +29,21 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 	private UserService userService;
 
 	@Override
-	public UserDetails mapUserFromContext(DirContextOperations operations, String userName, Collection<? extends GrantedAuthority> authorities)
+	public UserDetails mapUserFromContext(DirContextOperations operations, String username, Collection<? extends GrantedAuthority> authorities)
 	{
 		User user = null;
 		try
 		{
-			user = userService.getUserByUserName(userName);
+			user = userService.getUserByUsername(username);
 			if(user == null)
 			{
-				user = userService.getUserByUserName(ANONYMOUS);
+				user = userService.getUserByUsername(ANONYMOUS);
 			}
 		} catch (ServiceException e)
 		{
 			LOGGER.error(e.getMessage());
 		}
-		return user != null ? new SecuredUser(user.getId(), userName, user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getRoles()) : new SecuredUser(userName, Arrays.asList(Role.ROLE_USER));
+		return user != null ? new SecuredUser(user.getId(), username, user.getPassword(), user.getRoles()) : new SecuredUser(username, Arrays.asList(Role.ROLE_USER));
 	}
 
 	@Override

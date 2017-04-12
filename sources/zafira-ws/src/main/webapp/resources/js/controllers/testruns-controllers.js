@@ -504,8 +504,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};
-                    if (currentUser.userName == null) {
-                        //user.userName = currentUser;
+                    if (currentUser.username == null) {
+                        //user.username = currentUser;
                         user.email = currentUser;
                         $scope.email.recipients.push(currentUser);
                         $scope.users.push(user);
@@ -578,7 +578,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.isFieldsDisabled = true;
                 $scope.isJiraIdExists = true;
                 $scope.isJiraIdClosed = false;
-                
+
                 $scope.createKnownIssue = function () {
                     var knownIssue = $scope.newKnownIssue;
                     $http.post('tests/' + test.id + '/issues', knownIssue).then(function successCallback(data) {

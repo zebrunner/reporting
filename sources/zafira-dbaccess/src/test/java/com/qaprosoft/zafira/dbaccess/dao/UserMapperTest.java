@@ -39,7 +39,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			setUserName("elton" + KeyGenerator.getKey());
+			setUsername("elton" + KeyGenerator.getKey());
 			setFirstName("Elton");
 			setLastName("John");
 			setEmail("e.jhon@gmail.com");
@@ -79,14 +79,14 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 	{ "createUser" })
 	public void getUserByUserName()
 	{
-		checkUser(userMapper.getUserByUserName(USER.getUserName()));
+		checkUser(userMapper.getUserByUserName(USER.getUsername()));
 	}
 
 	@Test(enabled = ENABLED, dependsOnMethods =
 	{ "createUser" })
 	public void updateUser()
 	{
-		USER.setUserName("eric" + KeyGenerator.getKey());
+		USER.setUsername("eric" + KeyGenerator.getKey());
 		USER.setFirstName("Eric");
 		USER.setLastName("Clapton");
 		USER.setEmail("e.clapton@gmail.com");
@@ -130,7 +130,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 	public void addUserToGroup() {
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
 		userSearchCriteria.setGroupName(GROUP.getName());
-		USER.setUserName("n1" + KeyGenerator.getKey());
+		USER.setUsername("n1" + KeyGenerator.getKey());
 		userMapper.createUser(USER);
 		groupMapper.createGroup(GROUP);
 		userMapper.addUserToGroup(USER.getId(), GROUP.getId());
@@ -151,7 +151,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 
 	private void checkUser(User user)
 	{
-		assertEquals(user.getUserName(), USER.getUserName(), "User name must match");
+		assertEquals(user.getUsername(), USER.getUsername(), "User name must match");
 		assertEquals(user.getFirstName(), USER.getFirstName(), "First name must match");
 		assertEquals(user.getLastName(), USER.getLastName(), "Last name must match");
 		assertEquals(user.getEmail(), USER.getEmail(), "Email must match");

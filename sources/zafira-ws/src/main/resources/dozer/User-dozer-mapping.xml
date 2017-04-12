@@ -11,12 +11,8 @@
 			<b>id</b>
 		</field>
 		<field>
-			<a>userName</a>
-			<b>userName</b>
-		</field>
-		<field>
-			<a>password</a>
-			<b>password</b>
+			<a>username</a>
+			<b>username</b>
 		</field>
 		<field>
 			<a>email</a>
@@ -29,6 +25,10 @@
 		<field>
 			<a>lastName</a>
 			<b>lastName</b>
+		</field>
+		<field>
+			<a>roles</a>
+			<b>roles</b>
 		</field>
 	</mapping>
 </mappings>

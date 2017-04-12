@@ -33,7 +33,7 @@
 					<div class="row">
 						<form data-ng-submit="loadUsers(1)">
 			            	<div class="col-lg-1"><input type="text" class="form-control" placeholder="ID" data-ng-model="usersSearchCriteria.id" data-ng-change="showReset = true"></div>
-			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.userName" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Username" data-ng-model="usersSearchCriteria.username" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Email" data-ng-model="usersSearchCriteria.email" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="First/Last name" data-ng-model="usersSearchCriteria.firstLastName" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="usersSearchCriteria.date"  style="min-width:95%" data-ng-change="showReset = true"></div>
@@ -57,7 +57,7 @@
 				  	<span>{{user.id}}</span>
 				</div>
 				<div class="col-lg-3">
-					<b>{{user.userName}}</b>
+					<b>{{user.username}}</b>
 					<span data-ng-repeat="group in user.groups" class="badge" style="margin-left: 5px;">{{group.name}}</span>
 				</div>
 				<div class="col-lg-3">

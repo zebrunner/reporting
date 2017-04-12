@@ -14,7 +14,7 @@ public class User extends AbstractEntity implements Comparable<User>
 {
 	private static final long serialVersionUID = 2720141152633805371L;
 
-	private String userName;
+	private String username;
 	private String password;
 	private String email;
 	private String firstName;
@@ -30,19 +30,19 @@ public class User extends AbstractEntity implements Comparable<User>
 		super.setId(id);
 	}
 
-	public User(String userName)
+	public User(String username)
 	{
-		this.userName = userName;
+		this.username = username;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName)
+	public void setUsername(String username)
 	{
-		this.userName = userName;
+		this.username = username;
 	}
 
 	public String getPassword()
@@ -108,6 +108,6 @@ public class User extends AbstractEntity implements Comparable<User>
 	@Override
 	public int compareTo(User user)
 	{
-		return userName.compareTo(user.getUserName());
+		return username.compareTo(user.getUsername());
 	}
 }

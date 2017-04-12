@@ -31,9 +31,9 @@ public class UserService
 
 	@Cacheable(value = "users")
 	@Transactional(readOnly = true)
-	public User getUserByUserName(String userName) throws ServiceException
+	public User getUserByUsername(String username) throws ServiceException
 	{
-		return userMapper.getUserByUserName(userName);
+		return userMapper.getUserByUserName(username);
 	}
 	
 	@CacheEvict(value = "users", allEntries=true)
@@ -58,7 +58,7 @@ public class UserService
 		{
 			newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
 		}
-		User user = getUserByUserName(newUser.getUserName());
+		User user = getUserByUsername(newUser.getUsername());
 		if (user == null)
 		{
 			createUser(newUser);

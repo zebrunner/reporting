@@ -9,26 +9,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qaprosoft.zafira.models.dto.errors.Error;
+import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
+import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+
 public class UnauthorizedEntryPoint extends LoginUrlAuthenticationEntryPoint
 {
-	private static final String CONTENT_TYPE_HEADER = "Content-Type";
-	private static final String APPLICATION_JSON = "application/json";
-
-	public UnauthorizedEntryPoint(String loginUrl)
+	private String error;
+	
+	public UnauthorizedEntryPoint(String loginUrl) throws JsonProcessingException
 	{
 		super(loginUrl);
+		this.error = new ObjectMapper().writeValueAsString(new ErrorResponse().setError(new Error(ErrorCode.UNAUTHORIZED)));
 	}
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException
 	{
-		if (APPLICATION_JSON.equals(request.getHeader(CONTENT_TYPE_HEADER)))
-		{
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		} 
-		else
-		{
-			super.commence(request, response, exception);
-		}
+		response.setContentType("application/json");
+	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	    response.getOutputStream().println(error);
 	}
 }

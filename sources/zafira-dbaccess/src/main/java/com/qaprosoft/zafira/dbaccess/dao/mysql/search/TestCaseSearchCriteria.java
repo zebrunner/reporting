@@ -12,7 +12,7 @@ public class TestCaseSearchCriteria extends SearchCriteria
 	private String testMethod;
 	private String testSuiteName;
 	private String testSuiteFile;
-	private String userName;
+	private String username;
 	private Date date;
 
 	public Long getId()
@@ -84,14 +84,14 @@ public class TestCaseSearchCriteria extends SearchCriteria
 		this.testSuiteFile = testSuiteFile;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName)
+	public void setUsername(String username)
 	{
-		this.userName = userName;
+		this.username = username;
 	}
 
 	public Date getDate()

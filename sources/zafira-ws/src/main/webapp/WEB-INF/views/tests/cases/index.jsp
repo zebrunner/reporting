@@ -20,7 +20,7 @@
 			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test class" data-ng-model="testCasesSearchCriteria.testClass" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-3"><input type="text" class="form-control" placeholder="Test method" data-ng-model="testCasesSearchCriteria.testMethod" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Test suite" data-ng-model="testCasesSearchCriteria.testSuiteFile" data-ng-change="showReset = true"></div>
-			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.userName" data-ng-change="showReset = true"></div>
+			            	<div class="col-lg-2"><input type="text" class="form-control" placeholder="Owner" data-ng-model="testCasesSearchCriteria.username" data-ng-change="showReset = true"></div>
 			            	<div class="col-lg-2"><input type="date" class="form-control" placeholder="Date" data-ng-model="testCasesSearchCriteria.date" style="min-width:95%" data-ng-change="showReset = true"></div>
 		            		<input type="submit" data-ng-hide="true" />
 		            	</form>
@@ -48,7 +48,7 @@
 					<span class="badge">{{testCase.testSuite.fileName}}</span>
 				</div>
 				<div  class="col-lg-2">
-					<span>{{testCase.user.userName}}</span>
+					<span>{{testCase.user.username}}</span>
 				</div>
 				<div  class="col-lg-2" style="padding-right: 3px;">
 					<span>{{testCase.createdAt | date:'MM/dd/yyyy'}}</span>

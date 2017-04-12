@@ -16,7 +16,7 @@
 			<form name="userForm">
 				<div class="form-group">
 					<label>Username</label> 
-					<input type="text" class="form-control" data-ng-model="user.userName" required disabled></input>
+					<input type="text" class="form-control" data-ng-model="user.username" required disabled></input>
 				</div>
 				<div class="form-group">
 					<label>Email</label> 

@@ -512,7 +512,7 @@
 		<id column="TEST_RUN_ID" property="id" />
 		
 		<result column="TEST_RUN_USER_ID" property="user.id" />
-		<result column="TEST_RUN_USER_USER_NAME" property="user.userName" />
+		<result column="TEST_RUN_USER_USER_NAME" property="user.username" />
 		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
 		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />

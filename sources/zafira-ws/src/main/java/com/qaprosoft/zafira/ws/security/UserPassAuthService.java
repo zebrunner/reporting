@@ -21,7 +21,7 @@ public class UserPassAuthService implements UserDetailsService
 		User user = null;
 		try
 		{
-			user = userService.getUserByUserName(username);
+			user = userService.getUserByUsername(username);
 			if (user == null)
 			{
 				throw new Exception("Invalid user name " + username);
@@ -32,9 +32,7 @@ public class UserPassAuthService implements UserDetailsService
 			throw new UsernameNotFoundException("User not found", e);
 		}
 		return new SecuredUser(user.getId(), 
-							   user.getUserName(), user.getPassword(), 
-							   user.getEmail(), 
-							   user.getFirstName(), user.getLastName(), 
+							   user.getUsername(), user.getPassword(), 
 							   user.getRoles());
 	}
 }

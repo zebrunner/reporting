@@ -115,7 +115,7 @@
 
     <resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
         <id column="USER_ID" property="id" />
-        <result column="USER_USERNAME" property="userName" />
+        <result column="USER_USERNAME" property="username" />
         <result column="USER_PASSWORD" property="password" />
         <result column="USER_FIRST_NAME" property="firstName" />
         <result column="USER_LAST_NAME" property="lastName" />

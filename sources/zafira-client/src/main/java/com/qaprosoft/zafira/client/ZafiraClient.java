@@ -555,7 +555,7 @@ public class ZafiraClient
 		} 
 		else 
 		{
-			LOGGER.debug("Registered user details:" + String.format(userDetails, user.getUserName(), user.getEmail(), user.getFirstName(), user.getLastName()));
+			LOGGER.debug("Registered user details:" + String.format(userDetails, user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName()));
 		}
 		return user;
 	}

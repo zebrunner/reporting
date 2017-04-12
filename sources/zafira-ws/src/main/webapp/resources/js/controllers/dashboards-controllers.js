@@ -35,11 +35,11 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			$scope.widgets = widgets.data;
 		});
 	};
-	
+
 	$scope.switchDashboard = function(id) {
 		window.open($location.$$absUrl.split("?")[0] + "?id=" + id, '_self');
 	};
-	
+
 	$scope.loadDashboardData = function(dashboard) {
 		for(var i = 0; i < dashboard.widgets.length; i++)
 		{
@@ -49,7 +49,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			}
 		}
 	};
-	
+
 	$scope.loadWidget = function(dashboardName, widget, attributes) {
 		var sqlAdapter = {};
 		sqlAdapter.sql = widget.sql;
@@ -69,7 +69,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					data[j].CREATED_AT = new Date(data[j].CREATED_AT);
 				}
 			}
-			
+
 			if(!isSQLWidget(widget))
 			{
 				widget.model = JSON.parse(widget.model);
@@ -87,17 +87,17 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			}
 		});
 	};
-	
+
 	var isSQLWidget = function(widget)
 	{
 		return 'sql' == widget.type;
 	};
-	
+
 	(function init(){
 		$scope.loadAllDashboards();
 		$scope.loadAllWidgets();
 	})();
-	
+
 	$scope.asString = function(value) {
 		if(value != null)
 		{
@@ -105,7 +105,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		}
 		return value;
 	};
-	
+
 	$scope.openDashboardWidgetModal = function(widget, isNew) {
 		$modal.open({
 			templateUrl : 'resources/templates/dashboard-widget-details-modal.jsp',
@@ -121,17 +121,17 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				}
 			},
 			controller : function($scope, $modalInstance, isNew, dashboardId, widget){
-				
+
 				$scope.isNew = isNew;
 				$scope.widget = widget;
-				
-				
+
+
 				if(isNew)
 				{
 					$scope.widget.position = 0;
 					$scope.widget.size = 4;
 				}
-				
+
 				$scope.addDashboardWidget = function(widget){
 					$http.post('dashboards/' + dashboardId + '/widgets', widget).then(function successCallback(data) {
 						$route.reload();
@@ -140,7 +140,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.deleteDashboardWidget = function(widget){
 					$http.delete('dashboards/' + dashboardId + '/widgets/' + widget.id).then(function successCallback(data) {
 						$route.reload();
@@ -149,7 +149,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.updateDashboardWidget = function(widget){
 					$http.put('dashboards/' + dashboardId + '/widgets', {"id" : widget.id, "size" : widget.size, "position": widget.position}).then(function successCallback(data) {
 						$route.reload();
@@ -158,7 +158,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};
@@ -167,7 +167,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
         }, function () {
         });
 	};
-	
+
 	$scope.openDashboardDetailsModal = function(dashboard, isNew){
 		$modal.open({
 			templateUrl : 'resources/templates/dashboard-details-modal.jsp',
@@ -180,16 +180,16 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				}
 			},
 			controller : function($scope, $modalInstance, dashboard, isNew){
-				
+
 				$scope.isNew = isNew;
 				$scope.dashboard = dashboard;
 				$scope.newAttribute = {};
-				
+
 				if($scope.isNew)
 				{
 					$scope.dashboard.type = 'GENERAL';
 				}
-				
+
 				$scope.createDashboard = function(dashboard){
 					$http.post('dashboards', dashboard).then(function successCallback(data){
 						$route.reload();
@@ -208,7 +208,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.deleteDashboard = function(dashboard){
 					$http.delete('dashboards/' + dashboard.id).then(function successCallback(data) {
 						window.open($location.$$absUrl.split("?")[0], '_self');
@@ -217,7 +217,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				// Dashboard attributes
 				$scope.createAttribute = function(attribute){
 					$http.post('dashboards/' + dashboard.id + '/attributes', attribute).then(function successCallback(rs){
@@ -237,7 +237,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 						alertify.error('Failed to update dashboard attribute');
 					});
 				};
-				
+
 				$scope.deleteAttribute = function(attribute){
 					$http.delete('dashboards/' + dashboard.id + '/attributes/' + attribute.id).then(function successCallback(rs) {
 						$scope.dashboard.attributes = rs.data;
@@ -246,7 +246,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 						alertify.error('Failed to delete dashboard attribute');
 					});
 				};
-				
+
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};
@@ -255,9 +255,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
         }, function () {
         });
 	};
-	
+
 	$scope.openWidgetDetailsModal = function(widget, isNew){
-		
+
 		$modal.open({
 			templateUrl : 'resources/templates/widget-details-modal.jsp',
 			resolve : {
@@ -269,7 +269,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 				}
 			},
 			controller : function($scope, $modalInstance, widget, isNew){
-				
+
 				$scope.isNew = isNew;
 				$scope.widget = widget;
 				if($scope.isNew && $scope.widget != null)
@@ -294,7 +294,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.deleteWidget = function(widget){
 					$http.delete('widgets/' + widget.id).then(function successCallback(data) {
 						$route.reload();
@@ -303,7 +303,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 					});
 					$modalInstance.close(0);
 				};
-				
+
 				$scope.cancel = function(){
 					$modalInstance.close(0);
 				};
@@ -312,12 +312,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
         }, function () {
         });
 	};
-	
+
 	$scope.sort = {
         column: null,
         descending: false
     };
-    
+
     $scope.changeSorting = function(column) {
         var sort = $scope.sort;
         if (sort.column == column) {
@@ -327,16 +327,16 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
             sort.descending = false;
         }
     };
-    
+
     $scope.openEmailModal = function(){
 		$modal.open({
 			templateUrl : 'resources/templates/email-details-modal.jsp',
 			controller : function($scope, $modalInstance, $mdConstant){
-				
+
 				$scope.title = "Zafira Dashboard";
 				$scope.subjectRequired = true;
 				$scope.textRequired = true;
-				
+
 				$scope.email = {};
 				$scope.email.subject = "Zafira Dashboards";
 				$scope.email.text = "This is auto-generated email, please do not reply!";
@@ -390,8 +390,8 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
                 }
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};
-					if(currentUser.userName == null) {
-						//user.userName = currentUser;
+					if(currentUser.username == null) {
+						//user.username = currentUser;
 						user.email = currentUser;
 						$scope.email.recipients.push(currentUser);
 						$scope.users.push(user);
@@ -416,5 +416,5 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
         }, function () {
         });
 	};
-	
+
 }]);

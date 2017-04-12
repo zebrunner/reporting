@@ -27,7 +27,8 @@ public class JWTProcessingFilter extends GenericFilterBean
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JWTProcessingFilter.class);
 
-	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String AUTHORIZATION = "Authorization";
+	private static final String BEARER = "Bearer ";
 	
 	private AuthenticationManager authManager;
 
@@ -40,10 +41,10 @@ public class JWTProcessingFilter extends GenericFilterBean
 	public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain) throws IOException, ServletException
 	{
 		HttpServletRequest request = (HttpServletRequest) rq;
-		if (!StringUtils.isEmpty(request.getHeader(AUTHORIZATION_HEADER)))
+		String auth = request.getHeader(AUTHORIZATION);
+		if (!StringUtils.isEmpty(auth) || auth.startsWith(BEARER))
 		{
-			UsernamePasswordAuthenticationToken authentication =
-					new UsernamePasswordAuthenticationToken(request.getHeader(AUTHORIZATION_HEADER), StringUtils.EMPTY);
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(StringUtils.removeStart(auth, BEARER), StringUtils.EMPTY);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));
 			try
 			{
