@@ -120,12 +120,16 @@ public class TestRunResultsEmail implements IEmailMessage
 	@Override
 	public String getSubject()
 	{
-		String status = Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() && ! testRun.isBlocker() ? "PASSED (known issues)"
-				: testRun.isBlocker() ? "FAILED (BLOCKERS)" : testRun.getStatus().name();
+		String status = buildStatusText(testRun);
 		String appVersion = argumentIsPresent("app_version")? configuration.get("app_version") + " - ": "";
 		String platformInfo = buildPlatformInfo();
 		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
 				configuration.get("env"), platformInfo);
+	}
+	
+	public static String buildStatusText(TestRun testRun){
+		return Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() && ! testRun.isBlocker() ? "PASSED (known issues)"
+				: testRun.isBlocker() ? "FAILED (BLOCKERS)" : testRun.getStatus().name();
 	}
 
 	private boolean argumentIsPresent(String arg, String... ignoreValues) {

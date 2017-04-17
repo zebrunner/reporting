@@ -538,7 +538,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 				$scope.markReviewed = function(){
 					var rq = {};
 					rq.comment = $scope.testRun.comments;
-					if((rq.comment == null || rq.comment == "") && (testRun.failed > 0 || testRun.skipped > 0))
+					if((rq.comment == null || rq.comment == "") && ((testRun.failed > 0 && testRun.failed > testRun.failedAsKnown) || testRun.skipped > 0))
 					{
 						alertify.error('Unable to mark as Reviewed test run with failed/skipped tests without leaving some comment!');
 					}

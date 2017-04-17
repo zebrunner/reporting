@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.JenkinsService;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
+import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 @Service
 public class SlackService
@@ -57,7 +58,7 @@ public class SlackService
 			String elapsed = countElapsedInSMH(tr.getElapsed());
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
-			String status = tr.getStatus().toString();
+			String status = TestRunResultsEmail.buildStatusText(tr);
 
 			String mainMsg = String.format(MAIN_PATTERN, tr.getId(), elapsed, status, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
 			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
@@ -86,7 +87,7 @@ public class SlackService
 		{
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
-			String status = tr.getStatus().toString();
+			String status = TestRunResultsEmail.buildStatusText(tr);
 
 			String mainMsg = String.format(REV_PATTERN, tr.getId(), status, buildRunInfo(tr), zafiraUrl, jenkinsUrl);
 			String msgRes = String.format(RESULTS_PATTERN, tr.getPassed(), tr.getFailed(),
