@@ -370,7 +370,7 @@ public class TestService
 		}
 	}
 	
-	private int getTestMessageHashCode(String message)
+	public int getTestMessageHashCode(String message)
 	{
 		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
 	}

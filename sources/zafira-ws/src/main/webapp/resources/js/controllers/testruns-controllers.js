@@ -650,9 +650,26 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.onChangeAction = function () {
                     fieldIsChanged = true;
                     // Reset flags
+                    $scope.isNew = true;
                     $scope.isJiraIdExists = true;
                     $scope.isJiraIdClosed = false;
                     $scope.isIssueFound = false;
+                };
+
+                $scope.selectCurrentIssue = function(issue) {
+                    $scope.isNew = false;
+                    $scope.newKnownIssue.id = issue.id;
+                    $scope.newKnownIssue.jiraId = issue.jiraId;
+                    $scope.newKnownIssue.description = issue.description;
+                };
+
+                $scope.updateKnownIssue = function () {
+                    $http.put('tests/' + test.id + '/issues', $scope.newKnownIssue).then(function successCallback(data) {
+                        $modalInstance.close(true);
+                        alertify.success('Known issue "' + $scope.newKnownIssue.jiraId + '" was updated');
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to update known issue');
+                    });
                 };
 
                 $interval(function () {
@@ -676,6 +693,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 };
 
                 $scope.initNewKnownIssue = function () {
+                    $scope.isNew = true;
                     $scope.newKnownIssue = {};
                     $scope.newKnownIssue.type = "BUG";
                     $scope.newKnownIssue.testCaseId = test.testCaseId;
