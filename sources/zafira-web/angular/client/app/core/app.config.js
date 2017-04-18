@@ -3,7 +3,8 @@
 
     angular.module('app.core')
         .factory('appConfig', [appConfig])
-        .config(['$mdThemingProvider', mdConfig]);
+        .config(['$mdThemingProvider', mdConfig])
+        .constant('API_URL', 'http://localhost:8081/zafira-ws');
 
     function appConfig() {
         var pageTransitionOpts = [
@@ -24,16 +25,16 @@
         var date = new Date();
         var year = date.getFullYear();
         var main = {
-            brand: 'Zafira',
+            brand: 'ZAFIRA',
             name: 'Lisa',
             year: year,
             layout: 'wide',                                 // String: 'boxed', 'wide'
-            menu: 'vertical',                               // String: 'horizontal', 'vertical'
+            menu: 'horizontal',                               // String: 'horizontal', 'vertical'
             isMenuCollapsed: false,                         // Boolean: true, false
-            fixedHeader: true,                              // Boolean: true, false
-            fixedSidebar: true,                             // Boolean: true, false
+            fixedHeader: false,                              // Boolean: true, false
+            fixedSidebar: false,                             // Boolean: true, false
             pageTransition: pageTransitionOpts[0],          // Object: 0, 1, 2, 3 and build your own
-            skin: '12',                                     // String: 11,12,13,14,15,16; 21,22,23,24,25,26; 31,32,33,34,35,36
+            skin: '32',                                     // String: 11,12,13,14,15,16; 21,22,23,24,25,26; 31,32,33,34,35,36
             link: 'https://themeforest.net/item/material-design-admin-with-angularjs/13582227'
         };
         var color = {

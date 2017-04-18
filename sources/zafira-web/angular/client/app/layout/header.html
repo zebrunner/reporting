@@ -25,7 +25,7 @@
 
     <div class="top-nav">
         <ul class="nav-left list-unstyled">
-            <li><md-button class="header-btn toggle-min" data-toggle-nav-collapsed-min aria-label="toggle-nav-collapsed-min"><i class="material-icons">menu</i></md-button></li>
+            <!--li><md-button class="header-btn toggle-min" data-toggle-nav-collapsed-min aria-label="toggle-nav-collapsed-min"><i class="material-icons">menu</i></md-button></li-->
             <li>
                 <md-menu md-position-mode="left bottom">
                     <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
@@ -59,29 +59,28 @@
                     </md-menu-content>
                 </md-menu>
             </li>
-            <li class="search-box visible-md visible-lg">
+            <!--  li class="search-box visible-md visible-lg">
                 <div class="input-group">
                     <span class="input-group-addon"><i class="material-icons">search</i></span>
                     <input type="text" class="form-control" placeholder="{{ 'SEARCH' | translate }}">
                     <span class="input-bar"></span>
                 </div>
-            </li>
+            </li-->
         </ul>
 
         <ul class="nav-right pull-right list-unstyled">
             <li>
                 <md-menu md-position-mode="target-right target">
                     <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
-                        <img src="assets/images/g1.jpg" alt="" class="img-circle img30_30">
+                        <i class="material-icons">account_circle</i>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/"><md-icon class="material-icons">assignment</md-icon><span data-translate="DASHBOARD"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/page/profile"><md-icon class="material-icons">lock_outline</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/page/signin"><md-icon class="material-icons">keyboard_tab</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
                     </md-menu-content>
                 </md-menu>
             </li>
-            <li class="hidden-xs hidden-sm" data-ng-controller="LangCtrl as ctrl">
+            <!--  li class="hidden-xs hidden-sm" data-ng-controller="LangCtrl as ctrl">
                 <md-menu md-position-mode="target-right target">
                     <md-button class="active-flag" aria-label="menu" ng-click="$mdMenu.open($event)">
                         <div class="flag flags-{{activeLang}}"></div>
@@ -95,7 +94,7 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </li>
+            </li-->
         </ul>
     </div>
 </header>

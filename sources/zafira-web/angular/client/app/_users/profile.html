@@ -1,0 +1,88 @@
+<div class="page page-profile" ng-controller="UsersController">
+
+    <div class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Profile</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form name="userForm">
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Username</label>
+                                                <input ng-model="user.username" disabled>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>First name</label>
+                                                <input ng-model="user.firstName">
+                                            </md-input-container>
+                                            <md-input-container flex>
+                                                <label>Last Name</label>
+                                                <input ng-model="user.lastName">
+                                            </md-input-container>
+                                        </div>
+                                        <md-input-container class="md-block">
+                                            <label>Email</label>
+                                            <input ng-model="user.email">
+                                        </md-input-container>
+                                        <div layout="row"> 
+		                                    <md-button type="submit"
+		                                               class="md-raised btn-w-md md-primary"
+		                                               ng-disabled="signin_form.$invalid">Save</md-button>  
+	                                    </div>   
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>    
+        </div>
+    </div>
+    
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Password</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form name="userForm">
+                                       <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Password</label>
+                                                <input ng-model="password">
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Confirm password</label>
+                                                <input ng-model="confirmPassword">
+                                            </md-input-container>
+                                        </div>
+                                        <div layout="row"> 
+		                                    <md-button type="submit"
+		                                               class="md-raised btn-w-md md-primary"
+		                                               ng-disabled="signin_form.$invalid">Save</md-button>  
+	                                    </div>   
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>    
+        </div>
+    </div>
+
+
+</div>

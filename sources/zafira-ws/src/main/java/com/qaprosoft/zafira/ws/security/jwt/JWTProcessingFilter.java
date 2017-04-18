@@ -29,7 +29,7 @@ public class JWTProcessingFilter extends GenericFilterBean
 
 	private static final String AUTHORIZATION = "Authorization";
 	private static final String BEARER = "Bearer ";
-	
+
 	private AuthenticationManager authManager;
 
 	public JWTProcessingFilter(AuthenticationManager authManager)
@@ -44,13 +44,13 @@ public class JWTProcessingFilter extends GenericFilterBean
 		String auth = request.getHeader(AUTHORIZATION);
 		if (!StringUtils.isEmpty(auth) && auth.startsWith(BEARER))
 		{
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(StringUtils.removeStart(auth, BEARER), StringUtils.EMPTY);
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+					StringUtils.removeStart(auth, BEARER), StringUtils.EMPTY);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails((HttpServletRequest) request));
 			try
 			{
 				SecurityContextHolder.getContext().setAuthentication(authManager.authenticate(authentication));
-			} 
-			catch (BadCredentialsException e)
+			} catch (BadCredentialsException e)
 			{
 				LOGGER.error("User not authorized: " + e.getMessage());
 			}

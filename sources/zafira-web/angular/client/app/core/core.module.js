@@ -6,6 +6,7 @@
          'ngAnimate'
         ,'ngAria'
         ,'ngMessages'
+        ,'ngCookies'
 
         // Custom modules
         ,'app.layout'

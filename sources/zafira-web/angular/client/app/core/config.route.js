@@ -36,6 +36,14 @@
                         url: '/dashboard',
                         templateUrl: 'app/dashboard/dashboard.html'
                     })
+                    .state('signin', {
+                        url: '/signin',
+                        templateUrl: 'app/_auth/signin.html'
+                    })
+                    .state('users/profile', {
+                        url: '/users/profile',
+                        templateUrl: 'app/_users/profile.html'
+                    })
                     .state('form/editor', {
                         url: '/form/editor',
                         templateUrl: "app/form/editor.html",
@@ -75,5 +83,4 @@
                     .otherwise('/dashboard');
             }
         ]);
-
 })(); 

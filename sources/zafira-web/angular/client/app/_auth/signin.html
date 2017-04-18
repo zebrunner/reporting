@@ -1,0 +1,57 @@
+<div class="page-signin" ng-controller="AuthController">
+
+    <div class="wrapper">
+        <div class="main-body">
+            <div class="body-inner">
+                <div class="card bg-white">
+                    <div class="card-content">
+
+                        <section class="logo text-center">
+                            <h1>ZAFIRA</h1>
+                        </section>
+
+                        <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin()">
+                                <div class="callout callout-danger" ng-if="!credentials.valid">
+                                    <p>Invalid credentials</p>
+                                </div>
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label>Username</label>
+                                        <md-icon class="material-icons">account_circle</md-icon>
+                                        <input required 
+                                               type="text"
+                                               name="username" 
+                                               ng-model="credentials.username"/>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <label>Password</label>
+                                        <md-icon class="material-icons">lock_outline</md-icon>
+                                        <input required 
+                                               type="password"
+                                               name="password" 
+                                               ng-model="credentials.password"/>
+                                    </md-input-container>  
+                                    <div layout="row" layout-align="center"> 
+	                                    <md-button type="submit"
+	                                               class="md-raised btn-w-md md-primary"
+	                                               ng-disabled="signin_form.$invalid">Signin</md-button>  
+                                    </div>                                   
+                                </fieldset>
+                            </form>
+                    </div>
+                </div>
+
+                <div class="additional-info">
+                	<!--  
+                    <a href="#!/page/signup">Register</a>
+                    <span class="divider-h"></span>
+                    -->
+                    <a href="#!/page/forgot-password">Forgot your password?</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
