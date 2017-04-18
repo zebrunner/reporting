@@ -33,12 +33,13 @@
         <!-- end Needs images -->
 
 
-            <!-- build:css({.tmp,client}) styles/main.css -->
-            <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
-            <link rel="stylesheet" href="styles/bootstrap.css">
-            <link rel="stylesheet" href="styles/ui.css">
-            <link rel="stylesheet" href="styles/app.css">
-            <!-- endbuild -->
+       <!-- build:css({.tmp,client}) styles/main.css -->
+       <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+       <link rel="stylesheet" href="bower_components/alertify-js/build/css/alertify.min.css">
+       <link rel="stylesheet" href="styles/bootstrap.css">
+       <link rel="stylesheet" href="styles/ui.css">
+       <link rel="stylesheet" href="styles/app.css">
+       <!-- endbuild -->
 
     </head>
     <body data-ng-app="app"
@@ -120,6 +121,8 @@
 
         <script src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
         <script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+                
+        <script src="bower_components/alertify-js/build/alertify.min.js"></script>
         <!-- endbuild -->
 
 
@@ -127,6 +130,7 @@
         <!-- inject:js -->
         <script src="app/app.module.js"></script>
         <script src="app/_auth/auth.module.js"></script>
+        <script src="app/_users/user.module.js"></script>
         <script src="app/_services/services.module.js"></script>
         <script src="app/chart/chart.module.js"></script>
         <script src="app/core/core.module.js"></script>
@@ -135,9 +139,9 @@
         <script src="app/layout/layout.module.js"></script>
         <script src="app/page/page.module.js"></script>
         <script src="app/table/table.module.js"></script>
-        <script src="app/_users/user.module.js"></script>
         <script src="app/ui/ui.module.js"></script>
         <script src="app/_auth/auth.controller.js"></script>
+        <script src="app/_users/user.controller.js"></script>
         <script src="app/_services/auth.service.js"></script>
         <script src="app/_services/user.service.js"></script>
         <script src="app/chart/echarts.controller.js"></script>
@@ -157,7 +161,6 @@
         <script src="app/page/page.controller.js"></script>
         <script src="app/page/page.directive.js"></script>
         <script src="app/table/table.controller.js"></script>
-        <script src="app/_users/user.controller.js"></script>
         <script src="app/ui/material.controller.js"></script>
         <script src="app/ui/ui.controller.js"></script>
         <script src="app/ui/ui.directive.js"></script>

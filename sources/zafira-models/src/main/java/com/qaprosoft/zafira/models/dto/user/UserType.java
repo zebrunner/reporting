@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.dto.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.dto.AbstractType;
 
 @JsonInclude(Include.NON_NULL)
 public class UserType extends AbstractType

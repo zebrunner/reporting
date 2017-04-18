@@ -1,6 +1,6 @@
 module.exports = function() {
-    var client = 'client',
-        clientApp = './client/app'
+    var client = 'src',
+        clientApp = './src/app'
         dist = 'dist',
         tmp = '.tmp',
         docs = 'documentation',
@@ -20,7 +20,7 @@ module.exports = function() {
             client + '/bower_components/textAngular/dist/textAngular-sanitize.min.js',
             client + '/bower_components/rangy/rangy-core.min.js',
             client + '/bower_components/rangy/rangy-selectionsaverestore.min.js',
-            client + '/bower_components/textAngular/dist/textAngular.js', 
+            client + '/bower_components/textAngular/dist/textAngular.js',
             client + '/bower_components/textAngular/dist/textAngularSetup.js',
         ],
         assetsToCopy: [
@@ -29,10 +29,10 @@ module.exports = function() {
             client + '/assets/**/*',
             client + '/data/**/*',
             client + '/vendors/**/*',
-            client + "/bower_components/font-awesome/css/*", 
-            client + "/bower_components/font-awesome/fonts/*", 
-            client + "/styles/loader.css", 
-            client + "/styles/ui/images/*", 
+            client + "/bower_components/font-awesome/css/*",
+            client + "/bower_components/font-awesome/fonts/*",
+            client + "/styles/loader.css",
+            client + "/styles/ui/images/*",
             client + "/favicon.ico"
         ],
         less: [],
@@ -44,14 +44,14 @@ module.exports = function() {
             clientApp + "/**/*.js",
             '!' + clientApp + "/**/*.spec.js"
         ],
-        docs: docs, 
+        docs: docs,
         docsPug: [
             docs + "/pug/index.pug",
             docs + "/pug/faqs.pug",
             docs + "/pug/layout.pug"
         ],
         allToClean: [
-            tmp, 
+            tmp,
             ".DS_Store",
             ".sass-cache",
             "node_modules",

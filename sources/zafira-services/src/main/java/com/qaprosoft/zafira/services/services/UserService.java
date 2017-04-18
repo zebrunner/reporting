@@ -13,6 +13,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 @Service
 public class UserService
@@ -27,6 +28,17 @@ public class UserService
 	public User getUserById(long id) throws ServiceException
 	{
 		return userMapper.getUserById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public User getNotNullUserById(long id) throws ServiceException
+	{
+		User user = getUserById(id);
+		if(user == null)
+		{
+			throw new UserNotFoundException();
+		}
+		return user;
 	}
 
 	@Cacheable(value = "users")
@@ -49,6 +61,15 @@ public class UserService
 	{
 		userMapper.updateUser(user);
 		return user;
+	}
+	
+	@CacheEvict(value = "users", allEntries=true)
+	@Transactional(rollbackFor = Exception.class)
+	public void updateUserPassword(long id, String password) throws ServiceException
+	{
+		User user = getNotNullUserById(id);
+		user.setPassword(passwordEncryptor.encryptPassword(password));
+		updateUser(user);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)

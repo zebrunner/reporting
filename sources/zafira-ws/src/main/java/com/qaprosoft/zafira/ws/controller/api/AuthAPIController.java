@@ -43,7 +43,7 @@ public class AuthAPIController extends AbstractController
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType login(@RequestBody @Valid CredentialsType credentials) throws BadCredentialsException
+	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials) throws BadCredentialsException
 	{
 		AuthTokenType authToken = null;
 		try

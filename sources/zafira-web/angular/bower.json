@@ -23,7 +23,8 @@
     "echarts": "~3.4.0",
     "angular-wizard": "^0.10.0",
     "ngECharts": "ngecharts#^0.2.0",
-    "ngmap": "~1.18.4"
+    "ngmap": "~1.18.4",
+    "alertify-js": "~1.8.0"
   },
   "devDependencies": {
     "bootstrap-sass-official": "~3.3.0"

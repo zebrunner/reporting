@@ -1,7 +1,7 @@
 <div class="page page-profile" ng-controller="UsersController">
 
     <div class="row">
-        <div class="col-lg-8 clearfix"> <h2 class="section-header">Profile</h2> </div>
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">User profile</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
                 <div class="panel-body">
@@ -9,7 +9,7 @@
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
                                 <div layout-padding>
-                                    <form name="userForm">
+                                    <form name="profileForm" ng-submit="updateUserProfile(user)">
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>Username</label>
@@ -19,21 +19,23 @@
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>First name</label>
-                                                <input ng-model="user.firstName">
+                                                <input ng-model="user.firstName" required>
                                             </md-input-container>
                                             <md-input-container flex>
                                                 <label>Last Name</label>
-                                                <input ng-model="user.lastName">
+                                                <input ng-model="user.lastName" required>
                                             </md-input-container>
                                         </div>
-                                        <md-input-container class="md-block">
-                                            <label>Email</label>
-                                            <input ng-model="user.email">
-                                        </md-input-container>
+                                        <div layout layout-sm="column">
+                                            <md-input-container flex>
+                                                <label>Email</label>
+                                                <input ng-model="user.email" required>
+                                            </md-input-container>
+                                        </div>
                                         <div layout="row"> 
 		                                    <md-button type="submit"
 		                                               class="md-raised btn-w-md md-primary"
-		                                               ng-disabled="signin_form.$invalid">Save</md-button>  
+		                                               ng-disabled="profileForm.$invalid">Save</md-button>  
 	                                    </div>   
                                     </form>
                                 </div>
@@ -47,7 +49,7 @@
     </div>
     
     <div class="row ui-section">
-        <div class="col-lg-8 clearfix"> <h2 class="section-header">Password</h2> </div>
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
                 <div class="panel-body">
@@ -55,28 +57,29 @@
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
                                 <div layout-padding>
-                                    <form name="userForm">
-                                       <div layout layout-sm="column">
-                                            <md-input-container flex>
-                                                <label>Password</label>
-                                                <input ng-model="password">
-                                            </md-input-container>
-                                        </div>
-                                        <div layout layout-sm="column">
-                                            <md-input-container flex>
-                                                <label>Confirm password</label>
-                                                <input ng-model="confirmPassword">
-                                            </md-input-container>
-                                        </div>
+                                    <form class="form-validation" name="password_form" ng-submit="updateUserPassword(password, confirmPassword)">
+                                        <md-input-container  class="md-block">
+                                            <label>Password</label>
+                                            <input type="password" ng-model="password" name="password" required />
+                                            <div ng-messages="password_form.password.$error" ng-if="password_form.password.$dirty">
+	                                            <div ng-message="required">Required</div>
+	                                        </div>
+                                        </md-input-container>
+                                        <md-input-container  class="md-block">
+                                            <label>Repeat</label>
+                                            <input type="password" ng-model="confirmPassword" name="confirmPassword" required />
+                                            <div ng-messages="password_form.confirmPassword.$error" ng-if="password_form.confirmPassword.$dirty">
+	                                            <div ng-message="required">Required</div>
+	                                        </div>
+                                        </md-input-container>
                                         <div layout="row"> 
 		                                    <md-button type="submit"
 		                                               class="md-raised btn-w-md md-primary"
-		                                               ng-disabled="signin_form.$invalid">Save</md-button>  
+		                                               ng-disabled="passwordForm.$invalid || password != confirmPassword">Save</md-button>  
 	                                    </div>   
                                     </form>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
