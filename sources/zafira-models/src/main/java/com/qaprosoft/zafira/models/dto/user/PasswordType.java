@@ -3,7 +3,9 @@ package com.qaprosoft.zafira.models.dto.user;
 import java.io.Serializable;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -13,10 +15,11 @@ public class PasswordType implements Serializable
 {
 	private static final long serialVersionUID = 8483235107118081307L;
 	
-	@NotNull
+	@NotEmpty(message = "Password required")
+	@Size(min = 5, message = "Too short password")
 	private String password;
 	
-	@NotNull
+	@NotEmpty(message = "Password confirmation required")
 	private String confirmPassword;
 
 	public String getPassword()
@@ -39,8 +42,8 @@ public class PasswordType implements Serializable
 		this.confirmPassword = confirmPassword;
 	}
 
-	@AssertTrue(message = "{confirm.invalid}")
-	public Boolean isConfirmationValid()
+	@AssertTrue(message = "Password confirmation not matching")
+	public boolean isConfirmationValid()
 	{
 		return password != null && password.equals(confirmPassword);
 	}

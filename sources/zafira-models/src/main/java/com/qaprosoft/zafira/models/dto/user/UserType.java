@@ -3,7 +3,7 @@ package com.qaprosoft.zafira.models.dto.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -14,7 +14,8 @@ import com.qaprosoft.zafira.models.dto.AbstractType;
 public class UserType extends AbstractType
 {
 	private static final long serialVersionUID = -6663692781158665080L;
-	@NotNull
+	
+	@NotEmpty(message = "Username required")
 	private String username;
 	private String email;
 	private String firstName;

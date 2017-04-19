@@ -166,5 +166,10 @@
     "FEATURE_CALLOUTS": "Feature Callouts",
     "SASH": "Sash",
     "EMAIL": "Email",
-    "WITH_TABS": "With Tabs"
+    "WITH_TABS": "With Tabs",
+    "USERS": "Users",
+    
+    "VLD_REQUIRED": "Required",
+    "VLD_PATTERN": "Invalid format",
+    "VLD_LENGHT_5": "5 symbols required "
 }

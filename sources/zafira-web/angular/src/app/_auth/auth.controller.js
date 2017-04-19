@@ -3,10 +3,12 @@
  
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$location', 'AuthService', AuthController])
+        .controller('AuthController', ['$scope', '$location', 'AuthService', 'UtilService', AuthController])
  
-    function AuthController($scope, $location, AuthService) {
+    function AuthController($scope, $location, AuthService, UtilService) {
  
+    	$scope.UtilService = UtilService;
+    	
         $scope.credentials = { valid: true };
  
         (function initController() {
@@ -14,9 +16,9 @@
         	AuthService.ClearCredentials();
         })();
  
-        $scope.signin = function () {
+        $scope.signin = function (credentials) {
             
-        	AuthService.Login($scope.credentials.username, $scope.credentials.password)
+        	AuthService.Login(credentials.username, credentials.password)
             .then(
             function (rs) {
             	if(rs.success)

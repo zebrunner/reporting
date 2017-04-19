@@ -1,0 +1,53 @@
+<div class="page page-profile" ng-controller="UserListController">
+
+    <div class="row ui-section">
+        <div class="col-lg-8 clearfix"> 
+        	<h2 class="section-header">Users</h2> 
+        </div>
+        <div class="col-md-12">
+            <article class="article">
+                <md-card class="no-margin-h">
+                    <md-toolbar class="md-table-toolbar alternate" ng-show="options.rowSelection && selected.length">
+                        <div class="md-toolbar-tools">
+                            <span>{{selected.length}} {{selected.length > 1 ? 'items' : 'item'}} selected</span>
+                        </div>
+                    </md-toolbar>
+                    <md-table-container>
+                        <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
+                            <thead ng-if="!options.decapitate" md-head md-order="query.order" md-on-reorder="logOrder">
+                                <tr md-row>
+                                    <th md-column md-order-by="name"><span>ID</span></th>
+                                    <th md-column md-order-by="type"><span>Username</span></th>
+                                    <th md-column md-order-by="calories.value"><span>Email</span></th>
+                                    <th md-column md-order-by="fat.value"><span>First/Last name</span></th>
+                                    <th md-column md-order-by="carbs.value"><span>Registered</span></th>
+                                    <th md-column md-order-by="protein.value"><span>Status</span></th>
+                                    <th md-column md-order-by="iron.value"><span>Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="user in sr.results">
+                                    <td md-cell>{{user.id}}</td>
+                                    <td md-cell>{{user.username}}</td>
+                                    <td md-cell>{{user.email}}</td>
+                                    <td md-cell>{{user.firstName}} {{user.lastName}}</td>
+                                    <td md-cell>{{user.createdAt | date:'MM/dd/yyyy'}}</td>
+                                    <td md-cell>
+                                    	<span ng-switch on="user.password != null && user.password != ''">
+                                    		<span class="label label-success" ng-switch-when="true">Active</span>
+                                    		<span class="label label-danger" ng-switch-when="false">Inactive</span>
+                                    	</span>
+                                    </td>
+                                    <td md-cell>
+									</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+
+                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="openPage"></md-table-pagination>
+                </md-card>
+            </article>   
+        </div>
+    </div>
+</div>

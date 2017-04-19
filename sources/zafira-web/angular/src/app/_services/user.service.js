@@ -3,39 +3,32 @@
  
     angular
         .module('app.services')
-        .factory('UserService', ['$http', '$cookies', '$rootScope', 'API_URL', UserService])
+        .factory('UserService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', UserService])
  
-    function UserService($http, $cookies, $rootScope, API_URL) {
+    function UserService($http, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
  
-        service.GetUserProfile = GetUserProfile;
-        service.UpdateUserProfile = UpdateUserProfile;
-        service.UpdateUserPassword = UpdateUserPassword;
+        service.getUserProfile = getUserProfile;
+        service.searchUsers = searchUsers;
+        service.updateUserProfile = updateUserProfile;
+        service.updateUserPassword = updateUserPassword;
  
         return service;
  
-        function GetUserProfile(username, password) {
-        	return $http.get(API_URL + '/api/users/profile').then(handleSuccess, handleError('Unable to get user profile'));
+        function getUserProfile(username, password) {
+        	return $http.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess, UtilService.handleError('Unable to get user profile'));
         }
         
-        function UpdateUserProfile(profile) {
-        	return $http.put(API_URL + '/api/users/profile', profile).then(handleSuccess, handleError('Unable to update user profile'));
+        function searchUsers(criteria) {
+        	return $http.post(API_URL + '/api/users/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search users'));
         }
         
-        function UpdateUserPassword(password) {
-        	return $http.put(API_URL + '/api/users/password', password).then(handleSuccess, handleError('Unable to update user password'));
+        function updateUserProfile(profile) {
+        	return $http.put(API_URL + '/api/users/profile', profile).then(UtilService.handleSuccess, UtilService.handleError('Unable to update user profile'));
         }
         
-        // private functions
-        
-        function handleSuccess(res) {
-            return { success: true, data: res.data };
-        }
- 
-        function handleError(error) {
-            return function () {
-                return { success: false, message: error };
-            };
+        function updateUserPassword(password) {
+        	return $http.put(API_URL + '/api/users/password', password).then(UtilService.handleSuccess, UtilService.handleError('Unable to update user password'));
         }
     }
 })();
