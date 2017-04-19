@@ -529,10 +529,17 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	 * @return XML representation of configuration bean
 	 * @throws JAXBException
 	 */
-	private String convertToXML(ConfigurationType config) throws JAXBException
+	private String convertToXML(ConfigurationType config)
 	{
 		final StringWriter w = new StringWriter();
-		marshaller.marshal(config, w);
+		try
+		{
+			marshaller.marshal(config != null ? config : new ConfigurationType(), w);
+		}
+		catch(Exception e)
+		{
+			LOGGER.error("Unable to convert config to XML: " + e.getMessage());
+		}
 		return w.toString();
 	}
 	
