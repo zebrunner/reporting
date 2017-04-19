@@ -15,7 +15,7 @@
 	<div class="row" data-ng-repeat="issue in knownIssues">
 		<div class="col-lg-12">
 			<div class="row">
-				<div class="col-lg-12"><b class="settings-line">{{issue.jiraId}}</b> {{issue.description}} <i class="float_right fa fa-times pointer settings-line" data-ng-really-message="Do you really want to delete known issue?" data-ng-really-click="deleteKnownIssue(issue.id)"></i></div>
+				<div class="col-lg-12"><span data-ng-click="selectCurrentIssue(issue)"><b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}</span> <i class="float_right fa fa-times pointer settings-line" data-ng-really-message="Do you really want to delete known issue?" data-ng-really-click="deleteKnownIssue(issue.id)"></i></div>
 			</div>
 			<hr/>
 		</div>
@@ -29,7 +29,7 @@
 					<input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
 					<span class="danger" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' not found</span>
 					<span class="danger" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' closed</span>
-					<span data-ng-show="!isDataLoaded || !isIssueFound"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
+					<span data-ng-show="(!isDataLoaded || !isIssueFound) && isConnectedToJira"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
@@ -44,7 +44,10 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
+	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
     	Create
     </button>
+	<button data-ng-if="! isNew" class="btn btn-success" data-ng-click="updateKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
+		Update
+	</button>
 </div>

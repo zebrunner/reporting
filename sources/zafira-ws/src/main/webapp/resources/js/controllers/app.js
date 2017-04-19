@@ -68,7 +68,14 @@ ZafiraApp.factory('UserService', function($http, $rootScope) {
             var promise = $http.get('users/current').then(function(rs) {
                 var authorities = rs.data.authorities;
                 if(authorities.length == 1) {
-                    $rootScope.currentRole = rs.data.authorities[0].authority;
+                    $rootScope.currentRole = authorities[0].authority;
+                } else {
+                    for(var i = 0; i < authorities.length; i++) {
+                        $rootScope.currentRole = authorities[i].authority;
+                        if($rootScope.currentRole == 'ROLE_ADMIN') {
+                            break;
+                        }
+                    }
                 }
                 return rs.data;
             });
@@ -92,6 +99,21 @@ ZafiraApp.factory('JenkinsService', function($http) {
         }
     };
     return jenkinsService;
+});
+
+ZafiraApp.factory('SlackService', function($http) {
+    var slackService = {
+        triggerReviewNotif : function(id) {
+            var promise = $http.get('slack/triggerReviewNotif/' + id).then(function successCallback(rs) {
+            	alertify.success('Notification was sent to Slack!');
+                return null;
+            }, function errorCallback(data) {
+    			alertify.error('Notification was not sent to Slack!' + data);
+    		});
+            return promise;
+        }
+    };
+    return slackService;
 });
 
 ZafiraApp.factory('DashboardService', function($http) {

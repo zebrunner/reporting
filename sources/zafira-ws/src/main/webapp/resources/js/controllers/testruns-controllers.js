@@ -1,6 +1,6 @@
 'use strict';
 
-ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '$http', '$location', 'UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', '$cookieStore', '$mdConstant', function ($scope, $interval, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, $cookieStore, $mdConstant) {
+ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '$http', '$location', 'UtilService', 'ProjectProvider', '$modal', 'SettingsService', 'ConfigService', 'SlackService', '$cookieStore', '$mdConstant', function ($scope, $interval, $rootScope, $http, $location, UtilService, ProjectProvider, $modal, SettingsService, ConfigService, SlackService, $cookieStore, $mdConstant) {
 
     var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -138,7 +138,11 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         }
         else {
             $scope.testRuns[testRun.id].status = testRun.status;
+            $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
         }
+    	ConfigService.getConfig("slack/" + testRun.id).then(function successCallback(rs){
+    		$scope.testRuns[testRun.id].isSlackAvailable = rs.available;
+		});
     };
 
     $scope.getArgValue = function (xml, key) {
@@ -285,31 +289,14 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         $scope.openEmailModal($itemScope.testRun);
     }];
 
-    const COMMENT = ['Comment', function ($itemScope) {
-        $scope.openCommentsModal($itemScope.testRun);
+    const SEND_SLACK_NOTIF = ['Notify in Slack', function ($itemScope) {
+		SlackService.triggerReviewNotif($itemScope.testRun.id);
+    }];
+	
+	const MARK_REVIEWED = ['Mark as reviewed', function ($itemScope) {
+	  	$scope.openCommentsModal($itemScope.testRun);
     }];
 
-    $scope.menuOptions = [
-        OPEN_TEST_RUN,
-        COPY_TEST_RUN_LINK,
-        COMMENT,
-        SEND_EMAIL,
-        null,
-        BUILD_NOW,
-        REBUILD,
-        null,
-        DELETE_TEST_RUN
-    ];
-
-    $scope.userMenuOptions = [
-        OPEN_TEST_RUN,
-        COPY_TEST_RUN_LINK,
-        COMMENT,
-        SEND_EMAIL,
-        null,
-        BUILD_NOW,
-        REBUILD
-    ];
     // -----------------------------------------------------------
 
     $scope.isConnectedToJenkins = false;
@@ -319,12 +306,16 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
     };
 
-    $scope.initMenuOptions = function () {
+    $scope.initMenuOptions = function (testRun) {
         var menuOptions = [];
         menuOptions.push(OPEN_TEST_RUN);
         menuOptions.push(COPY_TEST_RUN_LINK);
-        menuOptions.push(COMMENT);
+        menuOptions.push(MARK_REVIEWED);
         menuOptions.push(SEND_EMAIL);
+        if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
+		{
+        	menuOptions.push(SEND_SLACK_NOTIF);
+		}
         menuOptions.push(null);
         if($scope.isConnectedToJenkins) {
             menuOptions.push(BUILD_NOW);
@@ -412,7 +403,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.buildNow = function (id) {
                     $modalInstance.close(0);
                     $http.post('tests/runs/' + $scope.testRun.id + '/build', $scope.jobParameters).then(function successCallback(data) {
-                        alertify.success('Email was successfully sent!');
+                        alertify.success('CI job is building, it may take some time before status is updated');
                     }, function errorCallback(data) {
                         alertify.error('Failed to build job');
                     });
@@ -461,6 +452,14 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 
                 $scope.sendEmail = function (id) {
+                    if($scope.users.length == 0) {
+                        if(currentText != null && currentText.length != 0) {
+                            $scope.email.recipients.push(currentText);
+                        } else {
+                            alertify.error('Add a recipient!')
+                            return;
+                        }
+                    }
                     $modalInstance.close(0);
                     $scope.email.recipients = $scope.email.recipients.toString();
                     $http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
@@ -470,18 +469,28 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     });
                 };
                 $scope.users_all = [];
+                var currentText;
 
                 $scope.usersSearchCriteria = {};
                 $scope.asyncContacts = [];
                 $scope.filterSelected = true;
 
                 $scope.querySearch = querySearch;
-                function querySearch(criteria) {
+                var stopCriteria = '########';
+                function querySearch (criteria) {
                     $scope.usersSearchCriteria.email = criteria;
-                    return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
-                        .then(function (response) {
-                            return response.data.results;
-                        });
+                    currentText = criteria;
+                    if(!criteria.includes(stopCriteria)) {
+                        stopCriteria = '########';
+                        return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
+                            .then(function (response) {
+                                if (response.data.results.length == 0) {
+                                    stopCriteria = criteria;
+                                }
+                                return response.data.results;
+                            });
+                    }
+                    return "";
                 }
 
                 $scope.checkAndTransformRecipient = function (currentUser) {
@@ -513,36 +522,51 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
     };
 
-    $scope.openCommentsModal = function (testRun) {
-        $modal.open({
-            templateUrl: 'resources/templates/comments-modal.jsp',
-            resolve: {
-                'testRun': function () {
-                    return testRun;
-                }
-            },
-            controller: function ($scope, $modalInstance, testRun) {
-
-                $scope.title = testRun.testSuite.name;
-                $scope.testRun = testRun;
-
-                $scope.addComment = function () {
-                    var rq = {};
-                    rq.comment = $scope.testRun.comments;
-                    $http.post('tests/runs/' + $scope.testRun.id + '/comment', rq).then(function successCallback(data) {
-                        $modalInstance.close(0);
-                    }, function errorCallback(data) {
-                        alertify.error('Failed to add comment!');
-                    });
-                };
-                $scope.cancel = function () {
-                    $modalInstance.close(0);
-                };
-            }
-        }).result.then(function (data) {
+    $scope.openCommentsModal = function(testRun){
+		$modal.open({
+			templateUrl : 'resources/templates/comments-modal.jsp',
+			resolve : {
+				'testRun' : function(){
+					return testRun;
+				}
+			},
+			controller : function($scope, $modalInstance, testRun){
+				
+				$scope.title = testRun.testSuite.name;
+				$scope.testRun = testRun;
+				
+				$scope.markReviewed = function(){
+					var rq = {};
+					rq.comment = $scope.testRun.comments;
+					if((rq.comment == null || rq.comment == "") && ((testRun.failed > 0 && testRun.failed > testRun.failedAsKnown) || testRun.skipped > 0))
+					{
+						alertify.error('Unable to mark as Reviewed test run with failed/skipped tests without leaving some comment!');
+					}
+					else
+					{
+						$http.post('tests/runs/' + $scope.testRun.id + '/markReviewed', rq).then(function successCallback() {
+							$modalInstance.close(0);
+							alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
+							if ($scope.testRun.isSlackAvailable)
+							{
+								if(confirm("Would you like to post latest test run status to slack?"))
+								{
+									SlackService.triggerReviewNotif($scope.testRun.id);
+								}
+							}
+						}, function errorCallback(data) {
+							alertify.error('Failed to mark test run as reviewed. ' + data);
+						});
+					}
+				};
+				$scope.cancel = function(){
+					$modalInstance.close(0);
+				};
+			}
+		}).result.then(function(data) {
         }, function () {
         });
-    };
+	};
 
     $scope.openKnownIssueModal = function (test) {
         var modalInstance = $modal.open({
@@ -582,7 +606,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                             $scope.isIssueFound = true;
                             checkIssueStatus(issue);
                             if ($scope.isJiraIdExists) {
-                                $scope.newKnownIssue.description = issue.description;
+                                $scope.newKnownIssue.description = issue.summary;
                                 $scope.newKnownIssue.assigneeMessage = '(Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name + ')';
                             }
                         }, function errorCallback(data) {
@@ -603,6 +627,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                             $scope.isJiraIdClosed = true;
                             break;
                         default:
+                            // Reset flags
                             $scope.isJiraIdExists = true;
                             $scope.isJiraIdClosed = false;
                             break;
@@ -624,6 +649,27 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
                 $scope.onChangeAction = function () {
                     fieldIsChanged = true;
+                    // Reset flags
+                    $scope.isNew = true;
+                    $scope.isJiraIdExists = true;
+                    $scope.isJiraIdClosed = false;
+                    $scope.isIssueFound = false;
+                };
+
+                $scope.selectCurrentIssue = function(issue) {
+                    $scope.isNew = false;
+                    $scope.newKnownIssue.id = issue.id;
+                    $scope.newKnownIssue.jiraId = issue.jiraId;
+                    $scope.newKnownIssue.description = issue.description;
+                };
+
+                $scope.updateKnownIssue = function () {
+                    $http.put('tests/' + test.id + '/issues', $scope.newKnownIssue).then(function successCallback(data) {
+                        $modalInstance.close(true);
+                        alertify.success('Known issue "' + $scope.newKnownIssue.jiraId + '" was updated');
+                    }, function errorCallback(data) {
+                        alertify.error('Failed to update known issue');
+                    });
                 };
 
                 $interval(function () {
@@ -647,6 +693,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 };
 
                 $scope.initNewKnownIssue = function () {
+                    $scope.isNew = true;
                     $scope.newKnownIssue = {};
                     $scope.newKnownIssue.type = "BUG";
                     $scope.newKnownIssue.testCaseId = test.testCaseId;

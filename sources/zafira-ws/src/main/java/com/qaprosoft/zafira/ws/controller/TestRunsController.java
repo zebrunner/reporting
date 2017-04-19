@@ -1,5 +1,10 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +31,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.dto.CommentType;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -42,16 +53,8 @@ import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.models.dto.CommentType;
-import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.services.services.slack.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Test runs operations")
@@ -77,8 +80,11 @@ public class TestRunsController extends AbstractController
 	private JenkinsService jenkinsService;
 	
 	@Autowired
+	private SlackService slackService;
+	
+	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
-
+	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
@@ -132,11 +138,12 @@ public class TestRunsController extends AbstractController
 			notes = "Finishes test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException, InterruptedException
+	public @ResponseBody TestRunType finishTestRun(@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value="id") long id) throws ServiceException, InterruptedException, IOException
 	{
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
 	}
 	
@@ -145,8 +152,8 @@ public class TestRunsController extends AbstractController
 			notes = "Aborts test run.", response = TestRunType.class, responseContainer = "TestRunType")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id", required = true) @RequestParam(value="id", required=false) Long id,
-												  @ApiParam(value = "Test run CI id", required = true) @RequestParam(value="ciRunId", required=false) String ciRunId) throws ServiceException, InterruptedException
+	public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id") @RequestParam(value="id", required=false) Long id,
+												  @ApiParam(value = "Test run CI id") @RequestParam(value="ciRunId", required=false) String ciRunId) throws ServiceException, InterruptedException
 	{
 		if(id == null && ciRunId == null) 
 		{
@@ -263,10 +270,16 @@ public class TestRunsController extends AbstractController
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}/comment", method = RequestMethod.POST)
-	public void commentTestRun(@PathVariable(value="id") long id, @RequestBody @Valid CommentType comment) throws ServiceException, JAXBException
+	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
+	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
+			throws ServiceException, JAXBException
 	{
 		testRunService.addComment(id, comment.getComment());
+
+		TestRun tr = testRunService.getTestRunByIdFull(id);
+		tr.setReviewed(true);
+		tr = testRunService.updateTestRun(tr);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
 	}
 	
 	@ApiIgnore

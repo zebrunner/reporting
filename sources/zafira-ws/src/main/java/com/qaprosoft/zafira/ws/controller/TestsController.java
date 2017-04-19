@@ -215,9 +215,11 @@ public class TestsController extends AbstractController
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem updateTestKnownIssue(@RequestBody WorkItem workItem) throws ServiceException
+	@RequestMapping(value="{id}/issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem updateTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
 	{
+		Test test = testService.getTestById(id);
+		workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
 		return workItemService.updateWorkItem(workItem);
 	}
 	
