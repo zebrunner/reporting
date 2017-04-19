@@ -178,7 +178,7 @@
 	        </exclusion>
 	      </exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>net.rcarz</groupId>
 			<artifactId>jira-client</artifactId>
@@ -204,6 +204,11 @@
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>in.ashwanthkumar</groupId>
+		  	<artifactId>slack-java-webhook</artifactId>
 		</dependency>
 	</dependencies>
 

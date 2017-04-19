@@ -4,7 +4,7 @@
         <br/>
         <h2 style="clear: both; margin: 0;">Summary:</h2>
         <hr/>
-        <table style="width: 1000px;">
+        <table>
            	<#if testRun.env??>
             <tr>
                 <td style="width: 120px;">Environment:</td>

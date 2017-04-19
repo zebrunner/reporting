@@ -110,6 +110,8 @@
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 
 		<jjwt.version>0.7.0</jjwt.version>
+
+		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
 	</properties>
 
 	<modules>
@@ -590,6 +592,12 @@
 		    <artifactId>jjwt</artifactId>
 		    <version>${jjwt.version}</version>
 		</dependency>
+
+			<dependency>
+				<groupId>in.ashwanthkumar</groupId>
+				<artifactId>slack-java-webhook</artifactId>
+				<version>${slack-java-webhook.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
