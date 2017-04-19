@@ -1,8 +1,8 @@
 <div class="page page-profile" ng-controller="UserListController">
 
     <div class="row ui-section">
-        <div class="col-lg-8 clearfix"> 
-        	<h2 class="section-header">Users</h2> 
+        <div class="col-lg-8 clearfix">
+        	<h2 class="section-header">Users</h2>
         </div>
         <div class="col-md-12">
             <article class="article">
@@ -14,19 +14,19 @@
                     </md-toolbar>
                     <md-table-container>
                         <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                            <thead ng-if="!options.decapitate" md-head md-order="query.order" md-on-reorder="logOrder">
+                            <thead md-head md-order="order">
                                 <tr md-row>
-                                    <th md-column md-order-by="name"><span>ID</span></th>
-                                    <th md-column md-order-by="type"><span>Username</span></th>
-                                    <th md-column md-order-by="calories.value"><span>Email</span></th>
-                                    <th md-column md-order-by="fat.value"><span>First/Last name</span></th>
-                                    <th md-column md-order-by="carbs.value"><span>Registered</span></th>
-                                    <th md-column md-order-by="protein.value"><span>Status</span></th>
-                                    <th md-column md-order-by="iron.value"><span>Actions</span></th>
+                                    <th md-column md-order-by="id"><span>ID</span></th>
+                                    <th md-column md-order-by="username"><span>Username</span></th>
+                                    <th md-column md-order-by="email"><span>Email</span></th>
+                                    <th md-column md-order-by="firstName"><span>First/Last name</span></th>
+                                    <th md-column md-order-by="createdAt"><span>Registered</span></th>
+                                    <th md-column><span>Status</span></th>
+                                    <th md-column><span>Actions</span></th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="user in sr.results">
+                                <tr md-row ng-repeat="user in sr.results | orderBy: order">
                                     <td md-cell>{{user.id}}</td>
                                     <td md-cell>{{user.username}}</td>
                                     <td md-cell>{{user.email}}</td>
@@ -39,6 +39,26 @@
                                     	</span>
                                     </td>
                                     <td md-cell>
+                                        <md-menu>
+                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                <md-icon class="material-icons">settings</md-icon>
+                                            </md-button>
+                                            <md-menu-content width="4">
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="showEditProfileDialog($event, user)">
+                                                        <md-icon class="material-icons">build</md-icon>
+                                                        Edit profile
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-divider></md-menu-divider>
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="">
+                                                        <md-icon class="material-icons">timeline</md-icon>
+                                                        Performance
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
 									</td>
                                 </tr>
                             </tbody>
@@ -47,7 +67,7 @@
 
                     <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="openPage"></md-table-pagination>
                 </md-card>
-            </article>   
+            </article>
         </div>
     </div>
 </div>
