@@ -43,11 +43,17 @@
                                             <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                 <md-icon class="material-icons">settings</md-icon>
                                             </md-button>
-                                            <md-menu-content width="4">
+                                            <md-menu-content width="2">
                                                 <md-menu-item>
                                                     <md-button data-ng-click="showEditProfileDialog($event, user)">
                                                         <md-icon class="material-icons">build</md-icon>
                                                         Edit profile
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="showChangePasswordDialog($event, user)">
+                                                        <md-icon class="material-icons">lock_outline</md-icon>
+                                                        Change password
                                                     </md-button>
                                                 </md-menu-item>
                                                 <md-menu-item>
