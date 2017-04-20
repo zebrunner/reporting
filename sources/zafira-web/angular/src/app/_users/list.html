@@ -1,21 +1,21 @@
 <div class="page page-profile" ng-controller="UserListController">
 
     <div class="row ui-section">
-        <div class="col-lg-8 clearfix">
-        	<h2 class="section-header">Users <small>({{sr.totalResults}})</small></h2>
+        <div class="col-lg-12">
+        	<h2 class="section-header">Users 
+        		<small>({{sr.totalResults}})</small>
+        		<button class="md-button md-ink-ripple pull-right" type="button" ng-if="search_form.$dirty" ng-click="reset(); UtilService.untouchForm(search_form);">
+	                   <b>clear search</b>
+	            </button>
+        	</h2>
         </div>
         <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
-                    <md-toolbar class="md-table-toolbar alternate" ng-show="options.rowSelection && selected.length">
-                        <div class="md-toolbar-tools">
-                            <span>{{selected.length}} {{selected.length > 1 ? 'items' : 'item'}} selected</span>
-                        </div>
-                    </md-toolbar>
                     <md-table-container>
-                    	<form ng-submit="search()">
+                    	<form ng-submit="search()" name="search_form">
                         <table class="table-hover" md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                            <thead md-head>
+                            <thead md-head style="position: parent;">
                                 <tr md-row>
                                     <th md-column>
                                     	<md-input-container class="searchable">
@@ -38,7 +38,7 @@
                                         </md-input-container>
 									</th>
                                     <th md-column>
-                                    	<md-datepicker ng-model="sc.date" md-placeholder="Registered"></md-datepicker>
+                                    	<md-datepicker ng-model="sc.date" md-placeholder="Registered" ng-change="search()"></md-datepicker>
                                     </th>
                                     <th md-column><span>Status</span></th>
                                     <th md-column><span>Actions</span></th>
