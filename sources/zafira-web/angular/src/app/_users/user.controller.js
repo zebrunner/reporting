@@ -97,7 +97,7 @@
                                 {
                                     $scope.changePassword = {};
                                     $scope.hide();
-                                    alertify.success("Password changed");
+                                    alertify.success('Password changed');
                                 }
                                 else
                                 {
@@ -128,10 +128,24 @@
                 controller: function ($scope, $mdDialog) {
                     $scope.user = angular.copy(user);
                     $scope.updateUser = function() {
-                        UserService.updateUser($scope.user).then(function(rs) {
+                        UserService.createOrUpdateUser($scope.user).then(function(rs) {
                             if(rs.success)
                             {
                                 $scope.hide();
+                                alertify.success('Profile changed');
+                            }
+                            else
+                            {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    };
+                    $scope.deleteUser = function() {
+                        UserService.deleteUser($scope.user.id).then(function(rs) {
+                            if(rs.success)
+                            {
+                                $scope.hide();
+                                alertify.success('User deleted');
                             }
                             else
                             {
@@ -153,7 +167,40 @@
                 fullscreen: true
             })
                 .then(function(answer) {
-                    angular.copy(answer, user);
+                }, function() {
+                });
+        };
+
+        $scope.showCreateUserDialog = function(event) {
+            $mdDialog.show({
+                controller: function ($scope, $mdDialog) {
+                    $scope.createUser = function() {
+                        UserService.createOrUpdateUser($scope.user).then(function(rs) {
+                            if(rs.success)
+                            {
+                                $scope.hide();
+                                alertify.success('User created');
+                            }
+                            else
+                            {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    };
+                    $scope.hide = function() {
+                        $mdDialog.hide();
+                    };
+                    $scope.cancel = function() {
+                        $mdDialog.cancel();
+                    };
+                },
+                templateUrl: 'app/_users/new_user_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true
+            })
+                .then(function(answer) {
                 }, function() {
                 });
         };

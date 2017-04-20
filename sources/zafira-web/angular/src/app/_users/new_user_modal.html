@@ -1,8 +1,8 @@
 <md-dialog flex="50" aria-label="User profile">
-    <form class="form-validation" name="profile_form" ng-submit="updateUser(); UtilService.untouchForm(profile_form)" ng-cloak>
+    <form class="form-validation" name="user_form" ng-submit="createUser(); UtilService.untouchForm(user_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Edit Profile</h2>
+                <h2>Create user</h2>
                 <span flex></span>
                 <md-button class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
@@ -15,7 +15,7 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Username</label>
-                        <input type="text" ng-model="user.username" name="username" disabled/>
+                        <input type="text" ng-model="user.username" name="username"/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
@@ -33,10 +33,20 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Email</label>
-                        <input type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/">
-                        <div ng-messages="profile_form.email.$error" ng-if="profile_form.email.$dirty">
+                        <input type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/"/>
+                        <div ng-messages="user_form.email.$error" ng-if="user_form.email.$dirty">
                             <div ng-message="required" data-translate="VLD_REQUIRED"></div>
                             <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <input type="password" name="password" class="hide" required/>
+                <div layout layout-sm="column">
+                    <md-input-container  flex>
+                        <label>Password</label>
+                        <input type="password" ng-model="user.password" name="password" required/>
+                        <div ng-messages="user_form.password.$error" ng-if="user_form.password.$dirty">
+                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
                         </div>
                     </md-input-container>
                 </div>
@@ -44,13 +54,10 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button ng-click="deleteUser()" class="md-raised btn-w-md md-warn">
-                Delete
-            </md-button>
             <md-button type="submit"
                        class="md-raised btn-w-md md-primary"
-                       ng-disabled="profile_form.$invalid">
-                Save
+                       ng-disabled="user_form.$invalid">
+                Create
             </md-button>
         </md-dialog-actions>
     </form>

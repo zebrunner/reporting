@@ -12,7 +12,8 @@
         service.searchUsers = searchUsers;
         service.updateUserProfile = updateUserProfile;
         service.updateUserPassword = updateUserPassword;
-        service.updateUser = updateUser;
+        service.createOrUpdateUser = createOrUpdateUser;
+        service.deleteUser = deleteUser;
 
         return service;
 
@@ -32,8 +33,12 @@
         	return $http.put(API_URL + '/api/users/password', password).then(UtilService.handleSuccess, UtilService.handleError('Unable to update user password'));
         }
 
-        function updateUser(user){
+        function createOrUpdateUser(user){
             return $http.put(API_URL + '/users', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to update user'));
+        }
+
+        function deleteUser(id){
+            return $http.delete(API_URL + '/users/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user'));
         }
     }
 })();
