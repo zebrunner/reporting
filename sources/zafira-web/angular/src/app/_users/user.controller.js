@@ -64,7 +64,11 @@
     // **************************************************************************
     function UserListController($scope, $location, $mdDialog, UserService, UtilService) {
 
-    	$scope.sc = {page : 1, pageSize : 20};
+    	var DEFAULT_SC = {page : 1, pageSize : 20};
+    	
+    	$scope.UtilService = UtilService;
+    	
+    	$scope.sc = angular.copy(DEFAULT_SC);
     	$scope.users = [];
         $scope.order = 'username';
 
@@ -83,6 +87,11 @@
         			alertify.error(rs.message);
         		}
 			});
+        };
+        
+        $scope.reset = function () {
+        	$scope.sc = angular.copy(DEFAULT_SC);
+        	$scope.search();
         };
 
         $scope.showChangePasswordDialog = function($event, user) {
