@@ -4,6 +4,21 @@
         <div class="col-lg-8 clearfix">
         	<h2 class="section-header">Users</h2>
         </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="openGroupDetailsModal()">
+                    <span class="fa fa-users"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="openUserDetailsModal()">
+                    <span class="fa fa-plus"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
         <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">

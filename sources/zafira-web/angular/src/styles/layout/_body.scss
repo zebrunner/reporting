@@ -2,6 +2,18 @@ body {
     background: $main_container_bg;
 }
 
+#main-fab button.md-fab.md-fab-sm {
+    background-color: lightgray;
+    margin-bottom: 8px;
+}
+
+#main-fab {
+    position: fixed;
+    right: 60px;
+    bottom: 55px;
+    opacity:  0.6;
+}
+
 
 .body-auth,
 .body-err {
@@ -38,7 +50,7 @@ body {
             .page-err {
                 margin-right: 0;
             }
-        }          
+        }
     }
 }
 
@@ -69,7 +81,7 @@ body {
         // padding-bottom: 50px;
     }
 
-    // 
+    //
     &.on-canvas .main-container #content {
         margin-left: 0;
         margin-right: 0;
