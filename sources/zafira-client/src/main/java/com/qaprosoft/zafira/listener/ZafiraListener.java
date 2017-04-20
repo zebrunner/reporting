@@ -536,9 +536,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		{
 			marshaller.marshal(config != null ? config : new ConfigurationType(), w);
 		}
-		catch(Exception e)
+		catch(Throwable thr)
 		{
-			LOGGER.error("Unable to convert config to XML: " + e.getMessage());
+			LOGGER.error("Unable to convert config to XML!", thr);
 		}
 		return w.toString();
 	}
