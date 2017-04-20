@@ -68,8 +68,11 @@
     	$scope.users = [];
         $scope.order = 'username';
 
-    	$scope.openPage = function (page) {
-			$scope.sc.page = page;
+    	$scope.search = function (page) {
+    		if(page)
+    		{
+    			$scope.sc.page = page;
+    		}
 			UserService.searchUsers($scope.sc).then(function(rs) {
 				if(rs.success)
         		{
@@ -156,7 +159,7 @@
         };
 
 		(function initController() {
-			$scope.openPage(1);
+			$scope.search(1);
 		})();
 	}
 })();

@@ -15,6 +15,19 @@ body {
 }
 
 
+.searchable {
+  margin-bottom: 0px !important;
+  font-size: 12px !important;
+}
+
+.md-datepicker-input {
+  font-size: 12px !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
 .body-auth,
 .body-err {
     &.app > .main-container:before {
@@ -87,5 +100,3 @@ body {
         margin-right: 0;
     }
 }
-
-
