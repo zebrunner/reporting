@@ -1,5 +1,5 @@
 <md-dialog flex="50" aria-label="User profile">
-    <form ng-cloak>
+    <form class="form-validation" name="profile_form" ng-submit="updateUser(); UtilService.untouchForm(profile_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Edit Profile</h2>
@@ -15,7 +15,7 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Username</label>
-                        <input type="text" ng-model="user.username" name="username"/>
+                        <input type="text" ng-model="user.username" name="username" disabled/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
@@ -44,7 +44,9 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button class="md-primary" data-ng-click="cancel()">
+            <md-button type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="profile_form.$invalid">
                 Save
             </md-button>
         </md-dialog-actions>
