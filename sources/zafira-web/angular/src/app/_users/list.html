@@ -2,7 +2,7 @@
 
     <div class="row ui-section">
         <div class="col-lg-8 clearfix">
-        	<h2 class="section-header">Users</h2>
+        	<h2 class="section-header">Users <small>({{sr.totalResults}})</small></h2>
         </div>
         <div class="col-md-12">
             <article class="article">
@@ -13,17 +13,37 @@
                         </div>
                     </md-toolbar>
                     <md-table-container>
-                        <table md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                            <thead md-head md-order="order">
+                    	<form ng-submit="search()">
+                        <table class="table-hover" md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
+                            <thead md-head>
                                 <tr md-row>
-                                    <th md-column md-order-by="id"><span>ID</span></th>
-                                    <th md-column md-order-by="username"><span>Username</span></th>
-                                    <th md-column md-order-by="email"><span>Email</span></th>
-                                    <th md-column md-order-by="firstName"><span>First/Last name</span></th>
-                                    <th md-column md-order-by="createdAt"><span>Registered</span></th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="number" ng-model="sc.id" name="id" placeholder="ID"/>
+                                        </md-input-container>
+									</th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.username" name="username" placeholder="Username"/>
+                                        </md-input-container>
+                                    </th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.email" name="email" placeholder="Email"/>
+                                        </md-input-container>
+                                    </th>
+                                    <th md-column>
+										<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.firstLastName" name="firstLastName" placeholder="First/Last name"/>
+                                        </md-input-container>
+									</th>
+                                    <th md-column>
+                                    	<md-datepicker ng-model="sc.date" md-placeholder="Registered"></md-datepicker>
+                                    </th>
                                     <th md-column><span>Status</span></th>
                                     <th md-column><span>Actions</span></th>
                                 </tr>
+                               	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
                                 <tr md-row ng-repeat="user in sr.results | orderBy: order">
@@ -31,7 +51,7 @@
                                     <td md-cell>{{user.username}}</td>
                                     <td md-cell>{{user.email}}</td>
                                     <td md-cell>{{user.firstName}} {{user.lastName}}</td>
-                                    <td md-cell>{{user.createdAt | date:'MM/dd/yyyy'}}</td>
+                                    <td md-cell class="text-center">{{user.createdAt | date:'MM/dd/yyyy'}}</td>
                                     <td md-cell>
                                     	<span ng-switch on="user.password != null && user.password != ''">
                                     		<span class="label label-success" ng-switch-when="true">Active</span>
@@ -62,9 +82,10 @@
                                 </tr>
                             </tbody>
                         </table>
+                         </form>
                     </md-table-container>
 
-                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="openPage"></md-table-pagination>
+                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>
