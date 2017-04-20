@@ -90,7 +90,7 @@
                         $mdDialog.cancel();
                     };
                 },
-                templateUrl: 'app/_users/user_profile_modal.html',
+                templateUrl: 'app/_users/profile_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
