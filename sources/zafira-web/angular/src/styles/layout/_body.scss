@@ -13,6 +13,30 @@ body {
     bottom: 70px;
 }
 
+.md-dialog-container ~ .md-select-menu-container.md-active,
+.md-dialog-container ~ .md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    z-index: 10000;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+button.red {
+    color: #d9534f;
+    border-color: #d9534f;
+    background: white;
+    outline: none;
+}
+
+.scrollable {
+    overflow-y: scroll;
+    height: 200px;
+    border: 1px solid #cccccc
+}
+
 tr.result {
   border-left: 8px solid #777777;
 }
