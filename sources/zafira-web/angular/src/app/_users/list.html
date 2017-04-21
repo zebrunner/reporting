@@ -32,7 +32,7 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                     	<form ng-submit="search()" name="search_form">
-                        <table class="table-hover" md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
+                        <table class="table-hover" md-table>
                             <thead md-head style="position: parent;">
                                 <tr md-row>
                                     <th md-column>
@@ -58,18 +58,18 @@
                                     <th md-column>
                                     	<md-datepicker ng-model="sc.date" md-placeholder="Registered" ng-change="search()"></md-datepicker>
                                     </th>
-                                    <th md-column><span>Status</span></th>
-                                    <th md-column><span>Actions</span></th>
+                                    <th md-column>Status</th>
+                                    <th md-column></th>
                                 </tr>
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="user in sr.results | orderBy: order">
+                                <tr md-row ng-repeat="user in sr.results">
                                     <td md-cell>{{user.id}}</td>
                                     <td md-cell>{{user.username}}</td>
                                     <td md-cell>{{user.email}}</td>
                                     <td md-cell>{{user.firstName}} {{user.lastName}}</td>
-                                    <td md-cell class="text-center">{{user.createdAt | date:'MM/dd/yyyy'}}</td>
+                                    <td md-cell class="text-center">{{user.createdAt | date}}</td>
                                     <td md-cell>
                                     	<span ng-switch on="user.password != null && user.password != ''">
                                     		<span class="label label-success" ng-switch-when="true">Active</span>
@@ -79,7 +79,7 @@
                                     <td md-cell>
                                         <md-menu>
                                             <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-                                                <md-icon class="material-icons">settings</md-icon>
+                                                <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2">
                                                 <md-menu-item>

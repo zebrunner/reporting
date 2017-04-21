@@ -17,6 +17,7 @@
         ,'ngMaterial'
         ,'ui.router'
         ,'duScroll'
+        ,'angularMoment'
     ]);
 
 })();

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller;
+package com.qaprosoft.zafira.ws.controller.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,7 @@ import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.WorkItemService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
@@ -44,9 +45,9 @@ import net.rcarz.jiraclient.Issue;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
-@Api(value = "Tests operations")
-@RequestMapping("tests")
-public class TestsController extends AbstractController
+@Api(value = "Tests API")
+@RequestMapping("api/tests")
+public class TestsAPIController extends AbstractController
 {
 	@Autowired
 	private Mapper mapper;
@@ -70,11 +71,10 @@ public class TestsController extends AbstractController
 	private SimpMessagingTemplate websocketTemplate;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Start test", nickname = "startTest", code = 200, httpMethod = "POST",
-			notes = "Starts test.", response = TestType.class, responseContainer = "TestType")
+	@ApiOperation(value = "Start test", nickname = "startTest", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestType startTest(@RequestBody @Valid TestType t, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody TestType startTest(@Valid @RequestBody TestType t, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
 		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
@@ -82,20 +82,20 @@ public class TestsController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Finish test", nickname = "finishTest", code = 200, httpMethod = "POST",
-			notes = "Finishes test.", response = TestType.class, responseContainer = "TestType")
+	@ApiOperation(value = "Finish test", nickname = "finishTest", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/finish", method = RequestMethod.POST)
-	public @ResponseBody TestType finishTest(@ApiParam(value = "Id of the test", required = true) @PathVariable(value="id") long id, @RequestBody TestType t) throws ServiceException
+	public @ResponseBody TestType finishTest(@ApiParam(value = "Test ID", required = true) @PathVariable(value="id") long id, @RequestBody TestType t) throws ServiceException
 	{
 		t.setId(id);
 		Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 
-	@ApiIgnore
+	@ResponseStatusDetails
+	@ApiOperation(value = "Mark test passed", nickname = "markTestAsPassed", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/passed", method = RequestMethod.POST)
 	public @ResponseBody TestType markTestAsPassed(@PathVariable(value="id") long id) throws ServiceException, InterruptedException
@@ -110,18 +110,16 @@ public class TestsController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test work item", nickname = "createTestWorkItem", code = 200, httpMethod = "POST",
-			notes = "Creates a new test work item.", response = TestType.class, responseContainer = "TestType")
+	@ApiOperation(value = "Create test work item", nickname = "createTestWorkItem", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/workitems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestType createTestWorkItems(@ApiParam(value = "Id of the test work item", required = true) @PathVariable(value="id") long id, @RequestBody List<String> workItems) throws ServiceException
+	public @ResponseBody TestType createTestWorkItems(@ApiParam(value = "Work item ID", required = true) @PathVariable(value="id") long id, @RequestBody List<String> workItems) throws ServiceException
 	{
 		return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test dublicates by test type", nickname = "deleteTestDublicates", code = 200, httpMethod = "DELETE",
-			notes = "Deletes test dublicates by test type.", response = TestType.class, responseContainer = "TestType")
+	@ApiOperation(value = "Delete test dublicates", nickname = "deleteTestDublicates", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="duplicates/remove", method = RequestMethod.PUT)
 	public void deleteTestDuplicates(@RequestBody TestType test) throws ServiceException
@@ -130,16 +128,16 @@ public class TestsController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE",
-			notes = "Deletes test by id.", response = Test.class, responseContainer = "Test")
+	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
-	public void deleteTest(@ApiParam(value = "Id of the test", required = true) @PathVariable(value="id") long id) throws ServiceException
+	public void deleteTest(@ApiParam(value = "Test ID", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		testService.deleteTestById(id);
 	}
 
-	@ApiIgnore
+	@ResponseStatusDetails
+	@ApiOperation(value = "Search tests", nickname = "searchTests", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<Test> searchTests(@RequestBody TestSearchCriteria sc) throws ServiceException
@@ -147,10 +145,11 @@ public class TestsController extends AbstractController
 		return testService.searchTests(sc);
 	}
 	
-	@ApiIgnore
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get test known issues", nickname = "getTestKnownIssues", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/issues", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<WorkItem> getTestKnownIssues(@PathVariable(value="id") long id) throws ServiceException
+	public @ResponseBody List<WorkItem> getTestKnownIssues(@ApiParam(value = "Test ID", required = true) @PathVariable(value="id") long id) throws ServiceException
 	{
 		List<WorkItem> issues = new ArrayList<>();
 		Test test = testService.getTestById(id);
@@ -161,10 +160,11 @@ public class TestsController extends AbstractController
 		return issues;
 	}
 	
-	@ApiIgnore
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create test known issue", nickname = "createTestKnownIssue", code = 200, httpMethod = "POST", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}/issues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem createTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException, InterruptedException
+	public @ResponseBody WorkItem createTestKnownIssue(@ApiParam(value = "Test ID", required = true) @PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		if(getPrincipalId() > 0)
 		{
@@ -180,6 +180,26 @@ public class TestsController extends AbstractController
 		
 		return workItem;
 	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", code = 200, httpMethod = "PUT", response = WorkItem.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem updateTestKnownIssue(@ApiParam(value = "Test ID", required = true) @PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
+	{
+		Test test = testService.getTestById(id);
+		workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
+		return workItemService.updateWorkItem(workItem);
+	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete test known issue", nickname = "deleteTestKnownIssue", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="issues/{id}", method = RequestMethod.DELETE)
+	public void deleteTestKnownIssue(@ApiParam(value = "Work item ID", required = true) @PathVariable(value="id") long id) throws ServiceException
+	{
+		workItemService.deleteWorkItemById(id);
+	}
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
@@ -194,23 +214,5 @@ public class TestsController extends AbstractController
 	public @ResponseBody boolean getConnectionToJira() 
 	{
 		return jiraService.isConnected();
-	}
-	
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}/issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem updateTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
-	{
-		Test test = testService.getTestById(id);
-		workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
-		return workItemService.updateWorkItem(workItem);
-	}
-	
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="issues/{id}", method = RequestMethod.DELETE)
-	public void deleteTestKnownIssue(@PathVariable(value="id") long id) throws ServiceException
-	{
-		workItemService.deleteWorkItemById(id);
 	}
 }

@@ -13,19 +13,19 @@ body {
     bottom: 70px;
 }
 
-tr.result {
+.result {
   border-left: 8px solid #777777;
 }
 
-tr.result.PASSED {
+.result.PASSED {
   border-color: #8BC34A;
 }
 
-tr.result.FAILED {
+.result.FAILED {
   border-color: #F44336;
 }
 
-tr.result.IN_PROGRESS {
+.result.IN_PROGRESS {
   border-color: #00BCD4;
 }
 
