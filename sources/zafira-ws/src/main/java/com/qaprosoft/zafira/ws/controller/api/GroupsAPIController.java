@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.GroupService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +22,7 @@ import java.util.List;
 @Api(value = "Groups API")
 @CrossOrigin
 @RequestMapping("api/groups")
-public class GroupsAPIController {
+public class GroupsAPIController extends AbstractController {
 
     @Autowired
     private GroupService groupService;
