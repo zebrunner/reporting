@@ -17,8 +17,8 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                     	<form ng-submit="search()" name="search_form">
-                        <table class="table-hover" md-table md-row-select="options.rowSelection" ng-model="selected" md-progress="promise">
-                            <thead md-head style="position: parent;">
+                        <table md-table>
+                            <thead md-head>
                                 <tr md-row>
                                     <th md-column>
                                     	<md-input-container class="searchable">
@@ -48,36 +48,24 @@
                                     <th md-column>
                                     	<md-datepicker ng-model="sc.date" md-placeholder="Created" ng-change="search()"></md-datepicker>
                                     </th>
-                                    <th md-column><span>Actions</span></th>
+                                    <th md-column></th>
                                 </tr>
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="testcase in sr.results" class="result {{testcase.status}}">
+                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}" ng-dblclick="loadTests(testcase)">
                                     <td md-cell>{{testcase.id}}</td>
-                                    <td md-cell>{{getClassName(testcase.testClass)}}</td>
+                                    <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
                                     <td md-cell><span class="label label-default">{{testcase.testSuite.fileName}}</span></td>
                                     <td md-cell>{{testcase.user.username}}</td>
-                                    <td md-cell class="text-center">{{testcase.createdAt | date:'yyyy/MM/dd'}}</td>
+                                    <td md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
                                         <md-menu>
                                             <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-                                                <md-icon class="material-icons">settings</md-icon>
+                                                <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2">
-                                                <md-menu-item>
-                                                    <md-button data-ng-click="showEditProfileDialog($event, user, false)">
-                                                        <md-icon class="material-icons">build</md-icon>
-                                                        Edit profile
-                                                    </md-button>
-                                                </md-menu-item>
-                                                <md-menu-item>
-                                                    <md-button data-ng-click="showChangePasswordDialog($event, user, false)">
-                                                        <md-icon class="material-icons">lock_outline</md-icon>
-                                                        Change password
-                                                    </md-button>
-                                                </md-menu-item>
                                                 <md-menu-item>
                                                     <md-button data-ng-click="">
                                                         <md-icon class="material-icons">timeline</md-icon>
@@ -88,6 +76,39 @@
                                         </md-menu>
 									</td>
                                 </tr>
+                                <tr ng-if="testcase.expand" ng-repeat-end="">
+						            <td md-cell colspan="7">
+						            	<table class="table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th class="col-md-6">Name</th>
+	                                                <th class="col-md-2">Environment</th>
+	                                                <th class="col-md-2">Finished</th>
+	                                                <th class="col-md-2 text-center">Artifacts</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warn' : test.status == 'SKIPPED'}">
+	                                        		<td>{{test.name}}</td>
+	                                        		<td>
+	                                        			<span class="label label-primary">{{test.testConfig.env}}</span>
+	                                        		</td>
+	                                                <td>
+	                                                	<span class="time">
+															<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+														</span>
+	                                                </td>
+	                                                <td class="text-center">
+	                                                	<span data-ng-if="test.status != IN_PROGRESS">
+							                            	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a>
+							                            	<a data-ng-if="test.demoURL" href="test.demoURL" target="blank">Demo</a>
+							                       		</span>
+	                                                </td>
+	                                        	</tr>
+	                                        </tbody>
+	                                    </table>
+						            </td>
+						        </tr>
                             </tbody>
                         </table>
                          </form>
