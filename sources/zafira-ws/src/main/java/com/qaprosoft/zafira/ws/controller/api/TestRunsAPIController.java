@@ -120,7 +120,7 @@ public class TestRunsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
+    @ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "GET", response = TestRunType.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value="abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody TestRunType abortTestRun(@ApiParam(value = "Test run id") @RequestParam(value="id", required=false) Long id,
