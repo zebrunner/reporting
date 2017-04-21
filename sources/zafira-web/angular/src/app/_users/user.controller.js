@@ -282,6 +282,7 @@
             GroupService.createGroup(group).then(function(rs) {
                 if(rs.success)
                 {
+                    $scope.group = {};
                     $scope.getAllGroups();
                     alertify.success('Group "' + group.name + '" was created');
                     $scope.count ++;
