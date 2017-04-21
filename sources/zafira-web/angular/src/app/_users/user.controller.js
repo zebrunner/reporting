@@ -169,7 +169,7 @@
                         $mdDialog.cancel();
                     };
                 },
-                templateUrl: 'app/_users/profile_modal.html',
+                templateUrl: 'app/_users/edit_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
@@ -204,7 +204,7 @@
                         $mdDialog.cancel();
                     };
                 },
-                templateUrl: 'app/_users/new_user_modal.html',
+                templateUrl: 'app/_users/create_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
