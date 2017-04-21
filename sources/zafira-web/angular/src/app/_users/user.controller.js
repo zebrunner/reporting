@@ -65,9 +65,9 @@
     function UserListController($scope, $location, $mdDialog, UserService, UtilService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
-    	
+
     	$scope.UtilService = UtilService;
-    	
+
     	$scope.sc = angular.copy(DEFAULT_SC);
     	$scope.users = [];
         $scope.order = 'username';
@@ -88,7 +88,7 @@
         		}
 			});
         };
-        
+
         $scope.reset = function () {
         	$scope.sc = angular.copy(DEFAULT_SC);
         	$scope.search();
@@ -169,13 +169,14 @@
                         $mdDialog.cancel();
                     };
                 },
-                templateUrl: 'app/_users/profile_modal.html',
+                templateUrl: 'app/_users/edit_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: true
             })
                 .then(function(answer) {
+                    angular.copy(answer, user);
                 }, function() {
                 });
         };
@@ -203,7 +204,7 @@
                         $mdDialog.cancel();
                     };
                 },
-                templateUrl: 'app/_users/new_user_modal.html',
+                templateUrl: 'app/_users/create_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
