@@ -13,11 +13,6 @@ body {
     bottom: 70px;
 }
 
-.md-dialog-container ~ .md-select-menu-container.md-active,
-.md-dialog-container ~ .md-virtual-repeat-container.md-autocomplete-suggestions-container {
-    z-index: 10000;
-}
-
 tr.result {
   border-left: 8px solid #777777;
 }
@@ -139,4 +134,9 @@ button.red {
     overflow-y: scroll;
     height: 200px;
     border: 1px solid #cccccc
+}
+
+.md-dialog-container ~ .md-select-menu-container.md-active,
+.md-dialog-container ~ .md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    z-index: 10000;
 }
