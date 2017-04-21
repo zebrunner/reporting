@@ -168,6 +168,7 @@
     "EMAIL": "Email",
     "WITH_TABS": "With Tabs",
     "USERS": "Users",
+    "TEST_CASES": "Test cases",
     
     "VLD_REQUIRED": "Required",
     "VLD_PATTERN": "Invalid format",

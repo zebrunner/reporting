@@ -48,6 +48,10 @@
                         url: '/users',
                         templateUrl: 'app/_users/list.html'
                     })
+                    .state('tests/cases', {
+                        url: '/tests/cases',
+                        templateUrl: 'app/_testcases/list.html'
+                    })
                     .state('form/editor', {
                         url: '/form/editor',
                         templateUrl: "app/form/editor.html",

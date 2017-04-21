@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.auth')
+        .module('app.user')
         .controller('UserProfileController', ['$scope', '$location', 'UserService', 'UtilService', UserProfileController])
         .controller('UserListController', ['$scope', '$location', '$mdDialog', 'UserService', 'UtilService', UserListController])
 

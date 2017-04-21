@@ -14,6 +14,7 @@
         ,'app.services'
         ,'app.auth'
         ,'app.user'
+        ,'app.testcase'
         // 3rd party feature modules
         ,'md.data.table'
     ])
