@@ -18,25 +18,6 @@ body {
     z-index: 10000;
 }
 
-.btn-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
-}
-
-button.red {
-    color: #d9534f;
-    border-color: #d9534f;
-    background: white;
-    outline: none;
-}
-
-.scrollable {
-    overflow-y: scroll;
-    height: 200px;
-    border: 1px solid #cccccc
-}
-
 tr.result {
   border-left: 8px solid #777777;
 }
@@ -137,4 +118,25 @@ tr.result.IN_PROGRESS {
         margin-left: 0;
         margin-right: 0;
     }
+
+
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+button.red {
+    color: #d9534f;
+    border-color: #d9534f;
+    background: white;
+    outline: none;
+}
+
+.scrollable {
+    overflow-y: scroll;
+    height: 200px;
+    border: 1px solid #cccccc
 }
