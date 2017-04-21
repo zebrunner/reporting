@@ -40,9 +40,8 @@
                         </div>
                     </md-input-container>
                 </div>
-                <input type="password" name="password" class="hide"/>
                 <div layout layout-sm="column">
-                    <md-input-container  flex>
+                    <md-input-container nonautocomplete flex>
                         <label>Password</label>
                         <input type="password" ng-model="user.password" name="password" required/>
                         <div ng-messages="user_form.password.$error" ng-if="user_form.password.$dirty">
