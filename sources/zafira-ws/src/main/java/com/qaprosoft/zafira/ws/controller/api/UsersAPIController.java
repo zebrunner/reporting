@@ -72,10 +72,9 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create user", nickname = "createOrUpdateUser", code = 200, httpMethod = "POST",
-			notes = "Creates a new user.", response = UserType.class, responseContainer = "UserType")
+	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class, responseContainer = "UserType")
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);

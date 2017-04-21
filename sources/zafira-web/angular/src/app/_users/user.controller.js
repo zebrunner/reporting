@@ -65,9 +65,9 @@
     function UserListController($scope, $location, $mdDialog, UserService, UtilService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
-    	
+
     	$scope.UtilService = UtilService;
-    	
+
     	$scope.sc = angular.copy(DEFAULT_SC);
     	$scope.users = [];
         $scope.order = 'username';
@@ -88,7 +88,7 @@
         		}
 			});
         };
-        
+
         $scope.reset = function () {
         	$scope.sc = angular.copy(DEFAULT_SC);
         	$scope.search();
@@ -176,6 +176,7 @@
                 fullscreen: true
             })
                 .then(function(answer) {
+                    angular.copy(answer, user);
                 }, function() {
                 });
         };
