@@ -34,11 +34,11 @@
         }
 
         function createOrUpdateUser(user){
-            return $http.put(API_URL + '/users', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to update user'));
+            return $http.put(API_URL + '/api/users', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to update user'));
         }
 
         function deleteUser(id){
-            return $http.delete(API_URL + '/users/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user'));
+            return $http.delete(API_URL + '/api/users/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user'));
         }
     }
 })();

@@ -7,12 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
@@ -74,5 +69,24 @@ public class UsersAPIController extends AbstractController
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc) throws ServiceException
 	{
 		return userService.searchUsers(sc);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create user", nickname = "createOrUpdateUser", code = 200, httpMethod = "POST",
+			notes = "Creates a new user.", response = UserType.class, responseContainer = "UserType")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	{
+		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete user", nickname = "deleteUser", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
+	public void deleteUser(@PathVariable(value="id") long id) throws ServiceException
+	{
+		userService.deleteUser(id);
 	}
 }
