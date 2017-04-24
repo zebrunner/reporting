@@ -76,7 +76,7 @@
                                         </md-menu>
 									</td>
                                 </tr>
-                                <tr ng-if="testcase.expand" ng-repeat-end="">
+                                <tr ng-if="testcase.expand" ng-repeat-end="" ng-dblclick="loadTests(testcase)">
 						            <td md-cell colspan="7">
 						            	<table class="table">
 	                                        <thead>
@@ -88,15 +88,13 @@
 	                                            </tr>
 	                                        </thead>
 	                                        <tbody>
-	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warn' : test.status == 'SKIPPED'}">
+	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
 	                                        		<td>{{test.name}}</td>
 	                                        		<td>
 	                                        			<span class="label label-primary">{{test.testConfig.env}}</span>
 	                                        		</td>
-	                                                <td>
-	                                                	<span class="time">
-															<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-														</span>
+	                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
+														<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
 	                                                </td>
 	                                                <td class="text-center">
 	                                                	<span data-ng-if="test.status != IN_PROGRESS">
