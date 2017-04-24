@@ -52,6 +52,10 @@
                         url: '/tests/cases',
                         templateUrl: 'app/_testcases/list.html'
                     })
+                    .state('tests/runs', {
+                        url: '/tests/runs',
+                        templateUrl: 'app/_testruns/list.html'
+                    })
                     .state('form/editor', {
                         url: '/form/editor',
                         templateUrl: "app/form/editor.html",
@@ -91,4 +95,4 @@
                     .otherwise('/dashboard');
             }
         ]);
-})(); 
+})();

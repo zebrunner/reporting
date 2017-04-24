@@ -169,7 +169,8 @@
     "WITH_TABS": "With Tabs",
     "USERS": "Users",
     "TEST_CASES": "Test cases",
-    
+    "TEST_RUNS": "Test runs",
+
     "VLD_REQUIRED": "Required",
     "VLD_PATTERN": "Invalid format",
     "VLD_LENGHT_5": "5 symbols required "
