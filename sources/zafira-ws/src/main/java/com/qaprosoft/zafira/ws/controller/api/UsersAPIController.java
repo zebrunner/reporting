@@ -6,6 +6,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Users API")
@@ -72,7 +74,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class, responseContainer = "UserType")
+	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user, @RequestHeader(value="Project", required=false) String project) throws ServiceException
@@ -87,5 +89,23 @@ public class UsersAPIController extends AbstractController
 	public void deleteUser(@PathVariable(value="id") long id) throws ServiceException
 	{
 		userService.deleteUser(id);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
+	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException
+	{
+		return userService.addUserToGroup(user, id);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
+	@RequestMapping(value="{userId}/group/{groupId}", method = RequestMethod.DELETE)
+	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId, @PathVariable(value = "userId") long userId) throws ServiceException
+	{
+		userService.deleteUserFromGroup(groupId, userId);
 	}
 }

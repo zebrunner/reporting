@@ -13,7 +13,7 @@
         return service;
 
         function searchTestCases(criteria) {
-        	return $http.post(API_URL + '/api/tests/cases/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test cases'));
+            return $http.post(API_URL + '/api/tests/cases/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test cases'));
         }
     }
 })();
