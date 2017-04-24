@@ -124,6 +124,30 @@
             });
         };
 
+        $scope.populateSearchQuery = function () {
+            if ($location.search().testSuite) {
+                $scope.testRunSearchCriteria.testSuite = $location.search().testSuite;
+            }
+            if ($location.search().platform) {
+                $scope.testRunSearchCriteria.platform = $location.search().platform;
+            }
+            if ($location.search().environment) {
+                $scope.testRunSearchCriteria.environment = $location.search().environment;
+            }
+            if ($location.search().page) {
+                $scope.testRunSearchCriteria.page = $location.search().page;
+            }
+            if ($location.search().pageSize) {
+                $scope.testRunSearchCriteria.pageSize = $location.search().pageSize;
+            }
+            if ($location.search().fromDate) {
+                $scope.testRunSearchCriteria.fromDateString = $location.search().fromDate;
+            }
+            if ($location.search().toDate) {
+                $scope.testRunSearchCriteria.toDateString = $location.search().toDate;
+            }
+        };
+
         $scope.switchTestRunExpand = function (testRun) {
             testRun.expand == null ? testRun.expand = true : testRun.expand = !testRun.expand;
             if(testRun.expand) {
@@ -199,6 +223,7 @@
 
         (function initController() {
             $scope.search(1);
+            $scope.populateSearchQuery();
             $scope.loadEnvironments();
         })();
     }

@@ -20,6 +20,7 @@
                             <table md-table>
                                 <thead md-head>
                                     <tr md-row>
+                                        <th md-column></th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.status" name="status" placeholder="Status">
@@ -73,16 +74,32 @@
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testrun in sr.results" class="result {{testrun.status}}" ng-dblclick="switchTestRunExpand(testrun)">
+                                    <tr md-row ng-repeat-start="testRun in sr.results" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell>
-                                            <b>{{testrun.testSuite.name}}</b>
+                                            <md-progress-circular data-ng-if="testRun.status == 'IN_PROGRESS'" md-diameter="20px"></md-progress-circular>
+                                            <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
+                                                <small>{{progressBar}}%</small>
+                                            </timer>
+                                        </td>
+                                        <td md-cell>
+                                            <b> {{testRun.testSuite.name}}</b>
                                             <br/>
                                             <small>{{testRun.appVersion}}</small>
                                         </td>
-                                        <td md-cell><a href="{{testrun.job.jobURL}}"><span class="label label-default">{{testrun.job.name}}</span></a></td>
-                                        <td md-cell>{{testrun.env}}</td>
+                                        <td md-cell><a href="{{testRun.job.jobURL}}"><span class="label label-default">{{testRun.job.name}}</span></a></td>
+                                        <td md-cell>{{testRun.env}}</td>
                                         <td md-cell><span class="platform-icon {{testRun.platform}}"></span></td>
-                                        <td md-cell class="text-center">{{testrun.createdAt | date}}</td>
+                                        <td md-cell class="text-center">
+                                            <div>
+                                                <span class="time">
+                                                    <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                                </span>
+                                                <br/>
+                                                <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
+                                                <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
+                                                <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
+                                            </div>
+                                        </td>
                                         <td md-cell>
                                             <md-menu>
                                                 <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
@@ -99,7 +116,7 @@
                                             </md-menu>
                                         </td>
                                     </tr>
-                                    <tr ng-if="testrun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testrun)">
+                                    <tr ng-if="testRun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell colspan="7">
                                             <table class="table">
                                                 <thead>
@@ -111,7 +128,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="test in tests[testrun.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+                                                    <tr ng-repeat="test in tests[testRun.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
                                                         <td>{{test.name}}</td>
                                                         <td>
                                                             <span class="label label-primary">{{test.testConfig.env}}</span>
