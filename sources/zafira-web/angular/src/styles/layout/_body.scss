@@ -34,6 +34,14 @@ body {
   font-size: 12px !important;
 }
 
+.searchable.select {
+    margin-top: 0px !important;
+    margin-right: 8px;
+    padding-top: 0px;
+    padding-bottom: 6px;
+    font-size: 12px;
+}
+
 .md-datepicker-input {
   font-size: 12px !important;
 }
@@ -139,4 +147,37 @@ button.red {
 .md-dialog-container ~ .md-select-menu-container.md-active,
 .md-dialog-container ~ .md-virtual-repeat-container.md-autocomplete-suggestions-container {
     z-index: 10000;
+}
+
+.platform-icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background: url(../ui/images/platforms.png) no-repeat;
+    background-position: 150px 0;
+}
+
+.platform-icon.safari {
+    background-position: -3px -25px;
+}
+
+.platform-icon.chrome {
+    background-position: -3px -115px;
+}
+
+.platform-icon.firefox {
+    background-position: -3px -70px;
+}
+
+.platform-icon.iexplore, .platform-icon.ie, .platform-icon.edge {
+    background-position: -3px -3px;
+}
+
+.platform-icon.android, .platform-icon.Android, .platform-icon.ANDROID {
+    background-position: -3px -206px;
+}
+
+.platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
+    background-position: -3px -252px;
 }

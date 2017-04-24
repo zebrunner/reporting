@@ -1,0 +1,143 @@
+<div class="page page-profile" ng-controller="TestRunListController">
+
+    <div class="row ui-section">
+        <div class="col-lg-12">
+            <h2 class="section-header">Test runs
+                <small data-ng-if="sr.totalResults != 0">({{sr.totalResults}})</small>
+                <button class="md-button md-ink-ripple pull-right" type="button" ng-if="search_form.$dirty" ng-click="search();">
+                    <b>Search</b>
+                </button>
+                <button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-if="search_form.$dirty" ng-click="reset(); UtilService.untouchForm(search_form);">
+                    <b>Clear</b>
+                </button>
+            </h2>
+        </div>
+        <div class="col-md-12">
+            <article class="article">
+                <md-card class="no-margin-h">
+                    <md-table-container>
+                        <form ng-submit="search()" name="search_form">
+                            <table md-table>
+                                <thead md-head>
+                                    <tr md-row>
+                                        <th md-column>
+                                            <md-input-container class="searchable select">
+                                                <md-select ng-model="sc.status" name="status" placeholder="Status">
+                                                    <md-option value="" disabled>Status</md-option>
+                                                    <md-option value="PASSED">PASSED</md-option>
+                                                    <md-option value="FAILED">FAILED</md-option>
+                                                    <md-option value="SKIPPED">SKIPPED</md-option>
+                                                    <md-option value="ABORTED">ABORTED</md-option>
+                                                    <md-option value="IN_PROGRESS">IN_PROGRESS</md-option>
+                                                    <md-option value="UNKNOWN">UNKNOWN</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                            <md-input-container class="searchable">
+                                                <input type="text" ng-model="sc.testSuite.name" name="testSuite" placeholder="Test suite"/>
+                                            </md-input-container>
+                                            <md-input-container class="searchable">
+                                                <input type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
+                                            </md-input-container>
+                                        </th>
+                                        <th md-column>
+                                            <md-input-container class="searchable">
+                                                <input type="text" ng-model="sc.job.jobURL" name="jobURL" placeholder="Job URL"/>
+                                            </md-input-container>
+                                        </th>
+                                        <th md-column>
+                                            <md-input-container class="searchable select">
+                                                <md-select ng-model="sc.env" name="environment" placeholder="Environment">
+                                                    <md-option value="" disabled>Environment</md-option>
+                                                    <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </th>
+                                        <th md-column>
+                                            <md-input-container class="searchable select">
+                                                <md-select ng-model="sc.platform" name="platform" placeholder="Platform">
+                                                    <md-option value="" disabled>Platform</md-option>
+                                                    <md-option value="Android">Android</md-option>
+                                                    <md-option value="iOS">iOS</md-option>
+                                                    <md-option value="chrome">chrome</md-option>
+                                                    <md-option value="firefox">firefox</md-option>
+                                                    <md-option value="safari">safari</md-option>
+                                                    <md-option value="ie">ie</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </th>
+                                        <th md-column>
+                                            <md-datepicker ng-model="sc.date" md-placeholder="Created" ng-change="search()"></md-datepicker>
+                                        </th>
+                                        <th md-column></th>
+                                    </tr>
+                                    <md-button type="submit" class="hide">Search</md-button>
+                                </thead>
+                                <tbody md-body>
+                                    <tr md-row ng-repeat-start="testrun in sr.results" class="result {{testrun.status}}" ng-dblclick="switchTestRunExpand(testrun)">
+                                        <td md-cell>
+                                            <b>{{testrun.testSuite.name}}</b>
+                                            <br/>
+                                            <small>{{testRun.appVersion}}</small>
+                                        </td>
+                                        <td md-cell><a href="{{testrun.job.jobURL}}"><span class="label label-default">{{testrun.job.name}}</span></a></td>
+                                        <td md-cell>{{testrun.env}}</td>
+                                        <td md-cell><span class="platform-icon {{testRun.platform}}"></span></td>
+                                        <td md-cell class="text-center">{{testrun.createdAt | date}}</td>
+                                        <td md-cell>
+                                            <md-menu>
+                                                <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                    <md-icon class="material-icons">more_vert</md-icon>
+                                                </md-button>
+                                                <md-menu-content width="2">
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="">
+                                                            <md-icon class="material-icons">timeline</md-icon>
+                                                            Performance
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                </md-menu-content>
+                                            </md-menu>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="testrun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testrun)">
+                                        <td md-cell colspan="7">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-md-6">Name</th>
+                                                        <th class="col-md-2">Environment</th>
+                                                        <th class="col-md-2">Finished</th>
+                                                        <th class="col-md-2 text-center">Artifacts</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="test in tests[testrun.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+                                                        <td>{{test.name}}</td>
+                                                        <td>
+                                                            <span class="label label-primary">{{test.testConfig.env}}</span>
+                                                        </td>
+                                                        <td title="{{test.finishTime | date:'EEE HH:mm'}}">
+                                                            <time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                                        </td>
+                                                        <td class="text-center">
+                                                                <span data-ng-if="test.status != IN_PROGRESS">
+                                                                    <a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a>
+                                                                    <a data-ng-if="test.demoURL" href="test.demoURL" target="blank">Demo</a>
+                                                                </span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </md-table-container>
+
+                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                </md-card>
+            </article>
+        </div>
+    </div>
+</div>
