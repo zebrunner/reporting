@@ -873,8 +873,7 @@ public class ZafiraClient
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + UA_INSPECTIONS_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, uiInspection);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON)).post(ClientResponse.class, uiInspection);
 			created = clientRS.getStatus() == 200;
 
 		} catch (Exception e)
