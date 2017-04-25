@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.UserType;
+import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -53,6 +54,7 @@ public class ZafiraClient
 	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s&showStacktrace=%s";
 	private static final String EVENTS_PATH = "/events";
 	private static final String EVENTS_RECEIVED_PATH = "/events/received";
+	private static final String UA_INSPECTIONS_PATH = "/uainspections";
 
 	private String serviceURL;
 	private Client client;
@@ -857,5 +859,28 @@ public class ZafiraClient
 			LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + new Date(test.getStartTime()));
 		}
 		return test;
+	}
+	
+	/**
+	 * Registers UI inspection.
+	 * 
+	 * @param uiInspection
+	 * @return status
+	 */
+	public boolean createUAInspection(UAInspectionType uiInspection)
+	{
+		boolean created = false;
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + UA_INSPECTIONS_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, uiInspection);
+			created = clientRS.getStatus() == 200;
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to create UI inspection", e);
+		}
+		return created;
 	}
 }
