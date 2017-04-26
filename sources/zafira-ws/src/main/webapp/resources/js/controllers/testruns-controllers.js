@@ -621,16 +621,13 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                         $scope.isJiraIdExists = false;
                         return;
                     }
-                    switch (issue.status.name) {
-                        case 'Closed':
-                            $scope.isJiraIdExists = true;
-                            $scope.isJiraIdClosed = true;
-                            break;
-                        default:
-                            // Reset flags
-                            $scope.isJiraIdExists = true;
-                            $scope.isJiraIdClosed = false;
-                            break;
+                    $scope.checkStatusAsClosed(issue.status.name);
+                    if($scope.isJiraIdClosed) {
+                        $scope.isJiraIdExists = true;
+                    }
+                    else {
+                        // Reset flags
+                        $scope.isJiraIdExists = true;
                     }
                 };
 
@@ -705,6 +702,21 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     $modalInstance.close(false);
                 };
 
+                $scope.getJiraStatusesAsClosed = function() {
+                    SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(setting) {
+                        $scope.jiraStatusesAsClosed = setting.split(';');
+                    }, function errorCallback(data) {
+                        console.error(data);
+                    });
+                };
+
+                $scope.checkStatusAsClosed = function (status) {
+                    var newAr = $scope.jiraStatusesAsClosed.filter(function (jiraClosedStatus) {
+                        return jiraClosedStatus.toLowerCase() == status.toLowerCase();
+                    });
+                    $scope.isJiraIdClosed = newAr.length != 0;
+                };
+
                 (function init() {
                 	ConfigService.getConfig("jira").then(function(jira) {
                 		$scope.isConnectedToJira = jira.connected;
@@ -713,6 +725,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 	});
                     $scope.initNewKnownIssue();
                     $scope.getKnownIssues();
+                    $scope.getJiraStatusesAsClosed();
                 })();
             }
         });

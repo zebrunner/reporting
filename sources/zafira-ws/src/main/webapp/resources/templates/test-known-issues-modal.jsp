@@ -33,7 +33,7 @@
 				</div>
 				<div class="form-group">
 					<label>Description</label> 
-					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled || isJiraIdClosed || ! isJiraIdExists" required></textarea>
+					<textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
 				</div>
 				<div>
 					<label>Blocker</label>
@@ -44,7 +44,7 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid || isJiraIdClosed">
+	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
     	Create
     </button>
 	<button data-ng-if="! isNew" class="btn btn-success" data-ng-click="updateKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
