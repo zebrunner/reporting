@@ -34,7 +34,8 @@ public class ZafiraClient
 	
 	private static final String ANONYMOUS = "anonymous";
 	
-	private static final Integer TIMEOUT = 15 * 1000;
+	private static final Integer CONNECT_TIMEOUT = 30000;
+	private static final Integer READ_TIMEOUT = 30000;
 	
 	private static final String STATUS_PATH = "/status";
 	private static final String USERS_PATH = "/users";
@@ -62,12 +63,18 @@ public class ZafiraClient
 	private String password;
 	private String project;
 	
+	public static void main(String[] args) {
+		ZafiraClient zc = new ZafiraClient("http://cloud11.qaprosoft.com/zafira-ws");
+		zc.getTestRun(1L);
+	}
+	
+	
 	public ZafiraClient(String serviceURL)
 	{
 		this.serviceURL = serviceURL;
 		this.client = Client.create();
-		this.client.setConnectTimeout(TIMEOUT);
-		this.client.setReadTimeout(TIMEOUT);
+		this.client.setConnectTimeout(CONNECT_TIMEOUT);
+		this.client.setReadTimeout(READ_TIMEOUT);
 	}
 	
 	public ZafiraClient(String serviceURL, String username, String password)
