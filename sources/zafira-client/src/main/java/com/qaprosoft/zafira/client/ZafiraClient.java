@@ -63,12 +63,6 @@ public class ZafiraClient
 	private String password;
 	private String project;
 	
-	public static void main(String[] args) {
-		ZafiraClient zc = new ZafiraClient("http://cloud11.qaprosoft.com/zafira-ws");
-		zc.getTestRun(1L);
-	}
-	
-	
 	public ZafiraClient(String serviceURL)
 	{
 		this.serviceURL = serviceURL;

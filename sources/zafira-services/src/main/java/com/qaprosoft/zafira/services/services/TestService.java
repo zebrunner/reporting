@@ -109,6 +109,7 @@ public class TestService
 		if(test.getMessage() != null)
 		{
 			existingTest.setMessage(test.getMessage());
+			existingTest.setMessageHashCode(getTestMessageHashCode(test.getMessage()));
 		}
 		
 		if(Status.FAILED.equals(test.getStatus()))

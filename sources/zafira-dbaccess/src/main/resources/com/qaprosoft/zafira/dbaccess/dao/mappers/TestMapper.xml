@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS)
+			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, MESSAGE_HASH_CODE, START_TIME, FINISH_TIME, DEMO_URL, LOG_URL, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS)
 			VALUES (
 				#{name},
 			    #{status},
@@ -14,6 +14,7 @@
 			    #{testCaseId},
 			    #{testGroup},
 			    #{message},
+			    #{messageHashCode},
 			    #{startTime},
 			    #{finishTime},
 			    #{demoURL},
@@ -56,6 +57,7 @@
 				T.TEST_CASE_ID AS TEST_TEST_CASE_ID,
 				T.TEST_GROUP AS TEST_TEST_GROUP,
 				T.MESSAGE AS TEST_MESSAGE,
+				T.MESSAGE_HASH_CODE AS TEST_MESSAGE_HASH_CODE,
 				T.START_TIME AS TEST_START_TIME,
 				T.FINISH_TIME AS TEST_FINISH_TIME,
 				T.DEMO_URL AS TEST_DEMO_URL,
@@ -230,6 +232,7 @@
 				TEST_CASE_ID = #{testCaseId},
 				TEST_GROUP = #{testGroup},
 				MESSAGE = #{message},
+				MESSAGE_HASH_CODE = #{messageHashCode},
 				START_TIME = #{startTime},
 				FINISH_TIME = #{finishTime},
 				DEMO_URL = #{demoURL},
@@ -304,6 +307,7 @@
 		<result column="TEST_TEST_CASE_ID" property="testCaseId" />
 		<result column="TEST_TEST_GROUP" property="testGroup"/>
 		<result column="TEST_MESSAGE" property="message" />
+		<result column="TEST_MESSAGE_HASH_CODE" property="messageHashCode" />
 		<result column="TEST_START_TIME" property="startTime" />
 		<result column="TEST_FINISH_TIME" property="finishTime" />
 		<result column="TEST_DEMO_URL" property="demoURL" />

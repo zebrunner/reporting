@@ -23,6 +23,7 @@ public class TestType extends AbstractType
 	private Long testCaseId;
 	private String testGroup;
 	private String message;
+	private Integer messageHashCode;
 	private Long startTime;
 	private Long finishTime;
 	private String demoURL;
@@ -245,5 +246,15 @@ public class TestType extends AbstractType
 	public void setDependsOnMethods(String dependsOnMethods)
 	{
 		this.dependsOnMethods = dependsOnMethods;
+	}
+
+	public Integer getMessageHashCode()
+	{
+		return messageHashCode;
+	}
+
+	public void setMessageHashCode(Integer messageHashCode)
+	{
+		this.messageHashCode = messageHashCode;
 	}
 }
