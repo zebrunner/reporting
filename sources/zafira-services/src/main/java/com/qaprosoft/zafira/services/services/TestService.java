@@ -39,6 +39,8 @@ public class TestService
 	
 	private static final String SPACE = " ";
 	
+	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
+	
 	@Autowired
 	private TestMapper testMapper;
 	
@@ -106,10 +108,18 @@ public class TestService
 		existingTest.setLogURL(test.getLogURL());
 		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
-		if(test.getMessage() != null)
+		String message = test.getMessage();
+		if(message != null)
 		{
-			existingTest.setMessage(test.getMessage());
-			existingTest.setMessageHashCode(getTestMessageHashCode(test.getMessage()));
+			existingTest.setMessage(message);
+			// Handling of known Selenium errors
+			for(String error : SELENIUM_ERRORS)
+			{
+				message.startsWith(error);
+				message = error;
+				break;
+			}
+			existingTest.setMessageHashCode(getTestMessageHashCode(message));
 		}
 		
 		if(Status.FAILED.equals(test.getStatus()))
