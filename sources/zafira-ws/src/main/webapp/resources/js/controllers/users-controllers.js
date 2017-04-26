@@ -207,12 +207,23 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
                 $scope.querySearch = querySearch;
 
-                function querySearch (criteria) {
+                function querySearch (criteria, group) {
                     $scope.usersSearchCriteria.userName = criteria;
                     return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
                         .then(function(response){
-                        	return response.data.results;
+                        	return response.data.results.filter(searchFilter(group));
                         });
+                }
+                function searchFilter(group) {
+                    return function filterFn(user) {
+                        var users = group.userList;
+                        for(var i = 0; i < users.length; i++) {
+                            if(users[i].id == user.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
                 }
 
 				$scope.cancel = function(){

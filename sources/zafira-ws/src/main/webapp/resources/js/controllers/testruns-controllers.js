@@ -639,6 +639,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.getRightToSearch = function () {
                     if ($scope.newKnownIssue.jiraId == null || !fieldIsChanged) {
                         $scope.isRightToSearch = false;
+                        $scope.isIssueFound = true;
                     } else {
                         $scope.isRightToSearch = true;
                         fieldIsChanged = false;
@@ -650,6 +651,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.onChangeAction = function () {
                     fieldIsChanged = true;
                     // Reset flags
+                    $scope.newKnownIssue.description = '';
                     $scope.isNew = true;
                     $scope.isJiraIdExists = true;
                     $scope.isJiraIdClosed = false;
