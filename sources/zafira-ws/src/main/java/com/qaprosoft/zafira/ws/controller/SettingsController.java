@@ -18,7 +18,6 @@ import java.util.List;
 @Controller
 @ApiIgnore
 @RequestMapping("settings")
-@Secured({"ROLE_ADMIN"})
 public class SettingsController extends AbstractController
 {
 	@Autowired
@@ -26,6 +25,7 @@ public class SettingsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "index", method = RequestMethod.GET)
+	@Secured({"ROLE_ADMIN"})
 	public ModelAndView openSettingsPage()
 	{
 		return new ModelAndView("settings/index");
@@ -33,6 +33,7 @@ public class SettingsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
 	{
 		return settingsService.getAllSettings();
@@ -47,6 +48,7 @@ public class SettingsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public void deleteSetting(@PathVariable(value="id") long id) throws ServiceException
 	{
 		settingsService.deleteSettingById(id);
@@ -54,6 +56,7 @@ public class SettingsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody
 	Setting createSetting(@RequestBody Setting setting) throws ServiceException
 	{
@@ -62,6 +65,7 @@ public class SettingsController extends AbstractController
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody
 	Setting editSetting(@RequestBody Setting setting) throws ServiceException
 	{
