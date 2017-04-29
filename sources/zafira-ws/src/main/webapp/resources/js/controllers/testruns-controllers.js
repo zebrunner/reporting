@@ -105,8 +105,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 }
                 if (test.blocker) {
                     testRun.failedAsBlocker = testRun.failedAsBlocker + changeByAmount;
-                    testRun.blocker = true;
                 }
+                testRun.blocker = test.blocker;
                 break;
             case "SKIPPED":
                 testRun.skipped = testRun.skipped + changeByAmount;
@@ -568,15 +568,18 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
 	};
 
-    $scope.openKnownIssueModal = function (test) {
+    $scope.openKnownIssueModal = function (test, isNew) {
         var modalInstance = $modal.open({
             templateUrl: 'resources/templates/test-known-issues-modal.jsp',
             resolve: {
                 'test': function () {
                     return test;
+                },
+                'isNew': function () {
+                    return isNew;
                 }
             },
-            controller: function ($scope, $modalInstance, test) {
+            controller: function ($scope, $modalInstance, test, isNew) {
 
                 $scope.isConnectedToJira = false;
                 $scope.isIssueFound = true;
@@ -588,12 +591,18 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.createKnownIssue = function () {
                     var knownIssue = $scope.newKnownIssue;
                     $http.post('tests/' + test.id + '/issues', knownIssue).then(function successCallback(data) {
-                        $scope.initNewKnownIssue();
                         $scope.getKnownIssues();
                         $modalInstance.close(true);
-                        alertify.success('A new know issue "' + knownIssue.jiraId + '" was created');
+                        if(isNew)
+                            alertify.success('A new know issue "' + knownIssue.jiraId + '" was created');
+                        else
+                            alertify.success('A know issue "' + knownIssue.jiraId + '" was updated');
+                        $scope.initNewKnownIssue();
                     }, function errorCallback(data) {
-                        alertify.error('Failed to create new known issue');
+                        if(isNew)
+                            alertify.error('Failed to create new known issue');
+                        else
+                            alertify.error('Failed to update known issue');
                     });
                 };
 
@@ -649,14 +658,23 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     fieldIsChanged = true;
                     // Reset flags
                     $scope.newKnownIssue.description = '';
-                    $scope.isNew = true;
+                    $scope.newKnownIssue.id = null;
                     $scope.isJiraIdExists = true;
                     $scope.isJiraIdClosed = false;
                     $scope.isIssueFound = false;
+
+                    var existIssue =  $scope.knownIssues.filter(function (knownIssue) {
+                        var issueExists = knownIssue.jiraId == $scope.newKnownIssue.jiraId;
+                        $scope.isNew = ! (issueExists);
+                        return issueExists;
+                    })[0];
+                    if(existIssue)
+                        angular.copy(existIssue, $scope.newKnownIssue);
                 };
 
                 $scope.selectCurrentIssue = function(issue) {
-                    $scope.isNew = false;
+                    checkTestHasIssues();
+                    $scope.isNew = ! (issue.jiraId == $scope.testBugIssue.jiraId);
                     $scope.newKnownIssue.id = issue.id;
                     $scope.newKnownIssue.jiraId = issue.jiraId;
                     $scope.newKnownIssue.description = issue.description;
@@ -677,7 +695,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
                 $scope.deleteKnownIssue = function (id) {
                     $http.delete('tests/issues/' + id).then(function successCallback(data) {
-                        $scope.getKnownIssues();
+                        $scope.initNewKnownIssue();
                     }, function errorCallback(data) {
                         alertify.error('Failed to delete known issue');
                     });
@@ -686,13 +704,31 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.getKnownIssues = function () {
                     $http.get('tests/' + test.id + '/issues').then(function successCallback(issues) {
                         $scope.knownIssues = issues.data;
+                        var a = test;
+                        if(test.workItems.length && ! isNew)
+                            angular.copy($scope.testBugIssue, $scope.newKnownIssue);
                     }, function errorCallback(data) {
                         alertify.error('Failed to load known issues');
                     });
                 };
 
+                function checkTestHasIssues() {
+                    $scope.testHasKnownIssues = test.workItems.filter(function (item) {
+                        return item.type == 'BUG';
+                    }).length;
+                }
+
+                function getTestBugIssue() {
+                    $scope.testBugIssue = {};
+                    $scope.testBugIssue.jiraId = '';
+                    if($scope.testHasKnownIssues)
+                        $scope.testBugIssue = test.workItems.filter(function (item) {
+                            return item.type == 'BUG';
+                        })[0];
+                }
+
                 $scope.initNewKnownIssue = function () {
-                    $scope.isNew = true;
+                    $scope.isNew = isNew;
                     $scope.newKnownIssue = {};
                     $scope.newKnownIssue.type = "BUG";
                     $scope.newKnownIssue.testCaseId = test.testCaseId;
@@ -723,6 +759,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                         $scope.isDataLoaded = true;
                         $scope.isFieldsDisabled = false;
                 	});
+                	checkTestHasIssues();
+                	getTestBugIssue();
                     $scope.initNewKnownIssue();
                     $scope.getKnownIssues();
                     $scope.getJiraStatusesAsClosed();

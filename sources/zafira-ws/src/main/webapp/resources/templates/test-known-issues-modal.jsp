@@ -15,7 +15,7 @@
 	<div class="row" data-ng-repeat="issue in knownIssues">
 		<div class="col-lg-12">
 			<div class="row">
-				<div class="col-lg-12"><b class="settings-line">{{issue.jiraId}}</b> {{issue.description}} <i class="float_right fa fa-times pointer settings-line" data-ng-really-message="Do you really want to delete known issue?" data-ng-really-click="deleteKnownIssue(issue.id)"></i></div>
+				<div class="col-lg-12"><span data-ng-click="selectCurrentIssue(issue)"><b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}</span></div>
 			</div>
 			<hr/>
 		</div>
@@ -44,10 +44,13 @@
 	</div>
 </div>
 <div class="modal-footer">
+	<button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="knownIssueForm.$invalid">
+		Clear
+	</button>
 	<button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
     	Create
     </button>
-	<button data-ng-if="! isNew" class="btn btn-success" data-ng-click="updateKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
+	<button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="knownIssueForm.$invalid">
 		Update
 	</button>
 </div>

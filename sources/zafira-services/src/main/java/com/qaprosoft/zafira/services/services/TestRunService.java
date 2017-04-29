@@ -288,6 +288,8 @@ public class TestRunService
 			}
 			
 			testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
+			testRun.setKnownIssue(false);
+			testRun.setBlocker(false);
 			for(Test test : tests)
 			{
 				if(test.isKnownIssue())
