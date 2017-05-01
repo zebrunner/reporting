@@ -200,6 +200,26 @@ public class TestsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem updateTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
+	{
+		Test test = testService.getTestById(id);
+		workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
+		return workItemService.updateWorkItem(workItem);
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{testId}/issues/{workItemId}", method = RequestMethod.DELETE)
+	public void deleteTestKnownIssue(@PathVariable(value="workItemId") long workItemId, @PathVariable(value = "testId") long testId) throws ServiceException, InterruptedException {
+		Test test = testService.getTestById(testId);
+		TestRun testRun = testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="jira/{issue}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Issue getJiraIssue(@PathVariable(value = "issue") String issue) {
 		return jiraService.getIssue(issue);
@@ -211,23 +231,5 @@ public class TestsController extends AbstractController
 	public @ResponseBody boolean getConnectionToJira() 
 	{
 		return jiraService.isConnected();
-	}
-	
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}/issues", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem updateTestKnownIssue(@PathVariable(value="id") long id, @RequestBody WorkItem workItem) throws ServiceException
-	{
-		Test test = testService.getTestById(id);
-		workItem.setHashCode(testService.getTestMessageHashCode(test.getMessage()));
-		return workItemService.updateWorkItem(workItem);
-	}
-	
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="issues/{id}", method = RequestMethod.DELETE)
-	public void deleteTestKnownIssue(@PathVariable(value="id") long id) throws ServiceException
-	{
-		workItemService.deleteWorkItemById(id);
 	}
 }

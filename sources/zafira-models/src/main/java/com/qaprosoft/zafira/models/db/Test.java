@@ -175,6 +175,17 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		return workItems;
 	}
 
+	public WorkItem getBugWorkItem() {
+		if(workItems != null) {
+			for (WorkItem workItem : workItems) {
+				if (workItem.getType() == WorkItem.Type.BUG) {
+					return workItem;
+				}
+			}
+		}
+		return null;
+	}
+
 	public void setWorkItems(List<WorkItem> workItems)
 	{
 		this.workItems = workItems;
