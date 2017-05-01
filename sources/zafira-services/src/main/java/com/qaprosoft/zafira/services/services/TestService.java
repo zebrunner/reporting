@@ -289,28 +289,20 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Map<Test, TestRun> deleteTestWorkItemByWorkItemId(long workItemId) throws ServiceException, InterruptedException {
-		List<Test> tests = getTestsByWorkItemId(workItemId);
-		Map<Test, TestRun> runMap = new HashMap<>();
-		if(tests != null) {
-			for(Test test: tests) {
-				test.setKnownIssue(false);
-				test.setBlocker(false);
-				updateTest(test);
+	public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException, InterruptedException {
+		test.setKnownIssue(false);
+		test.setBlocker(false);
+		updateTest(test);
 
-				WorkItem workItem = workItemService.getWorkItemById(workItemId);
-				workItem.setHashCode(-1);
-				workItemService.updateWorkItem(workItem);
-				deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
+		WorkItem workItem = workItemService.getWorkItemById(workItemId);
+		workItem.setHashCode(-1);
+		workItemService.updateWorkItem(workItem);
+		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
 
-				testRunService.calculateTestRunResult(test.getTestRunId(), false);
-				TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		testRunService.calculateTestRunResult(test.getTestRunId(), false);
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
 
-				runMap.put(test, testRun);
-			}
-			//workItemService.deleteWorkItemById(workItemId);
-		}
-		return runMap;
+		return testRun;
 	}
 
 	@Transactional(rollbackFor = Exception.class)

@@ -694,7 +694,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 }, 2000);
 
                 $scope.deleteKnownIssue = function (id) {
-                    $http.delete('tests/issues/' + id).then(function successCallback(data) {
+                    $http.delete('tests/' + test.id + '/issues/' + id).then(function successCallback(data) {
                         $scope.initNewKnownIssue();
                     }, function errorCallback(data) {
                         alertify.error('Failed to delete known issue');

@@ -210,14 +210,12 @@ public class TestsController extends AbstractController
 
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="issues/{id}", method = RequestMethod.DELETE)
-	public void deleteTestKnownIssue(@PathVariable(value="id") long id) throws ServiceException, InterruptedException {
-		Map<Test, TestRun> runMap = testService.deleteTestWorkItemByWorkItemId(id);
-
-		for(Map.Entry entry: runMap.entrySet()) {
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush((Test) entry.getKey()));
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush((TestRun) entry.getValue()));
-		}
+	@RequestMapping(value="{testId}/issues/{workItemId}", method = RequestMethod.DELETE)
+	public void deleteTestKnownIssue(@PathVariable(value="workItemId") long workItemId, @PathVariable(value = "testId") long testId) throws ServiceException, InterruptedException {
+		Test test = testService.getTestById(testId);
+		TestRun testRun = testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
 	}
 
 	@ApiIgnore
