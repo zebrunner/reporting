@@ -19,6 +19,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private Long testCaseId;
     private String testGroup;
 	private String message;
+	private Integer messageHashCode;
 	private Date startTime;
 	private Date finishTime;
 	private String demoURL;
@@ -174,6 +175,17 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		return workItems;
 	}
 
+	public WorkItem getBugWorkItem() {
+		if(workItems != null) {
+			for (WorkItem workItem : workItems) {
+				if (workItem.getType() == WorkItem.Type.BUG) {
+					return workItem;
+				}
+			}
+		}
+		return null;
+	}
+
 	public void setWorkItems(List<WorkItem> workItems)
 	{
 		this.workItems = workItems;
@@ -225,6 +237,16 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setDependsOnMethods(String dependsOnMethods)
 	{
 		this.dependsOnMethods = dependsOnMethods;
+	}
+	
+	public Integer getMessageHashCode()
+	{
+		return messageHashCode;
+	}
+
+	public void setMessageHashCode(Integer messageHashCode)
+	{
+		this.messageHashCode = messageHashCode;
 	}
 
 	@Override

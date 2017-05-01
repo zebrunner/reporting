@@ -54,6 +54,10 @@ public abstract class AbstractController
 	{
 		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
 	}
+
+	protected boolean isAuthenticated() {
+		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+	}
 	
 	@ExceptionHandler(JobNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)

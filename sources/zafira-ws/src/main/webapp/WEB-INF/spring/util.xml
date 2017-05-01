@@ -35,6 +35,7 @@
 				<value>dozer/TestRun-dozer-mapping.xml</value>
 				<value>dozer/User-dozer-mapping.xml</value>
 				<value>dozer/Project-dozer-mapping.xml</value>
+				<value>dozer/UAInspection-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

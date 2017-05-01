@@ -39,6 +39,10 @@
 			<b>message</b>
 		</field>
 		<field>
+			<a>messageHashCode</a>
+			<b>messageHashCode</b>
+		</field>
+		<field>
 			<a>startTime</a>
 			<b>startTime</b>
 		</field>

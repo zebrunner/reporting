@@ -242,24 +242,21 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun) throws ServiceException
 	{
-		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
+		if(testRun != null && Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			new InvalidTestRunException("Unable to abort test run!");
-		}
-		
-		testRun.setStatus(Status.ABORTED);
-		updateTestRun(testRun);
-		
-		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		for(Test test : tests)
-		{
-			if(Status.IN_PROGRESS.equals(test.getStatus()))
+			testRun.setStatus(Status.ABORTED);
+			updateTestRun(testRun);
+			
+			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+			for(Test test : tests)
 			{
-				testService.abortTest(test);
+				if(Status.IN_PROGRESS.equals(test.getStatus()))
+				{
+					testService.abortTest(test);
+				}
 			}
+			testService.updateTestRerunFlags(testRun, tests);
 		}
-		testService.updateTestRerunFlags(testRun, tests);
-		
 		return testRun;
 	}
 	
@@ -291,6 +288,8 @@ public class TestRunService
 			}
 			
 			testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
+			testRun.setKnownIssue(false);
+			testRun.setBlocker(false);
 			for(Test test : tests)
 			{
 				if(test.isKnownIssue())

@@ -78,6 +78,9 @@
 	               	<li>
 	                    <a href="#!/devices"><i class="fa fa-lg fa-plug fa-fw"></i> Devices</a>
 	               	</li>
+	               	<li>
+                     	<a href="#!/uainspections"><i class="fa fa-lg fa-search fa-fw"></i> UA inspections</a>
+                   	</li>
 	               	</sec:authorize>
 	               	<li>
 	                    <a class="dropdown-toggle" data-toggle="dropdown" href="" aria-expanded="false">

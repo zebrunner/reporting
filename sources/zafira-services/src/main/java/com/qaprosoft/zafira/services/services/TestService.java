@@ -39,6 +39,8 @@ public class TestService
 	
 	private static final String SPACE = " ";
 	
+	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
+	
 	@Autowired
 	private TestMapper testMapper;
 	
@@ -106,9 +108,18 @@ public class TestService
 		existingTest.setLogURL(test.getLogURL());
 		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
-		if(test.getMessage() != null)
+		String message = test.getMessage();
+		if(message != null)
 		{
-			existingTest.setMessage(test.getMessage());
+			existingTest.setMessage(message);
+			// Handling of known Selenium errors
+			for(String error : SELENIUM_ERRORS)
+			{
+				message.startsWith(error);
+				message = error;
+				break;
+			}
+			existingTest.setMessageHashCode(getTestMessageHashCode(message));
 		}
 		
 		if(Status.FAILED.equals(test.getStatus()))
@@ -117,6 +128,7 @@ public class TestService
 			if(knownIssue != null)
 			{
 				existingTest.setKnownIssue(true);
+				existingTest.setBlocker(knownIssue.isBlocker());
 				testMapper.createTestWorkItem(existingTest, knownIssue);
 				if(existingTest.getWorkItems() == null)
 				{
@@ -199,6 +211,12 @@ public class TestService
 	{
 		return testMapper.getTestsByTestRunId(testRunId);
 	}
+
+	@Transactional(readOnly = true)
+	public List<Test> getTestsByWorkItemId(long workItemId) throws ServiceException
+	{
+		return testMapper.getTestsByWorkItemId(workItemId);
+	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Test updateTest(Test test) throws ServiceException
@@ -225,12 +243,6 @@ public class TestService
 		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(test.getTestRunId(), test.getTestCaseId(), test.getLogURL());
 	}
 	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestWorkItemByTestId(long testId) throws ServiceException
-	{
-		testMapper.deleteTestWorkItemByTestId(testId);
-	}
-	
 	@Transactional(readOnly = true)
 	public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException
 	{
@@ -247,20 +259,60 @@ public class TestService
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(testId);
-		if (test != null) 
+		boolean hasBugKnownIssues = test.getBugWorkItem() != null;
+		if (test != null)
 		{
 			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 			test.setKnownIssue(true);
-			if(workItem.isBlocker()) 
-			{
-				test.setBlocker(true);
-			}
+			test.setBlocker(workItem.isBlocker());
 			updateTest(test);
+		} else {
+			return null;
 		}
-		workItemService.createWorkItem(workItem);
-		testMapper.createTestWorkItem(test, workItem);
+		if(workItem.getId() != null && ! hasBugKnownIssues) {
+			workItemService.updateWorkItem(workItem);
+			testMapper.createTestWorkItem(test, workItem);
+		} else if(workItem.getId() != null && hasBugKnownIssues) {
+			WorkItem previousWorkItem = test.getBugWorkItem();
+			previousWorkItem.setHashCode(-1);
+			workItemService.updateWorkItem(previousWorkItem);
+			workItemService.updateWorkItem(workItem);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			testMapper.createTestWorkItem(test, workItem);
+		} else {
+			workItemService.createWorkItem(workItem);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			testMapper.createTestWorkItem(test, workItem);
+		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 		return workItem;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException, InterruptedException {
+		test.setKnownIssue(false);
+		test.setBlocker(false);
+		updateTest(test);
+
+		WorkItem workItem = workItemService.getWorkItemById(workItemId);
+		workItem.setHashCode(-1);
+		workItemService.updateWorkItem(workItem);
+		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
+
+		testRunService.calculateTestRunResult(test.getTestRunId(), false);
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+
+		return testRun;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException, InterruptedException {
+		testMapper.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, WorkItem.Type type) throws ServiceException, InterruptedException {
+		testMapper.deleteTestWorkItemByTestIdAndWorkItemType(testId, type);
 	}
 	
 	@Transactional

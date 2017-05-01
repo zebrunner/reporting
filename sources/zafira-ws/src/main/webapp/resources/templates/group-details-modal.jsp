@@ -40,6 +40,7 @@
                     <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
                             <md-chips ng-model="group.userList"
                                       md-autocomplete-snap
+                                      filter-selected=true
                                       md-require-match="true"
                                       md-on-add="addUserToGroup($chip, group)"
                                       md-on-remove="deleteUserFromGroup($chip, group)">
@@ -48,10 +49,11 @@
                                 </md-chip-template>
                                 <md-autocomplete
                                         md-search-text="searchText"
-                                        md-items="user in querySearch(searchText)"
+                                        md-items="user in querySearch(searchText, group)"
                                         md-item-text="user.userName"
                                         md-selected-item="currentUser"
                                         md-autoselect
+                                        md-no-cache="true"
                                         placeholder="add user">
                                     <md-item-template>
                                         <span>{{user.userName}}</span>
