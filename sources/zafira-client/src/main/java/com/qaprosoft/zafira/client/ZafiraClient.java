@@ -51,6 +51,7 @@ public class ZafiraClient
 	private static final String TEST_RUNS_PATH = "/tests/runs";
 	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
 	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
+	private static final String TEST_RUNS_ABORT_PATH = "/tests/runs/abort?id=%d";
 	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
 	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s&showStacktrace=%s";
 	private static final String EVENTS_PATH = "/events";
@@ -882,5 +883,27 @@ public class ZafiraClient
 			LOGGER.error("Unable to create UI inspection", e);
 		}
 		return created;
+	}
+	
+	/**
+	 * Aborts test run.
+	 * 
+	 * @param id of test run
+	 * @return status
+	 */
+	public boolean abortTestRun(long id)
+	{
+		boolean aborted = false;
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_ABORT_PATH, id));
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			aborted = clientRS.getStatus() == 200;
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to find test run by id", e);
+		}
+		return aborted;
 	}
 }
