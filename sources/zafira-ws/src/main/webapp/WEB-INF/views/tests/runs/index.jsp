@@ -48,6 +48,7 @@
 			            			<option value="firefox">firefox</option>
 			            			<option value="safari">safari</option>
 			            			<option value="ie">ie</option>
+			            			<option value="API">API</option>
 			            		</select>
 			            	</div>
 			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%" data-ng-change="showReset = true"></div>
