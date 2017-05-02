@@ -20,7 +20,6 @@
                             <table md-table>
                                 <thead md-head>
                                     <tr md-row>
-                                        <th md-column></th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.status" name="status" placeholder="Status">
@@ -66,39 +65,37 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                        <th md-column>
+                                        <th md-column colspan="2">
                                             <md-datepicker ng-model="sc.date" md-placeholder="Created" ng-change="search()"></md-datepicker>
                                         </th>
-                                        <th md-column></th>
                                     </tr>
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in sr.results" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr md-row ng-repeat-start="testRun in sr.results" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)" style="height: 55px;">
                                         <td md-cell>
-                                            <md-progress-circular data-ng-if="testRun.status == 'IN_PROGRESS'" md-diameter="20px"></md-progress-circular>
-                                            <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.status == 'IN_PROGRESS' && testRun.countdown">
-                                                <small>{{progressBar}}%</small>
-                                            </timer>
+                                        	<div class="row">
+                                        		<div class="col-lg-1" ng-if="testRun.status == 'IN_PROGRESS'" >
+	                                            	<md-progress-circular md-diameter="20px"></md-progress-circular>
+	                                            </div>
+	                                            <div class="col-lg-11">
+		                                            <b>{{testRun.testSuite.name}}</b>
+		                                            <br/>
+		                                            <small>{{testRun.appVersion}}</small>
+	                                            </div>
+                                        	</div>
+                                        </td>
+                                        <td md-cell><a href="{{testRun.job.jobURL}}">{{testRun.job.name}}</a></td>
+                                        <td md-cell><span class="label label-default">{{testRun.env}}</span> <span class="platform-icon {{testRun.platform}}"></td>
+                                        <td md-cell>
+                                        	<span class="time">
+                                                <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                            </span>
                                         </td>
                                         <td md-cell>
-                                            <b> {{testRun.testSuite.name}}</b>
-                                            <br/>
-                                            <small>{{testRun.appVersion}}</small>
-                                        </td>
-                                        <td md-cell><a href="{{testRun.job.jobURL}}"><span class="label label-default">{{testRun.job.name}}</span></a></td>
-                                        <td md-cell>{{testRun.env}}</td>
-                                        <td md-cell><span class="platform-icon {{testRun.platform}}"></span></td>
-                                        <td md-cell class="text-center">
-                                            <div>
-                                                <span class="time">
-                                                    <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-                                                </span>
-                                                <br/>
-                                                <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
-                                                <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
-                                                <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
-                                            </div>
+                                            <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
+                                            <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
+                                            <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
                                         </td>
                                         <td md-cell>
                                             <md-menu>
