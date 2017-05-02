@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.rcarz.jiraclient.Issue;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,9 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private JiraService jiraService;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -130,14 +134,18 @@ public class TestService
 			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
 			if(knownIssue != null)
 			{
-				existingTest.setKnownIssue(true);
-				existingTest.setBlocker(knownIssue.isBlocker());
-				testMapper.createTestWorkItem(existingTest, knownIssue);
-				if(existingTest.getWorkItems() == null)
-				{
-					existingTest.setWorkItems(new ArrayList<WorkItem>());
+				Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+				boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
+						&& jiraService.isIssueClosed(issueFromJira);
+				if(! isJiraIdClosed) {
+					existingTest.setKnownIssue(true);
+					existingTest.setBlocker(knownIssue.isBlocker());
+					testMapper.createTestWorkItem(existingTest, knownIssue);
+					if (existingTest.getWorkItems() == null) {
+						existingTest.setWorkItems(new ArrayList<WorkItem>());
+					}
+					existingTest.getWorkItems().add(knownIssue);
 				}
-				existingTest.getWorkItems().add(knownIssue);
 			}
 		}
 		testMapper.updateTest(existingTest);
