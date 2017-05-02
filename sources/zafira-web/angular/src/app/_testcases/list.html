@@ -54,7 +54,7 @@
                             </thead>
                             <tbody md-body>
                                 <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}" ng-dblclick="loadTests(testcase)">
-                                    <td md-cell>{{testcase.id}}</td>
+                                    <td md-cell>#{{testcase.id}}</td>
                                     <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
                                     <td md-cell><span class="label label-default">{{testcase.testSuite.fileName}}</span></td>

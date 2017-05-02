@@ -65,8 +65,8 @@
                             </thead>
                             <tbody md-body>
                                 <tr md-row ng-repeat="user in sr.results">
-                                    <td md-cell>{{user.id}}</td>
-                                    <td md-cell>{{user.username}}</td>
+                                    <td md-cell>#{{user.id}}</td>
+                                    <td md-cell><b>{{user.username}}</b></td>
                                     <td md-cell>{{user.email}}</td>
                                     <td md-cell>{{user.firstName}} {{user.lastName}}</td>
                                     <td md-cell class="text-center">{{user.createdAt | date}}</td>
