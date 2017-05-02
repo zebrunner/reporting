@@ -175,10 +175,14 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		return workItems;
 	}
 
-	public WorkItem getBugWorkItem() {
-		if(workItems != null) {
-			for (WorkItem workItem : workItems) {
-				if (workItem.getType() == WorkItem.Type.BUG) {
+	public WorkItem getWorkItem(WorkItem.Type type)
+	{
+		if (workItems != null)
+		{
+			for (WorkItem workItem : workItems)
+			{
+				if (type.equals(workItem.getType()))
+				{
 					return workItem;
 				}
 			}
