@@ -1,19 +1,19 @@
 package com.qaprosoft.zafira.listener;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.client.ZafiraClient.Response;
+import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
+import com.qaprosoft.zafira.config.IConfigurator;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.db.TestRun.Initiator;
+import com.qaprosoft.zafira.models.dto.*;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -27,28 +27,16 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ISuite;
-import org.testng.ISuiteListener;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.*;
 
-import com.qaprosoft.zafira.client.ZafiraClient;
-import com.qaprosoft.zafira.client.ZafiraClient.Response;
-import com.qaprosoft.zafira.config.CIConfig;
-import com.qaprosoft.zafira.config.CIConfig.BuildCasue;
-import com.qaprosoft.zafira.config.IConfigurator;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.db.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.JobType;
-import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.UserType;
-import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.File;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
@@ -185,6 +173,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				{
 					System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
 				}
+
+				Runtime.getRuntime().addShutdownHook(new ShutdownHook(ZAFIRA_URL, ZAFIRA_USERNAME,ZAFIRA_PASSWORD, String.valueOf(this.run.getId())));
 			}
 			catch (Exception e) 
 			{
@@ -546,7 +536,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	/**
 	 * Generated full test failures stack trace taking into account test skip reasons.
 	 * 
-	 * @param ITestResult result
+	 * @param result ITestResult
 	 * @return full error stack trace
 	 */
 	private String getFullStackTrace(ITestResult result) 
@@ -611,5 +601,47 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		}
 		
 	    return !StringUtils.isEmpty(sb.toString()) ? sb.toString() : null;
+	}
+
+
+
+	public static class ShutdownHook extends Thread {
+
+		private String zafiraHost;
+		private String userName;
+		private String password;
+		private String runId;
+		private Client  client;
+
+		public ShutdownHook (String zafiraHost, String userName, String password, String runId){
+		this.zafiraHost = zafiraHost;
+		this.userName = userName;
+		this.password = password;
+		this.runId = runId;
+		this.client = Client.create();
+		}
+
+
+		private void abortRun() {
+
+			String request_Url = zafiraHost + "tests/runs/abort?id=" + runId;
+
+			Client client = Client.create();
+			client.addFilter(new HTTPBasicAuthFilter(userName, password));
+			WebResource webResource = client.resource(request_Url);
+
+			ClientResponse response = webResource.type(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.getEntity(TestRunType.class);
+
+			System.out.println(response.getStatus());
+
+		}
+
+		@Override
+		public void run() {
+			LOGGER.info("Running shutdown hook");
+			abortRun();
+		}
+
 	}
 }
