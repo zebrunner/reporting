@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.rcarz.jiraclient.Issue;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 
@@ -55,6 +57,9 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private JiraService jiraService;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -115,9 +120,11 @@ public class TestService
 			// Handling of known Selenium errors
 			for(String error : SELENIUM_ERRORS)
 			{
-				message.startsWith(error);
-				message = error;
-				break;
+				if(message.startsWith(error))
+				{
+					message = error;
+					break;
+				}
 			}
 			existingTest.setMessageHashCode(getTestMessageHashCode(message));
 		}
@@ -127,14 +134,18 @@ public class TestService
 			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
 			if(knownIssue != null)
 			{
-				existingTest.setKnownIssue(true);
-				existingTest.setBlocker(knownIssue.isBlocker());
-				testMapper.createTestWorkItem(existingTest, knownIssue);
-				if(existingTest.getWorkItems() == null)
-				{
-					existingTest.setWorkItems(new ArrayList<WorkItem>());
+				Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+				boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
+						&& jiraService.isIssueClosed(issueFromJira);
+				if(! isJiraIdClosed) {
+					existingTest.setKnownIssue(true);
+					existingTest.setBlocker(knownIssue.isBlocker());
+					testMapper.createTestWorkItem(existingTest, knownIssue);
+					if (existingTest.getWorkItems() == null) {
+						existingTest.setWorkItems(new ArrayList<WorkItem>());
+					}
+					existingTest.getWorkItems().add(knownIssue);
 				}
-				existingTest.getWorkItems().add(knownIssue);
 			}
 		}
 		testMapper.updateTest(existingTest);
@@ -207,6 +218,17 @@ public class TestService
 	}
 	
 	@Transactional(readOnly = true)
+	public Test getNotNullTestById(long id) throws ServiceException
+	{
+		Test test = getTestById(id);
+		if(test == null)
+		{
+			throw new TestNotFoundException("Test ID: " + id);
+		}
+		return test;
+	}
+	
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunId(testRunId);
@@ -258,33 +280,35 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
-		Test test = getTestById(testId);
-		boolean hasBugKnownIssues = test.getBugWorkItem() != null;
-		if (test != null)
+		Test test = getNotNullTestById(testId);
+		WorkItem existingBug = test.getWorkItem(Type.BUG);
+		
+		workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+		test.setKnownIssue(true);
+		test.setBlocker(workItem.isBlocker());
+		updateTest(test);
+
+		if (workItem.getId() != null && existingBug == null)
 		{
-			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
-			test.setKnownIssue(true);
-			test.setBlocker(workItem.isBlocker());
-			updateTest(test);
-		} else {
-			return null;
-		}
-		if(workItem.getId() != null && ! hasBugKnownIssues) {
 			workItemService.updateWorkItem(workItem);
 			testMapper.createTestWorkItem(test, workItem);
-		} else if(workItem.getId() != null && hasBugKnownIssues) {
-			WorkItem previousWorkItem = test.getBugWorkItem();
-			previousWorkItem.setHashCode(-1);
-			workItemService.updateWorkItem(previousWorkItem);
+		} 
+		else if (workItem.getId() != null && existingBug != null)
+		{
+			existingBug.setHashCode(-1);
+			workItemService.updateWorkItem(existingBug);
 			workItemService.updateWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
 			testMapper.createTestWorkItem(test, workItem);
-		} else {
+		} 
+		else
+		{
 			workItemService.createWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
 			testMapper.createTestWorkItem(test, workItem);
 		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
+		
 		return workItem;
 	}
 

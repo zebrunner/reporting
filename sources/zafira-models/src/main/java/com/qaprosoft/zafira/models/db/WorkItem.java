@@ -57,11 +57,13 @@ public class WorkItem extends AbstractEntity
 		this.description = description;
 	}
 
-	public boolean isBlocker() {
+	public boolean isBlocker()
+	{
 		return blocker;
 	}
 
-	public void setBlocker(boolean blocker) {
+	public void setBlocker(boolean blocker)
+	{
 		this.blocker = blocker;
 	}
 

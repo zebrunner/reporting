@@ -185,6 +185,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				{
 					System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
 				}
+				
+				Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
 			}
 			catch (Exception e) 
 			{
@@ -611,5 +613,30 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		}
 		
 	    return !StringUtils.isEmpty(sb.toString()) ? sb.toString() : null;
+	}
+	
+	/**
+	 * TestRunShutdownHook - aborts test run when CI job is aborted.
+	 */
+	public static class TestRunShutdownHook extends Thread 
+	{
+		private ZafiraClient zc;
+		private TestRunType testRun;
+
+		public TestRunShutdownHook (ZafiraClient zc, TestRunType testRun)
+		{
+			this.zc = zc;
+			this.testRun = testRun;
+		}
+
+		@Override
+		public void run() 
+		{
+			if(testRun != null)
+			{
+				boolean aborted = zc.abortTestRun(testRun.getId());
+				LOGGER.info("TestRunShutdownHook was executed with result: " + aborted);
+			}
+		}
 	}
 }
