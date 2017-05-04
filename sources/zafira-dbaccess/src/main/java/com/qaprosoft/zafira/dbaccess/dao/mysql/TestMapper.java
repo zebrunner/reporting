@@ -18,6 +18,10 @@ public interface TestMapper
 	
 	void createTestWorkItem(@Param("test") Test test, @Param("workItem") WorkItem workItem);
 
+	void deleteTestWorkItemByWorkItemIdAndTestId(@Param("workItemId") long workItemId, @Param("testId") long testId);
+
+	void deleteTestWorkItemByTestIdAndWorkItemType(@Param("testId") long testId, @Param("type") WorkItem.Type type);
+
 	void deleteTestWorkItemByTestId(long testId);
 	
 	void updateTest(Test test);

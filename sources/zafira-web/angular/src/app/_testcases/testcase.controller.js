@@ -9,9 +9,9 @@
     function TestCaseListController($scope, $location, TestService, TestCaseService, UtilService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
-    	
+
     	$scope.UtilService = UtilService;
-    	
+
     	$scope.sc = angular.copy(DEFAULT_SC);
     	$scope.tests = {};
 
@@ -31,11 +31,11 @@
         		}
 			});
         };
-        
+
         $scope.loadTests = function(testCase) {
-        	
-        	testCase.expand == null ? testCase.expand = true : testCase.expand = !testCase.expand; 
-        	
+
+        	testCase.expand == null ? testCase.expand = true : testCase.expand = !testCase.expand;
+
         	if(testCase.expand)
         	{
         		TestService.searchTests({page: 1, pageSize: 10, testCaseId : testCase.id}).then(function(rs) {
@@ -49,14 +49,14 @@
             		}
     			});
         	}
-        	
+
         };
-        
+
         $scope.reset = function () {
         	$scope.sc = angular.copy(DEFAULT_SC);
         	$scope.search();
         };
-        
+
         $scope.getClassName = function(fullName) {
     		var parts = fullName.split(".");
     		return parts[parts.length - 1];

@@ -37,6 +37,27 @@
 			)
 		]]>
 	</insert>
+
+	<delete id="deleteTestWorkItemByWorkItemIdAndTestId">
+		<![CDATA[
+			DELETE FROM zafira.TEST_WORK_ITEMS
+			WHERE
+			WORK_ITEM_ID = #{workItemId}
+			AND
+			TEST_ID = #{testId}
+		]]>
+	</delete>
+
+	<delete id="deleteTestWorkItemByTestIdAndWorkItemType">
+		<![CDATA[
+			DELETE FROM zafira.TEST_WORK_ITEMS
+			WHERE
+			TEST_ID = #{testId}
+			AND
+			WORK_ITEM_ID IN
+			(SELECT WI.ID FROM zafira.WORK_ITEMS WI INNER JOIN zafira.TEST_WORK_ITEMS TWI ON WI.ID = TWI.WORK_ITEM_ID WHERE WI.TYPE = #{type})
+		]]>
+	</delete>
 	
 	<delete id="deleteTestWorkItemByTestId">
 		<![CDATA[

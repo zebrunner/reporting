@@ -1,0 +1,29 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="build_now_form" ng-submit="createUser(); UtilService.untouchForm(build_now_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Build now</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="build_now_form.$invalid">
+                Clear
+            </md-button>
+            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="build_now_form.$invalid">
+                Create
+            </md-button>
+            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="build_now_form.$invalid">
+                Update
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
