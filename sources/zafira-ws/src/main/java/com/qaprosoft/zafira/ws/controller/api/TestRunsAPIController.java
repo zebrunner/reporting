@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
@@ -231,6 +232,15 @@ public class TestRunsAPIController extends AbstractController {
     {
         String [] recipients = !StringUtils.isEmpty(email.getRecipients()) ? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[]{};
         return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
+    }
+
+    @ResponseStatusDetails
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", code = 200, httpMethod = "GET", response = String.class)
+    @RequestMapping(value="{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public @ResponseBody String exportTestRunHTML(@PathVariable(value="id") long id) throws ServiceException, JAXBException
+    {
+        return testRunService.exportTestRunHTML(id);
     }
 
     @ResponseStatusDetails

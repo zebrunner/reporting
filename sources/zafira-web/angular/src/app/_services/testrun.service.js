@@ -19,6 +19,7 @@
         service.createCompareMatrix = createCompareMatrix;
         service.deleteTestRun = deleteTestRun;
         service.sendTestRunResultsEmail = sendTestRunResultsEmail;
+        service.exportTestRunResultsHTML = exportTestRunResultsHTML;
         service.markTestRunAsReviewed = markTestRunAsReviewed;
         service.rerunTestRun = rerunTestRun;
         service.buildTestRun = buildTestRun;
@@ -69,6 +70,10 @@
 
         function sendTestRunResultsEmail(id, email, filter, showStacktrace) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/email', {params:{'filter': filter, 'showStacktrace': showStacktrace}}, email).then(UtilService.handleSuccess, UtilService.handleError('Unable to send test run results email'));
+        }
+
+        function exportTestRunResultsHTML(id) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/export').then(UtilService.handleSuccess, UtilService.handleError('Unable to get test run results HTML'));
         }
 
         function markTestRunAsReviewed(id, comment) {

@@ -370,6 +370,25 @@ public class TestRunService
 		
 		return emailService.sendEmail(email, recipients);
 	}
+
+	@Transactional(readOnly=true)
+	public String exportTestRunHTML(final Long testRunId) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByIdFull(testRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by ID: " + testRunId);
+		}
+		Configuration configuration = readConfiguration(testRun.getConfigXML());
+		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
+
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+
+		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+		email.setSuccessRate(calculateSuccessRate(testRun));
+		return emailService.getFreeMarkerTemplateContent(email);
+	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
 	{

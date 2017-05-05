@@ -46,9 +46,9 @@
              $scope.stomp = Stomp.over(sockJS);
              //stomp.debug = null;
              $scope.stomp.connect({}, function () {
-             $scope.stomp.subscribe("/topic/tests", function (data) {
-             $scope.getMessage(data.body);
-             });
+                 $scope.stomp.subscribe("/topic/tests", function (data) {
+                     $scope.getMessage(data.body);
+                 });
              });*/
         };
 
@@ -289,6 +289,26 @@
             });
         }];
 
+        const EXPORT = ['Export', function ($itemScope) {
+            TestRunService.exportTestRunResultsHTML($itemScope.testRun.id).then(function(rs) {
+                if(rs.success)
+                {
+                    var html = new Blob([data.data], {type: 'html'});
+                    var link = document.createElement("a");
+                    document.body.appendChild(link);
+                    link.style = "display: none";
+                    var url = window.URL.createObjectURL(html);
+                    link.href = url;
+                    link.download = $itemScope.testRun.testSuite.name.split(' ').join('_') + ".html";
+                    link.click();
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        }];
+
         const BUILD_NOW = ['Build now', function ($itemScope) {
             $scope.showBuildNowDialog($itemScope.testRun);
         }];
@@ -355,6 +375,26 @@
             $scope.showEmailDialog(testRun, event);
         };
 
+        $scope.export = function (testRun) {
+            TestRunService.exportTestRunResultsHTML(testRun.id).then(function(rs) {
+                if(rs.success)
+                {
+                    var html = new Blob([rs.data], {type: 'html'});
+                    var link = document.createElement("a");
+                    document.body.appendChild(link);
+                    link.style = "display: none";
+                    var url = window.URL.createObjectURL(html);
+                    link.href = url;
+                    link.download = testRun.testSuite.name.split(' ').join('_') + ".html";
+                    link.click();
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.notifyInSlack = function (testRun) {
             SlackService.triggerReviewNotif(testRun.id);
         };
@@ -410,6 +450,7 @@
             menuOptions.push(COPY_TEST_RUN_LINK);
             menuOptions.push(MARK_REVIEWED);
             menuOptions.push(SEND_EMAIL);
+            menuOptions.push(EXPORT);
             if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
             {
                 menuOptions.push(SEND_SLACK_NOTIF);

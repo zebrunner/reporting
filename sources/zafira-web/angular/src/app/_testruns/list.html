@@ -84,7 +84,7 @@
 	                                            <div class="col-sm-11">
 		                                            <b>
                                                         {{testRun.testSuite.name}}
-                                                        <i data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" class="fa fa-commenting-o" aria-hidden="true"></i>
+                                                        <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
                                                         <span data-ng-if="testRun.reviewed" class="label label-success">reviewed</span>
                                                     </b>
                                                     <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
@@ -141,6 +141,11 @@
                                                     <md-menu-item>
                                                         <md-button data-ng-click="sendAsEmail(testRun, $event)">
                                                             Send as email
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="export(testRun)">
+                                                            Export
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item ng-if="showNotifyInSlackOption">
