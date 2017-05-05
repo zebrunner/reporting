@@ -12,6 +12,14 @@
                 </button>
             </h2>
         </div>
+        <div class="col-lg-12">
+            <span data-ng-if="showRealTimeEvents == true">Disable</span><span data-ng-if="showRealTimeEvents == false">Enable</span> real-time events
+            <md-checkbox
+                ng-model="showRealTimeEvents"
+                aria-label="Real-time events checkbox"
+                class="md-warn md-align-top-left" flex>
+            </md-checkbox>
+        </div>
         <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
@@ -62,6 +70,7 @@
                                                     <md-option value="firefox">firefox</md-option>
                                                     <md-option value="safari">safari</md-option>
                                                     <md-option value="ie">ie</md-option>
+                                                    <md-option value="API">API</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </th>
@@ -72,7 +81,7 @@
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in testRuns" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell>
                                         	<div class="row">
                                         		<div class="col-sm-1" ng-if="testRun.status == 'IN_PROGRESS'">
@@ -166,7 +175,7 @@
                                                     </md-menu-item>
                                                     <md-divider></md-divider>
                                                     <md-menu-item ng-if="showDeleteTestRunOption">
-                                                        <md-button data-ng-click="deleteTestRun(testRun)">
+                                                        <md-button data-ng-click="deleteTestRunAction(testRun)">
                                                             Delete
                                                         </md-button>
                                                     </md-menu-item>
@@ -195,17 +204,15 @@
                                                             <div class="col-sm-8">
                                                                 <div class="col-sm-1" ng-if="test.status == 'IN_PROGRESS'">
                                                                     <md-progress-circular md-diameter="20px"></md-progress-circular>
-                                                                        <small>{{progressBar}}%</small>
-                                                                    </timer>
                                                                 </div>
                                                                 {{test.name}}
                                                                 <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span>
                                                             </div>
-                                                            <div class="col-sm-4" data-ng-if="test.status == 'FAILED'">
-                                                                <a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
+                                                            <div class="col-lg-4" data-ng-if="test.status == 'FAILED'">
+                                                                <a href="" class="float_right label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
                                                                 <span class="float_right" data-ng-if="test.status == 'FAILED'" style="margin: 0 5px;">|</span>
-                                                                <a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
-                                                                <a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
+                                                                <a href="" class="float_right label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
+                                                                <a href="" class="float_right label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-12">

@@ -30,6 +30,18 @@ body {
   border-color: #00BCD4;
 }
 
+.result_error.FAILED {
+    background: #ffb3b3;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.result_error.SKIPPED {
+    background: #ffe680;
+    padding: 8px;
+    margin: 5px 0;
+}
+
 .searchable {
   margin-bottom: 0px !important;
   font-size: 12px !important;

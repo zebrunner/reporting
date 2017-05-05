@@ -31,10 +31,12 @@
 
         $scope.showReset = $scope.testRunId != null;
 
-        $scope.testRunSearchCriteria = {
+        var DEFAULT_SC = {
             'page': 1,
             'pageSize': 20
         };
+
+        $scope.sc = angular.copy(DEFAULT_SC);
 
         $scope.testSearchCriteria = {
             'page': 1,
@@ -42,14 +44,14 @@
         };
 
         $scope.initWebsocket = function () {
-            /*var sockJS = new SockJS("/zafira-ws/zafira-websocket");
+            var sockJS = new SockJS("http://localhost:3030/zafira-ws/zafira-websocket");
              $scope.stomp = Stomp.over(sockJS);
              //stomp.debug = null;
              $scope.stomp.connect({}, function () {
                  $scope.stomp.subscribe("/topic/tests", function (data) {
                      $scope.getMessage(data.body);
                  });
-             });*/
+             });
         };
 
         $scope.disconnectWebsocket = function () {
@@ -132,7 +134,7 @@
                     {
                         delete $scope.testRuns[id];
                         alertify.success('Test run #' + id + ' removed');
-                        //$scope.search($scope.testRunSearchCriteria.page);
+                        //$scope.search($scope.sc.page);
                     }
                     else
                     {
@@ -195,24 +197,24 @@
 
         $scope.search = function (page, pageSize) {
 
-            $scope.testRunSearchCriteria.page = page;
+            $scope.sc.page = page;
 
             if (pageSize) {
-                $scope.testRunSearchCriteria.pageSize = pageSize;
+                $scope.sc.pageSize = pageSize;
             }
 
             if ($scope.testRunId) {
-                $scope.testRunSearchCriteria.id = $scope.testRunId;
+                $scope.sc.id = $scope.testRunId;
             }
             else {
-                $scope.testRunSearchCriteria = ProjectProvider.initProject($scope.testRunSearchCriteria);
+                $scope.sc = ProjectProvider.initProject($scope.sc);
             }
 
             if ($scope.startedAt) {
-                $scope.testRunSearchCriteria.date = new Date(Date.parse($scope.startedAt) + OFFSET);
+                $scope.sc.date = new Date(Date.parse($scope.startedAt) + OFFSET);
             }
 
-            TestRunService.searchTestRuns($scope.testRunSearchCriteria).then(function(rs) {
+            TestRunService.searchTestRuns($scope.sc).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
@@ -221,8 +223,8 @@
 
                     $scope.testRuns = {};
 
-                    $scope.testRunSearchCriteria.page = data.page;
-                    $scope.testRunSearchCriteria.pageSize = data.pageSize;
+                    $scope.sc.page = data.page;
+                    $scope.sc.pageSize = data.pageSize;
                     $scope.totalResults = data.totalResults;
 
                     for (var i = 0; i < data.results.length; i++) {
@@ -424,7 +426,7 @@
             });
         };
 
-        $scope.deleteTestRun = function (testRun) {
+        $scope.deleteTestRunAction = function (testRun) {
             $scope.deleteTestRun(testRun.id);
         };
 
@@ -489,7 +491,7 @@
 
         $scope.resetSearchCriteria = function () {
             $location.url($location.path());
-            $scope.testRunSearchCriteria = {
+            $scope.sc = {
                 'page': 1,
                 'pageSize': 25
             };
@@ -499,25 +501,25 @@
 
         $scope.populateSearchQuery = function () {
             if ($location.search().testSuite) {
-                $scope.testRunSearchCriteria.testSuite = $location.search().testSuite;
+                $scope.sc.testSuite = $location.search().testSuite;
             }
             if ($location.search().platform) {
-                $scope.testRunSearchCriteria.platform = $location.search().platform;
+                $scope.sc.platform = $location.search().platform;
             }
             if ($location.search().environment) {
-                $scope.testRunSearchCriteria.environment = $location.search().environment;
+                $scope.sc.environment = $location.search().environment;
             }
             if ($location.search().page) {
-                $scope.testRunSearchCriteria.page = $location.search().page;
+                $scope.sc.page = $location.search().page;
             }
             if ($location.search().pageSize) {
-                $scope.testRunSearchCriteria.pageSize = $location.search().pageSize;
+                $scope.sc.pageSize = $location.search().pageSize;
             }
             if ($location.search().fromDate) {
-                $scope.testRunSearchCriteria.fromDateString = $location.search().fromDate;
+                $scope.sc.fromDateString = $location.search().fromDate;
             }
             if ($location.search().toDate) {
-                $scope.testRunSearchCriteria.toDateString = $location.search().toDate;
+                $scope.sc.toDateString = $location.search().toDate;
             }
         };
 
@@ -614,6 +616,11 @@
                 $scope.loadTests(testRun.id);
             }
             testRun.expand == null ? testRun.expand = true : testRun.expand = !testRun.expand;
+        };
+
+        $scope.reset = function () {
+            $scope.sc = angular.copy(DEFAULT_SC);
+            $scope.search();
         };
 
         (function init() {
