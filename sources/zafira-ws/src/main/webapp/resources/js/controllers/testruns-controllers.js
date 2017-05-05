@@ -251,7 +251,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             link.style = "display: none";
             var url = window.URL.createObjectURL(html);
             link.href = url;
-            link.download = $itemScope.testRun.testSuite.name + ".html";
+            link.download = $itemScope.testRun.testSuite.name.split(' ').join('_') + ".html";
             link.click();
         }, function errorCallback(data) {
             console.error('Failed to export test run');
