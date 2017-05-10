@@ -20,27 +20,28 @@
                         <hr/>
                     </div>
                 </div>
-                <div layout layout-sm="column">
-                    <md-input-container flex>
-                        <label>Username</label>
-                        <input type="text" ng-model="user.username" name="username"/>
-                    </md-input-container>
-                </div>
                 <div>
-                    <label>Jira ID</label>
-                    <span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
-                    <input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+                    <div layout layout-sm="column">
+                        <span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
+                        <md-input-container flex>
+                            <label>Jira ID</label>
+                            <input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+                        </md-input-container>
+                    </div>
                     <span class="danger" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' not found</span>
                     <span class="danger" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' closed</span>
                     <span data-ng-show="(!isDataLoaded || !isIssueFound) && isConnectedToJira"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
                 </div>
                 <div>
-                    <label>Description</label>
-                    <textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label>Description</label>
+                            <textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
+                        </md-input-container>
+                    </div>
                 </div>
                 <div>
-                    <label>Blocker</label>
-                    <input type="checkbox" data-ng-model="newKnownIssue.blocker"/>
+                    <md-checkbox aria-label="Blocker checkbox" data-ng-model="newKnownIssue.blocker">Blocker</md-checkbox>
                 </div>
             </div>
         </md-dialog-content>

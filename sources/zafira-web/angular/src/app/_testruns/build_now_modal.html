@@ -11,18 +11,29 @@
         </md-toolbar>
 
         <md-dialog-content>
-
+            <div class="md-dialog-content">
+                <div layout layout-sm="column" data-ng-hide="isJobParametersLoaded" layout-align="space-around">
+                    <md-input-container flex>
+                        <div data-ng-hide="isJobParametersLoaded" layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div data-ng-if="noValidJob" layout="row" layout-align="center center">
+                    <small>Empty</small>
+                </div>
+                <div layout layout-sm="column" ng-repeat="(key, value) in jobParameters">
+                    <md-input-container flex>
+                        <label>{{key}}<span data-ng-if="'ci_run_id' == key"> (new)</span></label>
+                        <input ng-model="jobParameters[key]" type="text"/>
+                    </md-input-container>
+                </div>
+            </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="build_now_form.$invalid">
-                Clear
-            </md-button>
-            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="build_now_form.$invalid">
-                Create
-            </md-button>
-            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="build_now_form.$invalid">
-                Update
+            <md-button data-ng-if="! noValidJob" class="btn btn-success" data-ng-click="buildNow()" data-ng-disabled="build_now_form.$invalid">
+                Build
             </md-button>
         </md-dialog-actions>
     </form>

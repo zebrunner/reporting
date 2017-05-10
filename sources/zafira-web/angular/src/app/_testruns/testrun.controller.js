@@ -441,7 +441,7 @@
         $scope.isConnectedToJenkins = false;
         $scope.getJenkinsConnection = function() {
             ConfigService.getConfig("jenkins").then(function (rs) {
-                $scope.isConnectedToJenkins = rs.connected;
+                $scope.isConnectedToJenkins = rs.data.connected;
             });
         };
 
@@ -664,12 +664,14 @@
         };
         $scope.jobParameters = {};
         $scope.isJobParametersLoaded = false;
+        $scope.noValidJob = false;
         $scope.getJobParameters = function () {
             TestRunService.getJobParameters($scope.testRun.id).then(function(rs) {
                 if(rs.success)
                 {
                     $scope.jobParameters = rs.data;
                     $scope.isJobParametersLoaded = true;
+                    $scope.noValidJob = $scope.jobParameters == '';
                 }
                 else
                 {
@@ -755,7 +757,7 @@
 
         $scope.checkAndTransformRecipient = function (currentUser) {
             var user = {};
-            if (currentUser.userName == null) {
+            if (currentUser.username == null) {
                 //user.userName = currentUser;
                 user.email = currentUser;
                 $scope.email.recipients.push(currentUser);
@@ -999,7 +1001,7 @@
 
         $scope.getJiraStatusesAsClosed = function() {
             SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
-                $scope.jiraStatusesAsClosed = rs.split(';');
+                $scope.jiraStatusesAsClosed = rs.data.split(';');
             }, function errorCallback(data) {
                 console.error(data);
             });
