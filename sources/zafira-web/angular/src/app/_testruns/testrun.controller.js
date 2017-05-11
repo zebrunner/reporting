@@ -265,88 +265,6 @@
         };
 
         // --------------------  Context menu ------------------------
-        const OPEN_TEST_RUN = ['Open', function ($itemScope) {
-            window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
-        }];
-
-        const REBUILD = ['Rebuild', function ($itemScope) {
-
-            ConfigService.getConfig("jenkins").then(function (jenkins) {
-                if (jenkins.connected) {
-                    var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
-                    TestRunService.rerunTestRun($itemScope.testRun.id, rerunFailures).then(function(rs) {
-                        if(rs.success)
-                        {
-                            alertify.success('CI job is rebuilding, it may take some time before status is updated');
-                        }
-                        else
-                        {
-                            alertify.error(rs.message);
-                        }
-                    });
-                }
-                else {
-                    window.open($itemScope.testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
-                }
-            });
-        }];
-
-        const EXPORT = ['Export', function ($itemScope) {
-            TestRunService.exportTestRunResultsHTML($itemScope.testRun.id).then(function(rs) {
-                if(rs.success)
-                {
-                    var html = new Blob([data.data], {type: 'html'});
-                    var link = document.createElement("a");
-                    document.body.appendChild(link);
-                    link.style = "display: none";
-                    var url = window.URL.createObjectURL(html);
-                    link.href = url;
-                    link.download = $itemScope.testRun.testSuite.name.split(' ').join('_') + ".html";
-                    link.click();
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
-            });
-        }];
-
-        const BUILD_NOW = ['Build now', function ($itemScope) {
-            $scope.showBuildNowDialog($itemScope.testRun);
-        }];
-
-        const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
-            var node = document.createElement('pre');
-            node.textContent = $location.$$absUrl + "?id=" + $itemScope.testRun.id;
-            document.body.appendChild(node);
-
-            var selection = getSelection();
-            selection.removeAllRanges();
-
-            var range = document.createRange();
-            range.selectNodeContents(node);
-            selection.addRange(range);
-
-            document.execCommand('copy');
-            selection.removeAllRanges();
-            document.body.removeChild(node);
-        }];
-
-        const DELETE_TEST_RUN = ['Delete', function ($itemScope) {
-            $scope.deleteTestRun($itemScope.testRun.id);
-        }];
-
-        const SEND_EMAIL = ['Send as email', function ($itemScope) {
-            $scope.showEmailDialog($itemScope.testRun);
-        }];
-
-        const SEND_SLACK_NOTIF = ['Notify in Slack', function ($itemScope) {
-            SlackService.triggerReviewNotif($itemScope.testRun.id);
-        }];
-
-        const MARK_REVIEWED = ['Mark as reviewed', function ($itemScope) {
-            $scope.showCommentsDialog($itemScope.testRun);
-        }];
 
         $scope.openTestRun = function (testRun) {
             window.open($location.$$absUrl + "?id=" + testRun.id, '_blank');
@@ -443,29 +361,6 @@
             ConfigService.getConfig("jenkins").then(function (rs) {
                 $scope.isConnectedToJenkins = rs.data.connected;
             });
-        };
-
-        $scope.menuOptions = [];
-        $scope.initMenuOptions = function (testRun) {
-            var menuOptions = [];
-            menuOptions.push(OPEN_TEST_RUN);
-            menuOptions.push(COPY_TEST_RUN_LINK);
-            menuOptions.push(MARK_REVIEWED);
-            menuOptions.push(SEND_EMAIL);
-            menuOptions.push(EXPORT);
-            if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
-            {
-                menuOptions.push(SEND_SLACK_NOTIF);
-            }
-            //menuOptions.push(null);
-            if($scope.isConnectedToJenkins) {
-                menuOptions.push(BUILD_NOW);
-            }
-            menuOptions.push(REBUILD);
-            //if($rootScope.currentRole == 'ROLE_ADMIN') {
-                menuOptions.push(DELETE_TEST_RUN);
-            //}
-            $scope.menuOptions = menuOptions;
         };
 
         $scope.showDetails = function (id) {
