@@ -267,6 +267,14 @@ public class TestRunsController extends AbstractController
 		String [] recipients = !StringUtils.isEmpty(email.getRecipients()) ? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[]{};
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
 	}
+
+	@ApiIgnore
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String exportTestRunHTML(@PathVariable(value="id") long id) throws ServiceException, JAXBException
+	{
+		return testRunService.exportTestRunHTML(id);
+	}
 	
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)

@@ -105,8 +105,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 }
                 if (test.blocker) {
                     testRun.failedAsBlocker = testRun.failedAsBlocker + changeByAmount;
-                    testRun.blocker = true;
                 }
+                testRun.blocker = test.blocker;
                 break;
             case "SKIPPED":
                 testRun.skipped = testRun.skipped + changeByAmount;
@@ -243,6 +243,21 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         window.open($location.$$absUrl + "?id=" + $itemScope.testRun.id, '_blank');
     }];
 
+    const EXPORT = ['Export', function ($itemScope) {
+        $http.get('tests/runs/' + $itemScope.testRun.id + '/export').then(function successCallback(data) {
+            var html = new Blob([data.data], {type: 'html'});
+            var link = document.createElement("a");
+            document.body.appendChild(link);
+            link.style = "display: none";
+            var url = window.URL.createObjectURL(html);
+            link.href = url;
+            link.download = $itemScope.testRun.testSuite.name.split(' ').join('_') + ".html";
+            link.click();
+        }, function errorCallback(data) {
+            console.error('Failed to export test run');
+        });
+    }];
+
     const REBUILD = ['Rebuild', function ($itemScope) {
 
         ConfigService.getConfig("jenkins").then(function (jenkins) {
@@ -312,6 +327,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         menuOptions.push(COPY_TEST_RUN_LINK);
         menuOptions.push(MARK_REVIEWED);
         menuOptions.push(SEND_EMAIL);
+        menuOptions.push(EXPORT);
         if(testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed)
 		{
         	menuOptions.push(SEND_SLACK_NOTIF);
@@ -568,15 +584,18 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
         });
 	};
 
-    $scope.openKnownIssueModal = function (test) {
+    $scope.openKnownIssueModal = function (test, isNew) {
         var modalInstance = $modal.open({
             templateUrl: 'resources/templates/test-known-issues-modal.jsp',
             resolve: {
                 'test': function () {
                     return test;
+                },
+                'isNew': function () {
+                    return isNew;
                 }
             },
-            controller: function ($scope, $modalInstance, test) {
+            controller: function ($scope, $modalInstance, test, isNew) {
 
                 $scope.isConnectedToJira = false;
                 $scope.isIssueFound = true;
@@ -588,12 +607,18 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.createKnownIssue = function () {
                     var knownIssue = $scope.newKnownIssue;
                     $http.post('tests/' + test.id + '/issues', knownIssue).then(function successCallback(data) {
-                        $scope.initNewKnownIssue();
                         $scope.getKnownIssues();
                         $modalInstance.close(true);
-                        alertify.success('A new know issue "' + knownIssue.jiraId + '" was created');
+                        if(isNew)
+                            alertify.success('A new know issue "' + knownIssue.jiraId + '" was created');
+                        else
+                            alertify.success('A know issue "' + knownIssue.jiraId + '" was updated');
+                        $scope.initNewKnownIssue();
                     }, function errorCallback(data) {
-                        alertify.error('Failed to create new known issue');
+                        if(isNew)
+                            alertify.error('Failed to create new known issue');
+                        else
+                            alertify.error('Failed to update known issue');
                     });
                 };
 
@@ -621,16 +646,13 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                         $scope.isJiraIdExists = false;
                         return;
                     }
-                    switch (issue.status.name) {
-                        case 'Closed':
-                            $scope.isJiraIdExists = true;
-                            $scope.isJiraIdClosed = true;
-                            break;
-                        default:
-                            // Reset flags
-                            $scope.isJiraIdExists = true;
-                            $scope.isJiraIdClosed = false;
-                            break;
+                    $scope.checkStatusAsClosed(issue.status.name);
+                    if($scope.isJiraIdClosed) {
+                        $scope.isJiraIdExists = true;
+                    }
+                    else {
+                        // Reset flags
+                        $scope.isJiraIdExists = true;
                     }
                 };
 
@@ -639,6 +661,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.getRightToSearch = function () {
                     if ($scope.newKnownIssue.jiraId == null || !fieldIsChanged) {
                         $scope.isRightToSearch = false;
+                        $scope.isIssueFound = true;
                     } else {
                         $scope.isRightToSearch = true;
                         fieldIsChanged = false;
@@ -650,14 +673,24 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.onChangeAction = function () {
                     fieldIsChanged = true;
                     // Reset flags
-                    $scope.isNew = true;
+                    $scope.newKnownIssue.description = '';
+                    $scope.newKnownIssue.id = null;
                     $scope.isJiraIdExists = true;
                     $scope.isJiraIdClosed = false;
                     $scope.isIssueFound = false;
+
+                    var existIssue =  $scope.knownIssues.filter(function (knownIssue) {
+                        var issueExists = knownIssue.jiraId == $scope.newKnownIssue.jiraId;
+                        $scope.isNew = ! (issueExists);
+                        return issueExists;
+                    })[0];
+                    if(existIssue)
+                        angular.copy(existIssue, $scope.newKnownIssue);
                 };
 
                 $scope.selectCurrentIssue = function(issue) {
-                    $scope.isNew = false;
+                    checkTestHasIssues();
+                    $scope.isNew = ! (issue.jiraId == $scope.testBugIssue.jiraId);
                     $scope.newKnownIssue.id = issue.id;
                     $scope.newKnownIssue.jiraId = issue.jiraId;
                     $scope.newKnownIssue.description = issue.description;
@@ -677,8 +710,8 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 }, 2000);
 
                 $scope.deleteKnownIssue = function (id) {
-                    $http.delete('tests/issues/' + id).then(function successCallback(data) {
-                        $scope.getKnownIssues();
+                    $http.delete('tests/' + test.id + '/issues/' + id).then(function successCallback(data) {
+                        $scope.initNewKnownIssue();
                     }, function errorCallback(data) {
                         alertify.error('Failed to delete known issue');
                     });
@@ -687,13 +720,31 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.getKnownIssues = function () {
                     $http.get('tests/' + test.id + '/issues').then(function successCallback(issues) {
                         $scope.knownIssues = issues.data;
+                        var a = test;
+                        if(test.workItems.length && ! isNew)
+                            angular.copy($scope.testBugIssue, $scope.newKnownIssue);
                     }, function errorCallback(data) {
                         alertify.error('Failed to load known issues');
                     });
                 };
 
+                function checkTestHasIssues() {
+                    $scope.testHasKnownIssues = test.workItems.filter(function (item) {
+                        return item.type == 'BUG';
+                    }).length;
+                }
+
+                function getTestBugIssue() {
+                    $scope.testBugIssue = {};
+                    $scope.testBugIssue.jiraId = '';
+                    if($scope.testHasKnownIssues)
+                        $scope.testBugIssue = test.workItems.filter(function (item) {
+                            return item.type == 'BUG';
+                        })[0];
+                }
+
                 $scope.initNewKnownIssue = function () {
-                    $scope.isNew = true;
+                    $scope.isNew = isNew;
                     $scope.newKnownIssue = {};
                     $scope.newKnownIssue.type = "BUG";
                     $scope.newKnownIssue.testCaseId = test.testCaseId;
@@ -703,14 +754,32 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     $modalInstance.close(false);
                 };
 
+                $scope.getJiraStatusesAsClosed = function() {
+                    SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(setting) {
+                        $scope.jiraStatusesAsClosed = setting.split(';');
+                    }, function errorCallback(data) {
+                        console.error(data);
+                    });
+                };
+
+                $scope.checkStatusAsClosed = function (status) {
+                    var newAr = $scope.jiraStatusesAsClosed.filter(function (jiraClosedStatus) {
+                        return jiraClosedStatus.toLowerCase() == status.toLowerCase();
+                    });
+                    $scope.isJiraIdClosed = newAr.length != 0;
+                };
+
                 (function init() {
                 	ConfigService.getConfig("jira").then(function(jira) {
                 		$scope.isConnectedToJira = jira.connected;
                         $scope.isDataLoaded = true;
                         $scope.isFieldsDisabled = false;
                 	});
+                	checkTestHasIssues();
+                	getTestBugIssue();
                     $scope.initNewKnownIssue();
                     $scope.getKnownIssues();
+                    $scope.getJiraStatusesAsClosed();
                 })();
             }
         });

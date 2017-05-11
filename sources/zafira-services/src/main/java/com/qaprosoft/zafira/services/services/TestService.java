@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.rcarz.jiraclient.Issue;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 
@@ -38,6 +40,8 @@ public class TestService
 	private static final String INV_COUNT = "InvCount";
 	
 	private static final String SPACE = " ";
+	
+	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
 	
 	@Autowired
 	private TestMapper testMapper;
@@ -53,6 +57,9 @@ public class TestService
 	
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private JiraService jiraService;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -106,9 +113,20 @@ public class TestService
 		existingTest.setLogURL(test.getLogURL());
 		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
-		if(test.getMessage() != null)
+		String message = test.getMessage();
+		if(message != null)
 		{
-			existingTest.setMessage(test.getMessage());
+			existingTest.setMessage(message);
+			// Handling of known Selenium errors
+			for(String error : SELENIUM_ERRORS)
+			{
+				if(message.startsWith(error))
+				{
+					message = error;
+					break;
+				}
+			}
+			existingTest.setMessageHashCode(getTestMessageHashCode(message));
 		}
 		
 		if(Status.FAILED.equals(test.getStatus()))
@@ -116,13 +134,18 @@ public class TestService
 			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
 			if(knownIssue != null)
 			{
-				existingTest.setKnownIssue(true);
-				testMapper.createTestWorkItem(existingTest, knownIssue);
-				if(existingTest.getWorkItems() == null)
-				{
-					existingTest.setWorkItems(new ArrayList<WorkItem>());
+				Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+				boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
+						&& jiraService.isIssueClosed(issueFromJira);
+				if(! isJiraIdClosed) {
+					existingTest.setKnownIssue(true);
+					existingTest.setBlocker(knownIssue.isBlocker());
+					testMapper.createTestWorkItem(existingTest, knownIssue);
+					if (existingTest.getWorkItems() == null) {
+						existingTest.setWorkItems(new ArrayList<WorkItem>());
+					}
+					existingTest.getWorkItems().add(knownIssue);
 				}
-				existingTest.getWorkItems().add(knownIssue);
 			}
 		}
 		testMapper.updateTest(existingTest);
@@ -193,7 +216,7 @@ public class TestService
 	{
 		return testMapper.getTestById(id);
 	}
-
+	
 	@Transactional(readOnly = true)
 	public Test getNotNullTestById(long id) throws ServiceException
 	{
@@ -209,6 +232,12 @@ public class TestService
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunId(testRunId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Test> getTestsByWorkItemId(long workItemId) throws ServiceException
+	{
+		return testMapper.getTestsByWorkItemId(workItemId);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
@@ -236,12 +265,6 @@ public class TestService
 		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(test.getTestRunId(), test.getTestCaseId(), test.getLogURL());
 	}
 	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestWorkItemByTestId(long testId) throws ServiceException
-	{
-		testMapper.deleteTestWorkItemByTestId(testId);
-	}
-	
 	@Transactional(readOnly = true)
 	public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException
 	{
@@ -258,8 +281,8 @@ public class TestService
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getNotNullTestById(testId);
-		WorkItem existingBug = test.getWorkItem(WorkItem.Type.BUG);
-
+		WorkItem existingBug = test.getWorkItem(Type.BUG);
+		
 		workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 		test.setKnownIssue(true);
 		test.setBlocker(workItem.isBlocker());
@@ -269,23 +292,23 @@ public class TestService
 		{
 			workItemService.updateWorkItem(workItem);
 			testMapper.createTestWorkItem(test, workItem);
-		}
+		} 
 		else if (workItem.getId() != null && existingBug != null)
 		{
 			existingBug.setHashCode(-1);
 			workItemService.updateWorkItem(existingBug);
 			workItemService.updateWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
 			testMapper.createTestWorkItem(test, workItem);
-		}
+		} 
 		else
 		{
 			workItemService.createWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, WorkItem.Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
 			testMapper.createTestWorkItem(test, workItem);
 		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-
+		
 		return workItem;
 	}
 

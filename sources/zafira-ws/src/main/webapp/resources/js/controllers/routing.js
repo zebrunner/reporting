@@ -60,6 +60,12 @@ ZafiraApp.constant('ROUTES', [
 	}
 },
 {
+	url : '/uainspections',
+	config : {
+		templateUrl : 'uainspections/index'
+	}
+},
+{
 	url : '/',
 	config : {
 		redirectTo: 'dashboards'

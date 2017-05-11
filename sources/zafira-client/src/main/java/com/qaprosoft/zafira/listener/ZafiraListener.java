@@ -5,8 +5,10 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -92,6 +94,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private TestSuiteType suite = null;
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
+	private Set<String> classesToRerun = new HashSet<>();
 	private final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
 	
 	private Marshaller marshaller;
@@ -148,6 +151,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 					for(TestType test : Arrays.asList(zc.getTestRunResults(run.getId()).getObject()))
 					{
 						registeredTests.put(test.getName(), test);
+						if(test.isNeedRerun())
+						{
+							classesToRerun.add(test.getTestClass());
+						}
 					}
 				} 
 				else 
@@ -185,6 +192,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				{
 					System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
 				}
+				
+				Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
 			}
 			catch (Exception e) 
 			{
@@ -439,7 +448,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	@Override
 	public void onStart(ITestContext context)
 	{
-		// Do nothing
+		if(ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES 
+				&& DriverMode.CLASS_MODE.equals(configurator.getDriverMode())
+				&& !classesToRerun.contains(context.getClass().getName()))
+		{
+			throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
+		}
 	}
 	
 	@Override
@@ -529,10 +543,17 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	 * @return XML representation of configuration bean
 	 * @throws JAXBException
 	 */
-	private String convertToXML(ConfigurationType config) throws JAXBException
+	private String convertToXML(ConfigurationType config)
 	{
 		final StringWriter w = new StringWriter();
-		marshaller.marshal(config, w);
+		try
+		{
+			marshaller.marshal(config != null ? config : new ConfigurationType(), w);
+		}
+		catch(Throwable thr)
+		{
+			LOGGER.error("Unable to convert config to XML!", thr);
+		}
 		return w.toString();
 	}
 	
@@ -604,5 +625,30 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		}
 		
 	    return !StringUtils.isEmpty(sb.toString()) ? sb.toString() : null;
+	}
+	
+	/**
+	 * TestRunShutdownHook - aborts test run when CI job is aborted.
+	 */
+	public static class TestRunShutdownHook extends Thread 
+	{
+		private ZafiraClient zc;
+		private TestRunType testRun;
+
+		public TestRunShutdownHook (ZafiraClient zc, TestRunType testRun)
+		{
+			this.zc = zc;
+			this.testRun = testRun;
+		}
+
+		@Override
+		public void run() 
+		{
+			if(testRun != null)
+			{
+				boolean aborted = zc.abortTestRun(testRun.getId());
+				LOGGER.info("TestRunShutdownHook was executed with result: " + aborted);
+			}
+		}
 	}
 }

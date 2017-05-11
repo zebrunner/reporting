@@ -19,6 +19,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private Long testCaseId;
     private String testGroup;
 	private String message;
+	private Integer messageHashCode;
 	private Date startTime;
 	private Date finishTime;
 	private String demoURL;
@@ -31,6 +32,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private boolean needRerun;
 	private String owner;
 	private String dependsOnMethods;
+	private String testClass;
 
 	public Test()
 	{
@@ -240,6 +242,26 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setDependsOnMethods(String dependsOnMethods)
 	{
 		this.dependsOnMethods = dependsOnMethods;
+	}
+	
+	public Integer getMessageHashCode()
+	{
+		return messageHashCode;
+	}
+
+	public void setMessageHashCode(Integer messageHashCode)
+	{
+		this.messageHashCode = messageHashCode;
+	}
+
+	public String getTestClass()
+	{
+		return testClass;
+	}
+
+	public void setTestClass(String testClass)
+	{
+		this.testClass = testClass;
 	}
 
 	@Override

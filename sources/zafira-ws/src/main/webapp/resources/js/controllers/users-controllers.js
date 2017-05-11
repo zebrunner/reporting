@@ -6,22 +6,22 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			'page' : 1,
 			'pageSize' : 20
 	};
-
+	
 	$scope.showReset = false;
 	$scope.usersSearchCriteria = angular.copy(DEFAULT_SC);
-
+	
 	$scope.totalResults = 0;
 	$scope.users = [];
 	$scope.pefrDashboardId = null;
-
+	
 	$scope.loadUsers = function(page, pageSize){
-
+		
 		$scope.usersSearchCriteria.page = page;
 		if(pageSize)
 		{
 			$scope.usersSearchCriteria.pageSize = pageSize;
 		}
-
+		
 		$http.post('users/search', $scope.usersSearchCriteria).then(function successCallback(data) {
 			var data = data.data;
 			$scope.usersSearchCriteria.page = data.page;
@@ -32,7 +32,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			console.error('Failed to search users');
 		});
 	};
-
+	
 	$scope.openUserDetailsModal = function(id){
 		if(id)
 		{
@@ -49,10 +49,10 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 						}
 					},
 					controller : function($scope, $modalInstance, id, user){
-
+						
 						$scope.id = id;
 						$scope.user = user;
-
+		
 						$scope.updateUser = function(user){
 							$http.put('users', user).then(function successCallback(data) {
 								$route.reload();
@@ -61,7 +61,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 							});
 							$modalInstance.close(0);
 						};
-
+						
 						$scope.deleteUser = function(user){
 							$http.delete('users/' + user.id).then(function successCallback(data) {
 								$route.reload();
@@ -70,7 +70,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 							});
 							$modalInstance.close(0);
 						};
-
+						
 						$scope.cancel = function(){
 							$modalInstance.close(0);
 						};
@@ -87,9 +87,9 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 			$modal.open({
 				templateUrl : 'resources/templates/user-details-modal.jsp',
 				controller : function($scope, $modalInstance){
-
+					
 					$scope.user = {};
-
+	
 					$scope.updateUser = function(user){
 						$http.put('users', user).then(function successCallback(data) {
 							$route.reload();
@@ -98,7 +98,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 						});
 						$modalInstance.close(0);
 					};
-
+					
 					$scope.cancel = function(){
 						$modalInstance.close(0);
 					};
@@ -185,7 +185,7 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
                 $scope.addUserToGroup = function(user, group){
                     $http.put('users/group/' + group.id, user).then(function successCallback(data) {
-                    	alertify.success("User " + user.username + " was added to group " + group.name);
+                    	alertify.success("User " + user.userName + " was added to group " + group.name);
                     }, function errorCallback(data) {
                         alertify.error('Failed to add user to group');
                     });
@@ -207,17 +207,27 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
 
                 $scope.querySearch = querySearch;
 
-                function querySearch (criteria) {
-                    $scope.usersSearchCriteria.username = criteria;
+                function querySearch (criteria, group) {
+                    $scope.usersSearchCriteria.userName = criteria;
                     return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
                         .then(function(response){
-                        	return response.data.results;
+                        	return response.data.results.filter(searchFilter(group));
                         });
+                }
+                function searchFilter(group) {
+                    return function filterFn(user) {
+                        var users = group.userList;
+                        for(var i = 0; i < users.length; i++) {
+                            if(users[i].id == user.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
                 }
 
 				$scope.cancel = function(){
 					$modalInstance.close(0);
-					$route.reload();
 				};
 			}
 		}).result.then(function(data) {
@@ -225,25 +235,25 @@ ZafiraApp.controller('UsersListCtrl', [ '$scope', '$rootScope', '$http' ,'$locat
         });
     };
 
-
+	
 	$scope.resetSearchCriteria = function(){
 		$scope.usersSearchCriteria = angular.copy(DEFAULT_SC);
 		$scope.showReset = false;
 	};
-
+	
 	(function init(){
 		$scope.loadUsers(1);
 		DashboardService.getUserPerformanceDashboardId().then(function(dashboardId) {
 			$scope.pefrDashboardId = dashboardId;
 		});
 	})();
-
+	
 }]);
 
 ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$location', '$modal', '$route', 'UserService', function($scope, $rootScope, $http, $location, $modal, $route, UserService) {
 
 	$scope.user = {};
-
+	
 	$scope.updateUser = function(user){
 		$http.put('users', user).then(function successCallback(data) {
 			$route.reload();
@@ -251,7 +261,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			alertify.error('Failed to update user');
 		});
 	};
-
+	
 	$scope.updatePassword = function(newPassword, confirmPassword){
 		if(newPassword == confirmPassword)
 		{
@@ -263,7 +273,7 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			alertify.error("Passwords does not match!");
 		}
 	};
-
+	
 	(function init(){
 		UserService.getCurrentUser().then(function(user) {
 			$http.get('users/' + user.id).then(function successCallback(data) {
@@ -274,5 +284,5 @@ ZafiraApp.controller('UsersProfileCtrl', [ '$scope', '$rootScope', '$http' ,'$lo
 			});
 		});
 	})();
-
+	
 }]);

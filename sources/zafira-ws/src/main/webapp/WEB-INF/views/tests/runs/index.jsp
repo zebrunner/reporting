@@ -48,6 +48,7 @@
 			            			<option value="firefox">firefox</option>
 			            			<option value="safari">safari</option>
 			            			<option value="ie">ie</option>
+			            			<option value="API">API</option>
 			            		</select>
 			            	</div>
 			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%" data-ng-change="showReset = true"></div>
@@ -146,8 +147,9 @@
                     				</div>
                     				<div class="col-sm-4">
 	                    				<a href="" class="float_right clearfix label-success-empty" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
-		                    			<span class="float_right" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" style="margin: 0 5px;">|</span>
-		                    			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="openKnownIssueModal(test)">Mark as known issue</a>
+		                    			<span class="float_right" data-ng-if="test.status == 'FAILED'" style="margin: 0 5px;">|</span>
+		                    			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="openKnownIssueModal(test, true)">Mark as known issue</a>
+		                    			<a href="" class="float_right clearfix label-warning-empty" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="openKnownIssueModal(test, false)">Edit known issue</a>
                     				</div>
                     			</div>
                     			<div class="row">
