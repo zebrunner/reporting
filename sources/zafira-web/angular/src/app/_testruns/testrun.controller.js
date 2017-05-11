@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -44,10 +44,10 @@
         };
 
         $scope.initWebsocket = function () {
-            var sockJS = new SockJS("http://localhost:3030/zafira-ws/zafira-websocket");
+             var sockJS = new SockJS(API_URL + "/websockets");
              $scope.stomp = Stomp.over(sockJS);
              //stomp.debug = null;
-             $scope.stomp.connect({}, function () {
+             $scope.stomp.connect({withCredentials: false}, function () {
                  $scope.stomp.subscribe("/topic/tests", function (data) {
                      $scope.getMessage(data.body);
                  });
