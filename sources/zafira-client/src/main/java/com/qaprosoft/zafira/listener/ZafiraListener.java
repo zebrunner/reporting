@@ -5,8 +5,10 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -92,6 +94,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private TestSuiteType suite = null;
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
+	private Set<String> classesToRerun = new HashSet<>();
 	private final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
 	
 	private Marshaller marshaller;
@@ -148,6 +151,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 					for(TestType test : Arrays.asList(zc.getTestRunResults(run.getId()).getObject()))
 					{
 						registeredTests.put(test.getName(), test);
+						if(test.isNeedRerun())
+						{
+							classesToRerun.add(test.getTestClass());
+						}
 					}
 				} 
 				else 
@@ -441,7 +448,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	@Override
 	public void onStart(ITestContext context)
 	{
-		// Do nothing
+		if(ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES 
+				&& DriverMode.CLASS_MODE.equals(configurator.getDriverMode())
+				&& !classesToRerun.contains(context.getClass().getName()))
+		{
+			throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
+		}
 	}
 	
 	@Override

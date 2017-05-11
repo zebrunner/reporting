@@ -90,6 +90,7 @@
 				T.NEED_RERUN AS TEST_NEED_RERUN,
 				T.DEPENDS_ON_METHODS AS TEST_DEPENDS_ON_METHODS,
 				TCU.USERNAME AS TEST_OWNER,
+				TC.TEST_CLASS AS TEST_TEST_CLASS,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 
@@ -347,6 +348,7 @@
 		<result column="TEST_NEED_RERUN" property="needRerun" />
 		<result column="TEST_DEPENDS_ON_METHODS" property="dependsOnMethods" />
 		<result column="TEST_OWNER" property="owner" />
+		<result column="TEST_TEST_CLASS" property="testClass" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 		
