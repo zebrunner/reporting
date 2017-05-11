@@ -106,6 +106,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		{
 			try
 			{
+				// TODO: investigate possibility to remove methods from suite
+				// context based on need rerun flag. And delete appropriate code
+				// from before method and before class
+				
 				marshaller = JAXBContext.newInstance(ConfigurationType.class).createMarshaller();
 				
 				configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
@@ -446,13 +450,14 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	}
 	
 	@Override
-	public void onStart(ITestContext context)
-	{
-		if(ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES 
-				&& DriverMode.CLASS_MODE.equals(configurator.getDriverMode())
-				&& !classesToRerun.contains(context.getClass().getName()))
-		{
-			throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
+	public void onStart(ITestContext context) {
+		//TODO: investigate possibility to remove methods from context based on need rerun flag
+		if (ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES && DriverMode.CLASS_MODE.equals(configurator.getDriverMode())) {
+			if (context.getCurrentXmlTest().getClasses().size() > 0) {
+				if (!classesToRerun.contains(context.getCurrentXmlTest().getClasses().get(0).getName())) {
+					throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
+				}
+			}
 		}
 	}
 	
