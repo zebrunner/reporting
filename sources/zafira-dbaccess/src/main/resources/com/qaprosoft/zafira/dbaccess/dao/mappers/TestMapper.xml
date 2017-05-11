@@ -59,27 +59,6 @@
 			(SELECT WI.ID FROM zafira.WORK_ITEMS WI INNER JOIN zafira.TEST_WORK_ITEMS TWI ON WI.ID = TWI.WORK_ITEM_ID WHERE WI.TYPE = #{type})
 		]]>
 	</delete>
-	
-	<delete id="deleteTestWorkItemByWorkItemIdAndTestId">
-		<![CDATA[
-			DELETE FROM zafira.TEST_WORK_ITEMS
-			WHERE
-			WORK_ITEM_ID = #{workItemId}
-			AND
-			TEST_ID = #{testId}
-		]]>
-	</delete>
-
-	<delete id="deleteTestWorkItemByTestIdAndWorkItemType">
-		<![CDATA[
-			DELETE FROM zafira.TEST_WORK_ITEMS
-			WHERE
-			TEST_ID = #{testId}
-			AND
-			WORK_ITEM_ID IN
-			(SELECT WI.ID FROM zafira.WORK_ITEMS WI INNER JOIN zafira.TEST_WORK_ITEMS TWI ON WI.ID = TWI.WORK_ITEM_ID WHERE WI.TYPE = #{type})
-		]]>
-	</delete>
 
 	<delete id="deleteTestWorkItemByTestId">
 		<![CDATA[
@@ -111,7 +90,7 @@
 				T.NEED_RERUN AS TEST_NEED_RERUN,
 				T.DEPENDS_ON_METHODS AS TEST_DEPENDS_ON_METHODS,
 				TCU.USERNAME AS TEST_OWNER,
-				TC.TEST_CLASS AS TEST_TEST_CLASS,
+				TCS.TEST_CLASS AS TEST_TEST_CLASS,
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 
