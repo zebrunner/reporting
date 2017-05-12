@@ -170,6 +170,7 @@
     "USERS": "Users",
     "TEST_CASES": "Test cases",
     "TEST_RUNS": "Test runs",
+    "SHOW_LATEST_RUNS": "Show latest runs",
 
     "VLD_REQUIRED": "Required",
     "VLD_PATTERN": "Invalid format",

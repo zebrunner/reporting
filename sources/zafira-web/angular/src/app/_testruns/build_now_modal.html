@@ -1,5 +1,5 @@
 <md-dialog flex="50" aria-label="User profile">
-    <form class="form-validation" name="build_now_form" ng-submit="createUser(); UtilService.untouchForm(build_now_form)" ng-cloak>
+    <form class="form-validation" name="build_now_form" ng-submit="buildNow(); UtilService.untouchForm(build_now_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Build now</h2>
@@ -32,7 +32,7 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="! noValidJob" class="btn btn-success" data-ng-click="buildNow()" data-ng-disabled="build_now_form.$invalid">
+            <md-button data-ng-if="! noValidJob" class="btn btn-success" data-ng-disabled="build_now_form.$invalid">
                 Build
             </md-button>
         </md-dialog-actions>

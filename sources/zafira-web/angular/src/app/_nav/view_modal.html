@@ -1,0 +1,46 @@
+<md-dialog flex="50" aria-label="View">
+    <form class="form-validation" name="view_form" ng-submit="UtilService.untouchForm(view_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>View</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column" layout-align="space-around">
+                    <md-input-container flex>
+                        <label>Name</label>
+                        <input type="text" data-ng-model="view.name" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column" layout-align="space-around">
+                    <md-input-container flex>
+                        <label>Project</label>
+                        <md-select id="projectId" name="projectId" data-ng-model="view.projectId" required>
+                            <md-option ng-repeat="project in projects" value="{{project.id}}">
+                                {{project.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="view.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteView(view)">
+                Delete
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" data-ng-click="createView(view)"  data-ng-disabled="view_form.$invalid" data-ng-if="view.id == null">>
+                Create
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" data-ng-click="updateView(view)"  data-ng-disabled="viewForm.$invalid" data-ng-if="view.id != null">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
