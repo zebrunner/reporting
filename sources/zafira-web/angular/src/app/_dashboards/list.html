@@ -1,0 +1,56 @@
+<div class="page page-dashboard" data-ng-controller="DashboardController">
+
+    <div>
+	    <div class="row">
+	         <div class="col-lg-12">
+	         	<ul class="nav nav-pills">
+					<md-button data-ng-class="{'md-raised md-primary': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'"
+							   data-ng-click="switchDashboard(dashboard.id)">
+						{{dashboard.title}}
+					</md-button>
+	         	</ul>
+	         </div>
+	    </div>
+	    <br/>
+		<div class="row" id="dashboard_content">
+			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
+	        <div class="col-lg-{{widget.size}}" data-ng-repeat="widget in dashboard.widgets | orderBy:'position'">
+	            <div class="panel panel-default">
+	                <div class="panel-heading">
+	                    {{widget.title}}
+	                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
+	                	</sec:authorize>
+	                </div>
+	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
+	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
+	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
+	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
+	                     </div>
+	                     <div data-ng-if="widget.type == 'table'" class="table-responsive">
+	                     	<table class="table table-striped table-bordered table-hover" style="width: 100%;">
+	                     		<thead>
+		                     		<tr>
+		                     			<th class="pointer" data-ng-repeat="column in widget.model.columns" data-ng-click="changeSorting(column)">
+		                     				{{column}}&nbsp;<i class="fa fa-sort"></i>
+		                     			</th>
+		                     		</tr>
+	                     		</thead>
+	                     		<tbody>
+		                     		<tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
+		                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
+		                     		</tr>
+		                     	</tbody>
+	                     	</table>
+	                     </div>
+					     <div class="table-responsive" data-ng-if="widget.type == 'sql'">
+							<button type="button" class="btn btn-primary" data-ng-click="loadWidget(dashboard.title, widget, dashboard.attributes)">Run SQL query</button>
+						</div>
+	                </div>
+	            </div>
+	        </div>
+		</div>
+	</div>
+
+</div>
+    

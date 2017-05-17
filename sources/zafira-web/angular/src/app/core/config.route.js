@@ -32,10 +32,14 @@
 
 
                 $stateProvider
-                    .state('dashboard', {
-                        url: '/dashboard',
-                        templateUrl: 'app/dashboard/dashboard.html'
-                    })
+	                .state('dashboard', {
+	                    url: '/dashboards/:id',
+	                    templateUrl: 'app/_dashboards/list.html'
+	                })
+	                .state('dashboards', {
+	                    url: '/dashboards',
+	                    templateUrl: 'app/_dashboards/list.html'
+	                })
                     .state('signin', {
                         url: '/signin',
                         templateUrl: 'app/_auth/signin.html'
@@ -91,8 +95,8 @@
                     });
 
                 $urlRouterProvider
-                    .when('/', '/dashboard')
-                    .otherwise('/dashboard');
+                    .when('/', '/dashboards')
+                    .otherwise('/dashboards');
             }
         ]);
 })();

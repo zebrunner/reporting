@@ -5,7 +5,6 @@
         // Core modules
          'app.core'
         // Custom Feature modules
-        ,'app.chart'
         ,'app.ui'
         ,'app.ui.form'
         ,'app.ui.form.validation'
@@ -13,12 +12,17 @@
         ,'app.table'
         ,'app.services'
         ,'app.auth'
+        ,'app.dashboard'
         ,'app.user'
         ,'app.testcase'
         ,'app.testrun'
         ,'app.sidebar'
         // 3rd party feature modules
         ,'md.data.table'
+        ,'timer'
+        ,'n3-line-chart'
+        ,'n3-pie-chart'
+        ,'ngSanitize'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;

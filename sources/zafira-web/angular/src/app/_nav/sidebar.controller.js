@@ -3,14 +3,15 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$mdDialog', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', SidebarController])
+        .controller('SidebarController', ['$scope', '$mdDialog', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'DashboardService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $mdDialog, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService) {
+    function SidebarController($scope, $mdDialog, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, DashboardService) {
 
         $scope.project = null;
         $scope.version = null;
         $scope.projects = [];
+        $scope.dashboards = [];
         $scope.views = [];
 
         $scope.currentUser = null;
@@ -34,6 +35,18 @@
                 if(rs.success)
                 {
                     $scope.views = rs.data;
+                }
+                else
+                {
+                }
+            });
+        };
+        
+        $scope.loadDashboards = function(){
+            DashboardService.GetDashboards().then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.dashboards = rs.data;
                 }
                 else
                 {

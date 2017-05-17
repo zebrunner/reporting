@@ -7,12 +7,19 @@
         data-highlight-active
         data-ng-controller="SidebarController">
         <li class="nav-title"> <span data-translate="NAVIGATION"></span> </li>
-        <li><a md-button aria-label="menu" href="#!/dashboard"><i class="material-icons">home</i><span data-translate="DASHBOARD"></span></a></li>
-        <li>
-            <a md-button aria-label="menu" href="#" data-ng-mouseover="loadViews()"><i class="material-icons">playlist_add_check</i><span data-translate="TEST_RUNS"></span></a>
+		<li>
+            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseover="loadDashboards()"><i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span></a>
+            <ul>
+                <li data-ng-repeat="dashboard in dashboards | orderBy:'position'">
+                    <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">{{dashboard.title}}</a>
+                </li>
+            </ul>
+        </li>
+		<li>
+            <a md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseover="loadViews()"><i class="material-icons">playlist_add_check</i><span data-translate="TEST_RUNS"></span></a>
             <ul>
                 <li>
-                    <a md-button aria-label="menu" href="#!/tests/runs"><i class="fa fa-circle"></i><span data-translate="SHOW_LATEST_RUNS"></span></a>
+                    <a md-button aria-label="menu" href="#!/tests/runs"><span data-translate="SHOW_LATEST_RUNS"></span></a>
                 </li>
                 <md-divider  data-ng-if="views.length > 0"></md-divider>
                 <li data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
@@ -21,7 +28,7 @@
                 </li>
                 <md-divider></md-divider>
                 <li>
-                    <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)"  style="color: green;"><i class="fa fa-circle"></i><span>New +</span></a>
+                    <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)">Create view +</a>
                 </li>
             </ul>
         </li>
