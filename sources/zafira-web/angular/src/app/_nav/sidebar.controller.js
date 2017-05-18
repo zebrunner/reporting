@@ -41,7 +41,7 @@
                 }
             });
         };
-        
+
         $scope.loadDashboards = function(){
             DashboardService.GetDashboards().then(function(rs) {
                 if(rs.success)

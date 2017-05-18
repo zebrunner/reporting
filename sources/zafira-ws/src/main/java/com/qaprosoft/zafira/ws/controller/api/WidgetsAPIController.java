@@ -43,7 +43,6 @@ public class WidgetsAPIController extends AbstractController
     @ApiOperation(value = "Create widget", nickname = "createWidget", code = 200, httpMethod = "POST", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget, @RequestHeader(value="Project", required=false) String project) throws ServiceException
 	{
 		return widgetService.createWidget(widget);
@@ -62,7 +61,6 @@ public class WidgetsAPIController extends AbstractController
     @ApiOperation(value = "Delete widget", nickname = "deleteWidget", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
-	@Secured({"ROLE_ADMIN"})
 	public void deleteWidget(@PathVariable(value="id") long id) throws ServiceException
 	{
 		widgetService.deleteWidgetById(id);
@@ -72,7 +70,6 @@ public class WidgetsAPIController extends AbstractController
     @ApiOperation(value = "Update widget", nickname = "updateWidget", code = 200, httpMethod = "PUT", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
 	{
 		return widgetService.updateWidget(widget);

@@ -1,0 +1,93 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="dashboard_form" ng-submit="UtilService.untouchForm(dashboard_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Dashboard settings</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Title</label>
+                        <input type="text" ng-model="dashboard.title" name="title" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <md-select ng-model="dashboard.type" name="type" placeholder="Type" data-ng-if="isNew" ng-required>
+                            <md-option value="" disabled>Type</md-option>
+                            <md-option value="GENERAL">General</md-option>
+                            <md-option value="USER_PERFORMANCE">User performance</md-option>
+                        </md-select>
+                        <md-select ng-model="dashboard.type" name="type" placeholder="Type" data-ng-if="! isNew" disabled ng-required>
+                            <md-option value="" disabled>Type</md-option>
+                            <md-option value="GENERAL">General</md-option>
+                            <md-option value="USER_PERFORMANCE">User performance</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Position</label>
+                        <input type="text" ng-model="dashboard.position" name="position" required/>
+                    </md-input-container>
+                </div>
+                <div data-ng-if="!isNew">
+                    <label>Attributes</label>
+                    <div class="row attribute" data-ng-repeat="attribute in dashboard.attributes">
+                        <div class="col-lg-5">
+                            <md-input-container flex>
+                                <label>Key</label>
+                                <input placeholder="key" type="text" data-ng-model="attribute.key"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col-lg-5">
+                            <md-input-container flex>
+                                <label>Value</label>
+                                <input placeholder="value" type="text" data-ng-model="attribute.value"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col-lg-2" align="right">
+                            <button type="button" class="btn btn-default btn-circle green" data-ng-click="updateAttribute(attribute)">
+                                <i class="fa fa-floppy-o"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-circle red" data-ng-click="deleteAttribute(attribute)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5"><input placeholder="key" type="text" class="form-control" data-ng-model="newAttribute.key"></input></div>
+                        <div class="col-lg-5"><input placeholder="value" type="text" class="form-control" data-ng-model="newAttribute.value"></input></div>
+                        <div class="col-lg-2" align="right">
+                            <button type="button" class="btn btn-outline btn-success " data-ng-click="createAttribute(newAttribute)" data-ng-disabled="!newAttribute.key">New +</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="dashboard.id" type="submit"
+                       class="md-raised btn-w-md md-warn" data-ng-click="deleteDashboard(dashboard)">
+                Delete
+            </md-button>
+            <md-button data-ng-if="isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="dashboard_form.$invalid" data-ng-click="createDashboard(dashboard)">
+                Create
+            </md-button>
+            <md-button data-ng-if="!isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="dashboard_form.$invalid" data-ng-click="updateDashboard(dashboard)">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

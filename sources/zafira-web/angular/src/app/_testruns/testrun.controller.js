@@ -598,8 +598,8 @@
         $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 
         $scope.sendEmail = function (id) {
-            if($scope.users.length == 0) {
-                if(currentText != null && currentText.length != 0) {
+            if(! $scope.users.length) {
+                if(currentTextl && currentText.length) {
                     $scope.email.recipients.push(currentText);
                 } else {
                     alertify.error('Add a recipient!')
@@ -628,7 +628,7 @@
 
         $scope.querySearch = querySearch;
         var stopCriteria = '########';
-        function querySearch (criteria) {
+        function querySearch (criteria, user) {
             $scope.usersSearchCriteria.email = criteria;
             currentText = criteria;
             if(!criteria.includes(stopCriteria)) {
@@ -636,10 +636,10 @@
                 return UserService.searchUsersWithQuery($scope.usersSearchCriteria, criteria).then(function(rs) {
                     if(rs.success)
                     {
-                        if (rs.data.results.length == 0) {
+                        if (! rs.data.results.length) {
                             stopCriteria = criteria;
                         }
-                        return rs.data.results;
+                        return rs.data.results.filter(searchFilter(user));
                     }
                     else
                     {
@@ -650,15 +650,26 @@
             return "";
         }
 
+        function searchFilter(u) {
+            return function filterFn(user) {
+                var users = u;
+                for(var i = 0; i < users.length; i++) {
+                    if(users[i].id == user.id) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        }
+
         $scope.checkAndTransformRecipient = function (currentUser) {
             var user = {};
-            if (currentUser.username == null) {
-                //user.userName = currentUser;
-                user.email = currentUser;
+            if (currentUser.username) {
+                user = currentUser;
                 $scope.email.recipients.push(currentUser);
                 $scope.users.push(user);
             } else {
-                user = currentUser;
+                user.email = currentUser;
                 $scope.email.recipients.push(user.email);
                 $scope.users.push(user);
             }

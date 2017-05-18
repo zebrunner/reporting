@@ -1,0 +1,57 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="dashboard_widget_form" ng-submit="UtilService.untouchForm(dashboard_widget_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Widget settings</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Widget</label>
+                        <input type="text" ng-model="widget.title" name="title" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <md-select ng-model="widget.size" name="size" placeholder="Size" ng-required>
+                            <md-option value="" disabled>Size</md-option>
+                            <md-option value="4">1/3 screen</md-option>
+                            <md-option value="8">1/3 screen</md-option>
+                            <md-option value="12">Full-screen</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Position</label>
+                        <input type="text" ng-model="widget.position" name="position" required/>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="!isNew" type="submit"
+                       class="md-raised btn-w-md md-warn" data-ng-click="deleteDashboardWidget(widget)">
+                Delete
+            </md-button>
+            <md-button data-ng-if="isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="dashboard_widget_form.$invalid" data-ng-click="addDashboardWidget(widget)">
+                Add
+            </md-button>
+            <md-button data-ng-if="!isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="dashboard_widget_form.$invalid" data-ng-click="updateDashboardWidget(widget)">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -1,0 +1,64 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="widget_form" ng-submit="UtilService.untouchForm(widget_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Widget settings</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Title</label>
+                        <input type="text" ng-model="widget.title" name="title" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <md-select ng-model="widget.type" name="type" placeholder="Type" ng-required>
+                            <md-option value="" disabled>Type</md-option>
+                            <md-option value="linechart">Line chart</md-option>
+                            <md-option value="piechart">Pie chart</md-option>
+                            <md-option value="table">Table</md-option>
+                            <md-option value="sql">SQL</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>SQL</label>
+                        <textarea data-ng-model="widget.sql" rows="15" required></textarea>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column" data-ng-if="'sql' != widget.type">
+                    <md-input-container flex>
+                        <label>Model</label>
+                        <textarea data-ng-model="widget.model" rows="15"></textarea>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="widget.id" type="submit"
+                       class="md-raised btn-w-md md-warn" data-ng-click="deleteWidget(widget)">
+                Delete
+            </md-button>
+            <md-button data-ng-if="isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="widget_form.$invalid" data-ng-click="createWidget(widget)">
+                Create
+            </md-button>
+            <md-button data-ng-if="!isNew" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="widget_form.$invalid" data-ng-click="updateWidget(widget)">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

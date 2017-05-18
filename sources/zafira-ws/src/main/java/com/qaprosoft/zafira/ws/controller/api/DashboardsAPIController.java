@@ -63,7 +63,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", code = 200, httpMethod = "POST", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard) throws ServiceException, IOException, InterruptedException
 	{
 		return dashboardService.createDashboard(dashboard);
@@ -106,7 +105,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Delete dashboard", nickname = "deleteDashboard", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
-	@Secured({"ROLE_ADMIN"})
 	public void deleteDashboard(@PathVariable(value="id") long id) throws ServiceException
 	{
 		dashboardService.deleteDashboardById(id);
@@ -116,7 +114,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Update dashboard", nickname = "updateDashboard", code = 200, httpMethod = "PUT", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Dashboard updateDashboard(@RequestBody Dashboard dashboard) throws ServiceException
 	{
 		return dashboardService.updateDashboard(dashboard);
@@ -135,7 +132,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Delete dashboard widget", nickname = "deleteDashboardWidget", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{dashboardId}/widgets/{widgetId}", method = RequestMethod.DELETE)
-	@Secured({"ROLE_ADMIN"})
 	public void deleteDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="widgetId") long widgetId) throws ServiceException
 	{
 		dashboardService.deleteDashboardWidget(dashboardId, widgetId);
@@ -145,7 +141,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", code = 200, httpMethod = "PUT", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{dashboardId}/widgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody Widget updateDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
 	{
 		return dashboardService.updateDashboardWidget(dashboardId, widget);
@@ -179,7 +174,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<Attribute> createDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
 		dashboardService.createDashboardAttribute(dashboardId, attribute);
@@ -190,7 +184,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Update dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<Attribute> updateDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
 		dashboardService.updateAttribute(attribute);
@@ -201,7 +194,6 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Delete dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="{dashboardId}/attributes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<Attribute> deleteDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="id") long id)
 	{
 		dashboardService.deleteDashboardAttributeById(id);

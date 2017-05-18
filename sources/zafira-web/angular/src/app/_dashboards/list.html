@@ -1,6 +1,29 @@
 <div class="page page-dashboard" data-ng-controller="DashboardController">
 
     <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-header">{{dashboard.title}}</h2>
+            </div>
+        </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
+                    <span class="fa fa-envelope-o"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, dashboard, false)">
+                    <span class="fa fa-cog"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, {}, true)">
+                    <span class="fa fa-plus"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
@@ -18,13 +41,11 @@
 	            <div class="panel panel-default">
 	                <div class="panel-heading">
 	                    {{widget.title}}
-	                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="openDashboardWidgetModal(widget, false)"></i>
-	                	</sec:authorize>
+	                    <i class="float_right fa fa-lg fa-arrows pointer" style="line-height: 20px;" data-ng-click="showDashboardWidgetDialog($event, widget, false)"></i>
 	                </div>
 	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
 	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
-	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
+	                     <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
 	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
 	                     </div>
 	                     <div data-ng-if="widget.type == 'table'" class="table-responsive">
@@ -53,4 +74,3 @@
 	</div>
 
 </div>
-    
