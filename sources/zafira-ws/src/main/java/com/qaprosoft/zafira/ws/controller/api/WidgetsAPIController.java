@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -101,7 +100,7 @@ public class WidgetsAPIController extends AbstractController
 	@ResponseStatusDetails
     @ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Widget> getAllWidgets() throws ServiceException
 	{
 		return widgetService.getAllWidgets();

@@ -66,7 +66,7 @@
         }
 
         function UpdateDashboardWidget(dashboardId, widget) {
-            return $http.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget to dashboard'));
+            return $http.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget on dashboard'));
         }
 
         function DeleteDashboardWidget(dashboardId, widgetId) {

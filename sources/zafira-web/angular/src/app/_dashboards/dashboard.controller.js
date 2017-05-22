@@ -151,6 +151,13 @@
                     });
                 }
             });
+            DashboardService.GetWidgets().then(function (rs) {
+                if (rs.success) {
+                    $scope.widgets = rs.data;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
         })();
     }
 

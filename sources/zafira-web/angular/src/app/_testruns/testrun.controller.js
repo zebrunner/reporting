@@ -25,7 +25,7 @@
         $scope.testRuns = {};
         $scope.totalResults = 0;
 
-        $scope.showRealTimeEvents = false;
+        $scope.showRealTimeEvents = true;
 
         $scope.project = ProjectProvider.getProject();
 
@@ -502,9 +502,9 @@
                 });
         };
 
-        $scope.$watch('showRealTimeEvents', function () {
-            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
-        });
+//        $scope.$watch('showRealTimeEvents', function () {
+//            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
+//        });
 
         $scope.switchTestRunExpand = function (testRun) {
             if(testRun.expand == null) {
@@ -520,9 +520,9 @@
 
         (function init() {
 
-            if ($cookieStore.get("showRealTimeEvents") != null) {
-                $scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
-            }
+//            if ($cookieStore.get("showRealTimeEvents") != null) {
+//                $scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
+//            }
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
