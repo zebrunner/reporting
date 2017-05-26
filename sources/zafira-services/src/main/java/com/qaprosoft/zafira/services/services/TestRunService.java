@@ -177,7 +177,11 @@ public class TestRunService
 					{
 						testRun.setEnv(arg.getValue());
 					}
-					else if("browser".equals(arg.getKey()))
+					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
 					{
 						testRun.setPlatform(arg.getValue());
 					}
