@@ -229,6 +229,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             $scope.testSearchCriteria.page = data.page;
             $scope.testSearchCriteria.pageSize = data.pageSize;
 
+
             for (var i = 0; i < data.results.length; i++) {
                 $scope.addTest(data.results[i], false);
             }

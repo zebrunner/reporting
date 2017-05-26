@@ -67,7 +67,6 @@ public class TestRunService
 	
 	@Autowired
 	private SettingsService settingsService;
-	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
 	{
