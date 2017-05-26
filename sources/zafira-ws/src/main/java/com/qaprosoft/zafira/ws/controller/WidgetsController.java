@@ -13,7 +13,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +38,7 @@ public class WidgetsController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({"ROLE_ADMIN"})
-	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget) throws ServiceException
 	{
 		return widgetService.createWidget(widget);
 	}

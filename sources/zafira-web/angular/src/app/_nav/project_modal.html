@@ -1,5 +1,5 @@
 <md-dialog flex="50" aria-label="Project">
-    <form class="form-validation" name="project_form" ng-submit="createProject(project); UtilService.untouchForm(project_form)" ng-cloak>
+    <form class="form-validation" name="project_form" ng-submit="UtilService.untouchForm(project_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Project settings</h2>
@@ -31,7 +31,7 @@
             <md-button data-ng-if="project.id" class="btn btn-danger" data-ng-click="deleteProject(project)">
                 Delete
             </md-button>
-            <md-button class="btn btn-success" data-ng-disabled="project_form.$invalid">
+            <md-button class="btn btn-success" data-ng-disabled="project_form.$invalid" data-ng-click="createProject(project)">
                 Create
             </md-button>
         </md-dialog-actions>

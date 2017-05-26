@@ -61,7 +61,7 @@
 		                     		<tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
 		                     			<td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])"></td>
 		                     		</tr>
-		                     		<tr class="text-center">
+		                     		<tr class="text-center" data-ng-if="widget.data.dataset == 0">
 		                     			<td colspan="{{widget.model.columns.length}}">No data</td>
 		                     		</tr>
 		                     	</tbody>
@@ -76,7 +76,7 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-12">
-				<button type="button" class="btn btn-primary btn-outline btn-lg btn-block" data-ng-click="openWidgetDetailsModal({model : '{}'}, true)">Create new widget</button>
+				<button type="button" class="btn btn-primary btn-outline btn-lg btn-block" data-ng-click="showWidgetDialog($event, {model : '{}'}, true)">Create new widget</button>
 			</div>
 		</div>
 		<div class="row">
@@ -90,7 +90,7 @@
 	                                    <td md-cell>{{widget.title}}</td>
 	                                    <td md-cell>{{widget.type}}</td>
 	                                    <td md-cell class="text-center">
-	                                    	<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="openDashboardWidgetModal(widget, true)">Add widget to dashboard</button>
+	                                    	<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="showDashboardWidgetDialog($event, widget, true)">Add widget to dashboard</button>
 	                                    </td>
                                     	<td md-cell>
 	                                        <md-menu class="pull-right">
@@ -99,13 +99,13 @@
 	                                            </md-button>
 	                                            <md-menu-content width="2">
 	                                                <md-menu-item>
-	                                                    <md-button data-ng-click="openWidgetDetailsModal(widget, false)">
+	                                                    <md-button data-ng-click="showWidgetDialog($event, widget, false)">
 	                                                        <md-icon class="material-icons">settings</md-icon>
 	                                                        Edit widget
 	                                                    </md-button>
 	                                                </md-menu-item>
 	                                                <md-menu-item>
-	                                                    <md-button data-ng-click="openWidgetDetailsModal(widget, true)">
+	                                                    <md-button data-ng-click="showWidgetDialog($event, widget, true)">
 	                                                        <md-icon class="material-icons">content_copy</md-icon>
 	                                                        Copy widget
 	                                                    </md-button>

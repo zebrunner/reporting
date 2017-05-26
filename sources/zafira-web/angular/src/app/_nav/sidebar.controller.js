@@ -3,12 +3,12 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$mdDialog', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'DashboardService', SidebarController])
+        .controller('SidebarController', ['$scope', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'DashboardService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $mdDialog, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, DashboardService) {
+    function SidebarController($scope, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, DashboardService) {
 
-        $scope.project = null;
+        $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
@@ -22,10 +22,11 @@
             ConfigService.getConfig("projects").then(function(rs) {
                 if(rs.success)
                 {
-                    $scope.projects = rs;
+                    $scope.projects = rs.data;
                 }
                 else
                 {
+                	alertify.error("Unable to laod projects");
                 }
             });
         };
@@ -56,7 +57,8 @@
 
         $scope.setProject = function(project){
             ProjectProvider.setProject(project);
-            $window.location.reload();
+            $scope.project = project;
+            $state.reload();
         };
 
         $scope.showProjectDialog = function(event) {

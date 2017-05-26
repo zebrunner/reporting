@@ -23,41 +23,11 @@
         <span class="icon-bar"></span>
     </div>
 
-    <div class="top-nav">
+    <div class="top-nav" ng-controller="SidebarController">
         <ul class="nav-left list-unstyled">
             <!--li><md-button class="header-btn toggle-min" data-toggle-nav-collapsed-min aria-label="toggle-nav-collapsed-min"><i class="material-icons">menu</i></md-button></li-->
             <li>
-                <md-menu md-position-mode="left bottom">
-                    <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
-                        <i class="material-icons">email</i>
-                        <span class="badge">3</span>
-                    </md-button>
-                    <md-menu-content class="top-header-dropdown" width="4">
-                        <md-list class="md-dense">
-                            <md-list-item class="md-2-line" ng-click="null">
-                                <md-icon class="material-icons">mail_outline</md-icon>
-                                <div class="md-list-item-text">
-                                    <h3>New mail from David</h3>
-                                    <p>5 minutes ago</p>
-                                </div>
-                            </md-list-item>
-                            <md-list-item class="md-2-line" ng-click="null">
-                                <md-icon class="material-icons">chat_bubble_outline</md-icon>
-                                <div class="md-list-item-text">
-                                    <h3>Message from Jane</h3>
-                                    <p>15 minutes ago</p>
-                                </div>
-                            </md-list-item>
-                            <md-list-item class="md-2-line" ng-click="null">
-                                <md-icon class="material-icons">person_outline</md-icon>
-                                <div class="md-list-item-text">
-                                    <h3>New member John joined</h3>
-                                    <p>1 hour ago</p>
-                                </div>
-                            </md-list-item>
-                        </md-list>
-                    </md-menu-content>
-                </md-menu>
+                
             </li>
             <!--  li class="search-box visible-md visible-lg">
                 <div class="input-group">
@@ -70,7 +40,38 @@
 
         <ul class="nav-right pull-right list-unstyled">
             <li>
-                <md-menu md-position-mode="target-right target">
+            	<md-menu md-position-mode="left bottom">
+                    <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event); loadProjects();">
+                        <i class="material-icons">keyboard_arrow_down</i>
+                        <small data-ng-if="project">{{project.name}}</small>
+                        <small data-ng-if="!project">Project</small>
+                    </md-button>
+                    <md-menu-content class="top-header-dropdown" width="3">
+                        <md-list class="md-dense" >
+                        	<md-list-item class="md-2-line" ng-click="setProject(null)">
+                                <md-icon class="material-icons highlight_red">close</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3 class="highlight_red">Clear</h3>
+                                </div>
+                            </md-list-item>
+                            <md-list-item class="md-2-line" ng-click="showProjectDialog()">
+                                <md-icon class="material-icons highlight_green">add</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3 class="highlight_green">Create</h3>
+                                </div>
+                            </md-list-item>
+                            <md-list-item class="md-2-line" ng-click="setProject(project)" data-ng-repeat="project in projects | orderBy:'name'">
+                                <md-icon class="material-icons">chevron_right</md-icon>
+                                <div class="md-list-item-text">
+                                    <h3>{{project.name}}</h3>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </md-menu-content>
+                </md-menu>
+            </li>
+            <li>
+                <md-menu md-position-mode="left bottom">
                     <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
                         <i class="material-icons" style="font-size: 24px;">account_circle</i>
                     </md-button>

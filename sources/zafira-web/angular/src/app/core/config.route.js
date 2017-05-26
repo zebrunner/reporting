@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .config(['$stateProvider', '$urlRouterProvider', '$ocLazyLoadProvider',
-                function($stateProvider, $urlRouterProvider, $ocLazyLoadProvider) {
+        .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$ocLazyLoadProvider',
+                function($stateProvider, $urlRouterProvider, $httpProvider, $ocLazyLoadProvider) {
                 var routes, setRoutes;
 
                 routes = [
@@ -97,6 +97,7 @@
                 $urlRouterProvider
                     .when('/', '/dashboards')
                     .otherwise('/dashboards');
+                
             }
         ]);
 })();

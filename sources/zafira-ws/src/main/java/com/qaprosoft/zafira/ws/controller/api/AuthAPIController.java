@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -75,7 +76,7 @@ public class AuthAPIController extends AbstractController
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken) throws BadCredentialsException
+	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken) throws BadCredentialsException, ForbiddenOperationException
 	{
 		AuthTokenType authToken = null;
 		try
@@ -94,7 +95,7 @@ public class AuthAPIController extends AbstractController
 		}
 		catch(Exception e)
 		{
-			throw new BadCredentialsException(e.getMessage());
+			throw new ForbiddenOperationException(e);
 		}	
 		
 		return authToken;

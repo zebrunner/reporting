@@ -28,6 +28,7 @@
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
 		<security:csrf disabled="true"/>
 		<security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
 	</security:http>

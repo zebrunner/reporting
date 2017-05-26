@@ -81,8 +81,8 @@
         	return $http.get(API_URL + '/api/widgets').then(UtilService.handleSuccess, UtilService.handleError('Unable to load widgets'));
         }
 
-        function CreateWidget(widget, project) {
-            return $http.post(API_URL + '/api/widgets', {headers:{'Project': project}}, widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to create widget'));
+        function CreateWidget(widget) {
+            return $http.post(API_URL + '/api/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to create widget'));
         }
 
         function UpdateWidget(widget) {

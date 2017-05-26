@@ -3,10 +3,10 @@
 
     angular
         .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$location', 'TestService', 'TestCaseService', 'UtilService', TestCaseListController])
+        .controller('TestCaseListController', ['$scope', '$location', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
 
        // **************************************************************************
-    function TestCaseListController($scope, $location, TestService, TestCaseService, UtilService) {
+    function TestCaseListController($scope, $location, TestService, TestCaseService, UtilService, ProjectProvider) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -20,7 +20,7 @@
     		{
     			$scope.sc.page = page;
     		}
-    		TestCaseService.searchTestCases($scope.sc).then(function(rs) {
+    		TestCaseService.searchTestCases(ProjectProvider.initProject($scope.sc)).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;

@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$location', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', DashboardController])
+        .controller('DashboardController', ['$scope', '$location', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $location, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService) {
+    function DashboardController($scope, $location, $state, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, ProjectProvider) {
 
         $scope.dashboardId = $location.search().id;
         $scope.currentUserId = $location.search().userId;
@@ -20,8 +20,8 @@
 
         $scope.loadWidget = function (dashboardName, widget, attributes) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-//			var params = ProjectProvider.getProjectQueryParam();
-            var params = "?dashboardName=" + dashboardName;
+            var params = ProjectProvider.getProjectQueryParam();
+    		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
             if ($scope.currentUserId) {
                 params = params + "&currentUserId=" + $scope.currentUserId;
             }
@@ -78,10 +78,12 @@
                 fullscreen: true,
                 locals: {
                     widget: widget,
-                    isNew: isNew
+                    isNew: isNew,
+                    dashboardId: $scope.dashboardId
                 }
             })
                 .then(function (answer) {
+                	if(answer == true) $state.reload();
                 }, function () {
                 });
         };
@@ -100,6 +102,7 @@
                 }
             })
                 .then(function (answer) {
+                	if(answer == true) $state.reload();
                 }, function () {
                 });
         };
@@ -118,6 +121,7 @@
                 }
             })
                 .then(function (answer) {
+                	if(answer == true) $state.reload();
                 }, function () {
                 });
         };
@@ -162,7 +166,7 @@
     }
 
     // **************************************************************************
-    function DashboardWidgetController($scope, $mdDialog, DashboardService, widget, isNew) {
+    function DashboardWidgetController($scope, $mdDialog, DashboardService, widget, dashboardId, isNew) {
 
         $scope.isNew = isNew;
         $scope.widget = widget;
@@ -173,47 +177,47 @@
         }
 
         $scope.addDashboardWidget = function (widget) {
-            DashboardService.AddDashboardWidget($scope.dashboardId, widget).then(function (rs) {
+            DashboardService.AddDashboardWidget(dashboardId, widget).then(function (rs) {
                 if (rs.success) {
-                    //$route.reload();
+                	alertify.success("Widget added");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
         $scope.deleteDashboardWidget = function (widget) {
-            DashboardService.DeleteDashboardWidget($scope.dashboardId, widget.id).then(function (rs) {
+            DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
                 if (rs.success) {
-                    //$route.reload();
+                	alertify.success("Widget deleted");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
         $scope.updateDashboardWidget = function (widget) {
-            DashboardService.UpdateDashboardWidget($scope.dashboardId, {
+            DashboardService.UpdateDashboardWidget(dashboardId, {
                 "id": widget.id,
                 "size": widget.size,
                 "position": widget.position
             }).then(function (rs) {
                 if (rs.success) {
-                    //$route.reload();
+                	alertify.success("Widget updated");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
-        $scope.hide = function () {
-            $mdDialog.hide();
+        $scope.hide = function (result) {
+            $mdDialog.hide(result);
         };
         $scope.cancel = function () {
             $mdDialog.cancel();
@@ -236,29 +240,33 @@
         $scope.createDashboard = function(dashboard){
             DashboardService.CreateDashboard(dashboard).then(function (rs) {
                 if (rs.success) {
+                	alertify.success("Dashboard created");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
         $scope.updateDashboard = function(dashboard){
             dashboard.widgets = null;
             DashboardService.UpdateDashboard(dashboard).then(function (rs) {
                 if (rs.success) {
+                	alertify.success("Dashboard updated");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
         $scope.deleteDashboard = function(dashboard){
             DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
-                if (rs.success) {
+                if (rs.success) 
+                {
+                	alertify.success("Dashboard deleted");
                     var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
                     window.open(mainDashboard, '_self');
                 }
@@ -296,7 +304,7 @@
         };
 
         $scope.deleteAttribute = function(attribute){
-            DashboardService.DeleteDashboardAttribute(dashboard.id, attribute).then(function (rs) {
+            DashboardService.DeleteDashboardAttribute(dashboard.id, attribute.id).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard.attributes = rs.data;
                     alertify.success('Dashboard attribute removed');
@@ -307,8 +315,8 @@
             });
         };
 
-        $scope.hide = function () {
-            $mdDialog.hide();
+        $scope.hide = function (result) {
+            $mdDialog.hide(result);
         };
         $scope.cancel = function () {
             $mdDialog.cancel();
@@ -329,38 +337,42 @@
         $scope.createWidget = function(widget){
             DashboardService.CreateWidget(widget).then(function (rs) {
                 if (rs.success) {
+                	alertify.success("Widget created");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
         $scope.updateWidget = function(widget){
             DashboardService.UpdateWidget(widget).then(function (rs) {
                 if (rs.success) {
+                	alertify.success("Widget updated");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
+            $scope.hide(success);
         };
 
         $scope.deleteWidget = function(widget){
             DashboardService.DeleteWidget(widget.id).then(function (rs) {
                 if (rs.success) {
+                	alertify.success("Widget deleted");
+                	$scope.hide(true);
                 }
                 else {
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide();
         };
 
-        $scope.hide = function () {
-            $mdDialog.hide();
+        $scope.hide = function (result) {
+            $mdDialog.hide(result);
         };
         $scope.cancel = function () {
             $mdDialog.cancel();
