@@ -12,6 +12,7 @@
         service.truncate = truncate;
         service.handleSuccess = handleSuccess;
         service.handleError = handleError;
+        service.isEmpty = isEmpty;
  
         return service;
  
@@ -41,5 +42,9 @@
                 return { success: false, message: error };
             };
         }
+        
+        function isEmpty(obj) {
+        	return jQuery.isEmptyObject(obj);
+        };
     }
 })();

@@ -27,15 +27,15 @@
         }
 
         function getLatestJobTestRuns(id, job, env){
-            return $http.post(API_URL + '/api/jobs/views/' + id + '/tests/runs', {params:{'env': env}}, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to get latest job test runs'));
+            return $http.post(API_URL + '/api/jobs/views/' + id + '/tests/runs?env=' + env, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to get latest job test runs'));
         }
 
         function createJobView(jobViews){
-            return $http.post(API_URL + '/api/jobs/views').then(UtilService.handleSuccess, UtilService.handleError('Failed to create job views'));
+            return $http.post(API_URL + '/api/jobs/views', jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to create job views'));
         }
 
         function updateJobViews(id, jobViews, env){
-            return $http.put(API_URL + '/api/jobs/views/' + id, {params:{'env': env}}, jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to update job views'));
+            return $http.put(API_URL + '/api/jobs/views/' + id + '?env=' + env, jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to update job views'));
         }
 
         function getJobViews(id){

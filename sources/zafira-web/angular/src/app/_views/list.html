@@ -2,7 +2,7 @@
 
     <div class="row ui-section">
         <div class="col-lg-12">
-            <h2 class="section-header"><i class="fa fa-play-circle fa-fw"></i> {{view.name}}</h2>
+            <h2 class="section-header">{{view.name}}</h2>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
             <md-fab-trigger>
@@ -19,7 +19,7 @@
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
-        <div class="run_result row" align="center" data-ng-if="! jobViews.length">
+        <div class="run_result row" align="center" data-ng-if="UtilService.isEmpty(jobViews)">
             <div class="col-lg-12">No job views available</div>
         </div>
         <div class="row">
@@ -32,29 +32,34 @@
                                data-ng-click="showJobsViewDialog($event, envJobViews)"></i>
                     </div>
                     <div class="panel-body">
-                        <div class="run_result row result_{{jobView.testRun.status}}" data-ng-class="{'result_UNKNOWN' : jobView.testRun == null}" data-ng-repeat="jobView in envJobViews | orderBy:'job.name'" context-menu="userMenuOptions">
-                            <div class="col-lg-6">
-                                <input type="checkbox"
-                                       data-ng-model="jobView.testRun.rebuild"
-                                       data-ng-if="jobView.testRun != null && jobView.testRun.status != 'IN_PROGRESS' && jenkinsEnabled"
-                                       data-ng-true-value="true"
-                                       data-ng-false-value="false"
-                                       id="{{jobView.testRun.id}}"
-                                       value="{{jobView.testRun.id}}"
-                                       name="{{jobView.testRun.id}}">
-                               <!-- <img src="/resources/img/pending.gif" class="pending" data-ng-if="jobView.testRun.status == 'IN_PROGRESS'"/>-->
-                                <a href="{{jobView.job.jobURL + '/' + jobView.testRun.buildNumber}}" target="_blank">{{UtilService.truncate(jobView.job.name, 35)}}</a>
-                            </div>
-                            <div class="col-lg-3" align="center">
-                                <time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-                                <span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
-                            </div>
-                            <div class="col-lg-3" align="right">
-                                <span class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
-                                <span class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span>
-                                <span class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
-                            </div>
-                        </div>
+                    	<table md-table>
+                           <tbody md-body>
+                               <tr md-row ng-repeat="jobView in envJobViews | orderBy:'job.name'" class="result {{jobView.testRun.status}}" data-ng-class="{'UNKNOWN' : jobView.testRun == null}">
+                                   <td md-cell>
+	                                   	<input type="checkbox"
+	                                       data-ng-model="jobView.testRun.rebuild"
+	                                       data-ng-if="jobView.testRun != null && jobView.testRun.status != 'IN_PROGRESS' && jenkinsEnabled"
+	                                       data-ng-true-value="true"
+	                                       data-ng-false-value="false"
+	                                       id="{{jobView.testRun.id}}"
+	                                       value="{{jobView.testRun.id}}"
+	                                       name="{{jobView.testRun.id}}">
+                                   </td>
+                                   <td md-cell>
+                                       <a href="{{jobView.job.jobURL + '/' + jobView.testRun.buildNumber}}" target="_blank">{{UtilService.truncate(jobView.job.name, 35)}}</a>
+                                   </td>
+                                   <td md-cell>
+	                                   	<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
+                                   </td>
+                                   <td md-cell  style="min-width: 200px;">
+                                   		<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
+                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
+                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
+                                   </td>
+                               </tr>
+                           </tbody>
+                       </table>
                     </div>
                 </div>
             </div>
