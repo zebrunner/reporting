@@ -3,9 +3,9 @@
  
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$location', 'AuthService', 'UtilService', AuthController])
+        .controller('AuthController', ['$scope', '$state', 'AuthService', 'UtilService', AuthController])
  
-    function AuthController($scope, $location, AuthService, UtilService) {
+    function AuthController($scope, $state, AuthService, UtilService) {
  
     	$scope.UtilService = UtilService;
     	
@@ -24,7 +24,7 @@
             	if(rs.success)
             	{
             		AuthService.SetCredentials(rs.data);
-               	 	$location.url('/');
+               	 	$state.go('dashboard');
             	}
             	else
             	{

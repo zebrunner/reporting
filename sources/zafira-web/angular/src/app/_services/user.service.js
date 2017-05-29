@@ -20,7 +20,7 @@
 
         return service;
 
-        function getUserProfile(username, password) {
+        function getUserProfile() {
         	return $http.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess, UtilService.handleError('Unable to get user profile'));
         }
 

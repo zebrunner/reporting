@@ -3,17 +3,16 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'DashboardService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, DashboardService) {
+    function SidebarController($scope, $rootScope, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService) {
 
         $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
-
         $scope.currentUser = null;
 
         $scope.pefrDashboardId = null;
@@ -191,22 +190,18 @@
 
         (function initController() {
             $scope.project = ProjectProvider.getProject();
-
-            /*UserService.getCurrentUser().then(function(user) {
-                $scope.currentUser = user;
-            });*/
-
-            /*DashboardService.getUserPerformanceDashboardId().then(function(dashboardId) {
-                $scope.pefrDashboardId = dashboardId;
-            });*/
-
+            
+            UserService.getUserProfile().then(function(rs){
+	    		if(rs.success)
+	        	{
+	    			 $scope.currentUser = rs.data;
+	        	}
+            });
+            
             ConfigService.getConfig("version").then(function(rs) {
                 if(rs.success)
                 {
                     $scope.version = rs.data;
-                }
-                else
-                {
                 }
             });
         })();
