@@ -40,6 +40,10 @@
 	                    url: '/dashboards',
 	                    templateUrl: 'app/_dashboards/list.html'
 	                })
+                    .state('views', {
+                        url: '/views/:id',
+                        templateUrl: 'app/_views/list.html'
+                    })
                     .state('signin', {
                         url: '/signin',
                         templateUrl: 'app/_auth/signin.html'
@@ -97,7 +101,7 @@
                 $urlRouterProvider
                     .when('/', '/dashboards')
                     .otherwise('/dashboards');
-                
+
             }
         ]);
 })();
