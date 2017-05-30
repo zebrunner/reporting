@@ -172,7 +172,7 @@
                     	</div>
                     	<div class="col-lg-1 center" style="padding: 0;">
                     		<div data-ng-if="test.status != STARTED">
-                            	<a data-ng-if="test.logURL  && testRun.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS' && testRun.platform.toLowerCase() != 'api'">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
+                            	<a data-ng-if="test.logURL  && testRun.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank">Log</a> <span data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS'">| <a href="{{test.demoURL}}" target="blank">Demo</a></span>
                        		</div>
                     	</div>
 	                 </div>

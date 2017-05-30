@@ -25,6 +25,10 @@
             <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']??>
                 <td>Platform:</td>
                 <td>
+                    <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '')>
+                        ${configuration['platform']}
+                    </#if>
+
                     <#if configuration['mobile_device_name']?? && (configuration['mobile_device_name'] != 'NULL') && (configuration['mobile_device_name'] != '')>
                         ${configuration['mobile_device_name']}
                     </#if>
@@ -37,7 +41,7 @@
                         ${configuration['mobile_platform_version']}
                     </#if>
 
-                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
+                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')&& (configuration['browser'] != '{must_override}')>
                         ${configuration['browser']}
                     </#if>
 
