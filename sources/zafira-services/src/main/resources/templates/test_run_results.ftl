@@ -41,7 +41,7 @@
                         ${configuration['mobile_platform_version']}
                     </#if>
 
-                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')&& (configuration['browser'] != '{must_override}')>
+                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
                         ${configuration['browser']}
                     </#if>
 
