@@ -29,6 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
@@ -36,6 +37,7 @@ import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.TestRunner;
+import org.testng.internal.Configuration;
 import org.testng.internal.TestResult;
 import org.testng.xml.XmlTest;
 
@@ -165,7 +167,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 						Map<String, XmlTest> builtTestNames = new HashMap<>();
 						for (ITestNGMethod m : suiteContext.getAllMethods())
 						{
-							TestRunner testRunner = new TestRunner(null, suiteContext, m.getXmlTest(), false, null);
+							TestRunner testRunner = new TestRunner(new Configuration(), suiteContext, m.getXmlTest(),
+									false, new ArrayList<IInvokedMethodListener>());
 							TestResult testResult = new TestResult(m.getTestClass(), m.getInstance(), m, null, 0, 0,
 									testRunner);
 							builtTestNames.put(configurator.getTestName(testResult), m.getXmlTest());
