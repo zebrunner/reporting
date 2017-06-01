@@ -78,7 +78,7 @@ public class WorkItemService
 	public WorkItem createOrGetWorkItem(WorkItem newWorkItem) throws ServiceException
 	{
 		WorkItem workItem = getWorkItemByJiraIdAndType(newWorkItem.getJiraId(), newWorkItem.getType());
-		if(workItem == null )
+		if(workItem == null)
 		{
 			createWorkItem(newWorkItem);
 			return newWorkItem;

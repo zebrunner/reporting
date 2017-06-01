@@ -67,7 +67,6 @@ public class TestRunService
 	
 	@Autowired
 	private SettingsService settingsService;
-	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
 	{
@@ -177,7 +176,11 @@ public class TestRunService
 					{
 						testRun.setEnv(arg.getValue());
 					}
-					else if("browser".equals(arg.getKey()))
+					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL"))
 					{
 						testRun.setPlatform(arg.getValue());
 					}
@@ -358,15 +361,18 @@ public class TestRunService
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
-		
+
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		
+		if (testRun.getPlatform().equals("API")){
+			for (Test test:tests) {
+				test.setDemoURL(null);
+			}
+		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		
 		return emailService.sendEmail(email, recipients);
 	}
 

@@ -229,8 +229,13 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             $scope.testSearchCriteria.page = data.page;
             $scope.testSearchCriteria.pageSize = data.pageSize;
 
+
             for (var i = 0; i < data.results.length; i++) {
-                $scope.addTest(data.results[i], false);
+                var testData = data.results[i];
+                if($scope.testRunSearchCriteria.platform == 'API'){
+                    testData.demoURL = null;
+                }
+                $scope.addTest(testData, false);
             }
 
         }, function errorCallback(data) {
@@ -251,7 +256,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             link.style = "display: none";
             var url = window.URL.createObjectURL(html);
             link.href = url;
-            link.download = $itemScope.testRun.testSuite.name + ".html";
+            link.download = $itemScope.testRun.testSuite.name.split(' ').join('_') + ".html";
             link.click();
         }, function errorCallback(data) {
             console.error('Failed to export test run');

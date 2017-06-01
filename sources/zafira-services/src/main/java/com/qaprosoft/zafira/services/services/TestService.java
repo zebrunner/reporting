@@ -205,8 +205,12 @@ public class TestService
 		}
 		for(String jiraId : jiraIds)
 		{
-			WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-			testMapper.createTestWorkItem(test, workItem);
+			if(!StringUtils.isEmpty(jiraId))
+			{
+				WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+				testMapper.createTestWorkItem(test, workItem);
+			}
+			
 		}
 		return test;
 	}

@@ -82,6 +82,10 @@
 		<field-exclude> 
 		  	<a>workItems</a> 
 		  	<b>workItems</b> 
-		</field-exclude>  
+		</field-exclude>
+		<field>
+			<a>testClass</a>
+			<b>testClass</b>
+		</field>  
 	</mapping>
 </mappings>

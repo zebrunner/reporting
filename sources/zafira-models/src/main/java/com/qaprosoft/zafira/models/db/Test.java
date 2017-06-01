@@ -32,6 +32,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private boolean needRerun;
 	private String owner;
 	private String dependsOnMethods;
+	private String testClass;
 
 	public Test()
 	{
@@ -251,6 +252,16 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setMessageHashCode(Integer messageHashCode)
 	{
 		this.messageHashCode = messageHashCode;
+	}
+
+	public String getTestClass()
+	{
+		return testClass;
+	}
+
+	public void setTestClass(String testClass)
+	{
+		this.testClass = testClass;
 	}
 
 	@Override

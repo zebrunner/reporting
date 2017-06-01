@@ -36,6 +36,7 @@ public class TestType extends AbstractType
 	private boolean blocker;
 	private boolean needRerun;
 	private String dependsOnMethods;
+	private String testClass;
 
 	public TestType() {
 		
@@ -256,5 +257,15 @@ public class TestType extends AbstractType
 	public void setMessageHashCode(Integer messageHashCode)
 	{
 		this.messageHashCode = messageHashCode;
+	}
+
+	public String getTestClass()
+	{
+		return testClass;
+	}
+
+	public void setTestClass(String testClass)
+	{
+		this.testClass = testClass;
 	}
 }
