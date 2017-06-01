@@ -20,7 +20,7 @@
             </md-fab-actions>
         </md-fab-speed-dial>
         <div class="run_result row" align="center" data-ng-if="UtilService.isEmpty(jobViews)">
-            <div class="col-lg-12">No job views available</div>
+            <div class="col-lg-12">No data</div>
         </div>
         
         <div class="row">
@@ -63,10 +63,12 @@
 		                                   	<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
 	                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
 	                                   </td>
-	                                   <td md-cell  style="min-width: 200px;">
-	                                   		<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
-	                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
-	                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
+	                                   <td md-cell>
+	                                   		<div class="pull-right">
+	                                   			<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
+		                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
+		                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
+	                                   		</div>
 	                                   </td>
 	                               </tr>
 	                           </tbody>

@@ -64,6 +64,10 @@
                         url: '/tests/runs',
                         templateUrl: 'app/_testruns/list.html'
                     })
+                    .state('settings', {
+                        url: '/settings',
+                        templateUrl: 'app/_settings/list.html'
+                    })
                     .state('form/editor', {
                         url: '/form/editor',
                         templateUrl: "app/form/editor.html",

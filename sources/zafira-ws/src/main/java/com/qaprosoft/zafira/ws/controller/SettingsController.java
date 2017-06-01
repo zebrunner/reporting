@@ -1,19 +1,25 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
@@ -24,15 +30,7 @@ public class SettingsController extends AbstractController
 	private SettingsService settingsService;
 	
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "index", method = RequestMethod.GET)
-	@Secured({"ROLE_ADMIN"})
-	public ModelAndView openSettingsPage()
-	{
-		return new ModelAndView("settings/index");
-	}
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({"ROLE_ADMIN"})
 	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
 	{
