@@ -232,7 +232,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
             for (var i = 0; i < data.results.length; i++) {
                 var testData = data.results[i];
-                if($scope.testRunSearchCriteria.platform == 'API'){
+                if($scope.testRuns[testRunId].platform == 'API'){
                     testData.demoURL = null;
                 }
                 $scope.addTest(testData, false);
