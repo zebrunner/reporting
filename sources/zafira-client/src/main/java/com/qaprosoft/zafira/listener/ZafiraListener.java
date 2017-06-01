@@ -2,13 +2,13 @@ package com.qaprosoft.zafira.listener;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,8 +33,10 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.SkipException;
+import org.testng.internal.TestResult;
+import org.testng.xml.XmlTest;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
@@ -94,7 +96,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	private TestSuiteType suite = null;
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
-	private Set<String> classesToRerun = new HashSet<>();
 	private final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
 	
 	private Marshaller marshaller;
@@ -146,19 +147,36 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				if (this.run != null) 
 				{
 					// Already discovered run with the same CI_RUN_ID, it is re-run functionality!
-					// Reset build number for re-run to map to the latest rerun build 
+					// Reset build number for re-run to map to the latest rerun build
 					this.run.setBuildNumber(ci.getCiBuild());
 					// Re-register test run to reset status onto in progress
 					Response<TestRunType> response = zc.startTestRun(this.run);
 					this.run = response.getObject();
 					
-					for(TestType test : Arrays.asList(zc.getTestRunResults(run.getId()).getObject()))
+					List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
+					for (TestType test : testRunResults)
 					{
 						registeredTests.put(test.getName(), test);
-						if(test.isNeedRerun())
+					}
+
+					if (ZAFIRA_RERUN_FAILURES)
+					{
+						Map<String, XmlTest> builtTestNames = new HashMap<>();
+						for (ITestNGMethod m : suiteContext.getAllMethods())
 						{
-							classesToRerun.add(test.getTestClass());
+							TestResult testResult = new TestResult(m.getTestClass(), m.getInstance(), m, null, 0, 0, null);
+							builtTestNames.put(configurator.getTestName(testResult), m.getXmlTest());
 						}
+						
+						List<XmlTest> tests2rerun = new ArrayList<>();
+						for (TestType test : testRunResults)
+						{
+							if (test.isNeedRerun())
+							{
+								tests2rerun.add(builtTestNames.get(test.getName()));
+							}
+						}
+						suiteContext.getXmlSuite().setTests(tests2rerun);
 					}
 				} 
 				else 
@@ -232,13 +250,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			if(registeredTests.containsKey(testName))
 			{
 				startedTest = registeredTests.get(testName);
-				
-				// Skip already passed tests if rerun failures enabled
-				if(ZAFIRA_RERUN_FAILURES && !startedTest.isNeedRerun())
-				{
-					throw new SkipException("ALREADY_PASSED: " + testName);
-				}
-				
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest = zc.registerTestRestart(startedTest);
@@ -263,10 +274,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			registeredTests.put(testName, startedTest);
 		} 
-		catch(SkipException e)
-		{
-			throw e;
-		}
 		catch (Exception e) 
 		{
 			LOGGER.error("Undefined error during test case/method start!", e);
@@ -451,14 +458,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	@Override
 	public void onStart(ITestContext context) {
-		//TODO: investigate possibility to remove methods from context based on need rerun flag
-		if (ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES && DriverMode.CLASS_MODE.equals(configurator.getDriverMode())) {
-			if (context.getCurrentXmlTest().getClasses().size() > 0) {
-				if (!classesToRerun.contains(context.getCurrentXmlTest().getClasses().get(0).getName())) {
-					throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
-				}
-			}
-		}
 	}
 	
 	@Override
