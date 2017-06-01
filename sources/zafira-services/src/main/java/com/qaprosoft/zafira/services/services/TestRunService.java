@@ -192,6 +192,10 @@ public class TestRunService
 					{
 						testRun.setAppVersion(arg.getValue());
 					}
+					else if("keep_all_screenshots".equals(arg.getKey()))
+					{
+						testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
+					}
 				}
 			}
 		}
@@ -363,6 +367,7 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+
 		if (testRun.getPlatform().equals("API")){
 			for (Test test:tests) {
 				test.setDemoURL(null);

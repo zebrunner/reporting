@@ -229,10 +229,10 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             $scope.testSearchCriteria.page = data.page;
             $scope.testSearchCriteria.pageSize = data.pageSize;
 
-
             for (var i = 0; i < data.results.length; i++) {
                 var testData = data.results[i];
-                if($scope.testRuns[testRunId].platform == 'API'){
+                if(//$scope.testRuns[testRunId].config()
+                    $scope.testRuns[testRunId].screenshots == false){
                     testData.demoURL = null;
                 }
                 $scope.addTest(testData, false);
