@@ -22,6 +22,7 @@ CREATE TRIGGER update_timestamp_test_configs
 
 DROP TRIGGER update_timestamp_test_runs ON zafira.test_runs;
 
+
 UPDATE TEST_RUNS
 SET PLATFORM = 'API' WHERE TEST_RUNS.ID IN (
 	SELECT DISTINCT(TESTS.TEST_RUN_ID) FROM TESTS 
