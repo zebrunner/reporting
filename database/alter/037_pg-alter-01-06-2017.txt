@@ -1,13 +1,26 @@
 SET SCHEMA 'zafira';
 
+DROP TRIGGER update_timestamp_test_configs ON zafira.test_configs;
+
 UPDATE ZAFIRA.TEST_CONFIGS
 SET PLATFORM = 'API', BROWSER = NULL, PLATFORM_VERSION = NULL
-WHERE (PLATFORM = 'NULL' AND BROWSER = '{must_override}')
-OR (PLATFORM = '*' AND BROWSER = '{must_override}')
-OR (PLATFORM = 'NULL' AND BROWSER = '')
-OR (PLATFORM = '*' AND BROWSER = '')
+ WHERE (PLATFORM = 'NULL' AND BROWSER = '{must_override}')
+ OR (PLATFORM = 'NULL' AND BROWSER = '')
+ OR (PLATFORM = '*' AND BROWSER = '{must_override}')
+ OR (PLATFORM = '*' AND BROWSER = '')
+ OR (PLATFORM = '' AND BROWSER = '{must_override}')
+ OR (PLATFORM = '' AND BROWSER = '')
+ OR (PLATFORM IS NULL AND BROWSER = '{must_override}')
+ OR (PLATFORM IS NULL AND BROWSER = '')
 
-UPDATE ZAFIRA.TEST_RUNS
-SET PLATFORM = 'API' WHERE
-PLATFORM = 'NULL'
-OR PLATFORM = '{must_override}'
+CREATE TRIGGER update_timestamp_test_configs
+  BEFORE INSERT OR UPDATE
+  ON zafira.test_configs
+  FOR EACH ROW
+  EXECUTE PROCEDURE zafira.update_timestamp();
+
+
+--UPDATE ZAFIRA.TEST_RUNS
+--SET PLATFORM = 'API' WHERE
+--PLATFORM = 'NULL'
+--OR PLATFORM = '{must_override}'
