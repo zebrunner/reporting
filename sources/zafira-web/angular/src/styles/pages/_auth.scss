@@ -1,18 +1,18 @@
 .body-auth {
-    // #content {
-        background-color: $skin-gray;
-        // background: url('#{$image_path}/background/1.png') no-repeat center center fixed; 
+        // #content {
+        background: url(../assets/images/signin_bg.jpg) no-repeat center center fixed;
+        // background: url('#{$image_path}/background/1.png') no-repeat center center fixed;
         -webkit-background-size: cover;
         -moz-background-size: cover;
-        background-size: cover; 
-    // }    
+        background-size: cover;
+    // }
 }
 
 
 .btn-minimal {
     color: $reverse;
     color: rgba(255,255,255,.8);
-    background-color: transparent; 
+    background-color: transparent;
     border-color: $reverse;
     border-color: rgba(255,255,255,.8);
 
@@ -36,7 +36,7 @@
 .page-signup,
 .page-forgot {
 
-    // 
+    //
     .wrapper {
         padding: 0 10px;
     }
