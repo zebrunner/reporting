@@ -373,8 +373,20 @@ public class TestRunService
         }
         Configuration configuration = readConfiguration(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", wsURL));
-        List<Test> tests = testService.getTestsByTestRunId(testRunId);
+        for (Argument arg : configuration.getArg()) {
+            if (!StringUtils.isEmpty(arg.getValue())) {
+                if ("keep_all_screenshots".equals(arg.getKey())) {
+                    testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
+                }
+            }
+        }
 
+        List<Test> tests = testService.getTestsByTestRunId(testRunId);
+        if (!testRun.getScreenshots()){
+            for(Test test: tests){
+                test.setDemoURL(null);
+            }
+        }
         TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
         email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
         email.setShowOnlyFailures(showOnlyFailures);
