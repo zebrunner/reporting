@@ -14,7 +14,7 @@
                 <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
                     <span class="fa fa-refresh" aria-hidden="true"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" permission="['ROLE_ADMIN']">
                     <span class="fa fa-plus" aria-hidden="true"></span>
                 </md-button>
             </md-fab-actions>
@@ -40,7 +40,7 @@
 					                    	</span>
                                         </th>
                                         <th md-column>
-                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)">settings</i>
+                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" permission="['ROLE_ADMIN']">settings</i>
                                         </th>
                                 </tr>
 	                    	   </thead>

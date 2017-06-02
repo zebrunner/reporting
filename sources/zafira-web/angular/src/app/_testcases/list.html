@@ -89,9 +89,11 @@
 	                                        </thead>
 	                                        <tbody>
 	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
-	                                        		<td>{{test.name}}</td>
 	                                        		<td>
-	                                        			<span class="label label-primary">{{test.testConfig.env}}</span>
+	                                        			<b>{{test.name}}</b>
+	                                        		</td>
+	                                        		<td>
+	                                        			{{test.testConfig.env}}
 	                                        		</td>
 	                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
 														<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>

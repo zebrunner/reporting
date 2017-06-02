@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UAInspectionSearchCriteria;
@@ -23,25 +22,17 @@ import com.qaprosoft.zafira.services.services.ua.UAInspectionService;
 
 import springfox.documentation.annotations.ApiIgnore;
 
+@ApiIgnore
 @Controller
-@RequestMapping("uainspections")
-public class UAInspectionConstroller extends AbstractController
+@RequestMapping("api/uainspections")
+public class UAInspectionAPIConstroller extends AbstractController
 {
 	@Autowired
 	private Mapper mapper;
 	
 	@Autowired
 	private UAInspectionService uaInspectionService;
-
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "index", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView openIndexPage()
-	{
-		return new ModelAndView("uainspections/index");
-	}
 	
-	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.POST)
 	public void createUAInspection(@RequestBody @Valid UAInspectionType uaInspection) throws ServiceException
@@ -49,7 +40,6 @@ public class UAInspectionConstroller extends AbstractController
 		uaInspectionService.createUAInspection(mapper.map(uaInspection, UAInspection.class));
 	}
 
-	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<UAInspection> searchUAInspections(@RequestBody UAInspectionSearchCriteria sc) throws ServiceException

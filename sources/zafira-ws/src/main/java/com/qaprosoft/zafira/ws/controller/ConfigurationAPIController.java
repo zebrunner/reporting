@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +25,6 @@ import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.VersionService;
 import com.qaprosoft.zafira.services.services.slack.SlackService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
@@ -22,7 +22,6 @@ import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

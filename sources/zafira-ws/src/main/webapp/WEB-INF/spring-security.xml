@@ -20,6 +20,7 @@
 	
 	<!-- Public API end-points -->
 	<security:http pattern="/api/auth/**" security="none" />
+	<security:http pattern="/api/status/**" security="none" />
 	<security:http pattern="/websockets/**" security="none" />
 	
 	<!-- Protected API end-points -->
@@ -29,6 +30,17 @@
 		<security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/groups/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/devices/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/settings/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/jobs/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/certification/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/events/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/slack/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/uainspections/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
 		<security:csrf disabled="true"/>
 		<security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
 	</security:http>

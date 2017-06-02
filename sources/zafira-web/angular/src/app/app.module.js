@@ -100,6 +100,11 @@
 		            if ($rootScope.globals.auth) {
 		            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
 		            }
+		            
+		            if($cookies.getObject('user'))
+		            {
+		            	$rootScope.user = $cookies.getObject('user');
+		            }
 
 		            $rootScope.$on('$locationChangeStart', function (event, next, current) {
 		                // redirect to login page if not logged in and trying to access a restricted page

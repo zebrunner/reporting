@@ -25,8 +25,8 @@ import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 @Controller
 @Api(value = "Test suites operations")
-@RequestMapping("tests/suites")
-public class TestSuitesController extends AbstractController
+@RequestMapping("api/tests/suites")
+public class TestSuitesAPIController extends AbstractController
 {
 	@Autowired
 	private Mapper mapper;

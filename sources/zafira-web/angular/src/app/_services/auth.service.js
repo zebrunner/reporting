@@ -57,17 +57,6 @@
 	        }
 
 	         (function init() {
-	        	if(IsLoggedIn())
-	        	{
-	        		 UserService.getUserProfile()
-		             .then(
-		             function (rs) {
-		             	if(rs.success)
-		             	{
-		             		$rootScope.user = rs.data;
-		             	}
-		             });
-	        	}
 	         })();
 
 	        return service;

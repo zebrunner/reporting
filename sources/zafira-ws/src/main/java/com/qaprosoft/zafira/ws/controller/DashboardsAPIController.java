@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SeleniumService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

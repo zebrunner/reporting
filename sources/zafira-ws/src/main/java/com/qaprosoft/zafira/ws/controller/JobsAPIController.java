@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;

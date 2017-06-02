@@ -24,17 +24,17 @@
                 <md-divider  data-ng-if="views.length > 0"></md-divider>
                 <li data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
                     <a md-button href="#!/views/{{view.id}}">{{view.name}}</a>
-                    <i style="position: absolute; right: 10px; top: 15px;" class="fa fa-gear fa-fw" data-ng-click="showViewDialog($event, view)"></i>
+                    <i style="position: absolute; right: 10px; top: 15px;" class="fa fa-gear fa-fw" data-ng-click="showViewDialog($event, view)" permission="['ROLE_ADMIN']"></i>
                 </li>
                 <md-divider></md-divider>
-                <li>
+                <li permission="['ROLE_ADMIN']">
                     <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)">Create view +</a>
                 </li>
             </ul>
         </li>
         <li><a md-button aria-label="menu" href="#!/tests/cases"><i class="material-icons">library_books</i><span data-translate="TEST_CASES"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/users"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/settings"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li>
+        <li><a md-button aria-label="menu" href="#!/users" permission="['ROLE_ADMIN']"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
+        <li><a md-button aria-label="menu" href="#!/settings" permission="['ROLE_ADMIN']"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li>
         <!--li>
             <a md-button aria-label="menu" href="#!/ui"><i class="material-icons">card_giftcard</i><span><span data-translate="MATERIAL"></span> UI</span></a>
             <ul>

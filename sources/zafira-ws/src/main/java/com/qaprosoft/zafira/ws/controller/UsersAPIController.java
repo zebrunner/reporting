@@ -1,8 +1,7 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.Group;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,14 +23,10 @@ import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @Api(value = "Users API")
@@ -52,13 +47,8 @@ public class UsersAPIController extends AbstractController
 	public @ResponseBody UserType getUserProfile() throws ServiceException
 	{
 		User user = userService.getUserById(getPrincipalId());
-		List<Group.Role> roles = new ArrayList<>();
 		UserType userType = mapper.map(user, UserType.class);
-		for (Group group : user.getGroups())
-		{
-			roles.add(group.getRole());
-		}
-		userType.setRoles(roles);
+		userType.setRoles(user.getRoles());
 		return userType;
 	}
 

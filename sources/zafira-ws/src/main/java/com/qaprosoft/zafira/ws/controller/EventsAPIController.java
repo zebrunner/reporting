@@ -20,8 +20,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
-@RequestMapping("events")
-public class EventsController extends AbstractController
+@RequestMapping("api/events")
+public class EventsAPIController extends AbstractController
 {
 	@Autowired
 	private EventService eventService;

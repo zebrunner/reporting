@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.qaprosoft.zafira.models.db.Device;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -23,19 +22,12 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
-@RequestMapping("devices")
+@RequestMapping("api/devices")
 @Secured({"ROLE_ADMIN"})
-public class DevicesController extends AbstractController
+public class DevicesAPIController extends AbstractController
 {
 	@Autowired
 	private DeviceService deviceSerivce;
-	
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "index", method = RequestMethod.GET)
-	public ModelAndView openDevicesPage()
-	{
-		return new ModelAndView("devices/index");
-	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

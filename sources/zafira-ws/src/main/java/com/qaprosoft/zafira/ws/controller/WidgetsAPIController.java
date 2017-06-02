@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,6 @@ import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.WidgetService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.ApiOperation;

@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.controller.api;
+package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,6 @@ import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.WorkItemService;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

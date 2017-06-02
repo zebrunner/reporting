@@ -3,9 +3,9 @@
  
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$state', 'AuthService', 'UtilService', AuthController])
+        .controller('AuthController', ['$scope', '$rootScope', '$state', '$cookies', 'AuthService', 'UserService', 'UtilService', AuthController])
  
-    function AuthController($scope, $state, AuthService, UtilService) {
+    function AuthController($scope, $rootScope, $state, $cookies, AuthService, UserService, UtilService) {
  
     	$scope.UtilService = UtilService;
     	
@@ -24,7 +24,16 @@
             	if(rs.success)
             	{
             		AuthService.SetCredentials(rs.data);
-               	 	$state.go('dashboard');
+            		UserService.getUserProfile()
+            		 .then(
+            		  function (rs) {
+		              if(rs.success)
+		              {
+		            	  $rootScope.user = rs.data;
+		            	  $cookies.putObject('user', $rootScope.user);
+		            	  $state.go('dashboard');
+		              }
+            		});
             	}
             	else
             	{

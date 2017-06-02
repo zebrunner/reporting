@@ -11,7 +11,6 @@
                      'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
                      'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
         <a href="#!/">
-            <span class="logo-icon material-icons">dashboard</span>
             <span class="logo-text">{{main.brand}} {{version}}</span>
         </a>
     </div>
@@ -54,7 +53,7 @@
                                     <h3 class="highlight_red">Clear</h3>
                                 </div>
                             </md-list-item>
-                            <md-list-item class="md-2-line" ng-click="showProjectDialog()">
+                            <md-list-item class="md-2-line" ng-click="showProjectDialog()" permission="['ROLE_ADMIN']">
                                 <md-icon class="material-icons highlight_green">add</md-icon>
                                 <div class="md-list-item-text">
                                     <h3 class="highlight_green">Create</h3>

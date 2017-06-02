@@ -5,11 +5,11 @@
         .logo {
             @media (min-width: $screen-sm) {
                 width: 60px; // 59 + 1 (border)
-            } 
+            }
 
             .logo-text {
                 display: none;
-            }           
+            }
         }
 
         .top-nav {
@@ -18,7 +18,7 @@
     }
 }
 
-// 
+//
 .header-container {
     // height:( $header_height * 2);
     // @media (min-width:$screen-sm) {
@@ -65,7 +65,7 @@
             transition: width .25s ease-in-out;
             @media (min-width: $screen-sm) {
                 display: inline-block;
-                width: 220px;
+                width: 140px;
                 border-right: 1px solid $header-border;
             }
 
@@ -80,7 +80,7 @@
             }
         }
 
-        // 
+        //
         .menu-button {
             display: block;
             position: absolute;
@@ -110,7 +110,7 @@
             }
         }
 
-        // 
+        //
         .admin-options {
             z-index: 20;
             line-height: 20px;
@@ -123,11 +123,11 @@
             }
         }
 
-        // 
+        //
         .dropdown-menu.panel {
             padding: 0;
             white-space: nowrap;
-            
+
             .panel-heading,
             .panel-footer {
                 padding: 10px 15px;
@@ -154,7 +154,7 @@
         }
 
 
-        // 
+        //
         .top-nav {
             width: 100%;
             height: $header_height;
@@ -168,7 +168,7 @@
                 margin-bottom: 0;
             }
 
-            // 
+            //
             .nav-left,
             .nav-right {
                 font-size: 16px;
@@ -188,7 +188,7 @@
                             font-size: 18px;
                             margin-right: 5px;
                             line-height: $line-height-computed;
-                        } 
+                        }
                     }
 
                     > .toggle-min {
@@ -263,9 +263,9 @@
                     background: transparent;
                 }
 
-                .input-bar { 
-                    position: absolute; 
-                    display: block; 
+                .input-bar {
+                    position: absolute;
+                    display: block;
                     width: 90%;
                     bottom: 0;
                     left: 5%;
@@ -274,27 +274,27 @@
                 .input-bar:after {
                     position: absolute;
                     content: '';
-                    height: 1px; 
+                    height: 1px;
                     width: 0;
-                    bottom: 1px; 
-                    // background: $text-color; 
+                    bottom: 1px;
+                    // background: $text-color;
                     transition: all .35s $material_animation;
                 }
                 .input-bar:before {
                     left: 50%;
                 }
                 .input-bar:after {
-                    right: 50%; 
-                }  
+                    right: 50%;
+                }
                 input {
                     &:focus ~ .input-bar:before,
                     &:focus ~ .input-bar:after {
                         width: 50%;
-                    }                    
-                }          
+                    }
+                }
             }
 
-            // 
+            //
             .nav-left {
                 float: left;
                 padding: 0;
@@ -303,7 +303,7 @@
                 }
             }
 
-            // 
+            //
             .nav-right {
                 padding: 0;
                 > li {
@@ -326,15 +326,15 @@
 
 }
 
-// 
+//
 .top-header-dropdown {
-    // 
+    //
     md-list.md-dense md-list-item .md-list-item-inner>md-icon:first-child:not(.md-avatar-icon) {
         margin-left: 5px;
         margin-right: 25px;
     }
 
-    // 
+    //
     md-menu-item {
         min-height: auto;
         height: auto;
@@ -362,7 +362,7 @@
     .md-button {
         font-size: 14px;
         position: relative;
-        padding: 0 20px 0 57px; 
+        padding: 0 20px 0 57px;
         .flag {
             position: absolute;
             top: 8px;
@@ -372,11 +372,11 @@
 
     .lang-text {
         text-transform: capitalize;
-    }  
+    }
 }
 
 
-// 
+//
 .nav-left,
 .nav-right {
     // only apply to first level, not dropdown
@@ -404,7 +404,7 @@
 }
 
 
-// 
+//
 .skin-check {
     position: relative;
     display: block;
@@ -415,7 +415,7 @@
     input[type="radio"] + span:hover {
         cursor: pointer;
     }
-    
+
     input[type="radio"] + span {
         position: relative;
         > .overlay {
@@ -429,8 +429,8 @@
             height: 100%;
             background-color: rgba(0,0,0,.3);
             text-align: center;
-            line-height: 30px; 
-            color: #fff;           
+            line-height: 30px;
+            color: #fff;
         }
     }
 
@@ -453,7 +453,7 @@
             &:hover {
                 color: $text-color;
             }
-        }        
+        }
     }
 
     &.bg-white {
@@ -514,14 +514,14 @@
                 &:hover {
                     color: $text-color;
                 }
-            }        
+            }
         }
 
         .input-group-addon { color: $gray-lighter; }
         ::-webkit-input-placeholder { color: #eaeaea; }
         :-moz-placeholder { color: #eaeaea; } // Firefox 18-
         ::-moz-placeholder {  color: #eaeaea; } // Firefox 19+
-        :-ms-input-placeholder {color: #eaeaea; }   
+        :-ms-input-placeholder {color: #eaeaea; }
 
         .top-nav .nav-left > li > a .badge {
             color: #eaeaea;
@@ -538,7 +538,7 @@
         }
     }
 
-    // 
+    //
     > .top-header {
         .logo {
             border: 1px solid rgba(0,0,0,.1);
@@ -562,7 +562,7 @@
                     &:hover {
                         .icon-bar {
                             background-color: $reverse;
-                        }                        
+                        }
                     }
                 }
             }
@@ -581,7 +581,7 @@
                         color: $bright;
                     }
                 }
-            }        
+            }
         }
 
     }
@@ -659,4 +659,3 @@
         background-color: $brand-danger;
     }
 }
-

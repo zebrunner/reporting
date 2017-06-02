@@ -166,8 +166,8 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-divider></md-divider>
-                                                    <md-menu-item ng-if="showDeleteTestRunOption">
+                                                    <md-divider permission="['ROLE_ADMIN']"></md-divider>
+                                                    <md-menu-item ng-if="showDeleteTestRunOption" permission="['ROLE_ADMIN']">
                                                         <md-button data-ng-click="deleteTestRunAction(testRun)">
                                                             Delete
                                                         </md-button>
