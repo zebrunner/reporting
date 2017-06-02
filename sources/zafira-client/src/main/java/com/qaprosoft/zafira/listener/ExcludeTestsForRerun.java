@@ -30,7 +30,6 @@ public class ExcludeTestsForRerun
 	public static void excludeTestsForRerun(ISuite suite, List<TestType> testRunResults, IConfigurator configurator)
 	{
 		List<String> testNames2rerun = new ArrayList<>();
-		String[] testNames2rerunArr = testNames2rerun.toArray(new String[testNames2rerun.size()]);
 		for (TestType test : testRunResults)
 		{
 			if (test.isNeedRerun())
@@ -38,6 +37,7 @@ public class ExcludeTestsForRerun
 				testNames2rerun.add(test.getName());
 			}
 		}
+		String[] testNames2rerunArr = testNames2rerun.toArray(new String[testNames2rerun.size()]);
 		for (ITestNGMethod testNGMethod : suite.getAllMethods())
 		{
 			Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
