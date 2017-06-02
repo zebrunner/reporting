@@ -482,7 +482,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     }
                     $modalInstance.close(0);
                     $scope.email.recipients = $scope.email.recipients.toString();
-                    $http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email, $scope.testRun.screenshots).then(function successCallback(data) {
+                    $http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
                         alertify.success('Email was successfully sent!');
                     }, function errorCallback(data) {
                         alertify.error('Failed to send email');
