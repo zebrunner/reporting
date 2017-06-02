@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.listener;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,12 +32,7 @@ import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
-import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
-import org.testng.TestRunner;
-import org.testng.internal.Configuration;
-import org.testng.internal.TestResult;
-import org.testng.xml.XmlTest;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
@@ -163,40 +157,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 
 					if (ZAFIRA_RERUN_FAILURES)
 					{
-						Map<String, ITestNGMethod> builtTestNames = new HashMap<>();
-						for (ITestNGMethod m : suiteContext.getAllMethods())
-						{
-							TestRunner testRunner = new TestRunner(new Configuration(), suiteContext, m.getXmlTest(),
-									false, null);
-							TestResult testResult = new TestResult(m.getTestClass(), m.getInstance(), m, null, 0, 0,
-									testRunner);
-							builtTestNames.put(configurator.getTestName(testResult), m);
-						}
-						
-						List<XmlTest> tests2rerun = new ArrayList<>();
-						List<String> testsNames2rerun = new ArrayList<>();
-						for (TestType test : testRunResults)
-						{
-							if (test.isNeedRerun())
-							{
-								tests2rerun.add(builtTestNames.get(test.getName()).getXmlTest());
-								testsNames2rerun.add(test.getName());
-							}
-						}
-
-						for (int i = suiteContext.getAllMethods().size() - 1; i >= 0; i--)
-						{
-							ITestNGMethod m = suiteContext.getAllMethods().get(i);
-							TestRunner testRunner = new TestRunner(new Configuration(), suiteContext, m.getXmlTest(),
-									false, null);
-							TestResult testResult = new TestResult(m.getTestClass(), m.getInstance(), m, null, 0, 0,
-									testRunner);
-							if (!testsNames2rerun.contains(configurator.getTestName(testResult)))
-							{
-								suiteContext.getAllMethods().remove(i);
-							}
-						}
-						// suiteContext.getXmlSuite().getTests().get(0).setTests(tests2rerun);
+						ExcludeTestsForRerun.excludeTestsForRerun(suiteContext, testRunResults, configurator);
 					}
 				} 
 				else 
@@ -675,4 +636,5 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			}
 		}
 	}
+
 }
