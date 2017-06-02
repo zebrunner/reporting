@@ -80,13 +80,25 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly = true)
-	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
-	{
+	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException, JAXBException {
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+
+		for (TestRun testRun:testRuns) {
+			if(!StringUtils.isEmpty(testRun.getConfigXML())) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+					if (!StringUtils.isEmpty(arg.getValue())) {
+						if ("keep_all_screenshots".equals(arg.getKey())) {
+							testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
+						}
+					}
+				}
+			}
+		}
+
 		results.setResults(testRuns);
 		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
 		return results;
@@ -191,10 +203,6 @@ public class TestRunService
 					else if("app_version".equals(arg.getKey()))
 					{
 						testRun.setAppVersion(arg.getValue());
-					}
-					else if("keep_all_screenshots".equals(arg.getKey()))
-					{
-						testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
 					}
 				}
 			}
@@ -368,11 +376,6 @@ public class TestRunService
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 
-		if (testRun.getPlatform().equals("API")){
-			for (Test test:tests) {
-				test.setDemoURL(null);
-			}
-		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);

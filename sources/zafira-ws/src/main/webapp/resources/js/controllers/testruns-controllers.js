@@ -231,8 +231,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
             for (var i = 0; i < data.results.length; i++) {
                 var testData = data.results[i];
-                if(//$scope.testRuns[testRunId].config()
-                    $scope.testRuns[testRunId].screenshots == false){
+                if( $scope.testRuns[testRunId].screenshots == false){
                     testData.demoURL = null;
                 }
                 $scope.addTest(testData, false);
@@ -483,7 +482,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                     }
                     $modalInstance.close(0);
                     $scope.email.recipients = $scope.email.recipients.toString();
-                    $http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email).then(function successCallback(data) {
+                    $http.post('tests/runs/' + $scope.testRun.id + '/email', $scope.email, $scope.testRun.screenshots).then(function successCallback(data) {
                         alertify.success('Email was successfully sent!');
                     }, function errorCallback(data) {
                         alertify.error('Failed to send email');
