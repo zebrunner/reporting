@@ -365,7 +365,7 @@ public class TestRun extends AbstractEntity
 		this.driverMode = driverMode;
 	}
 
-	public boolean isScreenshots() {
+	public boolean getScreenshots() {
 		return screenshots;
 	}
 
