@@ -366,14 +366,13 @@ public class TestRunService
 	@Transactional(readOnly=true)
 	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByIdFull(testRunId);
-		if(testRun == null)
-		{
-			throw new ServiceException("No test runs found by ID: " + testRunId);
-		}
-		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
-
+        TestRun testRun = getTestRunByIdFull(testRunId);
+        if(testRun == null)
+        {
+            throw new ServiceException("No test runs found by ID: " + testRunId);
+        }
+        Configuration configuration = readConfiguration(testRun.getConfigXML());
+        configuration.getArg().add(new Argument("zafira_service_url", wsURL));
         for (Argument arg : configuration.getArg()) {
             if (!StringUtils.isEmpty(arg.getValue())) {
                 if ("keep_all_screenshots".equals(arg.getKey())) {
@@ -382,19 +381,17 @@ public class TestRunService
             }
         }
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
-
         if(!testRun.getScreenshots()){
             for(Test test:tests){
                 test.setDemoURL(null);
             }
         }
-
-		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
-		email.setShowOnlyFailures(showOnlyFailures);
-		email.setShowStacktrace(showStacktrace);
-		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.sendEmail(email, recipients);
+        TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
+        email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+        email.setShowOnlyFailures(showOnlyFailures);
+        email.setShowStacktrace(showStacktrace);
+        email.setSuccessRate(calculateSuccessRate(testRun));
+        return emailService.sendEmail(email, recipients);
 	}
 
 	@Transactional(readOnly=true)
