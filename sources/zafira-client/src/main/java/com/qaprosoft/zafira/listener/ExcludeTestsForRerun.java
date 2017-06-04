@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ISuite;
 import org.testng.ITestNGMethod;
+import org.testng.SuiteRunner;
 import org.testng.TestRunner;
 import org.testng.annotations.Test;
 import org.testng.internal.Configuration;
 import org.testng.internal.TestResult;
+import org.testng.xml.XmlSuite;
 
 import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.dto.TestType;
@@ -29,15 +31,15 @@ public class ExcludeTestsForRerun
 
 	public static void excludeTestsForRerun(ISuite suite, List<TestType> testRunResults, IConfigurator configurator)
 	{
-		List<String> testNames2rerun = new ArrayList<>();
+		List<String> testNamesNoRerun = new ArrayList<>();
 		for (TestType test : testRunResults)
 		{
-			if (test.isNeedRerun())
+			if (!test.isNeedRerun())
 			{
-				testNames2rerun.add(test.getName());
+				testNamesNoRerun.add(test.getName());
 			}
 		}
-		String[] testNames2rerunArr = testNames2rerun.toArray(new String[testNames2rerun.size()]);
+		String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
 		for (ITestNGMethod testNGMethod : suite.getAllMethods())
 		{
 			Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
@@ -53,11 +55,12 @@ public class ExcludeTestsForRerun
 						isDataProviderPresent = true;
 					} else
 					{
-						TestRunner testRunner = new TestRunner(new Configuration(), suite, testNGMethod.getXmlTest(),
-								false, null);
+						SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
+						TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
+								testNGMethod.getXmlTest(), false, null);
 						TestResult testResult = new TestResult(testNGMethod.getTestClass(), testNGMethod.getInstance(),
 								testNGMethod, null, 0, 0, testRunner);
-						if (testNames2rerun.contains(configurator.getTestName(testResult)))
+						if (testNamesNoRerun.contains(configurator.getTestName(testResult)))
 						{
 							modifyAnnotationValue(a, testNGMethod, ENABLED, false);
 						}
@@ -69,7 +72,7 @@ public class ExcludeTestsForRerun
 			{
 				for (Annotation a : annotations)
 				{
-					modifyAnnotationValue(a, testNGMethod, DO_NOT_RUN_TEST_NAMES, testNames2rerunArr);
+					modifyAnnotationValue(a, testNGMethod, DO_NOT_RUN_TEST_NAMES, testNamesNoRerunArr);
 				}
 			}
 		}
