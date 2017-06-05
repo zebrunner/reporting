@@ -231,7 +231,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
 
             for (var i = 0; i < data.results.length; i++) {
                 var testData = data.results[i];
-                if( $scope.testRuns[testRunId].screenshots == false){
+                if( $scope.testRuns[testRunId].screenshotsAvailable == false){
                     testData.demoURL = null;
                 }
                 $scope.addTest(testData, false);
