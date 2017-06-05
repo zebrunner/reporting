@@ -374,6 +374,7 @@ public class TestRunService
         }
         Configuration configuration = readConfiguration(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", wsURL));
+
         for (Argument arg : configuration.getArg()) {
             if (!StringUtils.isEmpty(arg.getValue())) {
                 if ("keep_all_screenshots".equals(arg.getKey())) {
