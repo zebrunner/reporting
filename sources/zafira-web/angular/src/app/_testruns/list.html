@@ -85,7 +85,7 @@
                                         <td md-cell>
                                         	<div class="row">
                                         		<div class="col-sm-1" ng-if="testRun.status == 'IN_PROGRESS'">
-	                                            	<md-progress-circular md-diameter="20px"></md-progress-circular>
+	                                            	<md-progress-circular md-diameter="18px"></md-progress-circular>
                                                     <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
                                                         <small>{{progressBar}}%</small>
                                                     </timer>
@@ -181,22 +181,18 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-md-8">Status&nbsp;
-                                                            Title&nbsp;
-                                                            Owner&nbsp;
-                                                            Device&nbsp;
-                                                        </th>
-                                                        <th class="col-md-2">Elapsed&nbsp;
-                                                            Started&nbsp;at&nbsp;
-                                                        </th>
-                                                        <th>
-                                                        </th>
-                                                        <th>
+                                                        <th class="row" colspan="4">
+                                                        	<div class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;<i class="fa fa-sort"></i></div >
+                                                        	<div class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;<i class="fa fa-sort"></i></div >
+                                                       		<div class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;<i class="fa fa-sort"></i></div >
+                                                       		<div class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;<i class="fa fa-sort"></i></div >
+                                                       		<div class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;<i class="fa fa-sort"></i></div >
+                                                       		<div class="pointer col-sm-2" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started&nbsp;<i class="fa fa-sort"></i></div >
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr data-ng-repeat="(id, test) in testRun.tests" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse"" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
                                                         <td>
                                                         	<b>{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
                                                         	<div>

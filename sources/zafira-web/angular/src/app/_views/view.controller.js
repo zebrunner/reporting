@@ -163,28 +163,14 @@
                 });
             }
         };
-
+        
         // --------------------  Context menu ------------------------
-        const OPEN_TEST_RUN = ['Open', function ($itemScope) {
-            var testRun = $itemScope.jobView.testRun;
-            window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
-        }];
 
-        const REBUILD = ['Rebuild', function ($itemScope) {
-            var job = $itemScope.jobView.job;
-            var testRun = $itemScope.jobView.testRun;
-            if($scope.jenkinsEnabled)
-            {
-                $scope.rebuildJobs(testRun.id);
-            }
-            else
-            {
-                window.open($itemScope.jobView.job.jobURL + "/" + testRun.buildNumber + '/rebuild/parameterized', '_blank');
-            }
-        }];
+        $scope.openTestRun = function (testRun) {
+        	window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
+        };
 
-        const COPY_TEST_RUN_LINK = ['Copy link', function ($itemScope) {
-            var testRun = $itemScope.jobView.testRun;
+        $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
             node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id;
             document.body.appendChild(node);
@@ -199,14 +185,21 @@
             document.execCommand('copy');
             selection.removeAllRanges();
             document.body.removeChild(node);
-        }];
+        };
+        
+        $scope.rebuild = function (job, testRun) {
+    		if($scope.jenkinsEnabled)
+    		{
+    			$scope.rebuildJobs(job.testRun.id);
+    		}
+    		else
+    		{
+    			window.open(job.jobURL + "/" + testRun.buildNumber + '/rebuild/parameterized', '_blank');
+    		}
+        };
+        
+        // ---------------------------------------------------------------
 
-        $scope.userMenuOptions = [
-            OPEN_TEST_RUN,
-            COPY_TEST_RUN_LINK,
-            null,
-            REBUILD
-        ];
 
         (function initController() {
             $scope.loadJobs();

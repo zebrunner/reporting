@@ -73,7 +73,7 @@
                 <md-menu md-position-mode="left bottom">
                     <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
                         <i class="material-icons" style="font-size: 24px;">account_circle</i>
-                        <small>{{currentUser.username}}</small>
+                        <small style="margin-right: 15px;">{{currentUser.username}}</small>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
@@ -81,21 +81,6 @@
                     </md-menu-content>
                 </md-menu>
             </li>
-            <!--  li class="hidden-xs hidden-sm" data-ng-controller="LangCtrl as ctrl">
-                <md-menu md-position-mode="target-right target">
-                    <md-button class="active-flag" aria-label="menu" ng-click="$mdMenu.open($event)">
-                        <div class="flag flags-{{activeLang}}"></div>
-                    </md-button>
-                    <md-menu-content width="3" class="langs">
-                        <md-menu-item ng-repeat="lang in langs">
-                            <md-button ng-click="setLang(lang)">
-                                <div class="flag flags-{{lang}}"></div>
-                                <span class="lang-text" >{{lang}}</span>
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </li-->
         </ul>
     </div>
 </header>

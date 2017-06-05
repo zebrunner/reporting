@@ -31,7 +31,7 @@
 	                    	<table md-table>
 	                    	   <thead md-head>
 	                    	   	<tr md-row>
-                                        <th md-column colspan="3">
+                                        <th md-column colspan="4">
                                         	<b style="font-size: 14px;">{{env}}</b>
 					                    	<span data-ng-if="jenkinsEnabled">
 					                    		<a href="" data-ng-click="selectForRerun(env, 'All')">All</a> | 
@@ -69,6 +69,31 @@
 		                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
 		                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
 	                                   		</div>
+	                                   </td>
+	                                   <td md-cell>
+	                                   		<md-menu>
+                                                <md-button aria-label="Job view settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                    <md-icon class="material-icons">more_vert</md-icon>
+                                                </md-button>
+                                                <md-menu-content width="3">
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="openTestRun(jobView.testRun)">
+                                                            Open
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="copyLink(jobView.testRun)">
+                                                            Copy link
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-divider></md-divider>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="rebuild(jobView.job, jobView.testRun)">
+                                                            Rebuild
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                </md-menu-content>
+                                            </md-menu>
 	                                   </td>
 	                               </tr>
 	                           </tbody>

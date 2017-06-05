@@ -25,6 +25,7 @@
         ,'n3-line-chart'
         ,'n3-pie-chart'
         ,'ngSanitize'
+        ,'chieffancypants.loadingBar'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
