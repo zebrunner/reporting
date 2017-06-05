@@ -244,6 +244,12 @@
 	               AND TR.STATUS = #{status}
 	            ]]>
 			</if>
+			<if test="null != currentUserId">
+				<![CDATA[
+	               AND TR.USER_ID = #{currentUserId}
+	            ]]>
+			</if>
+
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[

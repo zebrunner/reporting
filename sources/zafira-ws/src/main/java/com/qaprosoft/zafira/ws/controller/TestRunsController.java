@@ -194,7 +194,10 @@ public class TestRunsController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException, JAXBException {
-		return testRunService.searchTestRuns(sc);
+        if (sc.isReferredToCurrentUser()){
+            sc.setCurrentUserId(super.getPrincipalId());
+        }
+    	return testRunService.searchTestRuns(sc);
 	}
 
 	@ResponseStatusDetails
