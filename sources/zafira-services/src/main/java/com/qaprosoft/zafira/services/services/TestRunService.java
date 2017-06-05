@@ -81,6 +81,7 @@ public class TestRunService
 	
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException, JAXBException {
+
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
@@ -92,7 +93,7 @@ public class TestRunService
 				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
 					if (!StringUtils.isEmpty(arg.getValue())) {
 						if ("keep_all_screenshots".equals(arg.getKey())) {
-							testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
+							testRun.setScreenshotsAvailable(Boolean.valueOf(arg.getValue()));
 						}
 					}
 				}
@@ -376,13 +377,13 @@ public class TestRunService
         for (Argument arg : configuration.getArg()) {
             if (!StringUtils.isEmpty(arg.getValue())) {
                 if ("keep_all_screenshots".equals(arg.getKey())) {
-                    testRun.setScreenshots(Boolean.valueOf(arg.getValue()));
+                    testRun.setScreenshotsAvailable(Boolean.valueOf(arg.getValue()));
                 }
             }
         }
 
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
-        if (!testRun.getScreenshots()){
+        if (!testRun.isScreenshotsAvailable()){
             for(Test test: tests){
                 test.setDemoURL(null);
             }

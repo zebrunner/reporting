@@ -57,7 +57,7 @@ public class TestRun extends AbstractEntity
 	private Integer failedAsKnown;
 	private Integer failedAsBlocker;
 	private Integer skipped;
-	private boolean screenshots;
+	private boolean screenshotsAvailable;
 
 	private boolean reviewed;
 
@@ -365,12 +365,12 @@ public class TestRun extends AbstractEntity
 		this.driverMode = driverMode;
 	}
 
-	public boolean getScreenshots() {
-		return screenshots;
+	public boolean isScreenshotsAvailable() {
+		return screenshotsAvailable;
 	}
 
-	public void setScreenshots(boolean screenshots) {
-		this.screenshots = screenshots;
+	public void setScreenshotsAvailable(boolean screenshotsAvailable) {
+		this.screenshotsAvailable = screenshotsAvailable;
 	}
 
 	public Integer getCountdown()
