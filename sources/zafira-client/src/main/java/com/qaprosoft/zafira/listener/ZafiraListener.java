@@ -28,6 +28,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IHookCallBack;
+import org.testng.IHookable;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
@@ -56,7 +58,7 @@ import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
  * 
  * @author akhursevich
  */
-public class ZafiraListener implements ISuiteListener, ITestListener
+public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
 	
@@ -447,6 +449,21 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		// Do nothing
 	}
 	
+	@Override
+	public void run(IHookCallBack hookCallBack, ITestResult testResult)
+	{
+		String testName = configurator.getTestName(testResult);
+		TestType startedTest = registeredTests.get(testName);
+
+		if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
+		{
+			// do nothing
+		} else
+		{
+			hookCallBack.runTestMethod(testResult);
+		}
+	}
+
 	//==========================
 	
 	/**
