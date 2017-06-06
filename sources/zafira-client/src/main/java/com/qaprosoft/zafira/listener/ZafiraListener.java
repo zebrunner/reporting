@@ -49,6 +49,7 @@ import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 
@@ -519,12 +520,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			if(ZAFIRA_ENABLED)
 			{
-				zc = new ZafiraClient(ZAFIRA_URL, ZAFIRA_USERNAME, ZAFIRA_PASSWORD);
-				if(!zc.isAvailable())
+				zc = new ZafiraClient(ZAFIRA_URL);
+				
+				ZAFIRA_ENABLED =  zc.isAvailable();
+				
+				if(ZAFIRA_ENABLED)
 				{
-					ZAFIRA_ENABLED = false;
-					LOGGER.error("Zafira server is unavailable!");
+					Response<AuthTokenType> auth = zc.login(ZAFIRA_USERNAME, ZAFIRA_PASSWORD);
+					if(auth.getStatus() == 200)
+					{
+						zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
+					}
+					else
+					{
+						ZAFIRA_ENABLED = false;
+					}
 				}
+				LOGGER.error("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
 			}
 			
 			success = ZAFIRA_ENABLED;

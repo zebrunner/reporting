@@ -13,6 +13,16 @@ public class CredentialsType implements Serializable
 	
 	@NotNull
 	private String password;
+	
+	public CredentialsType()
+	{
+	}
+
+	public CredentialsType(String username, String password)
+	{
+		this.username = username;
+		this.password = password;
+	}
 
 	public String getUsername()
 	{
