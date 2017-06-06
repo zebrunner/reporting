@@ -180,7 +180,8 @@ public class TestRunService
 					{
 						testRun.setPlatform(arg.getValue());
 					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL"))
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
+							&& !arg.getValue().equals("*"))
 					{
 						testRun.setPlatform(arg.getValue());
 					}
