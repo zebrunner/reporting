@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -169,19 +168,20 @@ public class SeleniumService
 	
 	private void authorize(WebDriver wd, String auth, String domain, String url) throws InterruptedException
 	{
-		if(auth.startsWith("Basic"))
-		{
-			auth = new String(Base64.decodeBase64(auth.replace("Basic ", "").getBytes()));
-			wd.get(url);
-			wd.findElement(By.id("username")).sendKeys(auth.split(":")[0]);
-			wd.findElement(By.id("password")).sendKeys(auth.split(":")[1]);
-			wd.findElement(By.tagName("button")).click();
-			WebDriverUtil.pause(3, TimeUnit.SECONDS);
-		}
-		else
-		{
-			wd.manage().addCookie(new Cookie.Builder("JSESSIONID", auth).domain(normalizeDomain(domain)).build());
-		}
+		wd.manage().addCookie(new Cookie.Builder("Authorization", auth).domain(normalizeDomain(domain)).build());
+//		if(auth.startsWith("Basic"))
+//		{
+//			auth = new String(Base64.decodeBase64(auth.replace("Basic ", "").getBytes()));
+//			wd.get(url);
+//			wd.findElement(By.id("username")).sendKeys(auth.split(":")[0]);
+//			wd.findElement(By.id("password")).sendKeys(auth.split(":")[1]);
+//			wd.findElement(By.tagName("button")).click();
+//			WebDriverUtil.pause(3, TimeUnit.SECONDS);
+//		}
+//		else
+//		{
+//			wd.manage().addCookie(new Cookie.Builder("JSESSIONID", auth).domain(normalizeDomain(domain)).build());
+//		}
 		
 	}
 }
