@@ -372,22 +372,28 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
                 $scope.filterSelected = true;
 
                 $scope.querySearch = querySearch;
-                var stopCriteria = '########';
+
                 function querySearch (criteria) {
                     $scope.usersSearchCriteria.email = criteria;
-                    currentText = criteria;
-                    if(!criteria.includes(stopCriteria)) {
-                        stopCriteria = '########';
                         return $http.post('users/search', $scope.usersSearchCriteria, {params: {q: criteria}})
                             .then(function (response) {
-                                if (response.data.results.length == 0) {
-                                    stopCriteria = criteria;
-                                }
-                                return response.data.results;
+                                return response.data.results.filter(searchFilter($scope.users));
                             });
-                    }
-                    return "";
                 }
+
+                function searchFilter(addedUsers) {
+                    return function filterFn(user) {
+                        var users = addedUsers;
+                        for(var i = 0; i < users.length; i++) {
+                            if(users[i].id == user.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
+                }
+
+
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};
 					if(currentUser.userName == null) {

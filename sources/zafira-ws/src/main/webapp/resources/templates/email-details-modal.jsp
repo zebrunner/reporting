@@ -42,6 +42,7 @@
 									md-items="user in querySearch(searchText)"
 									md-item-text="user.email"
 									md-selected-item="currentUser"
+									md-no-cache="true"
 									<%--md-autoselect--%>
 									placeholder="add email">
 								<md-item-template>
