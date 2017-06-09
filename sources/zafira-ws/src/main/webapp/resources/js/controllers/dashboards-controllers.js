@@ -60,6 +60,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		{
 			params = params + "&currentUserId=" + $scope.currentUserId;
 		}
+		$scope.isLoading = true;
 		$http.post('widgets/sql' + params, sqlAdapter).then(function successCallback(data) {
 			var data = data.data;
 			for(var j = 0; j < data.length; j++)
@@ -80,6 +81,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			{
 				alertify.success('Query executed successfully');
 			}
+            if (data.length!=0){
+                $scope.isLoading = false;
+            }
 		}, function errorCallback(data) {
 			if(isSQLWidget(widget))
 			{
