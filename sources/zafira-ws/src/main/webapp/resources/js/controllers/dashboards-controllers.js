@@ -387,11 +387,25 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
                                 if (response.data.results.length == 0) {
                                     stopCriteria = criteria;
                                 }
-                                return response.data.results;
+                                return response.data.results.filter(searchFilter($scope.users));
                             });
                     }
                     return "";
                 }
+
+                function searchFilter(addedUsers) {
+                    return function filterFn(user) {
+                        var users = addedUsers;
+                        for(var i = 0; i < users.length; i++) {
+                            if(users[i].id == user.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
+                }
+
+
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};
 					if(currentUser.userName == null) {
