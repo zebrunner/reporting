@@ -60,6 +60,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		{
 			params = params + "&currentUserId=" + $scope.currentUserId;
 		}
+		$scope.isLoading = true;
 		$http.post('widgets/sql' + params, sqlAdapter).then(function successCallback(data) {
 			var data = data.data;
 			for(var j = 0; j < data.length; j++)
@@ -80,6 +81,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 			{
 				alertify.success('Query executed successfully');
 			}
+            if (data.length!=0){
+                $scope.isLoading = false;
+            }
 		}, function errorCallback(data) {
 			if(isSQLWidget(widget))
 			{
@@ -383,11 +387,25 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
                                 if (response.data.results.length == 0) {
                                     stopCriteria = criteria;
                                 }
-                                return response.data.results;
+                                return response.data.results.filter(searchFilter($scope.users));
                             });
                     }
                     return "";
                 }
+
+                function searchFilter(addedUsers) {
+                    return function filterFn(user) {
+                        var users = addedUsers;
+                        for(var i = 0; i < users.length; i++) {
+                            if(users[i].id == user.id) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    };
+                }
+
+
                 $scope.checkAndTransformRecipient = function (currentUser) {
                     var user = {};
 					if(currentUser.userName == null) {

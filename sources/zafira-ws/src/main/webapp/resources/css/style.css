@@ -182,7 +182,7 @@ img.pending {
 }
 
 .platform-icon.API {
-	background-position: -23px -181px;
+	background-position: -24px -180px;
 }
 
 .platform-icon.safari {
@@ -349,4 +349,7 @@ span.light_text {
 .danger_text {
 	color: #d9534f;
 	font-size: 12px;
+}
+.progress-circular_align {
+	top: 40%;
 }
