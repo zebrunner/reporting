@@ -350,3 +350,6 @@ span.light_text {
 	color: #d9534f;
 	font-size: 12px;
 }
+.progress-circular_align {
+	top: 40%;
+}

@@ -56,7 +56,8 @@
 	                	</sec:authorize>
 	                </div>
 	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
-	                     <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
+                         <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-show="isLoading"></md-progress-circular>
+                         <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
 	                     <div  data-ng-if="widget.type == 'piechart'" class="pie-chart">
 	                     	<pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
 	                     </div>
