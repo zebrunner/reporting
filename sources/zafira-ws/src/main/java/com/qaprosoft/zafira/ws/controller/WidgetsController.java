@@ -81,7 +81,7 @@ public class WidgetsController extends AbstractController
 			}
 		}
 
-		query.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
+        query = query.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
