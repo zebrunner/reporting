@@ -19,6 +19,9 @@ public class TestRunSearchCriteria extends SearchCriteria
 	private Date fromDate;
 	private Date toDate;
 	private Status status;
+	private boolean referredToCurrentUser;
+    private Long currentUserId;
+
 	
 	public TestRunSearchCriteria()
 	{
@@ -104,8 +107,24 @@ public class TestRunSearchCriteria extends SearchCriteria
 	{
 		this.fromDate = fromDate;
 	}
-	
-	public void setFromDateString(String fromDate) throws ParseException
+
+	public boolean isReferredToCurrentUser() {
+		return referredToCurrentUser;
+	}
+
+	public void setReferredToCurrentUser(boolean referredToCurrentUser) {
+		this.referredToCurrentUser = referredToCurrentUser;
+	}
+
+    public Long getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public void setCurrentUserId(Long currentUserId) {
+        this.currentUserId = currentUserId;
+    }
+
+    public void setFromDateString(String fromDate) throws ParseException
 	{
 		this.fromDate = new SimpleDateFormat("MM-dd-yyyy").parse(fromDate);
 	}

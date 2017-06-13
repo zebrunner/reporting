@@ -52,7 +52,10 @@
 			            		</select>
 			            	</div>
 			            	<div class="col-lg-2"><input type="datetime-local" class="form-control" placeholder="Date" data-ng-model="startedAt" style="min-width:95%" data-ng-change="showReset = true"></div>
-			            	<input type="submit" data-ng-hide="true" />
+							<div class="col-lg-3">
+								Show tests for current user <input type="checkbox" data-ng-model="testRunSearchCriteria.referredToCurrentUser" />
+							</div>
+							<input type="submit" data-ng-hide="true" />
 		            	</form>
 					</div>
 					<div class="row search_controls">
