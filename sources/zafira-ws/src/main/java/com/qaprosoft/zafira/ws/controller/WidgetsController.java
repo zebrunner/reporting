@@ -71,12 +71,8 @@ public class WidgetsController extends AbstractController
 	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project, @RequestParam(value="currentUserId", required=false) String currentUserId, @RequestParam(value="dashboardName", required=false) String dashboardName) throws ServiceException
 	{
-		String query = sql.getSql()
-				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
-				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
-				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
-		
+		String query = sql.getSql();
+
 		if(sql.getAttributes() != null)
 		{
 			for(Attribute attribute : sql.getAttributes())
@@ -84,7 +80,12 @@ public class WidgetsController extends AbstractController
 				query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
 			}
 		}
-		
+
+		query.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
+				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
+				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
+				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
+
 		return widgetService.executeSQL(query);
 	}
 	
