@@ -56,7 +56,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		sqlAdapter.attributes = attributes;
 		var params = ProjectProvider.getProjectQueryParam();
 		for(var i = 0; i<$scope.dashboard.attributes.length; i++){
-            if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == "project"){
+            if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
                 params = "?project=" + $scope.dashboard.attributes[i].value;
             }
 		}
