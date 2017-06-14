@@ -326,6 +326,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
     };
     
     $scope.changeSorting = function(column) {
+        column = column.replace(/[-[\]{}()*+?.,\\^$|#\s%]/g,"");
         var sort = $scope.sort;
         if (sort.column == column) {
             sort.descending = !sort.descending;
