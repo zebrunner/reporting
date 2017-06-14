@@ -55,9 +55,11 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		sqlAdapter.sql = widget.sql;
 		sqlAdapter.attributes = attributes;
 		var params = ProjectProvider.getProjectQueryParam();
-        if ($scope.dashboard.attributes[0] != null && $scope.dashboard.attributes[0] != '%' && $scope.dashboard.attributes[0] != '') {
-            params = "?project=" + $scope.dashboard.attributes[0].value;
-        }
+		for(var i = 0; i<$scope.dashboard.attributes.length; i++){
+            if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
+                params = "?project=" + $scope.dashboard.attributes[i].value;
+            }
+		}
 		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
 		if($scope.currentUserId != null)
 		{
