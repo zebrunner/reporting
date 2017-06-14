@@ -55,6 +55,9 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
 		sqlAdapter.sql = widget.sql;
 		sqlAdapter.attributes = attributes;
 		var params = ProjectProvider.getProjectQueryParam();
+        if ($scope.dashboard.attributes[0] != null && $scope.dashboard.attributes[0] != '%' && $scope.dashboard.attributes[0] != '') {
+            params = "?project=" + $scope.dashboard.attributes[0].value;
+        }
 		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
 		if($scope.currentUserId != null)
 		{
@@ -323,6 +326,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
     };
     
     $scope.changeSorting = function(column) {
+        column = column.replace(/[-[\]{}()*+?.,\\^$|#\s%]/g,"");
         var sort = $scope.sort;
         if (sort.column == column) {
             sort.descending = !sort.descending;
