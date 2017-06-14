@@ -328,7 +328,12 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
     };
     
     $scope.changeSorting = function(column) {
-        column = column.replace(/[-[\]{}()*+?.,\\^$|#\s%]/g,"");
+        var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
+
+        if (column.search(specCharRegexp) != -1) {
+            // handle by quotes from both sides
+             column = "\"" + column + "\"";
+         }
         var sort = $scope.sort;
         if (sort.column == column) {
             sort.descending = !sort.descending;
@@ -337,7 +342,7 @@ ZafiraApp.controller('DashboardsCtrl', [ '$scope', '$rootScope', '$http', '$loca
             sort.descending = false;
         }
     };
-    
+
     $scope.openEmailModal = function(){
 		$modal.open({
 			templateUrl : 'resources/templates/email-details-modal.jsp',
