@@ -468,6 +468,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.testRun = testRun;
                 $scope.email = {};
                 $scope.email.recipients = [];
+                $scope.email.screenshotsAvailable = $scope.testRun.screenshotsAvailable;
                 $scope.users = [];
                 $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 

@@ -366,7 +366,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-    public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+    public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace,boolean screenshotsAvailable, final String ... recipients) throws ServiceException, JAXBException
     {
         TestRun testRun = getTestRunByIdFull(testRunId);
         if(testRun == null)
@@ -376,16 +376,8 @@ public class TestRunService
         Configuration configuration = readConfiguration(testRun.getConfigXML());
         configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 
-        for (Argument arg : configuration.getArg()) {
-            if (!StringUtils.isEmpty(arg.getValue())) {
-                if ("keep_all_screenshots".equals(arg.getKey())) {
-                    testRun.setScreenshotsAvailable(Boolean.valueOf(arg.getValue()));
-                }
-            }
-        }
-
         List<Test> tests = testService.getTestsByTestRunId(testRunId);
-        if (!testRun.isScreenshotsAvailable()){
+        if (!screenshotsAvailable){
             for(Test test: tests){
                 test.setDemoURL(null);
             }
