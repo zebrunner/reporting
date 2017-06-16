@@ -193,8 +193,7 @@ public class TestRunsController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException
-	{
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc) throws ServiceException, JAXBException {
 		return testRunService.searchTestRuns(sc);
 	}
 
@@ -265,7 +264,8 @@ public class TestRunsController extends AbstractController
 														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace) throws ServiceException, JAXBException
 	{
 		String [] recipients = !StringUtils.isEmpty(email.getRecipients()) ? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[]{};
-		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
+		boolean screenshotsAvailable = email.isScreenshotsAvailable();
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, screenshotsAvailable, recipients);
 	}
 
 	@ApiIgnore

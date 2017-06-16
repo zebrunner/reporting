@@ -10,7 +10,8 @@ public class EmailType extends AbstractType
 	private String recipients;
 	private String subject;
 	private String text;
-	
+	private boolean screenshotsAvailable;
+
 	public EmailType() {
 		
 	}
@@ -44,4 +45,13 @@ public class EmailType extends AbstractType
 	{
 		this.recipients = recipients;
 	}
+
+	public boolean isScreenshotsAvailable() {
+		return screenshotsAvailable;
+	}
+
+	public void setScreenshotsAvailable(boolean screenshotsAvailable) {
+		this.screenshotsAvailable = screenshotsAvailable;
+	}
 }
+

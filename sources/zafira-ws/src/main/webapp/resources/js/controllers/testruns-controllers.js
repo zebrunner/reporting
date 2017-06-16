@@ -229,10 +229,9 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
             $scope.testSearchCriteria.page = data.page;
             $scope.testSearchCriteria.pageSize = data.pageSize;
 
-
             for (var i = 0; i < data.results.length; i++) {
                 var testData = data.results[i];
-                if($scope.testRuns[testRunId].platform == 'API'){
+                if( $scope.testRuns[testRunId].screenshotsAvailable == false){
                     testData.demoURL = null;
                 }
                 $scope.addTest(testData, false);
@@ -469,6 +468,7 @@ ZafiraApp.controller('TestRunsListCtrl', ['$scope', '$interval', '$rootScope', '
                 $scope.testRun = testRun;
                 $scope.email = {};
                 $scope.email.recipients = [];
+                $scope.email.screenshotsAvailable = $scope.testRun.screenshotsAvailable;
                 $scope.users = [];
                 $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 
