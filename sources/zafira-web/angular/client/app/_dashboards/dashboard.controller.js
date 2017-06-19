@@ -21,10 +21,16 @@
         $scope.loadWidget = function (dashboardName, widget, attributes) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = ProjectProvider.getProjectQueryParam();
-    		params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+    		}
+            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
             if ($scope.currentUserId) {
                 params = params + "&currentUserId=" + $scope.currentUserId;
             }
+          
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -58,7 +64,13 @@
             descending: false
         };
 
-        $scope.changeSorting = function (column) {
+        $scope.changeSorting = function(column) {
+            var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
+
+            if (column.search(specCharRegexp) != -1) {
+                // handle by quotes from both sides
+                 column = "\"" + column + "\"";
+             }
             var sort = $scope.sort;
             if (sort.column == column) {
                 sort.descending = !sort.descending;

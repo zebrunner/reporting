@@ -452,14 +452,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	@Override
 	public void onStart(ITestContext context) {
-		//TODO: investigate possibility to remove methods from context based on need rerun flag
-		if (ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES && DriverMode.CLASS_MODE.equals(configurator.getDriverMode())) {
-			if (context.getCurrentXmlTest().getClasses().size() > 0) {
-				if (!classesToRerun.contains(context.getCurrentXmlTest().getClasses().get(0).getName())) {
-					throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
-				}
-			}
-		}
+		// Do nothing
 	}
 	
 	@Override
