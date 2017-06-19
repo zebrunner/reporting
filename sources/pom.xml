@@ -118,12 +118,12 @@
 		<module>zafira-conf</module>
 		<module>zafira-models</module>
 		<module>zafira-client</module>
-		<!--module>zafira-dbaccess</module>
+		<module>zafira-dbaccess</module>
 		<module>zafira-services</module>
     <module>zafira-ws</module>
 		<module>zafira-batch-services</module>
 		<module>zafira-grid</module>
-		<module>zafira-web</module-->
+		<module>zafira-web</module>
 	</modules>
 
 	<dependencyManagement>
