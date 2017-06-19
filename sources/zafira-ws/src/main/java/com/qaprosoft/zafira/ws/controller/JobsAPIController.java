@@ -1,5 +1,29 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.JobView;
 import com.qaprosoft.zafira.models.db.TestRun;
@@ -9,23 +33,11 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.JobsService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections.CollectionUtils;
-import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "Jobs API")
@@ -45,7 +57,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create job", nickname = "createJob", code = 200, httpMethod = "POST", response = JobType.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job,
 			@RequestHeader(value = "Project", required = false) String project) throws
@@ -56,7 +68,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all jobs", nickname = "getAllJobs", code = 200, httpMethod = "GET", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Job> getAllJobs() throws ServiceException
 	{
@@ -65,7 +77,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", code = 200, httpMethod = "POST", response = Map.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}/tests/runs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env,
 			@RequestBody @Valid List<JobViewType> jobViews) throws ServiceException
@@ -80,7 +92,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create job view", nickname = "createJobViews", code = 200, httpMethod = "POST", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({ "ROLE_ADMIN" })
 	public @ResponseBody List<JobViewType> createJobViews(@RequestBody @Valid List<JobViewType> jobViews)
@@ -95,7 +107,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update job view", nickname = "updateJobViews", code = 200, httpMethod = "PUT", response = List.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({ "ROLE_ADMIN" })
 	public @ResponseBody List<JobViewType> updateJobViews(@RequestBody @Valid List<JobViewType> jobViews,
@@ -114,7 +126,7 @@ public class JobsAPIController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get job views", nickname = "getJobViews", code = 200, httpMethod = "GET", response = Map.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, List<JobViewType>> getJobViews(@PathVariable(value = "id") long id)
 			throws ServiceException
@@ -134,6 +146,8 @@ public class JobsAPIController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete job views", nickname = "deleteJobViews", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}", method = RequestMethod.DELETE)
 	public void deleteJobViews(@PathVariable(value = "id") long viewId, @QueryParam("env") String env)
 			throws ServiceException

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
 import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -24,13 +25,19 @@ public class GroupService
 		return group;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(readOnly = true)
 	public Group getGroupById(long id) throws ServiceException
 	{
 		return groupMapper.getGroupById(id);
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(readOnly = true)
+	public Group getPrimaryGroupByRole(Role role) throws ServiceException
+	{
+		return groupMapper.getPrimaryGroupByRole(role);
+	}
+	
+	@Transactional(readOnly = true)
 	public List<Group> getAllGroups() throws ServiceException
 	{
 		List<Group> groupList = groupMapper.getAllGroups();
@@ -41,7 +48,7 @@ public class GroupService
 		return groupList;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(readOnly=true)
 	public Integer getGroupsCount() throws ServiceException
 	{
 		return groupMapper.getGroupsCount();

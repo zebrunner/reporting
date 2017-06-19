@@ -15,7 +15,6 @@
     <sql id="getGroup">
         <![CDATA[
 			SELECT
-
 				G.ID AS GROUP_ID,
 				G.NAME AS GROUP_NAME,
 				G.ROLE AS GROUP_ROLE,
@@ -62,7 +61,25 @@
     <select id="getGroupById" resultMap="GroupResultMap">
         <include refid="getGroup" />
         <![CDATA[
+        
 			WHERE G.ID = #{id};
+		]]>
+    </select>
+    
+    <select id="getPrimaryGroupByRole" resultMap="GroupResultMap">
+        <![CDATA[
+        	SELECT
+				G.ID AS GROUP_ID,
+				G.NAME AS GROUP_NAME,
+				G.ROLE AS GROUP_ROLE,
+				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
+				G.CREATED_AT AS GROUP_CREATED_AT
+			FROM
+				zafira.GROUPS G
+			WHERE 
+				G.ROLE = #{role}
+			ORDER BY ID ASC
+			LIMIT 1
 		]]>
     </select>
 

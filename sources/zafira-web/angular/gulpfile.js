@@ -1,6 +1,4 @@
 var gulp = require('gulp');
-var war = require('gulp-war');
-var zip = require('gulp-zip');
 var args = require('yargs').argv;
 var browserSync = require('browser-sync');
 var config = require('./gulp.config')();
@@ -132,7 +130,7 @@ gulp.task('optimize', ['inject', 'sass-min'], function() {
         .src(config.index)
         .pipe($.plumber({errorHandler: swallowError}))
         .pipe($.useref())
-        .pipe($.if('scripts/app.js', $.uglify()))
+        // .pipe($.if('scripts/app.js', $.uglify()))
         .pipe(gulp.dest( config.dist ));
 
 });
@@ -154,16 +152,7 @@ gulp.task('serve-docs', ['pug-docs'], function() {
     startBrowserSync('docs');
 })
 
-gulp.task('war', function () {
-    gulp.src(["./dist/**"])
-        .pipe(war({
-            welcome: 'index.html',
-            displayName: 'Zafira Web',
-        }))
-        .pipe(zip('../target/zafira-web.war'))
-        .pipe(gulp.dest("."));
 
-})
 
 function clean(path, done) {
     log('Cleaning: ' + $.util.colors.blue(path));

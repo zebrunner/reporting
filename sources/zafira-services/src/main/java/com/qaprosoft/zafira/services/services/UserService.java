@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
@@ -20,6 +22,9 @@ public class UserService
 {
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private GroupService groupService;
 
 	@Autowired
 	private PasswordEncryptor passwordEncryptor;
@@ -83,6 +88,13 @@ public class UserService
 		if (user == null)
 		{
 			createUser(newUser);
+			Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
+			if(group != null)
+			{
+				addUserToGroup(newUser, group.getId());
+				newUser.getGroups().add(group);
+			}
+			
 		} else
 		{
 			newUser.setId(user.getId());

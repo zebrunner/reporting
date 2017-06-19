@@ -95,6 +95,11 @@ public class User extends AbstractEntity implements Comparable<User>
 		this.groups = groups;
 	}
 	
+	public void setRoles(List<Role> roles)
+	{
+		// Do nothing just treak for dozer mapper
+	}
+	
 	public List<Role> getRoles()
 	{
 		Set<Role> roles = new HashSet<>();

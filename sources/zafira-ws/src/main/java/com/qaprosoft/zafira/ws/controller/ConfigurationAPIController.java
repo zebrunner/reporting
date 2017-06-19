@@ -28,6 +28,8 @@ import com.qaprosoft.zafira.services.services.slack.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Controller
@@ -57,6 +59,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get version", nickname = "getVersion", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Map<String, Object> getVersion() throws ServiceException
@@ -70,6 +73,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get all projects", nickname = "getAllProjects", code = 200, httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<Project> getAllProjects() throws ServiceException
@@ -80,6 +84,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get jenkins config", nickname = "getJenkinsConfig", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "jenkins", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<String, Object> getJenkinsConfig() throws ServiceException
     {
@@ -91,6 +96,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Get jira config", nickname = "getJiraConfig", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "jira", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<String, Object> getJiraConfig() throws ServiceException
     {
@@ -102,6 +108,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatusDetails
     @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "slack/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<String, Object> isSlackAvailable(@PathVariable(value = "id") long id)
             throws ServiceException,

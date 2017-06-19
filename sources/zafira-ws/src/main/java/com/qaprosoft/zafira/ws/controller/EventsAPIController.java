@@ -16,6 +16,8 @@ import com.qaprosoft.zafira.models.db.Event;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.EventService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
@@ -25,17 +27,21 @@ public class EventsAPIController extends AbstractController
 {
 	@Autowired
 	private EventService eventService;
-	
+
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Event createEvent(@RequestBody @Valid Event event) throws ServiceException
 	{
 		eventService.createEvent(event);
 		return event;
 	}
-	
+
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="received", method = RequestMethod.PUT)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "received", method = RequestMethod.PUT)
 	public void markEventReceived(@RequestBody @Valid Event event) throws ServiceException
 	{
 		eventService.markEventReceived(event.getType(), event.getTestRunId(), event.getTestId());

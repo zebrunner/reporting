@@ -21,6 +21,8 @@ import com.qaprosoft.zafira.services.services.GroupService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Controller
@@ -34,7 +36,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create group", nickname = "createGroup", code = 200, httpMethod = "POST", response = Group.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Group createGroup(@RequestBody Group group) throws ServiceException
@@ -43,7 +45,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get group", nickname = "getGroup", code = 200, httpMethod = "GET", response = Group.class)
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Group getGroup(@PathVariable(value = "id") long id) throws ServiceException
@@ -52,7 +54,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get all groups", nickname = "getAllGroups", code = 200, httpMethod = "GET", response = List.class)
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
@@ -62,7 +64,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", code = 200, httpMethod = "GET", response = Integer.class)
     @RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Integer getGroupsCount() throws ServiceException
@@ -71,7 +73,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get roles", nickname = "getRoles", code = 200, httpMethod = "GET", response = List.class)
     @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Group.Role> getRoles() throws ServiceException
@@ -80,7 +82,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Update group", nickname = "updateGroup", code = 200, httpMethod = "PUT", response = Group.class)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Group updateGroup(@RequestBody Group group) throws ServiceException
@@ -89,7 +91,9 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Delete group", nickname = "deleteGroup", code = 200, httpMethod = "DELETE")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteGroup(@PathVariable(value = "id") long id) throws ServiceException

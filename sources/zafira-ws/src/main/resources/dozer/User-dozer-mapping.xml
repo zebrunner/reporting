@@ -26,5 +26,9 @@
 			<a>lastName</a>
 			<b>lastName</b>
 		</field>
+		<field>
+			<a>roles</a>
+			<b>roles</b>
+		</field>
 	</mapping>
 </mappings>

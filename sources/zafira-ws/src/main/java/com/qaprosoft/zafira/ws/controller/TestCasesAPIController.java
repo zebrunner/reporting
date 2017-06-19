@@ -29,6 +29,8 @@ import com.qaprosoft.zafira.services.services.TestCaseService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Controller
@@ -47,7 +49,7 @@ public class TestCasesAPIController extends AbstractController
 	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Search test cases", nickname = "searchTestCases", code = 200, httpMethod = "POST", response = SearchResult.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException
 	{
@@ -56,7 +58,7 @@ public class TestCasesAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create test case", nickname = "createTestCase", code = 200, httpMethod = "POST",  response = TestCaseType.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType createTestCase(@RequestBody @Valid TestCaseType testCase, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, MappingException, ExecutionException
 	{
@@ -68,6 +70,8 @@ public class TestCasesAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create multiple test cases", nickname = "createTestCases", code = 200, httpMethod = "POST", response = TestCaseType[].class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="batch", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestCaseType [] createTestCases(@RequestBody @Valid TestCaseType [] tcs, @RequestHeader(value="Project", required=false) String projectName) throws ServiceException, ExecutionException
 	{

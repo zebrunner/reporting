@@ -26,6 +26,8 @@ import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Controller
@@ -43,6 +45,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get user profile", nickname = "getUserProfile", code = 200, httpMethod = "GET", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "profile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType getUserProfile() throws ServiceException
 	{
@@ -55,6 +59,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update user profile", nickname = "updateUserProfile", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "profile", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType updateUserProfile(@Valid @RequestBody UserType user) throws ServiceException
 	{
@@ -65,6 +71,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update user password", nickname = "updateUserPassword", code = 200, httpMethod = "PUT")
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
 	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
 	{
@@ -74,6 +82,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Search users", nickname = "searchUsers", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
 			throws ServiceException
@@ -84,6 +94,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user,
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
@@ -94,6 +106,8 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete user", nickname = "deleteUser", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -102,6 +116,8 @@ public class UsersAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id)
@@ -112,6 +128,8 @@ public class UsersAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId,

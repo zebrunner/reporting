@@ -26,6 +26,8 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.WidgetService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -36,37 +38,46 @@ public class WidgetsAPIController extends AbstractController
 {
 	@Autowired
 	private WidgetService widgetService;
-	
+
 	@ResponseStatusDetails
-    @ApiOperation(value = "Create widget", nickname = "createWidget", code = 200, httpMethod = "POST", response = Widget.class)
+	@ApiOperation(value = "Create widget", nickname = "createWidget", code = 200, httpMethod = "POST", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget, @RequestHeader(value="Project", required=false) String project) throws ServiceException
+	public @ResponseBody Widget createWidget(@RequestBody @Valid Widget widget,
+			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
 		return widgetService.createWidget(widget);
 	}
-	
+
 	@ResponseStatusDetails
-    @ApiOperation(value = "Get widget", nickname = "getWidget", code = 200, httpMethod = "GET", response = Widget.class)
+	@ApiOperation(value = "Get widget", nickname = "getWidget", code = 200, httpMethod = "GET", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Widget getWidget(@PathVariable(value="id") long id) throws ServiceException
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Widget getWidget(@PathVariable(value = "id") long id) throws ServiceException
 	{
 		return widgetService.getWidgetById(id);
 	}
-	
+
 	@ResponseStatusDetails
-    @ApiOperation(value = "Delete widget", nickname = "deleteWidget", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete widget", nickname = "deleteWidget", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
-	public void deleteWidget(@PathVariable(value="id") long id) throws ServiceException
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	public void deleteWidget(@PathVariable(value = "id") long id) throws ServiceException
 	{
 		widgetService.deleteWidgetById(id);
 	}
-	
+
 	@ResponseStatusDetails
-    @ApiOperation(value = "Update widget", nickname = "updateWidget", code = 200, httpMethod = "PUT", response = Widget.class)
+	@ApiOperation(value = "Update widget", nickname = "updateWidget", code = 200, httpMethod = "PUT", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Widget updateWidget(@RequestBody Widget widget) throws ServiceException
 	{
@@ -74,31 +85,39 @@ public class WidgetsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-    @ApiOperation(value = "Execute SQL", nickname = "executeSQL", code = 200, httpMethod = "POST", response = List.class)
+	@ApiOperation(value = "Execute SQL", nickname = "executeSQL", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql, @RequestParam(value="project", defaultValue="", required=false) String project, @RequestParam(value="currentUserId", required=false) String currentUserId, @RequestParam(value="dashboardName", required=false) String dashboardName) throws ServiceException
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql,
+			@RequestParam(value = "project", defaultValue = "", required = false) String project,
+			@RequestParam(value = "currentUserId", required = false) String currentUserId,
+			@RequestParam(value = "dashboardName", required = false) String dashboardName) throws ServiceException
 	{
 		String query = sql.getSql()
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
+				.replaceAll("#\\{currentUserId\\}",
+						!StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
-		
-		if(sql.getAttributes() != null)
+
+		if (sql.getAttributes() != null)
 		{
-			for(Attribute attribute : sql.getAttributes())
+			for (Attribute attribute : sql.getAttributes())
 			{
 				query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
 			}
 		}
-		
+
 		return widgetService.executeSQL(query);
 	}
-	
+
 	@ResponseStatusDetails
-    @ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Widget> getAllWidgets() throws ServiceException
 	{
