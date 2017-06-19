@@ -86,6 +86,28 @@
             </executions>
         </plugin>
         <plugin>
+   		    <groupId>com.google.code.maven-replacer-plugin</groupId>
+   		    <artifactId>replacer</artifactId>
+   		    <version>1.5.3</version>
+   		    <executions>
+   		        <execution>
+   		            <phase>prepare-package</phase>
+   		            <goals>
+   		                <goal>replace</goal>
+   		            </goals>
+   		        </execution>
+   		    </executions>
+   		    <configuration>
+   		        <file>${project.basedir}/angular/dist/scripts/app.js</file>
+   		        <replacements>
+   		            <replacement>
+   		                <token>http://localhost:8888/zafira-ws</token>
+   		                <value>${zafira.url}${zafira.ws.path}</value>
+   		            </replacement>
+   		        </replacements>
+   		    </configuration>
+   		</plugin>
+        <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <version>3.1.0</version>

@@ -361,7 +361,8 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
+		// Forward from API to Web
+		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		if (testRun.getPlatform().equals("API")){
