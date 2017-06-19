@@ -125,7 +125,7 @@ public class ZafiraClient
 		{
 			WebResource webResource = client.resource(serviceURL + USERS_PATH);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, user);
+					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, user);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
