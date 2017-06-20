@@ -69,7 +69,7 @@
         }
 
         function sendTestRunResultsEmail(id, email, filter, showStacktrace) {
-            return $http.post(API_URL + '/api/tests/runs/' + id + '/email', {params:{'filter': filter, 'showStacktrace': showStacktrace}}, email).then(UtilService.handleSuccess, UtilService.handleError('Unable to send test run results email'));
+            return $http.post(API_URL + '/api/tests/runs/' + id + '/email', email, {params:{'filter': filter, 'showStacktrace': showStacktrace}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send test run results email'));
         }
 
         function exportTestRunResultsHTML(id) {
