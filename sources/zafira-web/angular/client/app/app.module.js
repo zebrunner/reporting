@@ -5,11 +5,7 @@
         // Core modules
          'app.core'
         // Custom Feature modules
-        ,'app.ui'
-        ,'app.ui.form'
-        ,'app.ui.form.validation'
         ,'app.page'
-        ,'app.table'
         ,'app.services'
         ,'app.auth'
         ,'app.dashboard'

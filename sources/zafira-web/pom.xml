@@ -101,7 +101,7 @@
    		        <file>${project.basedir}/angular/dist/scripts/app.js</file>
    		        <replacements>
    		            <replacement>
-   		                <token>http://localhost:8888/zafira-ws</token>
+   		                <token>http://127.0.0.1:8080/zafira-ws</token>
    		                <value>${zafira.url}${zafira.ws.path}</value>
    		            </replacement>
    		        </replacements>
