@@ -3,9 +3,9 @@
  
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$rootScope', '$state', '$cookies', 'AuthService', 'UserService', 'UtilService', AuthController])
+        .controller('AuthController', ['$scope', '$rootScope', '$state', '$cookies', '$templateCache', 'AuthService', 'UserService', 'UtilService', AuthController])
  
-    function AuthController($scope, $rootScope, $state, $cookies, AuthService, UserService, UtilService) {
+    function AuthController($scope, $rootScope, $state, $cookies, $templateCache, AuthService, UserService, UtilService) {
  
     	$scope.UtilService = UtilService;
     	
@@ -30,7 +30,8 @@
 		              {
 		            	  $rootScope.user = rs.data;
 		            	  $cookies.putObject('user', $rootScope.user);
-		            	  $state.go('dashboard');
+		            	  $rootScope.$broadcast('event:auth-loginSuccess', $rootScope.user);
+		            	  $state.go('dashboard', {}, { reload: true });
 		              }
             		});
             	}

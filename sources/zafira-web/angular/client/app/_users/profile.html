@@ -12,6 +12,11 @@
                             <div class="md-inline-form">
                                 <div layout-padding>
                                     <form name="profile_form" ng-submit="updateUserProfile(user)">
+                                    	<div layout layout-sm="column">
+                                    		<md-input-container flex>
+                                    			<div class="label label-default" data-ng-repeat="role in user.roles" style="margin-right: 5px;">{{role}}</div>
+                                        	</md-input-container>
+                                        </div>
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>Username</label>

@@ -58,7 +58,6 @@
 		            		AuthIntercepter.loginCancelled();
 		            	}
 		            });
-	        		
 	        	}
 	        	else
 	        	{

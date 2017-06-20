@@ -8,6 +8,8 @@
         function AuthService($http, $cookies, $rootScope, $state, UtilService, UserService, API_URL) {
 
 	    	var service = {};
+	    	
+	    	var currentUser = $cookies.getObject('user');
 
 	        service.Login = Login;
 	        service.SetCredentials = SetCredentials;
@@ -37,7 +39,7 @@
 	        }
 
 	        function IsLoggedIn() {
-	            return $rootScope.globals != null && $rootScope.globals.auth != null;
+	            return currentUser != null;
 	        }
 
 	        function UserHasPermission(permissions){
@@ -47,7 +49,7 @@
 
 	            var found = false;
 	            angular.forEach(permissions, function(permission, index){
-	                if ($rootScope.user.roles.indexOf(permission) >= 0){
+	                if (currentUser.roles.indexOf(permission) >= 0){
 	                    found = true;
 	                    return;
 	                }
@@ -55,9 +57,10 @@
 
 	            return found;
 	        }
-
-	         (function init() {
-	         })();
+	        
+	        $rootScope.$on("event:auth-loginSuccess", function(ev, user){
+	        	currentUser = user; 
+	        });
 
 	        return service;
     }

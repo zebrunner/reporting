@@ -4,7 +4,7 @@
     angular.module('app.core')
         .factory('appConfig', [appConfig])
         .config(['$mdThemingProvider', mdConfig])
-        .constant('API_URL', 'http://localhost:8888/zafira-ws');
+        .constant('API_URL', 'http://127.0.0.1:8080/zafira-ws');
 
     function appConfig() {
         var pageTransitionOpts = [

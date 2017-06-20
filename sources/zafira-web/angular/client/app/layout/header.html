@@ -23,20 +23,6 @@
     </div>
 
     <div class="top-nav" ng-controller="SidebarController">
-        <ul class="nav-left list-unstyled">
-            <!--li><md-button class="header-btn toggle-min" data-toggle-nav-collapsed-min aria-label="toggle-nav-collapsed-min"><i class="material-icons">menu</i></md-button></li-->
-            <li>
-                
-            </li>
-            <!--  li class="search-box visible-md visible-lg">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="material-icons">search</i></span>
-                    <input type="text" class="form-control" placeholder="{{ 'SEARCH' | translate }}">
-                    <span class="input-bar"></span>
-                </div>
-            </li-->
-        </ul>
-
         <ul class="nav-right pull-right list-unstyled">
             <li>
             	<md-menu md-position-mode="left bottom">
@@ -53,7 +39,7 @@
                                     <h3 class="highlight_red">Clear</h3>
                                 </div>
                             </md-list-item>
-                            <md-list-item class="md-2-line" ng-click="showProjectDialog()" permission="['ROLE_ADMIN']">
+                            <md-list-item class="md-2-line" ng-click="showProjectDialog()" data-ng-if="isAdmin()"">
                                 <md-icon class="material-icons highlight_green">add</md-icon>
                                 <div class="md-list-item-text">
                                     <h3 class="highlight_green">Create</h3>

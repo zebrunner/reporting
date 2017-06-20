@@ -3,11 +3,11 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$location', 'UserService', 'UtilService', UserProfileController])
-        .controller('UserListController', ['$scope', '$location', '$mdDialog', 'UserService', 'GroupService', 'UtilService', UserListController])
+        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', UserProfileController])
+        .controller('UserListController', ['$scope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $location, UserService, UtilService) {
+    function UserProfileController($scope, $location, $state, UserService, UtilService) {
 
     	$scope.UtilService = UtilService;
 
@@ -20,6 +20,7 @@
         		if(rs.success)
         		{
         			$scope.user = rs.data;
+        			$scope.changePassword.userId = $scope.user.id;
         		}
         		else
         		{
@@ -62,7 +63,7 @@
     }
 
     // **************************************************************************
-    function UserListController($scope, $location, $mdDialog, UserService, GroupService, UtilService) {
+    function UserListController($scope, $location, $state, $mdDialog, UserService, GroupService, UtilService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -98,6 +99,7 @@
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {
                     $scope.user = user;
+                    $scope.changePassword = {'userId' : user.id};
                     $scope.updateUserPassword = function(changePassword)
                     {
                         UserService.updateUserPassword(changePassword)
@@ -115,10 +117,10 @@
                             });
                     };
                     $scope.hide = function() {
-                        $mdDialog.hide();
+                        $mdDialog.hide(true);
                     };
                     $scope.cancel = function() {
-                        $mdDialog.cancel();
+                        $mdDialog.cancel(false);
                     };
                 },
                 templateUrl: 'app/_users/password_modal.html',
@@ -127,9 +129,13 @@
                 clickOutsideToClose:true,
                 fullscreen: true
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            	if(answer)
+            	{
+            		$state.reload();
+            	}
+            }, function() {
+            });
         };
 
         $scope.showEditProfileDialog = function(event, user) {
@@ -163,10 +169,10 @@
                         });
                     };
                     $scope.hide = function() {
-                        $mdDialog.hide($scope.user);
+                        $mdDialog.hide(true);
                     };
                     $scope.cancel = function() {
-                        $mdDialog.cancel();
+                        $mdDialog.cancel(false);
                     };
                 },
                 templateUrl: 'app/_users/edit_modal.html',
@@ -176,7 +182,10 @@
                 fullscreen: true
             })
                 .then(function(answer) {
-                    angular.copy(answer, user);
+                	if(answer)
+                	{
+                		$state.reload();
+                	}
                 }, function() {
                 });
         };
@@ -198,10 +207,10 @@
                         });
                     };
                     $scope.hide = function() {
-                        $mdDialog.hide();
+                        $mdDialog.hide(true);
                     };
                     $scope.cancel = function() {
-                        $mdDialog.cancel();
+                        $mdDialog.cancel(false);
                     };
                 },
                 templateUrl: 'app/_users/create_modal.html',
@@ -211,6 +220,10 @@
                 fullscreen: true
             })
                 .then(function(answer) {
+                	if(answer)
+                	{
+                		$state.reload();
+                	}
                 }, function() {
                 });
         };

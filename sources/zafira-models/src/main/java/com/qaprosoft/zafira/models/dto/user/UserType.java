@@ -20,6 +20,7 @@ public class UserType extends AbstractType
 	private String email;
 	private String firstName;
 	private String lastName;
+	private String password;
 	private List<Role> roles = new ArrayList<>();
 
 	public UserType() 
@@ -82,5 +83,15 @@ public class UserType extends AbstractType
 	public void setRoles(List<Role> roles)
 	{
 		this.roles = roles;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
 	}
 }

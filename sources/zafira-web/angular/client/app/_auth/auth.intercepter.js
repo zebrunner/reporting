@@ -43,17 +43,20 @@ angular
     $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
       return {
         responseError: function(rejection) {
-        	var config = rejection.config || {};
-            switch (rejection.status) {
-              case 401:
-                var deferred = $q.defer();
-                var bufferLength = httpBuffer.append(config, deferred);
-                if (bufferLength === 1)
-                  $rootScope.$broadcast('event:auth-loginRequired', rejection);
-                return deferred.promise;
-            }
-          // otherwise, default behaviour
-          return $q.reject(rejection);
+        	if(!window.location.endsWith('signin'))
+        	{
+        		var config = rejection.config || {};
+                switch (rejection.status) {
+                  case 401:
+                    var deferred = $q.defer();
+                    var bufferLength = httpBuffer.append(config, deferred);
+                    if (bufferLength === 1)
+                      $rootScope.$broadcast('event:auth-loginRequired', rejection);
+                    return deferred.promise;
+                }
+        	}
+	      // otherwise, default behaviour
+	      return $q.reject(rejection);
         }
       };
     }]);

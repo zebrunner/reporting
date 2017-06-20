@@ -3,19 +3,23 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService) {
+    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
 
         $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
-        $scope.currentUser = null;
+        $scope.currentUser = $cookies.getObject('user');
 
         $scope.pefrDashboardId = null;
+        
+        $scope.isAdmin = function(){
+        	return AuthService.UserHasPermission(["ROLE_ADMIN"]); 
+        };
 
         $scope.loadProjects = function(){
             ConfigService.getConfig("projects").then(function(rs) {
@@ -91,8 +95,7 @@
                 });
         };
 
-        // ************************************************************************** Modals Controllers ****
-        // ******************************
+        // ***** Modals Controllers *****
         function ProjectController($scope, $mdDialog) {
             $scope.project = {};
             $scope.createProject = function(project){
@@ -187,16 +190,15 @@
             (function initController() {
             })();
         }
+        
+        $rootScope.$on("event:auth-loginSuccess", function(ev, user){
+        	$scope.currentUser = user; 
+        });
+        
+        
 
         (function initController() {
             $scope.project = ProjectProvider.getProject();
-            
-            UserService.getUserProfile().then(function(rs){
-	    		if(rs.success)
-	        	{
-	    			 $scope.currentUser = rs.data;
-	        	}
-            });
             
             ConfigService.getConfig("version").then(function(rs) {
                 if(rs.success)

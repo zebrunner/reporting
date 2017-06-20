@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -76,7 +77,11 @@ public class UsersAPIController extends AbstractController
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
 	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
 	{
-		userService.updateUserPassword(getPrincipalId(), password.getPassword());
+		if(!isAdmin() && getPrincipalId() != password.getUserId())
+		{
+			throw new ForbiddenOperationException("No permissions to update password");
+		}
+		userService.updateUserPassword(password.getUserId(), password.getPassword());
 	}
 
 	@ResponseStatusDetails
