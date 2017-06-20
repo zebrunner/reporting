@@ -30,7 +30,7 @@
             if ($scope.currentUserId) {
                 params = params + "&currentUserId=" + $scope.currentUserId;
             }
-          
+            $scope.isLoading = true;
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -44,6 +44,9 @@
                         widget.model = JSON.parse(widget.model);
                         widget.data = {};
                         widget.data.dataset = data;
+                    }
+                    if (data.length != 0) {
+                        $scope.isLoading = false;
                     }
                 }
                 else {
@@ -276,7 +279,7 @@
 
         $scope.deleteDashboard = function(dashboard){
             DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
-                if (rs.success) 
+                if (rs.success)
                 {
                 	alertify.success("Dashboard deleted");
                     var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
