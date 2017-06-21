@@ -171,7 +171,7 @@ public class DashboardsAPIController extends AbstractController
 		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
 															 email.getHostname(), 
 															 accessToken,
-															 By.id("dashboard_content"),
+															 By.id("content"),
 															 By.id("dashboard_title"), dimension);
 		if(attachments.size() == 0)
 		{
