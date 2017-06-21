@@ -43,7 +43,7 @@ angular
     $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
       return {
         responseError: function(rejection) {
-        	if(!window.location.endsWith('signin'))
+        	if(!window.location.href.endsWith('signin'))
         	{
         		var config = rejection.config || {};
                 switch (rejection.status) {

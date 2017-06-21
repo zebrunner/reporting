@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -17,7 +17,7 @@
         $scope.reverse = false;
 
         $scope.UtilService = UtilService;
-        $scope.testRunId = $location.search().id;
+        $scope.testRunId = $stateParams.id;
 
         $scope.testRunsToCompare = [];
         $scope.compareQueryString = "";
@@ -145,7 +145,7 @@
         };
 
         $scope.addTestRun = function (testRun) {
-            testRun.showDetails = $scope.testRunId ? true : false;
+            testRun.expand = $scope.testRunId ? true : false;
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
                 testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL;
@@ -267,12 +267,12 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
-            window.open($location.$$absUrl + "?id=" + testRun.id, '_blank');
+            window.open($location.$$absUrl + "/" + testRun.id, '_blank');
         };
 
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
-            node.textContent = $location.$$absUrl + "?id=" + testRun.id;
+            node.textContent = $location.$$absUrl + "/" + testRun.id;
             document.body.appendChild(node);
 
             var selection = getSelection();
@@ -520,24 +520,23 @@
 
         (function init() {
 
-//            if ($cookieStore.get("showRealTimeEvents") != null) {
-//                $scope.showRealTimeEvents = $cookieStore.get("showRealTimeEvents");
-//            }
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
             $scope.getJenkinsConnection();
-            SettingsService.getSetting("JIRA_URL").then(function successCallback(rs) {
-                $scope.jiraURL = rs;
-            }, function errorCallback(data) {
-                console.error(data);
+            
+            SettingsService.getSetting("JIRA_URL").then(function(rs) {
+                if(rs.success)
+                {
+                	 $scope.jiraURL = rs.data;
+                }
             });
+           
         })();
     }
 
-    // ************************************************************************** Modals Controllers ****************
-    // **************************************************************************
+    // *** Modals Controllers ***
     function BuildNowController($scope, $mdDialog, TestRunService, testRun) {
         $scope.title = testRun.testSuite.name;
         $scope.textRequired = false;

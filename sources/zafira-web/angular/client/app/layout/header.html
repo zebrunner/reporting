@@ -11,15 +11,8 @@
                      'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
                      'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
         <a href="#!/">
-            <span class="logo-text">{{main.brand}} {{version}}</span>
+            <span class="logo-text">{{main.brand}}</span>
         </a>
-    </div>
-
-    <!-- needs to be put after logo to make it work -->
-    <div class="menu-button" toggle-off-canvas>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
     </div>
 
     <div class="top-nav" ng-controller="SidebarController">
@@ -63,6 +56,7 @@
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{pefrDashboardId}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
                     </md-menu-content>
                 </md-menu>

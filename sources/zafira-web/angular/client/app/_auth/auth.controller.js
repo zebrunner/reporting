@@ -12,28 +12,16 @@
         $scope.credentials = { valid: true };
  
         (function initController() {
-            // reset login status
         	AuthService.ClearCredentials();
         })();
  
         $scope.signin = function (credentials) {
-            
         	AuthService.Login(credentials.username, credentials.password)
             .then(function (rs) {
             	if(rs.success)
             	{
-            		AuthService.SetCredentials(rs.data);
-            		UserService.getUserProfile()
-            		 .then(
-            		  function (rs) {
-		              if(rs.success)
-		              {
-		            	  $rootScope.user = rs.data;
-		            	  $cookies.putObject('user', $rootScope.user);
-		            	  $rootScope.$broadcast('event:auth-loginSuccess', $rootScope.user);
-		            	  $state.go('dashboard', {}, { reload: true });
-		              }
-            		});
+            		$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
+            		$state.go('dashboards');
             	}
             	else
             	{

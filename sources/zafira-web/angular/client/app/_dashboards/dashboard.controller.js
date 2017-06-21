@@ -7,7 +7,7 @@
 
     function DashboardController($scope, $location, $state, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, ProjectProvider) {
 
-        $scope.dashboardId = $location.search().id;
+        $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
         $scope.loadDashboardData = function (dashboard) {

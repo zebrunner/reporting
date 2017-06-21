@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('DashboardService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', DashboardService])
+        .factory('DashboardService', ['$http', '$cookies', '$rootScope', '$location', 'UtilService', 'API_URL', DashboardService])
 
-    function DashboardService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function DashboardService($http, $cookies, $rootScope, $location, UtilService, API_URL) {
 
     	var service = {};
 
@@ -29,8 +29,11 @@
 
         return service;
 
-        function GetDashboards(userId) {
-        	return $http.get(API_URL + '/api/dashboards' + (userId != null ? '?userId=' + userId : '')).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+        function GetDashboards(type) {
+        	var config = { params : {} };
+        	if(type)
+        		config.params.type = type;
+        	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
         function CreateDashboard(dashboard) {
@@ -96,6 +99,5 @@
         function ExecuteWidgetSQL(params, sqlAdapter) {
         	return $http.post(API_URL + '/api/widgets/sql' + params, sqlAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to exequte SQL'));
         }
-
     }
 })();

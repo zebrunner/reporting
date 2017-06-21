@@ -4,7 +4,7 @@
     angular
         .module('app.user')
         .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', UserProfileController])
-        .controller('UserListController', ['$scope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', UserListController])
+        .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
     function UserProfileController($scope, $location, $state, UserService, UtilService) {
@@ -13,6 +13,7 @@
 
     	$scope.user = {};
     	$scope.changePassword = {};
+    	$scope.pefrDashboardId = null;
 
         (function initController() {
         	UserService.getUserProfile()
@@ -63,11 +64,12 @@
     }
 
     // **************************************************************************
-    function UserListController($scope, $location, $state, $mdDialog, UserService, GroupService, UtilService) {
+    function UserListController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, UtilService, DashboardService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
     	$scope.UtilService = UtilService;
+    	$scope.DashboardService = DashboardService;
 
     	$scope.sc = angular.copy(DEFAULT_SC);
     	$scope.users = [];
@@ -243,7 +245,13 @@
         };
 
 		(function initController() {
-			$scope.search(1);
+			 $scope.search(1);
+//			 DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
+//                if(rs.success && rs.data.length > 0)
+//                {
+//                	$scope.pefrDashboardId = rs.data[0].id;
+//                }
+//            });
 		})();
 	}
 

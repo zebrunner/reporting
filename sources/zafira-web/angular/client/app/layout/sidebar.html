@@ -31,7 +31,7 @@
             </ul>
         </li>
         <li><a md-button aria-label="menu" href="#!/tests/cases"><i class="material-icons">library_books</i><span data-translate="TEST_CASES"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/users" data-ng-if="isAdmin()"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/settings" data-ng-if="isAdmin()"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li>
+        <li><a md-button aria-label="menu" href="#!/users" data-ng-show="isAdmin()"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
+        <li><a md-button aria-label="menu" href="#!/settings" data-ng-show="isAdmin()"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li>
     </ul>
 </div>

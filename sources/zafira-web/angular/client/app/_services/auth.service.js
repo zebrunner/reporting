@@ -9,8 +9,6 @@
 
 	    	var service = {};
 	    	
-	    	var currentUser = $cookies.getObject('user');
-
 	        service.Login = Login;
 	        service.SetCredentials = SetCredentials;
 	        service.ClearCredentials = ClearCredentials;
@@ -39,7 +37,7 @@
 	        }
 
 	        function IsLoggedIn() {
-	            return currentUser != null;
+	            return $rootScope.currentUser != null && $rootScope.globals.auth != null;
 	        }
 
 	        function UserHasPermission(permissions){
@@ -48,20 +46,17 @@
 	            }
 
 	            var found = false;
-	            angular.forEach(permissions, function(permission, index){
-	                if (currentUser.roles.indexOf(permission) >= 0){
+	            angular.forEach(permissions, function(permission, index)
+	            {
+	                if ($rootScope.currentUser.roles.indexOf(permission) >= 0)
+	                {
 	                    found = true;
 	                    return;
 	                }
 	            });
-
 	            return found;
 	        }
 	        
-	        $rootScope.$on("event:auth-loginSuccess", function(ev, user){
-	        	currentUser = user; 
-	        });
-
 	        return service;
     }
 

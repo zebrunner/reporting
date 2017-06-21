@@ -8,14 +8,14 @@
     // **************************************************************************
     function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
 
+    	$scope.DashboardService = DashboardService;
+    	
         $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
-        $scope.currentUser = $cookies.getObject('user');
 
-        $scope.pefrDashboardId = null;
         
         $scope.isAdmin = function(){
         	return AuthService.UserHasPermission(["ROLE_ADMIN"]); 
@@ -51,9 +51,6 @@
                 if(rs.success)
                 {
                     $scope.dashboards = rs.data;
-                }
-                else
-                {
                 }
             });
         };
@@ -191,21 +188,8 @@
             })();
         }
         
-        $rootScope.$on("event:auth-loginSuccess", function(ev, user){
-        	$scope.currentUser = user; 
-        });
-        
-        
-
         (function initController() {
             $scope.project = ProjectProvider.getProject();
-            
-            ConfigService.getConfig("version").then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.version = rs.data;
-                }
-            });
         })();
     }
 })();
