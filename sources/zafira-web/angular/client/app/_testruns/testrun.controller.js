@@ -517,10 +517,13 @@
 //        });
 
         $scope.switchTestRunExpand = function (testRun) {
-            if(testRun.expand == null) {
+            if(!testRun.expand) {
                 $scope.loadTests(testRun.id);
+                testRun.expand = true;
+            } else {
+                testRun.expand = false;
             }
-            testRun.expand == null ? testRun.expand = true : testRun.expand = !testRun.expand;
+
         };
 
         $scope.reset = function () {
