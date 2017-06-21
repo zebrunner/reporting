@@ -61,8 +61,7 @@ public class ConfigurationAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Map<String, Object> getVersion() throws ServiceException
+    public @ResponseBody Map<String, Object> getVersion() throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
         config.put("service", versionService.getServiceVersion());

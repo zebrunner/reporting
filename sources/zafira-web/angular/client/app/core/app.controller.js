@@ -33,36 +33,32 @@
 	        }, true);
 	
 	
-	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
-	            $document.scrollTo(0, 0);
-	        });
-	        
-	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
-	        	AuthService.SetCredentials(auth);
-	        	$scope.initCommonData();
-	        });
-	        
-	        $scope.initCommonData = function()
+	        $scope.initSession = function()
 	        {
-	        	if(AuthService.IsLoggedIn())
-	        	{
-	        		UserService.getUserProfile()
-		        		 .then(
-		        		  function (rs) {
-			              if(rs.success)
-			              {
-			            	  $rootScope.currentUser = rs.data;
-			            	  $cookies.putObject('currentUser', $rootScope.currentUser);
-			              }
-		       		});
-	        		
-	        		DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
-		                if(rs.success && rs.data.length > 0)
-		                {
-		                	$rootScope.pefrDashboardId = rs.data[0].id;
-		                }
-		            });
-	        	}
+	        	UserService.getUserProfile()
+	       		 .then(
+	       		  function (rs) {
+		              if(rs.success)
+		              {
+		            	  $rootScope.currentUser = rs.data;
+		              }
+		       	});
+		   		
+		   		DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
+	               if(rs.success && rs.data.length > 0)
+	               {
+	               		$rootScope.pefrDashboardId = rs.data[0].id;
+	               }
+		        });
+		   		
+		   		AuthService.GenerateAccessToken()
+	        		.then(
+		            function (rs) {
+	            	if(rs.success)
+	            	{
+	            		$rootScope.accessToken = rs.data.token;
+	            	}
+	            });
 	        	
 	        	ConfigService.getConfig("version").then(function(rs) {
 	                if(rs.success)
@@ -72,6 +68,14 @@
 	            });
 	        };
 	        
+	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
+	            $document.scrollTo(0, 0);
+	        });
+	        
+	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
+	        	AuthService.SetCredentials(auth);
+	        	$scope.initSession();
+	        });
 	        
 	        $rootScope.$on('event:auth-loginRequired', function() 
 	        {
@@ -112,13 +116,8 @@
 	            {
 	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
 	            }
-	            
-	            if($cookies.getObject('currentUser'))
-	            {
-	            	$rootScope.currentUser = $cookies.getObject('currentUser');
-	            }
 	        	
-	        	$scope.initCommonData();
+	        	$scope.initSession();
 	        })();
 	    }
 })(); 

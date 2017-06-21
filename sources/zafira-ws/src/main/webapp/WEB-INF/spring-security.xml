@@ -19,12 +19,14 @@
 	</bean>
 	
 	<!-- Public API end-points -->
-	<security:http pattern="/api/auth/**" security="none" />
+	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/auth/refresh" security="none" />
 	<security:http pattern="/api/status/**" security="none" />
 	<security:http pattern="/websockets/**" security="none" />
 	
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint">
+		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()" />

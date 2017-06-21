@@ -13,6 +13,7 @@
 	        service.SetCredentials = SetCredentials;
 	        service.ClearCredentials = ClearCredentials;
 	        service.RefreshToken = RefreshToken;
+	        service.GenerateAccessToken = GenerateAccessToken;
 	        service.IsLoggedIn = IsLoggedIn;
 	        service.UserHasPermission = UserHasPermission;
 
@@ -22,6 +23,10 @@
 
 	        function RefreshToken(token) {
 		       	 return $http.post(API_URL + '/api/auth/refresh', {'refreshToken' :token}).then(UtilService.handleSuccess, UtilService.handleError('Invalid refresh token'));
+		    }
+	        
+	        function GenerateAccessToken(token) {
+		       	 return $http.get(API_URL + '/api/auth/access').then(UtilService.handleSuccess, UtilService.handleError('Unable to generate token'));
 		    }
 
 	        function SetCredentials(auth) {
@@ -33,6 +38,7 @@
 	        function ClearCredentials() {
 	            $rootScope.globals = {};
 	            $cookies.remove('globals');
+	            $cookies.remove('Access-Token');
 	            $http.defaults.headers.common.Authorization = null;
 	        }
 

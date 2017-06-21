@@ -96,6 +96,34 @@
             </section>    
         </div>
     </div>
+    
+    <div class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Access token</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding>
+                                    <form class="form-validation" name="access_token_form" ng-submit="generateAccessToken()">
+                                        <md-input-container  class="md-block">
+                                            <label>Token</label>
+                                            <input type="text" ng-model="accessToken" name="accessToken"/>
+                                        </md-input-container>
+                                        <div layout="row"> 
+		                                    <md-button type="submit" class="md-raised btn-w-md md-primary" style="margin-right: 10px;">Generate</md-button> 
+		                                    <md-button data-ng-if="accessToken" data-ng-click="copyAccessToken(accessToken)" class="md-raised btn-w-md md-info">Copy</md-button> 
+	                                    </div>   
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>    
+        </div>
+    </div>
 
 
 </div>

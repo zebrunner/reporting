@@ -36,7 +36,7 @@ public class JWTService
 		claims.put("roles", user.getRoles());
 		return buildToken(claims, authTokenExp);
 	}
-
+	
 	/**
 	 * Parses user details from JWT token.
 	 * @param JWT token to parse
@@ -85,6 +85,18 @@ public class JWTService
 		Claims claims = Jwts.claims().setSubject(user.getId().toString());
 		claims.put("password", user.getPassword());
 		return buildToken(claims, refreshTokenExp);
+	}
+	
+	/**
+	 * Generates JWT access token storing id, password of the user and specifies expiration (that never expires).
+	 * @param user that is used for token generation
+	 * @return generated JWT token
+	 */
+	public String generateAccessToken(User user)
+	{
+		Claims claims = Jwts.claims().setSubject(user.getId().toString());
+		claims.put("password", user.getPassword());
+		return buildToken(claims, Integer.MAX_VALUE);
 	}
 	
 	private String buildToken(Claims claims, Integer exp)

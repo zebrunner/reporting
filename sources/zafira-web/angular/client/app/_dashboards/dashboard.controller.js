@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$location', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$location', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $location, $state, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $location, $state, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
@@ -396,7 +396,7 @@
         })();
     }
 
-    function EmailController($scope, $mdDialog, $mdConstant, DashboardService, UserService) {
+    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService) {
 
         $scope.title = "Zafira Dashboard";
         $scope.subjectRequired = true;

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Attribute;
@@ -149,7 +148,7 @@ public class DashboardsAPIController extends AbstractController
 	@ApiIgnore
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Authorization", required=false) String auth, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
+	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
 	{
 		Dimension dimension = null;
 		if(!StringUtils.isEmpty(email.getDimension()))
@@ -159,8 +158,8 @@ public class DashboardsAPIController extends AbstractController
 		}
 		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
 															 email.getHostname(), 
-															 auth != null ? auth : RequestContextHolder.currentRequestAttributes().getSessionId(),
-															 By.id("dashboard_content"),
+															 accessToken,
+															 null,
 															 By.id("dashboard_title"), dimension);
 		if(attachments.size() == 0)
 		{

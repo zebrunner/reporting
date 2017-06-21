@@ -3,17 +3,18 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', UserProfileController])
+        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', 'AuthService', UserProfileController])
         .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $location, $state, UserService, UtilService) {
+    function UserProfileController($scope, $location, $state, UserService, UtilService, AuthService) {
 
     	$scope.UtilService = UtilService;
 
     	$scope.user = {};
     	$scope.changePassword = {};
     	$scope.pefrDashboardId = null;
+    	$scope.accessToken = null;
 
         (function initController() {
         	UserService.getUserProfile()
@@ -44,6 +45,36 @@
         			alertify.error(rs.message);
         		}
             });
+        };
+        
+        $scope.generateAccessToken = function()
+        {
+        	AuthService.GenerateAccessToken()
+        	.then(function (rs) {
+        		if(rs.success)
+        		{
+        			$scope.accessToken = rs.data.token;
+        		}
+            });
+        };
+        
+        $scope.copyAccessToken = function (accessToken) {
+            var node = document.createElement('pre');
+            node.textContent = accessToken;
+            document.body.appendChild(node);
+
+            var selection = getSelection();
+            selection.removeAllRanges();
+
+            var range = document.createRange();
+            range.selectNodeContents(node);
+            selection.addRange(range);
+
+            document.execCommand('copy');
+            selection.removeAllRanges();
+            document.body.removeChild(node);
+            
+            alertify.success("Access token copied to clipboard");
         };
 
         $scope.updateUserPassword = function(changePassword)
