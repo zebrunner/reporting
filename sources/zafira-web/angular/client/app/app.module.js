@@ -92,23 +92,10 @@
     .run(['$rootScope', '$location', '$cookies', '$http',
             function($rootScope, $location, $cookies, $http)
             {
-	        	// keep user logged in after page refresh
-	            $rootScope.globals = $cookies.getObject('globals') || {};
-	            
-	            if ($rootScope.globals.auth) 
-	            {
-	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
-	            }
-
-	            if($cookies.getObject('currentUser'))
-	            {
-	            	$rootScope.currentUser = $cookies.getObject('currentUser');
-	            }
-
 	            $rootScope.$on('$locationChangeStart', function (event, next, current) {
 	                // redirect to login page if not logged in and trying to access a restricted page
 	                var restrictedPage = $.inArray($location.path(), ['/signin']) === -1;
-	                var loggedIn = $rootScope.globals.auth;
+	                var loggedIn = $rootScope.globals.auth || $cookies.get('Access-Token');
 	                if (restrictedPage && !loggedIn)
 	                {
 	                    $location.path('/signin');

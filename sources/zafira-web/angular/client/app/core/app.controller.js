@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, appConfig, AuthService, UserService, DashboardService, ConfigService, AuthIntercepter) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, ConfigService, AuthIntercepter) {
 	
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -75,6 +75,11 @@
 	        
 	        $rootScope.$on('event:auth-loginRequired', function() 
 	        {
+	        	if($cookies.get('Access-Token'))
+	            {
+	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}}
+	            }
+	        	
 	        	if($rootScope.globals.auth != null && $rootScope.globals.auth.refreshToken != null)
 	        	{
 	        		AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
@@ -99,8 +104,21 @@
 	        });
 	        
 	        (function initController() {
+	        	
+	        	// keep user logged in after page refresh
+	            $rootScope.globals = $cookies.getObject('globals') || {};
+	            
+	            if ($rootScope.globals.auth) 
+	            {
+	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
+	            }
+	            
+	            if($cookies.getObject('currentUser'))
+	            {
+	            	$rootScope.currentUser = $cookies.getObject('currentUser');
+	            }
+	        	
 	        	$scope.initCommonData();
 	        })();
 	    }
-
 })(); 
