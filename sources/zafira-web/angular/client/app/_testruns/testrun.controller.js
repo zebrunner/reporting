@@ -228,7 +228,11 @@
                     $scope.totalResults = data.totalResults;
 
                     for (var i = 0; i < data.results.length; i++) {
-                        $scope.addTestRun(data.results[i]);
+                        var testRun = data.results[i];
+                        $scope.addTestRun(testRun);
+                        if (testRun.status == 'IN_PROGRESS') {
+                            $scope.loadTests(testRun.id);
+                        }
                     }
 
                     if ($scope.testRunId) {
@@ -252,10 +256,16 @@
                     $scope.userSearchResult = data;
                     $scope.testSearchCriteria.page = data.page;
                     $scope.testSearchCriteria.pageSize = data.pageSize;
-
+                    var inProgressTests = 0;
+                    var testRun = $scope.testRuns[testRunId];
                     for (var i = 0; i < data.results.length; i++) {
-                        $scope.addTest(data.results[i], false);
+                        var test = data.results[i];
+                        if (test.status == 'IN_PROGRESS') {
+                            inProgressTests++;
+                        }
+                        $scope.addTest(test, false);
                     }
+                    testRun.inProgress = inProgressTests;
                 }
                 else
                 {

@@ -57,7 +57,7 @@ public class TestRun extends AbstractEntity
 	private Integer failedAsKnown;
 	private Integer failedAsBlocker;
 	private Integer skipped;
-	
+	private Integer inProgress;
 	private boolean reviewed;
 
 	public boolean isReviewed() {
@@ -254,6 +254,14 @@ public class TestRun extends AbstractEntity
 	public void setSkipped(Integer skipped)
 	{
 		this.skipped = skipped;
+	}
+
+	public Integer getInProgress() {
+		return inProgress;
+	}
+
+	public void setInProgress(Integer inProgress) {
+		this.inProgress = inProgress;
 	}
 
 	public Project getProject()
