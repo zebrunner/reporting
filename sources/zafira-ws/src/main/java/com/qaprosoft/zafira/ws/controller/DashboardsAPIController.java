@@ -13,6 +13,7 @@ import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +29,14 @@ import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Dashboard.Type;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SeleniumService;
+import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -41,7 +44,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @Api(value = "Dashboards API")
@@ -57,6 +59,9 @@ public class DashboardsAPIController extends AbstractController
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private JWTService jwtService;
 
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", code = 200, httpMethod = "POST", response = Dashboard.class)
@@ -145,11 +150,18 @@ public class DashboardsAPIController extends AbstractController
 		return dashboardService.updateDashboardWidget(dashboardId, widget);
 	}
 	
-	@ApiIgnore
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ResponseStatusDetails
+    @ApiOperation(value = "Send dashboard by email", nickname = "sendDashboardByEmail", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Access-Token", paramType = "header") })
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
 	{
+    	User user = jwtService.parseRefreshToken(accessToken);
+    	if(user == null)
+    	{
+    		throw new BadCredentialsException("Invalid access token");
+    	}
+    	
 		Dimension dimension = null;
 		if(!StringUtils.isEmpty(email.getDimension()))
 		{
@@ -159,7 +171,7 @@ public class DashboardsAPIController extends AbstractController
 		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
 															 email.getHostname(), 
 															 accessToken,
-															 null,
+															 By.id("dashboard_content"),
 															 By.id("dashboard_title"), dimension);
 		if(attachments.size() == 0)
 		{

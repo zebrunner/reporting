@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$location', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $location, $state, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
@@ -154,28 +154,38 @@
                 }, function () {
                 });
         };
-
+        
         (function init() {
-            DashboardService.GetDashboards().then(function (rs) {
-                if (rs.success) {
-                    $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
-                    DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+        	
+        	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
+        	
+        	AuthService.RefreshToken(token)
+    		.then(
+            function (rs) {
+            	if(rs.success)
+            	{
+            		AuthService.SetCredentials(rs.data);
+            		
+            		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboard = rs.data;
-                            $scope.loadDashboardData($scope.dashboard);
+                            $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
+                            DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+                                if (rs.success) {
+                                    $scope.dashboard = rs.data;
+                                    $scope.loadDashboardData($scope.dashboard);
+                                }
+                            });
                         }
-                        else {
+                    });
+            		
+            		DashboardService.GetWidgets().then(function (rs) {
+                        if (rs.success) {
+                            $scope.widgets = rs.data;
+                        } else {
                             alertify.error(rs.message);
                         }
                     });
-                }
-            });
-            DashboardService.GetWidgets().then(function (rs) {
-                if (rs.success) {
-                    $scope.widgets = rs.data;
-                } else {
-                    alertify.error(rs.message);
-                }
+            	}
             });
         })();
     }

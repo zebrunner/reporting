@@ -22,6 +22,7 @@
 	<security:http pattern="/api/auth/login" security="none" />
 	<security:http pattern="/api/auth/refresh" security="none" />
 	<security:http pattern="/api/status/**" security="none" />
+	<security:http pattern="/api/dashboards/email" security="none" />
 	<security:http pattern="/websockets/**" security="none" />
 	
 	<!-- Protected API end-points -->
