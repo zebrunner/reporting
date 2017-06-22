@@ -530,7 +530,7 @@
 
         $scope.splitPlatform = function (string) {
             var array = string.split(' ');
-            var version = "v." + array[1] + " ";
+            var version = "v." + array[1];
             if (array.length == 2) {
                 return version;
             }

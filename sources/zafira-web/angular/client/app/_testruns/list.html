@@ -74,6 +74,7 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
+                                        <th md-colum></th>
                                         <th md-column colspan="2">
                                             <md-datepicker ng-model="sc.date" md-placeholder="Started" ng-change="search()"></md-datepicker>
                                         </th>
@@ -105,10 +106,12 @@
                                         <td md-cell>
                                             <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
                                         </td>
-                                        <td md-cell>
+                                        <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                         	<div class="platform-icon {{testRun.platform}} pull-right"/>
-                                            <div data-ng-if="testRun.browserVersion" class="label label-primary pull-right">{{testRun.browserVersion}}</div>
+                                         </td>
+                                        <td md-cell class="no-padding browser-version_column">
+                                             <div data-ng-if="testRun.browserVersion" class="label label-primary">{{testRun.browserVersion}}</div>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
                                         	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
