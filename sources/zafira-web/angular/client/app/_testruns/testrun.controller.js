@@ -229,6 +229,8 @@
 
                     for (var i = 0; i < data.results.length; i++) {
                         var testRun = data.results[i];
+                        var browserVersion = $scope.splitPlatform(data.results[i].platform);
+                        testRun.browserVersion = browserVersion;
                         $scope.addTestRun(testRun);
                         if (testRun.status == 'IN_PROGRESS') {
                             $scope.loadTests(testRun.id);
@@ -526,6 +528,17 @@
 
         };
 
+        $scope.splitPlatform = function (string) {
+            var array = string.split(' ');
+            var version = "v." + array[1] + " ";
+            if (array.length == 2) {
+                return version;
+            }
+            else {
+                return null;
+            }
+        };
+
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
             $scope.search();
@@ -538,14 +551,14 @@
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
             $scope.getJenkinsConnection();
-            
+
             SettingsService.getSetting("JIRA_URL").then(function(rs) {
                 if(rs.success)
                 {
                 	 $scope.jiraURL = rs.data;
                 }
             });
-           
+
         })();
     }
 
