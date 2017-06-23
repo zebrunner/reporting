@@ -74,9 +74,19 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                        <th md-colum></th>
+                                        <th md-column class="no-padding">
+                                            <div class="pull-right">
+                                            <md-input-container class="searchable select" >
+                                                <md-select ng-model="sc.period" name="period" placeholder="Period" >
+                                                    <md-option value="" ng-selected="true"></md-option>
+                                                    <md-option value="before">Before</md-option>
+                                                    <md-option value="after">After</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                                </div>
+                                        </th>
                                         <th md-column colspan="2">
-                                            <md-datepicker ng-model="sc.date" md-placeholder="Started" ng-change="search()"></md-datepicker>
+                                            <md-datepicker ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
                                         </th>
                                     </tr>
                                     <md-button type="submit" class="hide">Search</md-button>
