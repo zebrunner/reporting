@@ -87,6 +87,17 @@ public class TestRunService
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+		for(TestRun testRun: testRuns) {
+			if (!StringUtils.isEmpty(testRun.getConfigXML())) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+					if (!StringUtils.isEmpty(arg.getValue())) {
+						if ("browser_version".equals(arg.getKey())&&!arg.getValue().equals("*")&&!arg.getValue().equals("")&&arg.getValue()!=null) {
+							testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
+						}
+					}
+				}
+			}
+		}
 		results.setResults(testRuns);
 		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
 		return results;

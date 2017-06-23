@@ -74,6 +74,7 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
+                                        <th md-colum></th>
                                         <th md-column colspan="2">
                                             <md-datepicker ng-model="sc.date" md-placeholder="Started" ng-change="search()"></md-datepicker>
                                         </th>
@@ -105,9 +106,12 @@
                                         <td md-cell>
                                             <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
                                         </td>
-                                        <td md-cell>
+                                        <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                         	<div class="platform-icon {{testRun.platform}} pull-right"/>
+                                         </td>
+                                        <td md-cell class="no-padding browser-version_column">
+                                             <div data-ng-if="testRun.browserVersion" class="label label-primary">{{testRun.browserVersion}}</div>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
                                         	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
@@ -200,6 +204,13 @@
                                                                 <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                 <span data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                 <span data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                <span data-ng-if="test.testConfig.browserVersion && test.testConfig.browserVersion != '*' && test.testConfig.browserVersion != '' && test.testConfig.browserVersion != null" class="light_text"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'chrome'" class="fa fa-chrome" aria-hidden="true"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'firefox'" class="fa fa-firefox" aria-hidden="true"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'safari'" class="fa fa-safari" aria-hidden="true"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'ie'" class="fa fa-internet-explorer" aria-hidden="true"></i>
+                                                                    {{test.testConfig.browserVersion}}
+                                                                </span>
                                                             </div>
                                                         	<div class="result_error {{test.status}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                                                                 <show-more text="test.message" limit="100"></show-more>
