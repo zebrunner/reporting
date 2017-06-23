@@ -17,7 +17,7 @@
         ,'app.sidebar'
         // 3rd party feature modules
         ,'md.data.table'
-        //,'timer'
+        ,'timer'
         ,'n3-line-chart'
         ,'n3-pie-chart'
         ,'ngSanitize'
