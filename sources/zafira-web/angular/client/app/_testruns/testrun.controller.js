@@ -196,6 +196,9 @@
         };
 
         $scope.search = function (page, pageSize) {
+            $scope.sc.date = null;
+            $scope.sc.toDate = null;
+            $scope.sc.fromDate = null;
 
             $scope.sc.page = page;
 
@@ -212,6 +215,16 @@
 
             if ($scope.startedAt) {
                 $scope.sc.date = new Date(Date.parse($scope.startedAt) + OFFSET);
+            }
+
+            if ($scope.sc.period == ""){
+                $scope.sc.date = $scope.sc.chosenDate;
+            }
+            if ($scope.sc.period == "before"){
+                $scope.sc.toDate =  $scope.sc.chosenDate;
+             }
+            else if ($scope.sc.period == "after") {
+                $scope.sc.fromDate = $scope.sc.chosenDate;
             }
 
             TestRunService.searchTestRuns($scope.sc).then(function(rs) {
@@ -833,6 +846,7 @@
         };
 
         $scope.isRightToSearch = false;
+
 
         $scope.getRightToSearch = function () {
             if ($scope.newKnownIssue.jiraId == null || !fieldIsChanged) {
