@@ -582,7 +582,7 @@
 
         $scope.testRun = testRun;
 
-        $scope.buildNow = function (id) {
+        $scope.buildNow = function () {
             $scope.hide();
             TestRunService.buildTestRun($scope.testRun.id, $scope.jobParameters).then(function(rs) {
                 if(rs.success)
