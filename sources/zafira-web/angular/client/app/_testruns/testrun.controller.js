@@ -349,8 +349,8 @@
         };
 
         $scope.rebuild = function (testRun) {
-            ConfigService.getConfig("jenkins").then(function (jenkins) {
-                if (jenkins.connected) {
+            ConfigService.getConfig("jenkins").then(function (rs) {
+                if (rs.data.connected) {
                     var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
                     TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
                         if(rs.success)
