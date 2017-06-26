@@ -27,7 +27,20 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
     }
-    ]).directive('nonautocomplete', function () {
+    ]).directive('ngReallyClick', [function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                element.bind('click', function(e) {
+                    e.stopPropagation();
+                    var message = attrs.ngReallyMessage;
+                    if (message && confirm(message)) {
+                        scope.$apply(attrs.ngReallyClick);
+                    }
+                });
+            }
+        }
+    }]).directive('nonautocomplete', function () {
         return {
             restrict: 'A',
             link:function($scope, element, attrs) {
