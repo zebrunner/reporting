@@ -966,7 +966,7 @@
         };
         (function initController() {
             ConfigService.getConfig("jira").then(function(rs) {
-                $scope.isConnectedToJira = rs.connected;
+                $scope.isConnectedToJira = rs.data.connected;
                 $scope.isDataLoaded = true;
                 $scope.isFieldsDisabled = false;
             });
