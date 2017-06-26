@@ -73,8 +73,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	private boolean ZAFIRA_ENABLED = false;
 	private String 	ZAFIRA_URL = null;
-	private String 	ZAFIRA_USERNAME = null;
-	private String 	ZAFIRA_PASSWORD = null;
+	private String 	ZAFIRA_ACCESS_TOKEN = null;
 	private String 	ZAFIRA_PROJECT = null;
 	private String 	ZAFIRA_REPORT_EMAILS = null;
 	private String 	ZAFIRA_REPORT_FOLDER = null;
@@ -499,8 +498,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			ZAFIRA_ENABLED = config.getBoolean("zafira_enabled", false);
 			ZAFIRA_URL = config.getString("zafira_service_url");
-			ZAFIRA_USERNAME = config.getString("zafira_username");
-			ZAFIRA_PASSWORD = config.getString("zafira_password");
+			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token");
 			ZAFIRA_PROJECT = config.getString("zafira_project");
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
 			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
@@ -519,7 +517,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				
 				if(ZAFIRA_ENABLED)
 				{
-					Response<AuthTokenType> auth = zc.login(ZAFIRA_USERNAME, ZAFIRA_PASSWORD);
+					Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
 					if(auth.getStatus() == 200)
 					{
 						zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());

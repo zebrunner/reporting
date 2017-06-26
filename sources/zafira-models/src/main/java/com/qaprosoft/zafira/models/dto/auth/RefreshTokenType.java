@@ -19,6 +19,11 @@ public class RefreshTokenType implements Serializable
 	{
 	}
 	
+	public RefreshTokenType(String refreshToken)
+	{
+		this.refreshToken = refreshToken;
+	}
+
 	public String getRefreshToken()
 	{
 		return refreshToken;
