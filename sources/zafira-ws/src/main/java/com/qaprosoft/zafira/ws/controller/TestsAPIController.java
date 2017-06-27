@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
+import com.qaprosoft.zafira.services.services.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,20 +24,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.JiraService;
-import com.qaprosoft.zafira.services.services.TestMetricService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.WorkItemService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
@@ -61,6 +55,9 @@ public class TestsAPIController extends AbstractController
 
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private TestArtifactService testArtifactService;
 
 	@Autowired
 	private WorkItemService workItemService;
@@ -183,6 +180,22 @@ public class TestsAPIController extends AbstractController
 			issues = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), Type.BUG);
 		}
 		return issues;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get testArtifact results by testId", nickname = "getTestArtifacts", code = 200, httpMethod = "GET", response = java.util.List.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}/artifacts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<TestArtifactType> getTestArtifacts(@PathVariable(value = "id") long id) throws ServiceException
+	{
+		List<TestArtifactType> testArtifacts = new ArrayList<>();
+		for (TestArtifact testArtifact: testArtifactService.getAllTestArtifacts(id))
+		{
+			testArtifacts.add(mapper.map(testArtifact, TestArtifactType.class));
+		}
+		return testArtifacts;
 	}
 
 	@ResponseStatusDetails

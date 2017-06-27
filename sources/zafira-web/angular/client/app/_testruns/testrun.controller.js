@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'TestArtifactService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, TestArtifactService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -268,6 +268,18 @@
             });
         };
 
+        $scope.loadArtifacts = function (testId) {
+            TestArtifactService.getTestArtifacts(testId).then(function (rs) {
+                if (rs.success) {
+                    var testArtifacts = rs.data;
+                    $scope.testArtifacts = testArtifacts
+                }
+                else {
+                    console.error(rs.message);
+                }
+            });
+        };
+
         $scope.loadTests = function (testRunId) {
             $scope.lastTestRunOpened = testRunId;
             $scope.testSearchCriteria.testRunId = testRunId;
@@ -282,6 +294,9 @@
                     var testRun = $scope.testRuns[testRunId];
                     for (var i = 0; i < data.results.length; i++) {
                         var test = data.results[i];
+
+                        var artifacts = $scope.loadArtifacts(test.id);
+
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
