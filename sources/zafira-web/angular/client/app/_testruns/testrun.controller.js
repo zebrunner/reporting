@@ -220,11 +220,15 @@
             if ($scope.sc.period == ""){
                 $scope.sc.date = $scope.sc.chosenDate;
             }
-            if ($scope.sc.period == "before"){
+            else if ($scope.sc.period == "before"){
                 $scope.sc.toDate =  $scope.sc.chosenDate;
              }
             else if ($scope.sc.period == "after") {
                 $scope.sc.fromDate = $scope.sc.chosenDate;
+            }
+            else if ($scope.sc.period == "between") {
+                $scope.sc.fromDate = $scope.sc.chosenDate;
+                $scope.sc.toDate =  $scope.sc.endDate;
             }
 
             TestRunService.searchTestRuns($scope.sc).then(function(rs) {
@@ -530,6 +534,15 @@
 //        $scope.$watch('showRealTimeEvents', function () {
 //            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
 //        });
+
+        $scope.changePeriod = function () {
+            if ($scope.sc.period == "between") {
+                $scope.sc.isDateBetween = true;
+            }
+            else {
+                $scope.sc.isDateBetween = false;
+            }
+        };
 
         $scope.switchTestRunExpand = function (testRun) {
             if(!testRun.expand) {
