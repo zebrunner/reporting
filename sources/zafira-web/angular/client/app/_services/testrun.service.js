@@ -85,7 +85,7 @@
         }
 
         function buildTestRun(id, jobParameters, buildWithParameters) {
-            return $http.post(API_URL + '/api/tests/runs/' + id + '/build', {params:{'buildWithParameters': buildWithParameters}}, jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
+            return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 
         function getJobParameters(id) {

@@ -22,7 +22,7 @@ import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
+import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
@@ -39,7 +39,7 @@ public class ZafiraClient
 	private static final Integer READ_TIMEOUT = 30000;
 	
 	private static final String STATUS_PATH = "/api/status";
-	private static final String LOGIN_PATH = "/api/auth/login";
+	private static final String REFRESH_TOKEN_PATH = "/api/auth/refresh";
 	private static final String USERS_PATH = "/api/users";
 	private static final String JOBS_PATH = "/api/jobs";
 	private static final String TESTS_PATH = "/api/tests";
@@ -97,14 +97,14 @@ public class ZafiraClient
 		return isAvailable;
 	}
 	
-	public synchronized Response<AuthTokenType> login(String username, String password)
+	public synchronized Response<AuthTokenType> refreshToken(String token)
 	{
 		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + LOGIN_PATH);
+			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new CredentialsType(username, password));
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
