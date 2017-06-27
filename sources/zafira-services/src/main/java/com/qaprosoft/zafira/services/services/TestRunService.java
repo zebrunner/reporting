@@ -3,15 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -439,6 +431,8 @@ public class TestRunService
 	@Cacheable("environments")
 	public List<String> getEnvironments() throws ServiceException
 	{
-		return testRunMapper.getEnvironments();
+		List<String> environments = testRunMapper.getEnvironments();
+		Collections.sort(environments);
+		return environments;
 	}
 }
