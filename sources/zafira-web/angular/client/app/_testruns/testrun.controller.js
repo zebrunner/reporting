@@ -122,6 +122,9 @@
                 case "SKIPPED":
                     testRun.skipped = testRun.skipped + changeByAmount;
                     break;
+                case "IN_PROGRESS":
+                    testRun.inProgress = testRun.inProgress + changeByAmount;
+                    break;
                 default:
                     break;
             }
