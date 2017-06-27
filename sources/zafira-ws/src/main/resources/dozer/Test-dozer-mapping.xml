@@ -87,5 +87,9 @@
 			<a>testClass</a>
 			<b>testClass</b>
 		</field>  
+		<field>
+			<a>artifacts</a>
+			<b>artifacts</b>
+		</field>
 	</mapping>
 </mappings>

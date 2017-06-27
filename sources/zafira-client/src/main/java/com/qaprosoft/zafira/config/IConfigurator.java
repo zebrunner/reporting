@@ -7,6 +7,7 @@ import org.testng.ISuite;
 import org.testng.ITestResult;
 
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -29,6 +30,8 @@ public interface IConfigurator
 	String getLogURL(ITestResult test);
 	
 	String getDemoURL(ITestResult test);
+	
+	List<TestArtifactType> getArtifacts(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);
 	

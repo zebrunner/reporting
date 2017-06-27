@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.models.db;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private String owner;
 	private String dependsOnMethods;
 	private String testClass;
+	private List<TestArtifact> artifacts = new ArrayList<>();
 
 	public Test()
 	{
@@ -262,6 +264,16 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setTestClass(String testClass)
 	{
 		this.testClass = testClass;
+	}
+	
+	public List<TestArtifact> getArtifacts()
+	{
+		return artifacts;
+	}
+
+	public void setArtifacts(List<TestArtifact> artifacts)
+	{
+		this.artifacts = artifacts;
 	}
 
 	@Override
