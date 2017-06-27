@@ -431,8 +431,6 @@ public class TestRunService
 	@Cacheable("environments")
 	public List<String> getEnvironments() throws ServiceException
 	{
-		List<String> environments = testRunMapper.getEnvironments();
-		Collections.sort(environments);
-		return environments;
+		return testRunMapper.getEnvironments();
 	}
 }
