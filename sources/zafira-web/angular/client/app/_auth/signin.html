@@ -1,0 +1,61 @@
+<div class="page-signin" ng-controller="AuthController">
+
+    <div class="wrapper">
+        <div class="main-body">
+            <div class="body-inner">
+                <div class="card bg-white">
+                    <div class="card-content">
+
+                        <section class="logo text-center">
+                            <h1>ZAFIRA</h1>
+                        </section>
+
+                        <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
+                                <div class="callout callout-danger" ng-if="!credentials.valid">
+                                    <p>Invalid credentials</p>
+                                </div>
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label>Username</label>
+                                        <md-icon class="material-icons">account_circle</md-icon>
+                                        <input required 
+                                               type="text"
+                                               name="username" 
+                                               ng-model="credentials.username"/>
+                                       	<div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
+                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                       </div> 
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <label>Password</label>
+                                        <md-icon class="material-icons">lock_outline</md-icon>
+                                        <input required 
+                                               type="password"
+                                               name="password" 
+                                               ng-model="credentials.password"/>
+		                                       <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
+		                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+		                                       </div>       
+                                    </md-input-container>  
+                                    <div layout="row" layout-align="center"> 
+	                                    <md-button type="submit"
+	                                               class="md-raised btn-w-md md-primary"
+	                                               ng-disabled="signin_form.$invalid">Signin</md-button>  
+                                    </div>                                   
+                                </fieldset>
+                            </form>
+                    </div>
+                </div>
+
+                <div class="additional-info">
+                    <span>© 2017 Zafira all rights reserved</span>
+                    <br/>
+                    <small>server v.{{version.service}} | client v.{{version.client}}</small>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

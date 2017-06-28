@@ -1,11 +1,13 @@
 package com.qaprosoft.zafira.models.db;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class Test extends AbstractEntity implements Comparable<Test>
@@ -33,6 +35,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private String owner;
 	private String dependsOnMethods;
 	private String testClass;
+	private Set<TestArtifact> artifacts = new HashSet<>();
 
 	public Test()
 	{
@@ -262,6 +265,16 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setTestClass(String testClass)
 	{
 		this.testClass = testClass;
+	}
+	
+	public Set<TestArtifact> getArtifacts()
+	{
+		return artifacts;
+	}
+
+	public void setArtifacts(Set<TestArtifact> artifacts)
+	{
+		this.artifacts = artifacts;
 	}
 
 	@Override

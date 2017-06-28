@@ -1,0 +1,67 @@
+
+.ui-wave {
+    position:relative;
+    overflow:hidden;
+    z-index:0;
+    transition: all 0.2s $material_animation;
+    &.ui-wave-overflowed {
+        overflow:visible;
+    }
+    .ink {
+        display: block;
+        position: absolute;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 100%;
+        transform: scale(0);
+    }
+
+    // 
+    &.btn-flat,
+    &.btn-default {
+        .ink {
+            background: rgba(0, 0, 0, 0.2);
+        }
+    }
+}
+.wave-animate {
+    animation: ripple 0.65s linear;
+}
+@keyframes ripple {
+    100% {
+        opacity: 0;
+        transform: scale(2.5);
+    }
+}
+
+// sidebar
+.nav-container { // both for dark and light
+    .ui-wave {
+        .ink {
+            background: rgba(0, 0, 0, 0.2);
+        }        
+    }
+}
+.nav-collapsed-min {
+    .nav-container {
+        .ui-wave {
+            overflow: visible;
+        }
+    }
+}
+.nav-horizontal {
+    &.nav-container {
+        .ui-wave {
+            overflow: visible;
+        }
+    }    
+}
+// top-header
+.header-container.bg-white {
+    .ui-wave {
+        .ink {
+            background: rgba(0, 0, 0, 0.2);
+        }        
+    }
+}
+
+

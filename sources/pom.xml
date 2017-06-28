@@ -71,9 +71,11 @@
 
 		<maven-enforcer-plugin.version>1.3.1</maven-enforcer-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-war-plugin.version>2.4</maven-war-plugin.version>
 		<aspectj-maven-plugin.version>1.5</aspectj-maven-plugin.version>
 		<tomcat-maven-plugin.version>1.1</tomcat-maven-plugin.version>
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
+		<frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
 
 		<tomcat.version>7.0.52</tomcat.version>
 
@@ -103,10 +105,12 @@
 		<apache-commons-io.version>1.3.2</apache-commons-io.version>
 
 		<jenkins-client.version>0.3.7</jenkins-client.version>
-		
+
 		<jira-client.version>0.5</jira-client.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
-		
+
+		<jjwt.version>0.7.0</jjwt.version>
+
 		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
 	</properties>
 
@@ -119,6 +123,7 @@
     <module>zafira-ws</module>
 		<module>zafira-batch-services</module>
 		<module>zafira-grid</module>
+		<module>zafira-web</module>
 	</modules>
 
 	<dependencyManagement>
@@ -569,7 +574,7 @@
 			  <artifactId>jenkins-client</artifactId>
 			  <version>${jenkins-client.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>net.rcarz</groupId>
 				<artifactId>jira-client</artifactId>
@@ -581,7 +586,13 @@
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
 			</dependency>
-			
+
+			<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>${jjwt.version}</version>
+		</dependency>
+
 			<dependency>
 				<groupId>in.ashwanthkumar</groupId>
 				<artifactId>slack-java-webhook</artifactId>

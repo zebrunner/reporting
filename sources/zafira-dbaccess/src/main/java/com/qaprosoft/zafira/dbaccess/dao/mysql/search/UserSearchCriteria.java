@@ -5,7 +5,7 @@ import java.util.Date;
 public class UserSearchCriteria extends SearchCriteria
 {
 	private Long id;
-	private String userName;
+	private String username;
 	private String firstLastName;
 	private String email;
 	private Date date;
@@ -21,14 +21,14 @@ public class UserSearchCriteria extends SearchCriteria
 		this.id = id;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName)
+	public void setUsername(String username)
 	{
-		this.userName = userName;
+		this.username = username;
 	}
 
 	public String getEmail()

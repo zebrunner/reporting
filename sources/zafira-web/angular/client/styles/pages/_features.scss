@@ -1,0 +1,19 @@
+
+.page-features {
+    .panel {
+        border: 0;
+    }
+    .feature-list-container {
+        // padding: 15px;
+
+        .panel-body {
+            background-color: #405161;
+            padding: 30px 50px;
+        }
+
+        .col-xs-4 {
+            margin-bottom: 50px;
+        }
+    }
+
+}

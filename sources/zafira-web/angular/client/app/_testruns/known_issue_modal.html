@@ -1,0 +1,61 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="known_issue_form" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Known issues</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div class="row" data-ng-repeat="issue in knownIssues">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12"><span data-ng-click="selectCurrentIssue(issue)"><b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}</span></div>
+                        </div>
+                        <hr/>
+                    </div>
+                </div>
+                <div>
+                    <div layout layout-sm="column">
+                        <span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
+                        <md-input-container flex>
+                            <label>Jira ID</label>
+                            <input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+                        </md-input-container>
+                    </div>
+                    <span class="danger" data-ng-show="! isJiraIdExists">'{{newKnownIssue.jiraId}}' not found</span>
+                    <span class="danger" data-ng-show="isJiraIdClosed">'{{newKnownIssue.jiraId}}' closed</span>
+                    <span data-ng-show="(!isDataLoaded || !isIssueFound) && isConnectedToJira"><md-progress-circular md-mode="indeterminate" md-diameter="20" style="position: absolute; right: 22px; top: 32px;"></md-progress-circular></span>
+                </div>
+                <div>
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label>Description</label>
+                            <textarea class="form-control validation" rows="8" data-ng-model="newKnownIssue.description" data-ng-disabled="isFieldsDisabled" required></textarea>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div>
+                    <md-checkbox aria-label="Blocker checkbox" data-ng-model="newKnownIssue.blocker">Blocker</md-checkbox>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="known_issue_form.$invalid">
+                Clear
+            </md-button>
+            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid">
+                Create
+            </md-button>
+            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid">
+                Update
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

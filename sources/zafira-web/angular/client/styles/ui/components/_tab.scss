@@ -1,0 +1,176 @@
+// Dependency: Angular UI Bootstrap
+
+.ui-tab {
+    .nav-tabs {
+        margin-bottom: 15px;
+        &.nav-justified {
+            > li {
+                &.active {
+                    > a {
+                        border-bottom-color: transparent;
+                    }
+                }
+            }
+        }
+
+        > li {
+            &.active {
+                > a {
+                    background-color: $reverse;
+                    // &:focus,
+                    // &:hover,
+                    // &:active {
+                    //     border: 0;
+                    // }
+                }
+            }
+        }
+        a {
+            color: $text-color;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.ui-tab-container {
+    .nav-tabs {
+        margin-bottom: 0;
+        &.nav-justified {
+            > li {
+                &:last-child {
+                    border-right: 0;
+                }
+                &:hover,
+                &:active,
+                &:focus {
+                    > a {
+                        border-width: 0 0 1px 0;
+                        border-style: solid;
+                        border-color: $nav-tabs-border-color;
+                    }
+                }
+
+                > a {
+                    border-width: 0 0 1px 0;
+                    border-style: solid;
+                    border-color: $nav-tabs-border-color;
+                }
+            }
+        }
+
+        > li {
+            &.active {
+                > a {
+                    color: $link-color;
+                }                
+            }
+
+            &:hover,
+            &:active,
+            &:focus {
+                > a {
+                    border: 0;
+                    background-color: transparent;
+                }
+            }
+            > a {
+                margin: 0;
+                border: 0;
+                padding: 15px 15px;
+                font-weight: bold;
+                border-radius: 0;
+            }
+        }
+    }
+
+    .tab-content {
+        padding: 15px 15px;
+    }
+}
+
+.ui-tab-horizontal {
+    border: 1px solid $nav-tabs-border-color;
+    border-radius: $border-radius-base;
+    .nav-tabs {
+        background-color: $state-default-bg;
+
+        > li {
+            border-right: 1px solid $nav-tabs-border-color;
+            &.active {
+                &:hover,
+                &:active,
+                &:focus {
+                    > a {
+                        border: 0;
+                        background-color: #fff;
+                    }
+                }
+
+                > a {
+                    &:focus,
+                    &:hover,
+                    &:active {
+                        border: 0;
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+.ui-tab-vertical {
+    position: relative;
+    padding: 0 0 0 30%;
+    .nav-tabs {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 30%;
+        background-color: $state-default-bg;
+        border-width: 1px 0 1px 1px;
+        border-radius: $border-radius-base 0 0 $border-radius-base;
+        border-color: $nav-tabs-border-color;
+        border-style: solid;
+        > li {
+            width: 100%;
+            float: none;
+            border-bottom: 1px solid $nav-tabs-border-color;
+            margin: 0;
+            &:last-child {
+                border-bottom: 0;
+            }
+            &.active {
+                &:hover,
+                &:active,
+                &:focus {
+                    > a {
+                        border: 0;
+                        background-color: #fff;
+                    }
+                }
+
+                > a {
+                    margin-right: -1px;
+                    &:focus,
+                    &:hover,
+                    &:active {
+                        border: 0;
+                    }
+                }
+            }
+            > a {
+                display: block;
+            }
+        }        
+    }
+
+    .tab-content {
+        border: 1px solid $nav-tabs-border-color;
+        border-radius: 0 $border-radius-base $border-radius-base 0;
+    }
+
+}
+

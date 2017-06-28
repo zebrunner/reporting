@@ -1,0 +1,181 @@
+
+@mixin bg-style ($background, $color) {
+    background-color: $background;
+    color: $color;
+    a {
+        color: $color;
+        &:hover {
+            color: $color;
+        }
+    }
+}
+
+@mixin bg-variant-alt ($color) {
+    background-color: $color;
+    color: $reverse;
+    &:hover {
+        background-color: $color;
+        color: $reverse;
+    }
+}
+
+// 
+body {
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+// Overrides Angular-Material
+body p,
+html p {
+    line-height: $line-height-base;
+}
+
+::selection {
+    background: $brand-primary;
+    color: $reverse;
+}
+::-moz-selection {
+    background: $brand-primary;
+    color: $reverse;
+}
+
+:focus {
+    outline: none;
+}
+
+a {
+    text-decoration: none;
+    &:active,
+    &:focus{
+        text-decoration: none;
+        outline: none;
+    }
+}
+
+
+// background
+// -----------------
+// overrides Bootstrap
+a.bg-primary { @include bg-variant-alt ($brand-primary); }
+a.bg-success { @include bg-variant-alt ($brand-success); }
+a.bg-info { @include bg-variant-alt ($brand-info); }
+a.bg-warning { @include bg-variant-alt ($brand-warning); }
+a.bg-danger { @include bg-variant-alt ($brand-danger); }
+
+// normal
+.bg-light { @include bg-style($white, $text-color); }
+.bg-white { @include bg-style(#fff, $text-color); }
+
+.bg-body { @include bg-style($body-bg, $text-color); }
+.bg-dark { @include bg-style($dark, $reverse); }
+.bg-dark-light { @include bg-style($dark-light, $reverse); }
+.bg-black { @include bg-style(#000, $reverse); }
+.bg-primary { @include bg-style($brand-primary, $reverse); }
+.bg-primary-light { @include bg-style($skin-light, $reverse); }
+.bg-success { @include bg-style($brand-success, $reverse); }
+.bg-info { @include bg-style($brand-info, $reverse); }
+.bg-info-alt { @include bg-style($brand-info-alt, $reverse); }
+.bg-warning { @include bg-style($brand-warning, $reverse); }
+
+.bg-danger { @include bg-style($brand-danger, $reverse); }
+.bg-dark { @include bg-style($dark, $reverse); }
+.bg-bright { @include bg-style($bright, $text-color); }
+.bg-white { @include bg-style($reverse, $text-color); }
+
+.bg-facebook { @include bg-style(#335397, $reverse); }
+.bg-twitter { @include bg-style(#00c7f7, $reverse); }
+.bg-google-plus { @include bg-style(#df4a32, $reverse); }
+
+
+
+.ui-section {
+    margin-bottom: 60px;
+}
+// .section-header {
+//     font-weight: normal;
+//     font-size: 34px;
+//     line-height: 40px;
+//     color: $brand-primary;
+//     margin: 30px 0;
+// }
+
+// 
+.section-header,
+.article-title {
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: .6em 0;
+    color: $brand-primary;
+    &.color-dark {
+        color: $text-color;
+    }
+}
+
+// 
+.chapter {
+    .article {
+        padding-bottom: 30px;
+        &:nth-of-type(1) {
+            .article-title {
+                margin: 0 0 30px;
+                border-top: none;
+            }
+        }
+
+        &.article-dark {
+            background-color: rgba(0,0,0,.015);
+        }
+
+        &.article-bordered {
+            border-top: 1px solid rgba(0, 0, 0, 0.117647);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.117647);
+
+            &:last-child {
+                border-bottom: 0;
+            }
+        }
+
+        &.padding-lg-v {
+            padding: 75px 0;
+        }
+    }
+
+    .article-title {
+        font-size: 24px;
+        padding-top: 80px;
+        font-weight: normal;
+        line-height: 32px;
+        margin: 48px 0 30px;
+        border-top: 1px solid rgba(0, 0, 0, 0.117647);
+        color: $brand-primary;
+    }
+}
+
+// Hero
+// ------------------------------------
+.hero {
+    padding: 70px 0 75px;
+    text-align: center;
+}
+.hero-title{
+    -webkit-font-smoothing: antialiased;
+}
+.hero-title {
+    color: $text-color;
+    font-size: 45px;
+    font-weight: $font-weight-thin;
+    line-height: 50px;
+    margin-bottom: 10px;
+}
+.hero-tagline {
+    margin: 10px auto 30px;
+    max-width: 700px;
+    color: $text-color;
+    font-weight: $font-weight-thin;
+    font-size: 24px;
+    line-height: 32px;
+}
+

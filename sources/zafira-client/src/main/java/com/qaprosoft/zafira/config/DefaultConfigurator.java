@@ -1,13 +1,16 @@
 package com.qaprosoft.zafira.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -84,5 +87,11 @@ public class DefaultConfigurator implements IConfigurator
 	public Map<String, Long> getTestMetrics(ITestResult test)
 	{
 		return null;
+	}
+
+	@Override
+	public Set<TestArtifactType> getArtifacts(ITestResult test) 
+	{
+		return new HashSet<>();
 	}
 }

@@ -1,0 +1,42 @@
+
+// Shared variables and mixins
+@import 
+    "global/var"                        // global variables
+,   "global/var-extra"                  // extra global variables
+,   "bootstrap/bootstrap/mixins"        // Bootstrap mixins
+;
+
+
+@import 
+    "global/shared"
+    
+// overrides 3rd party libs' style
+,   "libs/angular-material"
+,   "libs/angular-material-data-table"
+,   "libs/angular-wizard"
+
+// Pages
+,   "global/var-pages"
+,   "pages/dashboard"
+,   "pages/pages"
+,   "pages/error"
+,   "pages/auth"
+,   "pages/profile"
+,   "pages/invoice"
+,   "pages/features"
+,   "pages/demo"
+,   "pages/demo-material"
+
+// sections
+,   "layout/layouts"
+,   "layout/nav"
+,   "layout/nav-off-canvas"
+,   "layout/nav-horizontal"
+,   "layout/nav-min"
+,   "layout/nav-color"
+,   "layout/header"
+,   "layout/body"
+,   "layout/quickview"
+,   "layout/quickview-customizer"
+,   "theme/customzier-options"
+;

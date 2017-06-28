@@ -1,0 +1,258 @@
+body {
+    background: $main_container_bg;
+}
+
+#main-fab button.md-fab.md-fab-sm {
+    background-color: lightgray;
+    margin-bottom: 8px;
+}
+
+#main-fab {
+    position: fixed;
+    right: 90px;
+    bottom: 70px;
+}
+
+.result {
+  border-left: 8px solid #777777;
+  height: 55px;
+}
+
+.result.PASSED {
+  border-color: #8BC34A;
+}
+
+.result.FAILED {
+  border-color: #F44336;
+}
+
+.result.IN_PROGRESS {
+  border-color: #00BCD4;
+}
+
+.result_error.FAILED {
+    background: #ffb3b3;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.result_error.SKIPPED {
+    background: #ffe680;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.searchable {
+  margin-bottom: 0px !important;
+  font-size: 12px !important;
+}
+
+.searchable.select {
+    margin-top: 0px !important;
+    margin-right: 8px;
+    padding-top: 0px;
+    padding-bottom: 6px;
+    font-size: 12px;
+}
+
+.md-datepicker-input {
+  font-size: 12px !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.body-auth,
+.body-err {
+    &.app > .main-container:before {
+        background: none;
+    }
+
+    // when it's normal nav
+    @media (min-width: $screen-sm) {
+        .page-signin,
+        .page-signup,
+        .page-forgot,
+        .page-err {
+            margin-right: 220px;
+        }
+    }
+    // when it's collapsed nav
+    &.nav-collapsed-min {
+        @media (min-width: $screen-sm) {
+            .page-signin,
+            .page-signup,
+            .page-forgot,
+            .page-err {
+                margin-right: 60px;
+            }
+        }
+    }
+    // when it's horizontal nav
+    .nav-horizontal + .content-container {
+        @media (min-width: $screen-sm) {
+            .page-signin,
+            .page-signup,
+            .page-forgot,
+            .page-err {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+// fullscreen, hide header and sidebar
+.body-wide {
+
+    #header,
+    #nav-container {
+        display: none;
+    }
+
+    > .main-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #content {
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        // bottom: 0;
+        // margin: 0;
+        padding-bottom: 0;
+        // padding-bottom: 50px;
+    }
+
+    //
+    &.on-canvas .main-container #content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+button.red {
+    color: #d9534f;
+    border-color: #d9534f;
+    background: white;
+    outline: none;
+}
+
+.scrollable {
+    overflow-y: scroll;
+    height: 200px;
+    border: 1px solid #cccccc
+}
+
+.md-dialog-container ~ .md-select-menu-container.md-active,
+.md-dialog-container ~ .md-virtual-repeat-container.md-autocomplete-suggestions-container {
+    z-index: 10000;
+}
+
+.platform-icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    background: url(../assets/images/platforms.png) no-repeat;
+    background-position: 150px 0;
+}
+
+.platform-icon.API {
+	background-position: -24px -180px;
+}
+
+.platform-icon.safari {
+    background-position: -3px -25px;
+}
+
+.platform-icon.chrome {
+    background-position: -3px -115px;
+}
+
+.platform-icon.firefox {
+    background-position: -3px -70px;
+}
+
+.platform-icon.iexplore, .platform-icon.ie, .platform-icon.edge {
+    background-position: -3px -3px;
+}
+
+.platform-icon.android, .platform-icon.Android, .platform-icon.ANDROID {
+    background-position: -3px -206px;
+}
+
+.platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
+    background-position: -3px -252px;
+}
+
+.label-success-border {
+	border: 1px solid #5cb85c;
+}
+
+.label-success-empty {
+	color: #5cb85c;
+}
+
+.label-danger-border {
+	border: 1px solid #d9534f;
+}
+
+.label-danger-empty {
+	color: #d9534f;
+}
+
+.label-warning-border {
+	border: 1px solid #f0ad4e;
+}
+
+.label-warning-empty {
+	color: #f0ad4e;
+}
+
+span.light_text {
+	color: #aaa !important;
+}
+
+.graph-box {
+	height: 350px;
+	padding-bottom: 35px;
+}
+
+.pie-chart {
+	height: 320px;
+	width: 320px;
+}
+
+.light-grey-bg {
+  background: #f9f9f9;
+}
+
+.highlight_green {
+  color: green !important;
+}
+
+.highlight_red {
+  color: red !important;
+}
+
+.progress-circular_align {
+    top: 40%;
+}
+
+.browser-version_column {
+    width: 120px;
+}

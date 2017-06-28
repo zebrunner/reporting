@@ -1,0 +1,182 @@
+
+
+// layout for horizontal nav
+@media (min-width: $screen-sm) {
+    .app {
+        > .main-container {
+            > .nav-container {
+                &.nav-horizontal {
+                    z-index: 9; // less then header, for dropdowns
+                    border-width: 0 0 1px;
+                    border-style: solid;
+                    border-color: darken($horizontal_sidebar_bg, 10%);
+                    &:before {
+                        border: 0;
+                    }
+
+                    .nav-title,
+                    .nav-divider,
+                    .li-small {
+                        display: none !important;
+                    }
+
+                    &.nav-fixed {
+                        border-width: 0 1px 1px 0;
+                        left: 0;
+                        right: 0;
+                        bottom: auto;
+
+                        #nav {
+                            text-align: center;
+                            > li {
+                                display: inline-block;
+                                float: none;
+                                &.nav-title,
+                                &.nav-divider {
+                                    display: none;
+                                }
+                                > a {
+                                    padding: 17.5px 28px 12.5px; // 17.5px - 12.5px = 5 to hack the bottom 5px caused by inline-block on 'li';
+                                }
+                            }
+                        }
+
+                        & + .content-container {
+                            margin: 80px 0 0;
+                        }
+                    }
+                }            
+            }
+        }
+    }
+}
+
+
+// Horizontal nav is desktop only
+@media (min-width: $screen-sm-min) {
+
+    .main-container {
+
+        > .nav-container.nav-horizontal {
+            float: none;
+            width: auto;
+            
+            // content
+            & + .content-container {
+                margin-left: 0;
+            }
+        }
+    }
+
+    .nav-horizontal {
+        background-color: $horizontal_sidebar_bg;
+
+        .slimScrollDiv {
+            overflow: visible !important; // overrides slimScroll plugin
+            height: auto !important;
+
+            .slimScrollBar,
+            .slimScrollRail {
+                display: none !important;
+            }
+        }     
+
+        .nav {
+            overflow: visible !important;
+
+            > li {
+                position: relative;
+                float: left;
+                &:hover {
+                    > a {
+                        background-color: darken($horizontal_sidebar_bg, 5%);
+                        color: $text-color;
+                    }
+                    > i { color: $text-color; }
+                }
+                &.active {
+                    > a {
+                        background-color: $horizontal_link_active_bg;
+                        color: $horizontal_link_active_color;
+                    }
+                    > .icon-has-ul-h { color: $horizontal_link_active_color; }
+                }
+
+                > a {
+                    padding: 15px 30px;
+                    text-align: center;
+                    font-weight: normal;
+
+                    > i {
+                        margin: 0;
+                        font-size: 26px;
+                        line-height: 1;
+                    }
+
+                    > span {
+                        margin: 0;
+                        display: block;
+                        font-size: 12px;
+                    }
+
+                    .badge {
+                        top: 15px;
+                    }
+
+                    > .icon-has-ul { // icon for default vertical nav
+                        display: none;
+                    }                    
+                }
+
+                > .icon-has-ul-h { // icon for horizontal nav
+                    display: block;
+                    position: absolute;
+                    bottom: 16px;
+                    right: 10px;
+                    font-size: 10px;
+                }
+
+                &:hover {
+                    > ul {
+                        display: block !important;
+                    }
+                }
+
+
+                
+                // sub menu
+                > ul {
+                    z-index: 9; // less then header, so that it's below header dropdown
+                    position: absolute;
+                    left: 0;
+                    top: 100%;
+                    min-width: 100%;
+                    width: auto;
+                    background-color: $horizontal_sub_nav_bg;
+                    @include border-bottom-radius($border-radius-base);
+
+                    li {
+                        white-space: nowrap;
+                        &:hover,
+                        &.active {
+                            > a {
+                                color: $brand-primary;
+                            }
+                        }
+                        // &.active {
+                        //     > a {
+                        //         background-color: darken($horizontal_sub_nav_bg, 5%);
+                        //     }
+                        // }
+
+                        > a {
+                            padding: 13px 40px 13px 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+}

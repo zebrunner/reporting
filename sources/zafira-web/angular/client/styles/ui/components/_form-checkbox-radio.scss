@@ -1,0 +1,165 @@
+
+
+// Radio
+.ui-radio {
+    position: relative;
+    margin: 0 20px 10px 20px;
+    font-size: $font-size-base;
+    line-height: 20px;
+    height: 20px;
+
+    input[type="radio"] + span:hover {
+        cursor: pointer;
+        &:before {
+            border-color: $brand-primary;
+        }
+    }
+    input[type="radio"]:disabled + span:hover {
+        cursor: not-allowed;
+        &:before {
+            border-color: #ccc;
+        }
+    }
+
+    input[type="radio"] {
+        display: none;
+    }
+
+    input[type="radio"] + span {
+        padding-left: 10px;
+        font-weight: normal;
+    }
+
+    input[type="radio"] + span:before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        position: absolute;
+        left: -20px;
+        top: 0;
+        background: white;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        transition: all .35s $material_animation;
+    }
+    input[type="radio"] + span:after {
+        // display: none;
+        visibility: hidden;
+        content: "";
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        top: 5px;
+        left: -15px;
+        background-color: $brand-primary;
+        border-radius: 50%;
+        transform: scale(0);
+        transition: all .3s $material_animation;
+    }
+    input[type="radio"]:disabled + span:before {
+        opacity: .65;
+        border: 2px solid #ccc;
+        cursor: no-drop;
+    }
+
+    input[type="radio"]:checked + span:before {
+        border-color: $brand-primary;
+    }
+    input[type="radio"]:checked + span:after {
+        // display: block;
+        visibility: visible;
+        transform: scale(1);
+    }
+
+    input[type="radio"]:disabled:checked + span:before {
+        border-color: #ccc;
+    }
+    input[type="radio"]:disabled:checked + span:after {
+        opacity: .65;
+        cursor: no-drop;
+        background-color: #ccc;
+    }
+}
+
+// Checkbox
+.ui-checkbox {
+    position: relative;
+    margin: 0 20px 10px 20px;
+    line-height: 20px;
+    height: 20px;
+    input[type="checkbox"] + span:hover {
+        cursor: pointer;
+        &:before {
+            border-color: $brand-primary;
+        }
+    }
+    input[type="checkbox"]:disabled + span:hover {
+        cursor: not-allowed;
+        &:before {
+            border-color: #ccc;
+        }
+    }
+
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    input[type="checkbox"] + span {
+        // position: relative;
+        font-weight: normal;
+    }
+
+    input[type="checkbox"] + span:before {
+        content: "";
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+        margin-left: -20px;
+        background-color: transparent;
+        border-radius: $border-radius-small;
+        border: 2px solid #ccc;         
+        transition: all .35s $material_animation;
+    }
+
+    input[type="checkbox"]:disabled + span:before {
+        opacity: .65;
+        border: 2px solid #ccc;
+        cursor: no-drop;
+    }
+
+    input[type="checkbox"]:checked + span:before {
+        border-color: $brand-primary;
+    }
+    input[type="checkbox"] + span:after {
+        // display: none;
+        visibility: hidden;
+        content: "";
+        width: 8px;
+        height: 8px;
+        position: absolute;
+        top: 7px;
+        left: -15px;
+        background-color: $brand-primary;
+        transform: scale(0);       
+        transition: all .35s $material_animation;
+    }
+    input[type="checkbox"]:checked + span:after {
+        // display: block;
+        visibility: visible;
+        transform: scale(1);       
+    }
+
+    input[type="checkbox"]:disabled:checked + span:before {
+        opacity: .65;
+        border: 2px solid #ccc;         
+    }
+    input[type="checkbox"]:disabled:checked + span:after {
+        opacity: .65;
+        cursor: no-drop;
+        background-color: #ccc;
+    }
+}

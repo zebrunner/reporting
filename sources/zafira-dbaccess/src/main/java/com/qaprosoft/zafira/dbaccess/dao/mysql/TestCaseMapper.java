@@ -14,7 +14,7 @@ public interface TestCaseMapper
 
 	TestCase getTestCaseById(long id);
 	
-	List<TestCase> getTestCasesByUsername(String userName);
+	List<TestCase> getTestCasesByUsername(String username);
 
 	TestCase getTestCaseByClassAndMethod(@Param("testClass") String testClass, @Param("testMethod") String testMethod);
 

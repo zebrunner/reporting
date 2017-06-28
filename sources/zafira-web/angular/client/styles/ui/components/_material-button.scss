@@ -1,0 +1,45 @@
+// Angular Material, md-fab
+.md-button {
+    // overrides
+    margin: 0;
+    line-height: $line-height-base;
+
+    // FAB
+    &.md-fab {
+        font-size: 20px;
+        padding: 0;
+
+        &.md-fab-square {
+            border-radius: $border-radius-base;
+        }
+        &.md-fab-xs {
+            font-size: 14px;
+            padding: 0;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+        }
+        &.md-fab-sm {
+            font-size: 14px;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+        }
+        &.md-fab-lg {
+            font-size: 28px;
+            width: 65px;
+            height: 65px;
+            line-height: 65px;
+        }
+    }
+}
+// Sizing, need to overrides again for md-button
+.btn-lg {
+    @include button-size($padding-large-vertical, $padding-large-horizontal, $font-size-large, $line-height-large, $border-radius-large);
+}
+.btn-sm {
+    @include button-size($padding-small-vertical, $padding-small-horizontal, $font-size-small, $line-height-small, $border-radius-small);
+}
+.btn-xs {
+    @include button-size($padding-xs-vertical, $padding-xs-horizontal, $font-size-small, $line-height-small, $border-radius-small);
+}

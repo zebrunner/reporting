@@ -49,8 +49,9 @@ import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.UserType;
+import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
@@ -72,8 +73,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	private boolean ZAFIRA_ENABLED = false;
 	private String 	ZAFIRA_URL = null;
-	private String 	ZAFIRA_USERNAME = null;
-	private String 	ZAFIRA_PASSWORD = null;
+	private String 	ZAFIRA_ACCESS_TOKEN = null;
 	private String 	ZAFIRA_PROJECT = null;
 	private String 	ZAFIRA_REPORT_EMAILS = null;
 	private String 	ZAFIRA_REPORT_FOLDER = null;
@@ -404,6 +404,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		test.setLogURL(configurator.getLogURL(result));
 		test.setTestMetrics(configurator.getTestMetrics(result));
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
+		test.setArtifacts(configurator.getArtifacts(result));
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);
@@ -451,14 +452,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	@Override
 	public void onStart(ITestContext context) {
-		//TODO: investigate possibility to remove methods from context based on need rerun flag
-/*		if (ZAFIRA_ENABLED && ZAFIRA_RERUN_FAILURES && DriverMode.CLASS_MODE.equals(configurator.getDriverMode())) {
-			if (context.getCurrentXmlTest().getClasses().size() > 0) {
-				if (!classesToRerun.contains(context.getCurrentXmlTest().getClasses().get(0).getName())) {
-					throw new SkipException("ALREADY_PASSED class: " + context.getClass().getName());
-				}
-			}
-		}*/
+		// Do nothing
 	}
 	
 	@Override
@@ -505,8 +499,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			ZAFIRA_ENABLED = config.getBoolean("zafira_enabled", false);
 			ZAFIRA_URL = config.getString("zafira_service_url");
-			ZAFIRA_USERNAME = config.getString("zafira_username");
-			ZAFIRA_PASSWORD = config.getString("zafira_password");
+			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token");
 			ZAFIRA_PROJECT = config.getString("zafira_project");
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
 			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
@@ -519,12 +512,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			if(ZAFIRA_ENABLED)
 			{
-				zc = new ZafiraClient(ZAFIRA_URL, ZAFIRA_USERNAME, ZAFIRA_PASSWORD);
-				if(!zc.isAvailable())
+				zc = new ZafiraClient(ZAFIRA_URL);
+				
+				ZAFIRA_ENABLED =  zc.isAvailable();
+				
+				if(ZAFIRA_ENABLED)
 				{
-					ZAFIRA_ENABLED = false;
-					LOGGER.error("Zafira server is unavailable!");
+					Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
+					if(auth.getStatus() == 200)
+					{
+						zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
+					}
+					else
+					{
+						ZAFIRA_ENABLED = false;
+					}
 				}
+				LOGGER.error("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
 			}
 			
 			success = ZAFIRA_ENABLED;

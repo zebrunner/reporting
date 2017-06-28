@@ -62,6 +62,6 @@ public class Job extends AbstractEntity
 	@Override
 	public int hashCode()
 	{
-		return (jobURL + user.getUserName()).hashCode();
+		return (jobURL + user.getUsername()).hashCode();
 	}
 }

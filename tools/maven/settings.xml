@@ -12,11 +12,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<zafira.url>http://localhost:8080</zafira.url>
-				<zafira.tomcat.url>${zafira.url}/manager/text</zafira.tomcat.url>
-				<zafira.tomcat.ws.path>/zafira</zafira.tomcat.ws.path>
-				<zafira.ws.url>http://localhost:8080</zafira.ws.url>
-				<zafira.integrationTest.host>${zafira.url}</zafira.integrationTest.host>
+        <zafira.url>http://localhost:8888</zafira.url>
+        <zafira.ws.path>/zafira-ws</zafira.ws.path>
+        <zafira.web.path>/zafira</zafira.web.path>
 
 				<zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
 				<zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
