@@ -160,6 +160,7 @@ public class TestService
 		{
 			for(TestArtifact artifact : test.getArtifacts())
 			{
+				artifact.setTestId(test.getId());
 				testArtifactService.createTestArtifact(artifact);
 			}
 		}

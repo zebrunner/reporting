@@ -406,11 +406,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		test.setArtifacts(configurator.getArtifacts(result));
 		
-		// quick workaround to set test id for artifacts
-		for (int i = 0; i < test.getArtifacts().size(); i++) {
-			test.getArtifacts().get(i).setTestId(test.getId());
-		}
-		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);
 		

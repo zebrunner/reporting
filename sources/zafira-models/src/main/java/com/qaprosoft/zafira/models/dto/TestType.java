@@ -1,8 +1,9 @@
 package com.qaprosoft.zafira.models.dto;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -40,7 +41,7 @@ public class TestType extends AbstractType
 	private String dependsOnMethods;
 	private String testClass;
 	@Valid
-	private List<TestArtifactType> artifacts = new ArrayList<>();
+	private Set<TestArtifactType> artifacts = new HashSet<>();
 
 	public TestType() {
 		
@@ -273,12 +274,12 @@ public class TestType extends AbstractType
 		this.testClass = testClass;
 	}
 
-	public List<TestArtifactType> getArtifacts()
+	public Set<TestArtifactType> getArtifacts()
 	{
 		return artifacts;
 	}
 
-	public void setArtifacts(List<TestArtifactType> artifacts)
+	public void setArtifacts(Set<TestArtifactType> artifacts)
 	{
 		this.artifacts = artifacts;
 	}

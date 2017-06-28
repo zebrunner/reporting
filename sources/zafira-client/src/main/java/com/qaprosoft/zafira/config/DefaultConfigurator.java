@@ -1,8 +1,10 @@
 package com.qaprosoft.zafira.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
@@ -88,8 +90,8 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
-	public List<TestArtifactType> getArtifacts(ITestResult test) 
+	public Set<TestArtifactType> getArtifacts(ITestResult test) 
 	{
-		return new ArrayList<>();
+		return new HashSet<>();
 	}
 }

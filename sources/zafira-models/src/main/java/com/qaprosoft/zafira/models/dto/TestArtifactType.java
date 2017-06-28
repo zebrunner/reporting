@@ -15,7 +15,7 @@ public class TestArtifactType extends AbstractType
 	private String name;
 	@NotNull
 	private String link;
-	@NotNull
+	
 	private Long testId;
 
 	private Date expiresAt;
@@ -63,5 +63,16 @@ public class TestArtifactType extends AbstractType
 	public void setExpiresAt(Date expiresAt)
 	{
 		this.expiresAt = expiresAt;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		boolean equals = false;
+		if(obj != null && obj instanceof TestArtifactType)
+		{
+			equals = this.name == ((TestArtifactType)obj).getName();
+		}
+		return equals;
 	}
 }
