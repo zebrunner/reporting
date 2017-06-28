@@ -451,6 +451,9 @@
 			TR.ENV
 			FROM
 			zafira.TEST_RUNS TR
+			ORDER BY
+				TR.ENV
+			ASC
 			LIMIT 10000
 		]]>
 	</select>
