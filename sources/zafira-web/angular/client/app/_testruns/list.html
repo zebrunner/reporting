@@ -240,7 +240,14 @@
                                                                 <a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
-                                                        <td class="text-center">
+                                                    <td class="text-center">
+                                                        <div
+                                                            data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
+                                                            data-ng-repeat="artifact in test.artifacts">
+                                                            <a href="{{artifact.link}}" target="blank" class="clearfix">{{artifact.name}}</a>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
                                                              <div data-ng-if="test.status != STARTED">
                                                                 <a data-ng-if="test.logURL && testRun.status != 'IN_PROGRESS'" href="{{test.logURL}}" target="blank" class="clearfix">Log</a>
                                                                 <a data-ng-if="test.demoURL && testRun.status != 'IN_PROGRESS'" href="{{test.demoURL}}" target="blank">Demo</a>
