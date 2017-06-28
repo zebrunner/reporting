@@ -73,4 +73,9 @@ public class TestArtifactType extends AbstractType
 		}
 		return equals;
 	}
+	
+	public boolean isValid()
+	{
+		return name != null && link != null;
+	}
 }
