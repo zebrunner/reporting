@@ -20,7 +20,18 @@ public class TestArtifactType extends AbstractType
 
 	public TestArtifactType()
 	{
+	}
+	
+	public TestArtifactType(String name, String link)
+	{
+		this(name, link, null);
+	}
 
+	public TestArtifactType(String name, String link, Date expiresAt)
+	{
+		this.name = name;
+		this.link = link;
+		this.expiresAt = expiresAt;
 	}
 
 	public String getName()
@@ -72,10 +83,5 @@ public class TestArtifactType extends AbstractType
 			equals = this.name == ((TestArtifactType)obj).getName();
 		}
 		return equals;
-	}
-	
-	public boolean isValid()
-	{
-		return name != null && link != null;
 	}
 }

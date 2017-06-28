@@ -57,6 +57,6 @@ public class TestArtifact extends AbstractEntity
 	
 	public boolean isValid()
 	{
-		return name != null && link != null;
+		return name != null && !name.isEmpty() && link != null && !link.isEmpty();
 	}
 }
