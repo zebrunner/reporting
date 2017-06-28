@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
@@ -31,7 +32,7 @@ public interface IConfigurator
 	
 	String getDemoURL(ITestResult test);
 	
-	List<TestArtifactType> getArtifacts(ITestResult test);
+	Set<TestArtifactType> getArtifacts(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);
 	

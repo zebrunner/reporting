@@ -2,8 +2,6 @@ package com.qaprosoft.zafira.models.dto;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -11,18 +9,29 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TestArtifactType extends AbstractType
 {
 	private static final long serialVersionUID = 555233394837989532L;
-	@NotNull
+	
 	private String name;
-	@NotNull
+	
 	private String link;
-	@NotNull
+	
 	private Long testId;
 
 	private Date expiresAt;
 
 	public TestArtifactType()
 	{
+	}
+	
+	public TestArtifactType(String name, String link)
+	{
+		this(name, link, null);
+	}
 
+	public TestArtifactType(String name, String link, Date expiresAt)
+	{
+		this.name = name;
+		this.link = link;
+		this.expiresAt = expiresAt;
 	}
 
 	public String getName()
@@ -63,5 +72,16 @@ public class TestArtifactType extends AbstractType
 	public void setExpiresAt(Date expiresAt)
 	{
 		this.expiresAt = expiresAt;
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		boolean equals = false;
+		if(obj != null && obj instanceof TestArtifactType)
+		{
+			equals = this.name == ((TestArtifactType)obj).getName();
+		}
+		return equals;
 	}
 }
