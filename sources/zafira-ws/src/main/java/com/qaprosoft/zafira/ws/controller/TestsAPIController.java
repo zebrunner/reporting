@@ -57,9 +57,6 @@ public class TestsAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@Autowired
-	private TestArtifactService testArtifactService;
-
-	@Autowired
 	private WorkItemService workItemService;
 
 	@Autowired
@@ -182,21 +179,6 @@ public class TestsAPIController extends AbstractController
 		return issues;
 	}
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get testArtifact results by testId", nickname = "getTestArtifacts", code = 200, httpMethod = "GET", response = java.util.List.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{id}/artifacts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<TestArtifactType> getTestArtifacts(@PathVariable(value = "id") long id) throws ServiceException
-	{
-		List<TestArtifactType> testArtifacts = new ArrayList<>();
-		for (TestArtifact testArtifact: testArtifactService.getAllTestArtifacts(id))
-		{
-			testArtifacts.add(mapper.map(testArtifact, TestArtifactType.class));
-		}
-		return testArtifacts;
-	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create test known issue", nickname = "createTestKnownIssue", code = 200, httpMethod = "POST", response = WorkItem.class)
