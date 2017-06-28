@@ -268,6 +268,7 @@
             });
         };
 
+
         $scope.loadTests = function (testRunId) {
             $scope.lastTestRunOpened = testRunId;
             $scope.testSearchCriteria.testRunId = testRunId;

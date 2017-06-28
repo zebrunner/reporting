@@ -126,15 +126,12 @@
 				TC.DEVICE AS TEST_TEST_CONFIG_DEVICE,
 				TC.MODIFIED_AT AS TEST_TEST_CONFIG_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT,
-                TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT,
-
-                TA.ID          AS TEST_ARTIFACT_ID,
-                TA.NAME        AS TEST_ARTIFACT_NAME,
-                TA.LINK        AS TEST_ARTIFACT_LINK,
-                TA.TEST_ID     AS TEST_ARTIFACT_TEST_ID,
-                TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
-                TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
-
+        TA.ID          AS TEST_ARTIFACT_ID,
+        TA.NAME        AS TEST_ARTIFACT_NAME,
+        TA.LINK        AS TEST_ARTIFACT_LINK,
+        TA.TEST_ID     AS TEST_ARTIFACT_TEST_ID,
+        TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
+        TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
             FROM
 				zafira.TESTS T
 			LEFT JOIN
@@ -162,9 +159,9 @@
 			ON
 				TCS.USER_ID = TCU.ID
             LEFT JOIN
-                zafira.TEST_ARTIFACTS TA
-            ON
-                TA.TEST_ID = T.ID
+        zafira.TEST_ARTIFACTS TA
+      ON
+        TA.TEST_ID = T.ID
         ]]>
 	</sql>
 
@@ -380,8 +377,9 @@
 
 		<collection property="workItems" ofType="com.qaprosoft.zafira.models.db.WorkItem"
 					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.WorkItemMapper.WorkItemResultMap"/>
-        <collection property="artifacts" ofType="com.qaprosoft.zafira.models.db.TestArtifact"
-                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.TestArtifactMapper.TestArtifactResultMap"/>
-    </resultMap>
+
+		<collection property="artifacts" ofType="com.qaprosoft.zafira.models.db.TestArtifact" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.TestArtifactMapper.TestArtifactResultMap"/>
+
+	</resultMap>
 	
 </mapper>

@@ -185,6 +185,7 @@ public class TestsAPIController extends AbstractController
 		return issues;
 	}
 
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create test known issue", nickname = "createTestKnownIssue", code = 200, httpMethod = "POST", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
