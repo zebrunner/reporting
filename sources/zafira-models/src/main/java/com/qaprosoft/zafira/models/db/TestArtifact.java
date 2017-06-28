@@ -54,4 +54,9 @@ public class TestArtifact extends AbstractEntity
 	{
 		this.testId = testId;
 	}
+	
+	public boolean isValid()
+	{
+		return name != null && link != null;
+	}
 }

@@ -160,8 +160,15 @@ public class TestService
 		{
 			for(TestArtifact artifact : test.getArtifacts())
 			{
-				artifact.setTestId(test.getId());
-				testArtifactService.createTestArtifact(artifact);
+				if(artifact.isValid())
+				{
+					artifact.setTestId(test.getId());
+					testArtifactService.createTestArtifact(artifact);
+				}
+				else
+				{
+					LOGGER.error("Unable to save invalid artifact");
+				}
 			}
 		}
 		

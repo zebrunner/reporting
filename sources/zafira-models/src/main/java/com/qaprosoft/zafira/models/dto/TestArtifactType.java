@@ -2,8 +2,6 @@ package com.qaprosoft.zafira.models.dto;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -11,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TestArtifactType extends AbstractType
 {
 	private static final long serialVersionUID = 555233394837989532L;
-	@NotNull
+	
 	private String name;
-	@NotNull
+	
 	private String link;
 	
 	private Long testId;
