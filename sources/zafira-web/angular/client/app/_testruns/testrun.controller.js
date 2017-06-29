@@ -559,6 +559,9 @@
         };
 
         $scope.splitPlatform = function (string) {
+	    if (string == null) {
+		return null;
+	    }
             var array = string.split(' ');
             var version = "v." + array[1];
             if (array.length == 2) {
