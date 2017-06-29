@@ -431,7 +431,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
 			
-			String report = zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
+			// Allow to override email from configurator
+			String emails = !StringUtils.isEmpty(configurator.getReportEmails()) ? configurator.getReportEmails() : ZAFIRA_REPORT_EMAILS;
+			
+			String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
 			
 			if(!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
 			{

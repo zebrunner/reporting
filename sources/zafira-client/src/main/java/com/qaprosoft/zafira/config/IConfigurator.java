@@ -41,4 +41,6 @@ public interface IConfigurator
 	DriverMode getDriverMode();
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
+	
+	String getReportEmails();
 }
