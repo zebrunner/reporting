@@ -538,14 +538,24 @@
 //            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
 //        });
 
+
+        $scope.isDateChosen = true;
+        $scope.isDateBetween = false;
+
         $scope.changePeriod = function () {
             if ($scope.sc.period == "between") {
-                $scope.sc.isDateBetween = true;
+                $scope.isDateChosen = true;
+                $scope.isDateBetween = true;
+            }
+            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
+                $scope.isDateChosen = true;
+                $scope.isDateBetween = false;
             }
             else {
-                $scope.sc.isDateBetween = false;
+                $scope.isDateChosen = false;
+                $scope.isDateBetween = false;
             }
-        };
+         };
 
         $scope.switchTestRunExpand = function (testRun) {
             if(!testRun.expand) {

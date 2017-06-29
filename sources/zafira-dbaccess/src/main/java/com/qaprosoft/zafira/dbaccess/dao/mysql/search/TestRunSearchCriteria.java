@@ -19,6 +19,7 @@ public class TestRunSearchCriteria extends SearchCriteria
 	private Date fromDate;
 	private Date toDate;
 	private Status status;
+	private String period;
 	
 	public TestRunSearchCriteria()
 	{
@@ -133,6 +134,14 @@ public class TestRunSearchCriteria extends SearchCriteria
 	public void setStatus(Status status)
 	{
 		this.status = status;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 
 	public String getAppVersion()
