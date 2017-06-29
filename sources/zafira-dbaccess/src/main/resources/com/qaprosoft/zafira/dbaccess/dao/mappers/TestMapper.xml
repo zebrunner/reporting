@@ -126,26 +126,26 @@
 				TC.DEVICE AS TEST_TEST_CONFIG_DEVICE,
 				TC.MODIFIED_AT AS TEST_TEST_CONFIG_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_TEST_CONFIG_CREATED_AT,
-        TA.ID          AS TEST_ARTIFACT_ID,
-        TA.NAME        AS TEST_ARTIFACT_NAME,
-        TA.LINK        AS TEST_ARTIFACT_LINK,
-        TA.TEST_ID     AS TEST_ARTIFACT_TEST_ID,
-        TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
-        TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
-            FROM
+        			TA.ID          AS TEST_ARTIFACT_ID,
+			        TA.NAME        AS TEST_ARTIFACT_NAME,
+			        TA.LINK        AS TEST_ARTIFACT_LINK,
+			        TA.TEST_ID     AS TEST_ARTIFACT_TEST_ID,
+			        TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
+			        TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
+		        FROM
 				zafira.TESTS T
 			LEFT JOIN
 				zafira.TEST_WORK_ITEMS TWI
-            ON 
-            	TWI.TEST_ID = T.ID
+		        ON 
+		            	TWI.TEST_ID = T.ID
 			LEFT JOIN
 				zafira.WORK_ITEMS WI
-            ON 
-            	WI.ID = TWI.WORK_ITEM_ID
-            LEFT JOIN
+		        ON 
+		            	WI.ID = TWI.WORK_ITEM_ID
+		        LEFT JOIN
 				zafira.USERS U
-            ON 
-            	WI.USER_ID = U.ID
+		        ON 
+		            	WI.USER_ID = U.ID
 			LEFT JOIN 
 				zafira.TEST_CONFIGS TC
 			ON 
@@ -158,10 +158,10 @@
 				zafira.USERS TCU
 			ON
 				TCS.USER_ID = TCU.ID
-            LEFT JOIN
-        zafira.TEST_ARTIFACTS TA
-      ON
-        TA.TEST_ID = T.ID
+		        LEFT JOIN
+			        zafira.TEST_ARTIFACTS TA
+		      	ON
+			        TA.TEST_ID = T.ID
         ]]>
 	</sql>
 
