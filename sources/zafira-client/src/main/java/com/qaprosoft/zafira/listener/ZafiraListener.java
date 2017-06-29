@@ -432,7 +432,11 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			zc.registerTestRunResults(this.run);
 			
 			// Allow to override email from configurator
-			String emails = !StringUtils.isEmpty(configurator.getReportEmails()) ? configurator.getReportEmails() : ZAFIRA_REPORT_EMAILS;
+			String emails = configurator.getReportEmails();
+			if(StringUtils.isEmpty(emails))
+			{
+				emails = ZAFIRA_REPORT_EMAILS;
+			}
 			
 			String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
 			
