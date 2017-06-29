@@ -1,0 +1,66 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="email_form" ng-submit="sendEmail(); UtilService.untouchForm(email_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Email</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content" data-ng-if="textRequired">
+                <div layout layout-sm="column">
+                    <div class="form-group">
+                        <md-input-container flex>
+                            <label>Text</label>
+                            <text-angular data-ng-model="email.text" options=""></text-angular>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                    <label>Recepients ({{email.recipients.length}})</label>
+                    <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
+                        <md-chips ng-model="users"
+                                  filter-selected=true
+                                  md-autocomplete-snap
+                                  md-transform-chip="checkAndTransformRecipient($chip)"
+                                  md-on-remove="removeRecipient($chip)"
+                                  md-separator-keys="keys">
+                            <md-chip-template>
+                                {{$chip.email}}
+                            </md-chip-template>
+                            <md-autocomplete
+                                    md-search-text="searchText"
+                                    md-items="user in querySearch(searchText, users)"
+                                    md-item-text="user.email"
+                                    md-selected-item="currentUser"
+                                    md-autoselect
+                                    md-no-cache="true"
+                                    placeholder="add email">
+                            <md-item-template>
+                                <span>{{user.email}}</span>
+                            </md-item-template>
+                            <md-not-found>
+                                No users matching "{{searchText}}" were found.
+                            </md-not-found>
+                            </md-autocomplete>
+                        </md-chips>
+                    </md-content>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button class="btn btn-success" data-ng-click="sendEmail()" data-ng-disabled="email_form.$invalid">
+                Send
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

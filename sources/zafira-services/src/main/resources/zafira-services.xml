@@ -106,4 +106,10 @@
 		<constructor-arg index="2" value="${zafira.jira.password}" />
 	</bean>
 	
+	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">
+		<constructor-arg index="0" value="${zafira.jwt.secret}" />
+		<constructor-arg index="1" value="${zafira.jwt.authTokenExp}"  />
+		<constructor-arg index="2" value="${zafira.jwt.refreshTokenExp}"  />
+	</bean>
+	
 </beans>

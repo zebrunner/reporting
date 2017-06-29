@@ -1,0 +1,26 @@
+
+// form validation
+.form-validation{
+    .ng-pristine {} // When it is first initialized
+    .ng-dirty {} // When the view changes
+    .ng-valid.ng-dirty {
+        border-color: $brand-success;
+    }
+    .ng-invalid.ng-dirty {
+        border-color: $brand-danger;
+    }
+
+
+    md-input-container > md-icon {
+        font-size: 20px;
+        line-height: 30px;    
+        color: $text-color;
+    }
+    md-input-container:not(.md-input-invalid).md-input-has-value > md-icon {
+        color: $brand-success; 
+    }
+    md-input-container.md-input-invalid > md-icon {
+        color: $brand-danger; 
+    }
+}
+

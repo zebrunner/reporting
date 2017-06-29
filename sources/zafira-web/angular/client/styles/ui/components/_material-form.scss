@@ -1,0 +1,71 @@
+
+// Material input
+.ui-input-group {
+    position: relative; 
+    margin: 18px 0 12px;
+
+    .form-control {
+        &:focus {
+            border-color: $brand-primary;
+        }
+    }
+
+    > input,
+    > textarea {
+        padding-left: 0;
+        padding-right: 0;
+        border: none;
+        border-bottom: 1px solid $input-border;
+        &:focus { outline:none; }
+        &:focus ~ label,
+        &:valid ~ label {
+            top: -20px;
+            left: 0;
+            font-size: 12px;
+        }
+        &:valid ~ label {
+            color: #999;
+        }
+        &:focus ~ label {
+            color: $brand-primary;
+        }
+
+        // active state
+        &:focus ~ .input-bar:before,
+        &:focus ~ .input-bar:after {
+            width: 50%;
+        }
+    }
+    > label {
+        color: $input-color-placeholder; 
+        font-size: 14px;
+        font-weight: normal;
+        position: absolute;
+        pointer-events: none;
+        left: 0;
+        top: 10px;
+        transition: all .35s $material_animation;
+    }
+
+    .input-bar { 
+        position: relative; 
+        display: block; 
+        width: 100%;
+    }
+    .input-bar:before,
+    .input-bar:after {
+        content: '';
+        height: 1px; 
+        width: 0;
+        bottom: 1px; 
+        position: absolute;
+        background: $brand-primary; 
+        transition: all .35s $material_animation;
+    }
+    .input-bar:before {
+        left: 50%;
+    }
+    .input-bar:after {
+        right: 50%; 
+    }
+}

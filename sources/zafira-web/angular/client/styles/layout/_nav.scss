@@ -1,0 +1,172 @@
+
+#nav-container {
+    ul {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    > .nav-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// 
+.nav-container {
+    .md-button {
+        text-align: left;
+        min-width: 20px;
+        text-transform: none;
+        border-radius: 0;
+    }
+    .nav {
+        margin: 0;
+        padding: 0;
+        -webkit-overflow-scrolling: touch;
+        -webkit-overflow-scrolling: -blackberry-touch;
+
+        .nav-title {
+            margin: 15px 15px 10px;
+            font-weight: normal;
+            font-size: $font-size-small;
+        }
+
+        .nav-divider {
+            margin: 10px 0 10px 15px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: transparent;
+        }
+
+        >li>a>i,
+        >li>a>.nav-icon {
+            display: inline-block;
+            vertical-align: bottom; // for material-icons
+            margin-right: 10px;
+            width: 20px;
+            line-height: $line-height-computed;
+            text-align: center;
+            font-size: 16px;
+            transition: all $nav-transition_duration ease-in-out;
+        }
+
+        a {
+            font-size: 13px;
+            transition: all $nav-transition_duration ease-in-out;
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration: none;
+            }
+        }
+
+        >li {
+            position: relative;
+            margin: 0;
+            text-align: left;
+            font-weight: bold;
+            transition: all $nav-transition_duration ease-in-out;
+            &.open {
+                .icon-has-ul {
+                    transform: rotate(180deg);
+                }
+            }
+            &.li-small {
+                font-size: 12px;
+                font-weight: normal;
+                > a {
+                    padding: 10px 15px;
+                    > i {
+                        font-size: 12px;
+                    }
+                }
+            }
+
+            &:first-child > a {
+                border-top: 0;
+            }
+
+
+
+            >a {
+                position: relative;
+                white-space: nowrap;
+                display: block;
+                padding: 15px 15px;
+                transition: all $nav-transition_duration ease-in-out;
+
+                .badge {
+                    position: absolute;
+                    top: 16px;
+                    right: 8px;
+                }
+
+                > .icon-has-ul { // icon for default vertical nav
+                    // float: right;
+                    // margin-right: 0;
+                    position: absolute;
+                    top: 15px;
+                    right: 0;
+                    font-size: 9px;
+                    line-height: 19px;
+                    transition: all .3s ease-in-out;
+                }                
+            }
+
+            > .icon-has-ul-h { // icon for horizontal nav
+                display: none; 
+            }
+
+
+        }
+
+        // sub menu
+        ul {
+            display: none;
+
+            a {
+                font-size: 13px;
+            }
+
+            li {
+                position: relative;
+                padding: 0;
+
+                &:last-child > a {
+                    border-bottom: 0;
+                }
+
+                > a {
+                    position: relative;
+                    display: block;
+                    padding: 13px 0 13px 25px;
+                    transition: all $nav-transition_duration ease-in-out;
+                    &:first-child {
+                        border-top: none;
+                    }
+
+                    > i {
+                        font-size: 4px;
+                        line-height: 16px;
+                        margin-right: 16px;
+                        vertical-align: middle;
+                    }
+
+                    > .badge {
+                        position: absolute;
+                        right: 8px;
+                        top: 12px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.nav-vertical {
+    box-shadow: 2px 0 2px 0 rgba(0,0,0,0.12);
+}
+
+
+

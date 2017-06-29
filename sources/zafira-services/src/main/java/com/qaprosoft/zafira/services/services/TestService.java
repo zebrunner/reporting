@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.rcarz.jiraclient.Issue;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestArtifact;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
@@ -60,6 +63,9 @@ public class TestService
 
 	@Autowired
 	private JiraService jiraService;
+	
+	@Autowired
+	private TestArtifactService testArtifactService;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -148,6 +154,24 @@ public class TestService
 				}
 			}
 		}
+		
+		// Save artifacts
+		if(!CollectionUtils.isEmpty(test.getArtifacts()))
+		{
+			for(TestArtifact artifact : test.getArtifacts())
+			{
+				if(artifact.isValid())
+				{
+					artifact.setTestId(test.getId());
+					testArtifactService.createTestArtifact(artifact);
+				}
+				else
+				{
+					LOGGER.error("Unable to save invalid artifact");
+				}
+			}
+		}
+		
 		testMapper.updateTest(existingTest);
 		
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());

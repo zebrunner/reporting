@@ -2,11 +2,13 @@ package com.qaprosoft.zafira.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -30,6 +32,8 @@ public interface IConfigurator
 	
 	String getDemoURL(ITestResult test);
 	
+	Set<TestArtifactType> getArtifacts(ITestResult test);
+	
 	List<String> getTestWorkItems(ITestResult test);
 	
 	int getRunCount(ITestResult test);
@@ -37,4 +41,6 @@ public interface IConfigurator
 	DriverMode getDriverMode();
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
+	
+	String getReportEmails();
 }

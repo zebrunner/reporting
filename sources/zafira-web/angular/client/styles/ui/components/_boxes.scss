@@ -1,0 +1,67 @@
+.box {
+    position: relative;
+    margin-bottom: $line-height-computed;
+    border: 0;
+    border-radius: $panel-border-radius;
+    box-shadow: 0 0 2px rgba(0,0,0,.15);
+
+    &.box-transparent {
+        box-shadow: none;
+    }
+
+    .box-dark {
+        background-color: rgba(0,0,0,.03);
+    }
+}
+
+// put color in .box-default, so .bg-xxx can overrides box color easily
+.box-default {
+    background-color: $panel-bg;
+}
+
+.box-header {
+    padding: $panel-heading-padding;
+    border-bottom: 1px solid transparent;
+    border-radius: ($panel-border-radius - 1) ($panel-border-radius - 1) 0 0;
+    font-weight: $headings-font-weight;
+    // text-transform: uppercase;
+}
+
+.box-toolbar {
+    position: absolute;
+    top: $panel-body-padding;
+    right: $panel-body-padding;
+
+    a {
+        color: $text-muted;
+
+        .material-icons {
+            font-size: $font-size-base;
+        }
+    }
+}
+
+.box-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.08);
+    margin: 0 $panel-body-padding;
+}
+
+.box-body {
+    padding: $panel-body-padding;
+    @include clearfix;
+
+    &.padding-lg {
+        padding: 30px 15px;
+    }
+    &.padding-xl {
+        padding: 60px 15px;
+    }
+    &.padding-lg-h {
+        padding: 15px 30px;
+    }
+    &.padding-lg-v {
+        padding: 30px 15px;
+    }
+}
+

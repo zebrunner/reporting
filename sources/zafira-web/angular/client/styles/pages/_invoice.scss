@@ -1,0 +1,34 @@
+.page-invoice {
+
+    .invoice-wrapper {
+        padding: 0 0 30px;
+        background-color: $reverse;
+    }
+
+}
+
+.invoice-inner {
+    padding: 15px 15px 30px;
+    background-color: $reverse;
+
+    .invoice-sum {
+        li {
+            margin-bottom: 5px;
+            padding: 10px;
+            background-color: $table-bg-accent;
+            border-radius: $border-radius-base;
+        }
+    }
+
+    .table {
+        &.table-bordered {
+            border: 0;
+        }
+
+        .bg-dark {
+            > th {
+                border: 0;
+            }
+        }
+    }
+}

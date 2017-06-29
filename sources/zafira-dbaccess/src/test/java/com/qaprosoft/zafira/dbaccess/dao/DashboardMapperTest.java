@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
 import com.qaprosoft.zafira.dbaccess.utils.Sort;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
 import com.qaprosoft.zafira.models.db.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -111,7 +110,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "updateDashboard"})
     public void getDashboardByType() {
-        Sort sort = new Sort();
+    	Sort<Dashboard> sort = new Sort<Dashboard>();
         List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboardsByType(Dashboard.Type.GENERAL));
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
@@ -119,7 +118,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getAllDashboards()
     {
-        Sort sort = new Sort();
+        Sort<Dashboard> sort = new Sort<Dashboard>();
         List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboards());
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }

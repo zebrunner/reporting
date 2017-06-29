@@ -7,7 +7,7 @@
 		<![CDATA[
 			INSERT INTO zafira.USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL)
 			VALUES (
-				#{userName},
+				#{username},
 				#{password},
 			    #{firstName},
 				#{lastName},
@@ -67,9 +67,9 @@
 	               AND U.ID = #{id}
 	            ]]>
 			</if>
-			<if test="null != userName">
+			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{userName}, '%')) 
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{username}, '%')) 
 	            ]]>
 			</if>
 			<if test="null != email">
@@ -112,9 +112,9 @@
 	               AND U.ID = #{id}
 	            ]]>
 			</if>
-			<if test="null != userName">
+			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{userName}, '%')) 
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT(#{username}, '%')) 
 	            ]]>
 			</if>
 			<if test="null != firstLastName">
@@ -161,9 +161,9 @@
 		               EMAIL = #{email},
 		            ]]>
 				</if>
-				<if test="null != userName">
+				<if test="null != username">
 		            <![CDATA[
-		               USERNAME = #{userName},	
+		               USERNAME = #{username},	
 		            ]]>
 				</if>
 				<if test="null != password">
@@ -195,14 +195,14 @@
 
 	<resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
 		<id column="USER_ID" property="id" />
-		<result column="USER_USERNAME" property="userName" />
+		<result column="USER_USERNAME" property="username" />
 		<result column="USER_PASSWORD" property="password" />
 		<result column="USER_FIRST_NAME" property="firstName" />
 		<result column="USER_LAST_NAME" property="lastName" />
 		<result column="USER_EMAIL" property="email" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
-		<collection property="groupList" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
+		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
 	</resultMap>
 
 	<insert id="addUserToGroup">

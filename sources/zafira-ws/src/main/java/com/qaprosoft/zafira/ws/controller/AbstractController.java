@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 public abstract class AbstractController
@@ -116,4 +119,42 @@ public abstract class AbstractController
 		result.setError(new Error(ErrorCode.TEST_RUN_NOT_REBUILT));
 		return result;
     }
+	
+	@ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.UNAUTHORIZED));
+		return result;
+    }
+	
+	@ExceptionHandler(ForbiddenOperationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.FORBIDDENT));
+		return result;
+    }
+	
+	@ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleUserNotFoundException(UserNotFoundException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.USER_NOT_FOUND));
+		return result;
+    }
+	
+	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
+	{
+		if(!isAdmin() && userId != getPrincipalId())
+		{
+			throw new ForbiddenOperationException();
+		}
+	}
 }

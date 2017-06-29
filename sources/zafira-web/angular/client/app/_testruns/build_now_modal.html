@@ -1,0 +1,40 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="build_now_form" ng-submit="buildNow(); UtilService.untouchForm(build_now_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Build now</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column" data-ng-hide="isJobParametersLoaded" layout-align="space-around">
+                    <md-input-container flex>
+                        <div data-ng-hide="isJobParametersLoaded" layout="row" layout-sm="column" layout-align="space-around">
+                            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div data-ng-if="noValidJob" layout="row" layout-align="center center">
+                    <small>Empty</small>
+                </div>
+                <div layout layout-sm="column" ng-repeat="(key, value) in jobParameters">
+                    <md-input-container flex>
+                        <label>{{key}}<span data-ng-if="'ci_run_id' == key"> (new)</span></label>
+                        <input ng-model="jobParameters[key]" type="text"/>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button type="submit" data-ng-if="! noValidJob" class="btn btn-success" data-ng-disabled="build_now_form.$invalid">
+                Build
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

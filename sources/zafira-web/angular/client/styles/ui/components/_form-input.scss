@@ -1,0 +1,69 @@
+
+md-input-container {
+    label {
+        margin: 0;
+    }
+}
+
+
+// General
+.form-control {
+    border-width: 1px;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: $skin;
+    box-shadow: none;
+}
+
+.form-group {
+    .col-sm-10 {
+        position: relative;
+        .icon {
+            position: absolute;
+            right: 25px;
+            top: 10px;
+        }
+    }
+
+}
+
+.input-round {
+    border-radius: 25px;
+}
+
+input.input-primary {
+    border-color: $skin;
+    &:focus {
+        border-color: $skin;
+    }
+}
+input.input-info {
+    border-color: $brand-info;
+    &:focus {
+        border-color: $brand-info;
+    }
+}
+input.input-success {
+    border-color: $brand-success;
+    &:focus {
+        border-color: $brand-success;
+    }
+}
+input.input-warning {
+    border-color: $brand-warning;
+    &:focus {
+        border-color: $brand-warning;
+    }
+}
+input.input-danger {
+    border-color: $brand-danger;
+    &:focus {
+        border-color: $brand-danger;
+    }
+}
+
+
+
+

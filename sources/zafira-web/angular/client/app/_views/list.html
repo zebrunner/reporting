@@ -1,0 +1,107 @@
+<div class="page page-profile" ng-controller="ViewController">
+
+    <div class="row ui-section">
+        <div class="col-lg-12">
+            <h2 class="section-header">{{view.name}}</h2>
+        </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
+                    <span class="fa fa-refresh" aria-hidden="true"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" permission="['ROLE_ADMIN']">
+                    <span class="fa fa-plus" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+        <div class="run_result row" align="center" data-ng-if="UtilService.isEmpty(jobViews)">
+            <div class="col-lg-12">No data</div>
+        </div>
+        
+        <div class="row">
+	        <div class="col-lg-{{envJobViews[0].size}}" data-ng-repeat="(env, envJobViews) in jobViews">
+	            <article class="article">
+	                <md-card class="no-margin-h">
+	                    <md-table-container>
+	                    	<table md-table>
+	                    	   <thead md-head>
+	                    	   	<tr md-row>
+                                        <th md-column colspan="4">
+                                        	<b style="font-size: 14px;">{{env}}</b>
+					                    	<span data-ng-if="jenkinsEnabled">
+					                    		<a href="" data-ng-click="selectForRerun(env, 'All')">All</a> | 
+					                    		<a href="" data-ng-click="selectForRerun(env, 'None')">None</a> | 
+					                    		<a href="" data-ng-click="selectForRerun(env, 'Failed')">Failed</a>
+					                    	</span>
+                                        </th>
+                                        <th md-column>
+                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" permission="['ROLE_ADMIN']">settings</i>
+                                        </th>
+                                </tr>
+	                    	   </thead>
+	                           <tbody md-body>
+	                               <tr md-row ng-repeat="jobView in envJobViews | orderBy:'job.name'" class="result {{jobView.testRun.status}}" data-ng-class="{'UNKNOWN' : jobView.testRun == null}">
+	                                   <td md-cell>
+		                                   	<input type="checkbox"
+		                                       data-ng-model="jobView.testRun.rebuild"
+		                                       data-ng-if="jobView.testRun != null && jobView.testRun.status != 'IN_PROGRESS' && jenkinsEnabled"
+		                                       data-ng-true-value="true"
+		                                       data-ng-false-value="false"
+		                                       id="{{jobView.testRun.id}}"
+		                                       value="{{jobView.testRun.id}}"
+		                                       name="{{jobView.testRun.id}}">
+	                                   </td>
+	                                   <td md-cell>
+	                                       <a href="{{jobView.job.jobURL + '/' + jobView.testRun.buildNumber}}" target="_blank">{{UtilService.truncate(jobView.job.name, 35)}}</a>
+	                                   </td>
+	                                   <td md-cell>
+		                                   	<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+	                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
+	                                   </td>
+	                                   <td md-cell>
+	                                   		<div class="pull-right">
+	                                   			<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
+		                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
+		                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
+	                                   		</div>
+	                                   </td>
+	                                   <td md-cell>
+	                                   		<md-menu>
+                                                <md-button aria-label="Job view settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                    <md-icon class="material-icons">more_vert</md-icon>
+                                                </md-button>
+                                                <md-menu-content width="3">
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="openTestRun(jobView.testRun)">
+                                                            Open
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="copyLink(jobView.testRun)">
+                                                            Copy link
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-divider></md-divider>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="rebuild(jobView.job, jobView.testRun)">
+                                                            Rebuild
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                </md-menu-content>
+                                            </md-menu>
+	                                   </td>
+	                               </tr>
+	                           </tbody>
+	                       </table>
+	                    </md-table-container>
+	                </md-card>
+	            </article>
+	        </div>	
+        </div>
+    </div>
+</div>

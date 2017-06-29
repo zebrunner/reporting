@@ -1,0 +1,232 @@
+// overrides Bootstrap
+.panel {
+    box-shadow: 0 0 3px rgba(0,0,0,.1);
+    // for panels in panel
+    .panel { 
+        box-shadow: none;
+    }
+    .panel-heading {
+        text-transform: uppercase;
+    }
+    .panel-title {
+        font-size: $font-size-base;
+    }
+
+    &.panel-labeled {
+        position: relative;
+        .panel-body {
+            padding: 35px 15px;
+        }
+    }
+    &.panel-minimal {
+        .panel-heading {
+            background: none;
+            border: 0;
+        }
+    }
+    .panel-label {
+        color: #ccc;
+        position: absolute;
+        bottom: 5px;
+        left: 7px;
+    }
+    .panel-body {
+        &.padding-lg {
+            padding: 30px 15px;
+        }
+        &.padding-xl {
+            padding: 60px 15px;
+        }
+        &.padding-lg-h {
+            padding: 15px 30px;
+        }
+    }
+}
+
+.panel-dark {
+    @include panel-variant($dark, #fff, $dark, $dark);
+}
+
+// panel box
+.panel-box {
+    display: table; // ensure always the same height for panel left and right
+    table-layout: fixed; // ensure same width
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: none;
+
+    .panel-item {
+        display: table-cell;
+        padding: 30px;
+        width: 1%;
+        vertical-align: top;
+        border-radius: 0;
+    }
+    .panel-left {
+        @include border-left-radius ($border-radius-base);
+    }
+    .panel-right {
+        @include border-right-radius ($border-radius-base);
+    }
+
+    &.info-box {
+        i {
+            line-height: 70px;
+        }
+    }
+
+    .panel-top,
+    .panel-bottom {
+        display: block;
+    }
+    .panel-top {
+        padding: 30px 20px;
+        @include border-top-radius ($border-radius-base);
+    }
+    .panel-bottom {
+        padding: 10px;
+        @include border-bottom-radius ($border-radius-base);
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .list-justified-container {
+        padding: 15px 0;
+    }
+
+    ul.list-justified {
+        display: table;
+        width: 100%;
+        list-style: none;
+        padding: 0;
+
+        > li {
+            float: none;
+            display: table-cell;
+            padding: 10px;
+            width: 1%;
+            border-right: 1px solid $gray-lighter;
+            &:last-child {
+                border: none;
+            }
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+
+    .panel-icon,
+    .panel-img {
+        display: block;
+        margin: -75px auto 0;
+        border-radius: 50%;
+        border: 10px solid $reverse;
+        width: 150px;
+        height: 150px;
+        line-height: 80px;
+        text-align: center;
+        font-size: 58px;
+        text-shadow: -6px 8px 5px rgba(0,0,0,0.3);
+
+    }
+    .panel-icon {
+        padding: 28px 35px 35px;
+    }
+    .panel-img {
+        padding: 0;
+        img {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+}
+
+// mini box
+.mini-box {
+    min-height: 120px;
+    padding: 25px;
+    .box-icon {
+        display: inline-block;
+        width: 70px;
+        height: 70px;
+        line-height: 70px;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 35px;
+        border-radius: $border-radius-base;
+
+        &.rounded {
+            border-radius: 50%;
+        }
+    }
+
+    .btn-icon,
+    .btn-icon-lined {
+        // float: left;
+        margin: 0 15px 0 0;
+        font-size: 32px;        
+    }
+
+    .box-info {
+        display: inline-block;
+        vertical-align: top;
+        p {
+            margin: 0;
+        }
+    }
+}
+
+// 
+.panel-profile {
+    border: none;
+
+    .profile {
+        margin: 5px 15px 5px 5px;
+        border-radius: 50%;
+        // box-shadow: 0 0 0 5px lighten($skin, 10%), 0 0 10px 0 rgba(0,0,0,.2);
+        padding: 5px;
+        border: 1px solid rgba(0,0,0,.2);
+
+        img {
+            border-radius: 50%;
+        }
+    }
+
+    .list-group > li > i {
+        margin-right: 10px;
+        font-size: 16px;
+        color: $gray-light;
+        table-layout: fixed;
+    }
+
+    .list-justified-container {
+        padding: 15px 0;
+    }
+
+    ul.list-justified {
+        display: table;
+        width: 100%;
+        list-style: none;
+        padding: 0;
+
+        > li {
+            float: none;
+            display: table-cell;
+            padding: 10px;
+            width: 1%;
+            border-right: 1px solid $gray-lighter;
+            &:last-child {
+                border: none;
+            }
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+}

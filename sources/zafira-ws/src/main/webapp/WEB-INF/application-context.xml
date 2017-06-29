@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
-                           http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.0.xsd">
+                           http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
 	<context:annotation-config />
 
@@ -18,9 +18,10 @@
 	<import resource="classpath:zafira-services.xml" />
 
 	<websocket:message-broker application-destination-prefix="/websocket">
-		<websocket:stomp-endpoint path="/zafira-websocket">
+		<websocket:stomp-endpoint path="/websockets" allowed-origins="*">
 			<websocket:sockjs />
 		</websocket:stomp-endpoint>
 		<websocket:simple-broker prefix="/topic" />
 	</websocket:message-broker>
+	
 </beans>

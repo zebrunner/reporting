@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 
 	<mapping type="bi-directional" wildcard="false">
-		<class-a>com.qaprosoft.zafira.models.dto.UserType</class-a>
+		<class-a>com.qaprosoft.zafira.models.dto.user.UserType</class-a>
 		<class-b>com.qaprosoft.zafira.models.db.User</class-b>
 
 		<field>
@@ -11,8 +11,8 @@
 			<b>id</b>
 		</field>
 		<field>
-			<a>userName</a>
-			<b>userName</b>
+			<a>username</a>
+			<b>username</b>
 		</field>
 		<field>
 			<a>password</a>
@@ -29,6 +29,10 @@
 		<field>
 			<a>lastName</a>
 			<b>lastName</b>
+		</field>
+		<field>
+			<a>roles</a>
+			<b>roles</b>
 		</field>
 	</mapping>
 </mappings>

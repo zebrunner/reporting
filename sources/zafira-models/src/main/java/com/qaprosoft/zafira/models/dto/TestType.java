@@ -1,8 +1,11 @@
 package com.qaprosoft.zafira.models.dto;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -37,6 +40,8 @@ public class TestType extends AbstractType
 	private boolean needRerun;
 	private String dependsOnMethods;
 	private String testClass;
+	@Valid
+	private Set<TestArtifactType> artifacts = new HashSet<>();
 
 	public TestType() {
 		
@@ -267,5 +272,15 @@ public class TestType extends AbstractType
 	public void setTestClass(String testClass)
 	{
 		this.testClass = testClass;
+	}
+
+	public Set<TestArtifactType> getArtifacts()
+	{
+		return artifacts;
+	}
+
+	public void setArtifacts(Set<TestArtifactType> artifacts)
+	{
+		this.artifacts = artifacts;
 	}
 }

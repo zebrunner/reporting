@@ -120,7 +120,7 @@
 		<![CDATA[
 			INNER JOIN zafira.USERS U
 			ON U.ID = TC.USER_ID
-			WHERE U.USERNAME = #{userName};
+			WHERE U.USERNAME = #{username};
 		]]>
 	</select>
 
@@ -168,9 +168,9 @@
 	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
 	            ]]>
 			</if>
-			<if test="null != userName">
+			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{userName}, '%'))
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -227,9 +227,9 @@
 	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
 	            ]]>
 			</if>
-			<if test="null != userName">
+			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{userName}, '%'))
+	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -327,7 +327,7 @@
 		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
 		
 		<result column="TEST_CASE_USER_ID" property="user.id" />
-		<result column="TEST_CASE_USER_USERNAME" property="user.userName" />
+		<result column="TEST_CASE_USER_USERNAME" property="user.username" />
 		<result column="TEST_CASE_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_CASE_USER_LAST_NAME" property="user.lastName" />
 		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
