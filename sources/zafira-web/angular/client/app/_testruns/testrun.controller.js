@@ -656,13 +656,9 @@
         $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 
         $scope.sendEmail = function (id) {
-            if(! $scope.users.length) {
-                if(currentTextl && currentText.length) {
-                    $scope.email.recipients.push(currentText);
-                } else {
-                    alertify.error('Add a recipient!')
-                    return;
-                }
+            if($scope.users.length == 0) {
+            	alertify.error('Add a recipient!')
+                return;
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
@@ -724,7 +720,7 @@
             var user = {};
             if (currentUser.username) {
                 user = currentUser;
-                $scope.email.recipients.push(currentUser);
+                $scope.email.recipients.push(currentUser.email);
                 $scope.users.push(user);
             } else {
                 user.email = currentUser;
