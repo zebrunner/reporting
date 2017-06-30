@@ -256,3 +256,7 @@ span.light_text {
 .browser-version_column {
     width: 120px;
 }
+
+body md-select-menu, body md-content{
+    max-height: 672px;
+}
