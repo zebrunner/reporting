@@ -260,3 +260,9 @@ span.light_text {
 body md-select-menu, body md-content{
     max-height: 672px;
 }
+
+.zoom_img img:hover{
+	-moz-transform:scale(2);
+	-webkit-transform:scale(2);
+	-o-transform:scale(2);
+}

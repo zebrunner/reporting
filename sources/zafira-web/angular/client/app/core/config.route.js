@@ -45,6 +45,10 @@
                     .state('settings', {
                         url: '/settings',
                         templateUrl: 'app/_settings/list.html'
+                    })
+                    .state('certifications', {
+                        url: '/certification',
+                        templateUrl: 'app/_certifications/list.html'
                     });
 
                 $urlRouterProvider

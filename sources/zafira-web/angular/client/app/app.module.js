@@ -14,6 +14,7 @@
         ,'app.testrun'
         ,'app.view'
         ,'app.settings'
+        ,'app.certification'
         ,'app.sidebar'
         // 3rd party feature modules
         ,'md.data.table'
