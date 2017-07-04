@@ -2,11 +2,10 @@ package com.qaprosoft.zafira.services.util;
 
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.DateSearchCriteria;
+import org.apache.commons.lang.time.DateUtils;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.ZoneId;
+import java.time.*;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -70,6 +69,7 @@ public class PeriodCalculator {
     }
 
     private static Date convertDate(LocalDate localDate){
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
     }
 }
