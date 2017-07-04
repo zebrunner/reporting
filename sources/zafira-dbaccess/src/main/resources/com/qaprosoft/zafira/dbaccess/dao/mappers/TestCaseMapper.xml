@@ -178,6 +178,16 @@
 	               AND TC.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
+			<if test="null != fromDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+			<if test="null != toDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date <= #{toDate}::date
+	            ]]>
+			</if>
 			<if test="null != project and null != project.id">
 	            <![CDATA[
 	               AND TC.PROJECT_ID = #{project.id}
@@ -235,6 +245,16 @@
 			<if test="null != date">
 	            <![CDATA[
 	               AND TC.CREATED_AT::date = #{date}::date
+	            ]]>
+			</if>
+			<if test="null != fromDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+			<if test="null != toDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != project and null != project.id">
