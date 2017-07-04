@@ -6,7 +6,7 @@ import java.util.Date;
 
 import com.qaprosoft.zafira.models.db.Status;
 
-public class TestRunSearchCriteria extends SearchCriteria
+public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {
 	private Long id;
 	private Long testSuiteId;

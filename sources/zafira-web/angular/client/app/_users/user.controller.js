@@ -46,7 +46,7 @@
         		}
             });
         };
-        
+
         $scope.generateAccessToken = function()
         {
         	AuthService.GenerateAccessToken()
@@ -57,7 +57,7 @@
         		}
             });
         };
-        
+
         $scope.copyAccessToken = function (accessToken) {
             var node = document.createElement('pre');
             node.textContent = accessToken;
@@ -73,7 +73,7 @@
             document.execCommand('copy');
             selection.removeAllRanges();
             document.body.removeChild(node);
-            
+
             alertify.success("Access token copied to clipboard");
         };
 
@@ -107,11 +107,30 @@
         $scope.order = 'username';
 
     	$scope.search = function (page) {
-    		if(page)
-    		{
-    			$scope.sc.page = page;
-    		}
-			UserService.searchUsers($scope.sc).then(function(rs) {
+            $scope.sc.date = null;
+            $scope.sc.toDate = null;
+            $scope.sc.fromDate = null;
+
+            if(page)
+            {
+                $scope.sc.page = page;
+            }
+
+            if ($scope.sc.period == ""){
+                $scope.sc.date = $scope.sc.chosenDate;
+            }
+            else if ($scope.sc.period == "before"){
+                $scope.sc.toDate =  $scope.sc.chosenDate;
+            }
+            else if ($scope.sc.period == "after") {
+                $scope.sc.fromDate = $scope.sc.chosenDate;
+            }
+            else if ($scope.sc.period == "between") {
+                $scope.sc.fromDate = $scope.sc.chosenDate;
+                $scope.sc.toDate =  $scope.sc.endDate;
+            }
+
+  		UserService.searchUsers($scope.sc).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;
@@ -275,6 +294,23 @@
                 });
         };
 
+        $scope.isDateChosen = true;
+        $scope.isDateBetween = false;
+
+        $scope.changePeriod = function () {
+            if ($scope.sc.period == "between") {
+                $scope.isDateChosen = true;
+                $scope.isDateBetween = true;
+            }
+            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
+                $scope.isDateChosen = true;
+                $scope.isDateBetween = false;
+            }
+            else {
+                $scope.isDateChosen = false;
+                $scope.isDateBetween = false;
+            }
+        };
 		(function initController() {
 			 $scope.search(1);
 //			 DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {

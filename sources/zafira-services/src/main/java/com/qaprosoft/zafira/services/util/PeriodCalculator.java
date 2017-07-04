@@ -1,8 +1,7 @@
 package com.qaprosoft.zafira.services.util;
 
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.DateSearchCriteria;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -13,7 +12,7 @@ import java.util.Date;
 
 public class PeriodCalculator {
 
-     public static SearchCriteria setPeriod(TestRunSearchCriteria sc){
+     public static DateSearchCriteria setPeriod(DateSearchCriteria sc){
          String periodName = sc.getPeriod();
          Year currentYear = Year.now();
          LocalDate currentDate = LocalDate.now();

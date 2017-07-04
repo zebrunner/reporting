@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TestCaseSearchCriteria extends SearchCriteria
+public class TestCaseSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {
 	private Long id;
 	private List<Long> ids;
@@ -14,6 +14,9 @@ public class TestCaseSearchCriteria extends SearchCriteria
 	private String testSuiteFile;
 	private String username;
 	private Date date;
+	private Date fromDate;
+	private Date toDate;
+	private String period;
 
 	public Long getId()
 	{
@@ -102,5 +105,29 @@ public class TestCaseSearchCriteria extends SearchCriteria
 	public void setDate(Date date)
 	{
 		this.date = date;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 }

@@ -87,6 +87,16 @@
 	               AND U.CREATED_AT::date = #{date}::date
 	            ]]>
 			</if>
+			<if test="null != fromDate">
+				<![CDATA[
+	               AND U.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+			<if test="null != toDate">
+				<![CDATA[
+	               AND U.CREATED_AT::date <= #{toDate}::date
+	            ]]>
+			</if>
 			<if test="null != groupName">
 				<![CDATA[
 	               AND LOWER(G.NAME) LIKE LOWER(CONCAT(#{groupName}, '%'))
@@ -130,6 +140,16 @@
 			<if test="null != date">
 	            <![CDATA[
 	               AND U.CREATED_AT::date = #{date}::date
+	            ]]>
+			</if>
+			<if test="null != fromDate">
+				<![CDATA[
+	               AND U.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+			<if test="null != toDate">
+				<![CDATA[
+	               AND U.CREATED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != groupName">

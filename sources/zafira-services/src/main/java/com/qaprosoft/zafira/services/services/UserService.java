@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
+import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +137,9 @@ public class UserService
 	@Transactional(readOnly = true)
 	public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException
 	{
+		if (sc.getPeriod()!=null){
+			PeriodCalculator.setPeriod(sc);
+		}
 		SearchResult<User> results = new SearchResult<User>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());

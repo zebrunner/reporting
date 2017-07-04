@@ -74,8 +74,8 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
+                                        <th md-column> </th>
                                         <th md-column class="no-padding">
-                                            <div class="pull-right">
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
                                                     <md-option value="" ng-selected="true"></md-option>
@@ -94,9 +94,6 @@
                                                     <md-option value="last_year">Last Year</md-option>
                                                 </md-select>
                                             </md-input-container>
-                                             </div>
-                                        </th>
-                                        <th md-column colspan="2">
                                             <md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
                                             <md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
                                         </th>

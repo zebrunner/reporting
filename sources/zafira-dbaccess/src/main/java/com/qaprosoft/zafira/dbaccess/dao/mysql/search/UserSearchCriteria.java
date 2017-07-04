@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
 import java.util.Date;
 
-public class UserSearchCriteria extends SearchCriteria
+public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {
 	private Long id;
 	private String username;
@@ -10,6 +10,9 @@ public class UserSearchCriteria extends SearchCriteria
 	private String email;
 	private Date date;
 	private String groupName;
+	private Date fromDate;
+	private Date toDate;
+	private String period;
 
 	public Long getId()
 	{
@@ -67,5 +70,29 @@ public class UserSearchCriteria extends SearchCriteria
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 }
