@@ -46,4 +46,10 @@ public class TestArtifactService
 	{
 		testArtifactMapper.deleteTestArtifactById(id);
 	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTestArtifactsByTestId(Long testId) throws ServiceException
+	{
+		testArtifactMapper.deleteTestArtifactsByTestId(testId);
+	}
 }

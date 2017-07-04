@@ -99,6 +99,7 @@ public class TestService
 			test.setBlocker(false);
 			updateTest(test);
 			workItemService.deleteKnownIssuesByTestId(test.getId());
+			testArtifactService.deleteTestArtifactsByTestId(test.getId());
 		}
 		return test;
 	}

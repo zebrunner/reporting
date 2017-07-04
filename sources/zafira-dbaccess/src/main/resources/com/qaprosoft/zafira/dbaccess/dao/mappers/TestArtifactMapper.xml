@@ -80,12 +80,21 @@
 	<sql id="deleteTestArtifact">
 		<![CDATA[
 			DELETE FROM zafira.TEST_ARTIFACTS
-			WHERE ID = #{id}
 		]]>
 	</sql>
 
 	<delete id="deleteTestArtifactById">
 		<include refid="deleteTestArtifact" />
+		<![CDATA[
+			WHERE ID = #{id}
+		]]>
+	</delete>
+	
+	<delete id="deleteTestArtifactsByTestId">
+		<include refid="deleteTestArtifact" />
+		<![CDATA[
+			WHERE TEST_ID = #{testId}
+		]]>
 	</delete>
 
 	<resultMap type="com.qaprosoft.zafira.models.db.TestArtifact" id="TestArtifactResultMap" autoMapping="false">

@@ -15,4 +15,6 @@ public interface TestArtifactMapper
 	void updateTestArtifact(TestArtifact testArtifact);
 
 	void deleteTestArtifactById(long id);
+	
+	void deleteTestArtifactsByTestId(long testId);
 }
