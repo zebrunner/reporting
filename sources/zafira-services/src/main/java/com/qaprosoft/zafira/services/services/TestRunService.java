@@ -84,7 +84,7 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
-	    if (sc.getPeriod()!=null){
+	    if (sc.getPeriod()!=null && !sc.getPeriod().equals("")){
 	        PeriodCalculator.setPeriod(sc);
         }
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
