@@ -69,7 +69,7 @@ public class PeriodCalculator {
     }
 
     private static Date convertDate(LocalDate localDate){
-        Date date = Date.from(localDate.atStartOfDay(ZoneId.of("UTC")).toInstant());
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         return DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
     }
 }
