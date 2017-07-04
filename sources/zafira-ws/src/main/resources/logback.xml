@@ -30,7 +30,7 @@
 		</encoder>
 	</appender>
 
-	<root level="info">
+	<root level="error">
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</root>

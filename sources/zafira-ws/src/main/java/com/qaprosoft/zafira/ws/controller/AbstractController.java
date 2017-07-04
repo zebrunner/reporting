@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
@@ -25,7 +26,6 @@ import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 public abstract class AbstractController
 {
@@ -35,15 +35,15 @@ public abstract class AbstractController
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
 	
-	protected SecuredUser getPrincipal()
+	protected JwtUserType getPrincipal()
 	{
 		Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return user instanceof SecuredUser ? (SecuredUser) user : null;
+		return user instanceof JwtUserType ? (JwtUserType) user : null;
 	}
 	
 	protected Long getPrincipalId()
 	{
-		SecuredUser user = getPrincipal();
+		JwtUserType user = getPrincipal();
 		return user != null ? user.getId() : 0;
 	}
 	
