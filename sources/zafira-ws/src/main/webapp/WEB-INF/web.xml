@@ -48,7 +48,7 @@
 	
 	<filter>
 		<filter-name>corsFilter</filter-name>
-		<filter-class>com.qaprosoft.zafira.ws.security.CORSFilter</filter-class>
+		<filter-class>com.qaprosoft.zafira.ws.security.filter.CORSFilter</filter-class>
 	</filter>
 
 	<filter-mapping>

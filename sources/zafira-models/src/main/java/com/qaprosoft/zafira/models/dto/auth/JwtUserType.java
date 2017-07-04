@@ -1,10 +1,9 @@
-package com.qaprosoft.zafira.ws.security;
+package com.qaprosoft.zafira.models.dto.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,47 +11,53 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.qaprosoft.zafira.models.db.Group.Role;
 
 /**
- * SecuredUser
- * 
- * @author akhursevich
+ * All user information handled by the JWT token
  */
-public class SecuredUser implements UserDetails
+public class JwtUserType implements UserDetails
 {
-	private static final long serialVersionUID = 1024356863633107004L;
+	private static final long serialVersionUID = 2105145272583220476L;
 
 	private long id;
+	
 	private String username;
+
 	private String password;
+	
 	private List<GrantedAuthority> authorities = new ArrayList<>();
 
-	public SecuredUser(String username, List<Role> roles)
+	public JwtUserType(long id, String username, List<Role> roles)
 	{
+		this.id = id;
 		this.username = username;
 		for(Role role : roles)
 		{
-			authorities.add(new SimpleGrantedAuthority(role.name()));
+			this.authorities.add(new SimpleGrantedAuthority(role.name()));
 		}
-		
-		// TODO: Remove when ready global user role setup
-		if(CollectionUtils.isEmpty(roles))
+		// TODO: removed when default role populated for all
+		if(this.authorities.isEmpty())
 		{
-			authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.name()));
+			this.authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		}
 	}
 	
-	public SecuredUser(long id, String username, String password, List<Role> roles)
+	public JwtUserType(long id, String username, String password, List<Role> roles)
 	{
-		this(username, roles);
-		this.id = id;
+		this(id, username, roles);
 		this.password = password;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities()
 	{
-		return this.authorities;
+		return authorities;
 	}
 
+	@Override
+	public String getPassword()
+	{
+		return password;
+	}
+	
 	public long getId()
 	{
 		return id;
@@ -62,12 +67,6 @@ public class SecuredUser implements UserDetails
 	public String getUsername()
 	{
 		return username;
-	}
-
-	@Override
-	public String getPassword()
-	{
-		return password;
 	}
 
 	@Override

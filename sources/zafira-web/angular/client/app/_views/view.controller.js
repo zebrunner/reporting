@@ -167,12 +167,12 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
-        	window.open($location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id, '_blank');
+        	window.open($location.$$absUrl.split("views")[0] + "tests/runs/" + testRun.id, '_blank');
         };
 
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
-            node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs?id=" + testRun.id;
+            node.textContent = $location.$$absUrl.split("views")[0] + "tests/runs/" + testRun.id;
             document.body.appendChild(node);
 
             var selection = getSelection();

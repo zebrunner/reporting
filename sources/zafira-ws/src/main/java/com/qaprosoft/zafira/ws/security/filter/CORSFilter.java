@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.ws.security;
+package com.qaprosoft.zafira.ws.security.filter;
 
 import java.io.IOException;
 

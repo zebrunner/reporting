@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.ws.security.ldap;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -13,10 +12,9 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
-import com.qaprosoft.zafira.ws.security.SecuredUser;
 
 @Component
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
@@ -43,7 +41,7 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 		{
 			LOGGER.error(e.getMessage());
 		}
-		return user != null ? new SecuredUser(user.getId(), username, user.getPassword(), user.getRoles()) : new SecuredUser(username, Arrays.asList(Role.ROLE_USER));
+		return new JwtUserType(user.getId(), username, user.getPassword(), user.getRoles());
 	}
 
 	@Override

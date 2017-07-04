@@ -5,8 +5,11 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +30,8 @@ import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @Controller
@@ -41,6 +46,9 @@ public class AuthAPIController extends AbstractController
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+    private AuthenticationManager authenticationManager;
+	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -50,16 +58,11 @@ public class AuthAPIController extends AbstractController
 		AuthTokenType authToken = null;
 		try
 		{
-			User user = userService.getUserByUsername(credentials.getUsername());
-			if(user == null)
-			{
-				throw new UsernameNotFoundException("Invalid username: " + credentials.getUsername());
-			}
+			Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 			
-			if(!userService.checkPassword(credentials.getPassword(), user.getPassword()))
-			{
-				throw new BadCredentialsException("Invalid password");
-			}
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			User user = userService.getUserByUsername(credentials.getUsername());
 			
 			authToken = new AuthTokenType("Bearer", 
 					jwtService.generateAuthToken(user), 
@@ -104,7 +107,7 @@ public class AuthAPIController extends AbstractController
 	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates access token", nickname = "accessToken", code = 200, httpMethod = "GET", response = AuthTokenType.class)
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value="access", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AccessTokenType accessToken() throws ServiceException
 	{	

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.services.UserService;
 
 @Component
@@ -31,8 +32,6 @@ public class UserPassAuthService implements UserDetailsService
 		{
 			throw new UsernameNotFoundException("User not found", e);
 		}
-		return new SecuredUser(user.getId(), 
-							   user.getUsername(), user.getPassword(), 
-							   user.getRoles());
+		return new JwtUserType(user.getId(), username, user.getPassword(), user.getRoles());
 	}
 }
