@@ -187,7 +187,7 @@
 	                        </#list>
 	                    </td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                            <#list test.artifacts as artifact>
+                            <#list test.artifacts?sort_by("name") as artifact>
                                 <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
                                 <p>
                             </#list>
