@@ -23,6 +23,7 @@
         ,'n3-pie-chart'
         ,'ngSanitize'
         ,'chieffancypants.loadingBar'
+        ,'textAngular'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
