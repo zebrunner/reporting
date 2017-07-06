@@ -63,7 +63,7 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                        <th md-column> 
+                                        <th md-column>
                                         	<md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                             </md-input-container>
@@ -207,7 +207,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse"" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
                                                         <td>
                                                         	<b>{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
                                                         	<div>
@@ -240,7 +240,7 @@
                                                     <td class="text-center">
                                                         <div
                                                             data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
-                                                            data-ng-repeat="artifact in test.artifacts">
+                                                            data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
                                                             <a href="{{artifact.link}}" target="blank" class="clearfix">{{artifact.name}}</a>
                                                         </div>
                                                     </td>
