@@ -187,16 +187,11 @@
 	                        </#list>
 	                    </td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-	            			<#if test.demoURL??>
-	            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
-	            			</#if>
-	            			<#if test.demoURL?? && test.logURL??>
-	            				<span> or </span>
-	            			</#if>
-	            			<#if test.logURL??>
-	            				<a href='${test.logURL}' style='color: white;'>Log</a>
-	            			</#if>
-	            		</td>
+                            <#list test.artifacts as artifact>
+                                <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
+                                <p>
+                            </#list>
+ 	            		</td>
 	            	</tr>
             	</#if>
             </#list>
