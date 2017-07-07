@@ -29,6 +29,11 @@
 	
 	<bean id="accessDeniedHandler" class="com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler" />
 	
+	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/auth/refresh" security="none" />
+	<security:http pattern="/api/status/**" security="none" />
+	<security:http pattern="/api/dashboards/email" security="none" />
+	
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
 		
@@ -38,12 +43,7 @@
 		
 		<security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER" />
 		
-		<security:intercept-url pattern="/api/auth/login" access="permitAll" />
-		<security:intercept-url pattern="/api/auth/refresh" access="permitAll" />
-		<security:intercept-url pattern="/api/status/**" access="permitAll" />
-		<security:intercept-url pattern="/api/dashboards/email" access="permitAll" />
-		<security:intercept-url pattern="/websockets/**" access="permitAll" />
-		
+		<security:intercept-url pattern="/websockets/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
@@ -61,6 +61,7 @@
 		<security:intercept-url pattern="/api/uainspections/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+		
 	</security:http>
 	
 	<!-- ####################### LDAP configuration ####################### -->
