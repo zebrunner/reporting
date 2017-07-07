@@ -535,7 +535,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 						ZAFIRA_ENABLED = false;
 					}
 				}
-				LOGGER.error("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
+				LOGGER.info("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
 			}
 			
 			success = ZAFIRA_ENABLED;
