@@ -381,11 +381,13 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		if (testRun.getPlatform().equals("API")){
 			for (Test test:tests) {
-				test.setDemoURL(null);
+				if (test.getStatus().equals(Status.FAILED)){
+					String message = test.getMessage().split("\n")[0];
+					test.setMessage(message);
+				}
 			}
-		}
+
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
