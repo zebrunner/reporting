@@ -382,7 +382,7 @@ public class TestRunService
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 			for (Test test:tests) {
-				if (test.getStatus().equals(Status.FAILED)){
+				if (test.getStatus().equals(Status.FAILED) && test.getMessage() != null){
 					String message = test.getMessage().split("\n")[0];
 					test.setMessage(message);
 				}
