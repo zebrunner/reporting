@@ -95,33 +95,31 @@
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
-                                        <td md-cell>
-                                        	<div ng-if="testRun.status == 'IN_PROGRESS'" style="position: absolute; left: -8px;">
-                                            	<md-progress-circular md-diameter="18px"></md-progress-circular>
+                                        <td md-cell colspan="2"style="padding: 0 15px;">
+                                        	<div ng-if="testRun.status == 'IN_PROGRESS'" style="float: left; margin-right: 5px;">
+                                            	<md-progress-circular md-diameter="20px"></md-progress-circular>
                                                    <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
                                                        <small>{{progressBar}}%</small>
                                                    </timer>
                                             </div>
-                                        	<div>
+                                        	<div style="float: left;">
                                            		<b>
                                                      {{testRun.testSuite.name}}
                                                      <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
                                                      <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
                                                  </b>
                                                  <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
-	                                            <br/>
-	                                            <small>{{testRun.appVersion}}</small>
+	                                             <br/>
+	                                             <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
+	                                             <small>{{testRun.appVersion}}</small>
                                         	</div>
-                                        </td>
-                                        <td md-cell>
-                                            <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
                                         </td>
                                         <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                          </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <div class="platform-icon {{testRun.platform}}"/>
-                                             <div data-ng-if="testRun.browserVersion" class="label label-primary">{{testRun.browserVersion}}</div>
+                                        	 <span class="platform-icon {{testRun.platform}}"/>
+                                             <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
                                         	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
@@ -134,8 +132,8 @@
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </span>
                                         </td>
-                                        <td md-cell>
-                                            <md-menu class="pull-right">
+                                        <td md-cell class="no-padding">
+                                            <md-menu>
                                                 <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event); initMenuRights(testRun)">
                                                     <md-icon class="material-icons">more_vert</md-icon>
                                                 </md-button>

@@ -47,14 +47,19 @@
 	                           <tbody md-body>
 	                               <tr md-row ng-repeat="jobView in envJobViews | orderBy:'job.name'" class="result {{jobView.testRun.status}}" data-ng-class="{'UNKNOWN' : jobView.testRun == null}">
 	                                   <td md-cell>
-		                                   	<input type="checkbox"
+	                                   		<md-progress-circular md-diameter="20px" data-ng-if="jobView.testRun.status == 'IN_PROGRESS'"></md-progress-circular>
+	                                   		<md-checkbox class="md-secondary"
+	                                   			aria-label="Rebuild" 
+	                                   			data-ng-model="jobView.testRun.rebuild" 
+	                                   			data-ng-if="jobView.testRun != null && jobView.testRun.status != 'IN_PROGRESS' && jenkinsEnabled" 
+	                                   			data-ng-true-value="true" 
+	                                   			data-ng-false-value="false">
+	                                   		</md-checkbox>
+		                                   	<!-- input type="checkbox"
 		                                       data-ng-model="jobView.testRun.rebuild"
-		                                       data-ng-if="jobView.testRun != null && jobView.testRun.status != 'IN_PROGRESS' && jenkinsEnabled"
-		                                       data-ng-true-value="true"
-		                                       data-ng-false-value="false"
 		                                       id="{{jobView.testRun.id}}"
 		                                       value="{{jobView.testRun.id}}"
-		                                       name="{{jobView.testRun.id}}">
+		                                       name="{{jobView.testRun.id}}"-->
 	                                   </td>
 	                                   <td md-cell>
 	                                       <a href="{{jobView.job.jobURL + '/' + jobView.testRun.buildNumber}}" target="_blank">{{UtilService.truncate(jobView.job.name, 35)}}</a>
@@ -68,7 +73,7 @@
 	                                   		<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
 	                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
 	                                   </td>
-	                                   <td md-cell>
+	                                   <td md-cell class="no-padding">
 	                                   		<md-menu>
                                                 <md-button aria-label="Job view settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                     <md-icon class="material-icons">more_vert</md-icon>
