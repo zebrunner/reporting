@@ -363,7 +363,7 @@
                     TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
                         if(rs.success)
                         {
-                            alertify.success('CI job is rebuilding, it may take some time before status is updated');
+                        	alertify.success("Rebuild triggered in CI service");
                         }
                         else
                         {

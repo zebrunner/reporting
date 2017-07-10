@@ -12,7 +12,7 @@
             </md-fab-trigger>
             <md-fab-actions>
                 <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
-                    <span class="fa fa-refresh" aria-hidden="true"></span>
+                    <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" permission="['ROLE_ADMIN']">
                     <span class="fa fa-plus" aria-hidden="true"></span>
@@ -59,16 +59,14 @@
 	                                   <td md-cell>
 	                                       <a href="{{jobView.job.jobURL + '/' + jobView.testRun.buildNumber}}" target="_blank">{{UtilService.truncate(jobView.job.name, 35)}}</a>
 	                                   </td>
-	                                   <td md-cell>
-		                                   	<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-	                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
+	                                   <td md-cell style="min-width: 150px;">
+	                                		<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
+	                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
+	                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
 	                                   </td>
 	                                   <td md-cell>
-	                                   		<div class="pull-right">
-	                                   			<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': jobView.testRun.passed == 0, 'label-success': jobView.testRun.passed > 0}">{{jobView.testRun.passed}}</span>
-		                                        <span title="Failed" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': jobView.testRun.failed == 0, 'label-danger': jobView.testRun.failed > 0}">{{jobView.testRun.failed}}</span></span>
-		                                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': jobView.testRun.skipped == 0, 'label-warning': jobView.testRun.skipped > 0}">{{jobView.testRun.skipped}}</span>
-	                                   		</div>
+	                                   		<time data-ng-if="jobView.testRun.startedAt" am-time-ago="jobView.testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+	                                		<span data-ng-if="!jobView.testRun.startedAt">Long ago</span>
 	                                   </td>
 	                                   <td md-cell>
 	                                   		<md-menu>

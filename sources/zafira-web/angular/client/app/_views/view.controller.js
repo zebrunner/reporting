@@ -16,7 +16,7 @@
         $scope.UtilService = UtilService;
 
         ConfigService.getConfig("jenkins").then(function(rs) {
-            $scope.jenkinsEnabled = rs.connected;
+            $scope.jenkinsEnabled = rs.data.connected;
         });
 
         $scope.loadView = function(){
@@ -156,9 +156,11 @@
                     if(rs.success)
                     {
                         testRun.status = 'IN_PROGRESS';
+                        alertify.success("Rebuild triggered in CI service");
                     }
                     else
                     {
+                    	alertify.error(rs.message);
                     }
                 });
             }
