@@ -33,6 +33,7 @@
 	<security:http pattern="/api/auth/refresh" security="none" />
 	<security:http pattern="/api/status/**" security="none" />
 	<security:http pattern="/api/dashboards/email" security="none" />
+	<security:http pattern="/websockets/**" security="none" />
 	
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
@@ -43,7 +44,6 @@
 		
 		<security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER" />
 		
-		<security:intercept-url pattern="/websockets/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
