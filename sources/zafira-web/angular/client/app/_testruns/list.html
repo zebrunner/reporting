@@ -4,10 +4,10 @@
         <div class="col-lg-12">
             <h2 class="section-header">Test runs
                 <small data-ng-if="sr">({{sr.totalResults}})</small>
-                <button class="md-button md-ink-ripple pull-right" type="button" ng-if="search_form.$dirty" ng-click="search();">
+                <button class="md-button md-ink-ripple pull-right" type="button"ng-click="search();">
                     <b>Search</b>
                 </button>
-                <button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-if="search_form.$dirty" ng-click="reset(); UtilService.untouchForm(search_form);">
+                <button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
                     <b>Clear</b>
                 </button>
             </h2>
