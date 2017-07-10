@@ -207,7 +207,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse"" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
                                                         <td>
                                                         	<b>{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
                                                         	<div>
