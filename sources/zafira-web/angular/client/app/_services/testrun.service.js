@@ -25,6 +25,7 @@
         service.buildTestRun = buildTestRun;
         service.getJobParameters = getJobParameters;
         service.getEnvironments = getEnvironments;
+        service.getPlatforms = getPlatforms;
 
         return service;
 
@@ -94,6 +95,10 @@
 
         function getEnvironments() {
             return $http.get(API_URL + '/api/tests/runs/environments').then(UtilService.handleSuccess, UtilService.handleError('Unable to get environments'));
+        }
+
+        function getPlatforms() {
+            return $http.get(API_URL + '/api/tests/runs/platforms').then(UtilService.handleSuccess, UtilService.handleError('Unable to get platforms'));
         }
     }
 })();

@@ -458,6 +458,20 @@
 		]]>
 	</select>
 
+	<select id="getPlatforms" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			DISTINCT
+			TR.PLATFORM
+			FROM
+			zafira.TEST_RUNS TR
+			ORDER BY
+				TR.PLATFORM
+			ASC
+			LIMIT 10000
+		]]>
+	</select>
+
 	<update id="updateTestRun">
 		<![CDATA[
 			UPDATE

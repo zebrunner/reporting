@@ -448,4 +448,10 @@ public class TestRunService
 	{
 		return testRunMapper.getEnvironments();
 	}
+
+	@Transactional(readOnly = true)
+	public List<String> getPlatforms() throws ServiceException
+	{
+		return testRunMapper.getPlatforms();
+	}
 }
