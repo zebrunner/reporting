@@ -417,6 +417,19 @@
             });
         };
 
+        $scope.loadPlatforms = function () {
+            TestRunService.getPlatforms().then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.platforms = rs.data;
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.resetSearchCriteria = function () {
             $location.url($location.path());
             $scope.sc = {
@@ -593,6 +606,7 @@
             $scope.search(1);
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
+            $scope.loadPlatforms();
             $scope.getJenkinsConnection();
 
             SettingsService.getSetting("JIRA_URL").then(function(rs) {

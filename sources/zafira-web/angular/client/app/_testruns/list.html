@@ -49,21 +49,15 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                       <th md-column>
+                                        <th md-column>
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.platform" name="platform" placeholder="Platform">
                                                     <md-option value="" disabled>Platform</md-option>
-                                                    <md-option value="Android">Android</md-option>
-                                                    <md-option value="iOS">iOS</md-option>
-                                                    <md-option value="chrome">chrome</md-option>
-                                                    <md-option value="firefox">firefox</md-option>
-                                                    <md-option value="safari">safari</md-option>
-                                                    <md-option value="ie">ie</md-option>
-                                                    <md-option value="API">API</md-option>
+                                                    <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                        <th md-column>
+                                      <th md-column>
                                         	<md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                             </md-input-container>
