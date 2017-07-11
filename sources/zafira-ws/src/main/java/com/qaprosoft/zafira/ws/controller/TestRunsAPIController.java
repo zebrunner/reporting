@@ -387,4 +387,15 @@ public class TestRunsAPIController extends AbstractController
 	{
 		return testRunService.getEnvironments();
 	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get platforms", nickname = "getPlatforms", code = 200, httpMethod = "GET", response = List.class)
+	@RequestMapping(value = "platforms", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<String> getPlatforms() throws ServiceException
+	{
+		return testRunService.getPlatforms();
+	}
 }
