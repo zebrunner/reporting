@@ -230,7 +230,7 @@
                                                             </span>
                                                         </td>
                                                     <td class="text-center">
-                                                        <div class = "artifacts-column"
+                                                        <div
                                                             data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
                                                             data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
                                                             <a href="{{artifact.link}}" target="blank" class="clearfix">{{artifact.name}}&nbsp</a>
