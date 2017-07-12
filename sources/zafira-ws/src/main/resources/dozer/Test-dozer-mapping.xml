@@ -52,14 +52,6 @@
 		</field>
 		
 		<field>
-			<a>demoURL</a>
-			<b>demoURL</b>
-		</field>
-		<field>
-			<a>logURL</a>
-			<b>logURL</b>
-		</field>
-		<field>
 			<a>retry</a>
 			<b>retry</b>
 		</field>

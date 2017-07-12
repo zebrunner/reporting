@@ -28,10 +28,6 @@ public interface IConfigurator
 	
 	String getTestMethodName(ITestResult test);
 	
-	String getLogURL(ITestResult test);
-	
-	String getDemoURL(ITestResult test);
-	
 	Set<TestArtifactType> getArtifacts(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);

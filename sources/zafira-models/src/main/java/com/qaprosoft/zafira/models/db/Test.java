@@ -24,8 +24,6 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private Integer messageHashCode;
 	private Date startTime;
 	private Date finishTime;
-	private String demoURL;
-	private String logURL;
 	private int retry;
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
@@ -132,26 +130,6 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setFinishTime(Date finishTime)
 	{
 		this.finishTime = finishTime;
-	}
-
-	public String getDemoURL()
-	{
-		return demoURL;
-	}
-
-	public void setDemoURL(String demoURL)
-	{
-		this.demoURL = demoURL;
-	}
-
-	public String getLogURL()
-	{
-		return logURL;
-	}
-
-	public void setLogURL(String logURL)
-	{
-		this.logURL = logURL;
 	}
 
 	public int getRetry()

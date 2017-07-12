@@ -54,8 +54,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setMessage("Hm....");
 			setStartTime(new Date());
 			setFinishTime(new Date());
-			setLogURL("http://1");
-			setDemoURL("http://1");
 			setTestConfig(testConfig);
 			setKnownIssue(true);
 			setBlocker(true);
@@ -103,8 +101,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		TEST.setTestRunId(11L);
 		TEST.setTestGroup("g2");
 		TEST.setMessage("Aha!");
-		TEST.setLogURL("http://2");
-		TEST.setDemoURL("http://2");
 		TEST.setTestConfig(new TestConfig(2L));
 		TEST.setKnownIssue(false);
 		TEST.setBlocker(false);
@@ -143,15 +139,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 
 		assertNull(testMapper.getTestById(TEST.getId()));
 	}
-	
-	@org.testng.annotations.Test(enabled = ENABLED && DELETE_ENABLED && !DELETE_BY_TEST, dependsOnMethods =
-	{ "createTest", "getTestById", "updateTest", "searchTests" })
-	public void deleteTestByTestRunIdAndTestCaseIdAndTestLogURL()
-	{
-		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(3, 1, "http://localhost:8080/lc/log");
-
-		assertNull(testMapper.getTestById(TEST.getId()));
-	}
 
 	private void checkTest(Test test)
 	{
@@ -162,8 +149,6 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 		assertEquals(test.getTestGroup(), TEST.getTestGroup(), "Test group must match");
 		assertEquals(test.getTestRunId(), TEST.getTestRunId(), "Test run ID must match");
 		assertEquals(test.getMessage(), TEST.getMessage(), "Message must match");
-		assertEquals(test.getLogURL(), TEST.getLogURL(), "Log URL must match");
-		assertEquals(test.getDemoURL(), TEST.getDemoURL(), "Demo URL must match");
 		assertEquals(test.isKnownIssue(), TEST.isKnownIssue(), "Known issue must match");
 		assertEquals(test.isBlocker(), TEST.isBlocker(), "Known issue must match");
 		assertEquals(test.getDependsOnMethods(), TEST.getDependsOnMethods(), "Depends on methods must match");

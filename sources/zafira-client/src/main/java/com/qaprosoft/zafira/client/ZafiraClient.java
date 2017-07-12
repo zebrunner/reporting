@@ -45,7 +45,6 @@ public class ZafiraClient
 	private static final String TESTS_PATH = "/api/tests";
 	private static final String TEST_FINISH_PATH = "/api/tests/%d/finish";
 	private static final String TEST_BY_ID_PATH = "/api/tests/%d";
-	private static final String TESTS_DUPLICATES_PATH = "/api/tests/duplicates/remove";
 	private static final String TEST_WORK_ITEMS_PATH = "/api/tests/%d/workitems";
 	private static final String TEST_SUITES_PATH = "/api/tests/suites";
 	private static final String TEST_CASES_PATH = "/api/tests/cases";
@@ -359,19 +358,6 @@ public class ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to finish test", e);
-		}
-	}
-	
-	public void deleteTestDuplicates(TestType test)
-	{
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + TESTS_DUPLICATES_PATH);
-			initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.put(ClientResponse.class, test);
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to delete test duplicates", e);
 		}
 	}
 	
@@ -827,14 +813,14 @@ public class ZafiraClient
 	 * @param retry
 	 * @return registered test
 	 */
-	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, String demoURL, String logURL, int retry, String configXML, String [] dependsOnMethods)
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods)
 	{
 		Long startTime = new Date().getTime();
 
-		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, demoURL: %s, logURL: %s, retry: %d";
+		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, retry: %d";
 
-		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, null, retry, configXML);
-		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, null, retry, configXML);
+		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
 
 		test.setTestGroup(group);
 		if(dependsOnMethods != null)
@@ -851,12 +837,11 @@ public class ZafiraClient
 		test = response.getObject();
 		if (test == null) 
 		{
-			throw new RuntimeException("Unable to register test '" + String.format(testDetails, name, status, testArgs,
-					testRunId, testCaseId, startTime, demoURL, logURL, retry) + "' startup for zafira service: " + serviceURL);
+			throw new RuntimeException("Unable to register test '" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry) + "' startup for zafira service: " + serviceURL);
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+			LOGGER.debug("Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
 		}
 		return test;
 	}
