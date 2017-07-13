@@ -17,20 +17,27 @@ public class TestCaseType extends AbstractType
 	@NotNull
 	private Long testSuiteId;
 	@NotNull
-	private Long userId;
+	private Long primaryOwnerId;
+	private Long secondaryOwnerId;
 	private ProjectType project;
 
 	public TestCaseType() {
 		
 	}
 	
-	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long userId)
+	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId)
 	{
 		this.testClass = testClass;
 		this.testMethod = testMethod;
 		this.info = info;
 		this.testSuiteId = testSuiteId;
-		this.userId = userId;
+		this.primaryOwnerId = primaryOwnerId;
+	}
+	
+	public TestCaseType(String testClass, String testMethod, String info, Long testSuiteId, Long primaryOwnerId, Long secondaryUserId)
+	{
+		this(testClass, testMethod, info, testSuiteId, primaryOwnerId);
+		this.secondaryOwnerId = secondaryUserId;
 	}
 	
 	public String getTestClass()
@@ -73,14 +80,24 @@ public class TestCaseType extends AbstractType
 		this.testSuiteId = testSuiteId;
 	}
 
-	public Long getUserId()
+	public Long getPrimaryOwnerId()
 	{
-		return userId;
+		return primaryOwnerId;
 	}
 
-	public void setUserId(Long userId)
+	public void setPrimaryOwnerId(Long primaryOwnerId)
 	{
-		this.userId = userId;
+		this.primaryOwnerId = primaryOwnerId;
+	}
+
+	public Long getSecondaryOwnerId()
+	{
+		return secondaryOwnerId;
+	}
+
+	public void setSecondaryOwnerId(Long secondaryOwnerId)
+	{
+		this.secondaryOwnerId = secondaryOwnerId;
 	}
 
 	public ProjectType getProject()

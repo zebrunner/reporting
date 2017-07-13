@@ -588,26 +588,27 @@ public class ZafiraClient
 	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
 	 * 
 	 * @param suiteId
-	 * @param ownerId
+	 * @param primaryOwnerId
+	 * @param secondaryOwnerId
 	 * @param testClass
 	 * @param testMethod
 	 * @return registred test case
 	 */
-	public TestCaseType registerTestCase(long suiteId, long ownerId, String testClass, String testMethod) 
+	public TestCaseType registerTestCase(Long suiteId, Long primaryOwnerId, Long secondaryOwnerId, String testClass, String testMethod) 
 	{
-		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, ownerId);
-		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %s, userId: %s";
-		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId);
+		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %s, primaryOwnerId: %s, secondaryOwnerId: %s";
+		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
 		Response<TestCaseType> response = createTestCase(testCase);
 		testCase = response.getObject();
 		if (testCase == null) 
 		{
 			throw new RuntimeException("Unable to register test case '"
-					+ String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId) + "' for zafira service: " + serviceURL);
+					+ String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId) + "' for zafira service: " + serviceURL);
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId));
 		}
 		return testCase;
 	}

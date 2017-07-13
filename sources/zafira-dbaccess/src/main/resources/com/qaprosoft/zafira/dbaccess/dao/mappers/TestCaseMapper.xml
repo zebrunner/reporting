@@ -5,7 +5,7 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CASES (USER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
+			INSERT INTO zafira.TEST_CASES (PRIMARY_OWNER_ID, SECONDARY_OWNER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
 		
 		]]>
 		<if test="null != status">	
@@ -17,7 +17,8 @@
 		<![CDATA[	
 			INFO)
 			VALUES (
-				#{user.id},
+				#{primaryOwner.id},
+				#{secondaryOwner.id},
 			    #{testSuiteId},
 				#{testClass},
 				#{testMethod},
@@ -42,7 +43,8 @@
 		<![CDATA[
 			SELECT
 				TC.ID AS TEST_CASE_ID,
-				TC.USER_ID AS TEST_CASE_USER_ID,
+				TC.PRIMARY_OWNER_ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				TC.SECONDARY_OWNER_ID AS TEST_SECONDARY_OWNER_ID,
 				TC.TEST_SUITE_ID AS TEST_CASE_TEST_SUITE_ID,
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
@@ -67,7 +69,8 @@
 		<![CDATA[
 			SELECT
 				TC.ID AS TEST_CASE_ID,
-				TC.USER_ID AS TEST_CASE_USER_ID,
+				TC.PRIMARY_OWNER_ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				TC.SECONDARY_OWNER_ID AS TEST_SECONDARY_OWNER_ID,
 				TC.TEST_SUITE_ID AS TEST_CASE_TEST_SUITE_ID,
 				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
 				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
@@ -76,13 +79,21 @@
 				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
 				TC.STATUS AS TEST_CASE_STATUS,
 				
-				U.ID AS TEST_CASE_USER_ID,
-				U.USERNAME AS TEST_CASE_USER_USERNAME,
-				U.FIRST_NAME AS TEST_CASE_USER_FIRST_NAME,
-				U.LAST_NAME AS TEST_CASE_USER_LAST_NAME,
-				U.EMAIL AS TEST_CASE_USER_EMAIL,
-				U.MODIFIED_AT AS TEST_CASE_USER_MODIFIED_AT,
-				U.CREATED_AT AS TEST_CASE_USER_CREATED_AT,
+				PU.ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				PU.USERNAME AS TEST_CASE_PRIMARY_OWNER_USERNAME,
+				PU.FIRST_NAME AS TEST_CASE_PRIMARY_OWNER_FIRST_NAME,
+				PU.LAST_NAME AS TEST_CASE_PRIMARY_OWNER_LAST_NAME,
+				PU.EMAIL AS TEST_CASE_PRIMARY_OWNER_EMAIL,
+				PU.MODIFIED_AT AS TEST_CASE_PRIMARY_OWNER_MODIFIED_AT,
+				PU.CREATED_AT AS TEST_CASE_PRIMARY_OWNER_CREATED_AT,
+				
+				SU.ID AS TEST_CASE_SECONDARY_OWNER_ID,
+				SU.USERNAME AS TEST_CASE_SECONDARY_OWNER_USERNAME,
+				SU.FIRST_NAME AS TEST_CASE_SECONDARY_OWNER_FIRST_NAME,
+				SU.LAST_NAME AS TEST_CASE_SECONDARY_OWNER_LAST_NAME,
+				SU.EMAIL AS TEST_CASE_SECONDARY_OWNER_EMAIL,
+				SU.MODIFIED_AT AS TEST_CASE_SECONDARY_OWNER_MODIFIED_AT,
+				SU.CREATED_AT AS TEST_CASE_SECONDARY_OWNER_CREATED_AT,
 				
 				TS.ID AS TEST_CASE_TEST_SUITE_ID,
 				TS.USER_ID AS TEST_CASE_TEST_SUITE_USER_ID,
@@ -100,7 +111,9 @@
 			FROM
 				zafira.TEST_CASES TC
 			LEFT JOIN 
-				zafira.USERS U ON U.ID = TC.USER_ID
+				zafira.USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
+			LEFT JOIN 
+				zafira.USERS SU ON SU.ID = TC.SECONDARY_OWNER_ID
 			LEFT JOIN 
 			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
 			LEFT JOIN
@@ -118,9 +131,9 @@
 	<select id="getTestCasesByUsername" resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />
 		<![CDATA[
-			INNER JOIN zafira.USERS U
-			ON U.ID = TC.USER_ID
-			WHERE U.USERNAME = #{username};
+			INNER JOIN zafira.USERS PU
+			ON PU.ID = TC.PRIMARY_OWNER_ID
+			WHERE PU.USERNAME = #{username};
 		]]>
 	</select>
 
@@ -170,7 +183,7 @@
 			</if>
 			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
+	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -207,7 +220,7 @@
             FROM
 				zafira.TEST_CASES TC
 			LEFT JOIN 
-				zafira.USERS U ON U.ID = TC.USER_ID
+				zafira.USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
 			LEFT JOIN 
 			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
         ]]>
@@ -239,7 +252,7 @@
 			</if>
 			<if test="null != username">
 	            <![CDATA[
-	               AND LOWER(U.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
+	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -271,9 +284,14 @@
 			    zafira.TEST_CASES
 		]]>
 			<set>
-				<if test="0 != user.id">
+				<if test="0 != primaryOwner.id">
 		            <![CDATA[
-		               USER_ID = #{user.id},
+		               PRIMARY_OWNER_ID = #{primaryOwner.id},
+		            ]]>
+				</if>
+				<if test="0 != secondaryOwner.id">
+		            <![CDATA[
+		               SECONDARY_OWNER_ID = #{secondaryOwner.id},
 		            ]]>
 				</if>
 				<if test="null != testSuiteId">
@@ -330,7 +348,8 @@
 
 	<resultMap type="com.qaprosoft.zafira.models.db.TestCase" id="TestCaseResultMap" autoMapping="false">
 		<id column="TEST_CASE_ID" property="id" />
-		<result column="TEST_CASE_USER_ID" property="user.id" />
+		<result column="TEST_CASE_PRIMARY_OWNER_ID" property="primaryOwner.id" />
+		<result column="TEST_CASE_SECONDARY_OWNER_ID" property="secondaryOwner.id" />
 		<result column="TEST_CASE_TEST_SUITE_ID" property="testSuiteId" />
 		<result column="TEST_CASE_TEST_CLASS" property="testClass" />
 		<result column="TEST_CASE_TEST_METHOD" property="testMethod" />
@@ -346,13 +365,21 @@
 		<result column="TEST_CASE_TEST_SUITE_MODIFIED_AT" property="testSuite.modifiedAt" />
 		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
 		
-		<result column="TEST_CASE_USER_ID" property="user.id" />
-		<result column="TEST_CASE_USER_USERNAME" property="user.username" />
-		<result column="TEST_CASE_USER_FIRST_NAME" property="user.firstName" />
-		<result column="TEST_CASE_USER_LAST_NAME" property="user.lastName" />
-		<result column="TEST_CASE_USER_EMAIL" property="user.email" />
-		<result column="TEST_CASE_USER_MODIFIED_AT" property="user.modifiedAt" />
-		<result column="TEST_CASE_USER_CREATED_AT" property="user.createdAt" />
+		<result column="TEST_CASE_PRIMARY_OWNER_ID" property="primaryOwner.id" />
+		<result column="TEST_CASE_PRIMARY_OWNER_USERNAME" property="primaryOwner.username" />
+		<result column="TEST_CASE_PRIMARY_OWNER_FIRST_NAME" property="primaryOwner.firstName" />
+		<result column="TEST_CASE_PRIMARY_OWNER_LAST_NAME" property="primaryOwner.lastName" />
+		<result column="TEST_CASE_PRIMARY_OWNER_EMAIL" property="primaryOwner.email" />
+		<result column="TEST_CASE_PRIMARY_OWNER_MODIFIED_AT" property="primaryOwner.modifiedAt" />
+		<result column="TEST_CASE_PRIMARY_OWNER_CREATED_AT" property="primaryOwner.createdAt" />
+		
+		<result column="TEST_CASE_SECONDARY_OWNER_ID" property="secondaryOwner.id" />
+		<result column="TEST_CASE_SECONDARY_OWNER_USERNAME" property="secondaryOwner.username" />
+		<result column="TEST_CASE_SECONDARY_OWNER_FIRST_NAME" property="secondaryOwner.firstName" />
+		<result column="TEST_CASE_SECONDARY_OWNER_LAST_NAME" property="secondaryOwner.lastName" />
+		<result column="TEST_CASE_SECONDARY_OWNER_EMAIL" property="secondaryOwner.email" />
+		<result column="TEST_CASE_SECONDARY_OWNER_MODIFIED_AT" property="secondaryOwner.modifiedAt" />
+		<result column="TEST_CASE_SECONDARY_OWNER_CREATED_AT" property="secondaryOwner.createdAt" />
 		
 		<result column="TEST_CASE_PROJECT_ID" property="project.id" />
 		<result column="TEST_CASE_PROJECT_NAME" property="project.name" />
