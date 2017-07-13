@@ -4,10 +4,14 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import org.springframework.stereotype.Service;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
+
+import javax.annotation.PostConstruct;
+
 import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
 
 @Service
@@ -19,18 +23,32 @@ public class JiraService
 	
 	private JiraClient jiraClient;
 
-	@Autowired
 	private SettingsService settingsService;
-	
-	public JiraService(String url, String username, String password)
-	{
+
+
+    @Autowired
+    public JiraService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
+
+    @PostConstruct
+	public void getJiraInfo() throws ServiceException {
+
+		String url = settingsService.getSettingValue(SettingType.JIRA_URL);
+		String username = settingsService.getSettingValue(SettingType.JIRA_USER);
+		String password = settingsService.getSettingValue(SettingType.JIRA_PASSWORD);
+
+		initJira(url, username, password);
+	}
+
+	public void initJira (String url, String username, String password){
 		try
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
 				this.credentials = new BasicCredentials(username, password);
 				this.jiraClient = new JiraClient(url, credentials);
-			}
+             }
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());

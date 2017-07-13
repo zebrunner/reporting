@@ -101,9 +101,6 @@
 	</bean>
 
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.JiraService">
-		<constructor-arg index="0" value="${zafira.jira.url}" />
-		<constructor-arg index="1" value="${zafira.jira.username}" />
-		<constructor-arg index="2" value="${zafira.jira.password}" />
 	</bean>
 	
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">
