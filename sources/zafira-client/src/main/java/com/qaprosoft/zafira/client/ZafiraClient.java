@@ -597,7 +597,7 @@ public class ZafiraClient
 	public TestCaseType registerTestCase(Long suiteId, Long primaryOwnerId, Long secondaryOwnerId, String testClass, String testMethod) 
 	{
 		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId);
-		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %s, primaryOwnerId: %s, secondaryOwnerId: %s";
+		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %d, primaryOwnerId: %d, secondaryOwnerId: %d";
 		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
 		Response<TestCaseType> response = createTestCase(testCase);
 		testCase = response.getObject();
@@ -608,7 +608,7 @@ public class ZafiraClient
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId));
+			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
 		}
 		return testCase;
 	}
