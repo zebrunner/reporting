@@ -54,18 +54,6 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
-	public String getLogURL(ITestResult test)
-	{
-		return "";
-	}
-
-	@Override
-	public String getDemoURL(ITestResult test)
-	{
-		return "";
-	}
-
-	@Override
 	public int getRunCount(ITestResult test)
 	{
 		return 0;

@@ -32,8 +32,6 @@ public interface TestMapper
 
 	void deleteTest(Test test);
 	
-	void deleteTestByTestRunIdAndTestCaseIdAndLogURL(@Param("testRunId") long testRunId, @Param("testCaseId") long testCaseId, @Param("logURL") String logURL);
-	
 	List<Test> searchTests(TestSearchCriteria sc);
 	
 	Integer getTestsSearchCount(TestSearchCriteria sc);

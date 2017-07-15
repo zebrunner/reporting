@@ -29,8 +29,6 @@ public class TestType extends AbstractType
 	private Integer messageHashCode;
 	private Long startTime;
 	private Long finishTime;
-	private String demoURL;
-	private String logURL;
 	private List<String> workItems;
 	private int retry;
 	private String configXML;
@@ -47,9 +45,7 @@ public class TestType extends AbstractType
 		
 	}
 	
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime,
-			String demoURL,
-			String logURL, List<String> workItems, int retry, String configXML)
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, List<String> workItems, int retry, String configXML)
 	{
 		this.name = name;
 		this.status = status;
@@ -57,8 +53,6 @@ public class TestType extends AbstractType
 		this.testRunId = testRunId;
 		this.testCaseId = testCaseId;
 		this.startTime = startTime;
-		this.demoURL = demoURL;
-		this.logURL = logURL;
 		this.workItems = workItems;
 		this.retry = retry;
 		this.configXML = configXML;
@@ -142,26 +136,6 @@ public class TestType extends AbstractType
 	public void setFinishTime(Long finishTime)
 	{
 		this.finishTime = finishTime;
-	}
-
-	public String getDemoURL()
-	{
-		return demoURL;
-	}
-
-	public void setDemoURL(String demoURL)
-	{
-		this.demoURL = demoURL;
-	}
-
-	public String getLogURL()
-	{
-		return logURL;
-	}
-
-	public void setLogURL(String logURL)
-	{
-		this.logURL = logURL;
 	}
 
 	public List<String> getWorkItems()
