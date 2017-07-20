@@ -609,7 +609,7 @@
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
 
-            SettingsService.getSetting("JIRA_URL").then(function(rs) {
+            SettingsService.getSettingByName("JIRA_URL").then(function(rs) {
                 if(rs.success)
                 {
                 	 $scope.jiraURL = rs.data;
@@ -858,7 +858,8 @@
                         checkIssueStatus(issue);
                         if ($scope.isJiraIdExists) {
                             $scope.newKnownIssue.description = issue.summary;
-                            $scope.newKnownIssue.assigneeMessage = '(Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name + ')';
+                            $scope.newKnownIssue.assigneeMessage = 'Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name;
+                            $scope.newKnownIssue.status = issue.status.name;
                         }
                     }
                     else
@@ -905,6 +906,7 @@
             // Reset flags
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
+            $scope.newKnownIssue.status = null;
             $scope.isJiraIdExists = true;
             $scope.isJiraIdClosed = false;
             $scope.isIssueFound = false;
@@ -924,6 +926,7 @@
             $scope.newKnownIssue.id = issue.id;
             $scope.newKnownIssue.jiraId = issue.jiraId;
             $scope.newKnownIssue.description = issue.description;
+            $scope.newKnownIssue.status = issue.status.name;
         };
 
         $interval(function () {
@@ -985,7 +988,7 @@
         };
 
         $scope.getJiraStatusesAsClosed = function() {
-            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+            SettingsService.getSettingByName('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
                 $scope.jiraStatusesAsClosed = rs.data.split(';');
             }, function errorCallback(data) {
                 console.error(data);

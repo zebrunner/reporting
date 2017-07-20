@@ -7,9 +7,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
 
-	<context:component-scan base-package="com.qaprosoft.zafira.services.services" />
+	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.test" />
+	<context:property-placeholder location="classpath:crypto/crypto.properties"/>
 
 	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
 
@@ -93,7 +94,7 @@
 		<constructor-arg index="0" ref="amazonCredentials" />
 		<constructor-arg index="1" ref="amazonConfig" />
 	</bean>
-	
+
 	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.JenkinsService">
 		<constructor-arg index="0" value="${zafira.jenkins.url}" />
 		<constructor-arg index="1" value="${zafira.jenkins.username}" />
@@ -102,7 +103,7 @@
 
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.JiraService">
 	</bean>
-	
+
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">
 		<constructor-arg index="0" value="${zafira.jwt.secret}" />
 		<constructor-arg index="1" value="${zafira.jwt.authTokenExp}"  />

@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.util.crypto.CryptoTool;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 
 import javax.annotation.PostConstruct;
+
+import java.util.List;
 
 import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
 
@@ -23,21 +27,35 @@ public class JiraService
 	
 	private JiraClient jiraClient;
 
-	private SettingsService settingsService;
-
+    @Autowired
+    private CryptoTool cryptoTool;
 
     @Autowired
-    public JiraService(SettingsService settingsService) {
-        this.settingsService = settingsService;
-    }
+    private SettingsService settingsService;
 
     @PostConstruct
 	public void getJiraInfo() throws ServiceException {
+        String url = null;
+        String username = null;
+        String password = null;
 
-		String url = settingsService.getSettingValue(SettingType.JIRA_URL);
-		String username = settingsService.getSettingValue(SettingType.JIRA_USER);
-		String password = settingsService.getSettingValue(SettingType.JIRA_PASSWORD);
-
+        List<Setting> jiraSettings = settingsService.getSettingsByTool("JIRA");
+		for (Setting setting : jiraSettings){
+		    if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue())){
+                setting.setValue(cryptoTool.decrypt(setting.getValue()));
+            }
+            switch(setting.getName()){
+		        case "JIRA_URL":
+                    url = setting.getValue();
+                    break;
+                case "JIRA_USER":
+                    username = setting.getValue();
+                    break;
+                case "JIRA_PASSWORD":
+                    password = setting.getValue();
+                    break;
+            }
+        }
 		initJira(url, username, password);
 	}
 

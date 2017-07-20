@@ -3,22 +3,23 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService',  SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
+    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
 
     	$scope.DashboardService = DashboardService;
-    	
+
         $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
+        $scope.tools = [];
 
-        
+
         $scope.isAdmin = function(){
-        	return AuthService.UserHasPermission(["ROLE_ADMIN"]); 
+        	return AuthService.UserHasPermission(["ROLE_ADMIN"]);
         };
 
         $scope.loadProjects = function(){
@@ -51,6 +52,15 @@
                 if(rs.success)
                 {
                     $scope.dashboards = rs.data;
+                }
+            });
+        };
+
+        $scope.loadTools = function(){
+            SettingsService.getSettingTools().then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.tools = rs.data;
                 }
             });
         };
@@ -187,7 +197,7 @@
             (function initController() {
             })();
         }
-        
+
         (function initController() {
             $scope.project = ProjectProvider.getProject();
         })();

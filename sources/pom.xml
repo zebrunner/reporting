@@ -112,6 +112,7 @@
 		<jjwt.version>0.7.0</jjwt.version>
 
 		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
+		<cryptotool.version>5.11.0-SNAPSHOT</cryptotool.version>
 	</properties>
 
 	<modules>
@@ -598,6 +599,13 @@
 				<artifactId>slack-java-webhook</artifactId>
 				<version>${slack-java-webhook.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.qaprosoft.carina</groupId>
+				<artifactId>cryptotool</artifactId>
+				<version>${cryptotool.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

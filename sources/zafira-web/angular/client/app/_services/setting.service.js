@@ -9,10 +9,13 @@
         var service = {};
 
         service.getAllSettings = getAllSettings;
-        service.getSetting = getSetting;
+        service.getSettingByName = getSettingByName;
+        service.getSettingByTool = getSettingByTool;
         service.deleteSetting = deleteSetting;
         service.createSetting = createSetting;
         service.editSetting = editSetting;
+        service.getSettingTools = getSettingTools;
+
 
         return service;
 
@@ -20,8 +23,12 @@
             return $http.get(API_URL + '/api/settings/list').then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings list'));
         }
 
-        function getSetting(name) {
-            return $http.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+        function getSettingByTool(tool) {
+            return $http.get(API_URL + '/api/settings/tool/' + tool).then(UtilService.handleSuccess, UtilService.handleError('Unable to load' + tool + 'settings'));
+        }
+
+        function getSettingByName(name) {
+            return $http.get(API_URL + '/api/settings/name/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
         }
 
         function deleteSetting(id) {
@@ -35,5 +42,10 @@
         function editSetting(setting) {
             return $http.put(API_URL + '/api/settings', setting).then(UtilService.handleSuccess, UtilService.handleError('Unable to edit setting'));
         }
+
+        function getSettingTools() {
+            return $http.get(API_URL + '/api/settings/tools').then(UtilService.handleSuccess, UtilService.handleError('Unable to get tools'));
+        }
+
     }
 })();

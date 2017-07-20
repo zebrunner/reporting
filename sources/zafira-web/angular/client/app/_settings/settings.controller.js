@@ -3,23 +3,24 @@
 
     angular
         .module('app.settings')
-        .controller('SettingsController', ['$scope', '$state', '$mdConstant', '$mdDialog', 'SettingsService', SettingsController])
+        .controller('SettingsController', ['$scope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'SettingsService', SettingsController])
 
-    function SettingsController($scope, $state, $mdConstant, $mdDialog, SettingsService) {
+    function SettingsController($scope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
 
     	$scope.settings = [];
-    	
+        $scope.toolName = null;
+
     	$scope.showSettingsDialog = function(event, setting) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {
-                	
+
                 	$scope.setting = {};
-                	
+
                 	if(setting != null)
                 	{
                 		$scope.setting = setting;
                 	}
-                	
+
                     $scope.create = function(setting) {
                     	SettingsService.createSetting(setting).then(function(rs) {
                             if(rs.success)
@@ -33,7 +34,7 @@
                             }
                         });
                     };
-                    
+
                     $scope.update = function(settings) {
                     	SettingsService.editSetting(settings).then(function(rs) {
                             if(rs.success)
@@ -47,7 +48,7 @@
                             }
                         });
                     };
-                    
+
                     $scope.delete = function(id) {
                     	SettingsService.deleteSetting(id).then(function(rs) {
                             if(rs.success)
@@ -61,7 +62,7 @@
                             }
                         });
                     };
-                    
+
                     $scope.hide = function() {
                         $mdDialog.hide(true);
                     };
@@ -83,19 +84,25 @@
                 }, function() {
                 });
         };
-    	
-    	
+
+
     	(function init(){
-    		SettingsService.getAllSettings().then(function(rs) {
+
+            SettingsService.getAllSettings().then(function(rs) {
                 if(rs.success)
                 {
-                    $scope.settings = rs.data;
+                    $scope.toolName = $stateParams.tool ? $stateParams.tool : rs.data[0].tool;
+                    SettingsService.getSettingByTool($scope.toolName.toUpperCase()).then(function (rs){
+                        if (rs.success) {
+                            $scope.settings = rs.data;
+                        }
+                    });
                 }
                 else
                 {
                     console.error('Failed to load settings');
                 }
             });
-		})();
+        })();
     }
 })();

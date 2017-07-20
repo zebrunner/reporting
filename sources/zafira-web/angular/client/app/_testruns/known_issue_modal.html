@@ -21,6 +21,11 @@
                     </div>
                 </div>
                 <div>
+                    <div layout layout-sm="column" ng-class="newKnownIssue.status == 'Done' ? 'label label-default' : 'label label-danger'" data-ng-show="newKnownIssue.status">
+                        <label class="jira-status">{{newKnownIssue.status}}</label>
+                    </div>
+                    <label>&nbsp{{newKnownIssue.assigneeMessage}}</label>
+                    <p>
                     <div layout layout-sm="column">
                         <span class="success_text" style="float: right">{{newKnownIssue.assigneeMessage}}</span>
                         <md-input-container flex>
