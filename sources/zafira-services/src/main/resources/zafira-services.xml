@@ -10,7 +10,6 @@
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.test" />
-	<context:property-placeholder location="classpath:crypto/crypto.properties"/>
 
 	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
 

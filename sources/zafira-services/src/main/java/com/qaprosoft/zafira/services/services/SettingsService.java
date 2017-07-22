@@ -1,18 +1,16 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.List;
-
-import com.qaprosoft.zafira.models.db.Dashboard;
-import com.qaprosoft.zafira.services.util.crypto.CryptoTool;
+import com.qaprosoft.carina.core.foundation.crypto.CryptoTool;
+import com.qaprosoft.carina.core.foundation.crypto.SecretKeyManager;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.apache.commons.lang.StringUtils;
-import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import java.util.List;
 
 @Service
 public class SettingsService
@@ -20,7 +18,10 @@ public class SettingsService
 	@Autowired
 	private SettingsMapper settingsMapper;
 
-	private static CryptoTool cryptoTool = new CryptoTool();
+    @Autowired
+    private CryptoService cryptoService;
+
+    private static CryptoTool cryptoTool = new CryptoTool("./src/main/resources/crypto.key", "AES/ECB/PKCS5Padding", "AES");
 
 	public enum SettingType
 	{
@@ -82,10 +83,12 @@ public class SettingsService
 	@Transactional(rollbackFor = Exception.class)
 	public Setting updateSetting(Setting setting) throws ServiceException
 	{
-		if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue()))
+        Setting dbSetting = getSettingByName(setting.getName());
+		if (setting.isEncrypted() && !dbSetting.isEncrypted() && !StringUtils.isEmpty(setting.getValue()))
 		{
 			setting.setValue(cryptoTool.encrypt(setting.getValue()));
 		}
+
 		settingsMapper.updateSetting(setting);
 		return setting;
 	}
@@ -100,4 +103,12 @@ public class SettingsService
 		settingsMapper.createSetting(setting);
 		return setting;
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public Setting generateKey(Setting setting) throws ServiceException
+	{
+		settingsMapper.updateSetting(setting);
+		return setting;
+	}
+
 }

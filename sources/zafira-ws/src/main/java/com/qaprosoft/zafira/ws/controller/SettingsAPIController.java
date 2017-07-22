@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.services.services.CryptoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,10 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
@@ -105,5 +110,17 @@ public class SettingsAPIController extends AbstractController
 	public @ResponseBody Setting editSetting(@RequestBody Setting setting) throws ServiceException
 	{
 		return settingsService.updateSetting(setting);
+	}
+
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 200, httpMethod = "GET")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "key", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void generateKey() throws ServiceException
+	{
+		 cryptoService.generateKey();
 	}
 }

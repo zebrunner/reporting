@@ -211,11 +211,10 @@
 		  	<artifactId>slack-java-webhook</artifactId>
 		</dependency>
 
-		<!--dependency>
+		<dependency>
 			<groupId>com.qaprosoft.carina</groupId>
 			<artifactId>cryptotool</artifactId>
-		</dependency-->
-		
+		</dependency>
 	</dependencies>
 
 	<build>

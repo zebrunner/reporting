@@ -2,18 +2,15 @@ package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.util.crypto.CryptoTool;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
-import org.springframework.stereotype.Service;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-
 import java.util.List;
 
 import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
@@ -28,13 +25,14 @@ public class JiraService
 	private JiraClient jiraClient;
 
     @Autowired
-    private CryptoTool cryptoTool;
+    private CryptoService cryptoService;
 
     @Autowired
     private SettingsService settingsService;
 
     @PostConstruct
 	public void getJiraInfo() throws ServiceException {
+
         String url = null;
         String username = null;
         String password = null;
@@ -42,7 +40,7 @@ public class JiraService
         List<Setting> jiraSettings = settingsService.getSettingsByTool("JIRA");
 		for (Setting setting : jiraSettings){
 		    if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue())){
-                setting.setValue(cryptoTool.decrypt(setting.getValue()));
+                setting.setValue(cryptoService.decrypt(setting.getValue()));
             }
             switch(setting.getName()){
 		        case "JIRA_URL":
