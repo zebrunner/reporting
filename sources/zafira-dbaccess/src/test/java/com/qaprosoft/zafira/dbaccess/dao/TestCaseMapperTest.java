@@ -28,13 +28,17 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			User user = new User();
-			user.setId(1L);
+			User user1 = new User();
+			user1.setId(1L);
+			
+			User user2 = new User();
+			user2.setId(5L);
 			
 			Project project = new Project();
-			project.setId(1L);
+			project.setId(2L);
 			
-			setUser(user);
+			setPrimaryOwner(user1);
+			setSecondaryOwner(user2);
 			setProject(project);
 			setTestSuiteId(1L);
 			setTestClass("com.qaprosoft.Test");
@@ -81,9 +85,10 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 	{ "createTestCase" })
 	public void updateTestCase()
 	{
-		TEST_CASE.getUser().setId(2L);
+		TEST_CASE.getPrimaryOwner().setId(5L);
+		TEST_CASE.getSecondaryOwner().setId(1L);
 		TEST_CASE.getProject().setId(2L);
-		TEST_CASE.setTestSuiteId(2L);
+		TEST_CASE.setTestSuiteId(1L);
 		TEST_CASE.setTestClass("com.qaprosoft.SuperTest");
 		TEST_CASE.setTestMethod("test2");
 		TEST_CASE.setInfo("Do not run me!");
@@ -125,7 +130,7 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 
 	private void checkTestCase(TestCase testCase)
 	{
-		assertEquals(testCase.getUser().getId(), TEST_CASE.getUser().getId(), "User ID must match");
+		assertEquals(testCase.getPrimaryOwner().getId(), TEST_CASE.getPrimaryOwner().getId(), "User ID must match");
 		assertEquals(testCase.getTestSuiteId(), TEST_CASE.getTestSuiteId(), "Test suite ID must match");
 		assertEquals(testCase.getTestClass(), TEST_CASE.getTestClass(), "Test case class must match");
 		assertEquals(testCase.getTestMethod(), TEST_CASE.getTestMethod(), "Test case method must match");

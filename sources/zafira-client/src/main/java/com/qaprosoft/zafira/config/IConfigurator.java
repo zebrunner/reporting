@@ -22,7 +22,9 @@ public interface IConfigurator
 	
 	String getOwner(ISuite suite);
 	
-	String getOwner(ITestResult test);
+	String getPrimaryOwner(ITestResult test);
+	
+	String getSecondaryOwner(ITestResult test);
 	
 	String getTestName(ITestResult test);
 	

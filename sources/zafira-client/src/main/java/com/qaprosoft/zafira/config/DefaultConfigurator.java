@@ -36,9 +36,15 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
-	public String getOwner(ITestResult test)
+	public String getPrimaryOwner(ITestResult test)
 	{
 		return ANONYMOUS;
+	}
+	
+	@Override
+	public String getSecondaryOwner(ITestResult test)
+	{
+		return null;
 	}
 
 	@Override
