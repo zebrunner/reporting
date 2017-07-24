@@ -12,6 +12,21 @@
                 </button>
             </h2>
         </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()">
+                    <span class="fa fa-undo" aria-hidden="true"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" permission="['ROLE_ADMIN']">
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
         <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
@@ -20,7 +35,17 @@
                             <table md-table>
                                 <thead md-head>
                                     <tr md-row>
-                                        <th md-column>
+                                    	   <th md-column>
+                                    	   	   <md-input-container>
+	                                            	<md-checkbox class="md-secondary"
+		                                   			aria-label="Select" 
+		                                   			data-ng-model="selectAll"
+		                                   			data-ng-true-value="true" 
+		                                   			data-ng-false-value="false">
+		                                   		</md-checkbox>
+                                            </md-input-container>
+                                    	   </th>
+                                        <th md-column style="min-width: 360px;">
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.status" name="status" placeholder="Status">
                                                     <md-option value="" disabled>Status</md-option>
@@ -35,8 +60,6 @@
                                             <md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
                                             </md-input-container>
-                                        </th>
-                                        <th md-column>
                                             <md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
@@ -89,24 +112,31 @@
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
-                                        <td md-cell colspan="2"style="padding: 0 15px;">
-                                        	<div ng-if="testRun.status == 'IN_PROGRESS'" style="float: left; margin-right: 5px;">
-                                            	<md-progress-circular md-diameter="20px"></md-progress-circular>
-                                                   <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
-                                                       <small>{{progressBar}}%</small>
-                                                   </timer>
-                                            </div>
-                                        	<div style="float: left;">
-                                           		<b>
-                                                     {{testRun.testSuite.name}}
-                                                     <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
-                                                     <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
-                                                 </b>
-                                                 <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
-	                                             <br/>
-	                                             <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-	                                             <small>{{testRun.appVersion}}</small>
-                                        	</div>
+                                        <td md-cell>
+                                        		<md-checkbox class="md-secondary"
+	                                   			aria-label="Select" 
+	                                   			data-ng-model="testRun.selected" 
+	                                   			data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
+	                                   			data-ng-true-value="true" 
+	                                   			data-ng-false-value="false">
+	                                   		</md-checkbox>
+	                                   		<div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
+		                                   		<md-progress-circular md-diameter="20px"></md-progress-circular>
+	                                             <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
+	                                                 <small>{{progressBar}}%</small>
+	                                             </timer>
+                                             </div>
+                                        </td>
+                                        <td md-cell>
+	                                         <b>
+                                                  {{testRun.testSuite.name}}
+                                                  <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
+                                                  <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
+                                             </b>
+                                             <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
+                                           	<br/>
+                                           	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
+                                           	<small>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
@@ -245,7 +275,6 @@
                             </table>
                         </form>
                     </md-table-container>
-
                     <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
