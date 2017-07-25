@@ -119,8 +119,8 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "key", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void generateKey() throws ServiceException
+	public void regenerateKey() throws ServiceException
 	{
-		 cryptoService.generateKey();
+		settingsService.regenerateKey();
 	}
 }

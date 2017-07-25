@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
 import java.util.List;
 
 /**
@@ -24,19 +25,16 @@ public class CryptoService {
 
     private CryptoTool cryptoTool;
 
-    private String key;
-
     private String type = null;
     private String algorithm = null;
     private int size = 0;
-
+    private String key = null;
 
     @Autowired
     private SettingsService settingsService;
 
     @PostConstruct
-    public void getCryptoInfo() throws ServiceException {
-
+    public void initCryptoTool() throws ServiceException {
 
         List<Setting> cryptoSettings = settingsService.getSettingsByTool("CRYPTO");
 
@@ -53,18 +51,30 @@ public class CryptoService {
                 case "CRYPTO_KEY_SIZE":
                     size = Integer.valueOf(setting.getValue());
                     break;
+                case "KEY":
+                    String dbKey = setting.getValue();
+                    if (dbKey == null){
+                        generateKey();
+                        key = settingsService.getSettingByName("KEY").getValue();
+                    }
+                    else {
+                        key = dbKey;
+                    }
+                    break;
             }
+
+            init(algorithm, type);
         }
-        initCryptoTool(algorithm, type, size);
+
     }
 
-    public void initCryptoTool (String algorithm, String type, String path, int size){
+    private void init(String algorithm, String type){
         try
         {
-            if (!StringUtils.isEmpty(algorithm) && !StringUtils.isEmpty(type) && !StringUtils.isEmpty(path) && size!=0)
+            if (!StringUtils.isEmpty(algorithm) && !StringUtils.isEmpty(type))
             {
-                this.cryptoTool = new CryptoTool(algorithm,type,path);
-                this.key = settingsService.getSettingByName("KEY").getValue();
+                SecretKey secretKey = SecretKeyManager.getKey(key,type);
+                cryptoTool = new CryptoTool(algorithm, type, secretKey);
             }
         } catch (Exception e)
         {
@@ -80,11 +90,6 @@ public class CryptoService {
     public String decrypt (String strToDecrypt)
     {
         return cryptoTool.decrypt(strToDecrypt);
-    }
-
-    public String getKey()
-    {
-        return this.key;
     }
 
     public void generateKey() throws ServiceException {

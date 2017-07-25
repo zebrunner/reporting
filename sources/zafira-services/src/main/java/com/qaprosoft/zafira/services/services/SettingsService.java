@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.carina.core.foundation.crypto.CryptoTool;
-import com.qaprosoft.carina.core.foundation.crypto.SecretKeyManager;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -84,11 +83,16 @@ public class SettingsService
 	public Setting updateSetting(Setting setting) throws ServiceException
 	{
         Setting dbSetting = getSettingByName(setting.getName());
-		if (setting.isEncrypted() && !dbSetting.isEncrypted() && !StringUtils.isEmpty(setting.getValue()))
-		{
-			setting.setValue(cryptoTool.encrypt(setting.getValue()));
+        if (!StringUtils.isEmpty(setting.getValue())) {
+			if (setting.isEncrypted() && !dbSetting.isEncrypted())
+			{
+				setting.setValue(cryptoService.encrypt(setting.getValue()));
+			}
+			else if (!setting.isEncrypted() && dbSetting.isEncrypted())
+			{
+				setting.setValue(cryptoService.decrypt(setting.getValue()));
+			}
 		}
-
 		settingsMapper.updateSetting(setting);
 		return setting;
 	}
@@ -98,17 +102,18 @@ public class SettingsService
 	{
 		if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue()))
 		{
-			setting.setValue(cryptoTool.encrypt(setting.getValue()));
+			setting.setValue(cryptoService.encrypt(setting.getValue()));
 		}
 		settingsMapper.createSetting(setting);
 		return setting;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Setting generateKey(Setting setting) throws ServiceException
+	public void regenerateKey() throws ServiceException
 	{
-		settingsMapper.updateSetting(setting);
-		return setting;
+		cryptoService.generateKey();
+		cryptoService.initCryptoTool();
+
 	}
 
 }

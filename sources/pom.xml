@@ -112,7 +112,7 @@
 		<jjwt.version>0.7.0</jjwt.version>
 
 		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
-		<carina.version>5.24.0-SNAPSHOT</carina.version>
+		<carina.version>5.25.0-SNAPSHOT</carina.version>
 	</properties>
 
 	<modules>

@@ -30,32 +30,32 @@ public class JiraService
     @Autowired
     private SettingsService settingsService;
 
-    @PostConstruct
-	public void getJiraInfo() throws ServiceException {
-
-        String url = null;
-        String username = null;
-        String password = null;
-
-        List<Setting> jiraSettings = settingsService.getSettingsByTool("JIRA");
-		for (Setting setting : jiraSettings){
-		    if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue())){
-                setting.setValue(cryptoService.decrypt(setting.getValue()));
-            }
-            switch(setting.getName()){
-		        case "JIRA_URL":
-                    url = setting.getValue();
-                    break;
-                case "JIRA_USER":
-                    username = setting.getValue();
-                    break;
-                case "JIRA_PASSWORD":
-                    password = setting.getValue();
-                    break;
-            }
-        }
-		initJira(url, username, password);
-	}
+//    @PostConstruct
+//	public void getJiraInfo() throws ServiceException {
+//
+//        String url = null;
+//        String username = null;
+//        String password = null;
+//
+//        List<Setting> jiraSettings = settingsService.getSettingsByTool("JIRA");
+//		for (Setting setting : jiraSettings){
+//		    if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue())){
+//                setting.setValue(cryptoService.decrypt(setting.getValue()));
+//            }
+//            switch(setting.getName()){
+//		        case "JIRA_URL":
+//                    url = setting.getValue();
+//                    break;
+//                case "JIRA_USER":
+//                    username = setting.getValue();
+//                    break;
+//                case "JIRA_PASSWORD":
+//                    password = setting.getValue();
+//                    break;
+//            }
+//        }
+//		initJira(url, username, password);
+//	}
 
 	public void initJira (String url, String username, String password){
 		try
