@@ -40,7 +40,7 @@ public class ZafiraClient
 	private static final Integer READ_TIMEOUT = 30000;
 	
 	private static final String STATUS_PATH = "/api/status";
-	private static final String LOGIN_PATH = "/api/auth/login";
+	private static final String EXTERNAL_AUTH_PATH = "/api/auth/external";
 	private static final String REFRESH_TOKEN_PATH = "/api/auth/refresh";
 	private static final String USERS_PATH = "/api/users";
 	private static final String JOBS_PATH = "/api/jobs";
@@ -98,12 +98,12 @@ public class ZafiraClient
 		return isAvailable;
 	}
 	
-	public synchronized Response<AuthTokenType> login(String username, String password)
+	public synchronized Response<AuthTokenType> externalAuth(String username, String password)
 	{
 		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + LOGIN_PATH);
+			WebResource webResource = client.resource(serviceURL + EXTERNAL_AUTH_PATH);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new CredentialsType(username, password));
 			response.setStatus(clientRS.getStatus());
@@ -114,7 +114,7 @@ public class ZafiraClient
 
 		} catch (Exception e)
 		{
-			LOGGER.error("Unable to create user", e);
+			LOGGER.error("Unable to authorize user", e);
 		}
 		return response;
 	}

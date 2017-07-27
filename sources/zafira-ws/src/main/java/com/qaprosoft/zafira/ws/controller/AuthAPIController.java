@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
@@ -40,6 +42,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("api/auth")
 public class AuthAPIController extends AbstractController
 {
+	@Autowired
+	private Mapper mapper;
+	
 	@Autowired
 	private JWTService jwtService;
 	
@@ -113,5 +118,27 @@ public class AuthAPIController extends AbstractController
 	{	
 		String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()));
 		return new AccessTokenType(token);
+	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Auth external service", nickname = "externalAuth", code = 200, httpMethod = "POST", response = UserType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "external", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserType externalAuth(@Valid @RequestBody CredentialsType credentials) throws BadCredentialsException
+	{
+		UserType user = null;
+		try
+		{
+			Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
+			
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			
+			user = mapper.map(userService.getUserByUsername(credentials.getUsername()), UserType.class);
+		}
+		catch(Exception e)
+		{
+			throw new BadCredentialsException(e.getMessage());
+		}
+		return user;
 	}
 }
