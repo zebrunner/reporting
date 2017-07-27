@@ -22,6 +22,7 @@ import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
+import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
@@ -39,6 +40,7 @@ public class ZafiraClient
 	private static final Integer READ_TIMEOUT = 30000;
 	
 	private static final String STATUS_PATH = "/api/status";
+	private static final String LOGIN_PATH = "/api/auth/login";
 	private static final String REFRESH_TOKEN_PATH = "/api/auth/refresh";
 	private static final String USERS_PATH = "/api/users";
 	private static final String JOBS_PATH = "/api/jobs";
@@ -94,6 +96,27 @@ public class ZafiraClient
 			LOGGER.error("Unable to send ping", e);
 		}
 		return isAvailable;
+	}
+	
+	public synchronized Response<AuthTokenType> login(String username, String password)
+	{
+		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + LOGIN_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new CredentialsType(username, password));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(AuthTokenType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to create user", e);
+		}
+		return response;
 	}
 	
 	public synchronized Response<AuthTokenType> refreshToken(String token)
