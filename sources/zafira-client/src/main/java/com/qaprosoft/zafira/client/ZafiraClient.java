@@ -22,7 +22,6 @@ import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
@@ -40,7 +39,7 @@ public class ZafiraClient
 	private static final Integer READ_TIMEOUT = 30000;
 	
 	private static final String STATUS_PATH = "/api/status";
-	private static final String EXTERNAL_AUTH_PATH = "/api/auth/external";
+	private static final String PROFILE_PATH = "/api/users/profile";
 	private static final String REFRESH_TOKEN_PATH = "/api/auth/refresh";
 	private static final String USERS_PATH = "/api/users";
 	private static final String JOBS_PATH = "/api/jobs";
@@ -98,18 +97,18 @@ public class ZafiraClient
 		return isAvailable;
 	}
 	
-	public synchronized Response<AuthTokenType> externalAuth(String username, String password)
+	public synchronized Response<UserType> getUserProfile()
 	{
-		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		Response<UserType> response = new Response<UserType>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + EXTERNAL_AUTH_PATH);
+			WebResource webResource = client.resource(serviceURL + PROFILE_PATH);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new CredentialsType(username, password));
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
-				response.setObject(clientRS.getEntity(AuthTokenType.class));
+				response.setObject(clientRS.getEntity(UserType.class));
 			}
 
 		} catch (Exception e)
