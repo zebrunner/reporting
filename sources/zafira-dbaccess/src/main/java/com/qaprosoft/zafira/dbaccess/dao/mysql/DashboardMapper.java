@@ -25,7 +25,7 @@ public interface DashboardMapper
 
 	void updateDashboardWidget(@Param("dashboardId") Long dashboardId, @Param("widget") Widget widget);
 
-	List<Dashboard> getAllDashboardsByType(Dashboard.Type type);
+	List<Dashboard> getDashboardsByHidden(boolean hidden);
 
 	List<Attribute> getAttributesByDashboardId(long dashboardId);
 

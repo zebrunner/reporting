@@ -154,18 +154,18 @@
                 }, function () {
                 });
         };
-        
+
         (function init() {
-        	
+
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
-        	
+
         	AuthService.RefreshToken(token)
     		.then(
             function (rs) {
             	if(rs.success)
             	{
             		AuthService.SetCredentials(rs.data);
-            		
+
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
                             $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
@@ -177,7 +177,7 @@
                             });
                         }
                     });
-            		
+
             		DashboardService.GetWidgets().then(function (rs) {
                         if (rs.success) {
                             $scope.widgets = rs.data;
@@ -259,7 +259,7 @@
 
         if($scope.isNew)
         {
-            $scope.dashboard.type = 'GENERAL';
+            $scope.dashboard.hidden = false;
         }
 
         $scope.createDashboard = function(dashboard){
