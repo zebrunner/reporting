@@ -46,6 +46,11 @@
             'pageSize': 100000
         };
 
+        $scope.testCaseSearchCriteria = {
+            'page': 1,
+            'pageSize': 100000
+        };
+
         ConfigService.getConfig("jenkins").then(function(rs) {
             $scope.jenkinsEnabled = rs.data.connected;
         });
@@ -306,7 +311,7 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
-                        var testCase = $scope.testCases[test.testCaseId];
+                        var testCase = $scope.testCases.results[test.testCaseId];
                         test.primaryOwner = testCase.primaryOwner.username;
                         test.secondaryOwner = testCase.secondaryOwner.username;
                         $scope.addTest(test, false);
@@ -321,20 +326,19 @@
         };
 
         $scope.loadTestCases = function () {
-            TestCaseService.searchTestCases($scope.testSearchCriteria).then(function (rs) {
-                if (rs.success) {
-                    var data = rs.data;
-                    $scope.testRuns = {};
-                    for (var i = 0; i < data.results.length; i++) {
-                        var testCase = data.results[i];
-                        $scope.testCases[testCase.id] = testCase;
-                   }
-               }
-                else {
-                    console.error(rs.message);
+
+            TestCaseService.searchTestCases(ProjectProvider.initProject($scope.testCaseSearchCriteria)).then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.testCases = rs.data;
+                }
+                else
+                {
+                    alertify.error(rs.message);
                 }
             });
-        };
+
+         };
 
         // --------------------  Context menu ------------------------
 
@@ -652,9 +656,9 @@
         (function init() {
 
             $scope.initWebsocket();
+            $scope.loadTestCases();
             $scope.search(1);
             $scope.populateSearchQuery();
-            $scope.loadTestCases();
             $scope.loadEnvironments();
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
