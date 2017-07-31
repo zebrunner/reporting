@@ -38,9 +38,9 @@
                                     	   <th md-column>
                                     	   	   <md-input-container>
 	                                            	<md-checkbox class="md-secondary"
-		                                   			aria-label="Select" 
+		                                   			aria-label="Select"
 		                                   			data-ng-model="selectAll"
-		                                   			data-ng-true-value="true" 
+		                                   			data-ng-true-value="true"
 		                                   			data-ng-false-value="false">
 		                                   		</md-checkbox>
                                             </md-input-container>
@@ -114,10 +114,10 @@
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell>
                                         		<md-checkbox class="md-secondary"
-	                                   			aria-label="Select" 
-	                                   			data-ng-model="testRun.selected" 
+	                                   			aria-label="Select"
+	                                   			data-ng-model="testRun.selected"
 	                                   			data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
-	                                   			data-ng-true-value="true" 
+	                                   			data-ng-true-value="true"
 	                                   			data-ng-false-value="false">
 	                                   		</md-checkbox>
 	                                   		<div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
@@ -241,6 +241,7 @@
                                                                     <i data-ng-if="test.testConfig.browser == 'firefox'" class="fa fa-firefox" aria-hidden="true"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'safari'" class="fa fa-safari" aria-hidden="true"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'ie'" class="fa fa-internet-explorer" aria-hidden="true"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'edge'" class="fa fa-edge" aria-hidden="true"></i>
                                                                     {{test.testConfig.browserVersion}}
                                                                 </span>
                                                             </div>
