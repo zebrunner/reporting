@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'TestCaseService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, TestCaseService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -32,6 +32,8 @@
         $scope.showReset = $scope.testRunId != null;
         $scope.selectAll = false;
 
+        $scope.testCases = {};
+
         var DEFAULT_SC = {
             'page': 1,
             'pageSize': 20
@@ -43,7 +45,7 @@
             'page': 1,
             'pageSize': 100000
         };
-        
+
         ConfigService.getConfig("jenkins").then(function(rs) {
             $scope.jenkinsEnabled = rs.data.connected;
         });
@@ -134,8 +136,8 @@
                     break;
             }
         };
-        
-        $scope.batchRerun = function() 
+
+        $scope.batchRerun = function()
         {
         		$scope.selectAll = false;
             var 	rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
@@ -147,8 +149,8 @@
 	        		}
 	    		}
         };
-        
-        $scope.batchDelete = function() 
+
+        $scope.batchDelete = function()
         {
         		$scope.selectAll = false;
 	        	for(var id in $scope.testRuns)
@@ -160,13 +162,13 @@
 	    		}
         };
 
-        $scope.deleteTestRun = function (id, confirmation) 
+        $scope.deleteTestRun = function (id, confirmation)
         {
         		if(confirmation == null)
         		{
         			confirmation = confirm("Do you really want to delete test run?");
         		}
-            if (confirmation) 
+            if (confirmation)
             {
                 TestRunService.deleteTestRun(id).then(function(rs) {
                     if(rs.success)
@@ -220,7 +222,7 @@
             $scope.sc.toDate = null;
             $scope.sc.fromDate = null;
             $scope.selectAll = false;
-            
+
             $scope.sc.page = page;
 
             if (pageSize) {
@@ -304,12 +306,31 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
+                        var testCase = $scope.testCases[test.testCaseId];
+                        test.primaryOwner = testCase.primaryOwner.username;
+                        test.secondaryOwner = testCase.secondaryOwner.username;
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
                 }
                 else
                 {
+                    console.error(rs.message);
+                }
+            });
+        };
+
+        $scope.loadTestCases = function () {
+            TestCaseService.searchTestCases($scope.testSearchCriteria).then(function (rs) {
+                if (rs.success) {
+                    var data = rs.data;
+                    $scope.testRuns = {};
+                    for (var i = 0; i < data.results.length; i++) {
+                        var testCase = data.results[i];
+                        $scope.testCases[testCase.id] = testCase;
+                   }
+               }
+                else {
                     console.error(rs.message);
                 }
             });
@@ -373,7 +394,7 @@
         $scope.buildNow = function (testRun, event) {
             $scope.showBuildNowDialog(testRun, event);
         };
-        
+
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
         		{
@@ -633,6 +654,7 @@
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
+            $scope.loadTestCases();
             $scope.loadEnvironments();
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
