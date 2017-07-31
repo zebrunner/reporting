@@ -1,4 +1,4 @@
-<div class="nav-wrapper">
+<div class="nav-wrapper" xmlns:font-size="http://www.w3.org/1999/xhtml">
     <ul id="nav"
         class="nav"
         data-slim-scroll
@@ -9,7 +9,7 @@
             <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseover="loadDashboards()"><i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span></a>
             <ul>
                 <li data-ng-repeat="dashboard in dashboards | orderBy:'position'">
-                    <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">{{dashboard.title}}</a>
+                    <span md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">{{dashboard.title}}&nbsp<i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 11px;"></i></span>
                 </li>
             </ul>
         </li>
