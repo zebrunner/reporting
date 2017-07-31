@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
-import com.qaprosoft.zafira.models.db.Dashboard.Type;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.DashboardEmailType;
@@ -73,26 +72,21 @@ public class DashboardsAPIController extends AbstractController
 	}
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get all dashboards", nickname = "getAllDashboards", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get dashboards", nickname = "getAllDashboards", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Dashboard> getAllDashboards(@RequestParam(value="type", required=false) String type, @RequestParam(value="userId", required=false) Long userId) throws ServiceException
+	public @ResponseBody List<Dashboard> getAllDashboards(@RequestParam(value="hidden", required=false) boolean hidden) throws ServiceException
 	{
-		List<Dashboard> dashboards = new ArrayList<>();
-		if(StringUtils.isEmpty(type))
+		List<Dashboard> dashboards;
+		if(hidden)
 		{
-			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.GENERAL));
+			dashboards = dashboardService.getDashboardsByHidden(false);
 		}
 		else
 		{
-			dashboards = dashboardService.getAllDashboardsByType(Type.valueOf(type));
+            dashboards = (dashboardService.getAllDashboards());
 		}
-		
-		if(userId != null && isAuthenticated())
-		{
-			dashboards.addAll(dashboardService.getAllDashboardsByType(Type.USER_PERFORMANCE));
-		}
-		
+
 		return dashboards;
 	}
 

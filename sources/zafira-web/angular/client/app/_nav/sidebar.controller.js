@@ -9,16 +9,16 @@
     function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
 
     	$scope.DashboardService = DashboardService;
-    	
+
         $scope.project = ProjectProvider.getProject();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
 
-        
+
         $scope.isAdmin = function(){
-        	return AuthService.UserHasPermission(["ROLE_ADMIN"]); 
+        	return AuthService.UserHasPermission(["ROLE_ADMIN"]);
         };
 
         $scope.loadProjects = function(){
@@ -29,7 +29,7 @@
                 }
                 else
                 {
-                	alertify.error("Unable to laod projects");
+                	alertify.error("Unable to load projects");
                 }
             });
         };
@@ -46,13 +46,23 @@
             });
         };
 
-        $scope.loadDashboards = function(){
-            DashboardService.GetDashboards().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.dashboards = rs.data;
-                }
-            });
+        $scope.loadDashboards = function () {
+
+            if ($scope.isAdmin() == true) {
+                DashboardService.GetDashboards().then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
+            else {
+                var hidden = true;
+                DashboardService.GetDashboards(hidden).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
         };
 
         $scope.setProject = function(project){
@@ -187,7 +197,7 @@
             (function initController() {
             })();
         }
-        
+
         (function initController() {
             $scope.project = ProjectProvider.getProject();
         })();

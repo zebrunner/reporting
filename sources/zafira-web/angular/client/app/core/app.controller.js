@@ -4,13 +4,13 @@
     angular.module('app')
         .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
 	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, ConfigService, AuthIntercepter) {
-	
+
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
-	
+
 	        $scope.$watch('main', function(newVal, oldVal) {
-	        	
+
 	            if (newVal.menu === 'horizontal' && oldVal.menu === 'vertical') {
 	                $rootScope.$broadcast('nav:reset');
 	            }
@@ -31,8 +31,8 @@
 	                $scope.main.fixedSidebar = false;
 	            }
 	        }, true);
-	
-	
+
+
 	        $scope.initSession = function()
 	        {
 	        	UserService.getUserProfile()
@@ -43,14 +43,14 @@
 		            	  $rootScope.currentUser = rs.data;
 		              }
 		       	});
-		   		
-		   		DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
+
+		   		DashboardService.GetDashboards().then(function(rs) {
 	               if(rs.success && rs.data.length > 0)
 	               {
 	               		$rootScope.pefrDashboardId = rs.data[0].id;
 	               }
 		        });
-		   		
+
 		   		AuthService.GenerateAccessToken()
 	        		.then(
 		            function (rs) {
@@ -59,7 +59,7 @@
 	            		$rootScope.accessToken = rs.data.token;
 	            	}
 	            });
-	        	
+
 	        	ConfigService.getConfig("version").then(function(rs) {
 	                if(rs.success)
 	                {
@@ -67,23 +67,23 @@
 	                }
 	            });
 	        };
-	        
+
 	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
 	            $document.scrollTo(0, 0);
 	        });
-	        
+
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
 	        	AuthService.SetCredentials(auth);
 	        	$scope.initSession();
 	        });
-	        
-	        $rootScope.$on('event:auth-loginRequired', function() 
+
+	        $rootScope.$on('event:auth-loginRequired', function()
 	        {
 	        	if($cookies.get('Access-Token'))
 	            {
 	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}}
 	            }
-	        	
+
 	        	if($rootScope.globals.auth != null && $rootScope.globals.auth.refreshToken != null)
 	        	{
 	        		AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
@@ -106,18 +106,18 @@
 	        		$state.go("signin");
 	        	}
 	        });
-	        
+
 	        (function initController() {
-	        	
+
 	        	// keep user logged in after page refresh
 	            $rootScope.globals = $cookies.getObject('globals') || {};
-	            
-	            if ($rootScope.globals.auth) 
+
+	            if ($rootScope.globals.auth)
 	            {
 	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
 	            }
-	        	
+
 	        	$scope.initSession();
 	        })();
 	    }
-})(); 
+})();

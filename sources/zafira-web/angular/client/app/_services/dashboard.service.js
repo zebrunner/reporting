@@ -29,11 +29,11 @@
 
         return service;
 
-        function GetDashboards(type) {
-        	var config = { params : {} };
-        	if(type)
-        		config.params.type = type;
-        	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+        function GetDashboards(hidden) {
+            var config = { params : {} };
+            if(hidden)
+                config.params.hidden = hidden;
+         	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
         function CreateDashboard(dashboard) {

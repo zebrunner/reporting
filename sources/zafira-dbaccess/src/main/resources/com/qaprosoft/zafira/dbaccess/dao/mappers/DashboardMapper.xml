@@ -5,10 +5,10 @@
 	
 	 <insert id="createDashboard" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-			INSERT INTO zafira.DASHBOARDS (TITLE, TYPE, POSITION)
+			INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION)
 			VALUES (
 				#{title},
-				#{type},
+				#{hidden},
 				#{position}
 			)
 		]]>
@@ -19,7 +19,7 @@
 			SELECT
 				D.ID AS DASHBOARD_ID,
 				D.TITLE AS DASHBOARD_TITLE,
-				D.TYPE AS DASHBOARD_TYPE,
+				D.HIDDEN AS DASHBOARD_HIDDEN,
 				D.POSITION AS DASHBOARD_POSITION,
 				D.MODIFIED_AT AS DASHBOARD_MODIFIED_AT,
 				D.CREATED_AT AS DASHBOARD_CREATED_AT,
@@ -66,10 +66,10 @@
 		]]>
 	</select>
 
-    <select id="getAllDashboardsByType" resultMap="DashboardResultMap">
+    <select id="getDashboardsByHidden" resultMap="DashboardResultMap">
         <include refid="getDashboard" />
         <![CDATA[
-			WHERE D.TYPE = #{type}
+			WHERE D.HIDDEN = #{hidden}
 			ORDER BY D.POSITION ASC;
 		]]>
     </select>
@@ -80,7 +80,7 @@
 			    zafira.DASHBOARDS
 			SET
 				TITLE = #{title},
-				TYPE = #{type},
+                HIDDEN = #{hidden},
 				POSITION = #{position}
 			WHERE
 			    ID = #{id}
@@ -103,7 +103,7 @@
 	<resultMap type="com.qaprosoft.zafira.models.db.Dashboard" id="DashboardResultMap" autoMapping="false">
         <id column="DASHBOARD_ID" property="id" />
         <result column="DASHBOARD_TITLE" property="title" />
-        <result column="DASHBOARD_TYPE" property="type"/>
+        <result column="DASHBOARD_HIDDEN" property="hidden"/>
         <result column="DASHBOARD_POSITION" property="position"/>
         <result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
         <result column="DASHBOARD_CREATED_AT" property="createdAt" />
