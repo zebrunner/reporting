@@ -235,6 +235,7 @@
                                                         	<div>
                                                                 <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                 <span data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                <span data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                 <span data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                 <span data-ng-if="test.testConfig.browserVersion && test.testConfig.browserVersion != '*' && test.testConfig.browserVersion != '' && test.testConfig.browserVersion != null" class="light_text"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'chrome'" class="fa fa-chrome" aria-hidden="true"></i>

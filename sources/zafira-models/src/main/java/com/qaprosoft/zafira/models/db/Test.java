@@ -31,6 +31,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private boolean blocker;
 	private boolean needRerun;
 	private String owner;
+	private String secondaryOwner;
 	private String dependsOnMethods;
 	private String testClass;
 	private Set<TestArtifact> artifacts = new HashSet<>();
@@ -203,6 +204,14 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
+	}
+
+	public String getSecondaryOwner() {
+		return secondaryOwner;
+	}
+
+	public void setSecondaryOwner(String secondaryOwner) {
+		this.secondaryOwner = secondaryOwner;
 	}
 
 	public boolean isNeedRerun()
