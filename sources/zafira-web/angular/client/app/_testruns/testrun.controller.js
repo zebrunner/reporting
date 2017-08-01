@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'TestCaseService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, TestCaseService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -32,8 +32,6 @@
         $scope.showReset = $scope.testRunId != null;
         $scope.selectAll = false;
 
-        $scope.testCases = {};
-
         var DEFAULT_SC = {
             'page': 1,
             'pageSize': 20
@@ -42,11 +40,6 @@
         $scope.sc = angular.copy(DEFAULT_SC);
 
         $scope.testSearchCriteria = {
-            'page': 1,
-            'pageSize': 100000
-        };
-
-        $scope.testCaseSearchCriteria = {
             'page': 1,
             'pageSize': 100000
         };
@@ -311,9 +304,6 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
-                        var testCase = $scope.testCases.results[test.testCaseId];
-                        test.primaryOwner = testCase.primaryOwner.username;
-                        test.secondaryOwner = testCase.secondaryOwner.username;
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
@@ -324,21 +314,6 @@
                 }
             });
         };
-
-        $scope.loadTestCases = function () {
-
-            TestCaseService.searchTestCases(ProjectProvider.initProject($scope.testCaseSearchCriteria)).then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.testCases = rs.data;
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
-            });
-
-         };
 
         // --------------------  Context menu ------------------------
 
@@ -656,7 +631,6 @@
         (function init() {
 
             $scope.initWebsocket();
-            $scope.loadTestCases();
             $scope.search(1);
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
