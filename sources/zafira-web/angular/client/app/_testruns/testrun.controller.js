@@ -74,7 +74,8 @@
             if (event.type == 'TEST_RUN') {
                 if (($scope.testRunId && $scope.testRunId != event.testRun.id)
                     || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
-                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)) {
+                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)
+                    || !$scope.checkSearchCriteria($scope.sc)) {
                     return;
                 }
 
@@ -86,6 +87,17 @@
                 $scope.$apply();
             }
             return true;
+        };
+
+        $scope.checkSearchCriteria = function (sc) {
+            var isEmpty = true;
+            for (var criteria in sc) {
+                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize") {
+                    isEmpty = false;
+                    break;
+                }
+            }
+            return isEmpty;
         };
 
         $scope.addTest = function (test, isEvent) {
