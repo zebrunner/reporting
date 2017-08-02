@@ -8,8 +8,9 @@
         function AuthService($http, $cookies, $rootScope, $state, UtilService, UserService, API_URL) {
 
 	    	var service = {};
-	    	
+
 	        service.Login = Login;
+	        service.Register = Register;
 	        service.SetCredentials = SetCredentials;
 	        service.ClearCredentials = ClearCredentials;
 	        service.RefreshToken = RefreshToken;
@@ -21,10 +22,14 @@
 	        	 return $http.post(API_URL + '/api/auth/login', {'username' : username, 'password': password}).then(UtilService.handleSuccess, UtilService.handleError('Invalid credentials'));
 	        }
 
+            function Register(user) {
+                return $http.post(API_URL + '/api/auth/register', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to register user'));
+            }
+
 	        function RefreshToken(token) {
 		       	 return $http.post(API_URL + '/api/auth/refresh', {'refreshToken' :token}).then(UtilService.handleSuccess, UtilService.handleError('Invalid refresh token'));
 		    }
-	        
+
 	        function GenerateAccessToken(token) {
 		       	 return $http.get(API_URL + '/api/auth/access').then(UtilService.handleSuccess, UtilService.handleError('Unable to generate token'));
 		    }
@@ -62,7 +67,7 @@
 	            });
 	            return found;
 	        }
-	        
+
 	        return service;
     }
 

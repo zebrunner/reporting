@@ -48,7 +48,7 @@
 	                               <tr md-row ng-repeat="jobView in envJobViews | orderBy:'job.name'" class="result {{jobView.testRun.status}}" data-ng-class="{'UNKNOWN' : jobView.testRun == null}">
 	                                   <td md-cell>
 	                                   		<!--<md-progress-circular md-diameter="20px" data-ng-if="jobView.testRun.status == 'IN_PROGRESS'"></md-progress-circular>-->
-                                           <div ng-if="!jobView.testRun.selected && jobView.testRun.status == 'IN_PROGRESS'" data-ng-click="jobView.testRun.selected = true">
+                                           <div ng-if="!jobView.testRun.selected && jobView.testRun.status == 'IN_PROGRESS'" data-ng-click="jobView.testRun.rebuild = true">
                                                <md-progress-circular md-diameter="20px"></md-progress-circular>
                                                <timer countdown="jobView.testRun.countdown" eta="jobView.testRun.eta" interval="1000" data-ng-if="jobView.testRun.countdown">
                                                    <small>{{progressBar}}%</small>

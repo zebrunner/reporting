@@ -47,14 +47,12 @@ public class UserService
 		return user;
 	}
 
-	@Cacheable(value = "users")
 	@Transactional(readOnly = true)
 	public User getUserByUsername(String username) throws ServiceException
 	{
 		return userMapper.getUserByUserName(username);
 	}
-	
-	@CacheEvict(value = "users", allEntries=true)
+
 	@Transactional(rollbackFor = Exception.class)
 	public void createUser(User user) throws ServiceException
 	{

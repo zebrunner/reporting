@@ -2,6 +2,9 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.dto.user.UserType;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +37,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @Api(value = "Auth API")
 @CrossOrigin
@@ -48,6 +54,9 @@ public class AuthAPIController extends AbstractController
 	
 	@Autowired
     private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private Mapper mapper;
 	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
@@ -74,6 +83,24 @@ public class AuthAPIController extends AbstractController
 			throw new BadCredentialsException(e.getMessage());
 		}
 		return authToken;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST", response = AuthTokenType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AuthTokenType register(@Valid @RequestBody UserType userType)
+			throws BadCredentialsException, ServiceException
+	{
+		List<Group.Role> roles = new ArrayList<>();
+		roles.add(Group.Role.ROLE_USER);
+		userType.setRoles(roles);
+		User user = userService.createOrUpdateUser(mapper.map(userType, User.class));
+
+		return new AuthTokenType("Bearer",
+				jwtService.generateAuthToken(user),
+				jwtService.generateRefreshToken(user),
+				jwtService.getExpiration());
 	}
 	
 	@ResponseStatusDetails
