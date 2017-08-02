@@ -15,10 +15,10 @@
 
         $scope.UtilService = UtilService;
 
-        $scope.testSearchCriteria = {
+        /*$scope.testSearchCriteria = {
             'page': 1,
             'pageSize': 100000
-        };
+        };*/
 
         $scope.initWebsocket = function () {
             var sockJS = new SockJS(API_URL + "/websockets");
@@ -53,6 +53,12 @@
         $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
+
+            /*for (var env in $scope.jobViews) {
+                $scope.jobViews[env].filter(function (view) {
+                    return view.testRun.id == test.testRun.id;
+                })[0].testRun;
+            }*/
 
             var testRun = $scope.testRuns[test.testRunId];
             if (testRun == null) {
@@ -178,7 +184,9 @@
                         {
                             testRun.rebuild = false;
                             testRun.tests = {};
-                            $scope.loadTests(testRun);
+                            if(testRun.status == 'IN_PROGRESS') {
+                                $scope.loadTests(testRun);
+                            }
                             jobViews[i].testRun = testRun;
                             $scope.testRuns[testRun.id] = testRun;
                         }
@@ -192,14 +200,11 @@
         };
 
         $scope.loadTests = function (testRun) {
-            $scope.testSearchCriteria.testRunId = testRun.id;
-            TestService.searchTests($scope.testSearchCriteria).then(function(rs) {
+            //$scope.testSearchCriteria.testRunId = testRun.id;
+            TestService.searchTests({'page':1, 'pageSize':100000, 'testRunId':testRun.id}).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
-                    $scope.userSearchResult = data;
-                    $scope.testSearchCriteria.page = data.page;
-                    $scope.testSearchCriteria.pageSize = data.pageSize;
                     var inProgressTests = 0;
                     for (var i = 0; i < data.results.length; i++) {
                         var test = data.results[i];

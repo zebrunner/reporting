@@ -18,32 +18,35 @@
                                     <md-input-container class="md-block">
                                         <label>Username</label>
                                         <md-icon class="material-icons">account_circle</md-icon>
-                                        <input required 
+                                        <input required
                                                type="text"
-                                               name="username" 
+                                               name="username"
                                                ng-model="credentials.username"/>
                                        	<div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
                                             <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                                       </div> 
+                                       </div>
                                     </md-input-container>
                                     <md-input-container class="md-block">
                                         <label>Password</label>
                                         <md-icon class="material-icons">lock_outline</md-icon>
-                                        <input required 
+                                        <input required
                                                type="password"
-                                               name="password" 
+                                               name="password"
                                                ng-model="credentials.password"/>
 		                                       <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
 		                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-		                                       </div>       
-                                    </md-input-container>  
-                                    <div layout="row" layout-align="center"> 
+		                                       </div>
+                                    </md-input-container>
+                                    <div layout="row" layout-align="center">
 	                                    <md-button type="submit"
 	                                               class="md-raised btn-w-md md-primary"
-	                                               ng-disabled="signin_form.$invalid">Signin</md-button>  
-                                    </div>                                   
+	                                               ng-disabled="signin_form.$invalid">Signin</md-button>
+                                    </div>
                                 </fieldset>
                             </form>
+                        <!--<div align="center">
+                            <a href="/#!/register">Registration</a>
+                        </div>-->
                     </div>
                 </div>
 
