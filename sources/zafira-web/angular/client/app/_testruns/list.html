@@ -261,13 +261,25 @@
                                                                 <a href="{{jiraURL + '/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
-                                                    <td class="text-center">
-                                                        <div
-                                                            data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
-                                                            data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
-                                                            <a href="{{artifact.link}}" target="blank" class="clearfix">{{artifact.name}}&nbsp</a>
-                                                        </div>
-                                                    </td>
+                                                        <td class="text-center">
+                                                            <div
+                                                                data-ng-if="test.status != STARTED && test.separatedArtifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
+                                                                data-ng-repeat="separatedArtifact in test.separatedArtifacts | orderObjectBy:'name':reverse:true">
+                                                                <a href="{{separatedArtifact.link}}" target="blank" class="clearfix">{{separatedArtifact.name}}&nbsp</a>
+                                                            </div>
+                                                        </td>
+                                                       <td data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
+                                                            <md-menu>
+                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                                    <md-icon class="material-icons">expand_more</md-icon>
+                                                                </md-button>
+                                                                <md-menu-content>
+                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
+                                                                        <md-button href="{{artifact.link}}"  target="blank">{{artifact.name}}</md-button>
+                                                                   </md-menu-item>
+                                                                </md-menu-content>
+                                                            </md-menu>
+                                                        </td>
                                                         </tr>
                                                 </tbody>
                                             </table>

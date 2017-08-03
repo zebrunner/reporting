@@ -100,7 +100,18 @@
             return isEmpty;
         };
 
-        $scope.addTest = function (test, isEvent) {
+       $scope.separateArtifacts = function (test) {
+            test.separatedArtifacts = [];
+            for (var i = 0; i< test.artifacts.length; i++) {
+                var artifact = test.artifacts[i];
+                if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
+                    test.separatedArtifacts[artifact.id] = artifact;
+                    test.artifacts.splice(i,1);
+                }
+            }
+       };
+
+       $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
@@ -286,7 +297,6 @@
                             $scope.loadTests(testRun.id);
                         }
                     }
-
                     if ($scope.testRunId) {
                         $scope.loadTests($scope.testRunId);
                     }
@@ -316,6 +326,7 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
+                        $scope.separateArtifacts(test);
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
