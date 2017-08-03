@@ -86,21 +86,16 @@ public class AuthAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST", response = AuthTokenType.class)
+	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType register(@Valid @RequestBody UserType userType)
+	public void register(@Valid @RequestBody UserType userType)
 			throws BadCredentialsException, ServiceException
 	{
 		List<Group.Role> roles = new ArrayList<>();
 		roles.add(Group.Role.ROLE_USER);
 		userType.setRoles(roles);
-		User user = userService.createOrUpdateUser(mapper.map(userType, User.class));
-
-		return new AuthTokenType("Bearer",
-				jwtService.generateAuthToken(user),
-				jwtService.generateRefreshToken(user),
-				jwtService.getExpiration());
+		userService.createOrUpdateUser(mapper.map(userType, User.class));
 	}
 	
 	@ResponseStatusDetails
