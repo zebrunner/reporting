@@ -268,7 +268,8 @@
                                                                 <a href="{{separatedArtifact.link}}" target="blank" class="clearfix">{{separatedArtifact.name}}&nbsp</a>
                                                             </div>
                                                         </td>
-                                                       <td data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
+                                                        <td data-ng-if="test.separatedArtifacts.length == 0"></td>
+                                                        <td data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                                     <md-icon class="material-icons">expand_more</md-icon>
@@ -280,6 +281,7 @@
                                                                 </md-menu-content>
                                                             </md-menu>
                                                         </td>
+                                                        <td data-ng-if="test.artifacts.length == 0"></td>
                                                         </tr>
                                                 </tbody>
                                             </table>
