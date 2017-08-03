@@ -35,8 +35,9 @@
                 .then(function (rs) {
                     if(rs.success)
                     {
-                        $rootScope.$broadcast('event:auth-loginSuccess', rs.data);
-                        $state.go('dashboards');
+                        //$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
+                        $state.go('signin');
+                        alertify.success('Success! Sign in now.');
                     }
                     else
                     {
