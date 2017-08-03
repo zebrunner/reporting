@@ -53,11 +53,15 @@
                     .state('certifications', {
                         url: '/certification',
                         templateUrl: 'app/_certifications/list.html'
+                    })
+                    .state('404', {
+                        url: '/404',
+                        templateUrl: 'app/page/404.html'
                     });
 
                 $urlRouterProvider
                     .when('/', '/dashboards')
-                    .otherwise('/dashboards');
+                    .otherwise('/404');
 
             }
         ]);
