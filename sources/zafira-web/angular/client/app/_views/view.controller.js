@@ -3,10 +3,10 @@
 
     angular
         .module('app.user')
-        .controller('ViewController', ['$scope', '$location', '$state', '$mdDialog', '$stateParams', 'UtilService', 'ConfigService', 'TestRunService', 'JobService', 'ViewService', ViewController])
+        .controller('ViewController', ['$scope', '$location', '$state', '$mdDialog', '$stateParams', 'UtilService', 'ConfigService', 'TestRunService', 'JobService', 'ViewService', 'TestService', 'API_URL', ViewController])
 
     // **************************************************************************
-    function ViewController($scope, $location, $state, $mdDialog, $stateParams, UtilService, ConfigService, TestRunService, JobService, ViewService) {
+    function ViewController($scope, $location, $state, $mdDialog, $stateParams, UtilService, ConfigService, TestRunService, JobService, ViewService, TestService, API_URL) {
 
         $scope.view = {};
         $scope.jobs = [];
@@ -14,6 +14,94 @@
         $scope.testRuns = {};
 
         $scope.UtilService = UtilService;
+
+        /*$scope.testSearchCriteria = {
+            'page': 1,
+            'pageSize': 100000
+        };*/
+
+        $scope.initWebsocket = function () {
+            var sockJS = new SockJS(API_URL + "/websockets");
+            $scope.stomp = Stomp.over(sockJS);
+            //stomp.debug = null;
+            $scope.stomp.connect({withCredentials: false}, function () {
+                $scope.stomp.subscribe("/topic/tests", function (data) {
+                    $scope.getMessage(data.body);
+                });
+            });
+        };
+
+        $scope.disconnectWebsocket = function () {
+            if ($scope.stomp != null) {
+                $scope.stomp.disconnect();
+            }
+        };
+
+        $scope.$on('$destroy', function () {
+            $scope.disconnectWebsocket();
+        });
+
+        $scope.getMessage = function (message) {
+            var event = JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+            if (event.type == 'TEST') {
+                $scope.addTest(event.test, true);
+                $scope.$apply();
+            }
+            return true;
+        };
+
+        $scope.addTest = function (test, isEvent) {
+
+            test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
+
+            /*for (var env in $scope.jobViews) {
+                $scope.jobViews[env].filter(function (view) {
+                    return view.testRun.id == test.testRun.id;
+                })[0].testRun;
+            }*/
+
+            var testRun = $scope.testRuns[test.testRunId];
+            if (testRun == null) {
+                return;
+            }
+
+            if (isEvent) {
+                if (testRun.tests[test.id] != null) {
+                    $scope.updateTestRunResults(testRun, testRun.tests[test.id], -1);
+                }
+                testRun.tests[test.id] = test;
+                $scope.updateTestRunResults(testRun, test, 1);
+            }
+            else {
+                testRun.tests[test.id] = test;
+            }
+        };
+
+        $scope.updateTestRunResults = function (testRun, test, changeByAmount) {
+            switch (test.status) {
+                case "PASSED":
+                    testRun.passed = testRun.passed + changeByAmount;
+                    break;
+                case "FAILED":
+                    testRun.failed = testRun.failed + changeByAmount;
+                    if (test.knownIssue) {
+                        testRun.failedAsKnown = testRun.failedAsKnown + changeByAmount;
+                    }
+                    if (test.blocker) {
+                        testRun.failedAsBlocker = testRun.failedAsBlocker + changeByAmount;
+                    }
+                    testRun.blocker = test.blocker;
+                    break;
+                case "SKIPPED":
+                    testRun.skipped = testRun.skipped + changeByAmount;
+                    break;
+                case "IN_PROGRESS":
+                    testRun.inProgress = testRun.inProgress + changeByAmount;
+                    break;
+                default:
+                    break;
+            }
+        };
 
         ConfigService.getConfig("jenkins").then(function(rs) {
             $scope.jenkinsEnabled = rs.data.connected;
@@ -95,6 +183,10 @@
                         if(testRun)
                         {
                             testRun.rebuild = false;
+                            testRun.tests = {};
+                            if(testRun.status == 'IN_PROGRESS') {
+                                $scope.loadTests(testRun);
+                            }
                             jobViews[i].testRun = testRun;
                             $scope.testRuns[testRun.id] = testRun;
                         }
@@ -103,6 +195,29 @@
                 else
                 {
                     console.error('Failed to load job test runs');
+                }
+            });
+        };
+
+        $scope.loadTests = function (testRun) {
+            //$scope.testSearchCriteria.testRunId = testRun.id;
+            TestService.searchTests({'page':1, 'pageSize':100000, 'testRunId':testRun.id}).then(function(rs) {
+                if(rs.success)
+                {
+                    var data = rs.data;
+                    var inProgressTests = 0;
+                    for (var i = 0; i < data.results.length; i++) {
+                        var test = data.results[i];
+                        if (test.status == 'IN_PROGRESS') {
+                            inProgressTests++;
+                        }
+                        $scope.addTest(test, false);
+                    }
+                    testRun.inProgress = inProgressTests;
+                }
+                else
+                {
+                    console.error(rs.message);
                 }
             });
         };
@@ -165,7 +280,7 @@
                 });
             }
         };
-        
+
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
@@ -188,7 +303,7 @@
             selection.removeAllRanges();
             document.body.removeChild(node);
         };
-        
+
         $scope.rebuild = function (job, testRun) {
     		if($scope.jenkinsEnabled)
     		{
@@ -199,11 +314,12 @@
     			window.open(job.jobURL + "/" + testRun.buildNumber + '/rebuild/parameterized', '_blank');
     		}
         };
-        
+
         // ---------------------------------------------------------------
 
 
         (function initController() {
+            $scope.initWebsocket();
             $scope.loadJobs();
             $scope.loadView();
             $scope.loadJobViews();

@@ -1,9 +1,17 @@
 INSERT INTO zafira.SETTINGS (NAME, VALUE) VALUES ('STF_NOTIFICATION_RECIPIENTS', '');
 INSERT INTO zafira.SETTINGS (NAME, VALUE) VALUES ('JIRA_URL', '');
+INSERT INTO SETTINGS (NAME, VALUE) VALUES ('JIRA_CLOSED_STATUS', 'CLOSED');
 INSERT INTO zafira.SETTINGS (NAME, VALUE) VALUES ('SLACK_WEB_HOOK_URL', '');
 INSERT INTO zafira.SETTINGS (NAME, VALUE) VALUES ('SLACK_NOTIF_CHANNEL_EXAMPLE', '');
 
+INSERT INTO GROUPS (NAME, ROLE) VALUES ('General Admins Group', 'ROLE_ADMIN');
+INSERT INTO GROUPS (NAME, ROLE) VALUES ('General Users Group', 'ROLE_USER');
+
 INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION) VALUES ('UNKNOWN', '');
+
+INSERT INTO zafira.GROUPS (NAME, ROLE) VALUES ('USER', 'ROLE_USER');
+INSERT INTO zafira.GROUPS (NAME, ROLE) VALUES ('ADMIN', 'ROLE_ADMIN');
+
 
 DO $$
 DECLARE dashboard_id zafira.DASHBOARDS.id%TYPE;
@@ -15,7 +23,7 @@ DECLARE top_widget_id zafira.WIDGETS.id%TYPE;
 DECLARE progress_widget_id zafira.WIDGETS.id%TYPE;
 
 BEGIN
-  INSERT INTO zafira.DASHBOARDS (TITLE, TYPE) VALUES ('Performance dashboard', 'PERFORMANCE') RETURNING id INTO dashboard_id;
+  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Performance dashboard', TRUE) RETURNING id INTO dashboard_id;
 
   INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES ('Performance widget', 'linechart',
 	'set schema zafira;
@@ -37,7 +45,7 @@ ORDER BY env, "CREATED_AT"',
 
 
 
-	INSERT INTO zafira.DASHBOARDS (TITLE, TYPE) VALUES ('General', 'GENERAL') RETURNING id INTO general_dashboard_id;
+	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('General', FALSE) RETURNING id INTO general_dashboard_id;
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES ('Test results (last 30 days)', 'linechart',
 		'set schema ''zafira'';
