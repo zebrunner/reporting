@@ -61,6 +61,7 @@
 
                 $urlRouterProvider
                     .when('/', '/dashboards')
+                    .when('', '/dashboards')
                     .otherwise('/404');
 
             }
