@@ -162,7 +162,7 @@ public class TestService
 				if(artifact.isValid())
 				{
 					artifact.setTestId(test.getId());
-					testArtifactService.createTestArtifact(artifact);
+					testArtifactService.createOrUpdateTestArtifact(artifact);
 				}
 				else
 				{

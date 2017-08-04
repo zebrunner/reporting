@@ -59,4 +59,27 @@ public class TestArtifact extends AbstractEntity
 	{
 		return name != null && !name.isEmpty() && link != null && !link.isEmpty();
 	}
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TestArtifact that = (TestArtifact) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (link != null ? !link.equals(that.link) : that.link != null) return false;
+        if (expiresAt != null ? !expiresAt.equals(that.expiresAt) : that.expiresAt != null) return false;
+        return testId != null ? testId.equals(that.testId) : that.testId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (expiresAt != null ? expiresAt.hashCode() : 0);
+        result = 31 * result + (testId != null ? testId.hashCode() : 0);
+        return result;
+    }
 }
