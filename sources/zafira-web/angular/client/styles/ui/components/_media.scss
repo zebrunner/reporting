@@ -1,0 +1,15 @@
+.media-list {
+
+    &.media-divider-full {
+        .media {
+            border-bottom: 1px solid $state-default-border;
+        }
+    }
+
+    &.media-divider-inset {
+        .media-body {
+            border-bottom: 1px solid $state-default-border;
+        }
+    }
+
+}

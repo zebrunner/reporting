@@ -21,12 +21,14 @@ import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.UserType;
+import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
+import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
+import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.Base64;
 
 public class ZafiraClient
 {
@@ -37,31 +39,32 @@ public class ZafiraClient
 	private static final Integer CONNECT_TIMEOUT = 30000;
 	private static final Integer READ_TIMEOUT = 30000;
 	
-	private static final String STATUS_PATH = "/status";
-	private static final String USERS_PATH = "/users";
-	private static final String JOBS_PATH = "/jobs";
-	private static final String TESTS_PATH = "/tests";
-	private static final String TEST_FINISH_PATH = "/tests/%d/finish";
-	private static final String TEST_BY_ID_PATH = "/tests/%d";
-	private static final String TESTS_DUPLICATES_PATH = "/tests/duplicates/remove";
-	private static final String TEST_WORK_ITEMS_PATH = "/tests/%d/workitems";
-	private static final String TEST_SUITES_PATH = "/tests/suites";
-	private static final String TEST_CASES_PATH = "/tests/cases";
-	private static final String TEST_CASES_BATCH_PATH = "/tests/cases/batch";
-	private static final String TEST_RUNS_PATH = "/tests/runs";
-	private static final String TEST_RUNS_FINISH_PATH = "/tests/runs/%d/finish";
-	private static final String TEST_RUNS_RESULTS_PATH = "/tests/runs/%d/results";
-	private static final String TEST_RUNS_ABORT_PATH = "/tests/runs/abort?id=%d";
-	private static final String TEST_RUN_BY_ID_PATH = "/tests/runs/%d";
-	private static final String TEST_RUN_EMAIL_PATH = "/tests/runs/%d/email?filter=%s&showStacktrace=%s";
-	private static final String EVENTS_PATH = "/events";
-	private static final String EVENTS_RECEIVED_PATH = "/events/received";
-	private static final String UA_INSPECTIONS_PATH = "/uainspections";
+	private static final String STATUS_PATH = "/api/status";
+	private static final String PROFILE_PATH = "/api/users/profile";
+	private static final String LOGIN_PATH = "/api/auth/login";
+	private static final String REFRESH_TOKEN_PATH = "/api/auth/refresh";
+	private static final String USERS_PATH = "/api/users";
+	private static final String JOBS_PATH = "/api/jobs";
+	private static final String TESTS_PATH = "/api/tests";
+	private static final String TEST_FINISH_PATH = "/api/tests/%d/finish";
+	private static final String TEST_BY_ID_PATH = "/api/tests/%d";
+	private static final String TEST_WORK_ITEMS_PATH = "/api/tests/%d/workitems";
+	private static final String TEST_SUITES_PATH = "/api/tests/suites";
+	private static final String TEST_CASES_PATH = "/api/tests/cases";
+	private static final String TEST_CASES_BATCH_PATH = "/api/tests/cases/batch";
+	private static final String TEST_RUNS_PATH = "/api/tests/runs";
+	private static final String TEST_RUNS_FINISH_PATH = "/api/tests/runs/%d/finish";
+	private static final String TEST_RUNS_RESULTS_PATH = "/api/tests/runs/%d/results";
+	private static final String TEST_RUNS_ABORT_PATH = "/api/tests/runs/abort?id=%d";
+	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
+	private static final String TEST_RUN_EMAIL_PATH = "/api/tests/runs/%d/email?filter=%s&showStacktrace=%s";
+	private static final String EVENTS_PATH = "/api/events";
+	private static final String EVENTS_RECEIVED_PATH = "/api/events/received";
+	private static final String UA_INSPECTIONS_PATH = "/api/uainspections";
 
 	private String serviceURL;
 	private Client client;
-	private String username;
-	private String password;
+	private String authToken;
 	private String project;
 	
 	public ZafiraClient(String serviceURL)
@@ -72,11 +75,9 @@ public class ZafiraClient
 		this.client.setReadTimeout(READ_TIMEOUT);
 	}
 	
-	public ZafiraClient(String serviceURL, String username, String password)
+	public void setAuthToken(String authToken) 
 	{
-		this(serviceURL);
-		this.username = username;
-		this.password = password;
+		this.authToken = authToken;
 	}
 	
 	public boolean isAvailable()
@@ -98,6 +99,69 @@ public class ZafiraClient
 		return isAvailable;
 	}
 	
+	public synchronized Response<UserType> getUserProfile()
+	{
+		Response<UserType> response = new Response<UserType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + PROFILE_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to authorize user", e);
+		}
+		return response;
+	}
+	
+	public synchronized Response<AuthTokenType> login(String username, String password)
+	{
+		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + LOGIN_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new CredentialsType(username, password));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(AuthTokenType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to login", e);
+		}
+		return response;
+	}
+	
+	public synchronized Response<AuthTokenType> refreshToken(String token)
+	{
+		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(AuthTokenType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to create user", e);
+		}
+		return response;
+	}
+	
 	public synchronized Response<UserType> createUser(UserType user)
 	{
 		Response<UserType> response = new Response<UserType>(0, null);
@@ -105,7 +169,7 @@ public class ZafiraClient
 		{
 			WebResource webResource = client.resource(serviceURL + USERS_PATH);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, user);
+					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, user);
 			response.setStatus(clientRS.getStatus());
 			if (clientRS.getStatus() == 200)
 			{
@@ -342,19 +406,6 @@ public class ZafiraClient
 		}
 	}
 	
-	public void deleteTestDuplicates(TestType test)
-	{
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + TESTS_DUPLICATES_PATH);
-			initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.put(ClientResponse.class, test);
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to delete test duplicates", e);
-		}
-	}
-	
 	public Response<TestType> createTestWorkItems(long testId, List<String> workItems)
 	{
 		Response<TestType> response = new Response<TestType>(0, null);
@@ -507,9 +558,9 @@ public class ZafiraClient
 	
 	private WebResource.Builder initHeaders(WebResource.Builder builder)
 	{
-		if(!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
+		if(!StringUtils.isEmpty(authToken))
 		{
-			builder.header("Authorization", "Basic " + new String(Base64.encode(username + ":" + password)));
+			builder.header("Authorization", authToken);
 		}
 		if(!StringUtils.isEmpty(project))
 		{
@@ -559,7 +610,7 @@ public class ZafiraClient
 		} 
 		else 
 		{
-			LOGGER.debug("Registered user details:" + String.format(userDetails, user.getUserName(), user.getEmail(), user.getFirstName(), user.getLastName()));
+			LOGGER.debug("Registered user details:" + String.format(userDetails, user.getUsername(), user.getEmail(), user.getFirstName(), user.getLastName()));
 		}
 		return user;
 	}
@@ -568,26 +619,27 @@ public class ZafiraClient
 	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
 	 * 
 	 * @param suiteId
-	 * @param ownerId
+	 * @param primaryOwnerId
+	 * @param secondaryOwnerId
 	 * @param testClass
 	 * @param testMethod
 	 * @return registred test case
 	 */
-	public TestCaseType registerTestCase(long suiteId, long ownerId, String testClass, String testMethod) 
+	public TestCaseType registerTestCase(Long suiteId, Long primaryOwnerId, Long secondaryOwnerId, String testClass, String testMethod) 
 	{
-		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, ownerId);
-		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %s, userId: %s";
-		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+		TestCaseType testCase = new TestCaseType(testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId);
+		String testCaseDetails = "testClass: %s, testMethod: %s, info: %s, testSuiteId: %d, primaryOwnerId: %d, secondaryOwnerId: %d";
+		LOGGER.debug("Test Case details for registration:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
 		Response<TestCaseType> response = createTestCase(testCase);
 		testCase = response.getObject();
 		if (testCase == null) 
 		{
 			throw new RuntimeException("Unable to register test case '"
-					+ String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId) + "' for zafira service: " + serviceURL);
+					+ String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId) + "' for zafira service: " + serviceURL);
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, ownerId));
+			LOGGER.debug("Registered test case details:" + String.format(testCaseDetails, testClass, testMethod, "", suiteId, primaryOwnerId, secondaryOwnerId));
 		}
 		return testCase;
 	}
@@ -807,14 +859,14 @@ public class ZafiraClient
 	 * @param retry
 	 * @return registered test
 	 */
-	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, String demoURL, String logURL, int retry, String configXML, String [] dependsOnMethods)
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods)
 	{
 		Long startTime = new Date().getTime();
 
-		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, demoURL: %s, logURL: %s, retry: %d";
+		String testDetails = "name: %s, status: %s, testArgs: %s, testRunId: %s, testCaseId: %s, startTime: %s, retry: %d";
 
-		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, null, retry, configXML);
-		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, null, retry, configXML);
+		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
 
 		test.setTestGroup(group);
 		if(dependsOnMethods != null)
@@ -831,12 +883,11 @@ public class ZafiraClient
 		test = response.getObject();
 		if (test == null) 
 		{
-			throw new RuntimeException("Unable to register test '" + String.format(testDetails, name, status, testArgs,
-					testRunId, testCaseId, startTime, demoURL, logURL, retry) + "' startup for zafira service: " + serviceURL);
+			throw new RuntimeException("Unable to register test '" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry) + "' startup for zafira service: " + serviceURL);
 		} 
 		else 
 		{
-			LOGGER.debug("Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, demoURL, logURL, retry));
+			LOGGER.debug("Registered test startup details:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
 		}
 		return test;
 	}

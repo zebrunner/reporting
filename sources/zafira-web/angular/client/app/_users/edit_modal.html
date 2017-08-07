@@ -1,0 +1,57 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="profile_form" ng-submit="updateUser(); UtilService.untouchForm(profile_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Edit Profile</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Username</label>
+                        <input type="text" ng-model="user.username" name="username" disabled/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>First name</label>
+                        <input type="text" ng-model="user.firstName" name="firstName"/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Last Name</label>
+                        <input type="text" ng-model="user.lastName" name="lastName"/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Email</label>
+                        <input type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/">
+                        <div ng-messages="profile_form.email.$error" ng-if="profile_form.email.$dirty">
+                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                            <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
+                        </div>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button ng-click="deleteUser()" class="md-raised btn-w-md md-warn">
+                Delete
+            </md-button>
+            <md-button type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="profile_form.$invalid">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

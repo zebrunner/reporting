@@ -42,4 +42,6 @@ public interface TestRunMapper
 	List<TestRun> getLatestJobTestRuns(@Param("env") String env, @Param("jobIds") List<Long> jobIds);
 
 	List<String> getEnvironments();
+
+	List<String> getPlatforms();
 }

@@ -1,8 +1,11 @@
 package com.qaprosoft.zafira.models.dto;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,8 +29,6 @@ public class TestType extends AbstractType
 	private Integer messageHashCode;
 	private Long startTime;
 	private Long finishTime;
-	private String demoURL;
-	private String logURL;
 	private List<String> workItems;
 	private int retry;
 	private String configXML;
@@ -37,14 +38,14 @@ public class TestType extends AbstractType
 	private boolean needRerun;
 	private String dependsOnMethods;
 	private String testClass;
+	@Valid
+	private Set<TestArtifactType> artifacts = new HashSet<>();
 
 	public TestType() {
 		
 	}
 	
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime,
-			String demoURL,
-			String logURL, List<String> workItems, int retry, String configXML)
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, List<String> workItems, int retry, String configXML)
 	{
 		this.name = name;
 		this.status = status;
@@ -52,8 +53,6 @@ public class TestType extends AbstractType
 		this.testRunId = testRunId;
 		this.testCaseId = testCaseId;
 		this.startTime = startTime;
-		this.demoURL = demoURL;
-		this.logURL = logURL;
 		this.workItems = workItems;
 		this.retry = retry;
 		this.configXML = configXML;
@@ -137,26 +136,6 @@ public class TestType extends AbstractType
 	public void setFinishTime(Long finishTime)
 	{
 		this.finishTime = finishTime;
-	}
-
-	public String getDemoURL()
-	{
-		return demoURL;
-	}
-
-	public void setDemoURL(String demoURL)
-	{
-		this.demoURL = demoURL;
-	}
-
-	public String getLogURL()
-	{
-		return logURL;
-	}
-
-	public void setLogURL(String logURL)
-	{
-		this.logURL = logURL;
 	}
 
 	public List<String> getWorkItems()
@@ -267,5 +246,15 @@ public class TestType extends AbstractType
 	public void setTestClass(String testClass)
 	{
 		this.testClass = testClass;
+	}
+
+	public Set<TestArtifactType> getArtifacts()
+	{
+		return artifacts;
+	}
+
+	public void setArtifacts(Set<TestArtifactType> artifacts)
+	{
+		this.artifacts = artifacts;
 	}
 }

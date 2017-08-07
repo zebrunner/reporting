@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-	<security:authentication-manager>
+	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserPassAuthService" />
 	
-		<security:authentication-provider>
-			<security:user-service>
-				<security:user name="admin" password="avatei16" authorities="ROLE_ADMIN" />
-			</security:user-service>
-		</security:authentication-provider>
-		
+	<bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
+		<property name="passwordEncryptor">
+			<ref bean="passwordEncryptor" />
+		</property>
+	</bean>
+	
+	<security:authentication-manager alias="authenticationManager">
+	
 		<security:authentication-provider user-service-ref="userAuthService">
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
@@ -20,35 +22,49 @@
 		<!-- security:authentication-provider ref="ldapAuthProvider"  / -->
 		
 	</security:authentication-manager>
-
-	<bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
-		<property name="passwordEncryptor">
-			<ref bean="passwordEncryptor" />
-		</property>
-	</bean>
-
-	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserAuthService" />
-
-	<security:http auto-config="true" use-expressions="true" entry-point-ref="apiUnauthorizedEntryPoint" disable-url-rewriting="false">
-		<security:access-denied-handler error-page="/errors/403"/>
+	
+	<bean id="authenticationTokenProcessingFilter" class="com.qaprosoft.zafira.ws.security.filter.JwtTokenAuthenticationFilter" />
+	
+	<bean id="unauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint" />
+	
+	<bean id="accessDeniedHandler" class="com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler" />
+	
+	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/auth/refresh" security="none" />
+	<security:http pattern="/api/status/**" security="none" />
+	<security:http pattern="/api/dashboards/email" security="none" />
+	<security:http pattern="/websockets/**" security="none" />
+	
+	<!-- Protected API end-points -->
+	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
+		
 		<security:csrf disabled="true"/>
-		<security:form-login login-page="/signin" always-use-default-target="true" default-target-url="/" authentication-failure-url="/signin/failed" />
-		<!--security:remember-me  user-service-ref="userAuthService"/ -->
-		<security:logout logout-success-url="/signin" invalidate-session="true" />
-		<security:http-basic />
-		<security:intercept-url pattern="/signin" access="permitAll"/>
-		<security:intercept-url pattern="/signin/failed" access="permitAll"/>
-		<security:intercept-url pattern="/login" access="permitAll"/>
-		<security:intercept-url pattern="/resources/**" access="permitAll" />
-		<security:intercept-url pattern="/status" access="permitAll" />
-		<security:intercept-url pattern="/**" access="isAuthenticated()" />
+		
+		<security:access-denied-handler ref="accessDeniedHandler" />
+		
+		<security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER" />
+		
+		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/groups/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/devices/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/settings/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/jobs/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/certification/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/events/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/slack/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/uainspections/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+		
 	</security:http>
 	
-	<bean id="apiUnauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.servlet.listeners.APIUnauthorizedEntryPoint">
-	    <constructor-arg  name="loginUrl" value="/signin"/>
-	</bean>
-	
-	<!-- LDAP configuration -->
+	<!-- ####################### LDAP configuration ####################### -->
 	<security:ldap-server id="contextSource" url="${zafira.ldap.protocol}://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>
 	
 	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
@@ -56,7 +72,7 @@
 		<property name="userDetailsContextMapper" ref="customUserDetailsContextMapper" />
 	</bean>
 	
-	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.CustomUserDetailsContextMapper" />
+	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper" />
 	
 	<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
 		<constructor-arg ref="contextSource" />
@@ -69,4 +85,5 @@
 		<constructor-arg index="2" ref="contextSource" />
 		<property name="searchSubtree" value="true" />
 	</bean>
+
 </beans>

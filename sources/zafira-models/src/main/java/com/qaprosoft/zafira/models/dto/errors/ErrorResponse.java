@@ -18,9 +18,10 @@ public class ErrorResponse
 		return error;
 	}
 
-	public void setError(Error error)
+	public ErrorResponse setError(Error error)
 	{
 		this.error = error;
+		return this;
 	}
 
 	public List<Error> getValidationErrors()

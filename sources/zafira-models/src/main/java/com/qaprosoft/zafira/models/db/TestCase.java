@@ -7,13 +7,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TestCase extends AbstractEntity
 {
 	private static final long serialVersionUID = 4877029098773384360L;
-	
+
 	private String testClass;
 	private String testMethod;
 	private Status status;
 	private String info;
 	private Long testSuiteId;
-	private User user = new User();
+	private User primaryOwner = new User();
+	private User secondaryOwner = new User();
 	private TestSuite testSuite = new TestSuite();
 	private Project project;
 
@@ -57,16 +58,26 @@ public class TestCase extends AbstractEntity
 		this.testSuiteId = testSuiteId;
 	}
 
-	public User getUser()
+	public User getPrimaryOwner()
 	{
-		return user;
+		return primaryOwner;
 	}
 
-	public void setUser(User user)
+	public void setPrimaryOwner(User primaryOwner)
 	{
-		this.user = user;
+		this.primaryOwner = primaryOwner;
 	}
-	
+
+	public User getSecondaryOwner()
+	{
+		return secondaryOwner;
+	}
+
+	public void setSecondaryOwner(User secondaryOwner)
+	{
+		this.secondaryOwner = secondaryOwner;
+	}
+
 	public TestSuite getTestSuite()
 	{
 		return testSuite;
@@ -76,7 +87,7 @@ public class TestCase extends AbstractEntity
 	{
 		this.testSuite = testSuite;
 	}
-	
+
 	public Status getStatus()
 	{
 		return status;
@@ -86,7 +97,7 @@ public class TestCase extends AbstractEntity
 	{
 		this.status = status;
 	}
-	
+
 	public Project getProject()
 	{
 		return project;
@@ -100,12 +111,12 @@ public class TestCase extends AbstractEntity
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj != null && obj instanceof TestCase && this.hashCode() == ((TestCase)obj).hashCode());
+		return (obj != null && obj instanceof TestCase && this.hashCode() == ((TestCase) obj).hashCode());
 	}
-	
+
 	@Override
 	public int hashCode()
 	{
-		return (testClass + testMethod + testSuiteId + info + user.getId()).hashCode();
+		return (testClass + testMethod + testSuiteId + info + primaryOwner.getId() + secondaryOwner.getId()).hashCode();
 	}
 }

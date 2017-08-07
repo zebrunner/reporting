@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
 import com.qaprosoft.zafira.dbaccess.utils.Sort;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
 import com.qaprosoft.zafira.models.db.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,7 +76,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         private static final long serialVersionUID = 1L;
         {
             setTitle("t1");
-            setType(Type.PERFORMANCE);
+            setHidden(true);
             setPosition(0);
             setWidgets(WIDGETS);
         }
@@ -111,15 +110,15 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "updateDashboard"})
     public void getDashboardByType() {
-        Sort sort = new Sort();
-        List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboardsByType(Dashboard.Type.GENERAL));
+    	Sort<Dashboard> sort = new Sort<Dashboard>();
+        List<Dashboard> dashboards = sort.sortById(dashboardMapper.getDashboardsByHidden(false));
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getAllDashboards()
     {
-        Sort sort = new Sort();
+        Sort<Dashboard> sort = new Sort<Dashboard>();
         List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboards());
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
@@ -128,7 +127,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     public void updateDashboard()
     {
         DASHBOARD.setTitle("t2");
-        DASHBOARD.setType(Dashboard.Type.GENERAL);
+        DASHBOARD.setHidden(false);
         DASHBOARD.setPosition(1);
         dashboardMapper.updateDashboard(DASHBOARD);
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
@@ -189,7 +188,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     private void checkDashboard(Dashboard dashboard)
     {
         assertEquals(dashboard.getTitle(), DASHBOARD.getTitle(), "Dashboard title must match");
-        assertEquals(dashboard.getType(), DASHBOARD.getType(), "Dashboard type must match");
+        assertEquals(dashboard.isHidden(), DASHBOARD.isHidden(), "Dashboard state must match");
         assertEquals(dashboard.getPosition(), DASHBOARD.getPosition(), "Dashboard position must match");
         List<Widget> widgets = dashboard.getWidgets();
         assertEquals(widgets.size(), DASHBOARD.getWidgets().size(), "Invalid amount of widgets!");

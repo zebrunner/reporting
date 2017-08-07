@@ -1,0 +1,63 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="user_form" ng-submit="createUser(); UtilService.untouchForm(user_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Create user</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Username</label>
+                        <input type="text" ng-model="user.username" name="username"/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>First name</label>
+                        <input type="text" ng-model="user.firstName" name="firstName"/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Last Name</label>
+                        <input type="text" ng-model="user.lastName" name="lastName"/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Email</label>
+                        <input type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/"/>
+                        <div ng-messages="user_form.email.$error" ng-if="user_form.email.$dirty">
+                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                            <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container nonautocomplete flex>
+                        <label>Password</label>
+                        <input type="password" ng-model="user.password" name="password" required/>
+                        <div ng-messages="user_form.password.$error" ng-if="user_form.password.$dirty">
+                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                        </div>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="user_form.$invalid">
+                Create
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

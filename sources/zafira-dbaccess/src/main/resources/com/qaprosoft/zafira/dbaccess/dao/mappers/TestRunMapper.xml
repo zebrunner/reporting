@@ -226,12 +226,12 @@
 			</if>
 			<if test="null != fromDate">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date >= #{fromDate}::date
+	               AND TR.STARTED_AT::date >= #{fromDate}::date
 	            ]]>
 			</if>
 			<if test="null != toDate">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date <= #{toDate}::date
+	               AND TR.STARTED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != project and null != project.id">
@@ -317,12 +317,12 @@
 			</if>
 			<if test="null != fromDate">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date >= #{fromDate}::date
+	               AND TR.STARTED_AT::date >= #{fromDate}::date
 	            ]]>
 			</if>
 			<if test="null != toDate">
 	            <![CDATA[
-	               AND TR.CREATED_AT::date <= #{toDate}::date
+	               AND TR.STARTED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
 			<if test="null != project and null != project.id">
@@ -451,6 +451,23 @@
 			TR.ENV
 			FROM
 			zafira.TEST_RUNS TR
+			ORDER BY
+				TR.ENV
+			ASC
+			LIMIT 10000
+		]]>
+	</select>
+
+	<select id="getPlatforms" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			DISTINCT
+			TR.PLATFORM
+			FROM
+			zafira.TEST_RUNS TR
+			ORDER BY
+				TR.PLATFORM
+			ASC
 			LIMIT 10000
 		]]>
 	</select>
@@ -516,7 +533,7 @@
 		<id column="TEST_RUN_ID" property="id" />
 		
 		<result column="TEST_RUN_USER_ID" property="user.id" />
-		<result column="TEST_RUN_USER_USER_NAME" property="user.userName" />
+		<result column="TEST_RUN_USER_USER_NAME" property="user.username" />
 		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
 		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />

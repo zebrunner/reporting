@@ -14,6 +14,9 @@ public class VersionService
 	@Value("${zafira.client.version}")
 	private String clientVersion;
 	
+	@Value("${zafira.webservice.url}")
+	private String webserviceURL;
+	
 	public String getServiceVersion() throws ServiceException
 	{
 		return serviceVersion;
@@ -22,5 +25,10 @@ public class VersionService
 	public String getClientVersion() throws ServiceException
 	{
 		return clientVersion;
+	}
+
+	public String getWebserviceURL()
+	{
+		return webserviceURL;
 	}
 }

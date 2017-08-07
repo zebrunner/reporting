@@ -2,11 +2,13 @@ package com.qaprosoft.zafira.config;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
@@ -20,15 +22,15 @@ public interface IConfigurator
 	
 	String getOwner(ISuite suite);
 	
-	String getOwner(ITestResult test);
+	String getPrimaryOwner(ITestResult test);
+	
+	String getSecondaryOwner(ITestResult test);
 	
 	String getTestName(ITestResult test);
 	
 	String getTestMethodName(ITestResult test);
 	
-	String getLogURL(ITestResult test);
-	
-	String getDemoURL(ITestResult test);
+	Set<TestArtifactType> getArtifacts(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);
 	
@@ -37,4 +39,6 @@ public interface IConfigurator
 	DriverMode getDriverMode();
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
+	
+	String getReportEmails();
 }

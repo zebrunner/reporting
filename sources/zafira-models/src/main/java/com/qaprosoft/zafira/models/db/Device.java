@@ -9,6 +9,7 @@ public class Device extends AbstractEntity
 	private String serial;
 	private boolean enabled;
 	private boolean lastStatus;
+	private boolean statusChanged;
 	private int disconnects;
 
 	public String getModel()
@@ -59,5 +60,15 @@ public class Device extends AbstractEntity
 	public void setDisconnects(int disconnects)
 	{
 		this.disconnects = disconnects;
+	}
+
+	public boolean isStatusChanged()
+	{
+		return statusChanged;
+	}
+
+	public void setStatusChanged(boolean statusChanged)
+	{
+		this.statusChanged = statusChanged;
 	}
 }

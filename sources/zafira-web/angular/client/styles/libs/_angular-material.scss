@@ -1,0 +1,93 @@
+// Dialog
+md-backdrop.md-dialog-backdrop{
+    z-index: $zindex-modal-background;
+}
+.md-dialog-container {
+    z-index: $zindex-modal-background + 1; // higher than the backdrop
+}
+
+.ui-md-radio-group-inline {
+    md-radio-button {
+        display: inline-block;
+        margin: 0 10px 10px;
+    }
+}
+
+// Z-index
+// Menu, Select
+.md-open-menu-container {
+    z-index: $zindex-navbar-fixed;
+}
+
+// Radio
+md-radio-button {
+
+    &[disabled] .md-on {
+        background-color: #ccc;
+    }
+}
+
+
+// 
+md-toast {
+    &.md-toast-primary {
+        > .md-toast-content {
+            background-color: $brand-primary;
+        }
+    }
+}
+
+
+// Datepicker
+.md-datepicker-calendar-pane .md-datepicker-input-mask {
+    width: auto;
+}
+
+// Material Toast
+md-toast {
+    z-index: 999999 !important;
+    position: fixed !important;
+}
+
+// Tab
+.md-primary {
+    md-tabs-wrapper {
+        md-prev-button,
+        md-next-button {
+            md-icon {
+                color: $gray-lighter;
+            }
+        }
+    }
+}
+
+// Porgress-bar
+.md-progressbar {
+    margin-bottom: 5px !important;
+    height: 10px;
+
+    > .md-container {
+        background-color: $progress-bg;
+        height: 10px;
+        .md-bar2 {
+            height: 10px;
+        }
+    }
+
+    &.brand-success .md-bar2 { background-color: $brand-success; }
+    &.brand-info .md-bar2 { background-color: $brand-info; }
+    &.brand-warning .md-bar2 { background-color: $brand-warning; }
+    &.brand-danger .md-bar2 { background-color: $brand-danger; }
+    &.brand-primary .md-bar2 { background-color: $brand-primary; }
+}
+.progressbar-container {
+    margin-bottom: 20px;
+    .progress {
+        margin-bottom: 5px;
+    }
+    .desc {
+        color: $skin-gray-dark;
+    }
+}
+
+

@@ -1,0 +1,141 @@
+<div class="page page-profile" ng-controller="TestCaseListController">
+
+    <div class="row ui-section">
+        <div class="col-lg-12">
+        	<h2 class="section-header">Test cases
+        		<small data-ng-if="sr">({{sr.totalResults}})</small>
+        		<button class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
+	                   <b>Search</b>
+	            </button>
+        		<button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+	                   <b>Clear</b>
+	            </button>
+        	</h2>
+        </div>
+        <div class="col-md-12">
+            <article class="article">
+                <md-card class="no-margin-h">
+                    <md-table-container>
+                    	<form ng-submit="search()" name="search_form">
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="number" ng-model="sc.id" name="id" placeholder="ID"/>
+                                        </md-input-container>
+									</th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.testClass" name="testClass" placeholder="Test class"/>
+                                        </md-input-container>
+                                    </th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.testMethod" name="testMethod" placeholder="Test method"/>
+                                        </md-input-container>
+                                    </th>
+                                    <th md-column>
+                                    	<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.testSuiteFile" name="testSuiteFile" placeholder="Test suite"/>
+                                        </md-input-container>
+                                    </th>
+                                    <th md-column>
+										<md-input-container class="searchable">
+                                            <input type="text" ng-model="sc.username" name="username" placeholder="Owner"/>
+                                        </md-input-container>
+									</th>
+                                    <th md-column class="no-padding">
+                                            <md-input-container class="searchable select">
+                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
+                                                    <md-option value="" ng-selected="true"></md-option>
+                                                    <md-option value="before">Before</md-option>
+                                                    <md-option value="after">After</md-option>
+                                                    <md-option value="between">Between</md-option>
+                                                    <md-option value="today">Today</md-option>
+                                                    <md-option value="yesterday">Yesterday</md-option>
+                                                    <md-option value="this_week">This Week</md-option>
+                                                    <md-option value="last_week">Last Week</md-option>
+                                                    <md-option value="this_month">This Month</md-option>
+                                                    <md-option value="last_month">Last Month</md-option>
+                                                    <md-option value="this_qtr">This Quarter</md-option>
+                                                    <md-option value="last_qtr">Last Quarter</md-option>
+                                                    <md-option value="this_year">This Year</md-option>
+                                                    <md-option value="last_year">Last Year</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                         <md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Created" ></md-datepicker>
+                                        <md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Created"></md-datepicker>
+                                     </th>
+                                    <th md-column></th>
+                                </tr>
+                               	<md-button type="submit" class="hide">Search</md-button>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}" ng-dblclick="loadTests(testcase)">
+                                    <td md-cell>#{{testcase.id}}</td>
+                                    <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
+                                    <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
+                                    <td md-cell><span class="label label-default">{{testcase.testSuite.fileName}}</span></td>
+                                    <td md-cell>{{testcase.primaryOwner.username}}</td>
+                                    <td md-cell class="text-center">{{testcase.createdAt | date}}</td>
+                                    <td md-cell>
+                                        <md-menu>
+                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                <md-icon class="material-icons">more_vert</md-icon>
+                                            </md-button>
+                                            <md-menu-content width="2">
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="">
+                                                        <md-icon class="material-icons">timeline</md-icon>
+                                                        Performance
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+									</td>
+                                </tr>
+                                <tr ng-if="testcase.expand" ng-repeat-end="" ng-dblclick="loadTests(testcase)">
+						            <td md-cell colspan="7">
+						            	<table class="table">
+	                                        <thead>
+	                                            <tr>
+	                                                <th class="col-md-6">Name</th>
+	                                                <th class="col-md-2">Environment</th>
+	                                                <th class="col-md-2">Finished</th>
+	                                                <th class="col-md-2 text-center">Artifacts</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody>
+	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id : true" ng-class="{'info' : test.status == 'IN_PROGRESS', 'success' : test.status == 'PASSED', 'danger' : test.status == 'FAILED', 'warning' : test.status == 'SKIPPED'}">
+	                                        		<td>
+	                                        			<b>{{test.name}}</b>
+	                                        		</td>
+	                                        		<td>
+	                                        			{{test.testConfig.env}}
+	                                        		</td>
+	                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
+														<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+	                                                </td>
+	                                                <td class="text-center">
+	                                                	<span data-ng-if="test.status != IN_PROGRESS">
+							                            	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a>
+							                            	<a data-ng-if="test.demoURL" href="test.demoURL" target="blank">Demo</a>
+							                       		</span>
+	                                                </td>
+	                                        	</tr>
+	                                        </tbody>
+	                                    </table>
+						            </td>
+						        </tr>
+                            </tbody>
+                        </table>
+                         </form>
+                    </md-table-container>
+
+                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                </md-card>
+            </article>
+        </div>
+    </div>
+</div>

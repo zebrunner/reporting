@@ -1,0 +1,138 @@
+
+.layout-boxed {
+    > .header-container {
+        .top-header {
+            max-width: $boxed_layout_width;
+            margin: 0 auto;
+        }
+    }
+
+    > .main-container {
+        max-width: $boxed_layout_width;
+        margin: 0 auto;
+    }
+}
+
+.body-wide {
+    &.app > .main-container > .nav-container,
+    &.app > .main-container > .content-container,
+    .header-container > .top-header .logo,
+    .header-container > .top-header .top-nav {
+        transition: none;
+    }
+}
+
+
+html {
+    position: relative;
+    min-height: 100%; // important!
+    height: 100%; // important!
+    background: none; // important!, fix angular-material css cause sidebar background to break bug
+}
+
+// default
+.app {
+    position: relative;
+    min-height: 100%; // important!
+    height: 100%; // important!
+
+    > .header-container {
+        &.header-fixed {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: $zindex-navbar-fixed;
+
+            & + .main-container {
+                padding-top: $header_height * 2;
+                @media (min-width:$screen-sm) {
+                    padding-top: $header_height;
+                }
+            }
+
+        }
+
+        .top-header {}
+    }
+
+    > .main-container {
+        position: relative;
+        min-height: 100%; // important!
+        padding-bottom: 0;
+        &:before { // content container background for boxed layout
+            content: " ";
+            line-height: 0;
+            z-index: -2; // so that it is beneath sidebar
+            position: absolute;
+            display: block;
+            width: 100%;
+            max-width: inherit; //
+            top: 0;
+            bottom: 0;
+            background-color: $main_container_bg;
+            box-shadow: 0 -2px 2px rgba(0,0,0,.2);
+        }
+
+        > .nav-vertical {
+            &:before {
+                left: 0;
+            }
+        }
+
+        > .nav-container {
+            display: none;
+            z-index: 11; // should be highter than top header
+            position: static;
+            float: left;
+            width: 220px;
+            transition: width .25s ease-in-out;
+            // border-width: 0 1px 0 0;
+            // border-style: solid;
+            // border-color: darken($sidebar_bg, 10%);
+            @media (min-width:$screen-sm) {
+                display: block;
+            }
+            &:before {
+                z-index: -1; // so that it is beneath top header
+                content: " ";
+                line-height: 0;
+                position: absolute;
+                display: block;
+                top: 0;
+                bottom: 0;
+                width: inherit;
+                background-color: inherit;
+                border-width: inherit;
+                border-style: inherit;
+                border-color: inherit;
+            }
+            &.nav-fixed {
+                position: fixed;
+                top: $header_height * 2;
+                bottom: 0;
+                float: none;
+                @media (min-width:$screen-sm) {
+                    top: $header_height;
+                }
+            }
+
+
+        }
+
+        > .content-container {
+            overflow: hidden;
+            min-height: 100%;
+            margin-left: 0;
+            // transition: none;
+            transition: margin-left .25s ease-in-out;
+            @media (min-width:$screen-sm) {
+                margin-left: 220px;
+            }
+        }
+
+    }
+
+}
+
+

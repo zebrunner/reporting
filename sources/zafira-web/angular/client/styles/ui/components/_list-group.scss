@@ -1,0 +1,23 @@
+.list-group-item {
+    padding: 15px;
+    border: 1px solid $state-default-border-light;
+}
+
+
+.list-info {
+    li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .icon { 
+            margin-right: 10px;
+            color: $brand-primary;
+        }
+
+        label { width: 100px; }
+    }
+}

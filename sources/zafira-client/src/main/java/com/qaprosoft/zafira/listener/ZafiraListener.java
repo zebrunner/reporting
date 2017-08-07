@@ -49,8 +49,9 @@ import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.UserType;
+import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.
@@ -72,8 +73,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 	
 	private boolean ZAFIRA_ENABLED = false;
 	private String 	ZAFIRA_URL = null;
-	private String 	ZAFIRA_USERNAME = null;
-	private String 	ZAFIRA_PASSWORD = null;
+	private String 	ZAFIRA_ACCESS_TOKEN = null;
 	private String 	ZAFIRA_PROJECT = null;
 	private String 	ZAFIRA_REPORT_EMAILS = null;
 	private String 	ZAFIRA_REPORT_FOLDER = null;
@@ -220,14 +220,22 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 			String testName = configurator.getTestName(result);
 
 			// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-			String owner = !StringUtils.isEmpty(configurator.getOwner(result)) ? configurator.getOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-			UserType methodOwner = zc.registerUser(owner, null, null, null);
-			LOGGER.debug("methodOwner: " + methodOwner);
+			String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
+			UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+			LOGGER.debug("primaryOwner: " + primaryOwnerName);
+			
+			String secondaryOwnerName = configurator.getSecondaryOwner(result);
+			UserType secondaryOwner = null;
+			if(!StringUtils.isEmpty(secondaryOwnerName))
+			{
+				secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+				LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
+			}
 			
 			String testClass = result.getMethod().getTestClass().getName();
 			String testMethod = configurator.getTestMethodName(result);
 
-			TestCaseType testCase = zc.registerTestCase(this.suite.getId(), methodOwner.getId(), testClass, testMethod);
+			TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(), (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
 
 			// Search already registered test!
 			if(registeredTests.containsKey(testName))
@@ -248,7 +256,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getDemoURL(result), configurator.getLogURL(result), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -345,15 +353,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 				String testName = configurator.getTestName(result);
 				
 				// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-				String owner = !StringUtils.isEmpty(configurator.getOwner(result)) ? configurator.getOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-				UserType methodOwner = zc.registerUser(owner, null, null, null);
-				LOGGER.debug("methodOwner: " + methodOwner);
+				String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
+				UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+				LOGGER.debug("primaryOwner: " + primaryOwnerName);
+				
+				String secondaryOwnerName = configurator.getSecondaryOwner(result);
+				UserType secondaryOwner = null;
+				if(!StringUtils.isEmpty(secondaryOwnerName))
+				{
+					secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+					LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
+				}
 				
 				String testClass = result.getMethod().getTestClass().getName();
 				String testMethod = configurator.getTestMethodName(result);
 				
 				//if not start new test as it is skipped dependent test method
-				TestCaseType testCase = zc.registerTestCase(this.suite.getId(), methodOwner.getId(), testClass, testMethod);
+				TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(),  (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
 				String testArgs = result.getParameters().toString();
 				
 				String group = result.getMethod().getTestClass().getName();
@@ -361,7 +377,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), null, null, configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
 				testByThread.put(Thread.currentThread().getId(), test);
 			}
 			
@@ -390,10 +406,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 			throw new RuntimeException("Unable to find TestType result to mark test as finished! name: '" + testName + "'; threadId: " + threadId);
 		}
 		
-		test.setDemoURL(configurator.getDemoURL(result));
-		test.setLogURL(configurator.getLogURL(result));
 		test.setTestMetrics(configurator.getTestMetrics(result));
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
+		test.setArtifacts(configurator.getArtifacts(result));
 		
 		String testDetails = "testId: %d; testCaseId: %d; testRunId: %d; name: %s; thread: %s; status: %s, finishTime: %s \n message: %s";
 		String logMessage = String.format(testDetails, test.getId(), test.getTestCaseId(), test.getTestRunId(), test.getName(), threadId, status, finishTime, message);
@@ -420,7 +435,14 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
 			
-			String report = zc.sendTestRunReport(this.run.getId(), ZAFIRA_REPORT_EMAILS, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
+			// Allow to override email from configurator
+			String emails = configurator.getReportEmails();
+			if(StringUtils.isEmpty(emails))
+			{
+				emails = ZAFIRA_REPORT_EMAILS;
+			}
+			
+			String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
 			
 			if(!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
 			{
@@ -502,8 +524,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 			
 			ZAFIRA_ENABLED = config.getBoolean("zafira_enabled", false);
 			ZAFIRA_URL = config.getString("zafira_service_url");
-			ZAFIRA_USERNAME = config.getString("zafira_username");
-			ZAFIRA_PASSWORD = config.getString("zafira_password");
+			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token");
 			ZAFIRA_PROJECT = config.getString("zafira_project");
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
 			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
@@ -516,12 +537,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 			
 			if(ZAFIRA_ENABLED)
 			{
-				zc = new ZafiraClient(ZAFIRA_URL, ZAFIRA_USERNAME, ZAFIRA_PASSWORD);
-				if(!zc.isAvailable())
+				zc = new ZafiraClient(ZAFIRA_URL);
+				
+				ZAFIRA_ENABLED =  zc.isAvailable();
+				
+				if(ZAFIRA_ENABLED)
 				{
-					ZAFIRA_ENABLED = false;
-					LOGGER.error("Zafira server is unavailable!");
+					Response<AuthTokenType> auth = zc.refreshToken(ZAFIRA_ACCESS_TOKEN);
+					if(auth.getStatus() == 200)
+					{
+						zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
+					}
+					else
+					{
+						ZAFIRA_ENABLED = false;
+					}
 				}
+				LOGGER.info("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
 			}
 			
 			success = ZAFIRA_ENABLED;

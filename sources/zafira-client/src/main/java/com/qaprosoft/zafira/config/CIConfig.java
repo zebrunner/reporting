@@ -63,7 +63,11 @@ public class CIConfig
 
 	public void setCiBuildCause(String ciBuildCause)
 	{
-		this.ciBuildCause = BuildCasue.valueOf(ciBuildCause.toUpperCase());
+		if(ciBuildCause != null)
+		{
+			// HotFix for 'BuildCasue.UPSTREAMTRIGGER,UPSTREAMTRIGGER,UPSTREAMTRIGGER'
+			this.ciBuildCause = BuildCasue.valueOf(ciBuildCause.toUpperCase().split(",")[0]);
+		}
 	}
 
 	public String getCiParentUrl()

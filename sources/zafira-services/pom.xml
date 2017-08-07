@@ -202,8 +202,13 @@
 		</dependency>
 		
 		<dependency>
-		  <groupId>in.ashwanthkumar</groupId>
-		  <artifactId>slack-java-webhook</artifactId>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>in.ashwanthkumar</groupId>
+		  	<artifactId>slack-java-webhook</artifactId>
 		</dependency>
 	</dependencies>
 

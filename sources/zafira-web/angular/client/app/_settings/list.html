@@ -1,0 +1,75 @@
+<div class="page page-dashboard" data-ng-controller="SettingsController">
+
+    <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-header">Settings
+                	<small>({{settings.length}})</small>
+                </h2>
+            </div>
+        </div>
+		<md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showSettingsDialog()">
+                    <span class="fa fa-plus"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+        <div class="row">
+	        <div class="col-md-12">
+	            <article class="article">
+	                <md-card class="no-margin-h">
+	                    <md-table-container>
+	                        <table class="table-hover" md-table>
+	                            <thead md-head style="position: parent;">
+	                                <tr md-row>
+	                                    <th md-column>
+	                                    	Name
+	                                    </th>
+	                                    <th md-column>
+	                                    	Value
+	                                    </th>
+	                                    <th md-column>
+											Modified
+										</th>
+	                                    <th md-column></th>
+	                                </tr>
+	                            </thead>
+	                            <tbody md-body>
+	                                <tr md-row ng-repeat="setting in settings | orderBy:'name'">
+	                                    <td md-cell><b>{{setting.name}}</b></td>
+	                                    <td md-cell>{{setting.value}}</td>
+	                                    <td md-cell style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
+	                                    <td md-cell class="no-padding">
+	                                        <md-menu>
+	                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+	                                                <md-icon class="material-icons">more_vert</md-icon>
+	                                            </md-button>
+	                                            <md-menu-content width="2">
+	                                                <md-menu-item>
+	                                                    <md-button data-ng-click="showSettingsDialog($event, setting)">
+	                                                        <md-icon class="material-icons">build</md-icon>
+	                                                        Edit setting
+	                                                    </md-button>
+	                                                </md-menu-item>
+	                                            </md-menu-content>
+	                                        </md-menu>
+										</td>
+	                                </tr>
+	                                <tr md-row data-ng-if="settings.length == 0">
+	                                	<td md-cell colspan="4" class="text-center">No data</td>
+	                                </tr>
+	                            </tbody>
+	                        </table>
+	                    </md-table-container>
+	                </md-card>
+	            </article>
+	        </div>
+        </div>
+	</div>
+</div>

@@ -25,7 +25,7 @@
             <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']??>
                 <td>Platform:</td>
                 <td>
-                    <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '')>
+                    <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '') && (configuration['platform'] != '*')>
                         ${configuration['platform']}
                     </#if>
 
@@ -64,7 +64,7 @@
                 <td>Test job URL:</td>
                 <td>
                     <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                        <a href="${configuration['zafira_service_url']}/#!/tests/runs?id=${testRun.id?c}">Zafira</a>
+                        <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}">Zafira</a>
                     </#if>
                     <#if testRun.job??>
                         <#if testRun.job.jobURL?last_index_of('/') != testRun.job.jobURL?length - 1>
@@ -187,16 +187,11 @@
 	                        </#list>
 	                    </td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-	            			<#if test.demoURL??>
-	            				<a href='${test.demoURL}' style='color: white;'>Demo</a>
-	            			</#if>
-	            			<#if test.demoURL?? && test.logURL??>
-	            				<span> or </span>
-	            			</#if>
-	            			<#if test.logURL??>
-	            				<a href='${test.logURL}' style='color: white;'>Log</a>
-	            			</#if>
-	            		</td>
+                            <#list test.artifacts?sort_by("name") as artifact>
+                                <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
+                                <p>
+                            </#list>
+ 	            		</td>
 	            	</tr>
             	</#if>
             </#list>

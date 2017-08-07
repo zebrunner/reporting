@@ -1,0 +1,21 @@
+.flags-sprite,
+.flags-english,
+.flags-chinese,
+.flags-french,
+.flags-german,
+.flags-italian,
+.flags-japanese,
+.flags-korea,
+.flags-portuguese,
+.flags-russian,
+.flags-spanish{background-image:url('ui/images/flags.png');background-repeat:no-repeat}
+.flags-english{background-position:0 0;height:32px;width:32px}
+.flags-chinese{background-position:0 -32px;height:32px;width:32px}
+.flags-french{background-position:0 -64px;height:32px;width:32px}
+.flags-german{background-position:0 -96px;height:32px;width:32px}
+.flags-italian{background-position:0 -128px;height:32px;width:32px}
+.flags-japanese{background-position:0 -160px;height:32px;width:32px}
+.flags-korea{background-position:0 -192px;height:32px;width:32px}
+.flags-portuguese{background-position:0 -224px;height:32px;width:32px}
+.flags-russian{background-position:0 -256px;height:32px;width:32px}
+.flags-spanish{background-position:0 -288px;height:32px;width:32px}

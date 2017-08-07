@@ -37,9 +37,14 @@ public class Error
 		this.field = field;
 	}
 
-	public ErrorCode getCode()
+	public int getCode()
 	{
-		return code;
+		return code.getCode();
+	}
+	
+	public String getMessage()
+	{
+		return code.name();
 	}
 
 	public void setCode(ErrorCode code)

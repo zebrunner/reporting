@@ -1,46 +1,50 @@
 package com.qaprosoft.zafira.models.db;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.List;
+import com.qaprosoft.zafira.models.db.Group.Role;
 
 @JsonInclude(Include.NON_NULL)
 public class User extends AbstractEntity implements Comparable<User>
 {
 	private static final long serialVersionUID = 2720141152633805371L;
 
-	private String userName;
+	private String username;
 	private String password;
 	private String email;
 	private String firstName;
 	private String lastName;
-	private List<Group> groupList;
+	private List<Group> groups = new ArrayList<>();
 
 	public User()
 	{
 	}
-	
+
 	public User(long id)
 	{
 		super.setId(id);
 	}
-	
-	public User(String userName)
+
+	public User(String username)
 	{
-		this.userName = userName;
-	}
-	
-	public String getUserName()
-	{
-		return userName;
+		this.username = username;
 	}
 
-	public void setUserName(String userName)
+	public String getUsername()
 	{
-		this.userName = userName;
+		return username;
 	}
-	
+
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
 	public String getPassword()
 	{
 		return password;
@@ -81,16 +85,34 @@ public class User extends AbstractEntity implements Comparable<User>
 		this.lastName = lastName;
 	}
 
-	public List<Group> getGroupList() {
-		return groupList;
+	public List<Group> getGroups()
+	{
+		return groups;
 	}
 
-	public void setGroupList(List<Group> groupList) {
-		this.groupList = groupList;
+	public void setGroups(List<Group> groups)
+	{
+		this.groups = groups;
+	}
+	
+	public void setRoles(List<Role> roles)
+	{
+		// Do nothing just treak for dozer mapper
+	}
+	
+	public List<Role> getRoles()
+	{
+		Set<Role> roles = new HashSet<>();
+		for(Group group : groups)
+		{
+			roles.add(group.getRole());
+		}
+		return new ArrayList<>(roles);
 	}
 
 	@Override
-	public int compareTo(User user) {
-		return userName.compareTo(user.getUserName());
+	public int compareTo(User user)
+	{
+		return username.compareTo(user.getUsername());
 	}
 }

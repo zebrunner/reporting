@@ -16,6 +16,7 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -67,6 +68,7 @@ public class TestRunService
 	
 	@Autowired
 	private SettingsService settingsService;
+
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
 	{
@@ -82,11 +84,25 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
+	    if (sc.getPeriod()!=null && !sc.getPeriod().equals("")){
+	        PeriodCalculator.setPeriod(sc);
+        }
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
+		for(TestRun testRun: testRuns) {
+			if (!StringUtils.isEmpty(testRun.getConfigXML())) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+					if (!StringUtils.isEmpty(arg.getValue())) {
+						if ("browser_version".equals(arg.getKey())&&!arg.getValue().equals("*")&&!arg.getValue().equals("")&&arg.getValue()!=null) {
+							testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
+						}
+					}
+				}
+			}
+		}
 		results.setResults(testRuns);
 		results.setTotalResults(testRunMapper.getTestRunsSearchCount(sc));
 		return results;
@@ -180,7 +196,8 @@ public class TestRunService
 					{
 						testRun.setPlatform(arg.getValue());
 					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL"))
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
+							&& !arg.getValue().equals("*"))
 					{
 						testRun.setPlatform(arg.getValue());
 					}
@@ -360,14 +377,10 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
+		// Forward from API to Web
+		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		if (testRun.getPlatform().equals("API")){
-			for (Test test:tests) {
-				test.setDemoURL(null);
-			}
-		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
@@ -397,9 +410,12 @@ public class TestRunService
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
 	{
-		ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
-		Configuration configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
-		IOUtils.closeQuietly(xmlBA);
+        Configuration configuration = new Configuration();
+        if (!StringUtils.isEmpty(xml)) {
+            ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
+            configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
+            IOUtils.closeQuietly(xmlBA);
+        }
 		return configuration;
 	}
 	
@@ -427,5 +443,11 @@ public class TestRunService
 	public List<String> getEnvironments() throws ServiceException
 	{
 		return testRunMapper.getEnvironments();
+	}
+
+	@Transactional(readOnly = true)
+	public List<String> getPlatforms() throws ServiceException
+	{
+		return testRunMapper.getPlatforms();
 	}
 }

@@ -1,0 +1,73 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="jobs_view_form" ng-submit="createUser(); UtilService.untouchForm(jobs_view_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Job view settings</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Environment</label>
+                        <input type="text" ng-model="jobView.env" name="env" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <md-select ng-model="jobView.size" type="number" name="size" placeholder="Size" ng-required>
+                            <md-option ng-value=4>1/3 screen</md-option>
+                            <md-option ng-value=6>1/2 screen</md-option>
+                            <md-option ng-value=12>Full-screen</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Position</label>
+                        <input type="number" ng-model="jobView.position" name="position" required/>
+                    </md-input-container>
+                </div>
+                <div class="form-group">
+                    <label>Jobs ({{jobsSelected.length}})</label>
+                    <input class="form-control" name="jobFilter" data-ng-model="jobFilter" placeholder="Job filter" />
+                    <div class="modal-body ng-scope scrollable">
+                        <div data-ng-repeat="job in jobs | orderBy:'name' | filter:{name:jobFilter}:false">
+                            <input type="checkbox" id="{{job.id}}"
+                                   data-ng-model="isChecked"
+                                   data-ng-checked="{{jobsSelected.indexOf(job.id) >= 0}}"
+                                   data-ng-true-value="true"
+                                   data-ng-false-value="false"
+                                   data-ng-click="selectJob(job.id, isChecked)"
+                                   value="{{job.id}}"
+                                   name="{{job.id}}">
+                            <label for="{{job.name}}"> {{job.name}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button data-ng-if="edit" type="submit"
+                       class="md-raised btn-w-md md-warn" data-ng-click="deleteJobView(jobView.env)">
+                Delete
+            </md-button>
+            <md-button data-ng-if="! edit" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       data-ng-click="createJobView()" data-ng-disabled="jobsViewForm.$invalid || jobsSelected.length == 0">
+                Create
+            </md-button>
+            <md-button data-ng-if="edit" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       data-ng-click="updateJobView(jobView.env)" data-ng-disabled="jobsViewForm.$invalid || jobsSelected.length == 0">
+                Save
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
