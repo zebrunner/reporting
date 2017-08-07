@@ -206,12 +206,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.ENV = #{environment}
+	               AND LOWER(TR.ENV) = LOWER(#{environment})
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.PLATFORM = #{platform}
+	               AND LOWER(TR.PLATFORM) = LOWER(#{platform})
 	            ]]>
 			</if>
 			<if test="null != appVersion">
@@ -296,12 +296,12 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND TR.ENV = #{environment}
+	               AND LOWER(TR.ENV) = LOWER(#{environment})
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.PLATFORM = #{platform}
+	               AND LOWER(TR.PLATFORM) = LOWER(#{platform})
 	            ]]>
 			</if>
 			<if test="null != appVersion">
@@ -448,11 +448,11 @@
 		<![CDATA[
 			SELECT
 			DISTINCT
-			TR.ENV
+			UPPER(TR.ENV)
 			FROM
 			zafira.TEST_RUNS TR
 			ORDER BY
-				TR.ENV
+				UPPER(TR.ENV)
 			ASC
 			LIMIT 10000
 		]]>
@@ -462,11 +462,11 @@
 		<![CDATA[
 			SELECT
 			DISTINCT
-			TR.PLATFORM
+			LOWER(TR.PLATFORM)
 			FROM
 			zafira.TEST_RUNS TR
 			ORDER BY
-				TR.PLATFORM
+				LOWER(TR.PLATFORM)
 			ASC
 			LIMIT 10000
 		]]>
