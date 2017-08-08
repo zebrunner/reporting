@@ -21,9 +21,14 @@
                     </div>
                 </div>
                 <div>
+                    <div layout layout-sm="column" ng-class="newKnownIssue.status == 'Done' ? 'label label-default' : 'label label-danger'" data-ng-show="newKnownIssue.status">
+                        <label class="jira-status">{{newKnownIssue.status}}</label>
+                    </div>
+                    <label>&nbsp{{newKnownIssue.assigneeMessage}}</label>
+                    <p>
                     <div layout layout-sm="column">
                         <md-input-container flex>
-                            <label>Jira ID {{newKnownIssue.assigneeMessage}}</label>
+                            <label>Jira ID</label>
                             <input type="text" ng-pattern="/^[A-z]+-[0-9]+$/" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                         </md-input-container>
                     </div>
