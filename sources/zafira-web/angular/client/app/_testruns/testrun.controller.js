@@ -107,6 +107,7 @@
                 if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
                     test.separatedArtifacts[artifact.id] = artifact;
                     test.artifacts.splice(i,1);
+                    i--;
                 }
             }
        };
