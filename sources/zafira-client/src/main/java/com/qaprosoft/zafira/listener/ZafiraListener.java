@@ -5,9 +5,11 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,11 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.IHookCallBack;
 import org.testng.IHookable;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
@@ -59,7 +65,7 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
  * 
  * @author akhursevich
  */
-public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
+public class ZafiraListener implements ISuiteListener, ITestListener, IHookable, IInvokedMethodListener
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
 	
@@ -94,6 +100,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 	private TestSuiteType suite = null;
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
+	private Set<String> classesToRerun = new HashSet<>();
 	private final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
 	
 	private Marshaller marshaller;
@@ -155,6 +162,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 					for (TestType test : testRunResults)
 					{
 						registeredTests.put(test.getName(), test);
+						if (test.isNeedRerun())
+						{
+							classesToRerun.add(test.getTestClass());
+						}
 					}
 
 					if (ZAFIRA_RERUN_FAILURES)
@@ -484,6 +495,31 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable
 		{
 			hookCallBack.runTestMethod(testResult);
 		}
+	}
+
+	private final static String SKIP_CFG_EXC_MSG = "Skipping configuration method since test class doesn't contain test methods to rerun";
+
+	@Override
+	public void beforeInvocation(IInvokedMethod invokedMethod, ITestResult testResult)
+	{
+		if (ZAFIRA_RERUN_FAILURES)
+		{
+			ITestNGMethod m = invokedMethod.getTestMethod();
+			if (!classesToRerun.contains(m.getTestClass().getName()))
+			{
+				if (m.isBeforeClassConfiguration() || m.isAfterClassConfiguration() || m.isBeforeTestConfiguration()
+						|| m.isAfterTestConfiguration())
+				{
+					throw new SkipException(SKIP_CFG_EXC_MSG);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void afterInvocation(IInvokedMethod invokedMethod, ITestResult testResult)
+	{
+		// do nothing
 	}
 
 	//==========================
