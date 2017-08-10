@@ -37,6 +37,7 @@ public class ExcludeTestsForRerun
 			if (!test.isNeedRerun())
 			{
 				testNamesNoRerun.add(test.getName());
+				System.err.println(test.getName());
 			}
 		}
 		String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
@@ -60,8 +61,10 @@ public class ExcludeTestsForRerun
 								testNGMethod.getXmlTest(), false, null);
 						TestResult testResult = new TestResult(testNGMethod.getTestClass(), testNGMethod.getInstance(),
 								testNGMethod, null, 0, 0, testRunner);
+						System.err.println("CHECKING: " + configurator.getTestName(testResult));
 						if (testNamesNoRerun.contains(configurator.getTestName(testResult)))
 						{
+							System.err.println("DISABLING: " + configurator.getTestName(testResult));
 							modifyAnnotationValue(a, testNGMethod, ENABLED, false);
 						}
 					}
