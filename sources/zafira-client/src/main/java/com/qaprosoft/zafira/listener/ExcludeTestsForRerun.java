@@ -37,17 +37,18 @@ public class ExcludeTestsForRerun
 			if (!test.isNeedRerun())
 			{
 				testNamesNoRerun.add(test.getName());
-				System.err.println(test.getName());
 			}
 		}
 		String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
 		for (ITestNGMethod testNGMethod : suite.getAllMethods())
 		{
+			System.err.println("==========" + testNGMethod.getMethodName() + "==========");
 			Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
 			boolean isDataProviderPresent = false;
 			boolean isTest = false;
 			for (Annotation a : annotations)
 			{
+				System.err.println("@ " + a.annotationType().getName());
 				if (a instanceof Test)
 				{
 					isTest = true;
