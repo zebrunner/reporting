@@ -107,6 +107,7 @@
                 if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
                     test.separatedArtifacts[artifact.id] = artifact;
                     test.artifacts.splice(i,1);
+                    i--;
                 }
             }
        };
@@ -909,7 +910,8 @@
                         checkIssueStatus(issue);
                         if ($scope.isJiraIdExists) {
                             $scope.newKnownIssue.description = issue.summary;
-                            $scope.newKnownIssue.assigneeMessage = '(Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name + ')';
+                            $scope.newKnownIssue.assigneeMessage = 'Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name;
+                            $scope.newKnownIssue.status = issue.status.name;
                         }
                     }
                     else
@@ -956,6 +958,7 @@
             // Reset flags
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
+            $scope.newKnownIssue.status = null;
             $scope.isJiraIdExists = true;
             $scope.isJiraIdClosed = false;
             $scope.isIssueFound = false;
@@ -975,6 +978,7 @@
             $scope.newKnownIssue.id = issue.id;
             $scope.newKnownIssue.jiraId = issue.jiraId;
             $scope.newKnownIssue.description = issue.description;
+            $scope.newKnownIssue.status = issue.status.name;
         };
 
         $interval(function () {
