@@ -41,6 +41,7 @@ import org.testng.ITestListener;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.xml.XmlClass;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
@@ -505,12 +506,31 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		if (ZAFIRA_RERUN_FAILURES)
 		{
 			ITestNGMethod m = invokedMethod.getTestMethod();
-			if (!classesToRerun.contains(m.getTestClass().getName()))
+			String declaringClassName = m.getConstructorOrMethod().getMethod().getDeclaringClass().getName();
+			String testClassName = m.getTestClass().getName();
+			if (!classesToRerun.contains(testClassName))
 			{
-				if (m.isBeforeClassConfiguration() || m.isAfterClassConfiguration() || m.isBeforeTestConfiguration()
-						|| m.isAfterTestConfiguration())
+				if (m.isBeforeClassConfiguration() || m.isAfterClassConfiguration())
 				{
+					LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName());
 					throw new SkipException(SKIP_CFG_EXC_MSG);
+				}
+				if (m.isBeforeTestConfiguration() || m.isAfterTestConfiguration())
+				{
+					boolean shouldSkip = true;
+					for (XmlClass cl : testResult.getTestContext().getCurrentXmlTest().getClasses())
+					{
+						if (classesToRerun.contains(cl.getName()))
+						{
+							shouldSkip = false;
+							break;
+						}
+					}
+					if (shouldSkip)
+					{
+						LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName());
+						throw new SkipException(SKIP_CFG_EXC_MSG);
+					}
 				}
 			}
 		}
