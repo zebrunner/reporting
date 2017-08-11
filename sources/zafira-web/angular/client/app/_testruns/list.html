@@ -142,7 +142,8 @@
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                          </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                             <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
