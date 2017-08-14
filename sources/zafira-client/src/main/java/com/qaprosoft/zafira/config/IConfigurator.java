@@ -22,15 +22,13 @@ public interface IConfigurator
 	
 	String getOwner(ISuite suite);
 	
-	String getOwner(ITestResult test);
+	String getPrimaryOwner(ITestResult test);
+	
+	String getSecondaryOwner(ITestResult test);
 	
 	String getTestName(ITestResult test);
 	
 	String getTestMethodName(ITestResult test);
-	
-	String getLogURL(ITestResult test);
-	
-	String getDemoURL(ITestResult test);
 	
 	Set<TestArtifactType> getArtifacts(ITestResult test);
 	

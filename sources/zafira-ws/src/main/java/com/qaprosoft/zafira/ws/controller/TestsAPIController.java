@@ -134,17 +134,6 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test dublicates", nickname = "deleteTestDublicates", code = 200, httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "duplicates/remove", method = RequestMethod.PUT)
-	public void deleteTestDuplicates(@RequestBody TestType test) throws ServiceException
-	{
-		testService.deleteTestByTestRunIdAndTestCaseIdAndLogURL(mapper.map(test, Test.class));
-	}
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(

@@ -50,4 +50,22 @@ public class GridStatusEmail implements IEmailMessage
 	{
 		return null;
 	}
+	
+	public int getTotal()
+	{
+		return devices != null ? devices.size() : 0;
+	}
+	
+	public int getConnected()
+	{
+		int connected = 0;
+		if(devices != null)
+		{
+			for(Device device : devices)
+			{
+				connected += device.isLastStatus() ? 1 : 0;
+			}
+		}
+		return connected;
+	}
 }

@@ -36,9 +36,15 @@ public class DefaultConfigurator implements IConfigurator
 	}
 
 	@Override
-	public String getOwner(ITestResult test)
+	public String getPrimaryOwner(ITestResult test)
 	{
 		return ANONYMOUS;
+	}
+	
+	@Override
+	public String getSecondaryOwner(ITestResult test)
+	{
+		return null;
 	}
 
 	@Override
@@ -51,18 +57,6 @@ public class DefaultConfigurator implements IConfigurator
 	public String getTestMethodName(ITestResult test)
 	{
 		return test.getMethod().getMethodName();
-	}
-
-	@Override
-	public String getLogURL(ITestResult test)
-	{
-		return "";
-	}
-
-	@Override
-	public String getDemoURL(ITestResult test)
-	{
-		return "";
 	}
 
 	@Override

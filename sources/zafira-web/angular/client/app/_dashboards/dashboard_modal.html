@@ -20,16 +20,9 @@
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <md-select ng-model="dashboard.type" name="type" placeholder="Type" data-ng-if="isNew" ng-required>
-                            <md-option value="" disabled>Type</md-option>
-                            <md-option value="GENERAL">General</md-option>
-                            <md-option value="USER_PERFORMANCE">User performance</md-option>
-                        </md-select>
-                        <md-select ng-model="dashboard.type" name="type" placeholder="Type" data-ng-if="! isNew" disabled ng-required>
-                            <md-option value="" disabled>Type</md-option>
-                            <md-option value="GENERAL">General</md-option>
-                            <md-option value="USER_PERFORMANCE">User performance</md-option>
-                        </md-select>
+                        <span>Hidden</span>
+                        <md-checkbox ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="isNew" ng-required></md-checkbox>
+                        <md-checkbox ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="!isNew" ng-required></md-checkbox>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">

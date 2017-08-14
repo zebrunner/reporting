@@ -176,27 +176,50 @@ button.red {
 }
 
 .platform-icon.safari {
-    background-position: -3px -25px;
+    background-position: -2px -24px;
 }
 
 .platform-icon.chrome {
-    background-position: -3px -115px;
+    background-position: -2px -114px;
 }
 
 .platform-icon.firefox {
-    background-position: -3px -70px;
+    background-position: -2px -68px;
+}
+.platform-icon.edge {
+    background-position: -2px -91px;
 }
 
-.platform-icon.iexplore, .platform-icon.ie, .platform-icon.edge {
-    background-position: -3px -3px;
+.platform-icon.xbox, .platform-icon.Xbox, .platform-icon.XBox  {
+    background-position: -24px -202px;
+}
+
+.platform-icon.ps, .platform-icon.PS, .platform-icon.playstation {
+    background-position: -24px -300px;
+}
+
+.platform-icon.appletv {
+    background-position: -24px -249px;
+}
+
+.platform-icon.androidtv {
+    background-position: -24px -225px;
+}
+
+.platform-icon.iexplorer, .platform-icon.ie {
+    background-position: -2px -3px;
 }
 
 .platform-icon.android, .platform-icon.Android, .platform-icon.ANDROID {
-    background-position: -3px -206px;
+    background-position: -2px -207px;
 }
 
 .platform-icon.ios, .platform-icon.IOS, .platform-icon.iOS {
-    background-position: -3px -252px;
+    background-position: -2px -249px;
+}
+
+.platform-icon.unknown {
+    background-position: -24px -275px;
 }
 
 .label-success-border {

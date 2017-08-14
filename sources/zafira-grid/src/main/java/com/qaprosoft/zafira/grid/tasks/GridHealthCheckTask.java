@@ -51,6 +51,7 @@ public class GridHealthCheckTask
 					{
 						device.setDisconnects(device.getDisconnects() + 1);
 					}
+					device.setStatusChanged(true);
 					deviceService.updateDevice(device);
 					statusChanged = true;
 				}

@@ -30,6 +30,7 @@
         $scope.project = ProjectProvider.getProject();
 
         $scope.showReset = $scope.testRunId != null;
+        $scope.selectAll = false;
 
         var DEFAULT_SC = {
             'page': 1,
@@ -42,6 +43,10 @@
             'page': 1,
             'pageSize': 100000
         };
+
+        ConfigService.getConfig("jenkins").then(function(rs) {
+            $scope.jenkinsEnabled = rs.data.connected;
+        });
 
         $scope.initWebsocket = function () {
              var sockJS = new SockJS(API_URL + "/websockets");
@@ -69,7 +74,8 @@
             if (event.type == 'TEST_RUN') {
                 if (($scope.testRunId && $scope.testRunId != event.testRun.id)
                     || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
-                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)) {
+                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)
+                    || !$scope.checkSearchCriteria($scope.sc)) {
                     return;
                 }
 
@@ -83,7 +89,30 @@
             return true;
         };
 
-        $scope.addTest = function (test, isEvent) {
+        $scope.checkSearchCriteria = function (sc) {
+            var isEmpty = true;
+            for (var criteria in sc) {
+                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize") {
+                    isEmpty = false;
+                    break;
+                }
+            }
+            return isEmpty;
+        };
+
+       $scope.separateArtifacts = function (test) {
+            test.separatedArtifacts = [];
+            for (var i = 0; i< test.artifacts.length; i++) {
+                var artifact = test.artifacts[i];
+                if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
+                    test.separatedArtifacts[artifact.id] = artifact;
+                    test.artifacts.splice(i,1);
+                    i--;
+                }
+            }
+       };
+
+       $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
@@ -130,14 +159,44 @@
             }
         };
 
-        $scope.deleteTestRun = function (id) {
-            if (confirm("Do you really want to delete test run?")) {
+        $scope.batchRerun = function()
+        {
+        		$scope.selectAll = false;
+            var 	rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
+	        	for(var id in $scope.testRuns)
+	    		{
+	        		if($scope.testRuns[id].selected)
+	        		{
+	        			$scope.rebuild($scope.testRuns[id], rerunFailures);
+	        		}
+	    		}
+        };
+
+        $scope.batchDelete = function()
+        {
+        		$scope.selectAll = false;
+	        	for(var id in $scope.testRuns)
+	    		{
+	        		if($scope.testRuns[id].selected)
+	        		{
+	        			$scope.deleteTestRun(id, true);
+	        		}
+	    		}
+        };
+
+        $scope.deleteTestRun = function (id, confirmation)
+        {
+        		if(confirmation == null)
+        		{
+        			confirmation = confirm("Do you really want to delete test run?");
+        		}
+            if (confirmation)
+            {
                 TestRunService.deleteTestRun(id).then(function(rs) {
                     if(rs.success)
                     {
                         delete $scope.testRuns[id];
                         alertify.success('Test run #' + id + ' removed');
-                        //$scope.search($scope.sc.page);
                     }
                     else
                     {
@@ -180,28 +239,11 @@
             return null;
         };
 
-        $scope.selectTestRun = function (id, isChecked) {
-            if (isChecked == "true") {
-                $scope.testRunsToCompare.push(id);
-            } else {
-                var idx = $scope.testRunsToCompare.indexOf(id);
-                if (idx > -1) {
-                    $scope.testRunsToCompare.splice(idx, 1);
-                }
-            }
-            $scope.compareQueryString = "";
-            for (var i = 0; i < $scope.testRunsToCompare.length; i++) {
-                $scope.compareQueryString = $scope.compareQueryString + $scope.testRunsToCompare[i];
-                if (i < $scope.testRunsToCompare.length - 1) {
-                    $scope.compareQueryString = $scope.compareQueryString + "+";
-                }
-            }
-        };
-
         $scope.search = function (page, pageSize) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
             $scope.sc.fromDate = null;
+            $scope.selectAll = false;
 
             $scope.sc.page = page;
 
@@ -256,7 +298,6 @@
                             $scope.loadTests(testRun.id);
                         }
                     }
-
                     if ($scope.testRunId) {
                         $scope.loadTests($scope.testRunId);
                     }
@@ -286,6 +327,7 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
+                        $scope.separateArtifacts(test);
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
@@ -356,25 +398,34 @@
             $scope.showBuildNowDialog(testRun, event);
         };
 
-        $scope.rebuild = function (testRun) {
-            ConfigService.getConfig("jenkins").then(function (rs) {
-                if (rs.data.connected) {
-                    var rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
-                    TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
-                        if(rs.success)
-                        {
-                        	alertify.success("Rebuild triggered in CI service");
-                        }
-                        else
-                        {
-                            alertify.error(rs.message);
-                        }
-                    });
-                }
-                else {
-                    window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
-                }
-            });
+        $scope.$watch('selectAll', function(newValue, oldValue) {
+        		for(var id in $scope.testRuns)
+        		{
+        			$scope.testRuns[id].selected = newValue;
+        		}
+        	});
+
+        $scope.rebuild = function (testRun, rerunFailures) {
+            if ($scope.jenkinsEnabled) {
+            		if(rerunFailures == null)
+            		{
+            			rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
+            		}
+                TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
+                    if(rs.success)
+                    {
+                    		testRun.status = 'IN_PROGRESS';
+                    		alertify.success("Rebuild triggered in CI service");
+                    }
+                    else
+                    {
+                         alertify.error(rs.message);
+                    }
+                });
+            }
+            else {
+                window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+            }
         };
 
         $scope.deleteTestRunAction = function (testRun) {
@@ -438,6 +489,7 @@
             };
             $scope.startedAt = null;
             $scope.showReset = false;
+            $scope.selectAll = false;
         };
 
         $scope.populateSearchQuery = function () {

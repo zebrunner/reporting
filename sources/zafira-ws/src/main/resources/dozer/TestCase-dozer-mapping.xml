@@ -27,8 +27,12 @@
 			<b>testSuiteId</b>
 		</field>
 		<field>
-			<a>userId</a>
-			<b>user.id</b>
+			<a>primaryOwnerId</a>
+			<b>primaryOwner.id</b>
+		</field>
+		<field>
+			<a>secondaryOwnerId</a>
+			<b>secondaryOwner.id</b>
 		</field>
 		<field>
 			<a>project</a>

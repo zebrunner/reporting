@@ -219,14 +219,22 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			String testName = configurator.getTestName(result);
 
 			// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-			String owner = !StringUtils.isEmpty(configurator.getOwner(result)) ? configurator.getOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-			UserType methodOwner = zc.registerUser(owner, null, null, null);
-			LOGGER.debug("methodOwner: " + methodOwner);
+			String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
+			UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+			LOGGER.debug("primaryOwner: " + primaryOwnerName);
+			
+			String secondaryOwnerName = configurator.getSecondaryOwner(result);
+			UserType secondaryOwner = null;
+			if(!StringUtils.isEmpty(secondaryOwnerName))
+			{
+				secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+				LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
+			}
 			
 			String testClass = result.getMethod().getTestClass().getName();
 			String testMethod = configurator.getTestMethodName(result);
 
-			TestCaseType testCase = zc.registerTestCase(this.suite.getId(), methodOwner.getId(), testClass, testMethod);
+			TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(), (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
 
 			// Search already registered test!
 			if(registeredTests.containsKey(testName))
@@ -254,7 +262,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getDemoURL(result), configurator.getLogURL(result), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -355,15 +363,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				String testName = configurator.getTestName(result);
 				
 				// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
-				String owner = !StringUtils.isEmpty(configurator.getOwner(result)) ? configurator.getOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-				UserType methodOwner = zc.registerUser(owner, null, null, null);
-				LOGGER.debug("methodOwner: " + methodOwner);
+				String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
+				UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+				LOGGER.debug("primaryOwner: " + primaryOwnerName);
+				
+				String secondaryOwnerName = configurator.getSecondaryOwner(result);
+				UserType secondaryOwner = null;
+				if(!StringUtils.isEmpty(secondaryOwnerName))
+				{
+					secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+					LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
+				}
 				
 				String testClass = result.getMethod().getTestClass().getName();
 				String testMethod = configurator.getTestMethodName(result);
 				
 				//if not start new test as it is skipped dependent test method
-				TestCaseType testCase = zc.registerTestCase(this.suite.getId(), methodOwner.getId(), testClass, testMethod);
+				TestCaseType testCase = zc.registerTestCase(this.suite.getId(), primaryOwner.getId(),  (secondaryOwner != null ? secondaryOwner.getId() : null), testClass, testMethod);
 				String testArgs = result.getParameters().toString();
 				
 				String group = result.getMethod().getTestClass().getName();
@@ -371,7 +387,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), null, null, configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
 				testByThread.put(Thread.currentThread().getId(), test);
 			}
 			
@@ -400,8 +416,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			throw new RuntimeException("Unable to find TestType result to mark test as finished! name: '" + testName + "'; threadId: " + threadId);
 		}
 		
-		test.setDemoURL(configurator.getDemoURL(result));
-		test.setLogURL(configurator.getLogURL(result));
 		test.setTestMetrics(configurator.getTestMetrics(result));
 		test.setConfigXML(convertToXML(configurator.getConfiguration()));
 		test.setArtifacts(configurator.getArtifacts(result));

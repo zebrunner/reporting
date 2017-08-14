@@ -44,6 +44,13 @@
 		]]>
 	</select>
 
+	<select id="getTestArtifactByNameAndTestId" resultMap="TestArtifactResultMap">
+		<include refid="getTestArtifact" />
+		<![CDATA[
+			WHERE TA.NAME = #{name} AND TA.TEST_ID = #{testId};
+		]]>
+	</select>
+
 	<update id="updateTestArtifact">
 		<![CDATA[
 			UPDATE

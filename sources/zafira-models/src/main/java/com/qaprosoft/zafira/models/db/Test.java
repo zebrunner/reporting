@@ -24,8 +24,6 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private Integer messageHashCode;
 	private Date startTime;
 	private Date finishTime;
-	private String demoURL;
-	private String logURL;
 	private int retry;
 	private TestConfig testConfig;
 	private List<WorkItem> workItems;
@@ -33,6 +31,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private boolean blocker;
 	private boolean needRerun;
 	private String owner;
+	private String secondaryOwner;
 	private String dependsOnMethods;
 	private String testClass;
 	private Set<TestArtifact> artifacts = new HashSet<>();
@@ -134,26 +133,6 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		this.finishTime = finishTime;
 	}
 
-	public String getDemoURL()
-	{
-		return demoURL;
-	}
-
-	public void setDemoURL(String demoURL)
-	{
-		this.demoURL = demoURL;
-	}
-
-	public String getLogURL()
-	{
-		return logURL;
-	}
-
-	public void setLogURL(String logURL)
-	{
-		this.logURL = logURL;
-	}
-
 	public int getRetry()
 	{
 		return retry;
@@ -225,6 +204,14 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
+	}
+
+	public String getSecondaryOwner() {
+		return secondaryOwner;
+	}
+
+	public void setSecondaryOwner(String secondaryOwner) {
+		this.secondaryOwner = secondaryOwner;
 	}
 
 	public boolean isNeedRerun()

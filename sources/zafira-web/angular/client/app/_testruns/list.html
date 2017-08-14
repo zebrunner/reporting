@@ -12,6 +12,21 @@
                 </button>
             </h2>
         </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()">
+                    <span class="fa fa-undo" aria-hidden="true"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" permission="['ROLE_ADMIN']">
+                    <span class="fa fa-trash" aria-hidden="true"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
         <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
@@ -20,7 +35,17 @@
                             <table md-table>
                                 <thead md-head>
                                     <tr md-row>
-                                        <th md-column>
+                                    	   <th md-column>
+                                    	   	   <md-input-container>
+	                                            	<md-checkbox class="md-secondary"
+		                                   			aria-label="Select"
+		                                   			data-ng-model="selectAll"
+		                                   			data-ng-true-value="true"
+		                                   			data-ng-false-value="false">
+		                                   		</md-checkbox>
+                                            </md-input-container>
+                                    	   </th>
+                                        <th md-column style="min-width: 360px;">
                                             <md-input-container class="searchable select">
                                                 <md-select ng-model="sc.status" name="status" placeholder="Status">
                                                     <md-option value="" disabled>Status</md-option>
@@ -35,8 +60,6 @@
                                             <md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
                                             </md-input-container>
-                                        </th>
-                                        <th md-column>
                                             <md-input-container class="searchable">
                                                 <input type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
@@ -89,30 +112,38 @@
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
-                                        <td md-cell colspan="2"style="padding: 0 15px;">
-                                        	<div ng-if="testRun.status == 'IN_PROGRESS'" style="float: left; margin-right: 5px;">
-                                            	<md-progress-circular md-diameter="20px"></md-progress-circular>
-                                                   <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
-                                                       <small>{{progressBar}}%</small>
-                                                   </timer>
-                                            </div>
-                                        	<div style="float: left;">
-                                           		<b>
-                                                     {{testRun.testSuite.name}}
-                                                     <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
-                                                     <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
-                                                 </b>
-                                                 <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
-	                                             <br/>
-	                                             <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-	                                             <small>{{testRun.appVersion}}</small>
-                                        	</div>
+                                        <td md-cell>
+                                        		<md-checkbox class="md-secondary"
+	                                   			aria-label="Select"
+	                                   			data-ng-model="testRun.selected"
+	                                   			data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
+	                                   			data-ng-true-value="true"
+	                                   			data-ng-false-value="false">
+	                                   		</md-checkbox>
+	                                   		<div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
+		                                   		<md-progress-circular md-diameter="20px"></md-progress-circular>
+	                                             <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
+	                                                 <small>{{progressBar}}%</small>
+	                                             </timer>
+                                             </div>
+                                        </td>
+                                        <td md-cell>
+	                                         <b>
+                                                  {{testRun.testSuite.name}}
+                                                  <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
+                                                  <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
+                                             </b>
+                                             <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
+                                           	<br/>
+                                           	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
+                                           	<small>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                          </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                             <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
@@ -205,12 +236,14 @@
                                                         	<div>
                                                                 <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                 <span data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                <span data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                 <span data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                 <span data-ng-if="test.testConfig.browserVersion && test.testConfig.browserVersion != '*' && test.testConfig.browserVersion != '' && test.testConfig.browserVersion != null" class="light_text"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'chrome'" class="fa fa-chrome" aria-hidden="true"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'firefox'" class="fa fa-firefox" aria-hidden="true"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'safari'" class="fa fa-safari" aria-hidden="true"></i>
                                                                     <i data-ng-if="test.testConfig.browser == 'ie'" class="fa fa-internet-explorer" aria-hidden="true"></i>
+                                                                    <i data-ng-if="test.testConfig.browser == 'edge'" class="fa fa-edge" aria-hidden="true"></i>
                                                                     {{test.testConfig.browserVersion}}
                                                                 </span>
                                                             </div>
@@ -229,13 +262,27 @@
                                                                 <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
-                                                    <td class="text-center">
-                                                        <div
-                                                            data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
-                                                            data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
-                                                            <a href="{{artifact.link}}" target="blank" class="clearfix">{{artifact.name}}&nbsp</a>
-                                                        </div>
-                                                    </td>
+                                                        <td class="text-center">
+                                                            <div
+                                                                data-ng-if="test.status != STARTED && test.separatedArtifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
+                                                                data-ng-repeat="separatedArtifact in test.separatedArtifacts | orderObjectBy:'name':reverse:true">
+                                                                <a href="{{separatedArtifact.link}}" target="blank" class="clearfix">{{separatedArtifact.name}}&nbsp</a>
+                                                            </div>
+                                                        </td>
+                                                        <td data-ng-if="test.separatedArtifacts.length == 0 && test.artifacts.length !=0"></td>
+                                                        <td data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
+                                                            <md-menu>
+                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                                    <md-icon class="material-icons">expand_more</md-icon>
+                                                                </md-button>
+                                                                <md-menu-content>
+                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
+                                                                        <md-button href="{{artifact.link}}"  target="blank">{{artifact.name}}</md-button>
+                                                                   </md-menu-item>
+                                                                </md-menu-content>
+                                                            </md-menu>
+                                                        </td>
+                                                        <td data-ng-if="test.artifacts.length == 0"></td>
                                                         </tr>
                                                 </tbody>
                                             </table>
@@ -245,7 +292,6 @@
                             </table>
                         </form>
                     </md-table-container>
-
                     <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>

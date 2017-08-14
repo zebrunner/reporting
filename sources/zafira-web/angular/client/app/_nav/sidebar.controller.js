@@ -3,10 +3,10 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService',  SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
+    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
 
     	$scope.DashboardService = DashboardService;
 
@@ -15,7 +15,6 @@
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
-        $scope.tools = [];
 
 
         $scope.isAdmin = function(){
@@ -30,7 +29,7 @@
                 }
                 else
                 {
-                	alertify.error("Unable to laod projects");
+                	alertify.error("Unable to load projects");
                 }
             });
         };
@@ -47,22 +46,23 @@
             });
         };
 
-        $scope.loadDashboards = function(){
-            DashboardService.GetDashboards().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.dashboards = rs.data;
-                }
-            });
-        };
+        $scope.loadDashboards = function () {
 
-        $scope.loadTools = function(){
-            SettingsService.getSettingTools().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.tools = rs.data;
-                }
-            });
+            if ($scope.isAdmin() == true) {
+                DashboardService.GetDashboards().then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
+            else {
+                var hidden = true;
+                DashboardService.GetDashboards(hidden).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
         };
 
         $scope.setProject = function(project){

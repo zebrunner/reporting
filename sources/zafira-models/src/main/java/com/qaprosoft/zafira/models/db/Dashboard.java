@@ -5,18 +5,15 @@ import java.util.List;
 
 public class Dashboard extends AbstractEntity
 {
-	private static final long serialVersionUID = -6778089455852822053L;
+
+	private static final long serialVersionUID = -562795025453363474L;
 
 	private String title;
 	private List<Widget> widgets = new ArrayList<Widget>();
-	private Type type;
+	private boolean hidden;
 	private Integer position;
 	private List<Attribute> attributes;
 
-	public enum Type
-	{
-		GENERAL, PERFORMANCE, USER_PERFORMANCE;
-	}
 
 	public String getTitle()
 	{
@@ -38,16 +35,6 @@ public class Dashboard extends AbstractEntity
 		this.widgets = widgets;
 	}
 
-	public Type getType()
-	{
-		return type;
-	}
-
-	public void setType(Type type)
-	{
-		this.type = type;
-	}
-
 	public Integer getPosition()
 	{
 		return position;
@@ -66,5 +53,13 @@ public class Dashboard extends AbstractEntity
 	public void setAttributes(List<Attribute> attributes)
 	{
 		this.attributes = attributes;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 }

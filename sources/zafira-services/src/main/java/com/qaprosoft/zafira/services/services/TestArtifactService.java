@@ -52,4 +52,31 @@ public class TestArtifactService
 	{
 		testArtifactMapper.deleteTestArtifactsByTestId(testId);
 	}
+
+	@Transactional(readOnly = true)
+	public TestArtifact getTestArtifactByNameAndTestId(String name, long testId) throws ServiceException
+	{
+        TestArtifact testArtifact = testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
+		return testArtifact;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestArtifact createOrUpdateTestArtifact(TestArtifact newTestArtifact) throws ServiceException
+	{
+		TestArtifact testArtifact = getTestArtifactByNameAndTestId(newTestArtifact.getName(), newTestArtifact.getTestId());
+		if(testArtifact == null)
+		{
+			createTestArtifact(newTestArtifact);
+		}
+		else if(!testArtifact.equals(newTestArtifact))
+		{
+			newTestArtifact.setId(testArtifact.getId());
+			updateTestArtifact(newTestArtifact);
+		}
+		else
+		{
+			newTestArtifact = testArtifact;
+		}
+		return newTestArtifact;
+	}
 }

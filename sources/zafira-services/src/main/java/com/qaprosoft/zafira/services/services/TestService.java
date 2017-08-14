@@ -116,8 +116,6 @@ public class TestService
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
-		existingTest.setDemoURL(test.getDemoURL());
-		existingTest.setLogURL(test.getLogURL());
 		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
 		
 		String message = test.getMessage();
@@ -164,7 +162,7 @@ public class TestService
 				if(artifact.isValid())
 				{
 					artifact.setTestId(test.getId());
-					testArtifactService.createTestArtifact(artifact);
+					testArtifactService.createOrUpdateTestArtifact(artifact);
 				}
 				else
 				{
@@ -286,12 +284,6 @@ public class TestService
 	public void deleteTestById(long id) throws ServiceException
 	{
 		testMapper.deleteTestById(id);
-	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestByTestRunIdAndTestCaseIdAndLogURL(Test test) throws ServiceException
-	{
-		testMapper.deleteTestByTestRunIdAndTestCaseIdAndLogURL(test.getTestRunId(), test.getTestCaseId(), test.getLogURL());
 	}
 	
 	@Transactional(readOnly = true)

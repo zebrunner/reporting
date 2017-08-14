@@ -410,9 +410,12 @@ public class TestRunService
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
 	{
-		ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
-		Configuration configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
-		IOUtils.closeQuietly(xmlBA);
+        Configuration configuration = new Configuration();
+        if (!StringUtils.isEmpty(xml)) {
+            ByteArrayInputStream xmlBA = new ByteArrayInputStream(xml.getBytes());
+            configuration = (Configuration) JAXBContext.newInstance(Configuration.class).createUnmarshaller().unmarshal(xmlBA);
+            IOUtils.closeQuietly(xmlBA);
+        }
 		return configuration;
 	}
 	
