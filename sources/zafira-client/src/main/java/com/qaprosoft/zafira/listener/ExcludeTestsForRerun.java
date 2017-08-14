@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ISuite;
@@ -40,43 +41,60 @@ public class ExcludeTestsForRerun
 			}
 		}
 		String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
+		String[] allDependentMethods = ArrayUtils.EMPTY_STRING_ARRAY;
 		for (ITestNGMethod testNGMethod : suite.getAllMethods())
 		{
-			System.err.println("==========" + testNGMethod.getMethodName() + "==========");
-			Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
-			boolean isDataProviderPresent = false;
-			boolean isTest = false;
-			for (Annotation a : annotations)
+			allDependentMethods = ArrayUtils.addAll(allDependentMethods, testNGMethod.getMethodsDependedUpon());
+		}
+		boolean isAnythingMarked = true;
+		while (isAnythingMarked)
+		{
+			isAnythingMarked = false;
+			for (ITestNGMethod testNGMethod : suite.getAllMethods())
 			{
-				System.err.println("@ " + a.annotationType().getName());
-				if (a instanceof Test)
-				{
-					isTest = true;
-					if (((Test) a).dataProvider() != null && !((Test) a).dataProvider().isEmpty())
-					{
-						isDataProviderPresent = true;
-					} else
-					{
-						SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
-						TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
-								testNGMethod.getXmlTest(), false, null);
-						TestResult testResult = new TestResult(testNGMethod.getTestClass(), testNGMethod.getInstance(),
-								testNGMethod, null, 0, 0, testRunner);
-						System.err.println("CHECKING: " + configurator.getTestName(testResult));
-						if (testNamesNoRerun.contains(configurator.getTestName(testResult)))
-						{
-							System.err.println("DISABLING: " + configurator.getTestName(testResult));
-							modifyAnnotationValue(a, testNGMethod, ENABLED, false);
-						}
-					}
-					break;
-				}
-			}
-			if (isTest && isDataProviderPresent)
-			{
+				Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
+				boolean isDataProviderPresent = false;
+				boolean isTest = false;
 				for (Annotation a : annotations)
 				{
-					modifyAnnotationValue(a, testNGMethod, DO_NOT_RUN_TEST_NAMES, testNamesNoRerunArr);
+					if (a instanceof Test)
+					{
+						isTest = true;
+						if (((Test) a).dataProvider() != null && !((Test) a).dataProvider().isEmpty())
+						{
+							isDataProviderPresent = true;
+						} else
+						{
+							if (!ArrayUtils.contains(allDependentMethods, testNGMethod.getRealClass().getName() + "."
+									+ testNGMethod.getConstructorOrMethod().getMethod().getName()))
+							{
+								SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
+								TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
+										testNGMethod.getXmlTest(), false, null);
+								TestResult testResult = new TestResult(testNGMethod.getTestClass(),
+										testNGMethod.getInstance(), testNGMethod, null, 0, 0, testRunner);
+								if (testNamesNoRerun.contains(configurator.getTestName(testResult))
+										&& ((Test) a).enabled())
+								{
+									modifyAnnotationValue(a, testNGMethod, ENABLED, false);
+									isAnythingMarked = true;
+
+									for (String m : testNGMethod.getMethodsDependedUpon())
+									{
+										allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
+									}
+								}
+							}
+						}
+						break;
+					}
+				}
+				if (isTest && isDataProviderPresent)
+				{
+					for (Annotation a : annotations)
+					{
+						modifyAnnotationValue(a, testNGMethod, DO_NOT_RUN_TEST_NAMES, testNamesNoRerunArr);
+					}
 				}
 			}
 		}

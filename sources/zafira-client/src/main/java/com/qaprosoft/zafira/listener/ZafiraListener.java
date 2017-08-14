@@ -508,15 +508,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			ITestNGMethod m = invokedMethod.getTestMethod();
 			String declaringClassName = m.getConstructorOrMethod().getMethod().getDeclaringClass().getName();
 			String testClassName = m.getTestClass().getName();
-			System.err.println(declaringClassName + " : " + m.getMethodName()
-					+ " for class " + testClassName);
 			if (!classesToRerun.contains(testClassName))
 			{
 				if (m.isBeforeClassConfiguration() || m.isAfterClassConfiguration())
 				{
-					System.err.println(
-							"SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
-									+ " for class " + testClassName);
+					LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
+							+ " for class " + testClassName);
 					throw new SkipException(SKIP_CFG_EXC_MSG);
 				}
 				if (m.isBeforeTestConfiguration() || m.isAfterTestConfiguration())
@@ -532,9 +529,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 					}
 					if (shouldSkip)
 					{
-						System.err.println(
-								"SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
-										+ " for class " + testClassName);
+						LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
+								+ " for class " + testClassName);
 						throw new SkipException(SKIP_CFG_EXC_MSG);
 					}
 				}
