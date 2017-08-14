@@ -24,6 +24,14 @@
                         <input type="text" ng-model="setting.value" name="value"/>
                     </md-input-container>
                 </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <span>Encrypt&nbsp&nbsp&nbsp</span>
+                        <md-checkbox ng-model="setting.encrypted" ng-change="!setting.encrypted">
+                            <span ng-if="setting.encrypted == true">This setting is encrypted</span>
+                        </md-checkbox>
+                    </md-input-container>
+                </div>
             </div>
         </md-dialog-content>
 

@@ -5,9 +5,11 @@
 
 	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.SETTINGS (NAME, VALUE)
+			INSERT INTO zafira.SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
 			VALUES (#{name},
-					#{value})
+					#{value},
+                    #{isEncrypted},
+                    #{tool})
 		]]>
 	</insert>
 
@@ -17,6 +19,8 @@
 				S.ID AS SETTING_ID,
 				S.NAME AS SETTING_NAME,
 				S.VALUE AS SETTING_VALUE,
+                S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
+                S.TOOL AS SETTING_TOOL,
 				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
 				S.CREATED_AT AS SETTING_CREATED_AT
 			FROM
@@ -38,10 +42,32 @@
 		]]>
 	</select>
 
+	<select id="getSettingsByTool" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.TOOL = #{tool}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
 	<select id="getSettingByName" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
 			WHERE S.NAME = #{name};
+		]]>
+	</select>
+
+	<select id="getTools" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+				DISTINCT
+				S.TOOL
+			FROM
+			zafira.SETTINGS S
+			ORDER BY
+				S.TOOL
+			ASC
+			LIMIT 10000
 		]]>
 	</select>
 
@@ -51,7 +77,9 @@
 			    zafira.SETTINGS
 			SET
 			    NAME = #{name},
-			    VALUE = #{value}
+			    VALUE = #{value},
+                IS_ENCRYPTED = #{isEncrypted},
+                TOOL = #{tool}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -78,6 +106,8 @@
 		<result column="SETTING_VALUE" property="value" />
 		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
 		<result column="SETTING_CREATED_AT" property="createdAt" />
+        <result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
+        <result column="SETTING_TOOL" property="tool" />
 	</resultMap>
 
 </mapper>

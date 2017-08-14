@@ -43,7 +43,8 @@
 	                            <tbody md-body>
 	                                <tr md-row ng-repeat="setting in settings | orderBy:'name'">
 	                                    <td md-cell><b>{{setting.name}}</b></td>
-	                                    <td md-cell>{{setting.value}}</td>
+                                        <td md-cell data-ng-if="setting.encrypted == true">••••••</td>
+	                                    <td md-cell data-ng-if="setting.encrypted == false">{{setting.value}}</td>
 	                                    <td md-cell style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
 	                                    <td md-cell class="no-padding">
 	                                        <md-menu>

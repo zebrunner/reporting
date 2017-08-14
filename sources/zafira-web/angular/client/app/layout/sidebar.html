@@ -32,6 +32,13 @@
         </li>
         <li><a md-button aria-label="menu" href="#!/tests/cases"><i class="material-icons">library_books</i><span data-translate="TEST_CASES"></span></a></li>
         <li><a md-button aria-label="menu" href="#!/users" data-ng-show="isAdmin()"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/settings" data-ng-show="isAdmin()"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li>
+        <li>
+            <a md-button aria-label="menu" href="#!/settings" data-ng-show="isAdmin()" data-ng-mouseover="loadTools()"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a>
+            <ul>
+                <li data-ng-repeat="tool in tools | orderBy:'name'">
+                    <a md-button aria-label="menu" href="#!/settings/tool/{{tool | lowercase}}">{{tool}}</a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </div>

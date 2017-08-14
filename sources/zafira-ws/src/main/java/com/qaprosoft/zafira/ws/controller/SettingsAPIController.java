@@ -1,18 +1,16 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.services.services.CryptoService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -34,6 +32,10 @@ public class SettingsAPIController extends AbstractController
 	@Autowired
 	private SettingsService settingsService;
 
+	@Autowired
+	private CryptoService cryptoService;
+
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -44,6 +46,27 @@ public class SettingsAPIController extends AbstractController
 	{
 		return settingsService.getAllSettings();
 	}
+
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
+	{
+		return settingsService.getSettingsByTool(tool.toUpperCase());
+	}
+
+    @ResponseStatusDetails
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams(
+            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = List.class)
+    @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getTools() throws ServiceException
+    {
+        return settingsService.getTools();
+    }
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = String.class)
@@ -87,5 +110,17 @@ public class SettingsAPIController extends AbstractController
 	public @ResponseBody Setting editSetting(@RequestBody Setting setting) throws ServiceException
 	{
 		return settingsService.updateSetting(setting);
+	}
+
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 200, httpMethod = "GET")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "key", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void regenerateKey() throws ServiceException
+	{
+		settingsService.regenerateKey();
 	}
 }

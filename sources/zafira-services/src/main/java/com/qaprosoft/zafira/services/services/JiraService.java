@@ -1,13 +1,18 @@
 package com.qaprosoft.zafira.services.services;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import net.rcarz.jiraclient.BasicCredentials;
+import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraClient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import net.rcarz.jiraclient.BasicCredentials;
-import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraClient;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+
 import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
 
 @Service
@@ -19,18 +24,47 @@ public class JiraService
 	
 	private JiraClient jiraClient;
 
-	@Autowired
-	private SettingsService settingsService;
-	
-	public JiraService(String url, String username, String password)
-	{
+    @Autowired
+    private CryptoService cryptoService;
+
+    @Autowired
+    private SettingsService settingsService;
+
+//    @PostConstruct
+//	public void getJiraInfo() throws ServiceException {
+//
+//        String url = null;
+//        String username = null;
+//        String password = null;
+//
+//        List<Setting> jiraSettings = settingsService.getSettingsByTool("JIRA");
+//		for (Setting setting : jiraSettings){
+//		    if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue())){
+//                setting.setValue(cryptoService.decrypt(setting.getValue()));
+//            }
+//            switch(setting.getName()){
+//		        case "JIRA_URL":
+//                    url = setting.getValue();
+//                    break;
+//                case "JIRA_USER":
+//                    username = setting.getValue();
+//                    break;
+//                case "JIRA_PASSWORD":
+//                    password = setting.getValue();
+//                    break;
+//            }
+//        }
+//		initJira(url, username, password);
+//	}
+
+	public void initJira (String url, String username, String password){
 		try
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
 				this.credentials = new BasicCredentials(username, password);
 				this.jiraClient = new JiraClient(url, credentials);
-			}
+             }
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());

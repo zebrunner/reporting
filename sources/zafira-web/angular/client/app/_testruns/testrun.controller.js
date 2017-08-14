@@ -661,7 +661,7 @@
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
 
-            SettingsService.getSetting("JIRA_URL").then(function(rs) {
+            SettingsService.getSettingByName("JIRA_URL").then(function(rs) {
                 if(rs.success)
                 {
                 	 $scope.jiraURL = rs.data;
@@ -1040,7 +1040,7 @@
         };
 
         $scope.getJiraStatusesAsClosed = function() {
-            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+            SettingsService.getSettingByName('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
                 $scope.jiraStatusesAsClosed = rs.data.split(';');
             }, function errorCallback(data) {
                 console.error(data);
