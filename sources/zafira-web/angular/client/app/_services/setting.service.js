@@ -9,6 +9,7 @@
         var service = {};
 
         service.getAllSettings = getAllSettings;
+        service.getSetting = getSetting;
         service.getSettingByName = getSettingByName;
         service.getSettingByTool = getSettingByTool;
         service.deleteSetting = deleteSetting;
@@ -29,6 +30,10 @@
 
         function getSettingByName(name) {
             return $http.get(API_URL + '/api/settings/name/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+        }
+
+        function getSetting(name) {
+            return $http.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
         }
 
         function deleteSetting(id) {

@@ -959,6 +959,7 @@
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
             $scope.newKnownIssue.status = null;
+            $scope.newKnownIssue.assigneeMessage = null;
             $scope.isJiraIdExists = true;
             $scope.isJiraIdClosed = false;
             $scope.isIssueFound = false;
@@ -1040,7 +1041,7 @@
         };
 
         $scope.getJiraStatusesAsClosed = function() {
-            SettingsService.getSettingByName('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
                 $scope.jiraStatusesAsClosed = rs.data.split(';');
             }, function errorCallback(data) {
                 console.error(data);
