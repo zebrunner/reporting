@@ -6,6 +6,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,9 @@ public class SettingsService
 
     @Autowired
     private CryptoService cryptoService;
+
+    @Autowired
+    private JiraService jiraService;
 
     private static CryptoTool cryptoTool = new CryptoTool("./src/main/resources/crypto.key", "AES/ECB/PKCS5Padding", "AES");
 
@@ -94,6 +98,7 @@ public class SettingsService
 			}
 		}
 		settingsMapper.updateSetting(setting);
+		jiraService.getJiraInfo();
 		return setting;
 	}
 

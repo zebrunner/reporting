@@ -8,14 +8,17 @@ import net.rcarz.jiraclient.JiraClient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.jmx.export.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
 
-@Service
+
+@ManagedResource(objectName="bean:name=jiraService", description="Jira init Managed Bean",
+		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
+		persistLocation="foo", persistName="bar")
 public class JiraService
 {
 	private static final Logger LOGGER = Logger.getLogger(JiraService.class);
@@ -57,6 +60,11 @@ public class JiraService
 		initJira(url, username, password);
 	}
 
+	@ManagedOperation(description="Change Jira initialization")
+	@ManagedOperationParameters({
+			@ManagedOperationParameter(name = "url", description = "Jira url"),
+			@ManagedOperationParameter(name = "username", description = "Jira username"),
+			@ManagedOperationParameter(name = "password", description = "Jira password")})
 	public void initJira (String url, String username, String password){
 		try
 		{
@@ -76,7 +84,7 @@ public class JiraService
 		boolean connected = false;
 		try
 		{
-			connected = this.jiraClient != null && this.jiraClient.getProjects() != null;
+			connected = getJiraClient() != null && getJiraClient().getProjects() != null;
 		}
 		catch(Exception e)
 		{
@@ -90,7 +98,7 @@ public class JiraService
 		Issue issue = null;
 		try
 		{
-			issue = jiraClient.getIssue(ticket);
+			issue = getJiraClient().getIssue(ticket);
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to find Jira issue: " + ticket, e);
@@ -112,5 +120,10 @@ public class JiraService
 			}
 		}
 		return isIssueClosed;
+	}
+
+	@ManagedAttribute(description="Get jira client")
+	public JiraClient getJiraClient() {
+		return jiraClient;
 	}
 }

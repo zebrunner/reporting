@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
-import java.util.List;
 
 /**
  * Created by irina on 21.7.17.
@@ -36,7 +35,7 @@ public class CryptoService {
     @PostConstruct
     public void initCryptoTool() throws ServiceException {
 
-        List<Setting> cryptoSettings = settingsService.getSettingsByTool("CRYPTO");
+        /*List<Setting> cryptoSettings = settingsService.getSettingsByTool("CRYPTO");
 
         for (Setting setting : cryptoSettings){
 
@@ -64,7 +63,7 @@ public class CryptoService {
             }
 
             init(algorithm, type);
-        }
+        }*/
 
     }
 

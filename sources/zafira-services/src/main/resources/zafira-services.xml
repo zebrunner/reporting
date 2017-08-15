@@ -7,6 +7,37 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
 
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
+
+	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+		<property name="beans">
+			<map>
+				<entry key="bean:name=jiraService" value-ref="jiraService"/>
+			</map>
+		</property>
+		<property name="assembler" ref="assembler"/>
+		<property name="namingStrategy" ref="namingStrategy"/>
+		<property name="autodetect" value="true"/>
+		<property name="server" ref="mbeanServer"/>
+	</bean>
+
+	<bean id="jmxAttributeSource"
+		  class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
+
+	<!-- will create management interface using annotation metadata -->
+	<bean id="assembler"
+		  class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+		<property name="attributeSource" ref="jmxAttributeSource"/>
+	</bean>
+
+	<!-- will pick up the ObjectName from the annotation -->
+	<bean id="namingStrategy"
+		  class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+		<property name="attributeSource" ref="jmxAttributeSource"/>
+	</bean>
+
+	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.JiraService"/>
+
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.test" />
@@ -100,13 +131,12 @@
 		<constructor-arg index="2" value="${zafira.jenkins.password}" />
 	</bean>
 
-	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.JiraService">
-	</bean>
-
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">
 		<constructor-arg index="0" value="${zafira.jwt.secret}" />
 		<constructor-arg index="1" value="${zafira.jwt.authTokenExp}"  />
 		<constructor-arg index="2" value="${zafira.jwt.refreshTokenExp}"  />
 	</bean>
-	
+
+
+
 </beans>
