@@ -515,8 +515,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 					LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
 							+ " for class " + testClassName);
 					throw new SkipException(SKIP_CFG_EXC_MSG);
-				}
-				if (m.isBeforeTestConfiguration() || m.isAfterTestConfiguration())
+				} else if (declaringClassName.equals(testClassName) && (m.isBeforeTestConfiguration() || m.isAfterTestConfiguration()))
 				{
 					boolean shouldSkip = true;
 					for (XmlClass cl : testResult.getTestContext().getCurrentXmlTest().getClasses())

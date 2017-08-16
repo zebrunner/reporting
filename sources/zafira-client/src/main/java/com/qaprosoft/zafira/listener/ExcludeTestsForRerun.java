@@ -5,8 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -33,11 +35,15 @@ public class ExcludeTestsForRerun
 	public static void excludeTestsForRerun(ISuite suite, List<TestType> testRunResults, IConfigurator configurator)
 	{
 		List<String> testNamesNoRerun = new ArrayList<>();
+		Set<String> classesToRerun = new HashSet<>();
 		for (TestType test : testRunResults)
 		{
 			if (!test.isNeedRerun())
 			{
 				testNamesNoRerun.add(test.getName());
+			} else
+			{
+				classesToRerun.add(test.getTestClass());
 			}
 		}
 		String[] testNamesNoRerunArr = testNamesNoRerun.toArray(new String[testNamesNoRerun.size()]);
@@ -53,8 +59,8 @@ public class ExcludeTestsForRerun
 			for (ITestNGMethod testNGMethod : suite.getAllMethods())
 			{
 				Annotation[] annotations = testNGMethod.getConstructorOrMethod().getMethod().getAnnotations();
-				boolean isDataProviderPresent = false;
 				boolean isTest = false;
+				boolean shouldUpdateDataProvider = false;
 				for (Annotation a : annotations)
 				{
 					if (a instanceof Test)
@@ -62,7 +68,19 @@ public class ExcludeTestsForRerun
 						isTest = true;
 						if (((Test) a).dataProvider() != null && !((Test) a).dataProvider().isEmpty())
 						{
-							isDataProviderPresent = true;
+							if (!classesToRerun.contains(testNGMethod.getRealClass().getName()) && ((Test) a).enabled())
+							{
+								modifyAnnotationValue(a, testNGMethod, ENABLED, false);
+								isAnythingMarked = true;
+
+								for (String m : testNGMethod.getMethodsDependedUpon())
+								{
+									allDependentMethods = ArrayUtils.removeElement(allDependentMethods, m);
+								}
+							} else
+							{
+								shouldUpdateDataProvider = true;
+							}
 						} else
 						{
 							if (!ArrayUtils.contains(allDependentMethods, testNGMethod.getRealClass().getName() + "."
@@ -73,8 +91,7 @@ public class ExcludeTestsForRerun
 										testNGMethod.getXmlTest(), false, null);
 								TestResult testResult = new TestResult(testNGMethod.getTestClass(),
 										testNGMethod.getInstance(), testNGMethod, null, 0, 0, testRunner);
-								if (testNamesNoRerun.contains(configurator.getTestName(testResult))
-										&& ((Test) a).enabled())
+								if (testNamesNoRerun.contains(configurator.getTestName(testResult)) && ((Test) a).enabled())
 								{
 									modifyAnnotationValue(a, testNGMethod, ENABLED, false);
 									isAnythingMarked = true;
@@ -89,7 +106,7 @@ public class ExcludeTestsForRerun
 						break;
 					}
 				}
-				if (isTest && isDataProviderPresent)
+				if (isTest && shouldUpdateDataProvider)
 				{
 					for (Annotation a : annotations)
 					{
