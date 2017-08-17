@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.services.services;
 
 
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import org.junit.Test;
 
 /**
@@ -11,8 +12,6 @@ public class JiraServiceTest {
     @Test
     public void testGetJiraInfo() throws Exception {
         JiraService jiraService = new JiraService();
-        jiraService.getJiraInfo();
-
     }
 
 }

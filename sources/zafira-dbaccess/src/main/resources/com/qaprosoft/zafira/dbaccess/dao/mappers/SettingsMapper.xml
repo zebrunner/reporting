@@ -50,6 +50,15 @@
 		]]>
 	</select>
 
+	<select id="getSettingsByEncrypted" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.IS_ENCRYPTED = #{isEncrypted}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
+
 	<select id="getSettingByName" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
