@@ -64,6 +64,8 @@
 				S.TOOL
 			FROM
 			zafira.SETTINGS S
+			WHERE
+				S.TOOL IS NOT NULL
 			ORDER BY
 				S.TOOL
 			ASC

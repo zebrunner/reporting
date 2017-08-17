@@ -13,6 +13,8 @@
 		<property name="beans">
 			<map>
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
+				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
+				<entry key="bean:name=slackService" value-ref="slackService"/>
 			</map>
 		</property>
 		<property name="assembler" ref="assembler"/>
@@ -36,7 +38,11 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
-	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.JiraService"/>
+	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.jmx.JiraService"/>
+
+	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.jmx.JenkinsService"/>
+
+	<bean id="slackService" class="com.qaprosoft.zafira.services.services.jmx.SlackService"/>
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
@@ -125,18 +131,10 @@
 		<constructor-arg index="1" ref="amazonConfig" />
 	</bean>
 
-	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.JenkinsService">
-		<constructor-arg index="0" value="${zafira.jenkins.url}" />
-		<constructor-arg index="1" value="${zafira.jenkins.username}" />
-		<constructor-arg index="2" value="${zafira.jenkins.password}" />
-	</bean>
-
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">
 		<constructor-arg index="0" value="${zafira.jwt.secret}" />
 		<constructor-arg index="1" value="${zafira.jwt.authTokenExp}"  />
 		<constructor-arg index="2" value="${zafira.jwt.refreshTokenExp}"  />
 	</bean>
-
-
 
 </beans>

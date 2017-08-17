@@ -47,8 +47,12 @@
                         templateUrl: 'app/_testruns/list.html'
                     })
                     .state('settings', {
-                        url: '/settings/tool/:tool',
+                        url: '/settings',
                         templateUrl: 'app/_settings/list.html'
+                    })
+                    .state('integrations', {
+                        url: '/integrations',
+                        templateUrl: 'app/_integrations/list.html'
                     })
                     .state('certifications', {
                         url: '/certification',

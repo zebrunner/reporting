@@ -3,14 +3,20 @@ package com.qaprosoft.zafira.services.services;
 import com.qaprosoft.carina.core.foundation.crypto.CryptoTool;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SettingsService
@@ -24,11 +30,20 @@ public class SettingsService
     @Autowired
     private JiraService jiraService;
 
+    @Autowired
+    private JenkinsService jenkinsService;
+
+    @Autowired
+    private SlackService slackService;
+
     private static CryptoTool cryptoTool = new CryptoTool("./src/main/resources/crypto.key", "AES/ECB/PKCS5Padding", "AES");
 
 	public enum SettingType
 	{
-		STF_NOTIFICATION_RECIPIENTS, JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE;
+		STF_NOTIFICATION_RECIPIENTS,
+		JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED,
+		JENKINS_URL, JENKINS_USER, JENKINS_PASSWORD, JENKINS_ENABLED,
+		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE
 	}
 
 	@Transactional(readOnly = true)
@@ -67,9 +82,19 @@ public class SettingsService
 	}
 
     @Transactional(readOnly = true)
-    public List<String> getTools() throws ServiceException
+    public Map<String, Boolean> getTools() throws ServiceException
     {
-        return settingsMapper.getTools();
+    	Map<String, Boolean> tools = new HashMap<>();
+    	Boolean value;
+        for(String toolStr : settingsMapper.getTools()) {
+        	value = null;
+        	if(isToolEnumValid(toolStr)) {
+        		Tool tool = Tool.valueOf(toolStr);
+        		value = getServiceByTool(tool).isConnected();
+			}
+			tools.put(toolStr, value);
+		}
+		return tools;
     }
 
 	@Transactional(readOnly = true)
@@ -87,19 +112,25 @@ public class SettingsService
 	public Setting updateSetting(Setting setting) throws ServiceException
 	{
         Setting dbSetting = getSettingByName(setting.getName());
-        if (!StringUtils.isEmpty(setting.getValue())) {
-			if (setting.isEncrypted() && !dbSetting.isEncrypted())
-			{
-				setting.setValue(cryptoService.encrypt(setting.getValue()));
-			}
-			else if (!setting.isEncrypted() && dbSetting.isEncrypted())
-			{
-				setting.setValue(cryptoService.decrypt(setting.getValue()));
-			}
-		}
+        setting = encrypt(setting, dbSetting);
 		settingsMapper.updateSetting(setting);
-		jiraService.getJiraInfo();
+		reinstantiateTool(setting.getTool());
 		return setting;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public Map<Tool, Boolean> updateToolSettings(List<Setting> settings) throws ServiceException
+	{
+		Map<Tool, Boolean> tools = new HashMap<>();
+		String tool = settings.get(0).getTool();
+		for(Setting setting : settings) {
+			Setting dbSetting = getSettingByName(setting.getName());
+			setting = encrypt(setting, dbSetting);
+			settingsMapper.updateSetting(setting);
+		}
+		reinstantiateTool(tool);
+		tools.put(Tool.valueOf(tool), getServiceByTool(Tool.valueOf(tool)).isConnected());
+		return tools;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -121,4 +152,52 @@ public class SettingsService
 
 	}
 
+	private Setting encrypt(Setting setting, Setting dbSetting) {
+		if (!StringUtils.isEmpty(setting.getValue()))
+		{
+			if (setting.isEncrypted() && !dbSetting.isEncrypted())
+			{
+				setting.setValue(cryptoService.encrypt(setting.getValue()));
+			}
+			else if (!setting.isEncrypted() && dbSetting.isEncrypted())
+			{
+				setting.setValue(cryptoService.decrypt(setting.getValue()));
+			}
+		}
+		return setting;
+	}
+
+	public void reinstantiateTool(String toolName) {
+		if(isToolEnumValid(toolName)) {
+			Tool tool = Tool.valueOf(toolName);
+			getServiceByTool(tool).init();
+		}
+	}
+
+	private boolean isToolEnumValid(String enumStr) {
+		try {
+			Tool.valueOf(enumStr);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+
+	public IJMXService getServiceByTool(Tool tool) {
+		IJMXService service = null;
+		switch (tool) {
+			case JIRA:
+				service = jiraService;
+				break;
+			case JENKINS:
+				service = jenkinsService;
+				break;
+			case SLACK:
+				service = slackService;
+				break;
+			default:
+				break;
+		}
+		return service;
+	}
 }

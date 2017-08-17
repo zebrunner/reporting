@@ -15,6 +15,7 @@
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
+        $scope.tools = {};
 
 
         $scope.isAdmin = function(){
@@ -63,15 +64,6 @@
                     }
                 });
             }
-        };
-
-        $scope.loadTools = function(){
-            SettingsService.getSettingTools().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.tools = rs.data;
-                }
-            });
         };
 
         $scope.setProject = function(project){

@@ -3,9 +3,9 @@
 
     angular
         .module('app.settings')
-        .controller('SettingsController', ['$scope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'SettingsService', SettingsController])
+        .controller('SettingsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'SettingsService', SettingsController])
 
-    function SettingsController($scope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
+    function SettingsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
 
     	$scope.settings = [];
         $scope.toolName = null;
@@ -16,7 +16,7 @@
 
                 	$scope.setting = {};
 
-                	if(setting != null)
+                	if(setting)
                 	{
                 		$scope.setting = setting;
                 	}
@@ -87,16 +87,10 @@
 
 
     	(function init(){
-
             SettingsService.getAllSettings().then(function(rs) {
                 if(rs.success)
                 {
-                    $scope.toolName = $stateParams.tool ? $stateParams.tool : rs.data[0].tool;
-                    SettingsService.getSettingByTool($scope.toolName.toUpperCase()).then(function (rs){
-                        if (rs.success) {
-                            $scope.settings = rs.data;
-                        }
-                    });
+                    $scope.settings = rs.data;
                 }
                 else
                 {

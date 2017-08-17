@@ -15,6 +15,7 @@
         service.deleteSetting = deleteSetting;
         service.createSetting = createSetting;
         service.editSetting = editSetting;
+        service.editSettings = editSettings;
         service.getSettingTools = getSettingTools;
 
 
@@ -29,7 +30,7 @@
         }
 
         function getSettingByName(name) {
-            return $http.get(API_URL + '/api/settings/name/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+            return $http.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
         }
 
         function getSetting(name) {
@@ -46,6 +47,10 @@
 
         function editSetting(setting) {
             return $http.put(API_URL + '/api/settings', setting).then(UtilService.handleSuccess, UtilService.handleError('Unable to edit setting'));
+        }
+
+        function editSettings(settings) {
+            return $http.put(API_URL + '/api/settings/tool', settings).then(UtilService.handleSuccess, UtilService.handleError('Unable to edit settings'));
         }
 
         function getSettingTools() {

@@ -1,0 +1,51 @@
+<div class="page page-dashboard" data-ng-controller="IntegrationsController">
+
+    <div>
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-header">Integration tools
+                    <small>({{settingTools.length}})</small>
+                </h2>
+            </div>
+        </div>
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+            <md-fab-trigger>
+                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                    <span class="fa fa-bars"></span>
+                </md-button>
+            </md-fab-trigger>
+            <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showSettingsDialog()">
+                    <span class="fa fa-plus"></span>
+                </md-button>
+            </md-fab-actions>
+        </md-fab-speed-dial>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6" data-ng-repeat="tool in settingTools">
+                    <div class="card bg-white">
+                        <div class="card-content">
+                            <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
+                            <span class="card-title">
+                                {{ tool.name }}
+                                <!--<i ng-class="{'jira-icon': tool.name == 'JIRA', 'slack-icon': tool.name == 'SLACK'}"></i>-->
+                            </span>
+                            <md-input-container style="float: right; margin-top: 0px">
+                                <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled" ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
+                            </md-input-container>
+                            <div class="row col-lg-12">
+                                <md-input-container class="md-block" ng-repeat="setting in tool.settings">
+                                    <label>{{ setting.name }}</label>
+                                    <input ng-model="setting.value" ng-disabled="!tool.isEnabled">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="card-action text-right">
+                            <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.JenkinsService;
-import com.qaprosoft.zafira.services.services.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.VersionService;
-import com.qaprosoft.zafira.services.services.slack.SlackService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
