@@ -142,7 +142,8 @@
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
                                          </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                             <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 200px;">
@@ -268,8 +269,8 @@
                                                                 <a href="{{separatedArtifact.link}}" target="blank" class="clearfix">{{separatedArtifact.name}}&nbsp</a>
                                                             </div>
                                                         </td>
-                                                        <td data-ng-if="test.separatedArtifacts.length == 0 && test.artifacts.length !=0"></td>
-                                                        <td data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
+                                                        <td>
+                                                            <div data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                                     <md-icon class="material-icons">expand_more</md-icon>
@@ -280,9 +281,9 @@
                                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
+                                                            </div>
                                                         </td>
-                                                        <td data-ng-if="test.artifacts.length == 0"></td>
-                                                        </tr>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </td>
