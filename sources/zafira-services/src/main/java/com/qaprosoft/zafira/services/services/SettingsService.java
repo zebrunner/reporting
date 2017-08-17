@@ -36,7 +36,6 @@ public class SettingsService
     @Autowired
     private SlackService slackService;
 
-    private static CryptoTool cryptoTool = new CryptoTool("./src/main/resources/crypto.key", "AES/ECB/PKCS5Padding", "AES");
 
 	public enum SettingType
 	{
@@ -49,7 +48,23 @@ public class SettingsService
 	@Transactional(readOnly = true)
 	public Setting getSettingByName(String name) throws ServiceException
 	{
-		return settingsMapper.getSettingByName(name);
+		Setting setting  = settingsMapper.getSettingByName(name);
+		if (setting == null)
+		{
+			throw new ServiceException("Setting not found: " + name);
+		}
+		return setting;
+	}
+
+	@Transactional(readOnly = true)
+	public List <Setting> getSettingsByEncrypted(boolean isEncrypted) throws ServiceException
+	{
+		List <Setting> settings  = settingsMapper.getSettingsByEncrypted(isEncrypted);
+		if (settings.size() == 0)
+		{
+			throw new ServiceException("Settings not found: " + isEncrypted);
+		}
+		return settings;
 	}
 	
 	@Transactional(readOnly = true)
@@ -109,7 +124,7 @@ public class SettingsService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Setting updateSetting(Setting setting) throws ServiceException
+	public Setting updateSetting(Setting setting) throws Exception
 	{
         Setting dbSetting = getSettingByName(setting.getName());
         setting = encrypt(setting, dbSetting);
@@ -118,8 +133,9 @@ public class SettingsService
 		return setting;
 	}
 
+
 	@Transactional(rollbackFor = Exception.class)
-	public Map<Tool, Boolean> updateToolSettings(List<Setting> settings) throws ServiceException
+	public Map<Tool, Boolean> updateToolSettings(List<Setting> settings) throws Exception
 	{
 		Map<Tool, Boolean> tools = new HashMap<>();
 		String tool = settings.get(0).getTool();
@@ -134,7 +150,7 @@ public class SettingsService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Setting createSetting(Setting setting) throws ServiceException
+	public Setting createSetting(Setting setting) throws Exception
 	{
 		if (setting.isEncrypted() && !StringUtils.isEmpty(setting.getValue()))
 		{
@@ -145,14 +161,13 @@ public class SettingsService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void regenerateKey() throws ServiceException
+	public void regenerateKey() throws Exception
 	{
 		cryptoService.generateKey();
-		cryptoService.initCryptoTool();
-
 	}
 
-	private Setting encrypt(Setting setting, Setting dbSetting) {
+	@Transactional(rollbackFor = Exception.class)
+	private Setting encrypt(Setting setting, Setting dbSetting) throws Exception {
 		if (!StringUtils.isEmpty(setting.getValue()))
 		{
 			if (setting.isEncrypted() && !dbSetting.isEncrypted())
@@ -165,6 +180,22 @@ public class SettingsService
 			}
 		}
 		return setting;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void reEncrypt(String newKey, Setting dbKey) throws Exception {
+		List<Setting> settings = getSettingsByEncrypted(true);
+		for(Setting setting: settings){
+			String decValue = cryptoService.decrypt(setting.getValue());
+			setting.setValue(decValue);
+		}
+        cryptoService.initZafiraEncryptor();
+		for(Setting setting: settings){
+			String encValue = cryptoService.encrypt(setting.getValue());
+			setting.setValue(encValue);
+			updateSetting(setting);
+		}
+
 	}
 
 	public void reinstantiateTool(String toolName) {

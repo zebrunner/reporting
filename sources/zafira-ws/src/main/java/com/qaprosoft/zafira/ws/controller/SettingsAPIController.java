@@ -93,7 +93,7 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting createSetting(@RequestBody Setting setting) throws ServiceException
+	public @ResponseBody Setting createSetting(@RequestBody Setting setting) throws Exception
 	{
 		return settingsService.createSetting(setting);
 	}
@@ -104,7 +104,7 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting editSetting(@RequestBody Setting setting) throws ServiceException
+	public @ResponseBody Setting editSetting(@RequestBody Setting setting) throws Exception
 	{
 		return settingsService.updateSetting(setting);
 	}
@@ -115,7 +115,7 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Tool, Boolean> editSettings(@RequestBody List<Setting> settings) throws ServiceException
+	public @ResponseBody Map<Tool, Boolean> editSettings(@RequestBody List<Setting> settings) throws Exception
 	{
 		return settingsService.updateToolSettings(settings);
 	}
@@ -126,7 +126,7 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "key", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void regenerateKey() throws ServiceException
+	public void regenerateKey() throws Exception
 	{
 		settingsService.regenerateKey();
 	}

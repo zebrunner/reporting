@@ -15,6 +15,7 @@
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
 				<entry key="bean:name=slackService" value-ref="slackService"/>
+				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
 			</map>
 		</property>
 		<property name="assembler" ref="assembler"/>
@@ -38,11 +39,17 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
+	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.CryptoService">
+		<property name="salt" value="${crypto.salt}" />
+	</bean>
+
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.jmx.JiraService"/>
 
 	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.jmx.JenkinsService"/>
 
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.jmx.SlackService"/>
+
+
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />
@@ -76,7 +83,7 @@
 		<property name="basename" value="classpath:i18n/services/messages" />
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
-	
+
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="${zafira.mail.host}" />
 		<property name="port" value="${zafira.mail.port}" />
