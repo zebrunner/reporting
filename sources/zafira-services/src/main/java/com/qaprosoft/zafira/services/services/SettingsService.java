@@ -155,11 +155,6 @@ public class SettingsService
 		return setting;
 	}
 
-	@Transactional(rollbackFor = Exception.class)
-	public void regenerateKey() throws Exception
-	{
-		cryptoService.generateKey();
-	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Setting encrypt(Setting setting, Setting dbSetting) throws Exception {
@@ -178,12 +173,13 @@ public class SettingsService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void reEncrypt(String newKey, Setting dbKey) throws Exception {
+	public void reEncrypt() throws Exception {
 		List<Setting> settings = getSettingsByEncrypted(true);
 		for(Setting setting: settings){
 			String decValue = cryptoService.decrypt(setting.getValue());
 			setting.setValue(decValue);
 		}
+		cryptoService.generateKey();
         reinstantiateTool(Tool.CRYPTO.name());
 		for(Setting setting: settings){
 			String encValue = cryptoService.encrypt(setting.getValue());
