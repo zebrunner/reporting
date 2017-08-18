@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,8 @@ import java.util.Map;
 @RequestMapping("api/settings")
 public class SettingsAPIController extends AbstractController
 {
+
+	private static final String ENCRYPTED_STRING = "******";
 
 	@Autowired
 	private SettingsService settingsService;
@@ -51,7 +54,15 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
 	{
-		return settingsService.getSettingsByTool(tool);
+		List<Setting> settings = settingsService.getSettingsByTool(tool);
+		for(Setting setting : settings)
+		{
+			if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
+			{
+				setting.setValue(ENCRYPTED_STRING);
+			}
+		}
+		return settings;
 	}
 
     @ResponseStatusDetails
@@ -121,22 +132,11 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 200, httpMethod = "GET")
-	@ResponseStatus(HttpStatus.OK)
+	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 201, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.CREATED)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "reencryption", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void regenerateKey() throws Exception
-	{
-		settingsService.regenerateKey();
-	}
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Reencrypt data", nickname = "reencrypt data", code = 200, httpMethod = "GET")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "key", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "key/regenerate", method = RequestMethod.POST)
 	public void reEncrypt() throws Exception
 	{
 		settingsService.reEncrypt();

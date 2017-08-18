@@ -10,6 +10,19 @@
     	$scope.settings = [];
         $scope.toolName = null;
 
+        $scope.regenerateKey = function () {
+            SettingsService.regenerateKey().then(function(rs) {
+                if(rs.success)
+                {
+                    alertify.success('Encrypt key was regenerated');
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
     	$scope.showSettingsDialog = function(event, setting) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {

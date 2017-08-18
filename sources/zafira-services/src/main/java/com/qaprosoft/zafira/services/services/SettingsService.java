@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.jmx.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class SettingsService
 	public List<Setting> getSettingsByTool(String tool) throws ServiceException
 	{
 	    List<Setting> settings = settingsMapper.getSettingsByTool(tool);
-        if (settings.size() == 0)
+        if (CollectionUtils.isEmpty(settings))
         {
             throw new ServiceException("Settings not found for tool: " + tool);
         }
@@ -97,12 +98,11 @@ public class SettingsService
     	Map<String, Boolean> tools = new HashMap<>();
     	Boolean value;
         for(String toolStr : settingsMapper.getTools()) {
-        	value = null;
-        	if(isToolEnumValid(toolStr)) {
+        	if(isToolEnumValid(toolStr) && ! Tool.valueOf(toolStr).equals(Tool.CRYPTO)) {
         		Tool tool = Tool.valueOf(toolStr);
         		value = getServiceByTool(tool).isConnected();
+				tools.put(toolStr, value);
 			}
-			tools.put(toolStr, value);
 		}
 		return tools;
     }
@@ -194,7 +194,6 @@ public class SettingsService
 			setting.setValue(encValue);
 			updateSetting(setting);
 		}
-
 	}
 
 	public void reinstantiateTool(String toolName) {

@@ -17,6 +17,7 @@
         service.editSetting = editSetting;
         service.editSettings = editSettings;
         service.getSettingTools = getSettingTools;
+        service.regenerateKey = regenerateKey;
 
 
         return service;
@@ -57,5 +58,8 @@
             return $http.get(API_URL + '/api/settings/tools').then(UtilService.handleSuccess, UtilService.handleError('Unable to get tools'));
         }
 
+        function regenerateKey() {
+            return $http.post(API_URL + '/api/settings/key/regenerate').then(UtilService.handleSuccess, UtilService.handleError('Unable to get tools'));
+        }
     }
 })();
