@@ -10,61 +10,66 @@ import org.apache.log4j.Logger;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.crypto.SecretKey;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.tools.Tool.CRYPTO;
-import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.*;
 
 /**
  * Created by irina on 21.7.17.
  */
 
 @ManagedResource(objectName="bean:name=cryptoService", description="Crypto init Managed Bean",
-        currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
+        currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
+        persistLocation="foo", persistName="bar")
 public class CryptoService implements IJMXService {
 
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
-    private String type = null;
+    private String type;
     private int size = 0;
-    private String key = null;
+    private String key;
     private String salt;
-    private BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
+    private BasicTextEncryptor basicTextEncryptor;
 
 
     @Autowired
     private SettingsService settingsService;
 
+    @Override
     @PostConstruct
-    public void initZafiraEncryptor() throws Exception {
+    public void init() {
 
-        List<Setting> cryptoSettings = settingsService.getSettingsByTool(CRYPTO.name());
+        List<Setting> cryptoSettings = null;
+        this.basicTextEncryptor = new BasicTextEncryptor();
+        try {
+            cryptoSettings = settingsService.getSettingsByTool(CRYPTO.name());
 
-        for (Setting setting : cryptoSettings){
+            for (Setting setting : cryptoSettings){
 
-            switch(SettingsService.SettingType.valueOf(setting.getName())){
+                switch(SettingsService.SettingType.valueOf(setting.getName())){
 
-                case CRYPTO_KEY_TYPE:
-                    type = setting.getValue();
-                    break;
-                case CRYPTO_KEY_SIZE:
-                    size = Integer.valueOf(setting.getValue());
-                    break;
-                case KEY:
-                    String dbKey = setting.getValue();
-                    if (dbKey == null){
-                        generateKey();
-                        key = settingsService.getSettingByName("KEY").getValue();
-                    }
-                    else {
-                        key = dbKey;
-                    }
-                    init();
+                    case CRYPTO_KEY_TYPE:
+                        type = setting.getValue();
+                        break;
+                    case CRYPTO_KEY_SIZE:
+                        size = Integer.valueOf(setting.getValue());
+                        break;
+                    case KEY:
+                        String dbKey = setting.getValue();
+                        if (dbKey == null){
+                            generateKey();
+                            key = settingsService.getSettingByName("KEY").getValue();
+                        }
+                        else {
+                            key = dbKey;
+                        }
+                        init(key);
+                }
             }
+        } catch (Exception e) {
+            LOGGER.error(e);
         }
     }
 
@@ -72,7 +77,7 @@ public class CryptoService implements IJMXService {
     @ManagedOperation(description="Change Crypto initialization")
     @ManagedOperationParameters({
             @ManagedOperationParameter(name = "key", description = "Crypto key")})
-    public void init(){
+    public void init(String key){
         try
         {
             if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt) )
@@ -96,7 +101,6 @@ public class CryptoService implements IJMXService {
         return basicTextEncryptor.decrypt(strToDecrypt);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void generateKey() throws Exception {
         Setting dbKey = settingsService.getSettingByName("KEY");
         String key = null;

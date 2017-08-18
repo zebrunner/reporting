@@ -39,17 +39,15 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
-	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
-		<property name="salt" value="${crypto.salt}" />
-	</bean>
-
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.jmx.JiraService"/>
 
 	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.jmx.JenkinsService"/>
 
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.jmx.SlackService"/>
 
-
+	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
+		<property name="salt" value="${crypto.salt}" />
+	</bean>
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 	<context:component-scan base-package="com.qaprosoft.zafira.services.util.switches" />

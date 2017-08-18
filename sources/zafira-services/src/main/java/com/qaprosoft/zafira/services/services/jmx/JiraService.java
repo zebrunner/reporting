@@ -30,9 +30,6 @@ public class JiraService implements IJMXService
 	private JiraClient jiraClient;
 
     @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
     private SettingsService settingsService;
 
     @Override

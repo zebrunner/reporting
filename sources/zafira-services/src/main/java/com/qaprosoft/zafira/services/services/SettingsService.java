@@ -21,9 +21,6 @@ public class SettingsService
 	private SettingsMapper settingsMapper;
 
     @Autowired
-    private CryptoService cryptoService;
-
-    @Autowired
     private JiraService jiraService;
 
     @Autowired
@@ -32,6 +29,8 @@ public class SettingsService
     @Autowired
     private SlackService slackService;
 
+	@Autowired
+	private CryptoService cryptoService;
 
 	public enum SettingType
 	{
@@ -163,7 +162,7 @@ public class SettingsService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	private Setting encrypt(Setting setting, Setting dbSetting) throws Exception {
+	public Setting encrypt(Setting setting, Setting dbSetting) throws Exception {
 		if (!StringUtils.isEmpty(setting.getValue()))
 		{
 			if (setting.isEncrypted() && !dbSetting.isEncrypted())
@@ -185,7 +184,7 @@ public class SettingsService
 			String decValue = cryptoService.decrypt(setting.getValue());
 			setting.setValue(decValue);
 		}
-        cryptoService.initZafiraEncryptor();
+        reinstantiateTool(Tool.CRYPTO.name());
 		for(Setting setting: settings){
 			String encValue = cryptoService.encrypt(setting.getValue());
 			setting.setValue(encValue);
