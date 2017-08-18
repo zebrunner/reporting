@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,6 +28,10 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
@@ -117,6 +122,17 @@ public class SettingsAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generate key", nickname = "generateKey", code = 200, httpMethod = "GET")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "reencryption", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void regenerateKey() throws Exception
+	{
+		settingsService.regenerateKey();
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Reencrypt data", nickname = "reencrypt data", code = 200, httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

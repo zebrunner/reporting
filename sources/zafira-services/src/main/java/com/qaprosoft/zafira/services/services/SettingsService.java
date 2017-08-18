@@ -155,10 +155,16 @@ public class SettingsService
 		return setting;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	public void regenerateKey() throws Exception
+	{
+		cryptoService.generateKey();
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Setting encrypt(Setting setting, Setting dbSetting) throws Exception {
-		if (!StringUtils.isEmpty(setting.getValue()))
+
+	    if (!StringUtils.isEmpty(setting.getValue()))
 		{
 			if (setting.isEncrypted() && !dbSetting.isEncrypted())
 			{
@@ -169,6 +175,9 @@ public class SettingsService
 				setting.setValue(cryptoService.decrypt(setting.getValue()));
 			}
 		}
+		else {
+            setting.setEncrypted(false);
+        }
 		return setting;
 	}
 
@@ -179,7 +188,6 @@ public class SettingsService
 			String decValue = cryptoService.decrypt(setting.getValue());
 			setting.setValue(decValue);
 		}
-		cryptoService.generateKey();
         reinstantiateTool(Tool.CRYPTO.name());
 		for(Setting setting: settings){
 			String encValue = cryptoService.encrypt(setting.getValue());
@@ -192,7 +200,10 @@ public class SettingsService
 	public void reinstantiateTool(String toolName) {
 		if(isToolEnumValid(toolName)) {
 			Tool tool = Tool.valueOf(toolName);
-			getServiceByTool(tool).init();
+			if (getServiceByTool(tool) != null)
+			{
+                getServiceByTool(tool).init();
+            }
 		}
 	}
 
