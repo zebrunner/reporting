@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -29,12 +30,18 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.IHookCallBack;
+import org.testng.IHookable;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
+import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.SkipException;
+import org.testng.xml.XmlClass;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
@@ -59,7 +66,7 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
  * 
  * @author akhursevich
  */
-public class ZafiraListener implements ISuiteListener, ITestListener
+public class ZafiraListener implements ISuiteListener, ITestListener, IHookable, IInvokedMethodListener
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
 	
@@ -146,19 +153,25 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 				if (this.run != null) 
 				{
 					// Already discovered run with the same CI_RUN_ID, it is re-run functionality!
-					// Reset build number for re-run to map to the latest rerun build 
+					// Reset build number for re-run to map to the latest rerun build
 					this.run.setBuildNumber(ci.getCiBuild());
 					// Re-register test run to reset status onto in progress
 					Response<TestRunType> response = zc.startTestRun(this.run);
 					this.run = response.getObject();
 					
-					for(TestType test : Arrays.asList(zc.getTestRunResults(run.getId()).getObject()))
+					List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
+					for (TestType test : testRunResults)
 					{
 						registeredTests.put(test.getName(), test);
-						if(test.isNeedRerun())
+						if (test.isNeedRerun())
 						{
 							classesToRerun.add(test.getTestClass());
 						}
+					}
+
+					if (ZAFIRA_RERUN_FAILURES)
+					{
+						ExcludeTestsForRerun.excludeTestsForRerun(suiteContext, testRunResults, configurator);
 					}
 				} 
 				else 
@@ -240,13 +253,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			if(registeredTests.containsKey(testName))
 			{
 				startedTest = registeredTests.get(testName);
-				
-				// Skip already passed tests if rerun failures enabled
-				if(ZAFIRA_RERUN_FAILURES && !startedTest.isNeedRerun())
-				{
-					throw new SkipException("ALREADY_PASSED: " + testName);
-				}
-				
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest = zc.registerTestRestart(startedTest);
@@ -271,10 +277,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			
 			registeredTests.put(testName, startedTest);
 		} 
-		catch(SkipException e)
-		{
-			throw e;
-		}
 		catch (Exception e) 
 		{
 			LOGGER.error("Undefined error during test case/method start!", e);
@@ -473,7 +475,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 	
 	@Override
 	public void onStart(ITestContext context) {
-		// Do nothing
 	}
 	
 	@Override
@@ -482,6 +483,66 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 		// Do nothing
 	}
 	
+	@Override
+	public void run(IHookCallBack hookCallBack, ITestResult testResult)
+	{
+		String testName = configurator.getTestName(testResult);
+		TestType startedTest = registeredTests.get(testName);
+
+		if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
+		{
+			// do nothing
+		} else
+		{
+			hookCallBack.runTestMethod(testResult);
+		}
+	}
+
+	private final static String SKIP_CFG_EXC_MSG = "Skipping configuration method since test class doesn't contain test methods to rerun";
+
+	@Override
+	public void beforeInvocation(IInvokedMethod invokedMethod, ITestResult testResult)
+	{
+		if (ZAFIRA_RERUN_FAILURES)
+		{
+			ITestNGMethod m = invokedMethod.getTestMethod();
+			String declaringClassName = m.getConstructorOrMethod().getMethod().getDeclaringClass().getName();
+			String testClassName = m.getTestClass().getName();
+			if (!classesToRerun.contains(testClassName) && declaringClassName.equals(testClassName))
+			{
+				if (m.isBeforeClassConfiguration() || m.isAfterClassConfiguration())
+				{
+					LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
+							+ " for class " + testClassName);
+					throw new SkipException(SKIP_CFG_EXC_MSG);
+				} else if (m.isBeforeTestConfiguration() || m.isAfterTestConfiguration())
+				{
+					boolean shouldSkip = true;
+					for (XmlClass cl : testResult.getTestContext().getCurrentXmlTest().getClasses())
+					{
+						if (classesToRerun.contains(cl.getName()))
+						{
+							shouldSkip = false;
+							break;
+						}
+					}
+					if (shouldSkip)
+					{
+						LOGGER.info("SKIPPING CONFIGURATION METHOD: " + declaringClassName + " : " + m.getMethodName()
+								+ " for class " + testClassName);
+						throw new SkipException(SKIP_CFG_EXC_MSG);
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void afterInvocation(IInvokedMethod invokedMethod, ITestResult testResult)
+	{
+		// do nothing
+	}
+
 	//==========================
 	
 	/**
@@ -681,4 +742,5 @@ public class ZafiraListener implements ISuiteListener, ITestListener
 			}
 		}
 	}
+
 }
