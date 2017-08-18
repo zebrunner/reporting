@@ -59,7 +59,7 @@ public class CryptoService implements IJMXService {
                     case KEY:
                         String dbKey = setting.getValue();
                         if (dbKey == null){
-                            generateKey();
+                            settingsService.regenerateKey();
                             key = settingsService.getSettingByName("KEY").getValue();
                         }
                         else {
