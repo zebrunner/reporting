@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.tools.Tool.CRYPTO;
+import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.*;
 
 /**
  * Created by irina on 21.7.17.
@@ -56,18 +57,13 @@ public class CryptoService implements IJMXService {
                     case CRYPTO_KEY_SIZE:
                         size = Integer.valueOf(setting.getValue());
                         break;
-                    case KEY:
-                        String dbKey = setting.getValue();
-                        if (dbKey == null){
-                            settingsService.regenerateKey();
-                            key = settingsService.getSettingByName("KEY").getValue();
-                        }
-                        else {
-                            key = dbKey;
-                        }
-                        init(key);
+                    default:
+                        break;
                 }
             }
+
+            initCryptoTool();
+
         } catch (Exception e) {
             LOGGER.error(e);
         }
@@ -75,11 +71,17 @@ public class CryptoService implements IJMXService {
 
 
     @ManagedOperation(description="Change Crypto initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "key", description = "Crypto key")})
-    public void init(String key){
+    public void initCryptoTool(){
         try
         {
+            String dbKey = settingsService.getSettingByName(KEY).getValue();
+            if (dbKey == null){
+                generateKey();
+                key = settingsService.getSettingByName(KEY).getValue();
+            }
+            else {
+                key = dbKey;
+            }
             if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt) )
             {
                 basicTextEncryptor.setPassword(key + salt);
@@ -102,17 +104,15 @@ public class CryptoService implements IJMXService {
     }
 
     public void generateKey() throws Exception {
-        Setting dbKey = settingsService.getSettingByName("KEY");
         String key = null;
         try {
             key = new String(Base64.encodeBase64(SecretKeyManager.generateKey(type, size).getEncoded()));
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }
-        Setting keySetting = settingsService.getSettingByName("KEY");
+        Setting keySetting = settingsService.getSettingByName(KEY);
         keySetting.setValue(key);
         settingsService.updateSetting(keySetting);
-        settingsService.reEncrypt(key, dbKey);
     }
 
     public String getSalt() {
