@@ -107,6 +107,7 @@
 		<jenkins-client.version>0.3.7</jenkins-client.version>
 
 		<jira-client.version>0.5</jira-client.version>
+		<jasypt>1.9.2</jasypt>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 
 		<jjwt.version>0.7.0</jjwt.version>
@@ -328,6 +329,7 @@
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>${springfox.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt-springsecurity3</artifactId>
@@ -605,6 +607,12 @@
 				<groupId>net.rcarz</groupId>
 				<artifactId>jira-client</artifactId>
 				<version>${jira-client.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>${jasypt}</version>
 			</dependency>
 
 			<dependency>

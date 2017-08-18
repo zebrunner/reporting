@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.CryptoService;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
