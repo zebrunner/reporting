@@ -1,25 +1,23 @@
-package com.qaprosoft.zafira.services.services;
+package com.qaprosoft.zafira.services.services.jmx;
 
-import com.qaprosoft.carina.core.foundation.crypto.CryptoTool;
 import com.qaprosoft.carina.core.foundation.crypto.SecretKeyManager;
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.util.SaltManager;
-import com.qaprosoft.zafira.services.util.ZafiraEncryptor;
-import net.rcarz.jiraclient.JiraClient;
+import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
+
+import static com.qaprosoft.zafira.models.db.tools.Tool.CRYPTO;
+import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.*;
 
 /**
  * Created by irina on 21.7.17.
@@ -27,16 +25,16 @@ import java.util.List;
 
 @ManagedResource(objectName="bean:name=cryptoService", description="Crypto init Managed Bean",
         currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
-public class CryptoService {
+public class CryptoService implements IJMXService {
 
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
-    private ZafiraEncryptor zafiraEncryptor;
     private String type = null;
-    private String algorithm = null;
     private int size = 0;
     private String key = null;
     private String salt;
+    private BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
+
 
     @Autowired
     private SettingsService settingsService;
@@ -44,22 +42,19 @@ public class CryptoService {
     @PostConstruct
     public void initZafiraEncryptor() throws Exception {
 
-        List<Setting> cryptoSettings = settingsService.getSettingsByTool("CRYPTO");
+        List<Setting> cryptoSettings = settingsService.getSettingsByTool(CRYPTO.name());
 
         for (Setting setting : cryptoSettings){
 
-            switch(setting.getName()){
+            switch(SettingsService.SettingType.valueOf(setting.getName())){
 
-                case "CRYPTO_KEY_TYPE":
+                case CRYPTO_KEY_TYPE:
                     type = setting.getValue();
                     break;
-                case "CRYPTO_ALGORITHM":
-                    algorithm = setting.getValue();
-                    break;
-                case "CRYPTO_KEY_SIZE":
+                case CRYPTO_KEY_SIZE:
                     size = Integer.valueOf(setting.getValue());
                     break;
-                case "KEY":
+                case KEY:
                     String dbKey = setting.getValue();
                     if (dbKey == null){
                         generateKey();
@@ -68,37 +63,37 @@ public class CryptoService {
                     else {
                         key = dbKey;
                     }
-                    break;
+                    init();
             }
         }
-         init(algorithm, type);
     }
 
 
     @ManagedOperation(description="Change Crypto initialization")
     @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "algorithm", description = "Crypto algorithm"),
-            @ManagedOperationParameter(name = "type", description = "Crypto type")})
-    private void init(String algorithm, String type){
+            @ManagedOperationParameter(name = "key", description = "Crypto key")})
+    public void init(){
         try
         {
-            if (!StringUtils.isEmpty(algorithm) && !StringUtils.isEmpty(type))
+            if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt) )
             {
-                SecretKey secretKey = SecretKeyManager.getKey(key,type);
-                zafiraEncryptor = new ZafiraEncryptor(algorithm, secretKey, salt);
+                basicTextEncryptor.setPassword(key + salt);
+            }
+            else {
+                throw new EncryptorInitializationException();
             }
         } catch (Exception e)
         {
-            LOGGER.error("Unable to initialize Crypto Tool: " + e.getMessage(), e);
+            LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
         }
     }
 
     public String encrypt(String strToEncrypt) throws Exception {
-        return zafiraEncryptor.encrypt(strToEncrypt);
+        return basicTextEncryptor.encrypt(strToEncrypt);
     }
 
     public String decrypt (String strToDecrypt) throws Exception {
-        return zafiraEncryptor.decrypt(strToDecrypt);
+        return basicTextEncryptor.decrypt(strToDecrypt);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -133,4 +128,17 @@ public class CryptoService {
         this.key = key;
     }
 
+    @Override
+    public boolean isConnected() {
+        boolean connected = false;
+        try
+        {
+            connected = getKey() != null && salt != null;
+        }
+        catch(Exception e)
+        {
+            LOGGER.error("Unable to connect to JIRA", e);
+        }
+        return connected;
+    }
 }

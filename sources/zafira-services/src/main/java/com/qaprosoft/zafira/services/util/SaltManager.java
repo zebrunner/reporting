@@ -1,10 +1,8 @@
 package com.qaprosoft.zafira.services.util;
 
-import com.qaprosoft.zafira.services.services.CryptoService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;

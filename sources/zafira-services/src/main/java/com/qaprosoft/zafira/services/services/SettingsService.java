@@ -1,14 +1,10 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.carina.core.foundation.crypto.CryptoTool;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.jmx.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +38,7 @@ public class SettingsService
 		STF_NOTIFICATION_RECIPIENTS,
 		JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED,
 		JENKINS_URL, JENKINS_USER, JENKINS_PASSWORD, JENKINS_ENABLED,
-		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE
+		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE, CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE,KEY
 	}
 
 	@Transactional(readOnly = true)
@@ -225,6 +221,9 @@ public class SettingsService
 				break;
 			case SLACK:
 				service = slackService;
+				break;
+			case CRYPTO:
+				service = cryptoService;
 				break;
 			default:
 				break;

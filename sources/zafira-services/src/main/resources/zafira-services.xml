@@ -39,7 +39,7 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
-	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.CryptoService">
+	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
 		<property name="salt" value="${crypto.salt}" />
 	</bean>
 
