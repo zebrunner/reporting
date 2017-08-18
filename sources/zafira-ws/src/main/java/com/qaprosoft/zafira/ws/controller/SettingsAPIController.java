@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -30,6 +31,10 @@ public class SettingsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)

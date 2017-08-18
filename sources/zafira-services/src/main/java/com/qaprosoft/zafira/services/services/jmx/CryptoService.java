@@ -75,7 +75,7 @@ public class CryptoService implements IJMXService {
         try
         {
             String dbKey = settingsService.getSettingByName(KEY).getValue();
-            if (dbKey == null){
+            if (StringUtils.isEmpty(dbKey)){
                 generateKey();
                 key = settingsService.getSettingByName(KEY).getValue();
             }
