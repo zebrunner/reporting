@@ -1,36 +1,29 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.VersionService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @Api(value = "Configuration API")
@@ -115,7 +108,7 @@ public class ConfigurationAPIController extends AbstractController {
     {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
-        if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null)
+        if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null && slackService.isConnected())
         {
             config.put("available", true);
         }else{

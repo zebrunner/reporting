@@ -32,6 +32,9 @@ public class JiraService implements IJMXService
     @Autowired
     private SettingsService settingsService;
 
+    @Autowired
+    private CryptoService cryptoService;
+
     @Override
 	@PostConstruct
 	public void init() {
@@ -42,21 +45,30 @@ public class JiraService implements IJMXService
 
         try {
 			List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA.name());
-			for (Setting setting : jiraSettings) {
-				switch (SettingsService.SettingType.valueOf(setting.getName())) {
-					case JIRA_URL:
-						url = setting.getValue();
-						break;
-					case JIRA_USER:
-						username = setting.getValue();
-						break;
-					case JIRA_PASSWORD:
-						password = setting.getValue();
-						break;
+			for (Setting setting : jiraSettings)
+			{
+				if(settingsService.isSettingTypeEnumValid(setting.getName()))
+				{
+					if(setting.isEncrypted())
+					{
+						setting.setValue(cryptoService.decrypt(setting.getValue()));
+					}
+					switch (SettingsService.SettingType.valueOf(setting.getName()))
+					{
+						case JIRA_URL:
+							url = setting.getValue();
+							break;
+						case JIRA_USER:
+							username = setting.getValue();
+							break;
+						case JIRA_PASSWORD:
+							password = setting.getValue();
+							break;
+					}
 				}
 			}
 			init(url, username, password);
-		} catch(ServiceException e) {
+		} catch(Exception e) {
         	LOGGER.error("Setting does not exist", e);
 		}
 	}

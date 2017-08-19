@@ -382,7 +382,7 @@ public class TestRunService
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL, true));
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
@@ -403,7 +403,7 @@ public class TestRunService
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL));
+		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL, true));
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		return emailService.getFreeMarkerTemplateContent(email);
 	}

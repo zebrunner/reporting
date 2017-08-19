@@ -24,11 +24,18 @@
                         <input type="text" ng-model="setting.value" name="value"/>
                     </md-input-container>
                 </div>
+                <md-input-container class="md-block" flex>
+                    <label>Integration tool</label>
+                    <md-select name="tool" ng-model="setting.tool" required>
+                        <md-option ng-repeat="(tool, isConnected) in $root.tools" value="{{tool}}">
+                            {{tool}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <span>Encrypt&nbsp&nbsp&nbsp</span>
+                        <span>Encrypt</span>
                         <md-checkbox ng-model="setting.encrypted" ng-change="!setting.encrypted">
-                            <span ng-if="setting.encrypted == true">This setting is encrypted</span>
                         </md-checkbox>
                     </md-input-container>
                 </div>

@@ -27,8 +27,6 @@ import java.util.Map;
 public class SettingsAPIController extends AbstractController
 {
 
-	private static final String ENCRYPTED_STRING = "******";
-
 	@Autowired
 	private SettingsService settingsService;
 
@@ -44,7 +42,15 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
 	{
-		return settingsService.getAllSettings();
+		List<Setting> settings = settingsService.getAllSettings();
+		for(Setting setting : settings)
+		{
+			if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
+			{
+				setting.setValue(settingsService.getEncryptedString());
+			}
+		}
+		return settings;
 	}
 
 
@@ -59,7 +65,7 @@ public class SettingsAPIController extends AbstractController
 		{
 			if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
 			{
-				setting.setValue(ENCRYPTED_STRING);
+				setting.setValue(settingsService.getEncryptedString());
 			}
 		}
 		return settings;

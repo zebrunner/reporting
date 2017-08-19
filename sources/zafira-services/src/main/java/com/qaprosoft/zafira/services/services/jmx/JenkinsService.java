@@ -7,7 +7,6 @@ import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -38,6 +37,9 @@ public class JenkinsService implements IJMXService
 	@Autowired
 	private SettingsService settingsService;
 
+	@Autowired
+	private CryptoService cryptoService;
+
 	@Override
 	@PostConstruct
 	public void init()  {
@@ -48,20 +50,25 @@ public class JenkinsService implements IJMXService
 		try {
 			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS.name());
 			for (Setting setting : jenkinsSettings) {
-				switch (SettingsService.SettingType.valueOf(setting.getName())) {
-					case JENKINS_URL:
-						url = setting.getValue();
-						break;
-					case JENKINS_USER:
-						username = setting.getValue();
-						break;
-					case JENKINS_PASSWORD:
-						password = setting.getValue();
-						break;
+				if(settingsService.isSettingTypeEnumValid(setting.getName())) {
+					if (setting.isEncrypted()) {
+						setting.setValue(cryptoService.decrypt(setting.getValue()));
+					}
+					switch (SettingsService.SettingType.valueOf(setting.getName())) {
+						case JENKINS_URL:
+							url = setting.getValue();
+							break;
+						case JENKINS_USER:
+							username = setting.getValue();
+							break;
+						case JENKINS_PASSWORD:
+							password = setting.getValue();
+							break;
+					}
 				}
 			}
 			init(url, username, password);
-		} catch(ServiceException e) {
+		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
 	}

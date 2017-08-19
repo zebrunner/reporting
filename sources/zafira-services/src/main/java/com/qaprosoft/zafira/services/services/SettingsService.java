@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.services.services;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.tools.Tool;
@@ -7,6 +8,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.jmx.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,10 @@ import java.util.Map;
 @Service
 public class SettingsService
 {
+
+	private static final String ENCRYPTED_STRING = "••••••";
+	private static final Logger LOGGER = Logger.getLogger(SettingsService.class);
+
 	@Autowired
 	private SettingsMapper settingsMapper;
 
@@ -38,46 +44,47 @@ public class SettingsService
 		STF_NOTIFICATION_RECIPIENTS,
 		JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED,
 		JENKINS_URL, JENKINS_USER, JENKINS_PASSWORD, JENKINS_ENABLED,
-		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE, CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE,KEY
+		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE,
+		CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY
 	}
 
 	@Transactional(readOnly = true)
 	public Setting getSettingByName(String name) throws ServiceException
 	{
-		Setting setting  = settingsMapper.getSettingByName(name);
-		if (setting == null)
+		return settingsMapper.getSettingByName(name);
+	}
+
+	@Transactional(readOnly = true)
+	public Setting getSettingByName(SettingType type, boolean needDecrypt)
+	{
+		Setting setting = settingsMapper.getSettingByName(type.name());
+		if(setting.isEncrypted() && needDecrypt)
 		{
-			throw new ServiceException("Setting not found: " + name);
+			try {
+				setting.setValue(cryptoService.decrypt(setting.getValue()));
+			} catch (Exception e) {
+				LOGGER.error(e);
+			}
 		}
 		return setting;
 	}
 
 	@Transactional(readOnly = true)
+	public Setting getSettingByName(SettingType type)
+	{
+		return getSettingByName(type, false);
+	}
+
+	@Transactional(readOnly = true)
 	public List <Setting> getSettingsByEncrypted(boolean isEncrypted) throws ServiceException
 	{
-		List <Setting> settings  = settingsMapper.getSettingsByEncrypted(isEncrypted);
-		if (settings.size() == 0)
-		{
-			throw new ServiceException("Settings not found: " + isEncrypted);
-		}
-		return settings;
-	}
-	
-	@Transactional(readOnly = true)
-	public Setting getSettingByName(SettingType type) throws ServiceException
-	{
-		return settingsMapper.getSettingByName(type.name());
+		return settingsMapper.getSettingsByEncrypted(isEncrypted);
 	}
 
 	@Transactional(readOnly = true)
 	public List<Setting> getSettingsByTool(String tool) throws ServiceException
 	{
-	    List<Setting> settings = settingsMapper.getSettingsByTool(tool);
-        if (CollectionUtils.isEmpty(settings))
-        {
-            throw new ServiceException("Settings not found for tool: " + tool);
-        }
-        return settings;
+        return settingsMapper.getSettingsByTool(tool);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -110,18 +117,14 @@ public class SettingsService
 	@Transactional(readOnly = true)
 	public String getSettingValue(SettingType type) throws ServiceException
 	{
-		Setting setting = getSettingByName(type.name());
-		if (setting == null)
-		{
-			throw new ServiceException("Setting not found: " + type.name());
-		}
-		return setting.getValue();
+		return getSettingByName(type.name()).getValue();
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Setting updateSetting(Setting setting) throws Exception
 	{
-        Setting dbSetting = getSettingByName(setting.getName());
+		Setting dbSetting = getSettingByName(setting.getName());
+		setting.setValue(getSettingSafely(setting).getValue());
         setting = encrypt(setting, dbSetting);
 		settingsMapper.updateSetting(setting);
 		reinstantiateTool(setting.getTool());
@@ -136,6 +139,7 @@ public class SettingsService
 		String tool = settings.get(0).getTool();
 		for(Setting setting : settings) {
 			Setting dbSetting = getSettingByName(setting.getName());
+			setting.setValue(getSettingSafely(setting).getValue());
 			setting = encrypt(setting, dbSetting);
 			settingsMapper.updateSetting(setting);
 		}
@@ -188,6 +192,7 @@ public class SettingsService
 			String decValue = cryptoService.decrypt(setting.getValue());
 			setting.setValue(decValue);
 		}
+		cryptoService.generateKey();
         reinstantiateTool(Tool.CRYPTO.name());
 		for(Setting setting: settings){
 			String encValue = cryptoService.encrypt(setting.getValue());
@@ -206,9 +211,30 @@ public class SettingsService
 		}
 	}
 
-	private boolean isToolEnumValid(String enumStr) {
+	public Setting getSettingSafely(Setting setting) throws ServiceException {
+		Setting dbSetting = getSettingByName(setting.getName());
+		if(setting != null && dbSetting.isEncrypted())
+		{
+			if(StringUtils.isBlank(setting.getValue()) || setting.getValue().contains("•"))
+			{
+				setting.setValue(dbSetting.getValue());
+			}
+		}
+		return setting;
+	}
+
+	public boolean isToolEnumValid(String enumStr) {
 		try {
 			Tool.valueOf(enumStr);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isSettingTypeEnumValid(String enumStr) {
+		try {
+			SettingType.valueOf(enumStr);
 			return true;
 		} catch(Exception e) {
 			return false;
@@ -234,5 +260,9 @@ public class SettingsService
 				break;
 		}
 		return service;
+	}
+
+	public String getEncryptedString() {
+		return ENCRYPTED_STRING;
 	}
 }

@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpStatusCodes;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -9,6 +11,7 @@ import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
+import in.ashwanthkumar.slack.webhook.SlackMessage;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,6 +54,9 @@ public class SlackService implements IJMXService
 	@Autowired
 	private SettingsService settingsService;
 
+	@Autowired
+	private CryptoService cryptoService;
+
 	@Override
 	@PostConstruct
 	public void init() {
@@ -60,6 +66,10 @@ public class SlackService implements IJMXService
 		try {
 			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(SLACK.name());
 			for (Setting setting : jenkinsSettings) {
+				if(setting.isEncrypted())
+				{
+					setting.setValue(cryptoService.decrypt(setting.getValue()));
+				}
 				switch (setting.getName()) {
 					case "SLACK_AUTHOR":
 						author = setting.getValue();
@@ -72,14 +82,25 @@ public class SlackService implements IJMXService
 				}
 			}
 			init(author, picPath);
-		} catch(ServiceException e) {
+		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
 	}
 
 	@Override
 	public boolean isConnected() {
-		return slack != null;
+		try {
+			if(slack != null) {
+				slack.push(new SlackMessage(StringUtils.EMPTY));
+			} else {
+				return false;
+			}
+		} catch (IOException e) {
+			if(((HttpResponseException) e).getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@ManagedOperation(description="Change Slack initialization")
@@ -90,9 +111,14 @@ public class SlackService implements IJMXService
 		String wH = getWebhook();
 		if (wH != null)
 		{
-			slack = new Slack(wH);
-			slack = slack.displayName(author);
-			slack = slack.icon(picPath);
+			slack = null;
+			try {
+				slack = new Slack(wH);
+				slack = slack.displayName(author);
+				slack = slack.icon(picPath);
+			} catch(IllegalArgumentException e) {
+				LOGGER.info("Webhook url is not provided");
+			}
 		}
 	}
 
@@ -164,12 +190,20 @@ public class SlackService implements IJMXService
 		return false;
 	}
 
-	public String getWebhook() throws ServiceException
-	{
+	public String getWebhook() throws ServiceException {
 		String wH = null;
-		if (settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL) != null)
+		Setting slackWebHookURL = settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL);
+		if (slackWebHookURL != null)
 		{
-			wH = settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL).getValue();
+			if(slackWebHookURL.isEncrypted())
+			{
+				try {
+					slackWebHookURL.setValue(cryptoService.decrypt(slackWebHookURL.getValue()));
+				} catch (Exception e) {
+					LOGGER.error(e);
+				}
+			}
+			wH = slackWebHookURL.getValue();
 		}
 		if (wH != null && !StringUtils.isEmpty(wH))
 		{
