@@ -31,6 +31,7 @@
 	<select id="getAllSettings" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
+		    WHERE S.NAME <> 'KEY'
 			ORDER BY S.NAME;
 		]]>
 	</select>

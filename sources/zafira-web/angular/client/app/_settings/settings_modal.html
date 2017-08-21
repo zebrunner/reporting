@@ -26,7 +26,8 @@
                 </div>
                 <md-input-container class="md-block" flex>
                     <label>Integration tool</label>
-                    <md-select name="tool" ng-model="setting.tool" required>
+                    <md-select name="tool" ng-model="setting.tool" ng-selected = ''>
+                        <md-option value=''/>
                         <md-option ng-repeat="(tool, isConnected) in $root.tools" value="{{tool}}">
                             {{tool}}
                         </md-option>
