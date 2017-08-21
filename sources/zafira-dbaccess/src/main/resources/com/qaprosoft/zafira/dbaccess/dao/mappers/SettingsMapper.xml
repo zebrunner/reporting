@@ -27,15 +27,32 @@
 				zafira.SETTINGS S
 		]]>
 	</sql>
-	
-	<select id="getAllSettings" resultMap="SettingResultMap">
-		<include refid="getSetting" />
-		<![CDATA[
-		    WHERE S.NAME NOT IN ( 'KEY', 'JIRA_ENABLED', 'JENKINS_ENABLED', 'SLACK_ENABLED' )
+
+    <select id="getAllSettings" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <![CDATA[
 			ORDER BY S.NAME;
 		]]>
+    </select>
+
+	<select id="getSettingsByIntegration" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <if test = "isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL NOT IN ('', 'KEY')
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
+        <if test = "!isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL = ''
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
 	</select>
-	
+
+
+
 	<select id="getSettingById" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[

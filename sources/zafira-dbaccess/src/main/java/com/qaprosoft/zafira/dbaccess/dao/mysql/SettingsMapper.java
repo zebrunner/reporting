@@ -2,8 +2,8 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Setting;
+import org.apache.ibatis.annotations.Param;
 
 public interface SettingsMapper
 {
@@ -18,6 +18,8 @@ public interface SettingsMapper
 	List<Setting> getSettingsByEncrypted (boolean isEncrypted);
 
 	List<Setting> getAllSettings();
+
+	List<Setting> getSettingsByIntegration(@Param("isIntegrationTool") boolean isIntegrationTool);
 
 	List<String> getTools();
 

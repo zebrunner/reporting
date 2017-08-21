@@ -9,6 +9,7 @@
         var service = {};
 
         service.getAllSettings = getAllSettings;
+        service.getSettingsByIntegration = getSettingsByIntegration;
         service.getSetting = getSetting;
         service.getSettingByName = getSettingByName;
         service.getSettingByTool = getSettingByTool;
@@ -26,7 +27,14 @@
             return $http.get(API_URL + '/api/settings/list').then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings list'));
         }
 
-        function getSettingByTool(tool) {
+        function getSettingsByIntegration(isIntegrationTool) {
+            var config = { params : {} };
+            if(isIntegrationTool)
+                config.params.isIntegrationTool = isIntegrationTool;
+            return $http.get(API_URL + '/api/settings/integration', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings by integration list'));
+        }
+
+         function getSettingByTool(tool) {
             return $http.get(API_URL + '/api/settings/tool/' + tool).then(UtilService.handleSuccess, UtilService.handleError('Unable to load' + tool + 'settings'));
         }
 

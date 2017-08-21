@@ -61,7 +61,7 @@
             SettingsService.getSettingTools().then(function(tools) {
                 if (tools.success) {
                     $scope.tools = tools.data;
-                    SettingsService.getAllSettings().then(function (settings) {
+                    SettingsService.getSettingsByIntegration(true).then(function (settings) {
                         if (settings.success) {
                             $scope.settings = settings.data;
                             for(var tool in $scope.tools) {

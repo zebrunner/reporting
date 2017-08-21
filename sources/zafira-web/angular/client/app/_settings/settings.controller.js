@@ -100,7 +100,7 @@
 
 
     	(function init(){
-            SettingsService.getAllSettings().then(function(rs) {
+            SettingsService.getSettingsByIntegration(false).then(function(rs) {
                 if(rs.success)
                 {
                     $scope.settings = rs.data;

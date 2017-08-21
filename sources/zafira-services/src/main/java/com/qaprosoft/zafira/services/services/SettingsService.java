@@ -99,6 +99,12 @@ public class SettingsService
 		return settingsMapper.getAllSettings();
 	}
 
+	@Transactional(readOnly = true)
+	public List<Setting> getSettingsByIntegration(boolean isIntegrationTool) throws ServiceException
+	{
+		return settingsMapper.getSettingsByIntegration(isIntegrationTool);
+	}
+
     @Transactional(readOnly = true)
     public Map<String, Boolean> getTools() throws ServiceException
     {

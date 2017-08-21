@@ -53,6 +53,31 @@ public class SettingsAPIController extends AbstractController
 		return settings;
 	}
 
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get settings by integration", nickname = "getSettingsByIntegration", code = 200, httpMethod = "GET", response = List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams(
+            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Setting> getAllSettings(@RequestParam(value="isIntegrationTool", required = false) boolean isIntegrationTool) throws ServiceException
+    {
+        List<Setting> settings;
+        if(isIntegrationTool){
+            settings = settingsService.getSettingsByIntegration(true);
+        }
+        else {
+            settings = settingsService.getSettingsByIntegration(false);
+        }
+        for(Setting setting : settings)
+        {
+            if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
+            {
+                setting.setValue(settingsService.getEncryptedString());
+            }
+        }
+        return settings;
+    }
+
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
