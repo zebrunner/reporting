@@ -31,7 +31,7 @@
 	<select id="getAllSettings" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
-		    WHERE S.NAME <> 'KEY'
+		    WHERE S.NAME NOT IN ( 'KEY', 'JIRA_ENABLED', 'JENKINS_ENABLED', 'SLACK_ENABLED' )
 			ORDER BY S.NAME;
 		]]>
 	</select>
