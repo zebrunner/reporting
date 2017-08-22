@@ -20,6 +20,20 @@
             });
         };
 
+
+        $scope.regenerateKey = function () {
+            SettingsService.regenerateKey().then(function(rs) {
+                if(rs.success)
+                {
+                    alertify.success('Encrypt key was regenerated');
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.switchEnabled = function (tool) {
             var setting = getSettingByName(tool.name + ENABLED_POSTFIX);
             setting.value = tool.isEnabled;

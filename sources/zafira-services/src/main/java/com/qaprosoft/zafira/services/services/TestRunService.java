@@ -16,6 +16,7 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +41,6 @@ import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 @Service
@@ -382,7 +382,7 @@ public class TestRunService
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL, true));
+		email.setJiraURL(settingsService.getSettingByType(Setting.SettingType.JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
@@ -403,7 +403,7 @@ public class TestRunService
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByName(SettingType.JIRA_URL, true));
+		email.setJiraURL(settingsService.getSettingByType(Setting.SettingType.JIRA_URL));
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		return emailService.getFreeMarkerTemplateContent(email);
 	}

@@ -14,8 +14,8 @@ import org.springframework.jmx.export.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.db.tools.Tool.CRYPTO;
-import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.*;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 
 /**
  * Created by irina on 21.7.17.
@@ -49,7 +49,7 @@ public class CryptoService implements IJMXService {
 
             for (Setting setting : cryptoSettings){
 
-                switch(SettingsService.SettingType.valueOf(setting.getName())){
+                switch(Setting.SettingType.valueOf(setting.getName())){
 
                     case CRYPTO_KEY_TYPE:
                         type = setting.getValue();
@@ -74,10 +74,10 @@ public class CryptoService implements IJMXService {
     public void initCryptoTool(){
         try
         {
-            String dbKey = settingsService.getSettingByName(KEY).getValue();
+            String dbKey = settingsService.getSettingByType(KEY).getValue();
             if (StringUtils.isEmpty(dbKey)){
                 generateKey();
-                key = settingsService.getSettingByName(KEY).getValue();
+                key = settingsService.getSettingByType(KEY).getValue();
             }
             else {
                 key = dbKey;
@@ -110,7 +110,7 @@ public class CryptoService implements IJMXService {
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }
-        Setting keySetting = settingsService.getSettingByName(KEY);
+        Setting keySetting = settingsService.getSettingByType(KEY);
         keySetting.setValue(key);
         settingsService.updateSetting(keySetting);
     }

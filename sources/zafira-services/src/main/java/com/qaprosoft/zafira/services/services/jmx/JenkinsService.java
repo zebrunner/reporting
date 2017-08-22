@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.qaprosoft.zafira.models.db.tools.Tool.JENKINS;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
 
 @ManagedResource(objectName="bean:name=jenkinsService", description="Jenkins init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
@@ -50,11 +50,10 @@ public class JenkinsService implements IJMXService
 		try {
 			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS.name());
 			for (Setting setting : jenkinsSettings) {
-				if(settingsService.isSettingTypeEnumValid(setting.getName())) {
 					if (setting.isEncrypted()) {
 						setting.setValue(cryptoService.decrypt(setting.getValue()));
 					}
-					switch (SettingsService.SettingType.valueOf(setting.getName())) {
+					switch (Setting.SettingType.valueOf(setting.getName())) {
 						case JENKINS_URL:
 							url = setting.getValue();
 							break;
@@ -66,7 +65,6 @@ public class JenkinsService implements IJMXService
 							break;
 					}
 				}
-			}
 			init(url, username, password);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);

@@ -15,8 +15,8 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showSettingsDialog()">
-                    <span class="fa fa-plus"></span>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to regenerate encrypt key? All values will be reencrypted!" data-ng-really-click="regenerateKey()">
+                    <span class="fa fa-key"></span>
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
@@ -36,7 +36,7 @@
                             <div class="row col-lg-12">
                                 <md-input-container class="md-block" ng-repeat="setting in tool.settings">
                                     <label>{{ setting.name }}</label>
-                                    <input ng-model="setting.value" ng-disabled="!tool.isEnabled">
+                                    <input ng-model="setting.value" ng-disabled="!tool.isEnabled" >
                                 </md-input-container>
                             </div>
                         </div>

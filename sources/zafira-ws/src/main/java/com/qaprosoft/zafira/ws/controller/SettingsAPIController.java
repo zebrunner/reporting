@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.db.tools.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
@@ -17,8 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static com.qaprosoft.zafira.models.db.Setting.*;
 
 @Controller
 @Api(value = "Settings API")
@@ -42,15 +43,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
 	{
-		List<Setting> settings = settingsService.getAllSettings();
-		for(Setting setting : settings)
-		{
-			if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
-			{
-				setting.setValue(settingsService.getEncryptedString());
-			}
-		}
-		return settings;
+        return settingsService.getAllSettings();
 	}
 
     @ResponseStatusDetails
@@ -62,18 +55,21 @@ public class SettingsAPIController extends AbstractController
     public @ResponseBody List<Setting> getAllSettings(@RequestParam(value="isIntegrationTool", required = false) boolean isIntegrationTool) throws ServiceException
     {
         List<Setting> settings;
-        if(isIntegrationTool){
-            settings = settingsService.getSettingsByIntegration(true);
-        }
-        else {
-            settings = settingsService.getSettingsByIntegration(false);
-        }
-        for(Setting setting : settings)
+        if(isIntegrationTool)
         {
-            if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
+            settings = settingsService.getSettingsByIntegration(true);
+            for(Setting setting : settings)
             {
-                setting.setValue(settingsService.getEncryptedString());
+                if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
+                {
+                    setting.setValue(settingsService.getEncryptedString());
+                }
             }
+
+        }
+        else
+        {
+            settings = settingsService.getSettingsByIntegration(false);
         }
         return settings;
     }
@@ -102,7 +98,8 @@ public class SettingsAPIController extends AbstractController
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = Map.class)
     @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<String, Boolean> getTools() throws ServiceException
+    public @ResponseBody
+    Map<Tool, Boolean> getTools() throws ServiceException
     {
         return settingsService.getTools();
     }
@@ -115,7 +112,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String getSettingValue(@PathVariable(value = "name") String name) throws ServiceException
 	{
-		return settingsService.getSettingValue(SettingsService.SettingType.valueOf(name));
+		return settingsService.getSettingValue(Setting.SettingType.valueOf(name));
 	}
 
 	@ResponseStatusDetails
@@ -146,9 +143,9 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting editSetting(@RequestBody Setting setting) throws Exception
+	public @ResponseBody void editSetting(@RequestBody Setting setting) throws Exception
 	{
-		return settingsService.updateSetting(setting);
+		settingsService.updateSetting(setting);
 	}
 
 	@ResponseStatusDetails
@@ -159,7 +156,21 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Tool, Boolean> editSettings(@RequestBody List<Setting> settings) throws Exception
 	{
-		return settingsService.updateToolSettings(settings);
+        Map<Tool, Boolean> tools = new HashMap<>();
+        Tool tool = settings.get(0).getTool();
+        for(Setting setting : settings) {
+            if (!setting.getValue().contains("•")){
+                if(setting.isValueForEncrypting())
+                {
+                    setting.setValue(cryptoService.encrypt(setting.getValue()));
+                    setting.setEncrypted(true);
+                }
+                settingsService.updateSetting(setting);
+            }
+         }
+        settingsService.reinstantiateTool(tool);
+        tools.put(tool, settingsService.getServiceByTool(tool).isConnected());
+        return tools;
 	}
 
 	@ResponseStatusDetails
