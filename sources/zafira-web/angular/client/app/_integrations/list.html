@@ -36,7 +36,8 @@
                             <div class="row col-lg-12">
                                 <md-input-container class="md-block" ng-repeat="setting in tool.settings">
                                     <label>{{ setting.name }}</label>
-                                    <input ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                    <input type="text" ng-if="!isPasswordSetting(tool.name, setting)" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                    <input type="password" ng-if="isPasswordSetting(tool.name, setting)" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
                                 </md-input-container>
                             </div>
                             <div class="row col-lg-12">
