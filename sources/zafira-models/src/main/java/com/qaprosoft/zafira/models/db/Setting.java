@@ -4,20 +4,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @JsonInclude(Include.NON_NULL)
 public class Setting extends AbstractEntity
 {
-
 	private static final long serialVersionUID = -6809215085336377266L;
-	private static final String [] valuesForEncrypting = {"JIRA_PASSWORD", "JENKINS_PASSWORD"};
+
+	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_PASSWORD");
 	
 	private String name;
 	private String value;
 	private boolean isEncrypted;
 	private Tool tool;
-
 
 	public String getName()
 	{
@@ -65,12 +65,13 @@ public class Setting extends AbstractEntity
     }
 
 
-    public enum Tool {
+    public enum Tool
+	{
         JIRA, JENKINS, SLACK, CRYPTO
     }
 
-    public boolean isValueForEncrypting() {
-        return Arrays.stream(valuesForEncrypting).anyMatch(this.name::equals);
+    public boolean isValueForEncrypting()
+	{
+        return TO_ENCRYPT.contains(this.getName());
     }
 }
-
