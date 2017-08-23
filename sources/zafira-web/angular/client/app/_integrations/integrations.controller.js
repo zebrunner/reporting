@@ -14,7 +14,9 @@
         $scope.saveTool = function (tool) {
             SettingsService.editSettings(tool.settings).then(function (rs) {
                 if (rs.success) {
-                    getSettingToolByName(tool.name).isConnected = rs.data[tool.name];
+                    var settingTool = getSettingToolByName(tool.name);
+                    settingTool.isConnected = rs.data.connected;
+                    settingTool.settings = rs.data.settingList;
                     alertify.success('Tool ' + tool.name + ' was changed');
                 }
             });

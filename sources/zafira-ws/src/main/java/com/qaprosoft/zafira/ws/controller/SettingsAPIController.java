@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
@@ -154,23 +155,33 @@ public class SettingsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Tool, Boolean> editSettings(@RequestBody List<Setting> settings) throws Exception
+	public @ResponseBody
+	ConnectedToolType editSettings(@RequestBody List<Setting> settings) throws Exception
 	{
-        Map<Tool, Boolean> tools = new HashMap<>();
+		ConnectedToolType connectedTool = new ConnectedToolType();
         Tool tool = settings.get(0).getTool();
         for(Setting setting : settings) {
-            if (!setting.getValue().contains("•")){
-                if(setting.isValueForEncrypting())
-                {
-                    setting.setValue(cryptoService.encrypt(setting.getValue()));
-                    setting.setEncrypted(true);
-                }
-                settingsService.updateSetting(setting);
+            {
+                if (!setting.getValue().contains("•")){
+					if (setting.isValueForEncrypting() && !StringUtils.isBlank(setting.getValue())){
+						{
+							setting.setValue(cryptoService.encrypt(setting.getValue()));
+							setting.setEncrypted(true);
+							settingsService.updateSetting(setting);
+							setting.setValue(settingsService.getEncryptedString());
+						}
+					}
+					else {
+						settingsService.updateSetting(setting);
+					}
+				}
             }
          }
         settingsService.reinstantiateTool(tool);
-        tools.put(tool, settingsService.getServiceByTool(tool).isConnected());
-        return tools;
+		connectedTool.setName(tool.name());
+		connectedTool.setSettingList(settings);
+		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
+        return connectedTool;
 	}
 
 	@ResponseStatusDetails

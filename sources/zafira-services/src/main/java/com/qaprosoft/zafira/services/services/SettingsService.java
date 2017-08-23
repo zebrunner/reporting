@@ -21,7 +21,6 @@ public class SettingsService
 {
 
 	private static final String ENCRYPTED_STRING = "••••••";
-	private static final Logger LOGGER = Logger.getLogger(SettingsService.class);
 
 	@Autowired
 	private SettingsMapper settingsMapper;
