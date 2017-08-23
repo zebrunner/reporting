@@ -39,13 +39,13 @@
         <include refid="getSetting" />
         <if test = "isIntegrationTool">
             <![CDATA[
-                    WHERE S.TOOL NOT IN ('', 'KEY')
+                    WHERE S.TOOL IS NOT NULL
                     ORDER BY S.NAME;
             ]]>
         </if>
         <if test = "!isIntegrationTool">
             <![CDATA[
-                    WHERE S.TOOL = ''
+                    WHERE S.TOOL IS NULL
                     ORDER BY S.NAME;
             ]]>
         </if>
@@ -84,7 +84,7 @@
 		]]>
 	</select>
 
-	<select id="getTools" resultType="java.lang.String">
+	<select id="getTools" resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
 		<![CDATA[
 			SELECT
 				DISTINCT

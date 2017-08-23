@@ -14,8 +14,8 @@ import org.springframework.jmx.export.annotation.*;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.db.tools.Tool.JIRA;
-import static com.qaprosoft.zafira.services.services.SettingsService.SettingType.JIRA_CLOSED_STATUS;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
 
 
 @ManagedResource(objectName="bean:name=jiraService", description="Jira init Managed Bean",
@@ -47,13 +47,11 @@ public class JiraService implements IJMXService
 			List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA.name());
 			for (Setting setting : jiraSettings)
 			{
-				if(settingsService.isSettingTypeEnumValid(setting.getName()))
-				{
 					if(setting.isEncrypted())
 					{
 						setting.setValue(cryptoService.decrypt(setting.getValue()));
 					}
-					switch (SettingsService.SettingType.valueOf(setting.getName()))
+					switch (Setting.SettingType.valueOf(setting.getName()))
 					{
 						case JIRA_URL:
 							url = setting.getValue();
@@ -64,7 +62,6 @@ public class JiraService implements IJMXService
 						case JIRA_PASSWORD:
 							password = setting.getValue();
 							break;
-					}
 				}
 			}
 			init(url, username, password);
