@@ -11,12 +11,19 @@
 
         var ENABLED_POSTFIX = '_ENABLED';
 
+        var SORT_POSTFIXES = {
+            '_URL': 1,
+            '_USER': 2,
+            '_PASSWORD': 3
+        };
+
         $scope.saveTool = function (tool) {
             SettingsService.editSettings(tool.settings).then(function (rs) {
                 if (rs.success) {
                     var settingTool = getSettingToolByName(tool.name);
                     settingTool.isConnected = rs.data.connected;
                     settingTool.settings = rs.data.settingList;
+                    settingTool.settings.sort(compare);
                     alertify.success('Tool ' + tool.name + ' was changed');
                 }
             });
@@ -73,6 +80,36 @@
             })[0];
         };
 
+        function compare(a, b) {
+            var aSortOrder = getSortOrderByPostfix(a.name);
+            var bSortOrder = getSortOrderByPostfix(b.name);
+            if(aSortOrder < bSortOrder) {
+                return -1;
+            } else if(aSortOrder > bSortOrder) {
+                return 1;
+            } else
+                return 0;
+        }
+
+        var getSortOrderByPostfix = function (settingName) {
+            for(var postfix in SORT_POSTFIXES) {
+                if(settingName.includes(postfix)) {
+                    return SORT_POSTFIXES[postfix];
+                }
+            }
+            return getMaxSortOrder() + 1;
+        };
+
+        var getMaxSortOrder = function () {
+            var max = 0;
+            for(var postfix in SORT_POSTFIXES) {
+                if(SORT_POSTFIXES[postfix] > max) {
+                    max = SORT_POSTFIXES[postfix];
+                }
+            }
+            return max;
+        };
+
         (function init(){
             SettingsService.getSettingTools().then(function(tools) {
                 if (tools.success) {
@@ -91,6 +128,7 @@
                                     return setting.tool == tool;
                                 });
                                 currentTool.isEnabled = getEnabledSetting(tool, settings.data).value == 'true';
+                                currentTool.settings.sort(compare);
                                 $scope.settingTools.push(currentTool);
                             }
                         }
