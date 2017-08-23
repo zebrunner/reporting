@@ -10,6 +10,7 @@
         $scope.settingTools = [];
 
         var ENABLED_POSTFIX = '_ENABLED';
+        var PASSWORD_POSTFIX = '_PASSWORD';
 
         var SORT_POSTFIXES = {
             '_URL': 1,
@@ -58,12 +59,16 @@
 
         var getSettingToolByName = function (name) {
             return $scope.settingTools.filter(function (tool) {
-                return tool.name == name;
+                return tool.name === name;
             })[0];
         };
 
         var isEnabledSetting  = function (tool, setting) {
-            return setting.name == tool + ENABLED_POSTFIX;
+            return setting.name === tool + ENABLED_POSTFIX;
+        };
+
+        $scope.isPasswordSetting  = function (tool, setting) {
+            return setting.name === tool + PASSWORD_POSTFIX;
         };
 
         var getEnabledSetting = function (tool, settings) {
@@ -76,7 +81,7 @@
 
         var getSettingByName = function (name) {
             return $scope.settings.filter(function (setting) {
-                return setting.name == name;
+                return setting.name === name;
             })[0];
         };
 
@@ -125,9 +130,9 @@
                                     if(isEnabledSetting(tool, setting)) {
                                         return false;
                                     }
-                                    return setting.tool == tool;
+                                    return setting.tool === tool;
                                 });
-                                currentTool.isEnabled = getEnabledSetting(tool, settings.data).value == 'true';
+                                currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
                                 currentTool.settings.sort(compare);
                                 $scope.settingTools.push(currentTool);
                             }
