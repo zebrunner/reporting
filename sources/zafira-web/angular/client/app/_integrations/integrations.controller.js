@@ -11,17 +11,35 @@
 
         var ENABLED_POSTFIX = '_ENABLED';
 
+        var SORT_POSTFIXES = {
+            '_URL': 1,
+            '_USER': 2,
+            '_PASSWORD': 3
+        };
+
         $scope.saveTool = function (tool) {
-            SettingsService.editSettings(tool.settings).then(function (rs) {
+           SettingsService.editSettings(tool.settings).then(function (rs) {
                 if (rs.success) {
                     var settingTool = getSettingToolByName(tool.name);
                     settingTool.isConnected = rs.data.connected;
                     settingTool.settings = rs.data.settingList;
+                    settingTool.settings.sort(compare);
                     alertify.success('Tool ' + tool.name + ' was changed');
                 }
             });
         };
 
+        $scope.createSetting = function (tool) {
+            var addedSetting = tool.newSetting;
+            addedSetting.tool = tool.name;
+            tool.settings.push(addedSetting);
+            tool.newSetting = {};
+            SettingsService.createSetting(addedSetting).then(function (rs) {
+                if (rs.success) {
+                      alertify.success('New setting for ' + tool.name + ' was added');
+                }
+            });
+        };
 
         $scope.regenerateKey = function () {
             SettingsService.regenerateKey().then(function(rs) {
@@ -73,26 +91,34 @@
             })[0];
         };
 
-        $scope.showAddToolSettingDialog = function (event, tool) {
-            $mdDialog.show({
-                controller: IntegrationsController,
-                templateUrl: 'app/_integrations/add_setting_modal.html',
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose: true,
-                fullscreen: true,
-                locals: {
-                    tool: tool
+        function compare(a, b) {
+            var aSortOrder = getSortOrderByPostfix(a.name);
+            var bSortOrder = getSortOrderByPostfix(b.name);
+            if(aSortOrder < bSortOrder) {
+                return -1;
+            } else if(aSortOrder > bSortOrder) {
+                return 1;
+            } else
+                return 0;
+        }
+
+        var getSortOrderByPostfix = function (settingName) {
+            for(var postfix in SORT_POSTFIXES) {
+                if(settingName.includes(postfix)) {
+                    return SORT_POSTFIXES[postfix];
                 }
-            })
-                .then(function (answer) {
-                    if(answer == true) $state.reload();
-                }, function () {
-                });
+            }
+            return getMaxSortOrder() + 1;
         };
 
-        $scope.cancel = function () {
-            $mdDialog.cancel();
+        var getMaxSortOrder = function () {
+            var max = 0;
+            for(var postfix in SORT_POSTFIXES) {
+                if(SORT_POSTFIXES[postfix] > max) {
+                    max = SORT_POSTFIXES[postfix];
+                }
+            }
+            return max;
         };
 
         (function init(){
@@ -113,6 +139,8 @@
                                     return setting.tool == tool;
                                 });
                                 currentTool.isEnabled = getEnabledSetting(tool, settings.data).value == 'true';
+                                currentTool.settings.sort(compare);
+                                currentTool.newSetting = {};
                                 $scope.settingTools.push(currentTool);
                             }
                         }

@@ -39,12 +39,26 @@
                                     <input ng-model="setting.value" ng-disabled="!tool.isEnabled" >
                                 </md-input-container>
                             </div>
-                        </div>
+                            <div class="row col-lg-12">
+                                <div class="col-lg-6" style="padding: 0">
+                                    <md-input-container class="md-block">
+                                        <label>NEW {{ tool.name }} SETTING</label>
+                                        <input placeholder="Name" type="text" class="form-control" data-ng-model="tool.newSetting.name" ng-disabled="!tool.isEnabled">
+                                    </md-input-container>
+                                </div>
+                                <div class="col-lg-6" style="padding: 0">
+                                    <md-input-container class="md-block">
+                                        <label></label>
+                                        <input placeholder="Value" type="text" class="form-control" data-ng-model="tool.newSetting.value" ng-disabled="!tool.isEnabled">
+                                    </md-input-container>
+                                </div>
+                            </div>
+                       </div>
                         <div class="card-action text-right">
-                            <md-button ng-click="showAddToolSettingDialog($event, tool)" ng-disabled="!tool.isEnabled">Add + </md-button><div class="divider"></div>
+                            <md-button ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
                             <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
                         </div>
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
