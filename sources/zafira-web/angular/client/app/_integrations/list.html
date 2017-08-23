@@ -41,9 +41,10 @@
                             </div>
                         </div>
                         <div class="card-action text-right">
+                            <md-button ng-click="showAddToolSettingDialog($event, tool)" ng-disabled="!tool.isEnabled">Add + </md-button><div class="divider"></div>
                             <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
                         </div>
-                    </div>
+                     </div>
                 </div>
             </div>
         </div>

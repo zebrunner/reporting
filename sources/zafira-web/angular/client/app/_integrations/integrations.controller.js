@@ -73,6 +73,28 @@
             })[0];
         };
 
+        $scope.showAddToolSettingDialog = function (event, tool) {
+            $mdDialog.show({
+                controller: IntegrationsController,
+                templateUrl: 'app/_integrations/add_setting_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: true,
+                fullscreen: true,
+                locals: {
+                    tool: tool
+                }
+            })
+                .then(function (answer) {
+                    if(answer == true) $state.reload();
+                }, function () {
+                });
+        };
+
+        $scope.cancel = function () {
+            $mdDialog.cancel();
+        };
+
         (function init(){
             SettingsService.getSettingTools().then(function(tools) {
                 if (tools.success) {

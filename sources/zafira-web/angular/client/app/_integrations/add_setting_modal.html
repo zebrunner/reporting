@@ -1,0 +1,42 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="dashboard_form" ng-submit="UtilService.untouchForm(dashboard_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Tool settings</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div data-ng-if="!isNew">
+                    <label>Settings</label>
+                    <div class="row attribute" data-ng-repeat="setting in tool.settings">
+                        <div class="col-lg-5">
+                            <md-input-container flex>
+                                <label>Name</label>
+                                <input placeholder="key" type="text" data-ng-model="setting.name"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col-lg-5">
+                            <md-input-container flex>
+                                <label>Value</label>
+                                <input placeholder="value" type="text" data-ng-model="setting.value"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5"><input placeholder="key" type="text" class="form-control" data-ng-model="newAttribute.key"></input></div>
+                        <div class="col-lg-5"><input placeholder="value" type="text" class="form-control" data-ng-model="newAttribute.value"></input></div>
+                        <div class="col-lg-2" align="right">
+                            <button type="button" class="btn btn-outline btn-primary" data-ng-click="createAttribute(newAttribute)" data-ng-disabled="!newAttribute.key">New +</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+        </form>
+</md-dialog>
