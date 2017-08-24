@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.*;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 
 @ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
@@ -191,7 +192,7 @@ public class SlackService implements IJMXService
 
 	public String getWebhook() throws ServiceException {
 		String wH = null;
-		Setting slackWebHookURL = settingsService.getSettingByType(Setting.SettingType.SLACK_WEB_HOOK_URL);
+		Setting slackWebHookURL = settingsService.getSettingByType(SLACK_WEB_HOOK_URL);
 		if (slackWebHookURL != null)
 		{
 			if(slackWebHookURL.isEncrypted())
@@ -214,7 +215,7 @@ public class SlackService implements IJMXService
 	public String getChannelMapping(TestRun tr) throws ServiceException
 	{
 		List<Setting> sList = settingsService.getAllSettings();
-		String pattern = StringUtils.substringBeforeLast(Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
+		String pattern = StringUtils.substringBeforeLast(SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
 		for (Setting s : sList)
 		{
 			if (s.getName().startsWith(pattern))

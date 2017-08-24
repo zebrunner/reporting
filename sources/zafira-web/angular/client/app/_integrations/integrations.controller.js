@@ -42,10 +42,25 @@
             });
         };
 
+        $scope.deleteSetting = function (setting, tool) {
+            var array = tool.settings;
+            var index = array.indexOf(setting);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            SettingsService.deleteSetting(setting.id).then(function (rs) {
+                if (rs.success) {
+
+                    alertify.success('Setting ' + setting.name + ' was deleted');
+                }
+            });
+        };
+
         $scope.regenerateKey = function () {
             SettingsService.regenerateKey().then(function(rs) {
                 if(rs.success)
                 {
+                    $state.reload();
                     alertify.success('Encrypt key was regenerated');
                 }
                 else

@@ -20,8 +20,6 @@ import static com.qaprosoft.zafira.models.db.Setting.*;
 public class SettingsService
 {
 
-	private static final String ENCRYPTED_STRING = "••••••";
-
 	@Autowired
 	private SettingsMapper settingsMapper;
 
@@ -160,7 +158,4 @@ public class SettingsService
 		return service;
 	}
 
-	public String getEncryptedString() {
-		return ENCRYPTED_STRING;
-	}
 }
