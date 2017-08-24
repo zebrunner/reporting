@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static com.qaprosoft.zafira.models.db.Setting.*;
@@ -59,14 +58,6 @@ public class SettingsAPIController extends AbstractController
         if(isIntegrationTool)
         {
             settings = settingsService.getSettingsByIntegration(true);
-            for(Setting setting : settings)
-            {
-                if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
-                {
-                    setting.setValue(settingsService.getEncryptedString());
-                }
-            }
-
         }
         else
         {
@@ -82,15 +73,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
 	{
-		List<Setting> settings = settingsService.getSettingsByTool(tool);
-		for(Setting setting : settings)
-		{
-			if(setting.isEncrypted() && ! StringUtils.isBlank(setting.getValue()))
-			{
-				setting.setValue(settingsService.getEncryptedString());
-			}
-		}
-		return settings;
+        return settingsService.getSettingsByTool(tool);
 	}
 
     @ResponseStatusDetails
@@ -161,22 +144,21 @@ public class SettingsAPIController extends AbstractController
 		ConnectedToolType connectedTool = new ConnectedToolType();
         Tool tool = settings.get(0).getTool();
         for(Setting setting : settings) {
-            {
-                if (!setting.getValue().contains("•")){
-					if (setting.isValueForEncrypting() && !StringUtils.isBlank(setting.getValue())){
-						{
-							setting.setValue(cryptoService.encrypt(setting.getValue()));
-							setting.setEncrypted(true);
-							settingsService.updateSetting(setting);
-							setting.setValue(settingsService.getEncryptedString());
-						}
-					}
-					else {
-						settingsService.updateSetting(setting);
-					}
-				}
-            }
-         }
+			if (setting.isValueForEncrypting()) {
+			    if(StringUtils.isBlank(setting.getValue())){
+                    setting.setEncrypted(false);
+                }
+                else
+                {
+                    Setting dbSetting = settingsService.getSettingByName(setting.getName());
+                    if(!setting.getValue().equals(dbSetting.getValue())){
+                        setting.setValue(cryptoService.encrypt(setting.getValue()));
+                        setting.setEncrypted(true);
+                    }
+                }
+			}
+            settingsService.updateSetting(setting);
+		}
         settingsService.reinstantiateTool(tool);
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);

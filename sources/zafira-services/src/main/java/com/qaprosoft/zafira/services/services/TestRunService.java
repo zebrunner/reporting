@@ -43,6 +43,8 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
+
 @Service
 public class TestRunService
 {
@@ -382,7 +384,7 @@ public class TestRunService
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByType(Setting.SettingType.JIRA_URL));
+		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
@@ -403,7 +405,7 @@ public class TestRunService
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
-		email.setJiraURL(settingsService.getSettingByType(Setting.SettingType.JIRA_URL));
+		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		return emailService.getFreeMarkerTemplateContent(email);
 	}

@@ -19,7 +19,7 @@
         };
 
         $scope.saveTool = function (tool) {
-            SettingsService.editSettings(tool.settings).then(function (rs) {
+           SettingsService.editSettings(tool.settings).then(function (rs) {
                 if (rs.success) {
                     var settingTool = getSettingToolByName(tool.name);
                     settingTool.isConnected = rs.data.connected;
@@ -30,11 +30,37 @@
             });
         };
 
+        $scope.createSetting = function (tool) {
+            var addedSetting = tool.newSetting;
+            addedSetting.tool = tool.name;
+            tool.settings.push(addedSetting);
+            tool.newSetting = {};
+            SettingsService.createSetting(addedSetting).then(function (rs) {
+                if (rs.success) {
+                      alertify.success('New setting for ' + tool.name + ' was added');
+                }
+            });
+        };
+
+        $scope.deleteSetting = function (setting, tool) {
+            var array = tool.settings;
+            var index = array.indexOf(setting);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            SettingsService.deleteSetting(setting.id).then(function (rs) {
+                if (rs.success) {
+
+                    alertify.success('Setting ' + setting.name + ' was deleted');
+                }
+            });
+        };
 
         $scope.regenerateKey = function () {
             SettingsService.regenerateKey().then(function(rs) {
                 if(rs.success)
                 {
+                    $state.reload();
                     alertify.success('Encrypt key was regenerated');
                 }
                 else
@@ -134,6 +160,7 @@
                                 });
                                 currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
                                 currentTool.settings.sort(compare);
+                                currentTool.newSetting = {};
                                 $scope.settingTools.push(currentTool);
                             }
                         }
