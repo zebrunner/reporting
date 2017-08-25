@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import net.rcarz.jiraclient.Issue;
 
 import org.apache.commons.collections.CollectionUtils;

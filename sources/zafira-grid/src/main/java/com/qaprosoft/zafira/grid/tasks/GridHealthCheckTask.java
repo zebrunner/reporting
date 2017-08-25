@@ -1,9 +1,5 @@
 package com.qaprosoft.zafira.grid.tasks;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 import com.qaprosoft.zafira.models.db.Device;
 import com.qaprosoft.zafira.models.db.Setting;
@@ -11,9 +7,12 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DeviceService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
 import com.qaprosoft.zafira.services.services.emails.GridStatusEmail;
 import com.qaprosoft.zafira.services.services.stf.STFService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 public class GridHealthCheckTask 
 {	
@@ -59,7 +58,7 @@ public class GridHealthCheckTask
 		}
 		if(statusChanged)
 		{
-			Setting setting = settingsService.getSettingByName(SettingType.STF_NOTIFICATION_RECIPIENTS);
+			Setting setting = settingsService.getSettingByType(Setting.SettingType.STF_NOTIFICATION_RECIPIENTS);
 			if(setting != null && setting.getValue() != null && !setting.getValue().isEmpty())
 			{
 				String [] receipients = setting.getValue().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ");

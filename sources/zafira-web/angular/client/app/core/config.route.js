@@ -50,6 +50,10 @@
                         url: '/settings',
                         templateUrl: 'app/_settings/list.html'
                     })
+                    .state('integrations', {
+                        url: '/integrations',
+                        templateUrl: 'app/_integrations/list.html'
+                    })
                     .state('certifications', {
                         url: '/certification',
                         templateUrl: 'app/_certifications/list.html'
