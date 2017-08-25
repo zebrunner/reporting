@@ -11,6 +11,8 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('JENKINS_ENABLED', true, 'JENKINS'),
 	('SLACK_WEB_HOOK_URL', '', 'SLACK'),
 	('SLACK_ENABLED', true, 'SLACK'),
+	('SLACK_AUTHOR', 'zafira notifications, 'SLACK'),
+	('SLACK_PIC_PATH', 'https://s3-us-west-1.amazonaws.com/zafira/web/logo.png', 'SLACK'),
 	('KEY', '', 'CRYPTO'),
 	('CRYPTO_KEY_SIZE', '128', 'CRYPTO'),
 	('CRYPTO_KEY_TYPE', 'AES', 'CRYPTO');

@@ -175,5 +175,6 @@
 
     "VLD_REQUIRED": "Required",
     "VLD_PATTERN": "Invalid format",
-    "VLD_LENGHT_5": "5 symbols required "
+    "VLD_LENGHT_5": "5 symbols required ",
+    "INTEGRATIONS": "Integrations"
 }
