@@ -71,6 +71,7 @@
                     if(rs.success)
                     {
                         $rootScope.tools = rs.data;
+                        $rootScope.$broadcast("event:settings-toolsInitialized", rs.data);
                     }
                 });
 	        };
@@ -84,7 +85,8 @@
 	        	$scope.initSession();
 	        });
 
-	        $rootScope.$on('event:auth-loginRequired', function()
+
+            $rootScope.$on('event:auth-loginRequired', function()
 	        {
 	        	if($cookies.get('Access-Token'))
 	            {

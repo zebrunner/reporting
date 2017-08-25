@@ -141,35 +141,43 @@
             return max;
         };
 
-        (function init(){
-            SettingsService.getSettingTools().then(function(tools) {
-                if (tools.success) {
-                    $scope.tools = tools.data;
-                    SettingsService.getSettingsByIntegration(true).then(function (settings) {
-                        if (settings.success) {
-                            $scope.settings = settings.data;
-                            for(var tool in $scope.tools) {
-                                var currentTool = {};
-                                currentTool.name = tool;
-                                currentTool.isConnected = $scope.tools[tool];
-                                currentTool.settings = settings.data.filter(function (setting) {
-                                    if(isEnabledSetting(tool, setting)) {
-                                        return false;
-                                    }
-                                    return setting.tool === tool;
-                                });
-                                currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
-                                currentTool.settings.sort(compare);
-                                currentTool.newSetting = {};
-                                $scope.settingTools.push(currentTool);
+        var initTools = function(tools) {
+            SettingsService.getSettingsByIntegration(true).then(function (settings) {
+                if (settings.success) {
+                    $scope.settings = settings.data;
+                    for(var tool in tools) {
+                        var currentTool = {};
+                        currentTool.name = tool;
+                        currentTool.isConnected = tools[tool];
+                        currentTool.settings = settings.data.filter(function (setting) {
+                            if(isEnabledSetting(tool, setting)) {
+                                return false;
                             }
-                        }
-                        else {
-                            console.error('Failed to load settings');
-                        }
-                    });
+                            return setting.tool === tool;
+                        });
+                        currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
+                        currentTool.settings.sort(compare);
+                        currentTool.newSetting = {};
+                        $scope.settingTools.push(currentTool);
+                    }
+                }
+                else {
+                    console.error('Failed to load settings');
                 }
             });
+        };
+
+        (function init(){
+            if($rootScope.tools)
+            {
+                initTools($rootScope.tools);
+            }
+            else
+            {
+                $rootScope.$on("event:settings-toolsInitialized", function(ev, tools){
+                    initTools(tools);
+                });
+            }
         })();
     }
 })();
