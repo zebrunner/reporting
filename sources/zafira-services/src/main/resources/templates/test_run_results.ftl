@@ -168,10 +168,13 @@
 	            				</pre>
 	            			</#if>
 	            		</td>
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-	            			<span>${test.owner}</span>
-	            		</td>
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                            <span>${test.owner}</span>
+                                <#if test.secondaryOwner ??>
+                                    ${test.secondaryOwner}
+                                </#if>
+                        </td>
+                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
 	                            <#if workItem.type == 'BUG'>
 	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
