@@ -217,10 +217,6 @@
 		  	<artifactId>slack-java-webhook</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.qaprosoft.carina</groupId>
-			<artifactId>cryptotool</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
-import com.qaprosoft.carina.core.foundation.crypto.SecretKeyManager;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
 import com.qaprosoft.zafira.services.services.SettingsService;
@@ -12,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
@@ -106,7 +108,7 @@ public class CryptoService implements IJMXService {
     public void generateKey() throws Exception {
         String key = null;
         try {
-            key = new String(Base64.encodeBase64(SecretKeyManager.generateKey(type, size).getEncoded()));
+            key = new String(Base64.encodeBase64(generateKey(type, size).getEncoded()));
         } catch (Exception e) {
             LOGGER.error("Unable to generate key: " + e.getMessage());
         }
@@ -144,5 +146,13 @@ public class CryptoService implements IJMXService {
             LOGGER.error("Unable to connect to JIRA", e);
         }
         return connected;
+    }
+
+    public static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException
+    {
+        LOGGER.debug("generating key use algorithm: '" + keyType + "'; size: " + size);
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType);
+        keyGenerator.init(size);
+        return keyGenerator.generateKey();
     }
 }
