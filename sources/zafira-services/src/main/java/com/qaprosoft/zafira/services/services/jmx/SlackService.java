@@ -1,29 +1,35 @@
-package com.qaprosoft.zafira.services.services.slack;
+package com.qaprosoft.zafira.services.services.jmx;
 
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpStatusCodes;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
+import in.ashwanthkumar.slack.webhook.SlackMessage;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jmx.export.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.*;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.JenkinsService;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.SettingsService.SettingType;
-import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
-
-@Service
-public class SlackService
+@ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
+		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
+		persistLocation="foo", persistName="bar")
+public class SlackService implements IJMXService
 {
 
 	private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
@@ -35,20 +41,96 @@ public class SlackService
 			+ "%3$s\n"
 			+ "<%4$s|Open in Zafira>  |  <%5$s|Open in Jenkins>";
 
+	private static final Logger LOGGER = Logger.getLogger(SlackService.class);
+
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
 
-	@Value("${zafira.slack.author}")
-	private String slackAuthor;
-
-	@Value("${zafira.slack.pic_path}")
-	private String slackPicPath;
+	private Slack slack;
 
 	@Autowired
 	private JenkinsService jenkinsService;
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
+	@Override
+	@PostConstruct
+	public void init() {
+		String author = null;
+		String picPath = null;
+
+		try {
+			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(SLACK.name());
+			for (Setting setting : jenkinsSettings) {
+				if(setting.isEncrypted())
+				{
+					setting.setValue(cryptoService.decrypt(setting.getValue()));
+				}
+				switch (setting.getName()) {
+					case "SLACK_AUTHOR":
+						author = setting.getValue();
+						break;
+					case "SLACK_PIC_PATH":
+						picPath = setting.getValue();
+						break;
+					default:
+						break;
+				}
+			}
+			init(author, picPath);
+		} catch(Exception e) {
+			LOGGER.error("Setting does not exist", e);
+		}
+	}
+
+	@Override
+	public boolean isConnected() {
+		try {
+			if(slack != null) {
+				slack.push(new SlackMessage(StringUtils.EMPTY));
+			} else {
+				return false;
+			}
+		} catch (IOException e) {
+			if(((HttpResponseException) e).getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@ManagedOperation(description="Change Slack initialization")
+	@ManagedOperationParameters({
+			@ManagedOperationParameter(name = "author", description = "Slack author"),
+			@ManagedOperationParameter(name = "picPath", description = "Slack pi path")})
+	public void init(String author, String picPath) throws ServiceException {
+		String wH = getWebhook();
+		if (wH != null)
+		{
+			slack = null;
+			try {
+				slack = new Slack(wH);
+				slack = slack.displayName(author);
+				slack = slack.icon(picPath);
+			} catch(IllegalArgumentException e) {
+				LOGGER.info("Webhook url is not provided");
+			}
+		}
+	}
+
+	private Slack prepareSlackInst(TestRun tr) throws ServiceException
+	{
+		String channel = getChannelMapping(tr);
+		if (channel != null)
+		{
+			slack = slack.sendToChannel(channel);
+		}
+		return slack;
+	}
 
 	public void sendAutoStatus(TestRun tr) throws IOException, ServiceException
 	{
@@ -108,30 +190,20 @@ public class SlackService
 		return false;
 	}
 
-	private Slack prepareSlackInst(TestRun tr) throws ServiceException
-	{
-		Slack s = null;
-		String wH = getWebhook();
-		if (wH != null)
-		{
-			String channel = getChannelMapping(tr);
-			if (channel != null)
-			{
-				s = new Slack(wH);
-				s = s.sendToChannel(channel);
-				s = s.displayName(slackAuthor);
-				s = s.icon(slackPicPath);
-			}
-		}
-		return s;
-	}
-
-	public String getWebhook() throws ServiceException
-	{
+	public String getWebhook() throws ServiceException {
 		String wH = null;
-		if (settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL) != null)
+		Setting slackWebHookURL = settingsService.getSettingByType(SLACK_WEB_HOOK_URL);
+		if (slackWebHookURL != null)
 		{
-			wH = settingsService.getSettingByName(SettingType.SLACK_WEB_HOOK_URL).getValue();
+			if(slackWebHookURL.isEncrypted())
+			{
+				try {
+					slackWebHookURL.setValue(cryptoService.decrypt(slackWebHookURL.getValue()));
+				} catch (Exception e) {
+					LOGGER.error(e);
+				}
+			}
+			wH = slackWebHookURL.getValue();
 		}
 		if (wH != null && !StringUtils.isEmpty(wH))
 		{
@@ -143,7 +215,7 @@ public class SlackService
 	public String getChannelMapping(TestRun tr) throws ServiceException
 	{
 		List<Setting> sList = settingsService.getAllSettings();
-		String pattern = StringUtils.substringBeforeLast(SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
+		String pattern = StringUtils.substringBeforeLast(SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
 		for (Setting s : sList)
 		{
 			if (s.getName().startsWith(pattern))
@@ -215,4 +287,8 @@ public class SlackService
 		return "warning";
 	}
 
+	@ManagedAttribute(description="Get Slack current instance")
+	public Slack getSlack() {
+		return slack;
+	}
 }

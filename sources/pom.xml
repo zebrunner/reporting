@@ -107,11 +107,13 @@
 		<jenkins-client.version>0.3.7</jenkins-client.version>
 
 		<jira-client.version>0.5</jira-client.version>
+		<jasypt>1.9.2</jasypt>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 
 		<jjwt.version>0.7.0</jjwt.version>
 
 		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
+		<carina.version>5.25.0-SNAPSHOT</carina.version>
 	</properties>
 
 	<modules>
@@ -120,11 +122,36 @@
 		<module>zafira-client</module>
 		<module>zafira-dbaccess</module>
 		<module>zafira-services</module>
-    <module>zafira-ws</module>
+        <module>zafira-ws</module>
 		<module>zafira-batch-services</module>
 		<module>zafira-grid</module>
 		<module>zafira-web</module>
 	</modules>
+
+	<repositories>
+		<repository>
+			<id>qaprosoft_releases</id>
+			<name>Qaprosoft Releases</name>
+			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>qaprosoft_snapshots</id>
+			<name>Qaprosoft Snapshots</name>
+			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -302,6 +329,7 @@
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>${springfox.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt-springsecurity3</artifactId>
@@ -582,6 +610,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>${jasypt}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
@@ -598,7 +632,20 @@
 				<artifactId>slack-java-webhook</artifactId>
 				<version>${slack-java-webhook.version}</version>
 			</dependency>
-		</dependencies>
+
+			<dependency>
+				<groupId>com.qaprosoft.carina</groupId>
+				<artifactId>cryptotool</artifactId>
+				<version>${carina.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+
 	</dependencyManagement>
 
 	<build>

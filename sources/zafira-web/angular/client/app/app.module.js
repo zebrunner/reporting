@@ -14,6 +14,7 @@
         ,'app.testrun'
         ,'app.view'
         ,'app.settings'
+        ,'app.integrations'
         ,'app.certification'
         ,'app.sidebar'
         // 3rd party feature modules
@@ -117,5 +118,5 @@
 	                }
 	            });
             }
-      ]);
+      ])
 })();

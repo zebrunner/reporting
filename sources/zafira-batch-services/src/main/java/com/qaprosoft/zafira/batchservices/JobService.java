@@ -16,5 +16,6 @@ public class JobService extends WrapperSimpleApp
 	{
 		@SuppressWarnings({ "resource", "unused" })
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:zafira-batchservices.xml");
+
 	}
 }

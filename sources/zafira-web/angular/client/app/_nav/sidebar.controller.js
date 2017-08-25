@@ -3,10 +3,10 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService) {
+    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
 
     	$scope.DashboardService = DashboardService;
 
@@ -15,6 +15,7 @@
         $scope.projects = [];
         $scope.dashboards = [];
         $scope.views = [];
+        $scope.tools = {};
 
 
         $scope.isAdmin = function(){

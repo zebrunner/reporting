@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, ConfigService, AuthIntercepter) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -66,6 +66,14 @@
 	                    $rootScope.version = rs.data;
 	                }
 	            });
+
+                SettingsService.getSettingTools().then(function(rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.tools = rs.data;
+                        $rootScope.$broadcast("event:settings-toolsInitialized", rs.data);
+                    }
+                });
 	        };
 
 	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
@@ -77,7 +85,8 @@
 	        	$scope.initSession();
 	        });
 
-	        $rootScope.$on('event:auth-loginRequired', function()
+
+            $rootScope.$on('event:auth-loginRequired', function()
 	        {
 	        	if($cookies.get('Access-Token'))
 	            {

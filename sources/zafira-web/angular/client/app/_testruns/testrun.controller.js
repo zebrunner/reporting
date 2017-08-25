@@ -666,7 +666,7 @@
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
 
-            SettingsService.getSetting("JIRA_URL").then(function(rs) {
+            SettingsService.getSettingByName("JIRA_URL").then(function(rs) {
                 if(rs.success)
                 {
                 	 $scope.jiraURL = rs.data;
@@ -964,6 +964,7 @@
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
             $scope.newKnownIssue.status = null;
+            $scope.newKnownIssue.assigneeMessage = null;
             $scope.isJiraIdExists = true;
             $scope.isJiraIdClosed = false;
             $scope.isIssueFound = false;

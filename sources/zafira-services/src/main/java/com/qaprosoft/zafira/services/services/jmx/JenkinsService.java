@@ -1,22 +1,32 @@
-package com.qaprosoft.zafira.services.services;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
-import com.offbytwo.jenkins.model.*;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+package com.qaprosoft.zafira.services.services.jmx;
 
 import com.google.common.base.Optional;
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.FolderJob;
+import com.offbytwo.jenkins.model.JobWithDetails;
+import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.*;
 
-@Service
-public class JenkinsService
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
+
+@ManagedResource(objectName="bean:name=jenkinsService", description="Jenkins init Managed Bean",
+		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
+		persistLocation="foo", persistName="bar")
+public class JenkinsService implements IJMXService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
@@ -24,8 +34,49 @@ public class JenkinsService
 
 	private JenkinsServer server;
 
-	public JenkinsService(String url, String username, String password)
-	{
+	@Autowired
+	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
+	@Override
+	@PostConstruct
+	public void init()  {
+		String url = null;
+		String username = null;
+		String password = null;
+
+		try {
+			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS.name());
+			for (Setting setting : jenkinsSettings) {
+					if (setting.isEncrypted()) {
+						setting.setValue(cryptoService.decrypt(setting.getValue()));
+					}
+					switch (Setting.SettingType.valueOf(setting.getName())) {
+						case JENKINS_URL:
+							url = setting.getValue();
+							break;
+						case JENKINS_USER:
+							username = setting.getValue();
+							break;
+						case JENKINS_PASSWORD:
+							password = setting.getValue();
+							break;
+					}
+				}
+			init(url, username, password);
+		} catch(Exception e) {
+			LOGGER.error("Setting does not exist", e);
+		}
+	}
+
+	@ManagedOperation(description="Change Jenkins initialization")
+	@ManagedOperationParameters({
+			@ManagedOperationParameter(name = "url", description = "Jenkins url"),
+			@ManagedOperationParameter(name = "username", description = "Jenkins username"),
+			@ManagedOperationParameter(name = "password", description = "Jenkins password")})
+	public void init(String url, String username, String password) {
 		try
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
@@ -111,8 +162,14 @@ public class JenkinsService
 		return job;
 	}
 
+	@Override
 	public boolean isConnected()
 	{
 		return this.server != null && this.server.isRunning();
+	}
+
+	@ManagedAttribute(description="Get jenkins server")
+	public JenkinsServer getServer() {
+		return server;
 	}
 }

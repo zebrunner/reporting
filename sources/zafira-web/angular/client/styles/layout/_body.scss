@@ -171,6 +171,14 @@ button.red {
     background-position: 150px 0;
 }
 
+.jira-icon {
+    background: url(../../assets/images/jira.png) no-repeat;
+}
+
+.slack-icon {
+    background: url(../../assets/images/slack.png) no-repeat;
+}
+
 .platform-icon.API {
 	background-position: -24px -180px;
 }
@@ -272,6 +280,10 @@ span.light_text {
   color: red !important;
 }
 
+.highlight_gray {
+    color: lightgrey !important;
+}
+
 .progress-circular_align {
     top: 40%;
 }
@@ -292,4 +304,13 @@ body md-select-menu, body md-content{
 
 .white-space-pre-line {
     white-space: pre-line;
+}
+
+.jira-status {
+    text-transform: uppercase;
+    margin-bottom: 0;
+}
+
+.material-icons.material-icon-16px {
+    font-size: 16px;
 }
