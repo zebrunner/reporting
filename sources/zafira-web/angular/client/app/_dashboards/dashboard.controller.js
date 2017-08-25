@@ -194,8 +194,10 @@
                                 if (rs.success) {
                                     $scope.dashboard = rs.data;
                                     var queryAttributes = getQueryAttributes();
-                                    for(var i = 0; i < queryAttributes.length; i++) {
-                                        $scope.dashboard.attributes.push(queryAttributes[i]);
+                                    if(queryAttributes.length) {
+                                        for (var i = 0; i < queryAttributes.length; i++) {
+                                            $scope.dashboard.attributes.push(queryAttributes[i]);
+                                        }
                                     }
                                     $scope.loadDashboardData($scope.dashboard);
                                 }
