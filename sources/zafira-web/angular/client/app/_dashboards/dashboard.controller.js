@@ -194,7 +194,7 @@
                                 if (rs.success) {
                                     $scope.dashboard = rs.data;
                                     var queryAttributes = getQueryAttributes();
-                                    if(queryAttributes.length) {
+                                    if(queryAttributes) {
                                         for (var i = 0; i < queryAttributes.length; i++) {
                                             $scope.dashboard.attributes.push(queryAttributes[i]);
                                         }
