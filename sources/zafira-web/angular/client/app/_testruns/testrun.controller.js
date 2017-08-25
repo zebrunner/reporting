@@ -652,8 +652,13 @@
             $scope.search();
         };
 
+        var toSc = function (qParams) {
+            $scope.sc = qParams;
+        };
+
         (function init() {
 
+            toSc($location.search());
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();

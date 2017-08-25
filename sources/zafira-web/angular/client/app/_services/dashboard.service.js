@@ -14,6 +14,7 @@
         service.UpdateDashboard = UpdateDashboard;
         service.DeleteDashboard = DeleteDashboard;
         service.CreateDashboardAttribute = CreateDashboardAttribute;
+        service.CreateDashboardAttributes = CreateDashboardAttributes;
         service.UpdateDashboardAttribute = UpdateDashboardAttribute;
         service.DeleteDashboardAttribute = DeleteDashboardAttribute;
         service.GetDashboardById = GetDashboardById;
@@ -50,6 +51,10 @@
 
         function CreateDashboardAttribute(dashboardId, attribute) {
             return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attribute'));
+        }
+
+        function CreateDashboardAttributes(dashboardId, attributes) {
+            return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes/queries', attributes).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attributes'));
         }
 
         function UpdateDashboardAttribute(dashboardId, attribute) {
