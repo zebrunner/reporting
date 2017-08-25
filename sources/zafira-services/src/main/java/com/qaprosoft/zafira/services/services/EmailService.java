@@ -35,7 +35,7 @@ public class EmailService
 	public String sendEmail(final IEmailMessage message, final String... recipients) throws ServiceException
 	{
 		final String text = getFreeMarkerTemplateContent(message);
-		if(recipients != null && recipients.length > 0)
+			if(recipients != null && recipients.length > 0)
 		{
 			MimeMessagePreparator preparator = new MimeMessagePreparator()
 			{
