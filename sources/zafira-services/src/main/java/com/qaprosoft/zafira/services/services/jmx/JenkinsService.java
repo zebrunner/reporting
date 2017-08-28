@@ -45,7 +45,7 @@ public class JenkinsService implements IJMXService
 	public void init()  {
 		String url = null;
 		String username = null;
-		String password = null;
+		String passwordOrApiToken = null;
 
 		try {
 			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS.name());
@@ -60,12 +60,12 @@ public class JenkinsService implements IJMXService
 						case JENKINS_USER:
 							username = setting.getValue();
 							break;
-						case JENKINS_PASSWORD:
-							password = setting.getValue();
+						case JENKINS_API_TOKEN_OR_PASSWORD:
+							passwordOrApiToken = setting.getValue();
 							break;
 					}
 				}
-			init(url, username, password);
+			init(url, username, passwordOrApiToken);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
@@ -75,13 +75,13 @@ public class JenkinsService implements IJMXService
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "url", description = "Jenkins url"),
 			@ManagedOperationParameter(name = "username", description = "Jenkins username"),
-			@ManagedOperationParameter(name = "password", description = "Jenkins password")})
-	public void init(String url, String username, String password) {
+			@ManagedOperationParameter(name = "passwordOrApiToken", description = "Jenkins passwordOrApiToken or api token")})
+	public void init(String url, String username, String passwordOrApiToken) {
 		try
 		{
-			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
+			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken))
 			{
-				this.server = new JenkinsServer(new URI(url), username, password);
+				this.server = new JenkinsServer(new URI(url), username, passwordOrApiToken);
 			}
 		} catch (Exception e)
 		{
