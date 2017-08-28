@@ -54,6 +54,10 @@
                         url: '/certification',
                         templateUrl: 'app/_certifications/list.html'
                     })
+                    .state('monitors', {
+                        url: '/monitors',
+                        templateUrl: 'app/_monitors/list.html'
+                     })
                     .state('404', {
                         url: '/404',
                         templateUrl: 'app/page/404.html'

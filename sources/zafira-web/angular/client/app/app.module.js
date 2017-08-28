@@ -10,6 +10,7 @@
         ,'app.auth'
         ,'app.dashboard'
         ,'app.user'
+        ,'app.monitor'
         ,'app.testcase'
         ,'app.testrun'
         ,'app.view'

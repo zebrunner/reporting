@@ -1,7 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper;
-import com.qaprosoft.zafira.models.db.monitor.Monitor;
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +21,10 @@ public class MonitorService {
     @Autowired
     private MonitorMapper monitorMapper;
 
-
     @Transactional(rollbackFor = Exception.class)
-    public void createMonitor(Monitor monitor){
+    public Monitor createMonitor(Monitor monitor){
         monitorMapper.createMonitor(monitor);
+        return monitor;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -46,4 +47,25 @@ public class MonitorService {
         return monitorMapper.getListEmailsByMonitor(monitor);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Monitor updateMonitor(Monitor monitor) throws ServiceException
+    {
+        monitorMapper.updateMonitor(monitor);
+        return monitor;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Monitor> getAllMonitors() {
+        return monitorMapper.getAllMonitors();
+    }
+
+    @Transactional(readOnly = true)
+    public Monitor getMonitorById(long id) {
+        return monitorMapper.getMonitorById(id);
+    }
+
+    @Transactional(readOnly=true)
+    public Integer getMonitorsCount() {
+        return monitorMapper.getMonitorsCount();
+    }
 }

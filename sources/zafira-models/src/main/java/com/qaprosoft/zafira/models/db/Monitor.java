@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.models.db.monitor;
+package com.qaprosoft.zafira.models.db;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.*;
@@ -21,7 +21,7 @@ public class Monitor extends AbstractEntity {
     private String requestBody;
     private String cronExpression;
     private boolean enableNotification;
-    private List<String> emailList;
+    private String emails;
     private int expectedResponseCode;
 
     public String getName() {
@@ -72,14 +72,6 @@ public class Monitor extends AbstractEntity {
         this.enableNotification = enableNotification;
     }
 
-    public List<String> getEmailList() {
-        return emailList;
-    }
-
-    public void setEmailList(List<String> emailList) {
-        this.emailList = emailList;
-    }
-
     public int getExpectedResponseCode() {
         return expectedResponseCode;
     }
@@ -88,4 +80,11 @@ public class Monitor extends AbstractEntity {
         this.expectedResponseCode = expectedResponseCode;
     }
 
+    public String getEmails() {
+        return emails;
+    }
+
+    public void setEmails(String emails) {
+        this.emails = emails;
+    }
 }

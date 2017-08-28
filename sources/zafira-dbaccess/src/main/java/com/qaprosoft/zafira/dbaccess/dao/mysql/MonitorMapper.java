@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
-import com.qaprosoft.zafira.models.db.monitor.Monitor;
-import org.apache.ibatis.annotations.Param;
+import com.qaprosoft.zafira.models.db.Monitor;
 
 import java.util.List;
 
@@ -23,12 +22,12 @@ public interface MonitorMapper {
 
     void deleteMonitor(Monitor monitor);
 
-    void addUserToMonitor(@Param("monitorId") Long monitorId, @Param("userId")Long userId);
-
     List<String> getListEmailsByMonitorId(long id);
 
     List<String> getListEmailsByMonitor(Monitor monitor);
 
+    List<Monitor> getAllMonitors();
 
+    Integer getMonitorsCount();
 
 }
