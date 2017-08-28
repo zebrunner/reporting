@@ -11,6 +11,7 @@
 
         var ENABLED_POSTFIX = '_ENABLED';
         var PASSWORD_POSTFIX = '_PASSWORD';
+        var ALTERNATIVE_PASSWORD_POSTFIX = '_API_TOKEN_OR_PASSWORD';
 
         var SORT_POSTFIXES = {
             '_URL': 1,
@@ -94,7 +95,7 @@
         };
 
         $scope.isPasswordSetting  = function (tool, setting) {
-            return setting.name === tool + PASSWORD_POSTFIX;
+            return setting.name === tool + PASSWORD_POSTFIX || setting.name === tool + ALTERNATIVE_PASSWORD_POSTFIX;
         };
 
         var getEnabledSetting = function (tool, settings) {
