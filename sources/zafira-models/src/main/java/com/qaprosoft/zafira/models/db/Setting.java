@@ -12,7 +12,7 @@ public class Setting extends AbstractEntity
 {
 	private static final long serialVersionUID = -6809215085336377266L;
 
-	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_PASSWORD");
+	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD");
 	
 	private String name;
 	private String value;
@@ -59,7 +59,7 @@ public class Setting extends AbstractEntity
     {
         STF_NOTIFICATION_RECIPIENTS,
         JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED,
-        JENKINS_URL, JENKINS_USER, JENKINS_PASSWORD, JENKINS_ENABLED,
+        JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD, JENKINS_ENABLED,
         SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE,
         CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY
     }
