@@ -1,5 +1,30 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
+import in.ashwanthkumar.slack.webhook.Slack;
+import in.ashwanthkumar.slack.webhook.SlackAttachment;
+import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
+import in.ashwanthkumar.slack.webhook.SlackMessage;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
+
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
 import com.qaprosoft.zafira.models.db.Setting;
@@ -7,24 +32,6 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
-import in.ashwanthkumar.slack.webhook.Slack;
-import in.ashwanthkumar.slack.webhook.SlackAttachment;
-import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
-import in.ashwanthkumar.slack.webhook.SlackMessage;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jmx.export.annotation.*;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.*;
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 
 @ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
@@ -122,21 +129,13 @@ public class SlackService implements IJMXService
 		}
 	}
 
-	private Slack prepareSlackInst(TestRun tr) throws ServiceException
+	public void sendAutoStatus(TestRun tr) throws IOException, ServiceException
 	{
 		String channel = getChannelMapping(tr);
 		if (channel != null)
 		{
 			slack = slack.sendToChannel(channel);
-		}
-		return slack;
-	}
 
-	public void sendAutoStatus(TestRun tr) throws IOException, ServiceException
-	{
-		Slack s = prepareSlackInst(tr);
-		if (s != null)
-		{
 			String elapsed = countElapsedInSMH(tr.getElapsed());
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
@@ -151,7 +150,7 @@ public class SlackService implements IJMXService
 					.color(determineColor(tr))
 					.addField(new Field("Test Results", msgRes, false))
 					.fallback(mainMsg + "\n" + msgRes);
-			s.push(attachment);
+			slack.push(attachment);
 		}
 	}
 
@@ -164,9 +163,11 @@ public class SlackService implements IJMXService
 	 */
 	public boolean sendReviwedStatus(TestRun tr) throws IOException, ServiceException
 	{
-		Slack s = prepareSlackInst(tr);
-		if (s != null)
+		String channel = getChannelMapping(tr);
+		if (channel != null)
 		{
+			slack = slack.sendToChannel(channel);
+
 			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
 			String status = TestRunResultsEmail.buildStatusText(tr);
@@ -184,7 +185,7 @@ public class SlackService implements IJMXService
 			{
 				attachment.addField(new Field("Comments", tr.getComments(), false));
 			}
-			s.push(attachment);
+			slack.push(attachment);
 			return true;
 		}
 		return false;
