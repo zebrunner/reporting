@@ -342,7 +342,9 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
-            window.open($location.$$absUrl + "/" + testRun.id, '_blank');
+            if ($location.$$absUrl.match(new RegExp(testRun.id, 'gi')) == null){
+                window.open($location.$$absUrl + "/" + testRun.id, '_blank');
+            }
         };
 
         $scope.copyLink = function (testRun) {
