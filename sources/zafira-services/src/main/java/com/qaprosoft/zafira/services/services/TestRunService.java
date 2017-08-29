@@ -372,8 +372,9 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		for (Test test: tests){
-            sortLogDemo(test);
+		for (Test test: tests)
+		{
+			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
         }
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
@@ -382,30 +383,6 @@ public class TestRunService
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		return emailService.sendEmail(email, recipients);
 	}
-
-	private void sortLogDemo (Test test){
-	    List <TestArtifact> testArtifacts = new ArrayList<>(test.getArtifacts());
-	  	for (TestArtifact artifact: testArtifacts){
-			String name = artifact.getName();
-			switch (name){
-				case "Log":
-					replaceArtifacts(testArtifacts, artifact, "Demo");
-					break;
-				case "Demo":
-					replaceArtifacts(testArtifacts, artifact, "Log");
-			}
-		}
-        test.setArtifacts(new LinkedHashSet<>(testArtifacts));
-	}
-
-	private void replaceArtifacts (List <TestArtifact> testArtifacts, TestArtifact testArtifact, String logOrDemo){
-        int artifactIndex = testArtifacts.indexOf(testArtifact);
-        if(testArtifacts.get(0).getName().equals(logOrDemo)){
-            Collections.swap(testArtifacts,1, artifactIndex);
-        } else {
-            Collections.swap(testArtifacts,0, artifactIndex);
-        }
-    }
 
 	@Transactional(readOnly=true)
 	public String exportTestRunHTML(final Long testRunId) throws ServiceException, JAXBException
