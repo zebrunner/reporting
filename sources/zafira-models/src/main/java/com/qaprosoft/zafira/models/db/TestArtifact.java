@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TestArtifact extends AbstractEntity
+public class TestArtifact extends AbstractEntity implements Comparable <TestArtifact>
 {
 	private static final long serialVersionUID = 2708440751800176584L;
 
@@ -82,4 +82,16 @@ public class TestArtifact extends AbstractEntity
         result = 31 * result + (testId != null ? testId.hashCode() : 0);
         return result;
     }
+
+	@Override
+	public int compareTo(TestArtifact testArtifact) {
+        String artifactName = testArtifact.getName();
+        if ((name.equals("Log") || name.equals("Demo")) && !artifactName.equals("Log") && !artifactName.equals("Demo")){
+            return -1;
+        }
+        else if ((artifactName.equals("Log") || artifactName.equals("Demo")) && !name.equals("Log") && !name.equals("Demo")){
+            return 1;
+        }
+        return this.name.compareTo(testArtifact.getName());
+	}
 }

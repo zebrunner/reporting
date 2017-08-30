@@ -3,20 +3,12 @@ package com.qaprosoft.zafira.services.services;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,9 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
@@ -383,6 +372,10 @@ public class TestRunService
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		for (Test test: tests)
+		{
+			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
+        }
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
