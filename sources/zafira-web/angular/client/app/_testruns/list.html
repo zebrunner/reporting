@@ -136,7 +136,7 @@
                                              <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
                                            	<br/>
                                            	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-                                           	<small>{{testRun.appVersion}}</small>
+                                           	<small><md-icon class="material-icons" style="font-size:12px;display: inline;" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
@@ -262,22 +262,15 @@
                                                                 <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
-                                                        <td class="text-center">
-                                                            <div
-                                                                data-ng-if="test.status != STARTED && test.separatedArtifacts.length !=0 && testRun.status != 'IN_PROGRESS'"
-                                                                data-ng-repeat="separatedArtifact in test.separatedArtifacts | orderObjectBy:'name':reverse:true">
-                                                                <a href="{{separatedArtifact.link}}" target="blank" class="clearfix">{{separatedArtifact.name}}&nbsp</a>
-                                                            </div>
-                                                        </td>
                                                         <td>
-                                                            <div data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'">
+                                                            <div data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'" class="pull-right">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-                                                                    <md-icon class="material-icons">expand_more</md-icon>
+                                                                    <md-icon class="material-icons">attachment</md-icon>
                                                                 </md-button>
                                                                 <md-menu-content>
-                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts | orderObjectBy:'name':reverse:true">
-                                                                        <md-button href="{{artifact.link}}"  target="blank">{{artifact.name}}</md-button>
+                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts" class="">
+                                                                        <md-button href="{{artifact.link}}" style="display: flex;">{{artifact.name}}</md-button>
                                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
