@@ -47,7 +47,7 @@ public class CryptoService implements IJMXService {
         List<Setting> cryptoSettings = null;
         this.basicTextEncryptor = new BasicTextEncryptor();
         try {
-            cryptoSettings = settingsService.getSettingsByTool(CRYPTO.name());
+            cryptoSettings = settingsService.getSettingsByTool(CRYPTO);
 
             for (Setting setting : cryptoSettings){
 

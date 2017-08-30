@@ -14,7 +14,7 @@ public interface SettingsMapper
 
 	Setting getSettingByName(String name);
 
-	List<Setting> getSettingsByTool (String tool);
+	List<Setting> getSettingsByTool (Tool tool);
 
 	List<Setting> getSettingsByEncrypted (boolean isEncrypted);
 

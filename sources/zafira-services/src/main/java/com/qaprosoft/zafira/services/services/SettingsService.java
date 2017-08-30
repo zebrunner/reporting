@@ -1,20 +1,23 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.*;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.qaprosoft.zafira.models.db.Setting.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.qaprosoft.zafira.dbaccess.dao.mysql.SettingsMapper;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.Setting.SettingType;
+import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
 
 @Service
 public class SettingsService
@@ -55,7 +58,7 @@ public class SettingsService
 	}
 
 	@Transactional(readOnly = true)
-	public List<Setting> getSettingsByTool(String tool) throws ServiceException
+	public List<Setting> getSettingsByTool(Tool tool) throws ServiceException
 	{
         return settingsMapper.getSettingsByTool(tool);
 	}

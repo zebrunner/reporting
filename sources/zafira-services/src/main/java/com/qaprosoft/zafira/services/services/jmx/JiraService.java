@@ -1,21 +1,28 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import net.rcarz.jiraclient.BasicCredentials;
-import net.rcarz.jiraclient.Issue;
-import net.rcarz.jiraclient.JiraClient;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
 
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
+import net.rcarz.jiraclient.BasicCredentials;
+import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraClient;
 
 
 @ManagedResource(objectName="bean:name=jiraService", description="Jira init Managed Bean",
@@ -44,7 +51,7 @@ public class JiraService implements IJMXService
         String password = null;
 
         try {
-			List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA.name());
+			List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA);
 			for (Setting setting : jiraSettings)
 			{
 					if(setting.isEncrypted())
@@ -62,7 +69,9 @@ public class JiraService implements IJMXService
 						case JIRA_PASSWORD:
 							password = setting.getValue();
 							break;
-				}
+						default:
+							break;
+					}
 			}
 			init(url, username, password);
 		} catch(Exception e) {

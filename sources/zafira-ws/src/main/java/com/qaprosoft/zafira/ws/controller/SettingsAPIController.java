@@ -73,7 +73,7 @@ public class SettingsAPIController extends AbstractController
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
 	{
-        return settingsService.getSettingsByTool(tool);
+        return settingsService.getSettingsByTool(Tool.valueOf(tool));
 	}
 
     @ResponseStatusDetails

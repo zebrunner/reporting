@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Arrays;
 import java.util.List;
 
-
 @JsonInclude(Include.NON_NULL)
 public class Setting extends AbstractEntity
 {
 	private static final long serialVersionUID = -6809215085336377266L;
 
 	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD");
-	
+
 	private String name;
 	private String value;
 	private boolean isEncrypted;
@@ -39,39 +38,38 @@ public class Setting extends AbstractEntity
 		this.value = value;
 	}
 
-	public boolean isEncrypted() {
+	public boolean isEncrypted()
+	{
 		return isEncrypted;
 	}
 
-	public void setEncrypted(boolean encrypted) {
+	public void setEncrypted(boolean encrypted)
+	{
 		isEncrypted = encrypted;
 	}
 
-	public Tool getTool() {
+	public Tool getTool()
+	{
 		return tool;
 	}
 
-	public void setTool(Tool tool) {
+	public void setTool(Tool tool)
+	{
 		this.tool = tool;
 	}
 
-    public enum SettingType
-    {
-        STF_NOTIFICATION_RECIPIENTS,
-        JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED,
-        JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD, JENKINS_ENABLED,
-        SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE,
-        CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY
-    }
-
-
-    public enum Tool
+	public enum SettingType
 	{
-        JIRA, JENKINS, SLACK, CRYPTO
-    }
+		STF_NOTIFICATION_RECIPIENTS, JIRA_URL, JIRA_USER, JIRA_PASSWORD, JIRA_CLOSED_STATUS, JIRA_ENABLED, JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD, JENKINS_ENABLED, SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE, CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY
+	}
 
-    public boolean isValueForEncrypting()
+	public enum Tool
 	{
-        return TO_ENCRYPT.contains(this.getName());
-    }
+		JIRA, JENKINS, SLACK, CRYPTO
+	}
+
+	public boolean isValueForEncrypting()
+	{
+		return TO_ENCRYPT.contains(this.getName());
+	}
 }

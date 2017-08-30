@@ -2,11 +2,6 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.SLACK;
-import in.ashwanthkumar.slack.webhook.Slack;
-import in.ashwanthkumar.slack.webhook.SlackAttachment;
-import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
-import in.ashwanthkumar.slack.webhook.SlackMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,6 +28,11 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
+import in.ashwanthkumar.slack.webhook.Slack;
+import in.ashwanthkumar.slack.webhook.SlackAttachment;
+import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
+import in.ashwanthkumar.slack.webhook.SlackMessage;
+
 @ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
 		persistLocation="foo", persistName="bar")
@@ -52,6 +52,12 @@ public class SlackService implements IJMXService
 
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
+	
+	@Value("${zafira.slack.image}")
+	private String image;
+	
+	@Value("${zafira.slack.author}")
+	private String author;
 
 	private Slack slack;
 
@@ -67,28 +73,9 @@ public class SlackService implements IJMXService
 	@Override
 	@PostConstruct
 	public void init() {
-		String author = null;
-		String picPath = null;
-
-		try {
-			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(SLACK.name());
-			for (Setting setting : jenkinsSettings) {
-				if(setting.isEncrypted())
-				{
-					setting.setValue(cryptoService.decrypt(setting.getValue()));
-				}
-				switch (setting.getName()) {
-					case "SLACK_AUTHOR":
-						author = setting.getValue();
-						break;
-					case "SLACK_PIC_PATH":
-						picPath = setting.getValue();
-						break;
-					default:
-						break;
-				}
-			}
-			init(author, picPath);
+		try 
+		{
+			init(author, image);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}

@@ -48,7 +48,7 @@ public class JenkinsService implements IJMXService
 		String passwordOrApiToken = null;
 
 		try {
-			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS.name());
+			List<Setting> jenkinsSettings = settingsService.getSettingsByTool(JENKINS);
 			for (Setting setting : jenkinsSettings) {
 					if (setting.isEncrypted()) {
 						setting.setValue(cryptoService.decrypt(setting.getValue()));
@@ -62,6 +62,8 @@ public class JenkinsService implements IJMXService
 							break;
 						case JENKINS_API_TOKEN_OR_PASSWORD:
 							passwordOrApiToken = setting.getValue();
+							break;
+						default:
 							break;
 					}
 				}
