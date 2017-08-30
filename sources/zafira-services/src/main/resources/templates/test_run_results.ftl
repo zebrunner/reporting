@@ -190,9 +190,11 @@
 	                        </#list>
 	                    </td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                            <#list test.artifacts as artifact>
-                                <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
-                                <p>
+                              <#list test.artifacts as artifact>
+                                  <#if artifact.name == 'Log' || artifact.name == 'Demo'>
+                                      <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
+                                  <p>
+                                  </#if>
                             </#list>
  	            		</td>
 	            	</tr>

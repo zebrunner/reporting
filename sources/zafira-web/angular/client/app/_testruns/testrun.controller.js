@@ -100,17 +100,6 @@
             return isEmpty;
         };
 
-       $scope.separateArtifacts = function (test) {
-            test.separatedArtifacts = [];
-            for (var i = 0; i< test.artifacts.length; i++) {
-                var artifact = test.artifacts[i];
-                if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
-                    test.separatedArtifacts[artifact.id] = artifact;
-                    test.artifacts.splice(i,1);
-                    i--;
-                }
-            }
-       };
 
        $scope.addTest = function (test, isEvent) {
 
@@ -327,7 +316,6 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
-                        $scope.separateArtifacts(test);
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
@@ -487,7 +475,7 @@
             $location.url($location.path());
             $scope.sc = {
                 'page': 1,
-                'pageSize': 25
+                'pageSize': 20
             };
             $scope.startedAt = null;
             $scope.showReset = false;
