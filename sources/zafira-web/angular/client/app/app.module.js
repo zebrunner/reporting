@@ -86,6 +86,43 @@
                 };
             }
         };
+    }]).directive('codeTextarea', ['$timeout', '$interval', function ($timeout, $interval) {
+        "use strict";
+        return {
+            restrict: 'E',
+            template: '<span><i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" aria-hidden="true"></i><pre class="code"><code data-ng-class="{{ codeClass }}" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
+            replace: true,
+            require: 'ngModel',
+            transclude: true,
+            scope: {
+                ngModel: '=',
+                codeData: '@',
+                codeClass: '@'
+            },
+            link: function (scope, iElement, iAttrs, ngModel) {
+
+                var initHighlight = function() {
+                    hljs.configure({
+                        tabReplace: '    '
+                    });
+                    $('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                };
+
+                scope.refreshHighlighting = function () {
+                    $('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                };
+
+                $timeout(initHighlight, 100);
+
+                iElement.bind("blur keyup change", function() {
+                    ngModel.$setViewValue(iElement[0].innerText);
+                });
+            }
+        };
     }]).filter('subString', function() {
         return function(str, start, end) {
             if (str != undefined) {
