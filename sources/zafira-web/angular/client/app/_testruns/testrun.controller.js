@@ -884,6 +884,7 @@
 
     function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, ConfigService) {
 
+        $scope.rerunFailures = true;
         $scope.testRun = testRun;
         $scope.rebuild = function (testRun, rerunFailures) {
             if ($scope.jenkinsEnabled) {

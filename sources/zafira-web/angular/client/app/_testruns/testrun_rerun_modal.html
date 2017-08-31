@@ -1,9 +1,9 @@
 
-<md-dialog flex="50" aria-label="User profile">
+<md-dialog flex="50" aria-label="User profile" style="max-width: 550px;">
     <form class="form-validation" name="build_now_form" ng-submit="buildNow(); UtilService.untouchForm(build_now_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Rebuild TestRun</h2>
+                <h2>Rebuild testrun</h2>
                 <span flex></span>
                 <md-button class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
@@ -13,20 +13,25 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout="row" layout-align="center center">
-                    Which tests would you like to rerun?
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Rerun tests</label>
+                        <md-select ng-model="rerunFailures" name="rerunFailures" >
+                            <md-option value="true" ng-selected="true">Only failures</md-option>
+                            <md-option value="false">All tests</md-option>
+                        </md-select>
+                    </md-input-container>
                 </div>
-            </div>
+             </div>
         </md-dialog-content>
 
-        <md-dialog-actions layout="row" layout-align="center center">
-            <md-button type="submit" class="btn btn-danger" data-ng-click="rebuild(testRun, true)">
-                Rerun only failures
+        <md-dialog-actions layout="row" >
+            <md-button type="submit" class="md-raised btn-w-md md-primary" data-ng-click="rebuild(testRun, rerunFailures)">
+                Rerun
             </md-button>
-            <md-button type="submit" class="btn btn-success" data-ng-click="rebuild(testRun, false)">
-                Rerun all tests
+            <md-button type="submit"  class="md-raised btn-w-md md-warn" data-ng-click="cancel()">
+                Cancel
             </md-button>
-        </md-dialog-actions>
-
-    </form>
+       </md-dialog-actions>
+   </form>
 </md-dialog>
