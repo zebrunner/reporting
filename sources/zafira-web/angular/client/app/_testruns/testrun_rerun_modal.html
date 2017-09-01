@@ -13,25 +13,29 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div layout layout-sm="column">
+                <div layout layout-sm="row">
                     <md-input-container flex>
                         <label>Rerun tests</label>
-                        <md-select ng-model="rerunFailures" name="rerunFailures" >
-                            <md-option value="true" ng-selected="true">Only failures</md-option>
-                            <md-option value="false">All tests</md-option>
-                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="row">
+                    <md-input-container flex>
+                        <md-radio-group ng-model="rerunFailures">
+                            <md-radio-button value="true">Only failures</md-radio-button>
+                            <md-radio-button value="false">All tests</md-radio-button>
+                        </md-radio-group>
                     </md-input-container>
                 </div>
              </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row" >
-            <md-button type="submit" class="md-raised btn-w-md md-primary" data-ng-click="rebuild(testRun, rerunFailures)">
-                Rerun
-            </md-button>
-            <md-button type="submit"  class="md-raised btn-w-md md-warn" data-ng-click="cancel()">
+             <md-button type="submit"  class="md-raised btn-w-md md-warn" data-ng-click="cancel()">
                 Cancel
             </md-button>
-       </md-dialog-actions>
+            <md-button type="submit" class="md-raised btn-w-md md-primary" data-ng-click="rebuild(testRun, rerunFailures)" md-selected="true">
+                Rerun
+            </md-button>
+        </md-dialog-actions>
    </form>
 </md-dialog>
