@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.batchservices.service.impl;
 
-import com.qaprosoft.zafira.batchservices.tasks.SendEmailNotificationToUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,31 +15,18 @@ public class SchedulerService implements ISchedulerService
 	@Autowired
 	private AbortFrozenTestRunsTask abortFrozenTestRunsTask;
 
-	@Autowired
-	private SendEmailNotificationToUser sendEmailNotificationToUser;
-
-	
-
 	@Override
 	public void executeAbortFrozenTestRunsTask() 
 	{
-//		try
-//		{
-//			abortFrozenTestRunsTask.runTask();
-//			logger.info("");
-//		} catch (ServiceException e)
-//		{
-//			logger.error("" + e);
-//		}
-	}
 
-	@Override
-	public void executeSendMessageToUserTask() {
-
-			sendEmailNotificationToUser.runTask();
+		try
+		{
+			abortFrozenTestRunsTask.runTask();
 			logger.info("");
-
+		} catch (ServiceException e)
+		{
+			logger.error("" + e);
+		}
 	}
-
 
 }

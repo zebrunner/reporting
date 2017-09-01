@@ -30,4 +30,5 @@ public interface MonitorMapper {
 
     Integer getMonitorsCount();
 
+    Monitor getLastMonitor();
 }

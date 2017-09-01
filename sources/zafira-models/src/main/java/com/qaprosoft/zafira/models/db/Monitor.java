@@ -15,9 +15,11 @@ import java.util.List;
 @JsonInclude(Include.NON_NULL)
 public class Monitor extends AbstractEntity {
 
+    public enum HttpMethod{GET, POST, PUT, DELETE}
+
     private String name;
     private String url;
-    private String httpMethod;
+    private HttpMethod httpMethod;
     private String requestBody;
     private String cronExpression;
     private boolean enableNotification;
@@ -40,11 +42,11 @@ public class Monitor extends AbstractEntity {
         this.url = url;
     }
 
-    public String getHttpMethod() {
+    public HttpMethod getHttpMethod() {
         return httpMethod;
     }
 
-    public void setHttpMethod(String httpMethod) {
+    public void setHttpMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
     }
 
@@ -87,4 +89,25 @@ public class Monitor extends AbstractEntity {
     public void setEmails(String emails) {
         this.emails = emails;
     }
-}
+
+
+    @Override
+    public String toString() {
+        return "Monitor{" +
+                "id='" + getId() + '\'' +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", httpMethod='" + httpMethod + '\'' +
+                ", requestBody='" + requestBody + '\'' +
+                ", cronExpression='" + cronExpression + '\'' +
+                ", enableNotification=" + enableNotification +
+                ", emails='" + emails + '\'' +
+                ", expectedResponseCode=" + expectedResponseCode +
+                '}';
+    }
+
+
+
+    }
+
+

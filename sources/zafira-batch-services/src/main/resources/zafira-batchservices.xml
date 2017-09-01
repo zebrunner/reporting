@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
-	<context:annotation-config />
+    <context:annotation-config/>
+    <context:component-scan base-package="com.qaprosoft.zafira.batchservices"/>
 
-	<import resource="classpath:zafira-dbaccess.xml" />
-	<import resource="classpath:zafira-services.xml" />
+    <import resource="classpath:zafira-dbaccess.xml"/>
+    <import resource="classpath:zafira-services.xml"/>
 
-	<util:properties id="environmentProperties" location="classpath:environment.properties" />
+    <util:properties id="environmentProperties" location="classpath:environment.properties"/>
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<array>
-				<value>classpath:environment.properties</value>
-			</array>
-		</property>
-	</bean>
+    <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <array>
+                <value>classpath:environment.properties</value>
+            </array>
+        </property>
+    </bean>
 
-	<bean id="abortFrozenTestRunsTask"
-		class="com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask" />
+    <bean id="abortFrozenTestRunsTask"
+          class="com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask"/>
 
-	<bean id="schedulerService" class="com.qaprosoft.zafira.batchservices.service.impl.SchedulerService" />
+    <bean id="schedulerService" class="com.qaprosoft.zafira.batchservices.service.impl.SchedulerService"/>
 
-	<!-- Job Details -->
-	<bean id="abortFrozenTestRunsTaskJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="executeAbortFrozenTestRunsTask" />
-	</bean>
 
-	<!-- Triggers -->
-	<bean id="abortFrozenTestRunsTaskTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="abortFrozenTestRunsTaskJobDetail" />
-		<property name="cronExpression"
-			value="${zafira.batch.jobs.abortFrozenTestRuns.trigger.cronExpression}" />
-	</bean>
+    <bean id="abortFrozenTestRunsTaskJobDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="schedulerService"/>
+        <property name="targetMethod" value="executeAbortFrozenTestRunsTask"/>
+    </bean>
 
-	<bean id="springScheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="jobDetails">
-			<list>
-				<ref bean="abortFrozenTestRunsTaskJobDetail" />
-			</list>
-		</property>
-		<property name="triggers">
-			<list>
-				<ref bean="abortFrozenTestRunsTaskTrigger" />
-			</list>
-		</property>
-	</bean>
+    <!-- Triggers -->
+    <bean id="abortFrozenTestRunsTaskTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="abortFrozenTestRunsTaskJobDetail"/>
+        <property name="cronExpression"
+                  value="${zafira.batch.jobs.abortFrozenTestRuns.trigger.cronExpression}"/>
+    </bean>
+
+    <bean id="springScheduler"
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+            <list>
+                <ref bean="abortFrozenTestRunsTaskJobDetail"/>
+            </list>
+        </property>
+        <property name="triggers">
+            <list>
+                <ref bean="abortFrozenTestRunsTaskTrigger"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

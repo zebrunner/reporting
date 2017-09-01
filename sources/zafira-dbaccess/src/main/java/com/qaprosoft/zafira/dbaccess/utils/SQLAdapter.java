@@ -37,4 +37,9 @@ public class SQLAdapter
 	{
 		this.attributes = attributes;
 	}
+
+	public static void main(String[] args) {
+
+	}
+
 }

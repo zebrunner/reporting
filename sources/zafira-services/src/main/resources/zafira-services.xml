@@ -22,6 +22,10 @@
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
 
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+	</bean>
+
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetObject" ref="messageJsonifier" />

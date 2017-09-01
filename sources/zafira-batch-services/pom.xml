@@ -40,12 +40,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -120,7 +118,7 @@
 						</goals>
 						<configuration>
 							<repositoryLayout>flat</repositoryLayout>
-							<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+							<!--<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>-->
 							<daemons>
 								<daemon>
 									<id>JobService</id>

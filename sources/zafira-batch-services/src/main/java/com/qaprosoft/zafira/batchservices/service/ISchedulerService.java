@@ -4,5 +4,4 @@ public interface ISchedulerService
 {
 	void executeAbortFrozenTestRunsTask();
 
-	void executeSendMessageToUserTask();
 }
