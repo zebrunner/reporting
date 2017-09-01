@@ -90,7 +90,7 @@
         "use strict";
         return {
             restrict: 'E',
-            template: '<span><i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" aria-hidden="true"></i><pre class="code"><code data-ng-class="{{ codeClass }}" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
+            template: '<span><i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" data-toggle="tooltip" title="Highlight your code! You can use doubleclick also." aria-hidden="true"></i><pre class="code"><code data-ng-class="{{ codeClass }}" ng-dblclick="refreshHighlighting()" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
             replace: true,
             require: 'ngModel',
             transclude: true,
