@@ -83,10 +83,10 @@
 	</bean>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${zafira.mail.host}" />
+		<!--<property name="host" value="${zafira.mail.host}" />
 		<property name="port" value="${zafira.mail.port}" />
 		<property name="username" value="${zafira.mail.user}" />
-		<property name="password" value="${zafira.mail.pass}" />
+		<property name="password" value="${zafira.mail.pass}" />-->
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="javaMailProperties">
 			<props>
@@ -95,7 +95,9 @@
 			</props>
 		</property>
 	</bean>
-	
+
+	<bean id="asynSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
+
 	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
 		id="freemarkerConfiguration">
 		<property name="preferFileSystemAccess" value="true" />
