@@ -11,7 +11,7 @@ public class Setting extends AbstractEntity
 {
 	private static final long serialVersionUID = -6809215085336377266L;
 
-	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD");
+	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD", "EMAIL_PASSWORD");
 
 	private String name;
 	private String value;
