@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,9 @@ public class SettingsService
 
     @Autowired
     private SlackService slackService;
+
+    @Autowired
+    private AsynSendEmailTask emailTask;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -133,10 +137,10 @@ public class SettingsService
 	}
 
 	public void reinstantiateTool(Tool tool) {
-			if (getServiceByTool(tool) != null)
-			{
-                getServiceByTool(tool).init();
-     		}
+		if (getServiceByTool(tool) != null)
+		{
+			getServiceByTool(tool).init();
+		}
 	}
 
 
@@ -154,6 +158,9 @@ public class SettingsService
 				break;
 			case CRYPTO:
 				service = cryptoService;
+				break;
+			case EMAIL:
+				service = emailTask;
 				break;
 			default:
 				break;
