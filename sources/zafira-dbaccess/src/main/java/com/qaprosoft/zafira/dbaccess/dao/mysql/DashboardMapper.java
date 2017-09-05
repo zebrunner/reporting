@@ -13,6 +13,8 @@ public interface DashboardMapper
 
 	Dashboard getDashboardById(Long id);
 
+	Dashboard getDashboardByTitle (String title);
+
 	List<Dashboard> getAllDashboards();
 
 	void updateDashboard(Dashboard dashboard);

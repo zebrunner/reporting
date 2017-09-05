@@ -176,6 +176,11 @@
             }
         };
 
+        $rootScope.$on("event:performance-getPersonal", function(){
+            $state.reload();
+        });
+
+
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;

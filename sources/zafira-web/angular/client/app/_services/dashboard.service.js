@@ -10,6 +10,7 @@
     	var service = {};
 
         service.GetDashboards = GetDashboards;
+        service.GetDashboardByTitle = GetDashboardByTitle;
         service.CreateDashboard = CreateDashboard;
         service.UpdateDashboard = UpdateDashboard;
         service.DeleteDashboard = DeleteDashboard;
@@ -35,6 +36,13 @@
             if(hidden)
                 config.params.hidden = hidden;
          	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+        }
+
+        function GetDashboardByTitle(title) {
+            var config = { params : {} };
+            if(title)
+                config.params.title = title;
+            return $http.get(API_URL + '/api/dashboards/title', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
         function CreateDashboard(dashboard) {

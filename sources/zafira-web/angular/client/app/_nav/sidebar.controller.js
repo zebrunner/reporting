@@ -3,10 +3,10 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', SidebarController])
+        .controller('SidebarController', ['$scope', '$location', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
+    function SidebarController($scope, $location, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
 
     	$scope.DashboardService = DashboardService;
 
@@ -70,6 +70,12 @@
             ProjectProvider.setProject(project);
             $scope.project = project;
             $state.reload();
+        };
+
+        $scope.checkUserId = function(){
+            if($location.search().userId !== $rootScope.currentUser.id){
+                $rootScope.$broadcast("event:performance-getPersonal");
+            }
         };
 
         $scope.showProjectDialog = function(event) {
