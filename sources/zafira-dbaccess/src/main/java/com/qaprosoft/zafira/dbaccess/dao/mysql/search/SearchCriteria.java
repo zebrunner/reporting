@@ -9,7 +9,7 @@ public class SearchCriteria
 	// Pages are zero-based
 	private Integer page = 1;
 	// The very default page size, just not to get NPE'd
-	private Integer pageSize = 25;
+	private Integer pageSize = 20;
 	private Project project;
 	
 	private SortOrder sortOrder = SortOrder.ASC;

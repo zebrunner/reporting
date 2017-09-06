@@ -10,10 +10,12 @@
     	var service = {};
 
         service.GetDashboards = GetDashboards;
+        service.GetDashboardByTitle = GetDashboardByTitle;
         service.CreateDashboard = CreateDashboard;
         service.UpdateDashboard = UpdateDashboard;
         service.DeleteDashboard = DeleteDashboard;
         service.CreateDashboardAttribute = CreateDashboardAttribute;
+        service.CreateDashboardAttributes = CreateDashboardAttributes;
         service.UpdateDashboardAttribute = UpdateDashboardAttribute;
         service.DeleteDashboardAttribute = DeleteDashboardAttribute;
         service.GetDashboardById = GetDashboardById;
@@ -36,6 +38,13 @@
          	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
+        function GetDashboardByTitle(title) {
+            var config = { params : {} };
+            if(title)
+                config.params.title = title;
+            return $http.get(API_URL + '/api/dashboards/title', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+        }
+
         function CreateDashboard(dashboard) {
             return $http.post(API_URL + '/api/dashboards', dashboard).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard'));
         }
@@ -50,6 +59,10 @@
 
         function CreateDashboardAttribute(dashboardId, attribute) {
             return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attribute'));
+        }
+
+        function CreateDashboardAttributes(dashboardId, attributes) {
+            return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes/queries', attributes).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attributes'));
         }
 
         function UpdateDashboardAttribute(dashboardId, attribute) {

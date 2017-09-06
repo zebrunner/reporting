@@ -5,9 +5,11 @@
 
 	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.SETTINGS (NAME, VALUE)
+			INSERT INTO zafira.SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
 			VALUES (#{name},
-					#{value})
+					#{value},
+                    #{isEncrypted},
+                    #{tool})
 		]]>
 	</insert>
 
@@ -17,20 +19,40 @@
 				S.ID AS SETTING_ID,
 				S.NAME AS SETTING_NAME,
 				S.VALUE AS SETTING_VALUE,
+                S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
+                S.TOOL AS SETTING_TOOL,
 				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
 				S.CREATED_AT AS SETTING_CREATED_AT
 			FROM
 				zafira.SETTINGS S
 		]]>
 	</sql>
-	
-	<select id="getAllSettings" resultMap="SettingResultMap">
-		<include refid="getSetting" />
-		<![CDATA[
+
+    <select id="getAllSettings" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <![CDATA[
 			ORDER BY S.NAME;
 		]]>
+    </select>
+
+	<select id="getSettingsByIntegration" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <if test = "isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL IS NOT NULL
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
+        <if test = "!isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL IS NULL
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
 	</select>
-	
+
+
+
 	<select id="getSettingById" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
@@ -38,10 +60,43 @@
 		]]>
 	</select>
 
+	<select id="getSettingsByTool" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.TOOL = #{tool}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
+	<select id="getSettingsByEncrypted" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.IS_ENCRYPTED = #{isEncrypted}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
+
 	<select id="getSettingByName" resultMap="SettingResultMap">
 		<include refid="getSetting" />
 		<![CDATA[
 			WHERE S.NAME = #{name};
+		]]>
+	</select>
+
+	<select id="getTools" resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
+		<![CDATA[
+			SELECT
+				DISTINCT
+				S.TOOL
+			FROM
+			zafira.SETTINGS S
+			WHERE
+				S.TOOL IS NOT NULL
+			ORDER BY
+				S.TOOL
+			ASC
+			LIMIT 10000
 		]]>
 	</select>
 
@@ -51,7 +106,9 @@
 			    zafira.SETTINGS
 			SET
 			    NAME = #{name},
-			    VALUE = #{value}
+			    VALUE = #{value},
+                IS_ENCRYPTED = #{isEncrypted},
+                TOOL = #{tool}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -78,6 +135,8 @@
 		<result column="SETTING_VALUE" property="value" />
 		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
 		<result column="SETTING_CREATED_AT" property="createdAt" />
+        <result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
+        <result column="SETTING_TOOL" property="tool" />
 	</resultMap>
 
 </mapper>

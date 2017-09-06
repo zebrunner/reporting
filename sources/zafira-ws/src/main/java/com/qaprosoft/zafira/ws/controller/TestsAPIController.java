@@ -30,7 +30,7 @@ import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;

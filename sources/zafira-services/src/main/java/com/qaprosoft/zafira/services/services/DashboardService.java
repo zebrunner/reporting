@@ -42,6 +42,13 @@ public class DashboardService
 	{
 		return dashboardMapper.getDashboardsByHidden(hidden);
 	}
+
+	@Transactional(readOnly = true)
+	public Dashboard getDashboardByTitle(String title) throws ServiceException
+	{
+        Dashboard dashboard = dashboardMapper.getDashboardByTitle(title);
+		return dashboard;
+	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException

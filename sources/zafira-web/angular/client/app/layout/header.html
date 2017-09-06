@@ -56,7 +56,8 @@
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{pefrDashboardId}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{pefrDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
+                        <md-menu-item data-ng-if="isAdmin()"><md-button aria-label="menu" ng-href="#!/integrations"><md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button></md-menu-item>
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
                     </md-menu-content>
                 </md-menu>

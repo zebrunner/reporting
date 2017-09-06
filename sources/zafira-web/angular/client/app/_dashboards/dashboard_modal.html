@@ -19,10 +19,10 @@
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
-                    <md-input-container flex>
+                    <md-input-container style="float: right; margin-top: 0" flex>
                         <span>Hidden</span>
-                        <md-checkbox ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="isNew" ng-required></md-checkbox>
-                        <md-checkbox ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="!isNew" ng-required></md-checkbox>
+                        <md-switch style="margin-top: 0" class="md-primary" ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="isNew" ng-required aria-label="integr-switch"></md-switch>
+                        <md-switch style="margin-top: 0" class="md-primary" ng-model="dashboard.hidden" ng-change="!dashboard.hidden" data-ng-if="!isNew" ng-required aria-label="integr-switch"></md-switch>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">

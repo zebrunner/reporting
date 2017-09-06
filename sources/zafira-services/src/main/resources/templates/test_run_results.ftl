@@ -168,10 +168,13 @@
 	            				</pre>
 	            			</#if>
 	            		</td>
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-	            			<span>${test.owner}</span>
-	            		</td>
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                            <span>${test.owner}</span>
+                                <#if test.secondaryOwner ??>
+                                    ${test.secondaryOwner}
+                                </#if>
+                        </td>
+                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
 	                            <#if workItem.type == 'BUG'>
 	                                <a href='${jiraURL}/${workItem.jiraId}' target="_blank" style="background: #d9534f; border-radius: 10px; padding: 1px 3px; display: block; margin-bottom: 3px; text-decoration: none; color: white;">
@@ -187,9 +190,11 @@
 	                        </#list>
 	                    </td>
 	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                            <#list test.artifacts?sort_by("name") as artifact>
-                                <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
-                                <p>
+                              <#list test.artifacts as artifact>
+                                  <#if artifact.name == 'Log' || artifact.name == 'Demo'>
+                                      <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
+                                  <p>
+                                  </#if>
                             </#list>
  	            		</td>
 	            	</tr>

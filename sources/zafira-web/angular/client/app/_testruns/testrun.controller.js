@@ -100,17 +100,6 @@
             return isEmpty;
         };
 
-       $scope.separateArtifacts = function (test) {
-            test.separatedArtifacts = [];
-            for (var i = 0; i< test.artifacts.length; i++) {
-                var artifact = test.artifacts[i];
-                if (artifact != null && (artifact.name.match(/^Log$/) || artifact.name.match(/^Demo$/))) {
-                    test.separatedArtifacts[artifact.id] = artifact;
-                    test.artifacts.splice(i,1);
-                    i--;
-                }
-            }
-       };
 
        $scope.addTest = function (test, isEvent) {
 
@@ -327,7 +316,6 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
-                        $scope.separateArtifacts(test);
                         $scope.addTest(test, false);
                     }
                     testRun.inProgress = inProgressTests;
@@ -342,7 +330,9 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
-            window.open($location.$$absUrl + "/" + testRun.id, '_blank');
+            if ($location.$$absUrl.match(new RegExp(testRun.id, 'gi')) == null){
+                window.open($location.$$absUrl + "/" + testRun.id, '_blank');
+            }
         };
 
         $scope.copyLink = function (testRun) {
@@ -485,7 +475,7 @@
             $location.url($location.path());
             $scope.sc = {
                 'page': 1,
-                'pageSize': 25
+                'pageSize': 20
             };
             $scope.startedAt = null;
             $scope.showReset = false;
@@ -652,8 +642,13 @@
             $scope.search();
         };
 
+        var toSc = function (qParams) {
+            $scope.sc = qParams;
+        };
+
         (function init() {
 
+            toSc($location.search());
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
@@ -661,7 +656,7 @@
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
 
-            SettingsService.getSetting("JIRA_URL").then(function(rs) {
+            SettingsService.getSettingByName("JIRA_URL").then(function(rs) {
                 if(rs.success)
                 {
                 	 $scope.jiraURL = rs.data;
@@ -959,6 +954,7 @@
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
             $scope.newKnownIssue.status = null;
+            $scope.newKnownIssue.assigneeMessage = null;
             $scope.isJiraIdExists = true;
             $scope.isJiraIdClosed = false;
             $scope.isIssueFound = false;

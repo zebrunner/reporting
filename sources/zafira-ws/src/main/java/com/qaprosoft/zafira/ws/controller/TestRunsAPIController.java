@@ -40,12 +40,12 @@ import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.slack.SlackService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

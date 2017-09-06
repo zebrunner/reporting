@@ -149,9 +149,15 @@
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smack</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smackx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-springsecurity3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -214,6 +220,7 @@
 		    <groupId>in.ashwanthkumar</groupId>
 		  	<artifactId>slack-java-webhook</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>

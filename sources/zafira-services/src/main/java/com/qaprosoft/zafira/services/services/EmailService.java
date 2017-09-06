@@ -8,7 +8,6 @@ import freemarker.template.Configuration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -23,11 +22,11 @@ public class EmailService
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
 	
-	@Value("${zafira.mail.user}")
-	private String mailUser;
-	
 	@Autowired
 	private Configuration freemarkerConfiguration;
+
+	@Autowired
+	private AsynSendEmailTask emailTask;
 	
 	@Autowired
 	private AutowireCapableBeanFactory autowireizer;
@@ -46,7 +45,7 @@ public class EmailService
 					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
 					msg.setSubject(message.getSubject());
 					msg.setTo(recipients);
-					msg.setFrom(mailUser);
+					msg.setFrom(emailTask.getJavaMailSenderImpl().getUsername());
 					msg.setText(text, true);
 					if(hasAttachments)
 					{
@@ -58,9 +57,9 @@ public class EmailService
 					}
 				}
 			};
-			Runnable task = new AsynSendEmailTask(preparator);
-			autowireizer.autowireBean(task);
-			Executors.newSingleThreadExecutor().execute(task);
+			emailTask.setPreparator(preparator);
+			autowireizer.autowireBean(emailTask);
+			Executors.newSingleThreadExecutor().execute(emailTask);
 		}
 		return text;
 	}

@@ -10,6 +10,8 @@
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
+        $scope.dashboard = {};
+
         $scope.loadDashboardData = function (dashboard) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 if ('sql' != dashboard.widgets[i].type) {
@@ -155,6 +157,48 @@
                 });
         };
 
+        var toAttributes = function (qParams) {
+            var attributes = [];
+            for(var param in qParams) {
+                var currentAttribute = {};
+                currentAttribute.key = param;
+                currentAttribute.value = qParams[param];
+                attributes.push(currentAttribute);
+            }
+            return attributes;
+        };
+
+        var getQueryAttributes = function () {
+            var qParams = $location.search();
+            var qParamsLength = Object.keys(qParams).length;
+            if(qParamsLength > 0 && $stateParams.id) {
+                return toAttributes(qParams);
+            }
+        };
+
+         $scope.$watch(
+            function() {
+                return $scope.currentUserId !== $location.$$search.userId;
+            },
+            function() {
+                if ($scope.currentUserId !== $location.$$search.userId){
+                    $scope.currentUserId = $location.search().userId;
+                    DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+                        if (rs.success) {
+                            $scope.dashboard = rs.data;
+                            var queryAttributes = getQueryAttributes();
+                            if(queryAttributes) {
+                                for (var i = 0; i < queryAttributes.length; i++) {
+                                    $scope.dashboard.attributes.push(queryAttributes[i]);
+                                }
+                            }
+                            $scope.loadDashboardData($scope.dashboard);
+                        }
+                    });
+                }
+            }
+        );
+
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
@@ -172,6 +216,12 @@
                             DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
                                 if (rs.success) {
                                     $scope.dashboard = rs.data;
+                                    var queryAttributes = getQueryAttributes();
+                                    if(queryAttributes) {
+                                        for (var i = 0; i < queryAttributes.length; i++) {
+                                            $scope.dashboard.attributes.push(queryAttributes[i]);
+                                        }
+                                    }
                                     $scope.loadDashboardData($scope.dashboard);
                                 }
                             });

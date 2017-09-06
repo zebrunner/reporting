@@ -1,14 +1,8 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import net.rcarz.jiraclient.Issue;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -293,7 +287,11 @@ public class TestService
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
-		results.setResults(testMapper.searchTests(sc));
+		List <Test> tests = testMapper.searchTests(sc);
+		for (Test test: tests){
+			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
+		}
+ 		results.setResults(tests);
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
 	}
