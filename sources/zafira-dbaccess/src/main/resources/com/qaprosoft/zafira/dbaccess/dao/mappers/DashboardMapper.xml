@@ -66,6 +66,13 @@
 		]]>
 	</select>
 
+    <select id="getDashboardByTitle" resultMap="DashboardResultMap">
+        <include refid="getDashboard" />
+        <![CDATA[
+			WHERE D.TITLE = #{title};
+		]]>
+    </select>
+
     <select id="getDashboardsByHidden" resultMap="DashboardResultMap">
         <include refid="getDashboard" />
         <![CDATA[

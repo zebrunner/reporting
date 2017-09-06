@@ -176,6 +176,29 @@
             }
         };
 
+         $scope.$watch(
+            function() {
+                return $scope.currentUserId !== $location.$$search.userId;
+            },
+            function() {
+                if ($scope.currentUserId !== $location.$$search.userId){
+                    $scope.currentUserId = $location.search().userId;
+                    DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+                        if (rs.success) {
+                            $scope.dashboard = rs.data;
+                            var queryAttributes = getQueryAttributes();
+                            if(queryAttributes) {
+                                for (var i = 0; i < queryAttributes.length; i++) {
+                                    $scope.dashboard.attributes.push(queryAttributes[i]);
+                                }
+                            }
+                            $scope.loadDashboardData($scope.dashboard);
+                        }
+                    });
+                }
+            }
+        );
+
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
