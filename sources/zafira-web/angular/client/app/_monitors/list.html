@@ -8,94 +8,68 @@
         </div>
     </div>
 
-
-
-
-
-
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-4" data-ng-repeat="monitor in monitors">
                 <div class="card bg-white">
-                    <div class="card-content">
-                        <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}"
-                           class="material-icons material-icon-16px">fiber_manual_record</i>
-
+                    <div style="min-height: 400px" class="card-content">
+                        <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
                         <span class="card-title">
-                                {{ monitor.name }}
+                        {{ monitor.name }}
                         </span>
 
                         <md-input-container style="float: right; margin-top: 0px">
-                            <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled"
-                                       ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
+                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled"
+                        ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
                         </md-input-container>
 
 
                         <div class="col-lg-11" style="padding: 0">
-                            <md-input-container class="md-block" style="margin-bottom: 0">
-                                <label>Name</label>
-                                <input type="text" ng-model="monitor.name" required>
-                            </md-input-container>
+                        <md-input-container class="md-block" style="margin-bottom: 0">
+                        <label>URL</label>
+                        <input type="text" ng-model="monitor.url" required>
+                        </md-input-container>
+                        </div>
+
+                        <div class="col-lg-11" style="padding: 0">
+                        <md-input-container class="md-block" flex>
+                        <label>Type</label>
+                        <md-select name="type" ng-model="monitor.type">
+                        <md-option value="HTTP">HTTP</md-option>
+                        <md-option value="PING">Ping</md-option>
+                        </md-select>
+                        </md-input-container>
                         </div>
 
 
                         <div class="col-lg-11" style="padding: 0">
-                            <md-input-container class="md-block" style="margin-bottom: 0">
-                                <label>URL</label>
-                                <input type="text" ng-model="monitor.url" required>
-                            </md-input-container>
-                        </div>
-
-                        <div class="col-lg-11" style="padding: 0">
-                            <md-input-container class="md-block" flex>
-                                <label>Type</label>
-                                <md-select name="type" ng-model="monitor.type">
-                                    <md-option value="HTTP">HTTP</md-option>
-                                    <md-option value="PING">Ping</md-option>
-                                </md-select>
-                            </md-input-container>
+                        <md-input-container class="md-block" style="margin-bottom: 0">
+                        <label>Cron expression</label>
+                        <input type="text" ng-model="monitor.cronExpression" required>
+                        </md-input-container>
                         </div>
 
 
                         <div class="col-lg-11" style="padding: 0">
-                            <md-input-container class="md-block" style="margin-bottom: 0">
-                                <label>Cron expression</label>
-                                <input type="text" ng-model="monitor.cronExpression" required>
-                            </md-input-container>
-                        </div>
-
-
-                        <div class="col-lg-11" style="padding: 0">
-                            <md-input-container class="md-block" style="margin-bottom: 0">
-                                <label>Expected response code</label>
-                                <input type="text" ng-model="monitor.expectedResponseCode" required>
-                            </md-input-container>
+                        <md-input-container class="md-block" style="margin-bottom: 0">
+                        <label>Expected response code</label>
+                        <input type="text" ng-model="monitor.expectedResponseCode" required>
+                        </md-input-container>
                         </div>
 
 
                         <div class="card-action text-center">
-                            <md-button ng-click="updateMonitor(monitor)" class="md-raised btn-w-md md-primary">
-                                Save
-                            </md-button>
-                            <md-button ng-click="deleteMonitor(monitor)" class="md-raised btn-w-md md-primary">
-                                Delete
-                            </md-button>
-                        </div>
-                    </div>
+                        <md-button ng-click="updateMonitor(monitor)" class="md-raised btn-w-md md-primary">
+                        Save
+                        </md-button>
+                        <md-button ng-click="deleteMonitor(monitor)" class="md-raised btn-w-md md-primary">
+                        Delete
+                        </md-button>
+
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
 
 
 
