@@ -35,21 +35,7 @@
                             <md-chip-template>
                                 {{$chip.email}}
                             </md-chip-template>
-                            <md-autocomplete
-                                md-autoselect
-                                md-no-cache="true"
-                                md-search-text="searchText"
-                                md-items="user in querySearch(searchText, users)"
-                                md-item-text="user.email"
-                                md-selected-item="currentUser"
-                                placeholder="add email">
-                                <md-item-template>
-                                    <span>{{user.email}}</span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No users matching "{{searchText}}" were found.
-                                </md-not-found>
-                            </md-autocomplete>
+
                         </md-chips>
                     </md-input-container>
                 </div>

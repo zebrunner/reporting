@@ -16,6 +16,7 @@ import java.util.List;
 public class Monitor extends AbstractEntity {
 
     public enum HttpMethod{GET, POST, PUT, DELETE}
+    public enum Type{HTTP, PING}
 
     private String name;
     private String url;
@@ -24,6 +25,7 @@ public class Monitor extends AbstractEntity {
     private String cronExpression;
     private boolean enableNotification;
     private String emails;
+    private Type type;
     private int expectedResponseCode;
 
     public String getName() {
@@ -91,23 +93,29 @@ public class Monitor extends AbstractEntity {
     }
 
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+
     @Override
     public String toString() {
         return "Monitor{" +
-                "id='" + getId() + '\'' +
                 "name='" + name + '\'' +
                 ", url='" + url + '\'' +
-                ", httpMethod='" + httpMethod + '\'' +
+                ", httpMethod=" + httpMethod +
                 ", requestBody='" + requestBody + '\'' +
                 ", cronExpression='" + cronExpression + '\'' +
                 ", enableNotification=" + enableNotification +
                 ", emails='" + emails + '\'' +
+                ", type=" + type +
                 ", expectedResponseCode=" + expectedResponseCode +
                 '}';
     }
-
-
-
-    }
+}
 
 

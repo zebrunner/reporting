@@ -6,7 +6,7 @@
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENABLE_NOTIFICATION, CRON_EXPRESSION,
-			EXPECTED_RESPONSE_STATUS, EMAILS)
+			EXPECTED_RESPONSE_STATUS, EMAILS, TYPE)
 			VALUES (
 				#{name},
 				#{url},
@@ -15,7 +15,8 @@
 				#{enableNotification},
 				#{cronExpression},
 				#{expectedResponseCode},
-				#{emails}
+				#{emails},
+				#{type}
 			)
 		]]>
     </insert>
@@ -49,7 +50,8 @@
 		    ENABLE_NOTIFICATION=#{enableNotification},
 		    CRON_EXPRESSION=#{cronExpression},
 			EXPECTED_RESPONSE_STATUS=#{expectedResponseCode},
-            EMAILS = #{emails}
+            EMAILS = #{emails},
+            TYPE = #{type}
 			WHERE
 			    ID = #{id}
 		]]>
@@ -68,6 +70,7 @@
 				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
 				M.EMAILS AS MONITOR_EMAILS,
 				M.EXPECTED_RESPONSE_STATUS AS MONITOR_EXPECTED_RESPONSE_STATUS,
+				M.TYPE AS MONITOR_TYPE,
 				M.CREATED_AT AS MONITOR_CREATED_AT,
 				M.MODIFIED_AT AS MONITOR_MODIFIED_AT
 			FROM
@@ -113,6 +116,7 @@
         <result column="MONITOR_CRON_EXPRESSION" property="cronExpression" />
         <result column="MONITOR_EXPECTED_RESPONSE_STATUS" property="expectedResponseCode" />
         <result column="MONITOR_EMAILS" property="emails" />
+        <result column="MONITOR_TYPE" property="type" />
         <result column="JOB_MODIFIED_AT" property="modifiedAt" />
         <result column="JOB_CREATED_AT" property="createdAt" />
     </resultMap>

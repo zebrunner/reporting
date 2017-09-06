@@ -23,6 +23,9 @@ public class MonitorEmailNotificationTask implements Job {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MonitorEmailNotificationTask.class);
 
+    public MonitorEmailNotificationTask() {
+    }
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         ApplicationContext applicationContext = null;
@@ -45,7 +48,7 @@ public class MonitorEmailNotificationTask implements Job {
                 (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
 
         String url = monitor.getUrl();
-        HttpMethod httpMethod = monitor.getHttpMethod();
+        Monitor.Type type  = monitor.getType();
 
         int expectedResponseStatus = monitor.getExpectedResponseCode();
         int actualResponseStatus = HttpClientUtil.sendGetAndGetResponseStatus(url);

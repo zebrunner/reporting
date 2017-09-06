@@ -443,6 +443,7 @@
                 }
             });
         };
+
         $scope.users_all = [];
 
         $scope.usersSearchCriteria = {};

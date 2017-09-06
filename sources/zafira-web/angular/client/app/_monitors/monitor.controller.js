@@ -1,236 +1,171 @@
-(function () {
-    'use strict';
+(function() {
+ 'use strict';
 
-    angular
-        .module('app.monitor')
-        .controller('MonitorListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'ЬService', 'GroupService', 'UtilService', 'DashboardService', MonitorListController])
+ angular
+  .module('app.monitor')
+  .controller('MonitorListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'MonitorService', MonitorListController])
 
-   function MonitorController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, UtilService, DashboardService) {
+ // **************************************************************************
+ function MonitorListController($scope, $rootScope, $location, $state, $mdDialog, MonitorService) {
 
-//    	var DEFAULT_SC = {page : 1, pageSize : 20};
-//
-//    	$scope.UtilService = UtilService;
-//    	$scope.DashboardService = DashboardService;
-//
-//    	$scope.sc = angular.copy(DEFAULT_SC);
-//    	$scope.users = [];
-//        $scope.order = 'username';
-//
-//    	$scope.search = function (page) {
-//            $scope.sc.date = null;
-//            $scope.sc.toDate = null;
-//            $scope.sc.fromDate = null;
-//
-//            if(page)
-//            {
-//                $scope.sc.page = page;
-//            }
-//
-//            if ($scope.sc.period == ""){
-//                $scope.sc.date = $scope.sc.chosenDate;
-//            }
-//            else if ($scope.sc.period == "before"){
-//                $scope.sc.toDate =  $scope.sc.chosenDate;
-//            }
-//            else if ($scope.sc.period == "after") {
-//                $scope.sc.fromDate = $scope.sc.chosenDate;
-//            }
-//            else if ($scope.sc.period == "between") {
-//                $scope.sc.fromDate = $scope.sc.chosenDate;
-//                $scope.sc.toDate =  $scope.sc.endDate;
-//            }
-//
-//  		UserService.searchUsers($scope.sc).then(function(rs) {
-//				if(rs.success)
-//        		{
-//        			$scope.sr = rs.data;
-//        		}
-//        		else
-//        		{
-//        			alertify.error(rs.message);
-//        		}
-//			});
-//        };
-//
-//        $scope.reset = function () {
-//        	$scope.sc = angular.copy(DEFAULT_SC);
-//        	$scope.search();
-//        };
-//
-//        $scope.showChangePasswordDialog = function($event, user) {
-//            $mdDialog.show({
-//                controller: function ($scope, $mdDialog) {
-//                    $scope.user = user;
-//                    $scope.changePassword = {'userId' : user.id};
-//                    $scope.updateUserPassword = function(changePassword)
-//                    {
-//                        UserService.updateUserPassword(changePassword)
-//                            .then(function (rs) {
-//                                if(rs.success)
-//                                {
-//                                    $scope.changePassword = {};
-//                                    $scope.hide();
-//                                    alertify.success('Password changed');
-//                                }
-//                                else
-//                                {
-//                                    alertify.error(rs.message);
-//                                }
-//                            });
-//                    };
-//                    $scope.hide = function() {
-//                        $mdDialog.hide(true);
-//                    };
-//                    $scope.cancel = function() {
-//                        $mdDialog.cancel(false);
-//                    };
-//                },
-//                templateUrl: 'app/_users/password_modal.html',
-//                parent: angular.element(document.body),
-//                targetEvent: event,
-//                clickOutsideToClose:true,
-//                fullscreen: true
-//            })
-//            .then(function(answer) {
-//            	if(answer)
-//            	{
-//            		$state.reload();
-//            	}
-//            }, function() {
-//            });
-//        };
-//
-//        $scope.showEditProfileDialog = function(event, user) {
-//            $mdDialog.show({
-//                controller: function ($scope, $mdDialog) {
-//                    $scope.user = angular.copy(user);
-//                    $scope.updateUser = function() {
-//                        UserService.createOrUpdateUser($scope.user).then(function(rs) {
-//                            if(rs.success)
-//                            {
-//                                $scope.hide();
-//                                alertify.success('Profile changed');
-//                            }
-//                            else
-//                            {
-//                                alertify.error(rs.message);
-//                            }
-//                        });
-//                    };
-//                    $scope.deleteUser = function() {
-//                        UserService.deleteUser($scope.user.id).then(function(rs) {
-//                            if(rs.success)
-//                            {
-//                                $scope.hide();
-//                                alertify.success('User deleted');
-//                            }
-//                            else
-//                            {
-//                                alertify.error(rs.message);
-//                            }
-//                        });
-//                    };
-//                    $scope.hide = function() {
-//                        $mdDialog.hide(true);
-//                    };
-//                    $scope.cancel = function() {
-//                        $mdDialog.cancel(false);
-//                    };
-//                },
-//                templateUrl: 'app/_users/edit_modal.html',
-//                parent: angular.element(document.body),
-//                targetEvent: event,
-//                clickOutsideToClose:true,
-//                fullscreen: true
-//            })
-//                .then(function(answer) {
-//                	if(answer)
-//                	{
-//                		$state.reload();
-//                	}
-//                }, function() {
-//                });
-//        };
-//
-//        $scope.showCreateUserDialog = function(event) {
-//            $mdDialog.show({
-//                controller: function ($scope, $mdDialog) {
-//                    $scope.createUser = function() {
-//                        UserService.createOrUpdateUser($scope.user).then(function(rs) {
-//                            if(rs.success)
-//                            {
-//                                $scope.hide();
-//                                alertify.success('User created');
-//                            }
-//                            else
-//                            {
-//                                alertify.error(rs.message);
-//                            }
-//                        });
-//                    };
-//                    $scope.hide = function() {
-//                        $mdDialog.hide(true);
-//                    };
-//                    $scope.cancel = function() {
-//                        $mdDialog.cancel(false);
-//                    };
-//                },
-//                templateUrl: 'app/_users/create_modal.html',
-//                parent: angular.element(document.body),
-//                targetEvent: event,
-//                clickOutsideToClose:true,
-//                fullscreen: true
-//            })
-//                .then(function(answer) {
-//                	if(answer)
-//                	{
-//                		$state.reload();
-//                	}
-//                }, function() {
-//                });
-//        };
+  (function initController() {
+   MonitorService.getAllMonitors()
+    .then(function(rs) {
+     if (rs.success) {
+      $scope.monitors = rs.data;
+     } else {
+      alertify.error(rs.message);
+     }
+    });
+  })();
 
-        $scope.showMonitorsSettingsDialog = function(event) {
-            $mdDialog.show({
-//                controller: GroupController,
-                templateUrl: 'app/_monitors/create_modal.html',
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose:true,
-                fullscreen: true
-            })
-                .then(function(answer) {
-                }, function() {
-                });
+  $scope.showCreateMonitorDialog = function(event) {
+   $mdDialog.show({
+     controller: function($scope, $mdDialog) {
+      $scope.monitor = {};
+      $scope.createMonitor = function() {
+       MonitorService.createMonitor($scope.monitor).then(function(rs) {
+        if (rs.success) {
+         $scope.hide();
+         alertify.success('Monitor created');
+        } else {
+         alertify.error(rs.message);
+        }
+       });
+      };
+      $scope.hide = function() {
+       $mdDialog.hide(true);
+      };
+      $scope.cancel = function() {
+       $mdDialog.cancel(false);
+      };
+     },
+     templateUrl: 'app/_monitors/create_modal.html',
+     parent: angular.element(document.body),
+     targetEvent: event,
+     clickOutsideToClose: true,
+     fullscreen: true
+    })
+    .then(function(answer) {
+     if (answer) {
+      $state.reload();
+     }
+    }, function() {});
+  };
+
+
+
+ $scope.deleteMonitor = function(monitor) {
+       MonitorService.deleteMonitor(monitor.id).then(function(rs) {
+        if (rs.success) {
+         alertify.success('Monitor deleted');
+         var index = $scope.monitors.indexOf(monitor);
+        $scope.monitors.splice(index, 1);
+        } else {
+         alertify.error(rs.message);
+        }
+       });
+      $scope.hide = function() {
+       $mdDialog.hide(true);
+      };
+      $scope.cancel = function() {
+       $mdDialog.cancel(false);
+      };
+  };
+
+
+
+
+$scope.updateMonitor = function(monitor) {
+       MonitorService.updateMonitor(monitor).then(function(rs) {
+        if (rs.success) {
+         alertify.success('Monitor with name:'+monitor.name+' is updated');
+        } else {
+         alertify.error(rs.message);
+        }
+       });
+      $scope.hide = function() {
+       $mdDialog.hide(true);
+      };
+      $scope.cancel = function() {
+       $mdDialog.cancel(false);
+      };
+  };
+
+
+
+
+$scope.checkAndTransformRecipient = function (currentUser) {
+            var user = {};
+            if (currentUser.username) {
+                user = currentUser;
+                $scope.email.recipients.push(user.email);
+                $scope.users.push(user);
+            } else {
+                user.email = currentUser;
+                $scope.email.recipients.push(user.email);
+                $scope.users.push(user);
+            }
+            return user;
         };
 
-//        $scope.isDateChosen = true;
-//        $scope.isDateBetween = false;
-//
-//        $scope.changePeriod = function () {
-//            if ($scope.sc.period == "between") {
-//                $scope.isDateChosen = true;
-//                $scope.isDateBetween = true;
-//            }
-//            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
-//                $scope.isDateChosen = true;
-//                $scope.isDateBetween = false;
-//            }
-//            else {
-//                $scope.isDateChosen = false;
-//                $scope.isDateBetween = false;
-//            }
-//        };
-//		(function initController() {
-//			 $scope.search(1);
-////			 DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
-////                if(rs.success && rs.data.length > 0)
-////                {
-////                	$scope.pefrDashboardId = rs.data[0].id;
-////                }
-////            });
-//		})();
-	}
 
+$scope.email = {};
+        $scope.email.subject = "Zafira Monitors";
+        $scope.email.text = "This is auto-generated email, please do not reply!";
+        $scope.email.hostname = document.location.hostname;
+        $scope.email.urls = [document.location.href];
+        $scope.email.recipients = [];
+        $scope.users = [];
+
+
+$scope.removeRecipient = function (user) {
+            var index = $scope.email.recipients.indexOf(user.email);
+            if (index >= 0) {
+                $scope.email.recipients.splice(index, 1);
+            }
+        };
+
+
+
+        $scope.checkAndTransformRecipient = function (currentUser) {
+                    var user = {};
+                    if (currentUser.username) {
+                        user = currentUser;
+                        $scope.email.recipients.push(user.email);
+                        $scope.users.push(user);
+                    } else {
+                        user.email = currentUser;
+                        $scope.email.recipients.push(user.email);
+                        $scope.users.push(user);
+                    }
+                    return user;
+                };
+
+
+
+
+                function querySearch(criteria, user) {
+                            $scope.usersSearchCriteria.email = criteria;
+                            currentText = criteria;
+                            if (!criteria.includes(stopCriteria)) {
+                                stopCriteria = '########';
+                                return UserService.searchUsersWithQuery($scope.usersSearchCriteria, criteria).then(function (rs) {
+                                    if (rs.success) {
+                                        if (! rs.data.results.length) {
+                                            stopCriteria = criteria;
+                                        }
+                                        return rs.data.results.filter(searchFilter(user));
+                                    }
+                                    else {
+                                    }
+                                });
+                            }
+                            return "";
+                        }
+
+
+
+ }
 
 })();

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -71,8 +72,13 @@ public class MonitorApiController extends AbstractController {
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    List<Monitor> getAllMonitors() throws ServiceException {
-        return monitorsService.getAllMonitors();
+    List<MonitorType> getAllMonitors() throws ServiceException {
+        List<MonitorType> monitorTypes = new ArrayList<>();
+        List<Monitor> monitors = monitorsService.getAllMonitors();
+        for (Monitor monitor: monitors){
+         monitorTypes.add(mapper.map(monitor, MonitorType.class));
+        }
+        return monitorTypes;
     }
 
     @ResponseStatusDetails
@@ -81,8 +87,8 @@ public class MonitorApiController extends AbstractController {
     @ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", code = 200, httpMethod = "GET", response = Monitor.class)
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    Monitor getMonitorById(@PathVariable(value = "id") long id) throws ServiceException {
-        return monitorsService.getMonitorById(id);
+    MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException {
+        return mapper.map(monitorsService.getMonitorById(id), MonitorType.class);
     }
 
     @ResponseStatusDetails

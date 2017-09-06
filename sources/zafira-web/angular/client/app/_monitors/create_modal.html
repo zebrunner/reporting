@@ -1,5 +1,6 @@
 <md-dialog flex="50" aria-label="Monitor profile">
-    <form class="form-validation" name="monitor_form" ng-submit="createMonitor(); UtilService.untouchForm(monitor_form)" ng-cloak>
+    <form class="form-validation" name="monitor_form" ng-submit="createMonitor(); UtilService.untouchForm(monitor_form)"
+          ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Create monitor</h2>
@@ -14,48 +15,109 @@
             <div class="md-dialog-content">
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <label>Username</label>
-                        <input type="text" ng-model="user.username" name="username"/>
+                        <label>Name</label>
+                        <input type="text" ng-model="monitor.name" name="name" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <label>First name</label>
-                        <input type="text" ng-model="user.firstName" name="firstName"/>
+                        <label>URL</label>
+                        <input type="text" ng-model="monitor.url" name="url" required/>
                     </md-input-container>
                 </div>
+
+                <div layout layout-sm="column">
+                    <md-input-container class="md-block" flex>
+                        <label>Type</label>
+                        <md-select name="type" ng-model="monitor.type" required>
+                            <md-option value="HTTP">HTTP</md-option>
+                            <md-option value="Ping">Ping</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+
+                <div layout layout-sm="column">
+                    <md-input-container class="md-block" flex>
+                        <label>HTTP method</label>
+                        <md-select name="type" ng-model="monitor.httpMethod" required>
+                            <md-option value="GET">GET</md-option>
+                            <md-option value="POST">POST</md-option>
+                            <md-option value="PUT">PUT</md-option>
+                            <md-option value="DELETE">DELETE</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+
+
+
+
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <label>Last Name</label>
-                        <input type="text" ng-model="user.lastName" name="lastName"/>
+                        <label>Recepients ({{email.recipients.length}})</label>
+                        <md-chips ng-model="users"
+                                  filter-selected=true
+                                  md-autocomplete-snap
+                                  md-transform-chip="checkAndTransformRecipient($chip)"
+                                  md-on-remove="removeRecipient($chip)"
+                                  md-separator-keys="keys">
+                            <md-chip-template>
+                                {{$chip.email}}
+                            </md-chip-template>
+                            <md-autocomplete
+                                    md-autoselect
+                                    md-no-cache="true"
+                                    md-search-text="searchText"
+                                    md-items="user in querySearch(searchText, users)"
+                                    md-item-text="user.email"
+                                    md-selected-item="currentUser"
+                                    placeholder="add email">
+                                <md-item-template>
+                                    <span>{{user.email}}</span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No users matching "{{searchText}}" were found.
+                                </md-not-found>
+                            </md-autocomplete>
+                        </md-chips>
                     </md-input-container>
                 </div>
+
+
+
+
                 <div layout layout-sm="column">
-                    <md-input-container flex>
-                        <label>Email</label>
-                        <input type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/"/>
-                        <div ng-messages="user_form.email.$error" ng-if="user_form.email.$dirty">
-                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                            <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
-                        </div>
+                    <md-input-container class="md-block" flex>
+                        <label>Cron Expression</label>
+                        <input type="text" ng-model="monitor.cronExpression" name="cronExpression" required/>
                     </md-input-container>
                 </div>
+
+
+                <div layout layout-sm="column" required>
+                    <md-switch ng-model="monitor.enableNotification" aria-label="Enable notification"
+                               ng-true-value="'true'" ng-false-value="'false'" class="md-warn">
+                        Enable notification : {{ monitor.enableNotification }}
+                    </md-switch>
+                </div>
+
+
                 <div layout layout-sm="column">
-                    <md-input-container nonautocomplete flex>
-                        <label>Password</label>
-                        <input type="password" ng-model="user.password" name="password" required/>
-                        <div ng-messages="user_form.password.$error" ng-if="user_form.password.$dirty">
-                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                        </div>
+                    <md-input-container class="md-block" flex>
+                        <label>Expected response code</label>
+                        <input type="text" ng-model="monitor.expectedResponseCode" name="expectedResponseCode"
+                               required/>
                     </md-input-container>
                 </div>
+
             </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
             <md-button type="submit"
                        class="md-raised btn-w-md md-primary"
-                       ng-disabled="user_form.$invalid">
+                       ng-disabled="monitor_form.$invalid">
                 Create
             </md-button>
         </md-dialog-actions>

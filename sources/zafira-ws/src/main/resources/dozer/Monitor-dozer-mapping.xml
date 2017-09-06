@@ -39,6 +39,10 @@
             <b>emails</b>
         </field>
         <field>
+            <a>type</a>
+            <b>type</b>
+        </field>
+        <field>
             <a>expectedResponseCode</a>
             <b>expectedResponseCode</b>
         </field>

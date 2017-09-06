@@ -17,6 +17,7 @@
 
         return service;
 
+
         function getAllMonitors() {
         	return $http.get(API_URL + '/api/monitors').then(UtilService.handleSuccess, UtilService.handleError('Unable to get all monitors'));
         }

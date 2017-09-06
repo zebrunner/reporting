@@ -1,129 +1,91 @@
 <div class="page page-profile" ng-controller="MonitorListController">
 
-	<div class="row ui-section">
-		<div class="col-lg-12">
-			<h2 class="section-header">Monitors
-				<small data-ng-if="sr">({{sr.totalResults}})</small>
-			</h2>
-		</div>
-		<md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
-			<md-fab-trigger>
-				<md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
-					<span class="fa fa-bars"></span>
-				</md-button>
-			</md-fab-trigger>
-			<md-fab-actions>
-				<md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showMonitorsSettingsDialog()">
-					<span class="fa fa-plus"></span>
-				</md-button>
-			</md-fab-actions>
-		</md-fab-speed-dial>
+    <div class="row ui-section">
+        <div class="col-lg-12">
+            <h2 class="section-header">Monitors
+                <small data-ng-if="monitors">({{monitors.length}})</small>
+            </h2>
+        </div>
+    </div>
 
-		<div class="col-md-12">
-			<article class="article">
-				<md-card class="no-margin-h">
-					<md-table-container>
-						<form ng-submit="search()" name="search_form">
-							<table class="table-hover" md-table>
-								<thead md-head style="position: parent;">
-								<tr md-row>
-									<th md-column>
-										<md-input-container class="searchable">
-											<input type="number" ng-model="sc.id" name="id" placeholder="ID"/>
-										</md-input-container>
-									</th>
-									<th md-column>
-										<md-input-container class="searchable">
-											<input type="text" ng-model="sc.username" name="username" placeholder="Username"/>
-										</md-input-container>
-									</th>
-									<th md-column>
-										<md-input-container class="searchable">
-											<input type="text" ng-model="sc.email" name="email" placeholder="Email"/>
-										</md-input-container>
-									</th>
-									<th md-column>
-										<md-input-container class="searchable">
-											<input type="text" ng-model="sc.firstLastName" name="firstLastName" placeholder="First/Last name"/>
-										</md-input-container>
-									</th>
-									<th md-column class="no-padding">
-										<md-input-container class="searchable select">
-											<md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
-												<md-option value="" ng-selected="true"></md-option>
-												<md-option value="before">Before</md-option>
-												<md-option value="after">After</md-option>
-												<md-option value="between">Between</md-option>
-												<md-option value="today">Today</md-option>
-												<md-option value="yesterday">Yesterday</md-option>
-												<md-option value="this_week">This Week</md-option>
-												<md-option value="last_week">Last Week</md-option>
-												<md-option value="this_month">This Month</md-option>
-												<md-option value="last_month">Last Month</md-option>
-												<md-option value="this_qtr">This Quarter</md-option>
-												<md-option value="last_qtr">Last Quarter</md-option>
-												<md-option value="this_year">This Year</md-option>
-												<md-option value="last_year">Last Year</md-option>
-											</md-select>
-										</md-input-container>
-										<md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Registered" ></md-datepicker>
-										<md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Registered"></md-datepicker>
-									</th>
-									<th md-column>Status</th>
-									<th md-column></th>
-								</tr>
-								<md-button type="submit" class="hide">Search</md-button>
-								</thead>
-								<tbody md-body>
-								<tr md-row ng-repeat="user in sr.results">
-									<td md-cell>#{{user.id}}</td>
-									<td md-cell><b>{{user.username}}</b></td>
-									<td md-cell>{{user.email}}</td>
-									<td md-cell>{{user.firstName}} {{user.lastName}}</td>
-									<td md-cell class="text-center">{{user.createdAt | date}}</td>
-									<td md-cell>
-                                    	<span ng-switch on="user.password != null && user.password != ''">
-                                    		<span class="label label-success" ng-switch-when="true">Active</span>
-                                    		<span class="label label-danger" ng-switch-when="false">Inactive</span>
-                                    	</span>
-									</td>
-									<td md-cell class="no-padding">
-										<md-menu>
-											<md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-												<md-icon class="material-icons">more_vert</md-icon>
-											</md-button>
-											<md-menu-content width="2">
-												<md-menu-item>
-													<md-button data-ng-click="showEditProfileDialog($event, user, false)">
-														<md-icon class="material-icons">build</md-icon>
-														Edit profile
-													</md-button>
-												</md-menu-item>
-												<md-menu-item>
-													<md-button data-ng-click="showChangePasswordDialog($event, user, false)">
-														<md-icon class="material-icons">lock_outline</md-icon>
-														Change password
-													</md-button>
-												</md-menu-item>
-												<md-menu-item>
-													<md-button ng-href="#!/dashboards/{{pefrDashboardId}}?userId={{user.id}}" style="padding-top: 12px">
-														<md-icon class="material-icons">timeline</md-icon>
-														Performance
-													</md-button>
-												</md-menu-item>
-											</md-menu-content>
-										</md-menu>
-									</td>
-								</tr>
-								</tbody>
-							</table>
-						</form>
-					</md-table-container>
 
-					<md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
-				</md-card>
-			</article>
-		</div>
+
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4" data-ng-repeat="monitor in monitors">
+                <div class="card bg-white">
+                    <div class="card-content">
+                        <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}"
+                           class="material-icons material-icon-16px">fiber_manual_record</i>
+
+                        <span class="card-title">
+                                {{ monitor.name }}
+                        </span>
+
+                        <md-input-container style="float: right; margin-top: 0px">
+                            <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled"
+                                       ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
+                        </md-input-container>
+
+
+                        <div class="col-lg-11" style="padding: 0">
+                            <md-input-container class="md-block" style="margin-bottom: 0">
+                                <label>Name</label>
+                                <input type="text" ng-model="monitor.name" required>
+                            </md-input-container>
+                        </div>
+
+
+                        <div class="col-lg-11" style="padding: 0">
+                            <md-input-container class="md-block" style="margin-bottom: 0">
+                                <label>URL</label>
+                                <input type="text" ng-model="monitor.url" required>
+                            </md-input-container>
+                        </div>
+
+                        <div class="col-lg-11" style="padding: 0">
+                            <md-input-container class="md-block" flex>
+                                <label>Type</label>
+                                <md-select name="type" ng-model="monitor.type">
+                                    <md-option value="HTTP">HTTP</md-option>
+                                    <md-option value="PING">Ping</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+
+
+                        <div class="col-lg-11" style="padding: 0">
+                            <md-input-container class="md-block" style="margin-bottom: 0">
+                                <label>Cron expression</label>
+                                <input type="text" ng-model="monitor.cronExpression" required>
+                            </md-input-container>
+                        </div>
+
+
+                        <div class="col-lg-11" style="padding: 0">
+                            <md-input-container class="md-block" style="margin-bottom: 0">
+                                <label>Expected response code</label>
+                                <input type="text" ng-model="monitor.expectedResponseCode" required>
+                            </md-input-container>
+                        </div>
+
+
+                        <div class="card-action text-center">
+                            <md-button ng-click="updateMonitor(monitor)" class="md-raised btn-w-md md-primary">
+                                Save
+                            </md-button>
+                            <md-button ng-click="deleteMonitor(monitor)" class="md-raised btn-w-md md-primary">
+                                Delete
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -138,8 +100,21 @@
 
 
 
+    <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+        <md-fab-trigger>
+            <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <span class="fa fa-bars"></span>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showCreateMonitorDialog()">
+                <span class="fa fa-plus"></span>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
 
-
-
-	</div>
 </div>
+
+
+
+

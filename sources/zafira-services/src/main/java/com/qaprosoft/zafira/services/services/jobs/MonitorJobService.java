@@ -45,7 +45,7 @@ public class MonitorJobService {
 
     public void addJob(Monitor monitor) {
         JobDetail jobDetail = JobBuilder.newJob(MonitorEmailNotificationTask.class)
-                .withIdentity(monitor.getId().toString(), "monitorGroup")
+                .withIdentity(monitor.getId().toString(), "monitorJobGroup")
                 .storeDurably(true).build();
 
         CronTriggerImpl trigger = new CronTriggerImpl();
@@ -68,17 +68,17 @@ public class MonitorJobService {
 
 
     public void deleteJob(long id) {
-        List<Monitor> monitors = monitorMapper.getAllMonitors();
-        Monitor monitor = null;
-        for (Monitor monitor1 : monitors) {
-            if (monitor1.getId() == id) {
-                monitor = monitor1;
-                break;
-            }
-        }
+//        List<Monitor> monitors = monitorMapper.getAllMonitors();
+//        Monitor monitor = null;
+//        for (Monitor monitor1 : monitors) {
+//            if (monitor1.getId() == id) {
+//                monitor = monitor1;
+//                break;
+//            }
+//        }
 
         try {
-            schedulerFactoryBean.getScheduler().deleteJob(findJobKey(monitor.getName()));
+            schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -88,7 +88,7 @@ public class MonitorJobService {
     public void updateExistingJob(Monitor monitor) {
 
         JobDetail job = JobBuilder.newJob(MonitorEmailNotificationTask.class)
-                .withIdentity(monitor.getId().toString(), "monitorGroup")
+                .withIdentity(monitor.getId().toString(), "monitorJobGroup")
                 .storeDurably(true).build();
         try {
             schedulerFactoryBean.getScheduler().getContext().put(job.getKey().getName(), monitor);
@@ -110,7 +110,7 @@ public class MonitorJobService {
         }
 
         CronTriggerImpl newTrigger = new CronTriggerImpl();
-        newTrigger.setName("Trigger " + monitor.getId());
+        newTrigger.setName(monitor.getId().toString());
         newTrigger.setGroup("monitorTriggerGroup");
         try {
             newTrigger.setCronExpression(monitor.getCronExpression());

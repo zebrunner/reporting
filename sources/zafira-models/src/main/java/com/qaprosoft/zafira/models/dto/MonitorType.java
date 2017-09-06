@@ -16,8 +16,9 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity {
 
+    private enum HttpMethod{GET, POST, PUT, DELETE}
+    private enum Type{HTTP, PING}
 
-    public enum HttpMethod{GET, POST, PUT, DELETE}
 
     @NotNull
     private String name;
@@ -28,6 +29,8 @@ public class MonitorType extends AbstractEntity {
     private String requestBody;
     @NotNull
     private String cronExpression;
+    @NotNull
+    private Type type;
     @NotNull
     private boolean enableNotification;
 
@@ -100,5 +103,11 @@ public class MonitorType extends AbstractEntity {
     }
 
 
+    public Type getType() {
+        return type;
+    }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
 }
