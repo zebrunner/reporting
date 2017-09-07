@@ -19,22 +19,22 @@ public class MonitorType extends AbstractEntity {
     private enum Type{HTTP, PING}
 
 
-    @NotNull
+    @NotNull(message = "Invalid name!")
     private String name;
-    @NotNull
+    @NotNull(message = "Invalid url")
     private String url;
-    @NotNull
+    @NotNull(message = "Invalid HTTP method")
     private HttpMethod httpMethod;
     private String requestBody;
-    @NotNull
+    @NotNull(message = "Invalid cron expression")
     private String cronExpression;
-    @NotNull
+    @NotNull(message = "Invalid type")
     private Type type;
-    @NotNull
+    @NotNull(message = "Invalid type!Type must be true or false!")
     private boolean enableNotification;
 
     private String emails;
-    @NotNull
+    @NotNull(message = "Invalid type of response code!")
     private int expectedResponseCode;
 
     public String getName() {

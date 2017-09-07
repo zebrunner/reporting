@@ -66,7 +66,7 @@ public class MonitorEmailNotificationTask implements Job {
             }
         }
 
-        if (expectedResponseStatus != actualResponseStatus) {
+        if (expectedResponseStatus != actualResponseStatus && monitor.isEnableNotification()) {
             String emails = monitor.getEmails();
             String[] emailList = getEmailList(emails);
             MonitorEmailMessageNotification monitorEmailMessageNotification = new MonitorEmailMessageNotification(monitor);
