@@ -19,7 +19,10 @@
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -169,7 +172,7 @@
 		  	<groupId>com.amazonaws</groupId>
 		  	<artifactId>aws-java-sdk</artifactId>
 	  	</dependency>
-		
+
 		<dependency>
 		  <groupId>com.offbytwo.jenkins</groupId>
 		  <artifactId>jenkins-client</artifactId>
@@ -184,7 +187,7 @@
 	        </exclusion>
 	      </exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.rcarz</groupId>
 			<artifactId>jira-client</artifactId>
@@ -206,12 +209,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>in.ashwanthkumar</groupId>
 		  	<artifactId>slack-java-webhook</artifactId>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <mapping type="bi-directional" wildcard="false">
+        <class-a>com.qaprosoft.zafira.models.dto.MonitorType</class-a>
+        <class-b>com.qaprosoft.zafira.models.db.Monitor</class-b>
+
+        <field>
+            <a>id</a>
+            <b>id</b>
+        </field>
+        <field>
+            <a>name</a>
+            <b>name</b>
+        </field>
+        <field>
+            <a>url</a>
+            <b>url</b>
+        </field>
+        <field>
+            <a>httpMethod</a>
+            <b>httpMethod</b>
+        </field>
+        <field>
+            <a>requestBody</a>
+            <b>requestBody</b>
+        </field>
+        <field>
+            <a>cronExpression</a>
+            <b>cronExpression</b>
+        </field>
+        <field>
+            <a>enableNotification</a>
+            <b>enableNotification</b>
+        </field>
+        <field>
+            <a>emails</a>
+            <b>emails</b>
+        </field>
+        <field>
+            <a>type</a>
+            <b>type</b>
+        </field>
+        <field>
+            <a>expectedResponseCode</a>
+            <b>expectedResponseCode</b>
+        </field>
+    </mapping>
+</mappings>
