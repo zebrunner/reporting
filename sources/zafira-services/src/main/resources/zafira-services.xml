@@ -67,6 +67,10 @@
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
 
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
+	</bean>
+
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetObject" ref="messageJsonifier" />
@@ -103,14 +107,14 @@
 		<property name="templateLoaderPaths" value="classpath:templates" />
 		<property name="defaultEncoding" value="UTF-8"/>
 	</bean>
-	
+
 	<bean id="stfService" class="com.qaprosoft.zafira.services.services.stf.STFService">
 		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
 		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
 	</bean>
-	
+
 	<cache:annotation-driven />
-	
+
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
