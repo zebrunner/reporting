@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 /**
  * @author Kirill Bugrim
@@ -32,8 +32,7 @@ public class MonitorType extends AbstractEntity {
     private Type type;
     @NotNull(message = "Invalid type!Type must be true or false!")
     private boolean enableNotification;
-
-    private String emails;
+    private String recipients;
     @NotNull(message = "Invalid type of response code!")
     private int expectedResponseCode;
 
@@ -85,12 +84,12 @@ public class MonitorType extends AbstractEntity {
         this.enableNotification = enableNotification;
     }
 
-    public String getEmails() {
-        return emails;
+    public String getRecipients() {
+        return recipients;
     }
 
-    public void setEmails(String emails) {
-        this.emails = emails;
+    public void setRecipients(String recipients) {
+        this.recipients = recipients;
     }
 
     public int getExpectedResponseCode() {

@@ -9,15 +9,15 @@ import org.quartz.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Kirill Bugrim
- *
- *  @version 1.0
+ * @version 1.0
  */
 
 @Service
-public class MonitorEmailNotificationTask implements Job {
+public class MonitorEmailNotificationTask implements  Job {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MonitorEmailNotificationTask.class);
 
@@ -25,13 +25,14 @@ public class MonitorEmailNotificationTask implements Job {
     }
 
     @Override
+    @Transactional
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         ApplicationContext applicationContext = null;
         try {
             applicationContext = (ApplicationContext) jobExecutionContext
                     .getScheduler().getContext().get("applicationContext");
         } catch (SchedulerException e) {
-            e.printStackTrace();
+            LOGGER.info("Can't get application context!");
         }
 
         EmailService emailService = applicationContext.getBean(EmailService.class);
@@ -39,11 +40,10 @@ public class MonitorEmailNotificationTask implements Job {
         try {
             schedulerContext = jobExecutionContext.getScheduler().getContext();
         } catch (SchedulerException e1) {
-            e1.printStackTrace();
+            LOGGER.info("Can't get job context!");
         }
 
-        Monitor monitor =
-                (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
+        Monitor monitor = (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
 
         String url = monitor.getUrl();
         String body = monitor.getRequestBody();
@@ -57,22 +57,21 @@ public class MonitorEmailNotificationTask implements Job {
                 actualResponseStatus = HttpClientUtil.sendGetAndGetResponseStatus(url);
                 break;
             }
-            case PUT:{
-                actualResponseStatus = HttpClientUtil.sendPutAndGetResponseStatus(url,body);
+            case PUT: {
+                actualResponseStatus = HttpClientUtil.sendPutAndGetResponseStatus(url, body);
                 break;
             }
-            case POST:{
-                actualResponseStatus = HttpClientUtil.sendPostAndGetResponseStatus(url,body);
+            case POST: {
+                actualResponseStatus = HttpClientUtil.sendPostAndGetResponseStatus(url, body);
             }
         }
 
+
         if (expectedResponseStatus != actualResponseStatus && monitor.isEnableNotification()) {
-            String emails = monitor.getEmails();
-            String[] emailList = getEmailList(emails);
-            MonitorEmailMessageNotification monitorEmailMessageNotification = new MonitorEmailMessageNotification(monitor);
-
+           MonitorEmailMessageNotification monitorEmailMessageNotification = new MonitorEmailMessageNotification(monitor, actualResponseStatus);
+            String recipients = monitor.getRecipients();
+            String[] emailList = getRecipientList(recipients);
             try {
-
                 emailService.sendEmail(monitorEmailMessageNotification, emailList);
             } catch (ServiceException e) {
                 LOGGER.info("Unable to send email!");
@@ -82,8 +81,8 @@ public class MonitorEmailNotificationTask implements Job {
     }
 
 
-    private String[] getEmailList(String emails) {
-        return emails.split(";");
+    private String[] getRecipientList(String recipients) {
+        return recipients.split(";");
     }
 
 }

@@ -79,7 +79,7 @@ public class MonitorJobService {
         try {
             schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
         } catch (SchedulerException e) {
-            e.printStackTrace();
+           LOGGER.info("Can't delete job");
         }
     }
 
@@ -114,7 +114,7 @@ public class MonitorJobService {
         try {
             newTrigger.setCronExpression(monitor.getCronExpression());
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.info("Can't set cron expression!");
         }
 
         try {

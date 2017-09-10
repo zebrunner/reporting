@@ -41,16 +41,6 @@ public class MonitorService {
         monitorMapper.deleteMonitorById(id);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getListEmailsByMonitorId(long id) {
-        return monitorMapper.getListEmailsByMonitorId(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<String> getListEmailsByMonitor(Monitor monitor) {
-        return monitorMapper.getListEmailsByMonitor(monitor);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public Monitor updateMonitor(Monitor monitor) throws ServiceException {
         monitorJobService.updateMonitor(monitor);

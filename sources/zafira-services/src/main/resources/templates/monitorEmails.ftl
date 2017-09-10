@@ -1,10 +1,14 @@
 <div>
-    <h2>${subject}</h2>
-    <p>${text}</p>
-    <#if monitor.url??>
-                <tr>
-                    <td>URL:</td>
-                    <td>${monitor.url}</td>
-                </tr>
-                </#if>
+   <p>${monitor.name}</p>
+   <#if monitor.url??>
+   <tr>
+      <td>URL:${monitor.url}</td>
+   </tr>
+   </br>
+   </#if>
+   <#if actualStatus??>
+   <tr>
+      <td>Actual status:${actualStatus}</td>
+   </tr>
+   </#if>
 </div>

@@ -20,7 +20,7 @@ public class Monitor extends AbstractEntity {
     private String requestBody;
     private String cronExpression;
     private boolean enableNotification;
-    private String emails;
+    private String recipients;
     private Type type;
     private int expectedResponseCode;
 
@@ -80,14 +80,13 @@ public class Monitor extends AbstractEntity {
         this.expectedResponseCode = expectedResponseCode;
     }
 
-    public String getEmails() {
-        return emails;
+    public String getRecipients() {
+        return recipients;
     }
 
-    public void setEmails(String emails) {
-        this.emails = emails;
+    public void setRecipients(String recipients) {
+        this.recipients = recipients;
     }
-
 
     public Type getType() {
         return type;
@@ -107,7 +106,7 @@ public class Monitor extends AbstractEntity {
                 ", requestBody='" + requestBody + '\'' +
                 ", cronExpression='" + cronExpression + '\'' +
                 ", enableNotification=" + enableNotification +
-                ", emails='" + emails + '\'' +
+                ", emails='" + recipients + '\'' +
                 ", type=" + type +
                 ", expectedResponseCode=" + expectedResponseCode +
                 '}';
