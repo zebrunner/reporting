@@ -22,13 +22,8 @@ public interface MonitorMapper {
 
     void deleteMonitor(Monitor monitor);
 
-    List<String> getListEmailsByMonitorId(long id);
-
-    List<String> getListEmailsByMonitor(Monitor monitor);
-
     List<Monitor> getAllMonitors();
 
     Integer getMonitorsCount();
 
-    Monitor getLastMonitor();
 }

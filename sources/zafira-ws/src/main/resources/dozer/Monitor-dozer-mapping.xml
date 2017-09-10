@@ -35,8 +35,8 @@
             <b>enableNotification</b>
         </field>
         <field>
-            <a>emails</a>
-            <b>emails</b>
+            <a>recipients</a>
+            <b>recipients</b>
         </field>
         <field>
             <a>type</a>

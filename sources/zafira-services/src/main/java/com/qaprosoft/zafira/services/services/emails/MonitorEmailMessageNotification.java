@@ -23,15 +23,26 @@ public class MonitorEmailMessageNotification implements IEmailMessage {
         this.monitor = monitor;
     }
 
+    public Integer getActualStatus() {
+        return actualStatus;
+    }
+
+    public void setActualStatus(Integer actualStatus) {
+        this.actualStatus = actualStatus;
+    }
+
     private Monitor monitor;
 
-    public MonitorEmailMessageNotification(Monitor monitor) {
+    private Integer actualStatus;
+
+    public MonitorEmailMessageNotification(Monitor monitor , Integer actualStatus) {
         this.monitor = monitor;
+        this.actualStatus = actualStatus;
     }
 
     @Override
     public String getSubject() {
-        return "Subject";
+        return "Monitor Alert!";
     }
 
     @Override
