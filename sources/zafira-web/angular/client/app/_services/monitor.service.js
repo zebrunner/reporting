@@ -30,8 +30,8 @@
             return $http.get(API_URL + '/api/monitors').then(UtilService.handleSuccess, UtilService.handleError('Unable to get monitors list'));
         }
 
-        function updateMonitor(monitor, enabledNotificationsOnly) {
-            return $http.put(API_URL + '/api/monitors?notificationsOnly=' + enabledNotificationsOnly, monitor).then(UtilService.handleSuccess, UtilService.handleError('Unable to update monitor'));
+        function updateMonitor(monitor, isActive) {
+            return $http.put(API_URL + '/api/monitors?notificationsOnly=' + isActive, monitor).then(UtilService.handleSuccess, UtilService.handleError('Unable to update monitor'));
         }
 
         function deleteMonitor(id) {

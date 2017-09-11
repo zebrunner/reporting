@@ -5,14 +5,14 @@
 
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENABLE_NOTIFICATION, CRON_EXPRESSION,
+			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, IS_ACTIVE, CRON_EXPRESSION,
 			EXPECTED_RESPONSE_STATUS, RECIPIENTS, TYPE)
 			VALUES (
 				#{name},
 				#{url},
 			    #{httpMethod},
 				#{requestBody},
-				#{enableNotification},
+				#{active},
 				#{cronExpression},
 				#{expectedResponseCode},
 				#{recipients},
@@ -47,7 +47,7 @@
 			URL=#{url},
 			HTTP_METHOD=#{httpMethod},
 		    REQUEST_BODY=#{requestBody},
-		    ENABLE_NOTIFICATION=#{enableNotification},
+		    IS_ACTIVE=#{active},
 		    CRON_EXPRESSION=#{cronExpression},
 			EXPECTED_RESPONSE_STATUS=#{expectedResponseCode},
             RECIPIENTS = #{recipients},
@@ -66,7 +66,7 @@
 				M.URL AS MONITOR_URL,
 				M.HTTP_METHOD AS MONITOR_HTTP_METHOD,
 				M.REQUEST_BODY AS MONITOR_REQUEST_BODY,
-				M.ENABLE_NOTIFICATION AS MONITOR_ENABLE_NOTIFICATION,
+				M.IS_ACTIVE AS MONITOR_IS_ACTIVE,
 				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
 				M.RECIPIENTS AS MONITOR_RECIPIENTS,
 				M.EXPECTED_RESPONSE_STATUS AS MONITOR_EXPECTED_RESPONSE_STATUS,
@@ -120,7 +120,7 @@
         <result column="MONITOR_URL" property="url" />
         <result column="MONITOR_HTTP_METHOD" property="httpMethod" />
         <result column="MONITOR_REQUEST_BODY" property="requestBody" />
-        <result column="MONITOR_ENABLE_NOTIFICATION" property="enableNotification" />
+        <result column="MONITOR_IS_ACTIVE" property="active" />
         <result column="MONITOR_CRON_EXPRESSION" property="cronExpression" />
         <result column="MONITOR_EXPECTED_RESPONSE_STATUS" property="expectedResponseCode" />
         <result column="MONITOR_RECIPIENTS" property="recipients" />

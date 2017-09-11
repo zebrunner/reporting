@@ -19,7 +19,7 @@ public class Monitor extends AbstractEntity {
     private HttpMethod httpMethod;
     private String requestBody;
     private String cronExpression;
-    private boolean enableNotification;
+    private boolean active;
     private String recipients;
     private Type type;
     private int expectedResponseCode;
@@ -64,12 +64,12 @@ public class Monitor extends AbstractEntity {
         this.cronExpression = cronExpression;
     }
 
-    public boolean isEnableNotification() {
-        return enableNotification;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setEnableNotification(boolean enableNotification) {
-        this.enableNotification = enableNotification;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public int getExpectedResponseCode() {
@@ -105,7 +105,7 @@ public class Monitor extends AbstractEntity {
                 ", httpMethod=" + httpMethod +
                 ", requestBody='" + requestBody + '\'' +
                 ", cronExpression='" + cronExpression + '\'' +
-                ", enableNotification=" + enableNotification +
+                ", active=" + active +
                 ", emails='" + recipients + '\'' +
                 ", type=" + type +
                 ", expectedResponseCode=" + expectedResponseCode +

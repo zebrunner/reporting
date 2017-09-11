@@ -31,8 +31,8 @@
             <b>cronExpression</b>
         </field>
         <field>
-            <a>enableNotification</a>
-            <b>enableNotification</b>
+            <a>active</a>
+            <b>active</b>
         </field>
         <field>
             <a>recipients</a>

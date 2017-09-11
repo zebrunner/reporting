@@ -56,8 +56,8 @@ public class MonitorService {
         if(notificationsOnly)
         {
             currentMonitor = monitorMapper.getMonitorById(monitor.getId());
-            currentMonitor.setEnableNotification(monitor.isEnableNotification());
-            monitorJobService.switchMonitor(monitor.isEnableNotification(), monitor.getId());
+            currentMonitor.setActive(monitor.isActive());
+            monitorJobService.switchMonitor(monitor.isActive(), monitor.getId());
         } else
         {
             currentMonitor = monitor;

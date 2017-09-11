@@ -31,14 +31,14 @@
             })
         };
 
-        $scope.updateMonitor = function (monitor, enabledNotificationsOnly) {
+        $scope.updateMonitor = function (monitor, isActive) {
             monitor.recipients = monitor.emailList.toString();
-            MonitorsService.updateMonitor(monitor, enabledNotificationsOnly).then(function (rs) {
+            MonitorsService.updateMonitor(monitor, isActive).then(function (rs) {
                 if(rs.success)
                 {
-                    if(enabledNotificationsOnly)
+                    if(isActive)
                     {
-                        var status = rs.data.enableNotification ? 'ran': 'stopped';
+                        var status = rs.data.active ? 'ran': 'stopped';
                         alertify.success("Monitor was " + status);
                     } else {
                         alertify.success('Monitor was updated');

@@ -30,7 +30,7 @@ public class MonitorType extends AbstractEntity {
     @NotNull(message = "Type required")
     private Monitor.Type type;
     @NotNull(message = "Enable or disable checkbox")
-    private boolean enableNotification;
+    private boolean active;
     private String recipients;
     @NotNull(message = "Expected code required")
     private int expectedResponseCode;
@@ -75,12 +75,12 @@ public class MonitorType extends AbstractEntity {
         this.cronExpression = cronExpression;
     }
 
-    public boolean isEnableNotification() {
-        return enableNotification;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setEnableNotification(boolean enableNotification) {
-        this.enableNotification = enableNotification;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getRecipients() {
