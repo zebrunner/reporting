@@ -99,7 +99,7 @@
 		</property>
 	</bean>
 
-	<bean id="asynSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
+	<bean id="asynSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask" scope="prototype"/>
 
 	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
 		id="freemarkerConfiguration">
