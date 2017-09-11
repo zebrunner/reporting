@@ -75,8 +75,7 @@ public class MonitorJobService {
     }
 
 
-
-    public void resumeJob(long id){
+    public void resumeJob(long id) {
         try {
             schedulerFactoryBean.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
         } catch (SchedulerException e) {
@@ -157,6 +156,17 @@ public class MonitorJobService {
             }
         }
         return null;
+    }
+
+
+    public void switchMonitor(boolean isRunning, long monitorId) {
+
+        if (isRunning) {
+            resumeJob(monitorId);
+        }else
+        {
+            pauseJob(monitorId);
+        }
     }
 
 }

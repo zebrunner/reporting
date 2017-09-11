@@ -56,15 +56,15 @@ public class MonitorsApiController extends AbstractController {
 
 
 
-    @ResponseStatusDetails
-    @ApiOperation(value = "Pause monitor", nickname = "pauseOrResumeMonitor", code = 200, httpMethod = "PUT")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public void pauseOrResumeJob(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @PathVariable(value = "id") long id)  {
-       monitorsService.pauseOrResumeMonitor(id , notificationsOnly);
-    }
+//    @ResponseStatusDetails
+//    @ApiOperation(value = "Pause monitor", nickname = "pauseOrResumeMonitor", code = 200, httpMethod = "PUT")
+//    @ResponseStatus(HttpStatus.OK)
+//    @ApiImplicitParams(
+//            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
+//    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+//    public void pauseOrResumeJob(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @PathVariable(value = "id") long id)  {
+//       monitorsService.pauseOrResumeMonitor(id , notificationsOnly);
+//    }
 
 
     @ResponseStatusDetails

@@ -42,12 +42,12 @@ public class MonitorService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    public void pauseOrResumeMonitor(long id, boolean b) {
-      if (b) monitorJobService.pauseJob(id);
-      else
-          monitorJobService.resumeJob(id);
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public void pauseOrResumeMonitor(long id, boolean b) {
+//      if (b) monitorJobService.pauseJob(id);
+//      else
+//          monitorJobService.resumeJob(id);
+//    }
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -57,6 +57,7 @@ public class MonitorService {
         {
             currentMonitor = monitorMapper.getMonitorById(monitor.getId());
             currentMonitor.setEnableNotification(monitor.isEnableNotification());
+            monitorJobService.switchMonitor(monitor.isEnableNotification(), monitor.getId());
         } else
         {
             currentMonitor = monitor;
