@@ -26,7 +26,7 @@ import java.util.List;
 @Api(value = "Monitors API")
 @CrossOrigin
 @RequestMapping("api/monitors")
-public class MonitorApiController extends AbstractController {
+public class MonitorsApiController extends AbstractController {
 
     @Autowired
     private MonitorService monitorsService;
@@ -60,8 +60,8 @@ public class MonitorApiController extends AbstractController {
     @ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    MonitorType updateMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException {
-        return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class)), MonitorType.class);
+    MonitorType updateMonitor(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @Valid @RequestBody MonitorType monitor) throws ServiceException {
+        return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), notificationsOnly), MonitorType.class);
     }
 
     @ResponseStatusDetails

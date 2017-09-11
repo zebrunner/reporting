@@ -5,7 +5,6 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -106,7 +105,7 @@ public class AmazonService implements IJMXService
 		try {
 			this.s3Client.getS3AccountOwner();
 			return this.s3Client.doesBucketExist(this.s3Bucket);
-		} catch (AmazonS3Exception e)
+		} catch (Exception e)
 		{
 			return false;
 		}

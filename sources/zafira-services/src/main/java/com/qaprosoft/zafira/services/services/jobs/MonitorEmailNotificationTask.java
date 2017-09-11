@@ -9,7 +9,6 @@ import org.quartz.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Kirill Bugrim
@@ -25,7 +24,6 @@ public class MonitorEmailNotificationTask implements  Job {
     }
 
     @Override
-    @Transactional
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         ApplicationContext applicationContext = null;
         try {
@@ -82,7 +80,7 @@ public class MonitorEmailNotificationTask implements  Job {
 
 
     private String[] getRecipientList(String recipients) {
-        return recipients.split(";");
+        return recipients.split(",");
     }
 
 }

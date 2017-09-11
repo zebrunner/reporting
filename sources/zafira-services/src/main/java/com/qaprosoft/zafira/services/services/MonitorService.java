@@ -42,11 +42,19 @@ public class MonitorService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Monitor updateMonitor(Monitor monitor) throws ServiceException {
-        monitorJobService.updateMonitor(monitor);
-        monitorMapper.updateMonitor(monitor);
-
-        return monitor;
+    public Monitor updateMonitor(Monitor monitor, boolean notificationsOnly) throws ServiceException {
+        Monitor currentMonitor;
+        if(notificationsOnly)
+        {
+            currentMonitor = monitorMapper.getMonitorById(monitor.getId());
+            currentMonitor.setEnableNotification(monitor.isEnableNotification());
+        } else
+        {
+            currentMonitor = monitor;
+            monitorJobService.updateMonitor(currentMonitor);
+        }
+        monitorMapper.updateMonitor(currentMonitor);
+        return currentMonitor;
     }
 
     @Transactional(readOnly = true)

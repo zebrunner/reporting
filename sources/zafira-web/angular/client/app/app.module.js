@@ -14,6 +14,7 @@
         ,'app.testrun'
         ,'app.view'
         ,'app.settings'
+        ,'app.monitors'
         ,'app.integrations'
         ,'app.certification'
         ,'app.sidebar'

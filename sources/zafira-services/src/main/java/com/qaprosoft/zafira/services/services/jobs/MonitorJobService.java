@@ -67,15 +67,6 @@ public class MonitorJobService {
 
 
     public void deleteJob(long id) {
-//        List<Monitor> monitors = monitorMapper.getAllMonitors();
-//        Monitor monitor = null;
-//        for (Monitor monitor1 : monitors) {
-//            if (monitor1.getId() == id) {
-//                monitor = monitor1;
-//                break;
-//            }
-//        }
-
         try {
             schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
         } catch (SchedulerException e) {
