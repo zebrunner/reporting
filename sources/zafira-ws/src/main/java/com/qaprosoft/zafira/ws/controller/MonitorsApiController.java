@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.dto.MonitorType;
@@ -26,90 +25,87 @@ import java.util.List;
 @Api(value = "Monitors API")
 @CrossOrigin
 @RequestMapping("api/monitors")
-public class MonitorsApiController extends AbstractController {
+public class MonitorsApiController extends AbstractController
+{
 
-    @Autowired
-    private MonitorService monitorsService;
+	@Autowired
+	private MonitorService monitorsService;
 
-    @Autowired
-    private Mapper mapper;
+	@Autowired
+	private Mapper mapper;
 
-    @ResponseStatusDetails
-    @ApiOperation(value = "Create monitor", nickname = "createMonitor", code = 200, httpMethod = "POST", response = Monitor.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    MonitorType createMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException {
-        return  mapper.map(monitorsService.createMonitor(mapper.map(monitor, Monitor.class)), MonitorType.class);
-    }
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create monitor", nickname = "createMonitor", code = 200, httpMethod = "POST", response = Monitor.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	MonitorType createMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException
+	{
+		return mapper.map(monitorsService.createMonitor(mapper.map(monitor, Monitor.class)), MonitorType.class);
+	}
 
-    @ResponseStatusDetails
-    @ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", code = 200, httpMethod = "DELETE")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams(
-            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void deleteMonitor(@PathVariable(value = "id") long id)  {
-        monitorsService.deleteMonitorById(id);
-    }
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+	public void deleteMonitor(@PathVariable(value = "id") long id)
+	{
+		monitorsService.deleteMonitorById(id);
+	}
 
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
+	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	MonitorType updateMonitor(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly,
+			@Valid @RequestBody MonitorType monitor) throws ServiceException
+	{
+		return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), notificationsOnly),
+				MonitorType.class);
+	}
 
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", code = 200, httpMethod = "GET", response = List.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	List<MonitorType> getAllMonitors() throws ServiceException
+	{
+		List<MonitorType> monitorTypes = new ArrayList<>();
+		List<Monitor> monitors = monitorsService.getAllMonitors();
+		for (Monitor monitor : monitors)
+		{
+			monitorTypes.add(mapper.map(monitor, MonitorType.class));
+		}
+		return monitorTypes;
+	}
 
-//    @ResponseStatusDetails
-//    @ApiOperation(value = "Pause monitor", nickname = "pauseOrResumeMonitor", code = 200, httpMethod = "PUT")
-//    @ResponseStatus(HttpStatus.OK)
-//    @ApiImplicitParams(
-//            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
-//    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-//    public void pauseOrResumeJob(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @PathVariable(value = "id") long id)  {
-//       monitorsService.pauseOrResumeMonitor(id , notificationsOnly);
-//    }
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", code = 200, httpMethod = "GET", response = Monitor.class)
+	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException
+	{
+		return mapper.map(monitorsService.getMonitorById(id), MonitorType.class);
+	}
 
-
-    @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
-    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    MonitorType updateMonitor(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @Valid @RequestBody MonitorType monitor) throws ServiceException {
-        return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), notificationsOnly), MonitorType.class);
-    }
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", code = 200, httpMethod = "GET", response = List.class)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    List<MonitorType> getAllMonitors() throws ServiceException {
-        List<MonitorType> monitorTypes = new ArrayList<>();
-        List<Monitor> monitors = monitorsService.getAllMonitors();
-        for (Monitor monitor: monitors){
-         monitorTypes.add(mapper.map(monitor, MonitorType.class));
-        }
-        return monitorTypes;
-    }
-
-    @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", code = 200, httpMethod = "GET", response = Monitor.class)
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException {
-        return mapper.map(monitorsService.getMonitorById(id), MonitorType.class);
-    }
-
-    @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-    @ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", code = 200, httpMethod = "GET", response = Integer.class)
-    @RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Integer getMonitorsCount() throws ServiceException {
-        return monitorsService.getMonitorsCount();
-    }
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", code = 200, httpMethod = "GET", response = Integer.class)
+	@RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody
+	Integer getMonitorsCount() throws ServiceException
+	{
+		return monitorsService.getMonitorsCount();
+	}
 }
 

@@ -2,61 +2,82 @@ package com.qaprosoft.zafira.services.services.emails;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Monitor;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
-/**
- * @author Kirill Bugrim
- *
- *  @version 1.0
- */
+public class MonitorEmailMessageNotification implements IEmailMessage
+{
 
-public class MonitorEmailMessageNotification implements IEmailMessage {
+	private static final String TEMPLATE = "monitor_status.ftl";
 
-    private static final String TEMPLATE = "monitorEmails.ftl";
+	@Value("${zafira.url}")
+	private String zafiraURL;
 
-    public Monitor getMonitor() {
-        return monitor;
-    }
+	@Value("${zafira.web.path}")
+	private String zafiraWebPath;
 
-    public void setMonitor(Monitor monitor) {
-        this.monitor = monitor;
-    }
+	private String zafiraFullURL;
 
-    public Integer getActualStatus() {
-        return actualStatus;
-    }
+	private Monitor monitor;
+	private Integer actualStatus;
+	private String text;
+	private String subject;
 
-    public void setActualStatus(Integer actualStatus) {
-        this.actualStatus = actualStatus;
-    }
+	public MonitorEmailMessageNotification(String subject, String text, Monitor monitor, Integer actualStatus)
+	{
+		this.subject = subject;
+		this.text = text;
+		this.monitor = monitor;
+		this.actualStatus = actualStatus;
+	}
 
-    private Monitor monitor;
+	public Monitor getMonitor()
+	{
+		return monitor;
+	}
 
-    private Integer actualStatus;
+	public void setMonitor(Monitor monitor)
+	{
+		this.monitor = monitor;
+	}
 
-    public MonitorEmailMessageNotification(Monitor monitor , Integer actualStatus) {
-        this.monitor = monitor;
-        this.actualStatus = actualStatus;
-    }
+	public Integer getActualStatus()
+	{
+		return actualStatus;
+	}
 
-    @Override
-    public String getSubject() {
-        return "Monitor Alert!";
-    }
+	public void setActualStatus(Integer actualStatus)
+	{
+		this.actualStatus = actualStatus;
+	}
 
-    @Override
-    public String getText() {
-        return "text";
-    }
+	public String getZafiraFullURL()
+	{
+		return zafiraURL + zafiraWebPath;
+	}
 
-    @Override
-    public String getTemplate() {
-        return TEMPLATE;
-    }
+	@Override
+	public String getSubject()
+	{
+		return subject;
+	}
 
-    @Override
-    public List<Attachment> getAttachments() {
-        return null;
-    }
+	@Override
+	public String getText()
+	{
+		return text;
+	}
+
+	@Override
+	public String getTemplate()
+	{
+		return TEMPLATE;
+	}
+
+	@Override
+	public List<Attachment> getAttachments()
+	{
+		return null;
+	}
 }

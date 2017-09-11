@@ -4,26 +4,23 @@ import com.qaprosoft.zafira.models.db.Monitor;
 
 import java.util.List;
 
-/**
- * @author Kirirll Bugrim
- * @version 1.0
- */
-public interface MonitorMapper {
+public interface MonitorMapper
+{
 
-    void createMonitor(Monitor monitor);
+	void createMonitor(Monitor monitor);
 
-    Monitor getMonitorById(long id);
+	Monitor getMonitorById(long id);
 
-    Monitor getMonitorByMonitorName(String monitorName);
+	Monitor getMonitorByMonitorName(String monitorName);
 
-    void updateMonitor(Monitor monitor);
+	void updateMonitor(Monitor monitor);
 
-    void deleteMonitorById(long id);
+	void deleteMonitorById(long id);
 
-    void deleteMonitor(Monitor monitor);
+	void deleteMonitor(Monitor monitor);
 
-    List<Monitor> getAllMonitors();
+	List<Monitor> getAllMonitors();
 
-    Integer getMonitorsCount();
+	Integer getMonitorsCount();
 
 }

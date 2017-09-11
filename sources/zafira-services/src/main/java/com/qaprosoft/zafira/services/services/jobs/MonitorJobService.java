@@ -18,155 +18,173 @@ import java.util.Objects;
 
 import static org.quartz.TriggerKey.triggerKey;
 
-/**
- * @author Kirill Bugrim
- * @version 1.0
- */
-
 @Service
-public class MonitorJobService {
+public class MonitorJobService
+{
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(MonitorJobService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(MonitorJobService.class);
 
-    @Autowired
-    private SchedulerFactoryBean schedulerFactoryBean;
-    @Autowired
-    private MonitorMapper monitorMapper;
+	private final static String JOB_GROUP_NAME = "monitorJobGroup";
+	private final static String TRIGGER_GROUP_NAME = "monitorTriggerGroup";
 
+	@Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
 
-    @PostConstruct
-    public void init() {
-        List<Monitor> monitors = monitorMapper.getAllMonitors();
-        for (Monitor monitor : monitors) {
-            addJob(monitor);
-        }
-    }
+	@Autowired
+	private MonitorMapper monitorMapper;
 
-    public void addJob(Monitor monitor) {
-        JobDetail jobDetail = JobBuilder.newJob(MonitorEmailNotificationTask.class)
-                .withIdentity(monitor.getId().toString(), "monitorJobGroup")
-                .storeDurably(true).build();
+	@PostConstruct
+	public void init()
+	{
+		List<Monitor> monitors = monitorMapper.getAllMonitors();
+		for (Monitor monitor : monitors)
+		{
+			addJob(monitor);
+			if (!monitor.isActive())
+			{
+				pauseJob(monitor.getId());
+			}
+		}
+	}
 
-        CronTriggerImpl trigger = new CronTriggerImpl();
-        trigger.setName(monitor.getId().toString());
-        trigger.setGroup("monitorTriggerGroup");
+	public void addJob(Monitor monitor)
+	{
+		JobDetail jobDetail = JobBuilder
+				.newJob(MonitorEmailNotificationTask.class)
+				.withIdentity(monitor.getId().toString(), JOB_GROUP_NAME)
+				.storeDurably(true).build();
 
-        try {
-            trigger.setCronExpression(monitor.getCronExpression());
-        } catch (ParseException e) {
-            LOGGER.info("Can't  set cron expression!");
-        }
+		CronTriggerImpl trigger = new CronTriggerImpl();
+		trigger.setName(monitor.getId().toString());
+		trigger.setGroup(TRIGGER_GROUP_NAME);
 
-        try {
-            schedulerFactoryBean.getScheduler().getContext().put(jobDetail.getKey().getName(), monitor);
-            schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't  schedule job!");
-        }
-    }
+		try
+		{
+			trigger.setCronExpression(monitor.getCronExpression());
+			schedulerFactoryBean.getScheduler().getContext().put(jobDetail.getKey().getName(), monitor);
+			schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
+		} catch (ParseException e)
+		{
+			LOGGER.error("Can't  set cron expression!");
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't  schedule job!");
+		}
+	}
 
+	public void pauseJob(long id)
+	{
+		try
+		{
+			schedulerFactoryBean.getScheduler().pauseJob(findJobKey(String.valueOf(id)));
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't delete job");
+		}
+	}
 
-    public void pauseJob(long id) {
-        try {
-            schedulerFactoryBean.getScheduler().pauseJob(findJobKey(String.valueOf(id)));
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't delete job");
-        }
-    }
+	public void resumeJob(long id)
+	{
+		try
+		{
+			schedulerFactoryBean.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't delete job");
+		}
+	}
 
+	public void deleteJob(long id)
+	{
+		try
+		{
+			schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't delete job");
+		}
+	}
 
-    public void resumeJob(long id) {
-        try {
-            schedulerFactoryBean.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't delete job");
-        }
-    }
+	public void updateExistingJob(Monitor monitor)
+	{
 
+		JobDetail job = JobBuilder
+				.newJob(MonitorEmailNotificationTask.class)
+				.withIdentity(monitor.getId().toString(), JOB_GROUP_NAME)
+				.storeDurably(true).build();
+		try
+		{
+			schedulerFactoryBean.getScheduler().getContext().put(job.getKey().getName(), monitor);
+			schedulerFactoryBean.getScheduler().addJob(job, true);
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't  schedule job!");
+		}
 
-    public void deleteJob(long id) {
-        try {
-            schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't delete job");
-        }
-    }
+	}
 
+	public void updateExistingTrigger(Monitor monitor)
+	{
 
-    public void updateExistingJob(Monitor monitor) {
+		Trigger oldTrigger = null;
+		try
+		{
+			oldTrigger = schedulerFactoryBean.getScheduler()
+					.getTrigger(triggerKey(monitor.getId().toString(), TRIGGER_GROUP_NAME));
 
-        JobDetail job = JobBuilder.newJob(MonitorEmailNotificationTask.class)
-                .withIdentity(monitor.getId().toString(), "monitorJobGroup")
-                .storeDurably(true).build();
-        try {
-            schedulerFactoryBean.getScheduler().getContext().put(job.getKey().getName(), monitor);
-            schedulerFactoryBean.getScheduler().addJob(job, true);
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't  schedule job!");
-        }
+			CronTriggerImpl newTrigger = new CronTriggerImpl();
+			newTrigger.setName(monitor.getId().toString());
+			newTrigger.setGroup(TRIGGER_GROUP_NAME);
+			newTrigger.setCronExpression(monitor.getCronExpression());
+			schedulerFactoryBean.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
+		} catch (SchedulerException e)
+		{
+			LOGGER.error("Can't get old trigger!");
+		} catch (ParseException e)
+		{
+			LOGGER.error("Can't set cron expression!");
+		}
+	}
 
-    }
+	public void updateMonitor(Monitor monitor)
+	{
+		updateExistingJob(monitor);
+		updateExistingTrigger(monitor);
+	}
 
+	public JobKey findJobKey(String jobName) throws SchedulerException
+	{
+		// Check running jobs first
+		for (JobExecutionContext runningJob : schedulerFactoryBean.getScheduler().getCurrentlyExecutingJobs())
+		{
+			if (Objects.equals(jobName, runningJob.getJobDetail().getKey().getName()))
+			{
+				return runningJob.getJobDetail().getKey();
+			}
+		}
+		// Check all jobs if not found
+		for (String groupName : schedulerFactoryBean.getScheduler().getJobGroupNames())
+		{
+			for (JobKey jobKey : schedulerFactoryBean.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName)))
+			{
+				if (Objects.equals(jobName, jobKey.getName()))
+				{
+					return jobKey;
+				}
+			}
+		}
+		return null;
+	}
 
-    public void updateExistingTrigger(Monitor monitor) {
-
-        Trigger oldTrigger = null;
-        try {
-            oldTrigger = schedulerFactoryBean.getScheduler().getTrigger(triggerKey(monitor.getId().toString(), "monitorTriggerGroup"));
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't get old trigger!");
-        }
-
-        CronTriggerImpl newTrigger = new CronTriggerImpl();
-        newTrigger.setName(monitor.getId().toString());
-        newTrigger.setGroup("monitorTriggerGroup");
-        try {
-            newTrigger.setCronExpression(monitor.getCronExpression());
-        } catch (ParseException e) {
-            LOGGER.info("Can't set cron expression!");
-        }
-
-        try {
-            schedulerFactoryBean.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
-        } catch (SchedulerException e) {
-            LOGGER.info("Can't reschedule trigger!");
-        }
-    }
-
-
-    public void updateMonitor(Monitor monitor) {
-        updateExistingJob(monitor);
-        updateExistingTrigger(monitor);
-    }
-
-
-    public JobKey findJobKey(String jobName) throws SchedulerException {
-        // Check running jobs first
-        for (JobExecutionContext runningJob : schedulerFactoryBean.getScheduler().getCurrentlyExecutingJobs()) {
-            if (Objects.equals(jobName, runningJob.getJobDetail().getKey().getName())) {
-                return runningJob.getJobDetail().getKey();
-            }
-        }
-        // Check all jobs if not found
-        for (String groupName : schedulerFactoryBean.getScheduler().getJobGroupNames()) {
-            for (JobKey jobKey : schedulerFactoryBean.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                if (Objects.equals(jobName, jobKey.getName())) {
-                    return jobKey;
-                }
-            }
-        }
-        return null;
-    }
-
-
-    public void switchMonitor(boolean isRunning, long monitorId) {
-
-        if (isRunning) {
-            resumeJob(monitorId);
-        }else
-        {
-            pauseJob(monitorId);
-        }
-    }
+	public void switchMonitor(boolean isRunning, long monitorId)
+	{
+		if (isRunning)
+		{
+			resumeJob(monitorId);
+		} else
+		{
+			pauseJob(monitorId);
+		}
+	}
 
 }
