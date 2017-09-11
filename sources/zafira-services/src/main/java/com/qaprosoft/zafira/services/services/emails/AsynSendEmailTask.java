@@ -32,6 +32,14 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	private MimeMessagePreparator preparator;
 
+	public AsynSendEmailTask() {
+	}
+
+	public AsynSendEmailTask(MimeMessagePreparator preparator)
+	{
+		this.preparator = preparator;
+	}
+
 	@Override
 	public void run()
 	{
