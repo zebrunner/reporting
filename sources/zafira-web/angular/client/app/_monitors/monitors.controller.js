@@ -38,8 +38,8 @@
                 {
                     if(enabledNotificationsOnly)
                     {
-                        var status = rs.data.enableNotification ? 'enabled': 'disabled';
-                        alertify.success("Email notifications was " + status);
+                        var status = rs.data.enableNotification ? 'ran': 'stopped';
+                        alertify.success("Monitor was " + status);
                     } else {
                         alertify.success('Monitor was updated');
                     }

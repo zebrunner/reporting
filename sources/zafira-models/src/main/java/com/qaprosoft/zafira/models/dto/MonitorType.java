@@ -3,8 +3,11 @@ package com.qaprosoft.zafira.models.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.qaprosoft.zafira.models.db.Monitor;
+import org.quartz.CronExpression;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Kirill Bugrim
@@ -15,25 +18,21 @@ import javax.validation.constraints.*;
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity {
 
-    private enum HttpMethod{GET, POST, PUT, DELETE}
-    private enum Type{HTTP, PING}
-
-
-    @NotNull(message = "Invalid name!")
+    @NotNull(message = "Name required")
     private String name;
-    @NotNull(message = "Invalid url")
+    @NotNull(message = "URL required")
     private String url;
-    @NotNull(message = "Invalid HTTP method")
-    private HttpMethod httpMethod;
+    @NotNull(message = "HTTP method required")
+    private Monitor.HttpMethod httpMethod;
     private String requestBody;
-    @NotNull(message = "Invalid cron expression")
+    @NotNull(message = "Cron expression required")
     private String cronExpression;
-    @NotNull(message = "Invalid type")
-    private Type type;
-    @NotNull(message = "Invalid type!Type must be true or false!")
+    @NotNull(message = "Type required")
+    private Monitor.Type type;
+    @NotNull(message = "Enable or disable checkbox")
     private boolean enableNotification;
     private String recipients;
-    @NotNull(message = "Invalid type of response code!")
+    @NotNull(message = "Expected code required")
     private int expectedResponseCode;
 
     public String getName() {
@@ -52,11 +51,11 @@ public class MonitorType extends AbstractEntity {
         this.url = url;
     }
 
-    public HttpMethod getHttpMethod() {
+    public Monitor.HttpMethod getHttpMethod() {
         return httpMethod;
     }
 
-    public void setHttpMethod(HttpMethod httpMethod) {
+    public void setHttpMethod(Monitor.HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
     }
 
@@ -101,11 +100,17 @@ public class MonitorType extends AbstractEntity {
     }
 
 
-    public Type getType() {
+    public Monitor.Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(Monitor.Type type) {
         this.type = type;
+    }
+
+    @AssertTrue(message = "Cron expression is invalid")
+    public boolean isCronExpressionValid()
+    {
+        return CronExpression.isValidExpression(this.cronExpression);
     }
 }
