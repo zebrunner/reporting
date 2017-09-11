@@ -1,18 +1,19 @@
 package com.qaprosoft.zafira.grid.tasks;
 
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.qaprosoft.zafira.models.db.Device;
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DeviceService;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.emails.GridStatusEmail;
 import com.qaprosoft.zafira.services.services.stf.STFService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Map;
 
 public class GridHealthCheckTask 
 {	

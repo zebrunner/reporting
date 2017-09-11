@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.grid.models;
 
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import com.qaprosoft.zafira.models.stf.STFDevice;
 
 public class GridResponse
 {
