@@ -8,14 +8,12 @@ import com.qaprosoft.zafira.services.util.HttpClientUtil;
 import org.quartz.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Kirill Bugrim
  * @version 1.0
  */
 
-@Service
 public class MonitorEmailNotificationTask implements  Job {
 
     private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MonitorEmailNotificationTask.class);
