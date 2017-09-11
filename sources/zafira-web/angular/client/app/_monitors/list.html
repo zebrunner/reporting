@@ -29,19 +29,19 @@
                             <span class="card-title">
                                 {{ monitor.name }}
                             </span>
-                            <md-input-container style="float: right; margin-top: 0px;">
-                                <md-switch style="margin-top: 0px" class="md-primary" ng-change="updateMonitor(monitor, true)" ng-model="monitor.enableNotification" aria-label="notif-switch"></md-switch>
+                            <md-input-container style="float: right; margin: 0; padding: 0">
+                                <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, true)" ng-model="monitor.enableNotification" aria-label="notif-switch"></md-switch>
                             </md-input-container>
                             <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container class="md-block" style="margin-bottom: 0">
+                                <md-input-container flex>
                                     <label>Name</label>
-                                    <input type="text" ng-model="monitor.name" >
+                                    <input type="text" ng-model="monitor.name" required/>
                                 </md-input-container>
                             </div>
                             <div layout layout-sm="column" style="padding: 0">
                                 <md-input-container flex>
                                     <label>URL</label>
-                                    <input name="value" type="text" data-ng-model="monitor.url" required/>
+                                    <input type="text" data-ng-model="monitor.url" required/>
                                 </md-input-container>
                             </div>
                             <div layout layout-sm="column" style="padding: 0">
