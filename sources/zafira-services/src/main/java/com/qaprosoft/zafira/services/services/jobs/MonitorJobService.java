@@ -66,11 +66,30 @@ public class MonitorJobService {
     }
 
 
+    public void pauseJob(long id) {
+        try {
+            schedulerFactoryBean.getScheduler().pauseJob(findJobKey(String.valueOf(id)));
+        } catch (SchedulerException e) {
+            LOGGER.info("Can't delete job");
+        }
+    }
+
+
+
+    public void resumeJob(long id){
+        try {
+            schedulerFactoryBean.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
+        } catch (SchedulerException e) {
+            LOGGER.info("Can't delete job");
+        }
+    }
+
+
     public void deleteJob(long id) {
         try {
             schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
         } catch (SchedulerException e) {
-           LOGGER.info("Can't delete job");
+            LOGGER.info("Can't delete job");
         }
     }
 

@@ -41,6 +41,15 @@ public class MonitorService {
         monitorMapper.deleteMonitorById(id);
     }
 
+
+    @Transactional(rollbackFor = Exception.class)
+    public void pauseOrResumeMonitor(long id, boolean b) {
+      if (b) monitorJobService.pauseJob(id);
+      else
+          monitorJobService.resumeJob(id);
+    }
+
+
     @Transactional(rollbackFor = Exception.class)
     public Monitor updateMonitor(Monitor monitor, boolean notificationsOnly) throws ServiceException {
         Monitor currentMonitor;

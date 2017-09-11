@@ -50,9 +50,22 @@ public class MonitorsApiController extends AbstractController {
     @ApiImplicitParams(
             {@ApiImplicitParam(name = "Authorization", paramType = "header")})
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void deleteMonitor(@PathVariable(value = "id") long id) throws ServiceException {
+    public void deleteMonitor(@PathVariable(value = "id") long id)  {
         monitorsService.deleteMonitorById(id);
     }
+
+
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Pause monitor", nickname = "pauseOrResumeMonitor", code = 200, httpMethod = "PUT")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams(
+            {@ApiImplicitParam(name = "Authorization", paramType = "header")})
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void pauseOrResumeJob(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly, @PathVariable(value = "id") long id)  {
+       monitorsService.pauseOrResumeMonitor(id , notificationsOnly);
+    }
+
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK)
