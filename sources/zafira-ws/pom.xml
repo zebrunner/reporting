@@ -195,7 +195,7 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<url>${zafira.url}/manager/text</url>
+					<url>${zafira.internal.url}/manager/text</url>
 					<server>TomcatServer</server>
 					<path>${zafira.ws.path}</path>
 				</configuration>
