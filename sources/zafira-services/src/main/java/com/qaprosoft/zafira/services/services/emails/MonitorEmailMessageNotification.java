@@ -11,14 +11,6 @@ public class MonitorEmailMessageNotification implements IEmailMessage
 
 	private static final String TEMPLATE = "monitor_status.ftl";
 
-	@Value("${zafira.url}")
-	private String zafiraURL;
-
-	@Value("${zafira.web.path}")
-	private String zafiraWebPath;
-
-	private String zafiraFullURL;
-
 	private Monitor monitor;
 	private Integer actualStatus;
 	private String text;
@@ -52,10 +44,6 @@ public class MonitorEmailMessageNotification implements IEmailMessage
 		this.actualStatus = actualStatus;
 	}
 
-	public String getZafiraFullURL()
-	{
-		return zafiraURL + zafiraWebPath;
-	}
 
 	@Override
 	public String getSubject()

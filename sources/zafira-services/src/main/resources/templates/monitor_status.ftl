@@ -1,5 +1,5 @@
 <div>
-    <p>Monitor name: <a href="${zafiraFullURL}/#!/monitors" style="font-variant: small-caps; color: #000;">${monitor.name}</a></p>
+    <p>Monitor name: <b style="font-variant: small-caps">${monitor.name}</b></p>
 <#if monitor.url??>
     <tr>
         <td>Monitor with URL: ${monitor.url}
