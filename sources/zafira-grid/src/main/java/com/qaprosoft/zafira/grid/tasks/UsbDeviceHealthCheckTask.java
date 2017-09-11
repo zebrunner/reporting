@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.stf.STFService;
 
