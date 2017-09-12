@@ -27,7 +27,7 @@
                     var settingTool = getSettingToolByName(tool.name);
                     settingTool.isConnected = rs.data.connected;
                     settingTool.settings = rs.data.settingList;
-                    settingTool.settings.sort(compare);
+                    settingTool.settings.sort(compareBySettingSortOrder);
                     alertify.success('Tool ' + tool.name + ' was changed');
                 }
             });
@@ -110,21 +110,50 @@
             })[0];
         };
 
-        function compare(a, b) {
+        function compareBySettingSortOrder(a, b) {
             var aSortOrder = getSortOrderByPostfix(a.name);
             var bSortOrder = getSortOrderByPostfix(b.name);
-            if(aSortOrder < bSortOrder) {
-                return -1;
-            } else if(aSortOrder > bSortOrder) {
-                return 1;
-            } else
-                return 0;
+            return compareTo(aSortOrder, bSortOrder)
+        }
+
+        function compareByName(a, b) {
+            var aSortOrder = a.name;
+            var bSortOrder = b.name;
+            return compareTo(aSortOrder, bSortOrder)
+        }
+
+        function compareByIsEnabled(a, b) {
+            var aSortOrder = a.isEnabled;
+            var bSortOrder = b.isEnabled;
+            return compareTo(aSortOrder, bSortOrder)
+        }
+
+        function compareTo(aSortOrder, bSortOrder) {
+            if(typeof(aSortOrder) === 'boolean' && typeof(bSortOrder) === 'boolean') {
+                if(aSortOrder === true && bSortOrder === false) {
+                    return -1;
+                } else if(aSortOrder === false && bSortOrder === true) {
+                    return 1;
+                } else
+                    return 0;
+            } else {
+                if (aSortOrder < bSortOrder) {
+                    return -1;
+                } else if (aSortOrder > bSortOrder) {
+                    return 1;
+                } else
+                    return 0;
+            }
         }
 
         var getSortOrderByPostfix = function (settingName) {
             for(var postfix in SORT_POSTFIXES) {
-                if(settingName.includes(postfix)) {
-                    return SORT_POSTFIXES[postfix];
+                try {
+                    if (settingName.includes(postfix)) {
+                        return SORT_POSTFIXES[postfix];
+                    }
+                } catch(e) {
+                    console.log('setting name ' + settingName);
                 }
             }
             return getMaxSortOrder() + 1;
@@ -155,10 +184,12 @@
                             return setting.tool === tool;
                         });
                         currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
-                        currentTool.settings.sort(compare);
+                        currentTool.settings.sort(compareBySettingSortOrder);
                         currentTool.newSetting = {};
                         $scope.settingTools.push(currentTool);
                     }
+                    $scope.settingTools.sort(compareByName);
+                    $scope.settingTools.sort(compareByIsEnabled)
                 }
                 else {
                     console.error('Failed to load settings');
