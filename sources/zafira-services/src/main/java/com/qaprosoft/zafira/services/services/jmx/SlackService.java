@@ -2,6 +2,10 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
+import in.ashwanthkumar.slack.webhook.Slack;
+import in.ashwanthkumar.slack.webhook.SlackAttachment;
+import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
+import in.ashwanthkumar.slack.webhook.SlackMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,11 +32,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
-import in.ashwanthkumar.slack.webhook.Slack;
-import in.ashwanthkumar.slack.webhook.SlackAttachment;
-import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
-import in.ashwanthkumar.slack.webhook.SlackMessage;
-
 @ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
 		persistLocation="foo", persistName="bar")
@@ -50,8 +49,8 @@ public class SlackService implements IJMXService
 
 	private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
-	@Value("${zafira.webservice.url}")
-	private String wsURL;
+	@Value("${zafira.web.url}")
+	private String webURL;
 	
 	@Value("${zafira.slack.image}")
 	private String image;
@@ -124,7 +123,7 @@ public class SlackService implements IJMXService
 			slack = slack.sendToChannel(channel);
 
 			String elapsed = countElapsedInSMH(tr.getElapsed());
-			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
+			String zafiraUrl = webURL + "/#!/tests/runs/" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
 			String status = TestRunResultsEmail.buildStatusText(tr);
 
@@ -155,7 +154,7 @@ public class SlackService implements IJMXService
 		{
 			slack = slack.sendToChannel(channel);
 
-			String zafiraUrl = wsURL + "/#!/tests/runs?id=" + tr.getId();
+			String zafiraUrl = webURL + "/#!/tests/runs/" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
 			String status = TestRunResultsEmail.buildStatusText(tr);
 
