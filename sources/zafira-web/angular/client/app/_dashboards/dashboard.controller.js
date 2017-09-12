@@ -124,7 +124,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, isNew) {
+        $scope.showWidgetDialog = function (event, widget, dashboard, isNew, currentUserId) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
@@ -134,7 +134,9 @@
                 fullscreen: true,
                 locals: {
                     widget: widget,
-                    isNew: isNew
+                    isNew: isNew,
+                    dashboard: dashboard,
+                    currentUserId: currentUserId
                 }
             })
                 .then(function (answer) {
@@ -400,10 +402,15 @@
         })();
     }
 
-    function WidgetController($scope, $mdDialog, DashboardService, widget, isNew) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, widget, isNew, ProjectProvider, $location, dashboard, currentUserId) {
 
+        $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;
         $scope.widget = widget;
+        $scope.dashboard = dashboard;
+        $scope.showWidget = false;
+
+
         if($scope.isNew && $scope.widget)
         {
             $scope.widget.id = null;
@@ -446,10 +453,110 @@
             });
         };
 
+        $rootScope.$on("$event:executeSQL", function () {
+            $scope.loadModalWidget($scope.widget, true);
+        });
+
+        $rootScope.$on("$event:showWidget", function () {
+            $scope.loadModalWidget($scope.widget);
+        });
+
+        $scope.loadModalWidget = function (widget, table) {
+
+            $scope.isLoading = true;
+            if (widget.originalType){
+                widget.type = widget.originalType;
+                widget.model = widget.originalModel;
+            }
+            var sqlAdapter = {'sql': widget.sql};
+            var params = ProjectProvider.getProjectQueryParam();
+            for(var i = 0; i < $scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+            }
+            params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
+            if (table) {
+                params = params + "&stackTraceRequired=" + true;
+            }
+            DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
+                if (rs.success) {
+                    var data = rs.data;
+                    var columns = {};
+                    for (var j = 0; j < data.length; j++) {
+                        if(j == 0){
+                            columns = Object.keys(data[j]);
+                        }
+                        if (data[j].CREATED_AT) {
+                            data[j].CREATED_AT = new Date(data[j].CREATED_AT);
+                        }
+                    }
+                    if ('sql' != widget.type) {
+                        if (table && widget.type !== 'table'){
+                            widget.originalType = widget.type;
+                            widget.originalModel = widget.model;
+                            widget.type = 'table';
+                            widget.model = JSON.stringify({"columns" : columns});
+                        }
+                        var isObject = widget.model instanceof Object;
+                        if (!isObject) {
+                            widget.model = JSON.parse(widget.model);
+                        }
+                        widget.data = {};
+                        widget.data.dataset = data;
+                    }
+                    $scope.isLoading = false;
+                    $scope.showWidget = true;
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.sort = {
+            column: null,
+            descending: false
+        };
+
+        $scope.changeSorting = function(column) {
+            var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
+
+            if (column.search(specCharRegexp) != -1) {
+                // handle by quotes from both sides
+                column = "\"" + column + "\"";
+            }
+            var sort = $scope.sort;
+            if (sort.column == column) {
+                sort.descending = !sort.descending;
+            } else {
+                sort.column = column;
+                sort.descending = false;
+            }
+        };
+
+
+        $scope.asString = function (value) {
+            if (value) {
+                value = value.toString();
+            }
+            return value;
+        };
+
+        $scope.closeWidget = function(widget){
+            widget.data = null;
+            widget.model = JSON.stringify(widget.model);
+            $scope.showWidget = false;
+        };
+
         $scope.hide = function (result) {
             $mdDialog.hide(result);
         };
         $scope.cancel = function () {
+            $scope.closeWidget(widget);
             $mdDialog.cancel();
         };
         (function initController() {
