@@ -24,7 +24,7 @@
             <div class="col-md-12">
                 <div class="col-md-4" data-ng-repeat="tool in settingTools | orderBy:'name'">
                     <div class="card bg-white">
-                        <div class="card-content">
+                        <div style="min-height: 400px" class="card-content">
                             <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
                             <span class="card-title">
                                 {{ tool.name }}
@@ -37,8 +37,8 @@
                                 <div class="col-lg-11" style="padding: 0">
                                     <md-input-container class="md-block" style="margin-bottom: 0">
                                         <label>{{ setting.name }}</label>
-                                        <input type="text" ng-if="!isPasswordSetting(tool.name, setting)" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
-                                        <input type="password" ng-if="isPasswordSetting(tool.name, setting)" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                        <input type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                        <input type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
                                     </md-input-container>
                                 </div>
                                 <div class="col-lg-1" style="padding: 0; margin-bottom: 0" data-ng-if="setting.name != 'SLACK_WEB_HOOK_URL'">
@@ -52,7 +52,7 @@
                                     </md-input-container>
                                 </div>
                             </div>
-                            <div class="row col-lg-12" data-ng-if="tool.name == 'SLACK'">
+                            <div class="row col-lg-12" data-ng-if="tool.name == 'SLACK'" style="position: relative">
                                 <div class="col-lg-6" style="padding: 0">
                                     <md-input-container class="md-block">
                                         <label>NEW {{ tool.name }} SETTING</label>
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                        </div>
-                        <div class="card-action text-right">
+                        <div class="card-action text-right" style="border-top: none;">
                             <md-button data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
                             <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
                         </div>

@@ -15,6 +15,7 @@
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
 				<entry key="bean:name=slackService" value-ref="slackService"/>
+				<entry key="bean:name=amazonService" value-ref="amazonService"/>
 				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
 			</map>
 		</property>
@@ -44,6 +45,8 @@
 	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.jmx.JenkinsService"/>
 
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.jmx.SlackService"/>
+
+	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.jmx.AmazonService"/>
 
 	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
 		<property name="salt" value="${zafira.crypto_salt}" />
@@ -83,10 +86,6 @@
 	</bean>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${zafira.mail.host}" />
-		<property name="port" value="${zafira.mail.port}" />
-		<property name="username" value="${zafira.mail.user}" />
-		<property name="password" value="${zafira.mail.pass}" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="javaMailProperties">
 			<props>
@@ -95,7 +94,9 @@
 			</props>
 		</property>
 	</bean>
-	
+
+	<bean id="asynSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
+
 	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
 		id="freemarkerConfiguration">
 		<property name="preferFileSystemAccess" value="true" />
@@ -120,20 +121,10 @@
             </set>
         </property>
     </bean>
-    
-    <bean id="amazonCredentials" class="com.amazonaws.auth.BasicAWSCredentials">
-		<constructor-arg index="0" value="${zafira.amazon.accessKey}" />
-		<constructor-arg index="1" value="${zafira.amazon.secretKey}" />
-	</bean>
 
 	<bean id="amazonConfig" class="com.amazonaws.ClientConfiguration">
 		<property name="maxConnections" value="100" />
 		<property name="protocol" value="HTTP" />
-	</bean>
-
-	<bean class="com.amazonaws.services.s3.AmazonS3Client">
-		<constructor-arg index="0" ref="amazonCredentials" />
-		<constructor-arg index="1" ref="amazonConfig" />
 	</bean>
 
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">

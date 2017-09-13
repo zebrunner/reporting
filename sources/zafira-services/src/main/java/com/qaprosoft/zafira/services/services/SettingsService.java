@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.jmx.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,6 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.jmx.SlackService;
 
 @Service
 public class SettingsService
@@ -34,6 +31,12 @@ public class SettingsService
 
     @Autowired
     private SlackService slackService;
+
+    @Autowired
+    private AsynSendEmailTask emailTask;
+
+    @Autowired
+    private AmazonService amazonService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -133,10 +136,10 @@ public class SettingsService
 	}
 
 	public void reinstantiateTool(Tool tool) {
-			if (getServiceByTool(tool) != null)
-			{
-                getServiceByTool(tool).init();
-     		}
+		if (getServiceByTool(tool) != null)
+		{
+			getServiceByTool(tool).init();
+		}
 	}
 
 
@@ -154,6 +157,12 @@ public class SettingsService
 				break;
 			case CRYPTO:
 				service = cryptoService;
+				break;
+			case EMAIL:
+				service = emailTask;
+				break;
+			case AMAZON:
+				service = amazonService;
 				break;
 			default:
 				break;

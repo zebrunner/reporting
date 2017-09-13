@@ -21,13 +21,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.pubnub.api.Callback;
 import com.pubnub.api.PubnubException;
-import com.qaprosoft.zafira.models.db.Event;
-import com.qaprosoft.zafira.models.db.Event.Type;
-import com.qaprosoft.zafira.dbaccess.model.stf.RemoteConnectUserDevice;
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
 import com.qaprosoft.zafira.grid.matchers.IDeviceMatcher;
 import com.qaprosoft.zafira.grid.models.GridRequest;
 import com.qaprosoft.zafira.grid.models.GridResponse;
+import com.qaprosoft.zafira.models.db.Event;
+import com.qaprosoft.zafira.models.db.Event.Type;
+import com.qaprosoft.zafira.models.stf.RemoteConnectUserDevice;
+import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.qaprosoft.zafira.services.services.EventService;
 import com.qaprosoft.zafira.services.services.stf.STFService;
 

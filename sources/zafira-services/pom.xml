@@ -19,6 +19,11 @@
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.qaprosoft</groupId>
+			<artifactId>zafira-client</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.mail</groupId>

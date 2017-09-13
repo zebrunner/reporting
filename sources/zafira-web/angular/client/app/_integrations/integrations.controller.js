@@ -16,7 +16,9 @@
         var SORT_POSTFIXES = {
             '_URL': 1,
             '_USER': 2,
-            '_PASSWORD': 3
+            '_PASSWORD': 3,
+            '_ACCESS_KEY': 4,
+            '_SECRET_KEY': 5
         };
 
         $scope.saveTool = function (tool) {
@@ -92,10 +94,6 @@
 
         var isEnabledSetting  = function (tool, setting) {
             return setting.name === tool + ENABLED_POSTFIX;
-        };
-
-        $scope.isPasswordSetting  = function (tool, setting) {
-            return setting.name === tool + PASSWORD_POSTFIX || setting.name === tool + ALTERNATIVE_PASSWORD_POSTFIX;
         };
 
         var getEnabledSetting = function (tool, settings) {
