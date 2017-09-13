@@ -30,29 +30,29 @@
                     </md-input-container>
                 </div>
                 <md-progress-circular md-mode="indeterminate" md-diameter="31px" ng-if="isLoading" style="left:50%"></md-progress-circular>
-                <div data-ng-if="widget.data" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
+                <div data-ng-if="widget.data" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.testType == 'linechart' || widget.testType == 'piechart')}">
                     <div layout layout-sm="column" class="pull-right">
                         <i data-ng-click="closeWidget(widget)" data-ng-if="showWidget" class="fa fa-window-close"></i>
                     </div>
-                    <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
-                    <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
-                        <pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
+                    <linechart data-ng-if="widget.testType == 'linechart'" data="widget.data" options="widget.testModel"></linechart>
+                    <div data-ng-if="widget.testType == 'piechart'" class="pie-chart">
+                        <pie-chart data="widget.data.dataset" options="widget.testModel"></pie-chart>
                     </div>
-                    <div data-ng-if="widget.type == 'table'" class="table-responsive" style="max-height: 350px; max-width: 1300px">
+                    <div data-ng-if="widget.testType == 'table'" class="table-responsive" style="max-height: 350px; max-width: 1300px">
                         <table class="table table-striped table-bordered table-hover" style="width: 100%;">
                             <thead>
                             <tr>
-                                <th class="pointer" data-ng-repeat="column in widget.model.columns" data-ng-click="changeSorting(column)">
+                                <th class="pointer" data-ng-repeat="column in widget.testModel.columns" data-ng-click="changeSorting(column)">
                                     {{column}}&nbsp;<i class="fa fa-sort"></i>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr data-ng-repeat="row in widget.data.dataset | orderBy:sort.column:sort.descending">
-                                <td data-ng-repeat="column in widget.model.columns" data-ng-bind-html="asString(row[column])" data-ng-style="widget.model.columns.length > 1 && {'max-width': '500px'}"></td>
+                                <td data-ng-repeat="column in widget.testModel.columns" data-ng-bind-html="asString(row[column])" data-ng-style="widget.testModel.columns.length > 1 && {'max-width': '500px'}"></td>
                             </tr>
                             <tr class="text-center" data-ng-if="widget.data.dataset == 0">
-                                <td colspan="{{widget.model.columns.length}}">No data</td>
+                                <td colspan="{{widget.testModel.columns.length}}">No data</td>
                             </tr>
                             </tbody>
                         </table>

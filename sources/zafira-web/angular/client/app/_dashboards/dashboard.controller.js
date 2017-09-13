@@ -430,6 +430,7 @@
 
         $scope.updateWidget = function(widget){
             DashboardService.UpdateWidget(widget).then(function (rs) {
+
                 if (rs.success) {
                 	alertify.success("Widget updated");
                 	$scope.hide(true);
@@ -438,7 +439,7 @@
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide(success);
+            $scope.hide(true);
         };
 
         $scope.deleteWidget = function(widget){
@@ -464,10 +465,7 @@
         $scope.loadModalWidget = function (widget, table) {
 
             $scope.isLoading = true;
-            if (widget.originalType){
-                widget.type = widget.originalType;
-                widget.model = widget.originalModel;
-            }
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i < $scope.dashboard.attributes.length; i++){
@@ -495,15 +493,13 @@
                         }
                     }
                     if ('sql' != widget.type) {
-                        if (table && widget.type !== 'table'){
-                            widget.originalType = widget.type;
-                            widget.originalModel = widget.model;
-                            widget.type = 'table';
-                            widget.model = JSON.stringify({"columns" : columns});
+                        if (table){
+                            widget.testType = 'table';
+                            widget.testModel = {"columns" : columns};
                         }
-                        var isObject = widget.model instanceof Object;
-                        if (!isObject) {
-                            widget.model = JSON.parse(widget.model);
+                        else {
+                            widget.testType = widget.type;
+                            widget.testModel = JSON.parse(widget.model);
                         }
                         widget.data = {};
                         widget.data.dataset = data;
@@ -538,7 +534,6 @@
             }
         };
 
-
         $scope.asString = function (value) {
             if (value) {
                 value = value.toString();
@@ -548,7 +543,6 @@
 
         $scope.closeWidget = function(widget){
             widget.data = null;
-            widget.model = JSON.stringify(widget.model);
             $scope.showWidget = false;
         };
 
@@ -556,7 +550,7 @@
             $mdDialog.hide(result);
         };
         $scope.cancel = function () {
-            $scope.closeWidget(widget);
+            widget.data = null;
             $mdDialog.cancel();
         };
         (function initController() {
