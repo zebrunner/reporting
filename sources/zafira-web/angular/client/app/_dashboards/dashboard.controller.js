@@ -124,7 +124,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, dashboard, isNew, currentUserId) {
+        $scope.showWidgetDialog = function (event, widget, dashboard, currentUserId, isNew) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
