@@ -44,10 +44,10 @@
 		              }
 		       	});
 
-		   		DashboardService.GetDashboards().then(function(rs) {
-	               if(rs.success && rs.data.length > 0)
+		   		DashboardService.GetDashboardByTitle("User Performance").then(function(rs) {
+	               if(rs.success)
 	               {
-	               		$rootScope.pefrDashboardId = rs.data[0].id;
+	               		$rootScope.pefrDashboardId = rs.data.id;
 	               }
 		        });
 

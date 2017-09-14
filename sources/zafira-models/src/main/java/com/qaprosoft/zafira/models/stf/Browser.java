@@ -1,5 +1,5 @@
 
-package com.qaprosoft.zafira.dbaccess.model.stf;
+package com.qaprosoft.zafira.models.stf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,62 +16,62 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({
-    "devices",
-    "success"
+    "apps",
+    "selected"
 })
-public class Devices {
+public class Browser {
 
     /**
      * 
      */
-    @JsonProperty("devices")
-    private List<STFDevice> devices = new ArrayList<STFDevice>();
+    @JsonProperty("apps")
+    private List<App> apps = new ArrayList<App>();
     /**
      * 
      */
-    @JsonProperty("success")
-    private Boolean success;
+    @JsonProperty("selected")
+    private Boolean selected;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
      * @return
-     *     The devices
+     *     The apps
      */
-    @JsonProperty("devices")
-    public List<STFDevice> getDevices() {
-        return devices;
+    @JsonProperty("apps")
+    public List<App> getApps() {
+        return apps;
     }
 
     /**
      * 
-     * @param devices
-     *     The devices
+     * @param apps
+     *     The apps
      */
-    @JsonProperty("devices")
-    public void setDevices(List<STFDevice> devices) {
-        this.devices = devices;
+    @JsonProperty("apps")
+    public void setApps(List<App> apps) {
+        this.apps = apps;
     }
 
     /**
      * 
      * @return
-     *     The success
+     *     The selected
      */
-    @JsonProperty("success")
-    public Boolean getSuccess() {
-        return success;
+    @JsonProperty("selected")
+    public Boolean getSelected() {
+        return selected;
     }
 
     /**
      * 
-     * @param success
-     *     The success
+     * @param selected
+     *     The selected
      */
-    @JsonProperty("success")
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    @JsonProperty("selected")
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     @JsonAnyGetter

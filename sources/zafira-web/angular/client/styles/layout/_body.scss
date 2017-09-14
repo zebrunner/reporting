@@ -314,3 +314,19 @@ body md-select-menu, body md-content{
 .material-icons.material-icon-16px {
     font-size: 16px;
 }
+
+pre.code {
+    border: 0 !important;
+    background-color: white !important;
+    padding: 0 !important;
+}
+
+pre.code:after{
+    content:"";
+    display:table;
+    clear:both
+}
+
+.large-card-content {
+    min-height: 500px !important;
+}

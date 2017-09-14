@@ -86,6 +86,56 @@
                 };
             }
         };
+    }]).directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
+        "use strict";
+        return {
+            restrict: 'E',
+            template: '<span>' +
+            '<i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" data-toggle="tooltip" title="Highlight code syntax" aria-hidden="true"></i>' +
+            '<i style="float: right" data-ng-click="showWidget()" data-ng-if="codeClass != sql" class="fa fa-pie-chart" data-toggle="tooltip" title="Show widget preview" aria-hidden="true">&nbsp&nbsp</i>' +
+            '<i style="float: right" data-ng-click="executeSQL()" data-ng-if="codeClass != sql"class="fa fa-flash" data-toggle="tooltip" title="Execute SQL query " aria-hidden="true">&nbsp&nbsp</i>' +
+            '<pre class="code"><code data-ng-class="{{ codeClass }}" ng-dblclick="refreshHighlighting()" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
+            replace: true,
+            require: 'ngModel',
+            transclude: true,
+            scope: {
+                ngModel: '=',
+                codeData: '@',
+                codeClass: '@'
+            },
+            link: function (scope, iElement, iAttrs, ngModel) {
+
+                var initHighlight = function() {
+                    var myScope = scope.codeClass;
+                    hljs.configure({
+                        tabReplace: '    '
+                    });
+                    $('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                };
+
+                scope.refreshHighlighting = function () {
+                    $('pre code').each(function(i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                };
+
+                scope.executeSQL = function () {
+                    $rootScope.$broadcast('$event:executeSQL');
+                };
+
+                scope.showWidget = function () {
+                    $rootScope.$broadcast('$event:showWidget');
+                };
+
+                $timeout(initHighlight, 100);
+
+                iElement.bind("blur keyup change", function() {
+                    ngModel.$setViewValue(iElement[0].innerText);
+                });
+            }
+        };
     }]).filter('subString', function() {
         return function(str, start, end) {
             if (str != undefined) {

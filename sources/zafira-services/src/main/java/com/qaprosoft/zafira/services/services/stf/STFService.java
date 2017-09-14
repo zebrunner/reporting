@@ -8,8 +8,9 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.model.stf.RemoteConnectUserDevice;
-import com.qaprosoft.zafira.dbaccess.model.stf.STFDevice;
+import com.qaprosoft.zafira.client.STFClient;
+import com.qaprosoft.zafira.models.stf.RemoteConnectUserDevice;
+import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service("stfService")

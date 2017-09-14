@@ -1,7 +1,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -97,6 +96,15 @@ public class DashboardsAPIController extends AbstractController
 	public @ResponseBody Dashboard getDashboardById(@PathVariable(value="id") long id) throws ServiceException
 	{
 		return dashboardService.getDashboardById(id);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get dashboard by title", nickname = "getDashboardByTitle", code = 200, httpMethod = "GET", response = Dashboard.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value="title", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Dashboard getDashboardByTitle(@RequestParam(value="title", required=false) String title) throws ServiceException
+	{
+		return dashboardService.getDashboardByTitle(title);
 	}
 
     @ResponseStatusDetails

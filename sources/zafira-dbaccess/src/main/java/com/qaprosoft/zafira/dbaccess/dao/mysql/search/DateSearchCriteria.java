@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
-import com.qaprosoft.zafira.models.db.Status;
-
 import java.util.Date;
 
 /**

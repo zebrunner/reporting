@@ -1,5 +1,5 @@
 
-package com.qaprosoft.zafira.dbaccess.model.stf;
+package com.qaprosoft.zafira.models.stf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
