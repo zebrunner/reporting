@@ -886,6 +886,7 @@
 
         $scope.rerunFailures = true;
         $scope.testRun = testRun;
+
         $scope.rebuild = function (testRun, rerunFailures) {
             if ($scope.jenkinsEnabled) {
                 TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
@@ -893,6 +894,7 @@
                     {
                         testRun.status = 'IN_PROGRESS';
                         alertify.success("Rebuild triggered in CI service");
+                        $scope.hide(true);
                     }
                     else
                     {
