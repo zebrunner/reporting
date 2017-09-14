@@ -1,10 +1,13 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -93,10 +96,12 @@ public class WidgetsAPIController extends AbstractController
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql,
 			@RequestParam(value = "project", defaultValue = "", required = false) String project,
 			@RequestParam(value = "currentUserId", required = false) String currentUserId,
-			@RequestParam(value = "dashboardName", required = false) String dashboardName) throws ServiceException
+			@RequestParam(value = "dashboardName", required = false) String dashboardName,
+            @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired ) throws ServiceException
 	{
 		String query = sql.getSql();
-		
+		List<Map<String, Object>> resultList;
+		try {
 		if (sql.getAttributes() != null)
 		{
 			for (Attribute attribute : sql.getAttributes())
@@ -104,16 +109,30 @@ public class WidgetsAPIController extends AbstractController
 				query = query.replaceAll("#\\{" + attribute.getKey() + "\\}", attribute.getValue());
 			}
 		}
-		
+
 		query = query
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
 
+            resultList = widgetService.executeSQL(query);
+        }
+        catch (Exception e) {
+            if (stackTraceRequired) {
+                resultList = new ArrayList<>();
+                Map<String, Object> exceptionMap = new HashMap<>();
+                exceptionMap.put("Check your query", ExceptionUtils.getFullStackTrace(e));
+                resultList.add(exceptionMap);
+                return resultList;
+            }
+            else {
+                throw e;
+            }
+        }
+        return resultList;
+    }
 
-		return widgetService.executeSQL(query);
-	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
