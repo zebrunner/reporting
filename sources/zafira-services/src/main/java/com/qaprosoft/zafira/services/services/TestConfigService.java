@@ -104,7 +104,7 @@ public class TestConfigService
 	public TestConfig updateTestConfig(long id, String configXML) throws ServiceException
 	{
 		TestConfig testConfig = getTestConfigById(id);
-		if(testConfig != null && StringUtils.isEmpty(configXML))
+		if(testConfig != null && !StringUtils.isEmpty(configXML))
 		{
 			testConfig.init(readConfigArgs(configXML, false));
 			testConfigMapper.updateTestConfig(testConfig);
