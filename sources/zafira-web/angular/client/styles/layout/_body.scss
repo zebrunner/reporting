@@ -326,3 +326,7 @@ pre.code:after{
     display:table;
     clear:both
 }
+
+.large-card-content {
+    min-height: 500px !important;
+}
