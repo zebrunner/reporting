@@ -388,6 +388,10 @@
             $scope.showBuildNowDialog(testRun, event);
         };
 
+        $scope.rerun = function (testRun, event) {
+            $scope.showRerunDialog(testRun, event);
+        };
+
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
         		{
@@ -532,6 +536,23 @@
             })
                 .then(function(answer) {
                 }, function() {
+                });
+        };
+
+        $scope.showRerunDialog = function (testRun, event) {
+            $mdDialog.show({
+                controller: TestRunRerunController,
+                templateUrl: 'app/_testruns/testrun_rerun_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: true,
+                fullscreen: true,
+                locals: {
+                    testRun: testRun
+                }
+            })
+                .then(function (answer) {
+                }, function () {
                 });
         };
 
@@ -860,6 +881,45 @@
 
         })();
     }
+
+    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, ConfigService) {
+
+        $scope.rerunFailures = true;
+        $scope.testRun = testRun;
+        $scope.rebuild = function (testRun, rerunFailures) {
+            if ($scope.jenkinsEnabled) {
+                TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
+                    if(rs.success)
+                    {
+                        testRun.status = 'IN_PROGRESS';
+                        alertify.success("Rebuild triggered in CI service");
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            else {
+                window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+            }
+         };
+
+        ConfigService.getConfig("jenkins").then(function(rs) {
+            $scope.jenkinsEnabled = rs.data.connected;
+        });
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        (function initController() {
+        })();
+    }
+
 
     function KnownIssueController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, test, isNew) {
         $scope.jiraId;
