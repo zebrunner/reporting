@@ -130,7 +130,8 @@
                 templateUrl: 'app/_dashboards/widget_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose: true,
+                clickOutsideToClose: false,
+                backdrop: 'static',
                 fullscreen: true,
                 locals: {
                     widget: widget,
@@ -430,7 +431,6 @@
 
         $scope.updateWidget = function(widget){
             DashboardService.UpdateWidget(widget).then(function (rs) {
-
                 if (rs.success) {
                 	alertify.success("Widget updated");
                 	$scope.hide(true);
@@ -541,17 +541,23 @@
             return value;
         };
 
-        $scope.closeWidget = function(widget){
-            widget.data = null;
+        $scope.closeWidget = function(){
+            $scope.clearWidgetData();
             $scope.showWidget = false;
         };
 
         $scope.hide = function (result) {
             $mdDialog.hide(result);
         };
+
         $scope.cancel = function () {
-            widget.data = null;
+            $scope.clearWidgetData();
             $mdDialog.cancel();
+        };
+
+        $scope.clearWidgetData = function () {
+            $scope.widget.data = null;
+            $scope.widget.testType = null;
         };
         (function initController() {
         })();
