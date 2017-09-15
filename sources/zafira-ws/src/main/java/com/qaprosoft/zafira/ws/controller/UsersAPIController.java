@@ -31,6 +31,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.Objects;
+
 @Controller
 @Api(value = "Users API")
 @CrossOrigin
@@ -77,7 +79,7 @@ public class UsersAPIController extends AbstractController
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
 	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
 	{
-		if(!isAdmin() && getPrincipalId() != password.getUserId())
+		if(!isAdmin() && !Objects.equals(getPrincipalId(), password.getUserId()))
 		{
 			throw new ForbiddenOperationException("No permissions to update password");
 		}
