@@ -114,15 +114,14 @@ public class WidgetsAPIController extends AbstractController
 			}
 		}
 
-			String param = StringUtils.substringBetween(query,"#{","}%" );
-
 			query = query
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
 
-			if(!param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
+			String param = StringUtils.substringBetween(query,"#{","}%" );
+			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
 			{
 				query = query.replaceAll("#\\{"+param+"\\}", settingsService.getSettingByName(param).getValue());
 			}
