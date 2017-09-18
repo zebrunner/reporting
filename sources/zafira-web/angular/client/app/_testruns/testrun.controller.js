@@ -441,6 +441,13 @@
             });
         };
 
+        $scope.isUrlContainsJenkinsHost = function(url, testRun) {
+            if(url && testRun.job && url.includes(testRun.job.jenkinsHost)) {
+                return true;
+            }
+            return false;
+        };
+
         $scope.showDetails = function (id) {
             var testRun = $scope.testRuns[id];
             testRun.showDetails = !testRun.showDetails;
@@ -520,6 +527,23 @@
                     console.error(rs.message);
                 }
             });
+        };
+
+        $scope.showCodeDialog = function(event, testRun) {
+            $mdDialog.show({
+                controller: CodeController,
+                templateUrl: 'app/_testruns/code_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    testRun: testRun
+                }
+            })
+                .then(function(answer) {
+                }, function() {
+                });
         };
 
         $scope.showBuildNowDialog = function(testRun, event) {
@@ -1128,6 +1152,62 @@
             $scope.initNewKnownIssue();
             $scope.getKnownIssues();
             $scope.getJiraStatusesAsClosed();
+        })();
+    }
+
+    function CodeController($scope, $mdDialog, $interval, testRun, TestRunService) {
+
+        $scope.content = '';
+        $scope.count = 100;
+        $scope.fullCount = 0;
+
+        $scope.getContent = function () {
+            TestRunService.getConsoleOutput(testRun.id, $scope.count, $scope.fullCount).then(function(rs) {
+                if(rs.success)
+                {
+                    for(var fullCount in rs.data) {
+                        if(fullCount === '-1')
+                        {
+                            stopInterval();
+                            break;
+                        }
+                        $scope.content = $scope.content.concat(rs.data[fullCount]);
+                        $scope.fullCount = fullCount;
+                    }
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                    $scope.hide();
+                }
+            });
+        };
+
+        var interval;
+
+        var startInterval = function () {
+            interval = $interval(function() {
+                $scope.getContent();
+            }, 8000);
+        };
+
+        var stopInterval = function () {
+            $interval.cancel(interval);
+            interval = undefined;
+        };
+        $scope.$on('$destroy', function() {
+            stopInterval();
+        });
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+        (function initController() {
+            $scope.getContent();
+            startInterval();
         })();
     }
 })();
