@@ -101,7 +101,7 @@
         };
 
 
-       $scope.addTest = function (test, isEvent) {
+        $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
@@ -121,7 +121,6 @@
                 testRun.tests[test.id] = test;
             }
         };
-
         $scope.updateTestRunResults = function (testRun, test, changeByAmount) {
             switch (test.status) {
                 case "PASSED":
