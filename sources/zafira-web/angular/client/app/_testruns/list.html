@@ -25,6 +25,9 @@
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" permission="['ROLE_ADMIN']">
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
+                <md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
+                    <span class="fa fa-eye" aria-hidden="true"></span>
+                </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
         <div class="col-md-12">
@@ -113,19 +116,21 @@
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell>
+                                            <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
-	                                   			aria-label="Select"
-	                                   			data-ng-model="testRun.selected"
-	                                   			data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
-	                                   			data-ng-true-value="true"
-	                                   			data-ng-false-value="false">
-	                                   		</md-checkbox>
-	                                   		<div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
-		                                   		<md-progress-circular md-diameter="20px"></md-progress-circular>
-	                                             <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
-	                                                 <small>{{progressBar}}%</small>
-	                                             </timer>
-                                             </div>
+                                                    aria-label="Select"
+                                                    data-ng-model="testRun.selected"
+                                                    data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
+                                                    data-ng-true-value="true"
+                                                    data-ng-false-value="false">
+                                                </md-checkbox>
+                                                <div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
+                                                    <md-progress-circular md-diameter="20px"></md-progress-circular>
+                                                     <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
+                                                         <small>{{progressBar}}%</small>
+                                                     </timer>
+                                                 </div>
+                                            </span>
                                         </td>
                                         <td md-cell>
 	                                         <b>
