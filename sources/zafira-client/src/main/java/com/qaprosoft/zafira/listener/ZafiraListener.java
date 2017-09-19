@@ -212,7 +212,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
 			}
-			catch (Exception e) 
+			catch (Throwable e) 
 			{
 				ZAFIRA_ENABLED = false;
 				LOGGER.error("Undefined error during test run registration!", e);
@@ -277,7 +277,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			
 			registeredTests.put(testName, startedTest);
 		} 
-		catch (Exception e) 
+		catch (Throwable e) 
 		{
 			LOGGER.error("Undefined error during test case/method start!", e);
 		}
@@ -296,7 +296,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
 			}
 		} 
-		catch (Exception e) {
+		catch (Throwable e) {
 			LOGGER.error("Undefined error during test case/method finish!", e);
 		}
 	}
@@ -314,7 +314,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
 			}
 		} 
-		catch (Exception e) {
+		catch (Throwable e) {
 			LOGGER.error("Undefined error during test case/method finish!", e);
 		}
 	}
@@ -332,7 +332,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
 			}
 		} 
-		catch (Exception e) {
+		catch (Throwable e) {
 			LOGGER.error("Undefined error during test case/method finish!", e);
 		}
 	}
@@ -399,7 +399,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				throw new RuntimeException("Unable to register test " + rs.getObject().getName() + " for zafira service: " + ZAFIRA_URL);
 			}
 		} 
-		catch (Exception e) {
+		catch (Throwable e) {
 			LOGGER.error("Undefined error during test case/method finish!", e);
 		}
 	}
@@ -467,7 +467,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				FileUtils.writeStringToFile(reportFile, report);
 			}
 		} 
-		catch (Exception e) 
+		catch (Throwable e) 
 		{
 			LOGGER.error("Unable to finish test run correctly", e);
 		}

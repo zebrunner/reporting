@@ -1,30 +1,5 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.dozer.Mapper;
-import org.dozer.MappingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
@@ -40,19 +15,30 @@ import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
+import org.dozer.Mapper;
+import org.dozer.MappingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @Api(value = "Test runs API")
@@ -163,10 +149,12 @@ public class TestRunsAPIController extends AbstractController
 		}
 
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		;
 		testRunService.abortTestRun(testRun);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH,
-				new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
+		{
+			websocketTemplate.convertAndSend(WEBSOCKET_PATH,
+					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		}
 
 		for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 		{
@@ -397,5 +385,18 @@ public class TestRunsAPIController extends AbstractController
 	public @ResponseBody List<String> getPlatforms() throws ServiceException
 	{
 		return testRunService.getPlatforms();
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
+	@RequestMapping(value = "{id}/jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "id") long testRunId, @PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
+		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 }
