@@ -1,0 +1,24 @@
+<md-dialog flex="50" aria-label="Code">
+    <form class="form-validation" name="code_form" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Console log</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container data-ng-if="content.length" flex>
+                    <div class="code" ng-bind-html="content"></div>
+                </md-input-container>
+                <div data-ng-hide="content.length" layout="row" layout-sm="column" layout-align="center center">
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class WidgetsAPIController extends AbstractController
 {
 	@Autowired
 	private WidgetService widgetService;
+
+	@Autowired
+	private SettingsService settingsService;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create widget", nickname = "createWidget", code = 200, httpMethod = "POST", response = Widget.class)
@@ -110,11 +114,17 @@ public class WidgetsAPIController extends AbstractController
 			}
 		}
 
-		query = query
+			query = query
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
+
+			String param = StringUtils.substringBetween(query,"#{","}%" );
+			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
+			{
+				query = query.replaceAll("#\\{"+param+"\\}", settingsService.getSettingByName(param).getValue());
+			}
 
             resultList = widgetService.executeSQL(query);
         }
