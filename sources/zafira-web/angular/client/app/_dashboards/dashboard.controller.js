@@ -3,24 +3,24 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
         $scope.dashboard = {};
 
-        $scope.loadDashboardData = function (dashboard) {
+        $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 if ('sql' != dashboard.widgets[i].type) {
-                    $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes);
+                    $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
                 }
             }
         };
 
-        $scope.loadWidget = function (dashboardName, widget, attributes) {
+        $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i<$scope.dashboard.attributes.length; i++){
@@ -32,7 +32,9 @@
             if ($scope.currentUserId) {
                 params = params + "&currentUserId=" + $scope.currentUserId;
             }
-            $scope.isLoading = true;
+            if(!refresh){
+                $scope.isLoading = true;
+            }
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -43,7 +45,9 @@
                     }
 
                     if ('sql' != widget.type) {
-                        widget.model = JSON.parse(widget.model);
+                        if(!refresh){
+                            widget.model = JSON.parse(widget.model);
+                        }
                         widget.data = {};
                         widget.data.dataset = data;
                     }
@@ -179,7 +183,11 @@
             }
         };
 
-         $scope.$watch(
+        $interval(function () {
+            $scope.loadDashboardData($scope.dashboard, true);
+        }, 30000);
+
+        $scope.$watch(
             function() {
                 return $scope.currentUserId !== $location.$$search.userId;
             },

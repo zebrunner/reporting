@@ -102,7 +102,7 @@
         };
 
 
-       $scope.addTest = function (test, isEvent) {
+        $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
