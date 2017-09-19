@@ -149,10 +149,12 @@ public class TestRunsAPIController extends AbstractController
 		}
 
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		;
 		testRunService.abortTestRun(testRun);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH,
-				new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
+		{
+			websocketTemplate.convertAndSend(WEBSOCKET_PATH,
+					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		}
 
 		for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 		{
