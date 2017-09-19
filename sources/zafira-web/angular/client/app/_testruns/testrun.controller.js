@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -80,6 +80,7 @@
                 }
 
                 $scope.addTestRun(event.testRun);
+                $scope.createPushNotification(event.testRun, true);
                 $scope.$apply();
             }
             else if (event.type == 'TEST') {
@@ -121,6 +122,51 @@
                 testRun.tests[test.id] = test;
             }
         };
+
+       $scope.createPushNotification = function (testRun, isSilent) {
+           if($scope.selectedTestRuns[testRun.id] != null && $scope.selectedTestRuns[testRun.id].followed && testRun.status != 'IN_PROGRESS') {
+               $rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
+               if(isSilent) {
+                   (new Audio('notification.mp3')).play();
+               }
+           }
+       };
+
+        $scope.selectedTestRuns = {};
+
+       $scope.addToSelectedTestRuns = function (testRun) {
+           $timeout(function () {
+               if(testRun.selected) {
+                   $scope.selectedTestRuns[testRun.id] = testRun;
+               } else {
+                   delete $scope.selectedTestRuns[testRun.id];
+               }
+           }, 100);
+       };
+
+       $scope.followSelectedTestRuns = function () {
+           var count = 0;
+           for(var id in $scope.selectedTestRuns) {
+               $scope.selectedTestRuns[id].followed = true;
+               if($scope.selectedTestRuns.hasOwnProperty(id)) {
+                   count++;
+               }
+           }
+           var messageText = '';
+           switch(count) {
+               case 0:
+                   messageText = 'Select test runs for follow them';
+                   break;
+               case 1:
+                   messageText = 'Selected test run will be followed';
+                   break;
+               default:
+                   messageText = 'Selected ' + count + ' test runs will be followed';
+                   break;
+           }
+           alertify.warning(messageText);
+       };
+
         $scope.updateTestRunResults = function (testRun, test, changeByAmount) {
             switch (test.status) {
                 case "PASSED":
