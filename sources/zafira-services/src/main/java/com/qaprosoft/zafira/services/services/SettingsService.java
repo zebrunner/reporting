@@ -38,6 +38,9 @@ public class SettingsService
     @Autowired
     private AmazonService amazonService;
 
+    @Autowired
+    private HipchatService hipchatService;
+
 	@Autowired
 	private CryptoService cryptoService;
 
@@ -163,6 +166,9 @@ public class SettingsService
 				break;
 			case AMAZON:
 				service = amazonService;
+				break;
+			case HIPCHAT:
+				service = hipchatService;
 				break;
 			default:
 				break;
