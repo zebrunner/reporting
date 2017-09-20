@@ -330,3 +330,7 @@ pre.code:after{
 .large-card-content {
     min-height: 500px !important;
 }
+
+div.code {
+    white-space: pre-line;
+}

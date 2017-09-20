@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import com.google.common.base.Optional;
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.FolderJob;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
@@ -17,9 +18,7 @@ import org.springframework.jmx.export.annotation.*;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
 
@@ -149,6 +148,26 @@ public class JenkinsService implements IJMXService
 		return jobParameters;
 	}
 
+	public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount)
+	{
+		Map<Integer, String> result = new HashMap<>();
+		try
+		{
+			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
+			BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
+			buildWithDetails.isBuilding();
+			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
+			if(! buildWithDetails.isBuilding())
+			{
+				result.put(-1, buildWithDetails.getDisplayName());
+			}
+		} catch (IOException e)
+		{
+			LOGGER.error("Unable to get console output text: " + e.getMessage());
+		}
+		return result;
+	}
+
 	private JobWithDetails getJobWithDetails(Job ciJob) throws IOException
 	{
 		JobWithDetails job = null;
@@ -162,6 +181,20 @@ public class JenkinsService implements IJMXService
 			job = server.getJob(ciJob.getName());
 		}
 		return job;
+	}
+
+	private Map<Integer, String> getLastLogStringsByCount(String log, Integer count, Integer fullCount)
+	{
+		Map<Integer, String> logMap = new HashMap<>();
+		int zero = 0;
+		String[] strings = log.split("\n");
+		count = strings.length < count ? strings.length : count;
+		if(fullCount != zero)
+		{
+			count = strings.length != fullCount ? strings.length - fullCount : zero;
+		}
+		logMap.put(strings.length, String.join("\n", Arrays.copyOfRange(strings, strings.length - count, strings.length)));
+		return logMap;
 	}
 
 	@Override

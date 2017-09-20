@@ -20,15 +20,15 @@ import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
-@ManagedResource(objectName="bean:name=amazonService", description="Amazon init Managed Bean",
-		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
+@ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean",
+		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class AmazonService implements IJMXService
 {
 
 	private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
 	public static final String COMMENT_KEY = "comment";
-	
+
 	private AmazonS3 s3Client;
 
 	private BasicAWSCredentials awsCredentials;
@@ -46,46 +46,50 @@ public class AmazonService implements IJMXService
 
 	@Override
 	@PostConstruct
-	public void init() {
+	public void init()
+	{
 		String accessKey = null;
 		String privateKey = null;
 		String bucket = null;
 
-		try {
+		try
+		{
 			List<Setting> jiraSettings = settingsService.getSettingsByTool(AMAZON);
 			for (Setting setting : jiraSettings)
 			{
-				if(setting.isEncrypted())
+				if (setting.isEncrypted())
 				{
 					setting.setValue(cryptoService.decrypt(setting.getValue()));
 				}
 				switch (Setting.SettingType.valueOf(setting.getName()))
 				{
-					case AMAZON_ACCESS_KEY:
-						accessKey = setting.getValue();
-						break;
-					case AMAZON_SECRET_KEY:
-						privateKey = setting.getValue();
-						break;
-					case AMAZON_BUCKET:
-						bucket = setting.getValue();
-						break;
-					default:
-						break;
+				case AMAZON_ACCESS_KEY:
+					accessKey = setting.getValue();
+					break;
+				case AMAZON_SECRET_KEY:
+					privateKey = setting.getValue();
+					break;
+				case AMAZON_BUCKET:
+					bucket = setting.getValue();
+					break;
+				default:
+					break;
 				}
 			}
 			init(accessKey, privateKey, bucket);
-		} catch(Exception e) {
+		} catch (Exception e)
+		{
 			LOGGER.error("Setting does not exist", e);
 		}
 	}
 
-	@ManagedOperation(description="Amazon initialization")
+	@ManagedOperation(description = "Amazon initialization")
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
 			@ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
-			@ManagedOperationParameter(name = "bucket", description = "Amazon bucket")})
-	public void init(String accessKey, String privateKey, String bucket){
+			@ManagedOperationParameter(name = "bucket", description = "Amazon bucket") })
+	public void init(String accessKey, String privateKey, String bucket)
+	{
 		try
 		{
 			if (!StringUtils.isEmpty(accessKey) && !StringUtils.isEmpty(privateKey) && !StringUtils.isEmpty(bucket))
@@ -101,8 +105,10 @@ public class AmazonService implements IJMXService
 	}
 
 	@Override
-	public boolean isConnected() {
-		try {
+	public boolean isConnected()
+	{
+		try
+		{
 			this.s3Client.getS3AccountOwner();
 			return this.s3Client.doesBucketExist(this.s3Bucket);
 		} catch (Exception e)
@@ -116,12 +122,12 @@ public class AmazonService implements IJMXService
 		ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(s3Bucket).withPrefix(filePrefix);
 		return getS3Client().listObjects(listObjectRequest).getObjectSummaries();
 	}
-	
+
 	public String getComment(String key)
 	{
 		return getS3Client().getObjectMetadata(s3Bucket, key).getUserMetaDataOf(COMMENT_KEY);
 	}
-	
+
 	public String getPublicLink(S3ObjectSummary objectSummary)
 	{
 		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(s3Bucket,
@@ -130,8 +136,9 @@ public class AmazonService implements IJMXService
 		return getS3Client().generatePresignedUrl(generatePresignedUrlRequest).toString();
 	}
 
-	@ManagedAttribute(description="Get amazon client")
-	public AmazonS3 getS3Client() {
+	@ManagedAttribute(description = "Get amazon client")
+	public AmazonS3 getS3Client()
+	{
 		return s3Client;
 	}
 }

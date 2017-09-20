@@ -74,6 +74,18 @@
                         $rootScope.$broadcast("event:settings-toolsInitialized", rs.data);
                     }
                 });
+
+                $rootScope.pushNotification = function (title, bodyText, timeout) {
+                    Push.create(title, {
+                        body: bodyText,
+                        icon: 'favicon.ico',
+                        timeout: timeout,
+                        onClick: function () {
+                            window.focus();
+                            this.close();
+                        }
+                    });
+                };
 	        };
 
 	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
