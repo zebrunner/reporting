@@ -52,7 +52,7 @@
                                     </md-input-container>
                                 </div>
                             </div>
-                            <div data-ng-if="tool.isEnabled" class="row col-lg-12" data-ng-if="tool.name == 'SLACK'" style="position: relative">
+                            <div data-ng-if="tool.isEnabled && tool.name == 'SLACK'" class="row col-lg-12" style="position: relative">
                                 <div class="col-lg-6" style="padding: 0">
                                     <md-input-container class="md-block">
                                         <label>NEW {{ tool.name }} SETTING</label>
