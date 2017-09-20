@@ -3,7 +3,6 @@ package com.qaprosoft.zafira.client;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +13,6 @@ import com.qaprosoft.zafira.models.stf.Serial;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class STFClient
 {
@@ -37,9 +34,6 @@ public class STFClient
 	{
 		this.serviceURL = serviceURL;
 		this.authToken = authToken;
-		
-		ClientConfig config = new DefaultClientConfig();
-		config.getSingletons().add(new JacksonJsonProvider());
 		
 		this.client = Client.create();
 		this.client.setConnectTimeout(TIMEOUT);
