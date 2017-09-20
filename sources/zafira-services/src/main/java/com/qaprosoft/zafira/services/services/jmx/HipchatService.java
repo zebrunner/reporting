@@ -48,7 +48,7 @@ public class HipchatService implements IJMXService
 				}
 				switch (Setting.SettingType.valueOf(setting.getName()))
 				{
-				case HIPCHAR_ACCESS_TOKEN:
+				case HIPCHAT_ACCESS_TOKEN:
 					accessToken = setting.getValue();
 					break;
 				default:
@@ -151,7 +151,7 @@ public class HipchatService implements IJMXService
 		try
 		{
 			return getHipchatClient().prepareGetSessionRequestBuilder().build().execute().get() != null;
-		} catch (InterruptedException | ExecutionException e)
+		} catch (Exception e)
 		{
 			return false;
 		}
