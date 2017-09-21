@@ -3,16 +3,18 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', 'AuthService', UserProfileController])
+        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', UserProfileController])
         .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $location, $state, UserService, UtilService, AuthService) {
+    function UserProfileController($scope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
 
     	$scope.UtilService = UtilService;
 
     	$scope.user = {};
     	$scope.changePassword = {};
+        $scope.preferences = {};
+        $scope.dashboards = [];
     	$scope.pefrDashboardId = null;
     	$scope.accessToken = null;
 
@@ -30,6 +32,10 @@
         		}
             });
         })();
+
+        $scope.isAdmin = function(){
+             return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        };
 
         $scope.updateUserProfile = function(profile)
         {
@@ -75,6 +81,29 @@
             document.body.removeChild(node);
 
             alertify.success("Access token copied to clipboard");
+        };
+
+        $scope.updatePreferences = function(preferences){
+
+        };
+
+        $scope.loadDashboards = function () {
+
+            if ($scope.isAdmin() === true) {
+                DashboardService.GetDashboards().then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
+            else {
+                var hidden = true;
+                DashboardService.GetDashboards(hidden).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
         };
 
         $scope.updateUserPassword = function(changePassword)
