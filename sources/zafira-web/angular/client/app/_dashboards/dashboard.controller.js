@@ -184,7 +184,9 @@
         };
 
         $interval(function () {
-            $scope.loadDashboardData($scope.dashboard, true);
+            if($stateParams.id){
+                $scope.loadDashboardData($scope.dashboard, true);
+            }
         }, 30000);
 
         $scope.$watch(
