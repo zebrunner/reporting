@@ -486,6 +486,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	@Override
 	public void run(IHookCallBack hookCallBack, ITestResult testResult)
 	{
+		if(!ZAFIRA_ENABLED) return;
+		
 		String testName = configurator.getTestName(testResult);
 		TestType startedTest = registeredTests.get(testName);
 

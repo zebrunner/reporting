@@ -107,6 +107,7 @@
 		<jenkins-client.version>0.3.7</jenkins-client.version>
 
 		<jira-client.version>0.5</jira-client.version>
+		<hipchat-client.version>0.4.3</hipchat-client.version>
 		<jasypt>1.9.2</jasypt>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 
@@ -607,6 +608,12 @@
 				<groupId>net.rcarz</groupId>
 				<artifactId>jira-client</artifactId>
 				<version>${jira-client.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.evanwong.oss</groupId>
+				<artifactId>hipchat-java</artifactId>
+				<version>${hipchat-client.version}</version>
 			</dependency>
 
 			<dependency>
