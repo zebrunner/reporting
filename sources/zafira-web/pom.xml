@@ -79,7 +79,7 @@
                         <goal>gulp</goal>
                     </goals>
                     <configuration>
-                        <arguments>serve-dist</arguments>
+                        <arguments>serve</arguments>
                     </configuration>
                     <phase>generate-resources</phase>
                 </execution>
