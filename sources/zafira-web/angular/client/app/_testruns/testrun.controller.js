@@ -80,7 +80,7 @@
                 }
 
                 $scope.addTestRun(event.testRun);
-                $scope.createPushNotification(event.testRun, true);
+                //$scope.createPushNotification(event.testRun, true);
                 $scope.$apply();
             }
             else if (event.type == 'TEST') {
@@ -125,8 +125,8 @@
 
        $scope.createPushNotification = function (testRun, isSilent) {
            if($scope.selectedTestRuns[testRun.id] != null && $scope.selectedTestRuns[testRun.id].followed && testRun.status != 'IN_PROGRESS') {
-               $rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
-               /*if(isSilent) {
+               /*$rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
+               if(isSilent) {
                    (new Audio('notification.mp3')).play();
                }*/
            }

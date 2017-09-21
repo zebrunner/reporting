@@ -75,7 +75,7 @@
                     }
                 });
 
-                $rootScope.pushNotification = function (title, bodyText, timeout) {
+                /*$rootScope.pushNotification = function (title, bodyText, timeout) {
                     Push.create(title, {
                         body: bodyText,
                         icon: 'favicon.ico',
@@ -85,7 +85,7 @@
                             this.close();
                         }
                     });
-                };
+                };*/
 	        };
 
 	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
