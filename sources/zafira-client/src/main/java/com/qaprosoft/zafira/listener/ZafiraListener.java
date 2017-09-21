@@ -486,17 +486,21 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	@Override
 	public void run(IHookCallBack hookCallBack, ITestResult testResult)
 	{
-		if(!ZAFIRA_ENABLED) return;
-		
-		String testName = configurator.getTestName(testResult);
-		TestType startedTest = registeredTests.get(testName);
-
-		if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
-		{
-			// do nothing
-		} else
+		if (!ZAFIRA_ENABLED)
 		{
 			hookCallBack.runTestMethod(testResult);
+		} else
+		{
+			String testName = configurator.getTestName(testResult);
+			TestType startedTest = registeredTests.get(testName);
+
+			if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
+			{
+				// do nothing
+			} else
+			{
+				hookCallBack.runTestMethod(testResult);
+			}
 		}
 	}
 
