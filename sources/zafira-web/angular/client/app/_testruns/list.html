@@ -50,7 +50,7 @@
                                     	   </th>
                                         <th md-column style="min-width: 360px;">
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.status" name="status" placeholder="Status">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
                                                     <md-option value="" disabled>Status</md-option>
                                                     <md-option value="PASSED">PASSED</md-option>
                                                     <md-option value="FAILED">FAILED</md-option>
@@ -61,15 +61,15 @@
                                                 </md-select>
                                             </md-input-container>
                                             <md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
                                             </md-input-container>
                                             <md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.environment" name="environment" placeholder="Environment">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.environment" name="environment" placeholder="Environment">
                                                     <md-option value="" disabled>Environment</md-option>
                                                     <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
                                                 </md-select>
@@ -77,7 +77,7 @@
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.platform" name="platform" placeholder="Platform">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.platform" name="platform" placeholder="Platform">
                                                     <md-option value="" disabled>Platform</md-option>
                                                     <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
                                                 </md-select>
@@ -85,12 +85,12 @@
                                         </th>
                                       <th md-column>
                                         	<md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                             </md-input-container>
                                         </th>
                                         <th md-column colspan="2">
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
                                                     <md-option value="" ng-selected="true"></md-option>
                                                     <md-option value="before">Before</md-option>
                                                     <md-option value="after">After</md-option>
@@ -107,8 +107,8 @@
                                                     <md-option value="last_year">Last Year</md-option>
                                                 </md-select>
                                             </md-input-container>
-                                            <md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
-                                            <md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
+                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
+                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
                                         </th>
                                     </tr>
                                     <md-button type="submit" class="hide">Search</md-button>

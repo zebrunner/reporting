@@ -736,6 +736,15 @@
             $scope.sc = qParams;
         };
 
+        $scope.onChangeCriteria = function () {
+            for(var criteria in $scope.sc) {
+                if(!$scope.sc[criteria] || !$scope.sc[criteria].length) {
+                    delete $scope.sc[criteria];
+                }
+            }
+            $location.search($scope.sc);
+        };
+
         (function init() {
 
             toSc($location.search());
