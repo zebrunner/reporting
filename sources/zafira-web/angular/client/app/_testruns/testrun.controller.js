@@ -703,16 +703,33 @@
             }
          };
 
-        $scope.switchTestRunExpand = function (testRun) {
-            if(!testRun.expand) {
-                if((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
-                    $scope.loadTests(testRun.id);
+        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
+            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
+                if (!testRun.expand) {
+                    if ((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
+                        $scope.loadTests(testRun.id);
+                    }
+                    testRun.expand = true;
+                } else {
+                    testRun.expand = false;
                 }
-                testRun.expand = true;
-            } else {
-                testRun.expand = false;
             }
+        };
 
+        var hasRightsToExpand = function (forceTrue, fromTestRun) {
+            if(!fromTestRun) {
+                var selectedText = window.getSelection().toString();
+                var unexpectedTokens = ['\n', '\t', ''];
+                if (forceTrue) return true;
+                for (var i = 0; i < unexpectedTokens.length; i++) {
+                    if (unexpectedTokens[i] === selectedText.trim()) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
         };
 
         var getJSONLength = function(jsonObj) {

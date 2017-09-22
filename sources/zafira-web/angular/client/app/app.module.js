@@ -92,11 +92,11 @@
 
                     timeout(function () {
                         if (window.pageYOffset > showMoreOffset) {
-                            if (location.hash() !== showMoreElementId) {
+                            /*if (location.hash() !== showMoreElementId) {
                                 location.hash(showMoreElementId);
-                            } else {
-                                anchorScroll();
-                            }
+                            } else {*/
+                                anchorScroll(showMoreElementId);
+                            /*}*/
                         }
                     }, 80);
                 };
