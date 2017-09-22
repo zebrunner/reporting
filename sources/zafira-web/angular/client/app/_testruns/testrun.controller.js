@@ -705,12 +705,22 @@
 
         $scope.switchTestRunExpand = function (testRun) {
             if(!testRun.expand) {
-                $scope.loadTests(testRun.id);
+                if((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
+                    $scope.loadTests(testRun.id);
+                }
                 testRun.expand = true;
             } else {
                 testRun.expand = false;
             }
 
+        };
+
+        var getJSONLength = function(jsonObj) {
+            var count = 0;
+            for(var id in jsonObj) {
+                count++;
+            }
+            return count;
         };
 
         $scope.splitPlatform = function (string) {
