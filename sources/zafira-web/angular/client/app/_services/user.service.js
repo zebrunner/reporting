@@ -17,6 +17,7 @@
         service.deleteUser = deleteUser;
         service.addUserToGroup = addUserToGroup;
         service.deleteUserFromGroup = deleteUserFromGroup;
+        service.getDefaultPreferences = getDefaultPreferences;
 
         return service;
 
@@ -54,6 +55,10 @@
 
         function deleteUserFromGroup(idUser, idGroup){
             return $http.delete(API_URL + '/api/users/' + idUser + '/group/' + idGroup).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user from group'));
+        }
+
+        function getDefaultPreferences() {
+            return $http.get(API_URL + '/api/users/preferences').then(UtilService.handleSuccess, UtilService.handleError('Unable to get default preferences'));
         }
     }
 })();

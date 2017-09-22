@@ -25,7 +25,7 @@
                                         </div>
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
-                                                <label>First name</label>
+                                                <label>First Name</label>
                                                 <input type="text" ng-model="user.firstName" name="firstName"/>
                                             </md-input-container>
                                             <md-input-container flex>
@@ -68,26 +68,21 @@
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
-                                <div layout-padding>
-                                    <form name="preference_form" ng-submit="updatePreferences(preferences);">
-                                        <div class="md-block">
-                                            <label>Widget Refresh </label>
-                                            <md-input-container class="md-block">
-                                                <md-select ng-model="preferences.refreshInterval" name="refreshInterval" placeholder="Interval">
-                                                    <md-option value="" disabled>Interval</md-option>
-                                                    <md-option value="30000">30 s</md-option>
-                                                    <md-option value="60000">1 min</md-option>
-                                                    <md-option value="120000">2 min</md-option>
-                                                    <md-option value="300000">5 min</md-option>
+                                <div layout-padding >
+                                    <form name="preference_form" ng-submit="updateUserProfile(user);" >
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="md-block" style="min-width: 450px;">
+                                                <label>Default Dashboard</label>
+                                                <md-select  ng-model="user.preferences.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
+                                                    <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
-                                        <div class="md-block">
-                                            <label>Start Dashboard</label>
-                                            <md-input-container data-ng-click="loadDashboards()" class="md-block">
-                                                <md-select  ng-model="preferences.defaultDashboard" name="defaultDashboard" placeholder="Dashboard">
-                                                    <md-option value="" disabled>Dashboard Name</md-option>
-                                                    <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard">{{dashboard.title}}</md-option>
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="md-block"  style="min-width: 450px;">
+                                                <label>Widget Refresh Interval</label>
+                                                <md-select ng-model="user.preferences.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
+                                                    <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
@@ -103,8 +98,6 @@
             </section>
         </div>
     </div>
-
-
 
     <div class="row">
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>

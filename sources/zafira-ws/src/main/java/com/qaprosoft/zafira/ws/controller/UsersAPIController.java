@@ -2,6 +2,8 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.services.services.UserPreferenceService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -41,6 +44,9 @@ public class UsersAPIController extends AbstractController
 {
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserPreferenceService userPreferenceService;
 
 	@Autowired
 	private Mapper mapper;
@@ -144,4 +150,16 @@ public class UsersAPIController extends AbstractController
 	{
 		userService.deleteUserFromGroup(groupId, userId);
 	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", code = 200, httpMethod = "GET", response = List.class)
+	@RequestMapping(value = "preferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<UserPreference> getDefaultUserPreferences() throws ServiceException
+	{
+		return userPreferenceService.getAllUserPreferences(userService.getUserByUsername("anonymous").getId());
+	}
+
 }
