@@ -729,6 +729,7 @@
 
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
+            $location.search({});
             $scope.search();
         };
 
