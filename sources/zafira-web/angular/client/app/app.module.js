@@ -51,38 +51,54 @@
                 angular.element('<input type="password" name="password" class="hide"/>').insertBefore(firstDivElement);
             }
         };
-    }).directive('showMore', [function() {
+    }).directive('showMore', ['$location', '$anchorScroll', '$timeout', function(location, anchorScroll, timeout) {
         return {
             restrict: 'AE',
             replace: true,
             scope: {
                 text: '=',
-                limit:'='
+                limit:'=',
+                elementId: '='
             },
 
-            template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
+            template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
 
             link: function(scope, iElement, iAttrs) {
 
+                anchorScroll.yOffset = 100;
 
                 scope.end = scope.limit;
                 scope.isShowMore = true;
                 scope.largeText = true;
 
+                var showMoreOffset = 0;
+                var showMoreElementId = 'more' + scope.elementId;
+                var showLessElementId = 'less' + scope.elementId;
+
                 if (scope.text.length <= scope.limit) {
                     scope.largeText = false;
-                };
+                }
 
                 scope.showMore = function() {
-
+                    showMoreOffset = angular.element('#' + showMoreElementId).offset().top;
                     scope.end = scope.text.length;
                     scope.isShowMore = false;
                 };
 
-                scope.showLess = function() {
+                scope.showLess = function(elementId) {
 
                     scope.end = scope.limit;
                     scope.isShowMore = true;
+
+                    timeout(function () {
+                        if (window.pageYOffset > showMoreOffset) {
+                            /*if (location.hash() !== showMoreElementId) {
+                                location.hash(showMoreElementId);
+                            } else {*/
+                                anchorScroll(showMoreElementId);
+                            /*}*/
+                        }
+                    }, 80);
                 };
             }
         };

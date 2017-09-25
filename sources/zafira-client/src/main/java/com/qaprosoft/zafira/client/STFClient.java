@@ -1,18 +1,20 @@
 package com.qaprosoft.zafira.client;
 
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.models.stf.Devices;
 import com.qaprosoft.zafira.models.stf.RemoteConnectUserDevice;
 import com.qaprosoft.zafira.models.stf.Response;
-import com.qaprosoft.zafira.models.stf.Serial;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 public class STFClient
 {
@@ -42,102 +44,121 @@ public class STFClient
 	
 	public synchronized Response<Devices> getAllDevices()
 	{
-		Response<Devices> response = new Response<Devices>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + DEVICES_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(Devices.class));
-			}
+		Response<Devices> result = new Response<Devices>(0, null);
+		try {
 
-		} catch (Exception e)
-		{
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			HttpResponse response = client.execute(request);
+
+			int status = response.getStatusLine().getStatusCode();
+			if (status == 200) {
+				ObjectMapper mapper = new ObjectMapper();
+				Devices devices = mapper.readValue(response.getEntity().getContent(), Devices.class); // object
+				result.setStatus(status);
+				result.setObject(devices);
+			}
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		return response;
+
+		return result;
 	}
 	
 	public synchronized boolean reserveDevice(String serial, long timeout)
 	{
 		boolean isSuccess = false;
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + USER_DEVICES_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new Serial(serial, timeout));
-			isSuccess = clientRS.getStatus() == 200 ? true : false;
+		try {
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpPost request = new HttpPost(serviceURL + USER_DEVICES_PATH);
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			
+		    StringEntity entity = new StringEntity("{\"serial\":\"" + serial +"\"}");
+		    entity.setContentType("application/json");
+		    request.setEntity(entity);
+		    
+			HttpResponse response = client.execute(request);
+			
+			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		
 		return isSuccess;
 	}
 	
 	public synchronized boolean returnDevice(String serial)
 	{
 		boolean isSuccess = false;
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + String.format(USER_DEVICES_BY_ID_PATH, serial));
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
-			isSuccess = clientRS.getStatus() == 200 ? true : false;
+		try {
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpDelete request = new HttpDelete(serviceURL + String.format(USER_DEVICES_BY_ID_PATH, serial));
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			HttpResponse response = client.execute(request);
+			
+			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		
 		return isSuccess;
 	}
 	
 	public synchronized Response<RemoteConnectUserDevice> remoteConnectDevice(String serial)
 	{
-		Response<RemoteConnectUserDevice> response = new Response<RemoteConnectUserDevice>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+		Response<RemoteConnectUserDevice> result = new Response<RemoteConnectUserDevice>(0, null);
+		try {
+
+/*			WebResource webResource = client.resource(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class);
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(RemoteConnectUserDevice.class));
-			}
+			*/
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			HttpResponse response = client.execute(request);
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
+			int status = response.getStatusLine().getStatusCode();
+			if (status == 200) {
+				ObjectMapper mapper = new ObjectMapper();
+				RemoteConnectUserDevice devices = mapper.readValue(response.getEntity().getContent(), RemoteConnectUserDevice.class); // object
+				result.setStatus(status);
+				result.setObject(devices);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
-		return response;
+
+		return result;
 	}
 	
 	public synchronized boolean remoteDisconnectDevice(String serial)
 	{
 		boolean isSuccess = false;
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).delete(ClientResponse.class);
-			isSuccess = clientRS.getStatus() == 200 ? true : false;
+		try {
 
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage());
+/*			WebResource webResource = client.resource(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).delete(ClientResponse.class)
+					*/
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpPost request = new HttpPost(serviceURL + String.format(USER_DEVICES_REMOTE_CONNECT_PATH, serial));
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			HttpResponse response = client.execute(request);
+			
+			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
+		
 		return isSuccess;
 	}
-	
-	private WebResource.Builder initHeaders(WebResource.Builder builder)
-	{
-		if(!StringUtils.isEmpty(authToken))
-		{
-			builder.header("Authorization", "Bearer " + authToken);
-		}
-		return builder;
-	}
+
 }

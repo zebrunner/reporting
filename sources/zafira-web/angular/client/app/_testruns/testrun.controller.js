@@ -123,14 +123,14 @@
             }
         };
 
-       /*$scope.createPushNotification = function (testRun, isSilent) {
+       $scope.createPushNotification = function (testRun, isSilent) {
            if($scope.selectedTestRuns[testRun.id] != null && $scope.selectedTestRuns[testRun.id].followed && testRun.status != 'IN_PROGRESS') {
-               $rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
+               /*$rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
                if(isSilent) {
                    (new Audio('notification.mp3')).play();
-               }
+               }*/
            }
-       };*/
+       };
 
         $scope.selectedTestRuns = {};
 
@@ -703,14 +703,41 @@
             }
          };
 
-        $scope.switchTestRunExpand = function (testRun) {
-            if(!testRun.expand) {
-                $scope.loadTests(testRun.id);
-                testRun.expand = true;
-            } else {
-                testRun.expand = false;
+        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
+            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
+                if (!testRun.expand) {
+                    if ((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
+                        $scope.loadTests(testRun.id);
+                    }
+                    testRun.expand = true;
+                } else {
+                    testRun.expand = false;
+                }
             }
+        };
 
+        var hasRightsToExpand = function (forceTrue, fromTestRun) {
+            if(!fromTestRun) {
+                var selectedText = window.getSelection().toString();
+                var unexpectedTokens = ['\n', '\t', ''];
+                if (forceTrue) return true;
+                for (var i = 0; i < unexpectedTokens.length; i++) {
+                    if (unexpectedTokens[i] === selectedText.trim()) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        var getJSONLength = function(jsonObj) {
+            var count = 0;
+            for(var id in jsonObj) {
+                count++;
+            }
+            return count;
         };
 
         $scope.splitPlatform = function (string) {
@@ -729,11 +756,21 @@
 
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
+            $location.search({});
             $scope.search();
         };
 
         var toSc = function (qParams) {
             $scope.sc = qParams;
+        };
+
+        $scope.onChangeCriteria = function () {
+            for(var criteria in $scope.sc) {
+                if(!$scope.sc[criteria] || !$scope.sc[criteria].length) {
+                    delete $scope.sc[criteria];
+                }
+            }
+            $location.search($scope.sc);
         };
 
         (function init() {
