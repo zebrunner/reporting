@@ -7,13 +7,14 @@
         .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $location, $rootScope, $state, UserService, DashboardService, UtilService, AuthService) {
+    function UserProfileController($scope, $rootScope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
 
     	$scope.UtilService = UtilService;
 
     	$scope.user = {};
     	$scope.changePassword = {};
         $scope.preferences = [];
+        $scope.preferenceForm = {};
         $scope.dashboards = [];
     	$scope.pefrDashboardId = null;
     	$scope.accessToken = null;
@@ -25,6 +26,8 @@
 
         $scope.updateUserProfile = function(profile)
         {
+            var userPreferences = profile.preferences;
+            profile.preferences.push($scope.preferences);
         	UserService.updateUserProfile(profile)
         	.then(function (rs) {
         		if(rs.success)
@@ -67,10 +70,6 @@
             document.body.removeChild(node);
 
             alertify.success("Access token copied to clipboard");
-        };
-
-        $scope.updatePreferences = function(preferences){
-
         };
 
         $scope.loadDashboards = function () {
@@ -142,30 +141,50 @@
                 });
         };
 
+        $scope.updateUserPreferences = function (preferenceForm){
+            var preferences = $scope.preferences;
+            for (var i = 0; i < preferences.length; i++){
+                preferences[i].userId = $scope.user.id;
+                if (preferences[i].name === 'DEFAULT_DASHBOARD'){
+                    preferences[i].value = preferenceForm.defaultDashboard;
+                }
+                else if (preferences[i].name === 'REFRESH_INTERVAL'){
+                    preferences[i].value = preferenceForm.refreshInterval;
+                }
+            }
+            UserService.updateUserPreferences($scope.user.id, preferences).then(function (rs) {
+                if(rs.success){
+                    $scope.preferences = rs.data;
+                    alertify.success('User preferences are successfully updated');
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.widgetRefreshIntervals = [30000, 60000, 120000, 180000, 300000];
 
         $scope.selectDashboard = function(dashboard){
-            var preferences = $scope.preferences;
-            if (preferences.length !== 0 && selectPreference('DEFAULT_DASHBOARD', preferences) === dashboard.title){
+            if ($rootScope.defaultDashboard === dashboard.title){
                 return true;
             }
         };
 
         $scope.selectInterval = function(interval){
-            var preferences = $scope.preferences;
-                if (preferences.length !== 0 && selectPreference('REFRESH_INTERVAL', preferences) == interval){
+                if ($rootScope.refreshInterval == interval){
                     return true;
             }
          };
 
         $scope.convertMillis = function(millis){
             var sec = millis/1000;
-              if(sec < 60){
-                  return sec + ' sec';
-              }
-              else {
-                  return sec/60 + ' min';
-              }
+            if(sec < 60){
+                return sec + ' sec';
+            }
+            else {
+                return sec/60 + ' min';
+            }
 
         };
 
@@ -174,12 +193,6 @@
                 if (preferences[i].name === name){
                     return preferences[i].value;
                 }
-            }
-        };
-
-        $scope.defaultsChanged = function(){
-            if($scope.preferences.defaultDashboard && $scope.preferences.refreshInterval){
-                return $scope.preferences.defaultDashboard.title !== "General" || $scope.preferences.refreshInterval !== "30000";
             }
         };
 

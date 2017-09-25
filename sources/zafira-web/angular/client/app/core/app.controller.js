@@ -35,14 +35,36 @@
 
 	        $scope.initSession = function()
 	        {
-	        	UserService.getUserProfile()
-	       		 .then(
-	       		  function (rs) {
-		              if(rs.success)
-		              {
-		            	  $rootScope.currentUser = rs.data;
-		              }
+	        	UserService.getUserProfile().then(function (rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.currentUser = rs.data;
+                        var userPreferences = $rootScope.currentUser.preferences;
+		            	if (userPreferences.length !== 0) {
+                            setDefaultPreferences(userPreferences);
+		            	}
+                        else {
+                            DashboardService.getDefaultPreferences().then(function(rs){
+                                if(rs.success)
+                                {
+                                    setDefaultPreferences(rs.data);
+                                }
+
+                            });
+                        }
+                    }
 		       	});
+
+                var setDefaultPreferences = function(userPreferences){
+                    for (var i = 0; i < userPreferences.length; i++){
+                        if (userPreferences[i].name === 'DEFAULT_DASHBOARD'){
+                            $rootScope.defaultDashboard = userPreferences[i].value;
+                        }
+                        else if (userPreferences[i].name === 'REFRESH_INTERVAL'){
+                            $rootScope.refreshInterval = userPreferences[i].value;
+                        }
+                    }
+                };
 
 		   		DashboardService.GetDashboardByTitle("User Performance").then(function(rs) {
 	               if(rs.success)

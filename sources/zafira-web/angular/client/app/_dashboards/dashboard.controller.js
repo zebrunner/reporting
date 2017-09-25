@@ -183,11 +183,12 @@
             }
         };
 
+        var interval = $rootScope.refreshInterval;
         $interval(function () {
             if($stateParams.id){
                 $scope.loadDashboardData($scope.dashboard, true);
             }
-        }, 30000);
+        }, interval);
 
         $scope.$watch(
             function() {
@@ -225,19 +226,30 @@
 
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
-                            DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                                if (rs.success) {
-                                    $scope.dashboard = rs.data;
-                                    var queryAttributes = getQueryAttributes();
-                                    if(queryAttributes) {
-                                        for (var i = 0; i < queryAttributes.length; i++) {
-                                            $scope.dashboard.attributes.push(queryAttributes[i]);
-                                        }
+                            if($stateParams.id == null){
+                                DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
+                                    if(rs.success)
+                                    {
+                                        $scope.dashboard = rs.data;
+                                        $scope.dashboardId = rs.data.id;
                                     }
-                                    $scope.loadDashboardData($scope.dashboard);
+                                });
+                            }
+                            else {
+                                $scope.dashboardId = $stateParams.id;
+                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
+                                    if (rs.success) {
+                                        $scope.dashboard = rs.data;
+                                    }
+                                });
+                            }
+                            var queryAttributes = getQueryAttributes();
+                            if(queryAttributes) {
+                                for (var i = 0; i < queryAttributes.length; i++) {
+                                    $scope.dashboard.attributes.push(queryAttributes[i]);
                                 }
-                            });
+                            }
+                            $scope.loadDashboardData($scope.dashboard);
                         }
                     });
 

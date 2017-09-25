@@ -70,11 +70,6 @@
 		               USER_ID = #{userId},
 		            ]]>
 				</if>
-				<if test="null != expiresAt">
-		            <![CDATA[
-		               EXPIRES_AT = #{expiresAt}
-		            ]]>
-				</if>
 			</set>
 		<![CDATA[
 			WHERE
@@ -107,7 +102,6 @@
 		<result column="USER_PREFERENCE_NAME" property="name" />
 		<result column="USER_PREFERENCE_VALUE" property="value" />
 		<result column="USER_PREFERENCE_USER_ID" property="userId" />
-		<result column="USER_PREFERENCE_EXPIRES_AT" property="expiresAt" />
 		<result column="USER_PREFERENCE_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_PREFERENCE_CREATED_AT" property="createdAt" />
 	</resultMap>
