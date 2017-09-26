@@ -176,7 +176,7 @@
             });
         };
 
-        $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 180000, 300000];
+        $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
 
         $scope.selectDashboard = function(dashboard){
             if ($rootScope.defaultDashboard === dashboard.title){
@@ -192,13 +192,15 @@
 
         $scope.convertMillis = function(millis){
             var sec = millis/1000;
-            if(sec < 60){
+            if (millis == 0) {
+                return 'Disabled'
+            }
+            else if(sec < 60){
                 return sec + ' sec';
             }
             else {
                 return sec/60 + ' min';
             }
-
         };
 
         (function initController() {
