@@ -34,7 +34,6 @@ INSERT INTO zafira.GROUPS (NAME, ROLE) VALUES
 
 
 DO $$
-
 DECLARE dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE widget_id zafira.WIDGETS.id%TYPE;
 DECLARE USER_ID zafira.USER_PREFERENCES.id%TYPE;
@@ -45,7 +44,6 @@ DECLARE top_widget_id zafira.WIDGETS.id%TYPE;
 DECLARE progress_widget_id zafira.WIDGETS.id%TYPE;
 
 BEGIN
-
 	INSERT INTO zafira.users (USERNAME) VALUES ('anonymous') RETURNING id INTO USER_ID;
 
 	INSERT INTO zafira.user_preferences (NAME, VALUE, USER_ID) VALUES
