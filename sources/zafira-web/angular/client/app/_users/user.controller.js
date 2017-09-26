@@ -155,6 +155,7 @@
             UserService.updateUserPreferences($scope.user.id, preferences).then(function (rs) {
                 if(rs.success){
                     $scope.preferences = rs.data;
+                    $rootScope.$broadcast('event:preferencesReset');
                     alertify.success('User preferences are successfully updated');
                 }
                 else {
@@ -166,9 +167,8 @@
         $scope.resetPreferences = function(){
             UserService.deleteUserPreferences($scope.user.id).then(function (rs) {
                 if(rs.success){
-                    alertify.success('Preferences are set to default')
                     $rootScope.$broadcast('event:preferencesReset');
-
+                    alertify.success('Preferences are set to default');
                 }
             else {
                     alertify.error(rs.message);
@@ -176,7 +176,7 @@
             });
         };
 
-        $scope.widgetRefreshIntervals = [3000, 30000, 60000, 120000, 180000, 300000];
+        $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 180000, 300000];
 
         $scope.selectDashboard = function(dashboard){
             if ($rootScope.defaultDashboard === dashboard.title){

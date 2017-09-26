@@ -49,7 +49,7 @@ BEGIN
 	INSERT INTO zafira.users (USERNAME) VALUES ('anonymous') RETURNING id INTO USER_ID;
 
 	INSERT INTO zafira.user_preferences (NAME, VALUE, USER_ID) VALUES
-		('REFRESH_INTERVAL', '30000', USER_ID),
+		('REFRESH_INTERVAL', '0', USER_ID),
 		('DEFAULT_DASHBOARD', 'General', USER_ID);
 
   INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Performance dashboard', TRUE) RETURNING id INTO dashboard_id;

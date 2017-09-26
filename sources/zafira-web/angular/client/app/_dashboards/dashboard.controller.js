@@ -202,7 +202,7 @@
             isRefreshing = true;
             (function refreshEvery(){
                 if ($location.$$url.indexOf("dashboards") > -1){
-                    if (typeof $scope.dashboard.title !== 'undefined' && typeof interval !== 'undefined'){
+                    if (typeof $scope.dashboard.title !== 'undefined' && typeof interval !== 'undefined' && interval != 0){
                         $scope.loadDashboardData($scope.dashboard, true);
                     }
                     refreshPromise = $timeout(refreshEvery, interval)
