@@ -680,6 +680,31 @@
                 });
         };
 
+
+
+        $scope.showAssignJiraTaskDialog = function(testTask, isNewTask, event) {
+                    $mdDialog.show({
+                        controller: TaskController,
+                        templateUrl: 'app/_testruns/task_assign_modal.html',
+                        parent: angular.element(document.body),
+                        targetEvent: event,
+                        clickOutsideToClose:true,
+                        fullscreen: true,
+                        locals: {
+                            testTask: testTask,
+                            isNewTask: isNewTask
+                        }
+                    })
+                        .then(function(answer) {
+                            if (answer == true) {
+                                $scope.loadTests($scope.lastTestRunOpened);
+                            }
+                        }, function() {
+                        });
+                };
+
+
+
 //        $scope.$watch('showRealTimeEvents', function () {
 //            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
 //        });
@@ -1061,6 +1086,7 @@
             });
         };
 
+
         $scope.checkKnowIssue = function () {
             $scope.getRightToSearch();
             if ($scope.isRightToSearch && $scope.isConnectedToJira) {
@@ -1169,6 +1195,8 @@
                     $scope.knownIssues = rs.data;
                     if(test.workItems.length && ! isNew)
                         angular.copy($scope.testBugIssue, $scope.newKnownIssue);
+
+                        if(test.workItems.length == 0) test.has ==false;
                 }
                 else
                 {
@@ -1236,6 +1264,205 @@
             $scope.getJiraStatusesAsClosed();
         })();
     }
+
+
+ function TaskController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, testTask, isNewTask) {
+        $scope.jiraId;
+        $scope.isConnectedToJira = false;
+        $scope.isIssueFound = true;
+        $scope.isDataLoaded = false;
+        $scope.isFieldsDisabled = true;
+        $scope.isJiraIdExists = true;
+        $scope.isJiraIdClosed = false;
+
+        $scope.assignWorkItem = function () {
+                    var taskIssue = $scope.newTaskIssue;
+                    TestService.assignTestJiraTask(testTask.id, taskIssue).then(function(rs) {
+                        if(rs.success)
+                        {
+                            $scope.hide();
+                            if(isNewTask)
+                                alertify.success('A new work item "' + taskIssue.jiraId + '" was assigned');
+                            else{
+                               var index = testTask.workItems.indexOf(taskIssue);
+                                testTask.workItems.splice(index, 1);
+                                alertify.success('A new work item "' + taskIssue.jiraId + '" was updated');
+                                }
+                          testTask.workItems.push(rs.data);
+                        }
+                        else
+                        {
+                            if(isNewTask)
+                                alertify.error('Failed to assign "' + taskIssue.jiraId + '" new work item');
+                            else
+                                alertify.error('Failed to update "' + taskIssue.jiraId + '" work item');
+                        }
+                    });
+                };
+
+
+                $scope.deleteWorkItem = function () {
+                                    var taskIssue = $scope.newTaskIssue;
+                                    TestService.deleteTestJiraTask(testTask.id, taskIssue.id).then(function(rs) {
+                                        if(rs.success)
+                                        {
+                                        var index = testTask.workItems.indexOf(taskIssue);
+                                        testTask.workItems.splice(index, 1);
+                                        $scope.hide();
+                                        alertify.success('A work item "' + taskIssue.jiraId + '" was unassigned');
+                                        }
+                                        else
+                                        alertify.error('Failed to unassign "' + taskIssue.jiraId + '" work item');
+
+                                    });
+                                };
+
+
+        $scope.checkTaskIssue = function () {
+            $scope.getRightToSearch();
+            if ($scope.isRightToSearch && $scope.isConnectedToJira) {
+                $scope.isIssueFound = false;
+                TestService.getJiraIssue($scope.newTaskIssue.jiraId).then(function(rs) {
+                    if(rs.success)
+                    {
+                        var issue = rs.data;
+                        $scope.isIssueFound = true;
+                        checkIssueStatus(issue);
+                        if ($scope.isJiraIdExists) {
+                            $scope.newTaskIssue.description = issue.summary;
+                            $scope.newTaskIssue.assigneeMessage = 'Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name;
+                            $scope.newTaskIssue.status = issue.status.name;
+                        }
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+        };
+
+        var checkIssueStatus = function (issue) {
+            if (issue == '') {
+                $scope.isJiraIdClosed = false;
+                $scope.isJiraIdExists = false;
+                return;
+            }
+            $scope.checkStatusAsClosed(issue.status.name);
+            if($scope.isJiraIdClosed) {
+                $scope.isJiraIdExists = true;
+            }
+            else {
+                // Reset flags
+                $scope.isJiraIdExists = true;
+            }
+        };
+
+        $scope.isRightToSearch = false;
+
+
+        $scope.getRightToSearch = function () {
+            if ($scope.newTaskIssue.jiraId == null || !fieldIsChanged) {
+                $scope.isRightToSearch = false;
+                $scope.isIssueFound = true;
+            } else {
+                $scope.isRightToSearch = true;
+                fieldIsChanged = false;
+            }
+        };
+
+        var fieldIsChanged = false;
+
+        $scope.onTaskChangeAction = function () {
+            fieldIsChanged = true;
+            // Reset flags
+            $scope.newTaskIssue.description = '';
+            $scope.newTaskIssue.id = null;
+            $scope.newTaskIssue.status = null;
+            $scope.newTaskIssue.assigneeMessage = null;
+            $scope.isJiraIdExists = true;
+            $scope.isJiraIdClosed = false;
+            $scope.isIssueFound = false;
+
+        };
+
+        $scope.selectCurrentIssue = function(issue) {
+            checkTestHasIssues();
+            $scope.isNewTask = ! (issue.jiraId == $scope.testTaskIssue.jiraId);
+            $scope.newTaskIssue.id = issue.id;
+            $scope.newTaskIssue.jiraId = issue.jiraId;
+            $scope.newTaskIssue.description = issue.description;
+            $scope.newTaskIssue.status = issue.status.name;
+        };
+
+        $interval(function () {
+            $scope.checkTaskIssue();
+        }, 2000);
+
+
+
+        function checkTestHasIssues() {
+            $scope.testHasTaskIssues = testTask.workItems.filter(function (item) {
+                return item.type == 'TASK';
+            }).length;
+        }
+
+        function getTestTaskIssue() {
+            $scope.testTaskIssue = {};
+            $scope.testTaskIssue.jiraId = '';
+            if($scope.testHasTaskIssues)
+                $scope.testTaskIssue = testTask.workItems.filter(function (item) {
+                    return item.type == 'TASK';
+                })[0];
+        }
+
+        $scope.initNewTaskIssue = function () {
+            $scope.isNewTask = isNewTask;
+            $scope.newTaskIssue = {};
+            $scope.newTaskIssue.type = "TASK";
+            $scope.newTaskIssue.testCaseId = testTask.testCaseId;
+        };
+
+        $scope.cancel = function () {
+            $scope.hide();
+        };
+
+        $scope.getJiraStatusesAsClosed = function() {
+            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+                $scope.jiraStatusesAsClosed = rs.data.split(';');
+            }, function errorCallback(data) {
+                console.error(data);
+            });
+        };
+
+        $scope.checkStatusAsClosed = function (status) {
+            var newAr = $scope.jiraStatusesAsClosed.filter(function (jiraClosedStatus) {
+                return jiraClosedStatus.toLowerCase() == status.toLowerCase();
+            });
+            $scope.isJiraIdClosed = newAr.length != 0;
+        };
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+        (function initController() {
+            ConfigService.getConfig("jira").then(function(rs) {
+                $scope.isConnectedToJira = rs.data.connected;
+                $scope.isDataLoaded = true;
+                $scope.isFieldsDisabled = false;
+            });
+            checkTestHasIssues();
+            getTestTaskIssue();
+            $scope.initNewTaskIssue();
+            $scope.getJiraStatusesAsClosed();
+            angular.copy(testTask.workItems.filter(function(workItem) {
+                return workItem.type === 'TASK';
+            })[0], $scope.newTaskIssue);
+        })();
+    }
+
 
     function CodeController($scope, $mdDialog, $interval, testRun, TestRunService) {
 
