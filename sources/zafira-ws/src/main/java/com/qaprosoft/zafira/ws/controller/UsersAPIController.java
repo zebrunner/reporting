@@ -177,4 +177,15 @@ public class UsersAPIController extends AbstractController
         }
         return userPreferenceService.getAllUserPreferences(userId);
     }
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{userId}/preferences", method = RequestMethod.DELETE)
+	public void deleteUserPreferences(@PathVariable(value = "userId") long userId) throws ServiceException
+	{
+        userPreferenceService.deleteUserPreferencesByUserId(userId);
+	}
 }

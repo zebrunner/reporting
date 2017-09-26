@@ -163,7 +163,20 @@
             });
         };
 
-        $scope.widgetRefreshIntervals = [30000, 60000, 120000, 180000, 300000];
+        $scope.resetPreferences = function(){
+            UserService.deleteUserPreferences($scope.user.id).then(function (rs) {
+                if(rs.success){
+                    alertify.success('Preferences are set to default')
+                    $rootScope.$broadcast('event:preferencesReset');
+
+                }
+            else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.widgetRefreshIntervals = [3000, 30000, 60000, 120000, 180000, 300000];
 
         $scope.selectDashboard = function(dashboard){
             if ($rootScope.defaultDashboard === dashboard.title){
@@ -186,14 +199,6 @@
                 return sec/60 + ' min';
             }
 
-        };
-
-        var selectPreference = function(name, preferences){
-            for(var i = 0; i < preferences.length; i++){
-                if (preferences[i].name === name){
-                    return preferences[i].value;
-                }
-            }
         };
 
         (function initController() {
