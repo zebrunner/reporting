@@ -42,7 +42,7 @@ public class STFClient
 		this.client.setReadTimeout(TIMEOUT);
 	}
 	
-	public synchronized Response<Devices> getAllDevices()
+	public Response<Devices> getAllDevices()
 	{
 		Response<Devices> result = new Response<Devices>(0, null);
 		try {
@@ -66,7 +66,7 @@ public class STFClient
 		return result;
 	}
 	
-	public synchronized boolean reserveDevice(String serial, long timeout)
+	public boolean reserveDevice(String serial, long timeout)
 	{
 		boolean isSuccess = false;
 		try {
@@ -91,7 +91,7 @@ public class STFClient
 		return isSuccess;
 	}
 	
-	public synchronized boolean returnDevice(String serial)
+	public boolean returnDevice(String serial)
 	{
 		boolean isSuccess = false;
 		try {
@@ -110,7 +110,7 @@ public class STFClient
 		return isSuccess;
 	}
 	
-	public synchronized Response<RemoteConnectUserDevice> remoteConnectDevice(String serial)
+	public Response<RemoteConnectUserDevice> remoteConnectDevice(String serial)
 	{
 		Response<RemoteConnectUserDevice> result = new Response<RemoteConnectUserDevice>(0, null);
 		try {
@@ -138,7 +138,7 @@ public class STFClient
 		return result;
 	}
 	
-	public synchronized boolean remoteDisconnectDevice(String serial)
+	public boolean remoteDisconnectDevice(String serial)
 	{
 		boolean isSuccess = false;
 		try {
