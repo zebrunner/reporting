@@ -20,7 +20,7 @@
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <md-select ng-model="widget.type" name="type" placeholder="Type" ng-required>
+                        <md-select ng-model="widget.type" name="type" placeholder="Type" required>
                             <md-option value="" disabled>Type</md-option>
                             <md-option value="linechart">Line chart</md-option>
                             <md-option value="piechart">Pie chart</md-option>
@@ -61,7 +61,7 @@
                 <div layout layout-sm="column">
                     <label>SQL</label>
                     <md-input-container flex>
-                        <code-textarea id="sql" ng-model="widget.sql" code-data="{{widget.sql}}" code-class="sql"></code-textarea>
+                        <code-textarea id="sql" ng-model="widget.sql" code-data="{{widget.sql}}" code-class="sql" required></code-textarea>
                         <!--<textarea class="code" data-ng-model="widget.sql" rows="15" required></textarea>-->
                     </md-input-container>
                 </div>
@@ -70,6 +70,12 @@
                     <md-input-container flex>
                         <code-textarea id="model" ng-model="widget.model" code-data="{{widget.model}}"></code-textarea>
                     </md-input-container>
+                </div>
+                <div layout layout-sm="column" data-ng-if="'sql' != widget.type">
+                <md-input-container style="float: right; margin-top: 0" flex>
+                    <span>Refreshable</span>
+                    <md-switch style="margin-top: 0" class="md-primary" ng-model="widget.refreshable" ng-required aria-label="integr-switch"></md-switch>
+                </md-input-container>
                 </div>
             </div>
         </md-dialog-content>

@@ -72,7 +72,7 @@
 				</if>
 				<if test="null != type">
 		            <![CDATA[
-		               TYPE = #{type}
+		               TYPE = #{type},
 		            ]]>
 				</if>
 				<if test="null != refreshable">

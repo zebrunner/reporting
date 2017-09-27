@@ -130,7 +130,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, dashboard, currentUserId, isNew) {
+        $scope.showWidgetDialog = function (event, widget, dashboard, isNew) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
@@ -141,9 +141,9 @@
                 fullscreen: true,
                 locals: {
                     widget: widget,
-                    isNew: isNew,
                     dashboard: dashboard,
-                    currentUserId: currentUserId
+                    isNew: isNew,
+                    currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (answer) {
@@ -442,7 +442,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, widget, isNew, ProjectProvider, $location, dashboard, currentUserId) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, currentUserId, dashboard, isNew) {
 
         $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;
