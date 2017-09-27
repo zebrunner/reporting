@@ -15,7 +15,9 @@
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 if ('sql' != dashboard.widgets[i].type) {
-                    $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
+                    if (!refresh || refresh && dashboard.widgets[i].refreshable) {
+                        $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
+                    }
                 }
             }
         };
