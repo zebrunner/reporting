@@ -31,7 +31,12 @@
 				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
 				G.CREATED_AT AS GROUP_CREATED_AT,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
-				U.CREATED_AT AS USER_CREATED_AT
+				U.CREATED_AT AS USER_CREATED_AT,
+				UP.ID          AS USER_PREFERENCE_ID,
+				UP.NAME        AS USER_PREFERENCE_NAME,
+				UP.VALUE       AS USER_PREFERENCE_VALUE,
+				UP.MODIFIED_AT AS USER_PREFERENCE_MODIFIED_AT,
+				UP.CREATED_AT  AS USER_PREFERENCE_CREATED_AT
 			FROM
 				zafira.USERS U
 			LEFT JOIN
@@ -42,6 +47,10 @@
 				zafira.GROUPS G
 			ON
 				UG.GROUP_ID = G.ID
+			LEFT JOIN
+				zafira.USER_PREFERENCES UP
+			ON
+				UP.USER_ID = U.ID
 		]]>
 	</sql>
 
@@ -223,6 +232,7 @@
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
 		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>
+		<collection property="preferences" ofType="com.qaprosoft.zafira.models.db.UserPreference" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.UserPreferenceMapper.UserPreferenceResultMap"/>
 	</resultMap>
 
 	<insert id="addUserToGroup">

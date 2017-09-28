@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
@@ -15,12 +15,15 @@
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 if ('sql' != dashboard.widgets[i].type) {
-                    $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
+                    if (!refresh || refresh && dashboard.widgets[i].refreshable) {
+                        $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
+                    }
                 }
             }
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i<$scope.dashboard.attributes.length; i++){
@@ -128,7 +131,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, dashboard, currentUserId, isNew) {
+        $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
@@ -141,7 +144,7 @@
                     widget: widget,
                     isNew: isNew,
                     dashboard: dashboard,
-                    currentUserId: currentUserId
+                    currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (answer) {
@@ -183,31 +186,49 @@
             }
         };
 
-        $interval(function () {
-            if($stateParams.id){
-                $scope.loadDashboardData($scope.dashboard, true);
+        $scope.getDataWithAttributes = function (dashboard, refresh) {
+            var queryAttributes = getQueryAttributes();
+            if(queryAttributes) {
+                for (var i = 0; i < queryAttributes.length; i++) {
+                    dashboard.attributes.push(queryAttributes[i]);
+                }
             }
-        }, 30000);
+            $scope.loadDashboardData(dashboard, refresh);
+        };
+
+        var refreshPromise;
+        var isRefreshing = false;
+        $scope.startRefreshing = function(){
+            if(isRefreshing) return;
+            isRefreshing = true;
+            (function refreshEvery(){
+                if ($location.$$url.indexOf("dashboards") > -1){
+                    if ($scope.dashboard.title && $rootScope.refreshInterval && $rootScope.refreshInterval != 0){
+                        $scope.loadDashboardData($scope.dashboard, true);
+                    }
+                    refreshPromise = $timeout(refreshEvery, $rootScope.refreshInterval)
+                }
+         }());
+        };
+
 
         $scope.$watch(
             function() {
-                return $scope.currentUserId !== $location.$$search.userId;
+                if ($scope.currentUserId && $location.$$search.userId){
+                    return $scope.currentUserId !== $location.$$search.userId;
+                }
             },
             function() {
-                if ($scope.currentUserId !== $location.$$search.userId){
-                    $scope.currentUserId = $location.search().userId;
-                    DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                        if (rs.success) {
-                            $scope.dashboard = rs.data;
-                            var queryAttributes = getQueryAttributes();
-                            if(queryAttributes) {
-                                for (var i = 0; i < queryAttributes.length; i++) {
-                                    $scope.dashboard.attributes.push(queryAttributes[i]);
-                                }
+                if ($scope.currentUserId && $location.$$search.userId) {
+                    if ($scope.currentUserId !== $location.$$search.userId) {
+                        $scope.currentUserId = $location.search().userId;
+                        DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+                            if (rs.success) {
+                                $scope.dashboard = rs.data;
+                                $scope.getDataWithAttributes($scope.dashboard, false);
                             }
-                            $scope.loadDashboardData($scope.dashboard);
-                        }
-                    });
+                        });
+                    }
                 }
             }
         );
@@ -225,19 +246,25 @@
 
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
-                            DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                                if (rs.success) {
-                                    $scope.dashboard = rs.data;
-                                    var queryAttributes = getQueryAttributes();
-                                    if(queryAttributes) {
-                                        for (var i = 0; i < queryAttributes.length; i++) {
-                                            $scope.dashboard.attributes.push(queryAttributes[i]);
-                                        }
+                            if($stateParams.id){
+                                $scope.dashboardId = $stateParams.id;
+                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
+                                    if (rs.success) {
+                                        $scope.dashboard = rs.data;
+                                        $scope.getDataWithAttributes($scope.dashboard, false);
                                     }
-                                    $scope.loadDashboardData($scope.dashboard);
-                                }
-                            });
+                                });
+                            }
+                            else {
+                                DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
+                                    if(rs.success)
+                                    {
+                                        $scope.dashboardId = rs.data.id;
+                                        $scope.dashboard = rs.data;
+                                        $scope.getDataWithAttributes($scope.dashboard, false);
+                                    }
+                                });
+                            }
                         }
                     });
 
@@ -250,6 +277,7 @@
                     });
             	}
             });
+            $scope.startRefreshing();
         })();
     }
 
@@ -413,7 +441,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, widget, isNew, ProjectProvider, $location, dashboard, currentUserId) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
 
         $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;

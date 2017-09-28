@@ -20,6 +20,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private String firstName;
 	private String lastName;
 	private List<Group> groups = new ArrayList<>();
+	private List<UserPreference> preferences = new ArrayList<>();
 
 	public User()
 	{
@@ -108,6 +109,14 @@ public class User extends AbstractEntity implements Comparable<User>
 			roles.add(group.getRole());
 		}
 		return new ArrayList<>(roles);
+	}
+
+	public List<UserPreference> getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(List<UserPreference> preferences) {
+		this.preferences = preferences;
 	}
 
 	@Override

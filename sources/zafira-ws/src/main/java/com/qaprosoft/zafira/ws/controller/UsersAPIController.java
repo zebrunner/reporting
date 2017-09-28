@@ -2,6 +2,8 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.services.services.UserPreferenceService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -41,6 +44,9 @@ public class UsersAPIController extends AbstractController
 {
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserPreferenceService userPreferenceService;
 
 	@Autowired
 	private Mapper mapper;
@@ -56,6 +62,7 @@ public class UsersAPIController extends AbstractController
 		User user = userService.getUserById(getPrincipalId());
 		UserType userType = mapper.map(user, UserType.class);
 		userType.setRoles(user.getRoles());
+		userType.setPreferences(user.getPreferences());
 		return userType;
 	}
 
@@ -68,7 +75,10 @@ public class UsersAPIController extends AbstractController
 	public @ResponseBody UserType updateUserProfile(@Valid @RequestBody UserType user) throws ServiceException
 	{
 		checkCurrentUserAccess(user.getId());
-		return mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
+		UserType userType =  mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
+		userType.setRoles(user.getRoles());
+		userType.setPreferences(user.getPreferences());
+		return userType;
 	}
 
 	@ResponseStatusDetails
@@ -143,5 +153,39 @@ public class UsersAPIController extends AbstractController
 			@PathVariable(value = "userId") long userId) throws ServiceException
 	{
 		userService.deleteUserFromGroup(groupId, userId);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", code = 200, httpMethod = "GET", response = List.class)
+	@RequestMapping(value = "preferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<UserPreference> getDefaultUserPreferences() throws ServiceException
+	{
+		return userPreferenceService.getAllUserPreferences(userService.getUserByUsername("anonymous").getId());
+	}
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value="{userId}/preferences", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<UserPreference> createUserPreference(@PathVariable(value="userId") long userId, @RequestBody List<UserPreference> preferences) throws ServiceException {
+
+	    for (UserPreference preference: preferences){
+            userPreferenceService.createOrUpdateUserPreference(preference);
+        }
+        return userPreferenceService.getAllUserPreferences(userId);
+    }
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{userId}/preferences", method = RequestMethod.DELETE)
+	public void deleteUserPreferences(@PathVariable(value = "userId") long userId) throws ServiceException
+	{
+        userPreferenceService.deleteUserPreferencesByUserId(userId);
 	}
 }
