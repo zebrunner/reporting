@@ -504,7 +504,7 @@
         $scope.loadModalWidget = function (widget, table) {
 
             $scope.isLoading = true;
-            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
+            widget.sql = widget.sql.replace(/\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i < $scope.dashboard.attributes.length; i++){
