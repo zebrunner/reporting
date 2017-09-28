@@ -23,6 +23,7 @@
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i<$scope.dashboard.attributes.length; i++){
@@ -502,7 +503,7 @@
         $scope.loadModalWidget = function (widget, table) {
 
             $scope.isLoading = true;
-            widget.sql = widget.sql.replace(/\s*[\r\n]/gm, "");
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql};
             var params = ProjectProvider.getProjectQueryParam();
             for(var i = 0; i < $scope.dashboard.attributes.length; i++){
