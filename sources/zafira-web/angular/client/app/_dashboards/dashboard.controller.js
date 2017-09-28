@@ -130,7 +130,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, dashboard, isNew) {
+        $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
@@ -141,8 +141,8 @@
                 fullscreen: true,
                 locals: {
                     widget: widget,
-                    dashboard: dashboard,
                     isNew: isNew,
+                    dashboard: dashboard,
                     currentUserId: $scope.currentUserId
                 }
             })
@@ -247,20 +247,20 @@
 
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            if(typeof $stateParams.id === 'undefined'){
-                                DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
-                                    if(rs.success)
-                                    {
-                                        $scope.dashboardId = rs.data.id;
+                            if($stateParams.id){
+                                $scope.dashboardId = $stateParams.id;
+                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
+                                    if (rs.success) {
                                         $scope.dashboard = rs.data;
                                         $scope.getDataWithAttributes($scope.dashboard, false);
                                     }
                                 });
                             }
                             else {
-                                $scope.dashboardId = $stateParams.id;
-                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
-                                    if (rs.success) {
+                                DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
+                                    if(rs.success)
+                                    {
+                                        $scope.dashboardId = rs.data.id;
                                         $scope.dashboard = rs.data;
                                         $scope.getDataWithAttributes($scope.dashboard, false);
                                     }
@@ -442,7 +442,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, currentUserId, dashboard, isNew) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
 
         $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;
