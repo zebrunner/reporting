@@ -197,17 +197,15 @@
 
         var refreshPromise;
         var isRefreshing = false;
-        var interval = $rootScope.refreshInterval;
-
         $scope.startRefreshing = function(){
             if(isRefreshing) return;
             isRefreshing = true;
             (function refreshEvery(){
                 if ($location.$$url.indexOf("dashboards") > -1){
-                    if (typeof $scope.dashboard.title !== 'undefined' && typeof interval !== 'undefined' && interval != 0){
+                    if ($scope.dashboard.title && $rootScope.refreshInterval && $rootScope.refreshInterval != 0){
                         $scope.loadDashboardData($scope.dashboard, true);
                     }
-                    refreshPromise = $timeout(refreshEvery, interval)
+                    refreshPromise = $timeout(refreshEvery, $rootScope.refreshInterval)
                 }
          }());
         };
@@ -215,12 +213,12 @@
 
         $scope.$watch(
             function() {
-                if (typeof $scope.currentUserId !== 'undefined' && typeof $location.$$search.userId !== 'undefined'){
+                if ($scope.currentUserId && $location.$$search.userId){
                     return $scope.currentUserId !== $location.$$search.userId;
                 }
             },
             function() {
-                if (typeof $scope.currentUserId !== 'undefined' && typeof $location.$$search.userId !== 'undefined') {
+                if ($scope.currentUserId && $location.$$search.userId) {
                     if ($scope.currentUserId !== $location.$$search.userId) {
                         $scope.currentUserId = $location.search().userId;
                         DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {

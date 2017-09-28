@@ -87,23 +87,22 @@
                     {
                         $rootScope.currentUser = rs.data;
                         var userPreferences = $rootScope.currentUser.preferences;
-                        if (userPreferences.length !== 0) {
-                            setDefaultPreferences(userPreferences);
+                        if (userPreferences && userPreferences.length !=0) {
+                            $scope.setDefaultPreferences(userPreferences);
                         }
                         else {
                             UserService.getDefaultPreferences().then(function(rs){
                                 if(rs.success)
                                 {
-                                    setDefaultPreferences(rs.data);
+                                    $scope.setDefaultPreferences(rs.data);
                                 }
-
-                            });
+                             });
                         }
                     }
                 });
              };
 
-            var setDefaultPreferences = function(userPreferences){
+            $scope.setDefaultPreferences = function(userPreferences){
                 for (var i = 0; i < userPreferences.length; i++){
                     if (userPreferences[i].name === 'DEFAULT_DASHBOARD'){
                         $rootScope.defaultDashboard = userPreferences[i].value;
