@@ -23,21 +23,12 @@
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
-            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-            var params = ProjectProvider.getProjectQueryParam();
-            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
-                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
-                }
-    		}
-            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
-            }
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             if(!refresh){
                 $scope.isLoading = true;
             }
+            var params = setQueryParams(dashboardName);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -62,6 +53,20 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        var setQueryParams = function(dashboardName){
+            var params = ProjectProvider.getProjectQueryParam();
+            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+            }
+            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
+            return params;
         };
 
         $scope.asString = function (value) {
@@ -137,8 +142,7 @@
                 templateUrl: 'app/_dashboards/widget_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
-                clickOutsideToClose: false,
-                backdrop: 'static',
+                clickOutsideToClose: true,
                 fullscreen: true,
                 locals: {
                     widget: widget,
@@ -441,7 +445,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
+    function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
 
         $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;
@@ -492,12 +496,31 @@
             });
         };
 
-        $rootScope.$on("$event:executeSQL", function () {
-            $scope.loadModalWidget($scope.widget, true);
+        $scope.$on("$event:executeSQL", function () {
+            if (widget.sql){
+                $scope.loadModalWidget($scope.widget, true);
+            }
+            else {
+                alertify.warning('Add SQL query');
+            }
         });
 
-        $rootScope.$on("$event:showWidget", function () {
-            $scope.loadModalWidget($scope.widget);
+        $scope.$on("$event:showWidget", function () {
+            if (widget.sql){
+                if(widget.type){
+                    $scope.loadModalWidget($scope.widget);
+                }
+                else {
+                    alertify.warning('Choose widget type');
+                }
+             }
+            else {
+                alertify.warning('Add SQL query');
+            }
+        });
+
+        $scope.$on('$destroy', function() {
+            $scope.closeWidget();
         });
 
         $scope.loadModalWidget = function (widget, table) {
@@ -505,19 +528,7 @@
             $scope.isLoading = true;
             widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql};
-            var params = ProjectProvider.getProjectQueryParam();
-            for(var i = 0; i < $scope.dashboard.attributes.length; i++){
-                if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
-                }
-            }
-            params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
-            }
-            if (table) {
-                params = params + "&stackTraceRequired=" + true;
-            }
+            var params = setQueryParams(table);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -532,11 +543,11 @@
                     }
                     if ('sql' != widget.type) {
                         if (table){
-                            widget.testType = 'table';
+                            widget.executeType = 'table';
                             widget.testModel = {"columns" : columns};
                         }
                         else {
-                            widget.testType = widget.type;
+                            widget.executeType = widget.type;
                             widget.testModel = JSON.parse(widget.model);
                         }
                         widget.data = {};
@@ -549,6 +560,23 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        var setQueryParams = function(table){
+            var params = ProjectProvider.getProjectQueryParam();
+            for(var i = 0; i < $scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+            }
+            params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
+            if (table) {
+                params = params + "&stackTraceRequired=" + true;
+            }
+            return params;
         };
 
         $scope.sort = {
@@ -580,7 +608,8 @@
         };
 
         $scope.closeWidget = function(){
-            $scope.clearWidgetData();
+            $scope.widget.data = null;
+            $scope.widget.executeType = null;
             $scope.showWidget = false;
         };
 
@@ -589,15 +618,10 @@
         };
 
         $scope.cancel = function () {
-            $scope.clearWidgetData();
             $mdDialog.cancel();
         };
 
-        $scope.clearWidgetData = function () {
-            $scope.widget.data = null;
-            $scope.widget.testType = null;
-        };
-        (function initController() {
+         (function initController() {
         })();
     }
 
