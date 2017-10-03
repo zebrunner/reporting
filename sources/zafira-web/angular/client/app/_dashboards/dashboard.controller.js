@@ -336,16 +336,19 @@
         };
 
         $scope.deleteDashboardWidget = function (widget) {
-            DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
-                if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-        };
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" from dashboard?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+         };
 
         $scope.updateDashboardWidget = function (widget) {
             DashboardService.UpdateDashboardWidget(dashboardId, {
