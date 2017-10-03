@@ -111,6 +111,7 @@
                         $rootScope.refreshInterval = userPreferences[i].value;
                     }
                 }
+                $rootScope.$broadcast("event:defaultPreferencesInitialized");
             };
 
             $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
