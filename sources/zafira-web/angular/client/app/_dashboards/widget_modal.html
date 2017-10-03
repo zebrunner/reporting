@@ -25,7 +25,6 @@
                             <md-option value="linechart">Line chart</md-option>
                             <md-option value="piechart">Pie chart</md-option>
                             <md-option value="table">Table</md-option>
-                            <md-option value="sql">SQL</md-option>
                         </md-select>
                     </md-input-container>
                 </div>
@@ -81,11 +80,7 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="widget.id" type="submit"
-                       class="md-raised btn-w-md md-warn" data-ng-click="deleteWidget(widget)">
-                Delete
-            </md-button>
-            <md-button data-ng-if="isNew" type="submit"
+           <md-button data-ng-if="isNew" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="widget_form.$invalid" data-ng-click="createWidget(widget)">
                 Create

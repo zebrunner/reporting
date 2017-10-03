@@ -76,6 +76,23 @@
             descending: false
         };
 
+        $scope.deleteWidget = function($event, widget){
+            var array = $scope.widgets;
+            var index = array.indexOf(widget);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            DashboardService.DeleteWidget(widget.id).then(function (rs) {
+                if (rs.success) {
+                    alertify.success("Widget deleted");
+                    $scope.hide(true);
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.changeSorting = function(column) {
             var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
 
@@ -489,18 +506,6 @@
                 }
             });
             $scope.hide(true);
-        };
-
-        $scope.deleteWidget = function(widget){
-            DashboardService.DeleteWidget(widget.id).then(function (rs) {
-                if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
         };
 
         $scope.$on("$event:executeSQL", function () {
