@@ -265,6 +265,8 @@
                                                         	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
+                                                            <a href="" class="float_right label-primary-empty clearfix" data-ng-if="test.workItems.length==0 || (test.workItems.length==1 && test.workItems[0].type=='BUG')" data-ng-click="showAssignJiraTaskDialog(test, true, $event)">Assign task</a>
+                                                            <a href="" class="float_right label-info-empty clearfix" data-ng-if="(test.workItems.length==1 && test.workItems[0].type=='TASK') || test.workItems.length==2" data-ng-click="showAssignJiraTaskDialog(test, false, $event)">Edit task</a>
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">

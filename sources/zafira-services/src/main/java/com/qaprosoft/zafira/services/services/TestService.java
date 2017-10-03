@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.services.services;
 
 import java.util.*;
 
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import net.rcarz.jiraclient.Issue;
 
@@ -17,14 +18,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestArtifact;
-import com.qaprosoft.zafira.models.db.TestCase;
-import com.qaprosoft.zafira.models.db.TestConfig;
-import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
@@ -354,7 +348,7 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, WorkItem.Type type) throws ServiceException, InterruptedException {
+	public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException, InterruptedException {
 		testMapper.deleteTestWorkItemByTestIdAndWorkItemType(testId, type);
 	}
 	
@@ -463,6 +457,62 @@ public class TestService
 			LOGGER.error("Unable to calculate rurun flags", e);
 			testMapper.updateTestsNeedRerun(testIds, true);
 		}
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public WorkItem assignOrUpdateTaskWorkItemToTest(long id, WorkItem workItem, long principalId) throws ServiceException, InterruptedException {
+		Test test = getTestById(id);
+		List<WorkItem> itemList = test.getWorkItems();
+		WorkItem existWorkItem = null;
+
+		for (WorkItem item : itemList) {
+			if (item.getType() == Type.TASK) {
+				existWorkItem = item;
+				break;
+			}
+		}
+
+		if (existWorkItem == null) {
+			if (principalId > 0) {
+				workItem.setUser(new User(principalId));
+			}
+			workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
+		} else {
+
+			if (workItem.getJiraId().equals(existWorkItem.getJiraId())) {
+				workItem = workItemService.updateWorkItem(workItem);
+			} else {
+				deleteTestWorkItemByWorkItemIdAndTestId(existWorkItem.getId(), id);
+				workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
+			}
+		}
+		return workItem;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public WorkItem createOrGetExistTestWorkItemWithTypeTask(long id, WorkItem workItem) throws ServiceException {
+		Test test = getTestById(id);
+		WorkItem item = null;
+
+		if (test == null) {
+			throw new ServiceException("Test not found by id: " + id);
+		}
+
+		if (!StringUtils.isEmpty(workItem.getJiraId())) {
+			item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
+			if (item == null) {
+				workItem.setType(Type.TASK);
+				workItemService.createWorkItem(workItem);
+				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
+			} else if (!item.getDescription().equals(workItem.getDescription())) {
+				workItem.setType(Type.TASK);
+				workItemService.createWorkItem(workItem);
+				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
+			}
+			testMapper.createTestWorkItem(test, item);
+		}
+
+		return item;
 	}
 	
 	public int getTestMessageHashCode(String message)

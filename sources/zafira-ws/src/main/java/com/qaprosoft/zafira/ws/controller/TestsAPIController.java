@@ -121,7 +121,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test work item", nickname = "createTestWorkItem", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Create test work item", nickname = "createTestWorkItems", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -132,6 +132,8 @@ public class TestsAPIController extends AbstractController
 	{
 		return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
 	}
+
+
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE")
@@ -200,6 +202,9 @@ public class TestsAPIController extends AbstractController
 		return workItem;
 	}
 
+
+
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", code = 200, httpMethod = "PUT", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -248,5 +253,35 @@ public class TestsAPIController extends AbstractController
 	public @ResponseBody boolean getConnectionToJira()
 	{
 		return jiraService.isConnected();
+	}
+
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Assign jira task", nickname = "createTestWorkItemJiraTask", code = 200, httpMethod = "POST", response = WorkItem.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}/task", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem assignOrUpdateTestWorkItemTask(
+			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id,
+			@RequestBody WorkItem workItem) throws ServiceException, InterruptedException
+	{
+		return testService.assignOrUpdateTaskWorkItemToTest(id, workItem, getPrincipalId());
+	}
+
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete test_work_item task", nickname = "deleteTestWorkItemJiraTask", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{testId}/task/{workItemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem deleteTestWorkItemTask(
+			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "testId") long testId,
+			@PathVariable(value = "workItemId") long workItemId) throws ServiceException, InterruptedException
+	{
+		WorkItem item = workItemService.getWorkItemById(workItemId);
+		testService.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
+		return item;
 	}
 }

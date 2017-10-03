@@ -12,9 +12,11 @@
         service.markTestAsPassed = markTestAsPassed;
         service.getTestKnownIssues = getTestKnownIssues;
         service.createTestKnownIssue = createTestKnownIssue;
+        service.assignTestJiraTask = assignTestJiraTask;
         service.deleteTestKnownIssue = deleteTestKnownIssue;
         service.getJiraIssue = getJiraIssue;
         service.getConnectionToJira = getConnectionToJira;
+        service.deleteTestJiraTask = deleteTestJiraTask;
 
         return service;
 
@@ -33,6 +35,14 @@
         function createTestKnownIssue(id, workItem) {
             return $http.post(API_URL + '/api/tests/' + id + '/issues', workItem).then(UtilService.handleSuccess, UtilService.handleError('Unable to create test work item'));
         }
+
+        function assignTestJiraTask(id, workItem) {
+            return $http.post(API_URL + '/api/tests/' + id + '/task', workItem).then(UtilService.handleSuccess, UtilService.handleError('Unable to create test work item'));
+        }
+
+        function deleteTestJiraTask(id, workItemId) {
+                    return $http.delete(API_URL + '/api/tests/' + id + '/task/'+ workItemId).then(UtilService.handleSuccess, UtilService.handleError('Unable to unassign test work item'));
+                }
 
         function deleteTestKnownIssue(testId, workItemId) {
             return $http.delete(API_URL + '/api/tests/' + testId + '/issues/' + workItemId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete test work item'));
