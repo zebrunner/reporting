@@ -77,20 +77,23 @@
         };
 
         $scope.deleteWidget = function($event, widget){
-            var array = $scope.widgets;
-            var index = array.indexOf(widget);
-            if (index > -1) {
-                array.splice(index, 1);
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" ?');
+            if (confirmedDelete) {
+                var array = $scope.widgets;
+                var index = array.indexOf(widget);
+                if (index > -1) {
+                    array.splice(index, 1);
+                }
+                DashboardService.DeleteWidget(widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
             }
-            DashboardService.DeleteWidget(widget.id).then(function (rs) {
-                if (rs.success) {
-                    alertify.success("Widget deleted");
-                    $scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
         };
 
         $scope.changeSorting = function(column) {
