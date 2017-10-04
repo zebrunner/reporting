@@ -68,9 +68,6 @@
 		                     	</tbody>
 	                     	</table>
 	                     </div>
-					     <div class="table-responsive" data-ng-if="widget.type == 'sql'">
-							<button type="button" class="btn btn-primary" data-ng-click="loadWidget(dashboard.title, widget, dashboard.attributes)">Run SQL query</button>
-						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -110,6 +107,12 @@
                                                     <md-button data-ng-click="showWidgetDialog($event, widget, true, dashboard, currentUserId)">
                                                         <md-icon class="material-icons">content_copy</md-icon>
                                                         Copy widget
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="deleteWidget($event, widget)">
+                                                        <md-icon class="material-icons">delete</md-icon>
+                                                        Delete widget
                                                     </md-button>
                                                 </md-menu-item>
                                             </md-menu-content>

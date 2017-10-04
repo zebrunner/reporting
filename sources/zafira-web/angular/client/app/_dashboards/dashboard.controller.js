@@ -14,11 +14,9 @@
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
-                if ('sql' != dashboard.widgets[i].type) {
                     if (!refresh || refresh && dashboard.widgets[i].refreshable) {
                         $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
                     }
-                }
             }
         };
 
@@ -37,15 +35,12 @@
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
-
-                    if ('sql' != widget.type) {
-                        if(!refresh){
-                            widget.model = JSON.parse(widget.model);
-                        }
-                        widget.data = {};
-                        widget.data.dataset = data;
+                    if(!refresh){
+                        widget.model = JSON.parse(widget.model);
                     }
-                    if (data.length != 0) {
+                    widget.data = {};
+                    widget.data.dataset = data;
+                    if (data.length !== 0) {
                         $scope.isLoading = false;
                     }
                 }
@@ -79,6 +74,26 @@
         $scope.sort = {
             column: null,
             descending: false
+        };
+
+        $scope.deleteWidget = function($event, widget){
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" ?');
+            if (confirmedDelete) {
+                var array = $scope.widgets;
+                var index = array.indexOf(widget);
+                if (index > -1) {
+                    array.splice(index, 1);
+                }
+                DashboardService.DeleteWidget(widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
         };
 
         $scope.changeSorting = function(column) {
@@ -237,6 +252,18 @@
             }
         );
 
+        var getDashboardByTitle = function (){
+            DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.dashboardId = rs.data.id;
+                    $scope.dashboard = rs.data;
+                    $scope.getDataWithAttributes($scope.dashboard, false);
+                }
+            });
+
+        };
+
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
@@ -250,7 +277,7 @@
 
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            if($stateParams.id){
+                            if ($stateParams.id) {
                                 $scope.dashboardId = $stateParams.id;
                                 DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
                                     if (rs.success) {
@@ -260,14 +287,14 @@
                                 });
                             }
                             else {
-                                DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
-                                    if(rs.success)
-                                    {
-                                        $scope.dashboardId = rs.data.id;
-                                        $scope.dashboard = rs.data;
-                                        $scope.getDataWithAttributes($scope.dashboard, false);
-                                    }
-                                });
+                                if ($rootScope.defaultDashboard) {
+                                    getDashboardByTitle();
+                                }
+                                else {
+                                    $rootScope.$on("event:defaultPreferencesInitialized", function () {
+                                        getDashboardByTitle();
+                                    })
+                                }
                             }
                         }
                     });
@@ -309,16 +336,19 @@
         };
 
         $scope.deleteDashboardWidget = function (widget) {
-            DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
-                if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-        };
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" from dashboard?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+         };
 
         $scope.updateDashboardWidget = function (widget) {
             DashboardService.UpdateDashboardWidget(dashboardId, {
@@ -484,18 +514,6 @@
             $scope.hide(true);
         };
 
-        $scope.deleteWidget = function(widget){
-            DashboardService.DeleteWidget(widget.id).then(function (rs) {
-                if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-        };
-
         $scope.$on("$event:executeSQL", function () {
             if (widget.sql){
                 $scope.loadModalWidget($scope.widget, true);
@@ -534,25 +552,23 @@
                     var data = rs.data;
                     var columns = {};
                     for (var j = 0; j < data.length; j++) {
-                        if(j == 0){
+                        if(j === 0){
                             columns = Object.keys(data[j]);
                         }
                         if (data[j].CREATED_AT) {
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
-                    if ('sql' != widget.type) {
-                        if (table){
-                            widget.executeType = 'table';
-                            widget.testModel = {"columns" : columns};
-                        }
-                        else {
-                            widget.executeType = widget.type;
-                            widget.testModel = JSON.parse(widget.model);
-                        }
-                        widget.data = {};
-                        widget.data.dataset = data;
+                    if (table){
+                        widget.executeType = 'table';
+                        widget.testModel = {"columns" : columns};
                     }
+                    else {
+                        widget.executeType = widget.type;
+                        widget.testModel = JSON.parse(widget.model);
+                    }
+                    widget.data = {};
+                    widget.data.dataset = data;
                     $scope.isLoading = false;
                     $scope.showWidget = true;
                 }
