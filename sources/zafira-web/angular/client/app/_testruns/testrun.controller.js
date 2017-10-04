@@ -219,10 +219,11 @@
         };
 
         $scope.deleteTestRun = function (id, confirmation)
-        {
+
+         {
         		if(confirmation == null)
         		{
-        			confirmation = confirm("Do you really want to delete test run?");
+        			confirmation = confirm('Do you really want to delete "' + $scope.testRuns[id].testSuite.name + '" test run?');
         		}
             if (confirmation)
             {
