@@ -375,6 +375,9 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
+            if ($location.$$path != $location.$$url){
+                $location.search({});
+            }
             if ($location.$$absUrl.match(new RegExp(testRun.id, 'gi')) == null){
                 window.open($location.$$absUrl + "/" + testRun.id, '_blank');
             }
