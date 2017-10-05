@@ -54,56 +54,126 @@
 	<select id="searchTestConfig" resultMap="TestConfigResultMap">
 		<include refid="getTestConfig" />
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="testConfig.url != null">
-	            <![CDATA[
-	               TC.URL = #{testConfig.url}
-	            ]]>
-			</if>
-			<if test="testConfig.env != null">
-	            <![CDATA[
-	               AND TC.ENV = #{testConfig.env}
-	            ]]>
-			</if>
-			<if test="testConfig.platform != null">
-	            <![CDATA[
-	               AND TC.PLATFORM = #{testConfig.platform}
-	            ]]>
-			</if>
-			<if test="testConfig.platformVersion != null">
-	            <![CDATA[
-	               AND TC.PLATFORM_VERSION = #{testConfig.platformVersion}
-	            ]]>
-			</if>
-			<if test="testConfig.browser != null">
-	            <![CDATA[
-	               AND TC.BROWSER = #{testConfig.browser}
-	            ]]>
-			</if>
-			<if test="testConfig.browserVersion != null">
-	            <![CDATA[
-	               AND TC.BROWSER_VERSION = #{testConfig.browserVersion}
-	            ]]>
-			</if>
-			<if test="testConfig.appVersion != null">
-	            <![CDATA[
-	               AND TC.APP_VERSION = #{testConfig.appVersion}
-	            ]]>
-			</if>
-			<if test="testConfig.locale != null">
-	            <![CDATA[
-	               AND TC.LOCALE = #{testConfig.locale}
-	            ]]>
-			</if>
-			<if test="testConfig.language != null">
-	            <![CDATA[
-	               AND TC.LANGUAGE = #{testConfig.language}
-	            ]]>
-			</if>
-			<if test="testConfig.device != null">
-	            <![CDATA[
-	               AND TC.DEVICE = #{testConfig.device}
-	            ]]>
-			</if>
+            <choose>
+                <when test="testConfig.url == null">
+                    <![CDATA[
+	                    TC.URL IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    TC.URL = #{testConfig.url}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.env == null">
+                    <![CDATA[
+	                    AND TC.ENV IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.ENV = #{testConfig.env}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.platform == null">
+                    <![CDATA[
+	                    AND TC.PLATFORM IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.PLATFORM = #{testConfig.platform}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.platformVersion == null">
+                    <![CDATA[
+	                    AND TC.PLATFORM_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.PLATFORM_VERSION = #{testConfig.platformVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.browser == null">
+                    <![CDATA[
+	                    AND TC.BROWSER IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.BROWSER = #{testConfig.browser}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.browserVersion == null">
+                    <![CDATA[
+	                    AND TC.BROWSER_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.BROWSER_VERSION = #{testConfig.browserVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.appVersion == null">
+                    <![CDATA[
+	                    AND TC.APP_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.APP_VERSION = #{testConfig.appVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.locale == null">
+                    <![CDATA[
+	                    AND TC.LOCALE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.LOCALE = #{testConfig.locale}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.language == null">
+                    <![CDATA[
+	                    AND TC.LANGUAGE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.LANGUAGE = #{testConfig.language}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.device == null">
+                    <![CDATA[
+	                    AND TC.DEVICE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.DEVICE = #{testConfig.device}
+	                ]]>
+                </otherwise>
+            </choose>
 		</trim>
 		 <![CDATA[
               LIMIT 1
