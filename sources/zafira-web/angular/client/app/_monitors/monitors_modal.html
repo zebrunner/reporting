@@ -1,0 +1,103 @@
+<md-dialog flex="50" aria-label="User profile">
+    <form class="form-validation" name="monitor_form" ng-submit="sendEmail(); UtilService.untouchForm(monitor_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Monitor</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Name</label>
+                        <input name="value" type="text" data-ng-model="monitor.name" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>URL</label>
+                        <input name="value" type="text" data-ng-model="monitor.url" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <md-select ng-model="monitor.type" name="type" placeholder="Type" ng-required>
+                            <md-option value="" disabled>Type</md-option>
+                            <md-option value="HTTP">HTTP</md-option>
+                            <md-option value="PING" disabled>Ping (Next feature)</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <md-radio-group id="httpMethods" ng-model="monitor.httpMethod" ng-if="isHttpBlockPresent(monitor)">
+                    <md-radio-button class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
+                    <md-radio-button class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
+                    <md-radio-button class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
+                    <md-radio-button class="checkbox-inline md-primary" value="DELETE">DELETE</md-radio-button>
+                </md-radio-group>
+                <div layout layout-sm="column" ng-if="isHttpBodyBlockPresent(monitor)">
+                    <span>Body</span>
+                    <md-input-container flex>
+                        <code-textarea id="requestBody" ng-model="monitor.requestBody" code-data="{{monitor.requestBody}}"></code-textarea>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Cron expression</label>
+                        <input name="value" type="text" data-ng-model="monitor.cronExpression" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Expected code</label>
+                        <input name="value" type="number" data-ng-model="monitor.expectedResponseCode" required/>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label ng-if="monitor.emailList">Recepients ({{monitor.emailList.length}})</label>
+                        <md-chips ng-model="monitor.emailList"
+                                  filter-selected=true
+                                  md-autocomplete-snap
+                                  md-transform-chip="checkAndTransformRecipient($chip, monitor)"
+                                  md-on-remove="removeRecipient($chip, monitor)"
+                                  md-separator-keys="keys">
+                            <md-chip-template>
+                                {{$chip}}
+                            </md-chip-template>
+                            <md-autocomplete
+                                md-autoselect
+                                md-no-cache=true
+                                md-search-text="searchText"
+                                md-items="user in querySearch(searchText, monitor)"
+                                md-item-text="user.email"
+                                placeholder="add email">
+                                <md-item-template>
+                                    <span>{{user.email}}</span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No users matching "{{searchText}}" were found.
+                                </md-not-found>
+                            </md-autocomplete>
+                        </md-chips>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container style="float: right; margin-top: 0px">
+                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.active" aria-label="notif-switch">Enable notifications</md-switch>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
+                Create
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

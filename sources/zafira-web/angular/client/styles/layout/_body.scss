@@ -334,3 +334,13 @@ pre.code:after{
 div.code {
     white-space: pre-line;
 }
+
+#httpMethods md-radio-button .md-label {
+    margin-left: 8px !important;
+    padding-right: 40px;
+}
+
+#httpMethods md-radio-button {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
