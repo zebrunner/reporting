@@ -104,7 +104,7 @@ public class TestService
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
-		existingTest.setTestConfig(testConfigService.updateTestConfig(existingTest.getTestConfig().getId(), configXML));
+		existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
 		
 		String message = test.getMessage();
 		if(message != null)
