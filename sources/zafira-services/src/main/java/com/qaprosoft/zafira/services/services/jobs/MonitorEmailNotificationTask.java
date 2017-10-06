@@ -1,24 +1,32 @@
 package com.qaprosoft.zafira.services.services.jobs;
 
-import com.qaprosoft.zafira.models.db.Monitor;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.EmailService;
-import com.qaprosoft.zafira.services.services.emails.MonitorEmailMessageNotification;
-import com.qaprosoft.zafira.services.util.HttpClientUtil;
-import org.quartz.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.EmailService;
+import com.qaprosoft.zafira.services.services.emails.MonitorEmailMessageNotification;
+
 @Service
 public class MonitorEmailNotificationTask implements Job
 {
-
 	private final static Logger LOGGER = LoggerFactory.getLogger(MonitorEmailNotificationTask.class);
 
-	private final static String EMAILS_STRING_SEPARATOR = ",";
-	private final static String EMAIL_SUBJECT = "Monitor Alert!";
+	private final static String EMAIL_SUBJECT = "Monitor Alert";
 	private final static String EMAIL_TEXT = "";
 
 	@Override
@@ -65,21 +73,54 @@ public class MonitorEmailNotificationTask implements Job
 	private Integer getResponseCode(Monitor monitor)
 	{
 		int responseCode = 0;
+		
+		HttpClient httpClient = HttpClientBuilder.create().build();
 		switch (monitor.getHttpMethod())
 		{
 		case GET:
 		{
-			responseCode = HttpClientUtil.sendGetAndGetResponseStatus(monitor.getUrl());
+			try
+			{
+				HttpGet request = new HttpGet(monitor.getUrl());
+				request.addHeader("Accept", "*/*");
+				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+			}
+			catch (Exception e) 
+			{
+				LOGGER.error(e.getMessage());
+			}
 			break;
 		}
 		case PUT:
 		{
-			responseCode = HttpClientUtil.sendPutAndGetResponseStatus(monitor.getUrl(), monitor.getRequestBody());
+			try
+			{
+				HttpPut request = new HttpPut(monitor.getUrl());
+				request.addHeader("Content-Type", "application/json");
+				request.addHeader("Accept", "*/*");
+				request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+			}
+			catch (Exception e) 
+			{
+				LOGGER.error(e.getMessage());
+			}
 			break;
 		}
 		case POST:
 		{
-			responseCode = HttpClientUtil.sendPostAndGetResponseStatus(monitor.getUrl(), monitor.getRequestBody());
+			try
+			{
+				HttpPost request = new HttpPost(monitor.getUrl());
+				request.addHeader("Content-Type", "application/json");
+				request.addHeader("Accept", "*/*");
+				request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+			}
+			catch (Exception e) 
+			{
+				LOGGER.error(e.getMessage());
+			}
 			break;
 		}
 		default:
@@ -90,7 +131,7 @@ public class MonitorEmailNotificationTask implements Job
 
 	private String[] getRecipientList(String recipients)
 	{
-		return recipients.split(EMAILS_STRING_SEPARATOR);
+		return recipients.replaceAll(" ", ",").replaceAll(";", ",").split(",");
 	}
 
 }

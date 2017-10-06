@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.models.db;
 
 public class Monitor extends AbstractEntity
 {
+	private static final long serialVersionUID = -1016459307109758493L;
 
 	public enum HttpMethod
 	{
