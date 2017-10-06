@@ -29,7 +29,11 @@ public interface DashboardMapper
 
 	List<Dashboard> getDashboardsByHidden(boolean hidden);
 
+	List<Dashboard> getDashboardsByCategory(String category);
+
 	List<Attribute> getAttributesByDashboardId(long dashboardId);
+
+    List<String> getDashboardCategories();
 
 	Attribute getAttributeById(long attributeId);
 
