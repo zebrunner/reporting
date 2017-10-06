@@ -68,9 +68,6 @@
 		                     	</tbody>
 	                     	</table>
 	                     </div>
-					     <div class="table-responsive" data-ng-if="widget.type == 'sql'">
-							<button type="button" class="btn btn-primary" data-ng-click="loadWidget(dashboard.title, widget, dashboard.attributes)">Run SQL query</button>
-						</div>
 	                </div>
 	            </div>
 	        </div>
@@ -78,7 +75,7 @@
 	</div>
 	<div class="row" permission="['ROLE_ADMIN']">
 		<div class="col-lg-12">
-			<button type="button" class="btn btn-primary btn-outline btn-lg btn-block" data-ng-click="showWidgetDialog($event, {model : '{}'}, true)">Create new widget</button>
+			<button type="button" class="btn btn-primary btn-outline btn-lg btn-block" data-ng-click="showWidgetDialog($event, {model : '{}'}, true, dashboard)">Create new widget</button>
 		</div>
 	</div>
 	<div class="row" permission="['ROLE_ADMIN']">
@@ -101,15 +98,21 @@
                                             </md-button>
                                             <md-menu-content width="2">
                                                 <md-menu-item>
-                                                    <md-button data-ng-click="showWidgetDialog($event, widget, false)">
+                                                    <md-button data-ng-click="showWidgetDialog($event, widget, false, dashboard)">
                                                         <md-icon class="material-icons">settings</md-icon>
                                                         Edit widget
                                                     </md-button>
                                                 </md-menu-item>
                                                 <md-menu-item>
-                                                    <md-button data-ng-click="showWidgetDialog($event, widget, true)">
+                                                    <md-button data-ng-click="showWidgetDialog($event, widget, true, dashboard, currentUserId)">
                                                         <md-icon class="material-icons">content_copy</md-icon>
                                                         Copy widget
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-item>
+                                                    <md-button data-ng-click="deleteWidget($event, widget)">
+                                                        <md-icon class="material-icons">delete</md-icon>
+                                                        Delete widget
                                                     </md-button>
                                                 </md-menu-item>
                                             </md-menu-content>

@@ -1,8 +1,8 @@
 <div class="page page-profile" ng-controller="UserProfileController">
 
     <div class="row">
-        <div class="col-lg-8 clearfix"> 
-        	<h2 class="section-header">User profile</h2> 
+        <div class="col-lg-8 clearfix">
+        	<h2 class="section-header">User profile</h2>
         </div>
         <div class="col-md-12">
             <section class="panel panel-default">
@@ -25,7 +25,7 @@
                                         </div>
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
-                                                <label>First name</label>
+                                                <label>First Name</label>
                                                 <input type="text" ng-model="user.firstName" name="firstName"/>
                                             </md-input-container>
                                             <md-input-container flex>
@@ -43,21 +43,61 @@
 		                                        </div>
                                             </md-input-container>
                                         </div>
-                                        <div layout="row"> 
+                                        <div layout="row">
 		                                    <md-button type="submit"
 		                                               class="md-raised btn-w-md md-primary"
-		                                               ng-disabled="profile_form.$invalid">Save</md-button>  
-	                                    </div>   
+		                                               ng-disabled="profile_form.$invalid">Save</md-button>
+	                                    </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>    
+            </section>
         </div>
     </div>
-    
+
+
+
+    <div class="row">
+        <div class="col-lg-8 clearfix"> <h2 class="section-header">Preferences</h2> </div>
+        <div class="col-md-12">
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="md-inline-form">
+                                <div layout-padding >
+                                    <form name="preference_form" ng-submit="updateUserPreferences(preferenceForm);" >
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="md-block" style="min-width: 450px;">
+                                                <label>Default Dashboard</label>
+                                                <md-select  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
+                                                    <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="md-block"  style="min-width: 450px;">
+                                                <label>Widget Refresh Interval</label>
+                                                <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
+                                                    <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
+                                                </md-select>
+                                            </md-input-container>
+                                        </div>
+                                            <md-button type="submit" class="md-raised btn-w-md md-primary">Set</md-button>
+                                            <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset</md-button>
+                                  </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
         <div class="col-md-12">
@@ -82,21 +122,21 @@
 	                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
 	                                        </div>
                                         </md-input-container>
-                                        <div layout="row"> 
+                                        <div layout="row">
 		                                    <md-button type="submit"
 		                                               class="md-raised btn-w-md md-primary"
-		                                               ng-disabled="password_form.$invalid">Change</md-button>  
-	                                    </div>   
+		                                               ng-disabled="password_form.$invalid">Change</md-button>
+	                                    </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>    
+            </section>
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Access token</h2> </div>
         <div class="col-md-12">
@@ -111,17 +151,17 @@
                                             <label>Token</label>
                                             <input type="text" ng-model="accessToken" name="accessToken"/>
                                         </md-input-container>
-                                        <div layout="row"> 
-		                                    <md-button type="submit" class="md-raised btn-w-md md-primary" style="margin-right: 10px;">Generate</md-button> 
-		                                    <md-button data-ng-if="accessToken" data-ng-click="copyAccessToken(accessToken)" class="md-raised btn-w-md md-info">Copy</md-button> 
-	                                    </div>   
+                                        <div layout="row">
+		                                    <md-button type="submit" class="md-raised btn-w-md md-primary" style="margin-right: 10px;">Generate</md-button>
+		                                    <md-button data-ng-if="accessToken" data-ng-click="copyAccessToken(accessToken)" class="md-raised btn-w-md md-info">Copy</md-button>
+	                                    </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>    
+            </section>
         </div>
     </div>
 

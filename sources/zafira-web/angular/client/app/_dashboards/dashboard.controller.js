@@ -3,36 +3,30 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
         $scope.dashboard = {};
 
-        $scope.loadDashboardData = function (dashboard) {
+        $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
-                if ('sql' != dashboard.widgets[i].type) {
-                    $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes);
-                }
+                    if (!refresh || refresh && dashboard.widgets[i].refreshable) {
+                        $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
+                    }
             }
         };
 
-        $scope.loadWidget = function (dashboardName, widget, attributes) {
+        $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-            var params = ProjectProvider.getProjectQueryParam();
-            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
-                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
-                }
-    		}
-            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
+            if(!refresh){
+                $scope.isLoading = true;
             }
-            $scope.isLoading = true;
+            var params = setQueryParams(dashboardName);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
                     var data = rs.data;
@@ -41,13 +35,12 @@
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
-
-                    if ('sql' != widget.type) {
+                    if(!refresh){
                         widget.model = JSON.parse(widget.model);
-                        widget.data = {};
-                        widget.data.dataset = data;
                     }
-                    if (data.length != 0) {
+                    widget.data = {};
+                    widget.data.dataset = data;
+                    if (data.length !== 0) {
                         $scope.isLoading = false;
                     }
                 }
@@ -55,6 +48,20 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        var setQueryParams = function(dashboardName){
+            var params = ProjectProvider.getProjectQueryParam();
+            for(var i = 0; i<$scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+            }
+            params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
+            return params;
         };
 
         $scope.asString = function (value) {
@@ -67,6 +74,26 @@
         $scope.sort = {
             column: null,
             descending: false
+        };
+
+        $scope.deleteWidget = function($event, widget){
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" ?');
+            if (confirmedDelete) {
+                var array = $scope.widgets;
+                var index = array.indexOf(widget);
+                if (index > -1) {
+                    array.splice(index, 1);
+                }
+                DashboardService.DeleteWidget(widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
         };
 
         $scope.changeSorting = function(column) {
@@ -124,7 +151,7 @@
                 });
         };
 
-        $scope.showWidgetDialog = function (event, widget, isNew) {
+        $scope.showWidgetDialog = function (event, widget, isNew, dashboard) {
             $mdDialog.show({
                 controller: WidgetController,
                 templateUrl: 'app/_dashboards/widget_modal.html',
@@ -134,7 +161,9 @@
                 fullscreen: true,
                 locals: {
                     widget: widget,
-                    isNew: isNew
+                    isNew: isNew,
+                    dashboard: dashboard,
+                    currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (answer) {
@@ -176,28 +205,64 @@
             }
         };
 
-         $scope.$watch(
+        $scope.getDataWithAttributes = function (dashboard, refresh) {
+            var queryAttributes = getQueryAttributes();
+            if(queryAttributes) {
+                for (var i = 0; i < queryAttributes.length; i++) {
+                    dashboard.attributes.push(queryAttributes[i]);
+                }
+            }
+            $scope.loadDashboardData(dashboard, refresh);
+        };
+
+        var refreshPromise;
+        var isRefreshing = false;
+        $scope.startRefreshing = function(){
+            if(isRefreshing) return;
+            isRefreshing = true;
+            (function refreshEvery(){
+                if ($location.$$url.indexOf("dashboards") > -1){
+                    if ($scope.dashboard.title && $rootScope.refreshInterval && $rootScope.refreshInterval != 0){
+                        $scope.loadDashboardData($scope.dashboard, true);
+                    }
+                    refreshPromise = $timeout(refreshEvery, $rootScope.refreshInterval)
+                }
+         }());
+        };
+
+
+        $scope.$watch(
             function() {
-                return $scope.currentUserId !== $location.$$search.userId;
+                if ($scope.currentUserId && $location.$$search.userId){
+                    return $scope.currentUserId !== $location.$$search.userId;
+                }
             },
             function() {
-                if ($scope.currentUserId !== $location.$$search.userId){
-                    $scope.currentUserId = $location.search().userId;
-                    DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                        if (rs.success) {
-                            $scope.dashboard = rs.data;
-                            var queryAttributes = getQueryAttributes();
-                            if(queryAttributes) {
-                                for (var i = 0; i < queryAttributes.length; i++) {
-                                    $scope.dashboard.attributes.push(queryAttributes[i]);
-                                }
+                if ($scope.currentUserId && $location.$$search.userId) {
+                    if ($scope.currentUserId !== $location.$$search.userId) {
+                        $scope.currentUserId = $location.search().userId;
+                        DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
+                            if (rs.success) {
+                                $scope.dashboard = rs.data;
+                                $scope.getDataWithAttributes($scope.dashboard, false);
                             }
-                            $scope.loadDashboardData($scope.dashboard);
-                        }
-                    });
+                        });
+                    }
                 }
             }
         );
+
+        var getDashboardByTitle = function (){
+            DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.dashboardId = rs.data.id;
+                    $scope.dashboard = rs.data;
+                    $scope.getDataWithAttributes($scope.dashboard, false);
+                }
+            });
+
+        };
 
         (function init() {
 
@@ -212,19 +277,25 @@
 
             		DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboardId = $stateParams.id ? $stateParams.id : rs.data[0].id;
-                            DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                                if (rs.success) {
-                                    $scope.dashboard = rs.data;
-                                    var queryAttributes = getQueryAttributes();
-                                    if(queryAttributes) {
-                                        for (var i = 0; i < queryAttributes.length; i++) {
-                                            $scope.dashboard.attributes.push(queryAttributes[i]);
-                                        }
+                            if ($stateParams.id) {
+                                $scope.dashboardId = $stateParams.id;
+                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
+                                    if (rs.success) {
+                                        $scope.dashboard = rs.data;
+                                        $scope.getDataWithAttributes($scope.dashboard, false);
                                     }
-                                    $scope.loadDashboardData($scope.dashboard);
+                                });
+                            }
+                            else {
+                                if ($rootScope.defaultDashboard) {
+                                    getDashboardByTitle();
                                 }
-                            });
+                                else {
+                                    $rootScope.$on("event:defaultPreferencesInitialized", function () {
+                                        getDashboardByTitle();
+                                    })
+                                }
+                            }
                         }
                     });
 
@@ -237,6 +308,7 @@
                     });
             	}
             });
+            $scope.startRefreshing();
         })();
     }
 
@@ -264,16 +336,19 @@
         };
 
         $scope.deleteDashboardWidget = function (widget) {
-            DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
-                if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-        };
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" from dashboard?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget deleted");
+                        $scope.hide(true);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+         };
 
         $scope.updateDashboardWidget = function (widget) {
             DashboardService.UpdateDashboardWidget(dashboardId, {
@@ -400,10 +475,15 @@
         })();
     }
 
-    function WidgetController($scope, $mdDialog, DashboardService, widget, isNew) {
+    function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
 
+        $scope.currentUserId = currentUserId;
         $scope.isNew = isNew;
         $scope.widget = widget;
+        $scope.dashboard = dashboard;
+        $scope.showWidget = false;
+
+
         if($scope.isNew && $scope.widget)
         {
             $scope.widget.id = null;
@@ -431,14 +511,66 @@
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide(success);
+            $scope.hide(true);
         };
 
-        $scope.deleteWidget = function(widget){
-            DashboardService.DeleteWidget(widget.id).then(function (rs) {
+        $scope.$on("$event:executeSQL", function () {
+            if (widget.sql){
+                $scope.loadModalWidget($scope.widget, true);
+            }
+            else {
+                alertify.warning('Add SQL query');
+            }
+        });
+
+        $scope.$on("$event:showWidget", function () {
+            if (widget.sql){
+                if(widget.type){
+                    $scope.loadModalWidget($scope.widget);
+                }
+                else {
+                    alertify.warning('Choose widget type');
+                }
+             }
+            else {
+                alertify.warning('Add SQL query');
+            }
+        });
+
+        $scope.$on('$destroy', function() {
+            $scope.closeWidget();
+        });
+
+        $scope.loadModalWidget = function (widget, table) {
+
+            $scope.isLoading = true;
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
+            var sqlAdapter = {'sql': widget.sql};
+            var params = setQueryParams(table);
+            DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
-                	alertify.success("Widget deleted");
-                	$scope.hide(true);
+                    var data = rs.data;
+                    var columns = {};
+                    for (var j = 0; j < data.length; j++) {
+                        if(j === 0){
+                            columns = Object.keys(data[j]);
+                        }
+                        if (data[j].CREATED_AT) {
+                            data[j].CREATED_AT = new Date(data[j].CREATED_AT);
+                        }
+                    }
+                    if (table){
+                        widget.executeType = 'table';
+                        widget.testModel = {"columns" : columns};
+                    }
+                    else {
+                        widget.executeType = widget.type;
+                        widget.testModel = JSON.parse(widget.model);
+                    }
+                    widget.data = {};
+                    widget.data.dataset = data;
+                    $scope.isLoading = false;
+                    $scope.showWidget = true;
                 }
                 else {
                     alertify.error(rs.message);
@@ -446,13 +578,66 @@
             });
         };
 
+        var setQueryParams = function(table){
+            var params = ProjectProvider.getProjectQueryParam();
+            for(var i = 0; i < $scope.dashboard.attributes.length; i++){
+                if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
+                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                }
+            }
+            params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
+            if (table) {
+                params = params + "&stackTraceRequired=" + true;
+            }
+            return params;
+        };
+
+        $scope.sort = {
+            column: null,
+            descending: false
+        };
+
+        $scope.changeSorting = function(column) {
+            var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
+
+            if (column.search(specCharRegexp) != -1) {
+                // handle by quotes from both sides
+                column = "\"" + column + "\"";
+            }
+            var sort = $scope.sort;
+            if (sort.column == column) {
+                sort.descending = !sort.descending;
+            } else {
+                sort.column = column;
+                sort.descending = false;
+            }
+        };
+
+        $scope.asString = function (value) {
+            if (value) {
+                value = value.toString();
+            }
+            return value;
+        };
+
+        $scope.closeWidget = function(){
+            $scope.widget.data = null;
+            $scope.widget.executeType = null;
+            $scope.showWidget = false;
+        };
+
         $scope.hide = function (result) {
             $mdDialog.hide(result);
         };
+
         $scope.cancel = function () {
             $mdDialog.cancel();
         };
-        (function initController() {
+
+         (function initController() {
         })();
     }
 

@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.models.dto.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qaprosoft.zafira.models.db.UserPreference;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,6 +23,7 @@ public class UserType extends AbstractType
 	private String lastName;
 	private String password;
 	private List<Role> roles = new ArrayList<>();
+	private List<UserPreference> preferences = new ArrayList<>();
 
 	public UserType() 
 	{
@@ -83,6 +85,14 @@ public class UserType extends AbstractType
 	public void setRoles(List<Role> roles)
 	{
 		this.roles = roles;
+	}
+
+	public List<UserPreference> getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(List<UserPreference> preferences) {
+		this.preferences = preferences;
 	}
 
 	public String getPassword()

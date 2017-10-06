@@ -327,6 +327,14 @@ pre.code:after{
     clear:both
 }
 
+.large-card-content {
+    min-height: 500px !important;
+}
+
+div.code {
+    white-space: pre-line;
+}
+
 #httpMethods md-radio-button .md-label {
     margin-left: 8px !important;
     padding-right: 40px;

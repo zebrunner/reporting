@@ -35,14 +35,7 @@
 
 	        $scope.initSession = function()
 	        {
-	        	UserService.getUserProfile()
-	       		 .then(
-	       		  function (rs) {
-		              if(rs.success)
-		              {
-		            	  $rootScope.currentUser = rs.data;
-		              }
-		       	});
+                $scope.initUserProfile();
 
 		   		DashboardService.GetDashboardByTitle("User Performance").then(function(rs) {
 	               if(rs.success)
@@ -74,9 +67,54 @@
                         $rootScope.$broadcast("event:settings-toolsInitialized", rs.data);
                     }
                 });
+
+                /*$rootScope.pushNotification = function (title, bodyText, timeout) {
+                    Push.create(title, {
+                        body: bodyText,
+                        icon: 'favicon.ico',
+                        timeout: timeout,
+                        onClick: function () {
+                            window.focus();
+                            this.close();
+                        }
+                    });
+                };*/
 	        };
 
-	        $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
+            $scope.initUserProfile = function (){
+                UserService.getUserProfile().then(function (rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.currentUser = rs.data;
+                        var userPreferences = $rootScope.currentUser.preferences;
+                        if (userPreferences && userPreferences.length !=0) {
+                            $scope.setDefaultPreferences(userPreferences);
+                        }
+                        else {
+                            UserService.getDefaultPreferences().then(function(rs){
+                                if(rs.success)
+                                {
+                                    $scope.setDefaultPreferences(rs.data);
+                                }
+                             });
+                        }
+                    }
+                });
+             };
+
+            $scope.setDefaultPreferences = function(userPreferences){
+                for (var i = 0; i < userPreferences.length; i++){
+                    if (userPreferences[i].name === 'DEFAULT_DASHBOARD'){
+                        $rootScope.defaultDashboard = userPreferences[i].value;
+                    }
+                    else if (userPreferences[i].name === 'REFRESH_INTERVAL'){
+                        $rootScope.refreshInterval = userPreferences[i].value;
+                    }
+                }
+                $rootScope.$broadcast("event:defaultPreferencesInitialized");
+            };
+
+            $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
 	            $document.scrollTo(0, 0);
 	        });
 
@@ -85,6 +123,9 @@
 	        	$scope.initSession();
 	        });
 
+            $rootScope.$on("event:preferencesReset", function () {
+                $scope.initUserProfile();
+            });
 
             $rootScope.$on('event:auth-loginRequired', function()
 	        {

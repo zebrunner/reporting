@@ -25,6 +25,9 @@
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" permission="['ROLE_ADMIN']">
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
+                <md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
+                    <span class="fa fa-eye" aria-hidden="true"></span>
+                </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
         <div class="col-md-12">
@@ -47,7 +50,7 @@
                                     	   </th>
                                         <th md-column style="min-width: 360px;">
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.status" name="status" placeholder="Status">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
                                                     <md-option value="" disabled>Status</md-option>
                                                     <md-option value="PASSED">PASSED</md-option>
                                                     <md-option value="FAILED">FAILED</md-option>
@@ -58,15 +61,15 @@
                                                 </md-select>
                                             </md-input-container>
                                             <md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.testSuite" name="testSuite" placeholder="Test suite"/>
                                             </md-input-container>
                                             <md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.environment" name="environment" placeholder="Environment">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.environment" name="environment" placeholder="Environment">
                                                     <md-option value="" disabled>Environment</md-option>
                                                     <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
                                                 </md-select>
@@ -74,7 +77,7 @@
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.platform" name="platform" placeholder="Platform">
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.platform" name="platform" placeholder="Platform">
                                                     <md-option value="" disabled>Platform</md-option>
                                                     <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
                                                 </md-select>
@@ -82,12 +85,12 @@
                                         </th>
                                       <th md-column>
                                         	<md-input-container class="searchable">
-                                                <input type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
+                                                <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                             </md-input-container>
                                         </th>
                                         <th md-column colspan="2">
                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
+                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
                                                     <md-option value="" ng-selected="true"></md-option>
                                                     <md-option value="before">Before</md-option>
                                                     <md-option value="after">After</md-option>
@@ -104,28 +107,30 @@
                                                     <md-option value="last_year">Last Year</md-option>
                                                 </md-select>
                                             </md-input-container>
-                                            <md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
-                                            <md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
+                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
+                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
                                         </th>
                                     </tr>
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun, true)">
                                         <td md-cell>
+                                            <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
-	                                   			aria-label="Select"
-	                                   			data-ng-model="testRun.selected"
-	                                   			data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
-	                                   			data-ng-true-value="true"
-	                                   			data-ng-false-value="false">
-	                                   		</md-checkbox>
-	                                   		<div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
-		                                   		<md-progress-circular md-diameter="20px"></md-progress-circular>
-	                                             <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
-	                                                 <small>{{progressBar}}%</small>
-	                                             </timer>
-                                             </div>
+                                                    aria-label="Select"
+                                                    data-ng-model="testRun.selected"
+                                                    data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"
+                                                    data-ng-true-value="true"
+                                                    data-ng-false-value="false">
+                                                </md-checkbox>
+                                                <div ng-if="!testRun.selected && testRun.status == 'IN_PROGRESS'" data-ng-click="testRun.selected = true">
+                                                    <md-progress-circular md-diameter="20px"></md-progress-circular>
+                                                     <timer countdown="testRun.countdown" eta="testRun.eta" interval="1000" data-ng-if="testRun.countdown">
+                                                         <small>{{progressBar}}%</small>
+                                                     </timer>
+                                                 </div>
+                                            </span>
                                         </td>
                                         <td md-cell>
 	                                         <b>
@@ -159,7 +164,7 @@
                                         </td>
                                         <td md-cell class="no-padding">
                                             <md-menu>
-                                                <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event); initMenuRights(testRun)">
+                                                <md-button aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); $mdMenu.open($event); ">
                                                     <md-icon class="material-icons">more_vert</md-icon>
                                                 </md-button>
                                                 <md-menu-content width="2" style="max-height: 450px;">
@@ -200,8 +205,13 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="rebuild(testRun)">
+                                                        <md-button data-ng-click="rerun(testRun, $event)">
                                                             Rebuild
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item>
+                                                        <md-button data-ng-click="showCodeDialog($event, testRun)">
+                                                            Show log
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider permission="['ROLE_ADMIN']"></md-divider>
@@ -214,7 +224,7 @@
                                             </md-menu>
                                         </td>
                                     </tr>
-                                    <tr ng-if="testRun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr ng-show="testRun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testRun, false)">
                                         <td md-cell colspan="7">
                                             <table class="table">
                                                 <thead>
@@ -248,13 +258,15 @@
                                                                 </span>
                                                             </div>
                                                         	<div class="result_error {{test.status}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
-                                                                <div class="white-space-pre-line"><show-more text="test.message" limit="100" ></show-more></div>
+                                                                <div class="white-space-pre-line"><show-more element-id="test.id" text="test.message" limit="100" ></show-more></div>
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
                                                         	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
+                                                            <a href="" class="float_right label-primary-empty clearfix" data-ng-if="test.workItems.length==0 || (test.workItems.length==1 && test.workItems[0].type=='BUG')" data-ng-click="showAssignJiraTaskDialog(test, true, $event)">Assign task</a>
+                                                            <a href="" class="float_right label-info-empty clearfix" data-ng-if="(test.workItems.length==1 && test.workItems[0].type=='TASK') || test.workItems.length==2" data-ng-click="showAssignJiraTaskDialog(test, false, $event)">Edit task</a>
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">

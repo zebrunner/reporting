@@ -3,36 +3,31 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$location', '$state', 'UserService', 'UtilService', 'AuthService', UserProfileController])
+        .controller('UserProfileController', ['$scope', '$rootScope', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', UserProfileController])
         .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $location, $state, UserService, UtilService, AuthService) {
+    function UserProfileController($scope, $rootScope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
 
     	$scope.UtilService = UtilService;
 
     	$scope.user = {};
     	$scope.changePassword = {};
+        $scope.preferences = [];
+        $scope.preferenceForm = {};
+        $scope.dashboards = [];
     	$scope.pefrDashboardId = null;
     	$scope.accessToken = null;
 
-        (function initController() {
-        	UserService.getUserProfile()
-        	.then(function (rs) {
-        		if(rs.success)
-        		{
-        			$scope.user = rs.data;
-        			$scope.changePassword.userId = $scope.user.id;
-        		}
-        		else
-        		{
-        			alertify.error(rs.message);
-        		}
-            });
-        })();
+
+        $scope.isAdmin = function(){
+             return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        };
 
         $scope.updateUserProfile = function(profile)
         {
+            var userPreferences = profile.preferences;
+            profile.preferences.push($scope.preferences);
         	UserService.updateUserProfile(profile)
         	.then(function (rs) {
         		if(rs.success)
@@ -77,8 +72,26 @@
             alertify.success("Access token copied to clipboard");
         };
 
-        $scope.updateUserPassword = function(changePassword)
-        {
+        $scope.loadDashboards = function () {
+
+            if ($scope.isAdmin() === true) {
+                DashboardService.GetDashboards().then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
+            else {
+                var hidden = true;
+                DashboardService.GetDashboards(hidden).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboards = rs.data;
+                    }
+                });
+            }
+        };
+
+        $scope.updateUserPassword = function(changePassword) {
         	UserService.updateUserPassword(changePassword)
         	.then(function (rs) {
         		if(rs.success)
@@ -92,6 +105,109 @@
         		}
             });
         };
+
+        $scope.getUserProfile = function(){
+            UserService.getUserProfile()
+                .then(function (rs) {
+                    if(rs.success)
+                    {
+                        $scope.user = rs.data;
+                        $scope.changePassword.userId = $scope.user.id;
+                        if($scope.user.preferences.length !== 0){
+                            $scope.preferences = $scope.user.preferences;
+                        }
+                        else {
+                            $scope.getDefaultPreferences();
+                        }
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+        };
+
+        $scope.getDefaultPreferences = function(){
+            UserService.getDefaultPreferences()
+                .then(function (rs) {
+                    if(rs.success)
+                    {
+                        $scope.preferences = rs.data;
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+        };
+
+        $scope.updateUserPreferences = function (preferenceForm){
+            var preferences = $scope.preferences;
+            for (var i = 0; i < preferences.length; i++){
+                preferences[i].userId = $scope.user.id;
+                if (preferences[i].name === 'DEFAULT_DASHBOARD'){
+                    preferences[i].value = preferenceForm.defaultDashboard;
+                }
+                else if (preferences[i].name === 'REFRESH_INTERVAL'){
+                    preferences[i].value = preferenceForm.refreshInterval;
+                }
+            }
+            UserService.updateUserPreferences($scope.user.id, preferences).then(function (rs) {
+                if(rs.success){
+                    $scope.preferences = rs.data;
+                    $rootScope.$broadcast('event:preferencesReset');
+                    alertify.success('User preferences are successfully updated');
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.resetPreferences = function(){
+            UserService.deleteUserPreferences($scope.user.id).then(function (rs) {
+                if(rs.success){
+                    $rootScope.$broadcast('event:preferencesReset');
+                    alertify.success('Preferences are set to default');
+                }
+            else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
+
+        $scope.selectDashboard = function(dashboard){
+            if ($rootScope.defaultDashboard === dashboard.title){
+                return true;
+            }
+        };
+
+        $scope.selectInterval = function(interval){
+                if ($rootScope.refreshInterval == interval){
+                    return true;
+            }
+         };
+
+        $scope.convertMillis = function(millis){
+            var sec = millis/1000;
+            if (millis == 0) {
+                return 'Disabled'
+            }
+            else if(sec < 60){
+                return sec + ' sec';
+            }
+            else {
+                return sec/60 + ' min';
+            }
+        };
+
+        (function initController() {
+            $scope.loadDashboards();
+            $scope.getUserProfile();
+        })();
+
     }
 
     // **************************************************************************

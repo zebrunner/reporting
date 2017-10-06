@@ -52,46 +52,66 @@
                 angular.element('<input type="password" name="password" class="hide"/>').insertBefore(firstDivElement);
             }
         };
-    }).directive('showMore', [function() {
+    }).directive('showMore', ['$location', '$anchorScroll', '$timeout', function(location, anchorScroll, timeout) {
         return {
             restrict: 'AE',
             replace: true,
             scope: {
                 text: '=',
-                limit:'='
+                limit:'=',
+                elementId: '='
             },
 
-            template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
+            template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
 
             link: function(scope, iElement, iAttrs) {
 
+                anchorScroll.yOffset = 100;
 
                 scope.end = scope.limit;
                 scope.isShowMore = true;
                 scope.largeText = true;
 
+                var showMoreOffset = 0;
+                var showMoreElementId = 'more' + scope.elementId;
+                var showLessElementId = 'less' + scope.elementId;
+
                 if (scope.text.length <= scope.limit) {
                     scope.largeText = false;
-                };
+                }
 
                 scope.showMore = function() {
-
+                    showMoreOffset = angular.element('#' + showMoreElementId).offset().top;
                     scope.end = scope.text.length;
                     scope.isShowMore = false;
                 };
 
-                scope.showLess = function() {
+                scope.showLess = function(elementId) {
 
                     scope.end = scope.limit;
                     scope.isShowMore = true;
+
+                    timeout(function () {
+                        if (window.pageYOffset > showMoreOffset) {
+                            /*if (location.hash() !== showMoreElementId) {
+                                location.hash(showMoreElementId);
+                            } else {*/
+                                anchorScroll(showMoreElementId);
+                            /*}*/
+                        }
+                    }, 80);
                 };
             }
         };
-    }]).directive('codeTextarea', ['$timeout', '$interval', function ($timeout, $interval) {
+    }]).directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
         "use strict";
         return {
             restrict: 'E',
-            template: '<span><i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" data-toggle="tooltip" title="Highlight your code! You can use doubleclick also." aria-hidden="true"></i><pre class="code"><code data-ng-class="{{ codeClass }}" ng-dblclick="refreshHighlighting()" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
+            template: '<span>' +
+            '<i style="float: right" data-ng-click="refreshHighlighting()" class="fa fa-refresh" data-toggle="tooltip" title="Highlight code syntax" aria-hidden="true"></i>' +
+            '<i style="float: right" data-ng-click="showWidget()" data-ng-if="codeClass != sql" class="fa fa-pie-chart" data-toggle="tooltip" title="Show widget preview" aria-hidden="true">&nbsp&nbsp</i>' +
+            '<i style="float: right" data-ng-click="executeSQL()" data-ng-if="codeClass != sql" class="fa fa-flash" data-toggle="tooltip" title="Execute SQL query " aria-hidden="true">&nbsp&nbsp</i>' +
+            '<pre class="code"><code data-ng-class="{{ codeClass }}" ng-dblclick="refreshHighlighting()" ng-transclude contenteditable="true">{{ codeData }}</code></pre><hr style="margin-top: 0"></span>',
             replace: true,
             require: 'ngModel',
             transclude: true,
@@ -103,6 +123,7 @@
             link: function (scope, iElement, iAttrs, ngModel) {
 
                 var initHighlight = function() {
+                    var myScope = scope.codeClass;
                     hljs.configure({
                         tabReplace: '    '
                     });
@@ -115,6 +136,14 @@
                     $('pre code').each(function(i, block) {
                         hljs.highlightBlock(block);
                     });
+                };
+
+                scope.executeSQL = function () {
+                    $rootScope.$broadcast('$event:executeSQL');
+                };
+
+                scope.showWidget = function () {
+                    $rootScope.$broadcast('$event:showWidget');
                 };
 
                 $timeout(initHighlight, 100);

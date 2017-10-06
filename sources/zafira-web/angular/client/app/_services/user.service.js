@@ -17,6 +17,9 @@
         service.deleteUser = deleteUser;
         service.addUserToGroup = addUserToGroup;
         service.deleteUserFromGroup = deleteUserFromGroup;
+        service.getDefaultPreferences = getDefaultPreferences;
+        service.updateUserPreferences = updateUserPreferences;
+        service.deleteUserPreferences = deleteUserPreferences;
 
         return service;
 
@@ -54,6 +57,18 @@
 
         function deleteUserFromGroup(idUser, idGroup){
             return $http.delete(API_URL + '/api/users/' + idUser + '/group/' + idGroup).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user from group'));
+        }
+
+        function getDefaultPreferences() {
+            return $http.get(API_URL + '/api/users/preferences').then(UtilService.handleSuccess, UtilService.handleError('Unable to get default preferences'));
+        }
+
+        function updateUserPreferences(userId, preferences) {
+            return $http.put(API_URL + '/api/users/' + userId + '/preferences', preferences).then(UtilService.handleSuccess, UtilService.handleError('Unable to update user preferences'));
+        }
+
+        function deleteUserPreferences(userId) {
+            return $http.delete(API_URL + '/api/users/' + userId + '/preferences').then(UtilService.handleSuccess, UtilService.handleError('Unable to delete user preferences'));
         }
     }
 })();

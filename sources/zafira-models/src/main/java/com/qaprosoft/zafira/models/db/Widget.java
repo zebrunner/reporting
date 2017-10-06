@@ -8,6 +8,7 @@ public class Widget extends AbstractEntity
 	private Integer position;
 	private String sql;
 	private String model;
+	private boolean refreshable;
 	private Integer size;
 	private String type;
 
@@ -44,6 +45,14 @@ public class Widget extends AbstractEntity
 	public String getModel()
 	{
 		return model;
+	}
+
+	public boolean isRefreshable() {
+		return refreshable;
+	}
+
+	public void setRefreshable(boolean refreshable) {
+		this.refreshable = refreshable;
 	}
 
 	public void setModel(String model)

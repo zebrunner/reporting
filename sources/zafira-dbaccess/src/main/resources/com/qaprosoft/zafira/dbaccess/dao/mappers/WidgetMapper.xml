@@ -11,12 +11,13 @@
 	
 	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.WIDGETS (TITLE, SQL, MODEL, TYPE)
+			INSERT INTO zafira.WIDGETS (TITLE, SQL, MODEL, TYPE, REFRESHABLE)
 			VALUES (
 				#{title},
 				#{sql},
 				#{model},
-				#{type}
+				#{type},
+				#{refreshable}
 			)
 		]]>
 	</insert>
@@ -29,6 +30,7 @@
 				W.SQL AS WIDGET_SQL,
 				W.MODEL AS WIDGET_MODEL,
 				W.TYPE AS WIDGET_TYPE,
+				W.REFRESHABLE AS WIDGET_REFRESHABLE,
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
 				W.CREATED_AT AS WIDGET_CREATED_AT
 			FROM
@@ -70,7 +72,12 @@
 				</if>
 				<if test="null != type">
 		            <![CDATA[
-		               TYPE = #{type}
+		               TYPE = #{type},
+		            ]]>
+				</if>
+				<if test="null != refreshable">
+					<![CDATA[
+		               REFRESHABLE = #{refreshable}
 		            ]]>
 				</if>
 			</set>
@@ -100,6 +107,7 @@
 		<result column="WIDGET_SQL" property="sql" />
 		<result column="WIDGET_MODEL" property="model" />
 		<result column="WIDGET_TYPE" property="type" />
+		<result column="WIDGET_REFRESHABLE" property="refreshable" />
 		
 		<result column="DASHBOARD_WIDGET_SIZE" property="size" />
 		<result column="DASHBOARD_WIDGET_POSITION" property="position" />

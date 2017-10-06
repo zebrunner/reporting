@@ -20,6 +20,8 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('AMAZON_SECRET_KEY', '', 'AMAZON'),
 	('AMAZON_BUCKET', '', 'AMAZON'),
 	('AMAZON_ENABLED', true, 'AMAZON'),
+	('HIPCHAT_ACCESS_TOKEN', '', 'HIPCHAT'),
+	('HIPCHAT_ENABLED', true, 'HIPCHAT'),
 	('KEY', '', 'CRYPTO'),
 	('CRYPTO_KEY_SIZE', '128', 'CRYPTO'),
 	('CRYPTO_KEY_TYPE', 'AES', 'CRYPTO');
@@ -34,6 +36,7 @@ INSERT INTO zafira.GROUPS (NAME, ROLE) VALUES
 DO $$
 DECLARE dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE widget_id zafira.WIDGETS.id%TYPE;
+DECLARE USER_ID zafira.USER_PREFERENCES.id%TYPE;
 
 DECLARE general_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE result_widget_id zafira.WIDGETS.id%TYPE;
@@ -41,6 +44,12 @@ DECLARE top_widget_id zafira.WIDGETS.id%TYPE;
 DECLARE progress_widget_id zafira.WIDGETS.id%TYPE;
 
 BEGIN
+	INSERT INTO zafira.users (USERNAME) VALUES ('anonymous') RETURNING id INTO USER_ID;
+
+	INSERT INTO zafira.user_preferences (NAME, VALUE, USER_ID) VALUES
+		('REFRESH_INTERVAL', '0', USER_ID),
+		('DEFAULT_DASHBOARD', 'General', USER_ID);
+
   INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Performance dashboard', TRUE) RETURNING id INTO dashboard_id;
 
   INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES ('Performance widget', 'linechart',

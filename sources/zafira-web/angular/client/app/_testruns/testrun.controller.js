@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -80,6 +80,7 @@
                 }
 
                 $scope.addTestRun(event.testRun);
+                //$scope.createPushNotification(event.testRun, true);
                 $scope.$apply();
             }
             else if (event.type == 'TEST') {
@@ -101,7 +102,7 @@
         };
 
 
-       $scope.addTest = function (test, isEvent) {
+        $scope.addTest = function (test, isEvent) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
@@ -121,6 +122,50 @@
                 testRun.tests[test.id] = test;
             }
         };
+
+       $scope.createPushNotification = function (testRun, isSilent) {
+           if($scope.selectedTestRuns[testRun.id] != null && $scope.selectedTestRuns[testRun.id].followed && testRun.status != 'IN_PROGRESS') {
+               /*$rootScope.pushNotification(testRun.testSuite.name, "Was finished with status '" + testRun.status + "'", 60000);
+               if(isSilent) {
+                   (new Audio('notification.mp3')).play();
+               }*/
+           }
+       };
+
+        $scope.selectedTestRuns = {};
+
+       $scope.addToSelectedTestRuns = function (testRun) {
+           $timeout(function () {
+               if(testRun.selected) {
+                   $scope.selectedTestRuns[testRun.id] = testRun;
+               } else {
+                   delete $scope.selectedTestRuns[testRun.id];
+               }
+           }, 100);
+       };
+
+       $scope.followSelectedTestRuns = function () {
+           var count = 0;
+           for(var id in $scope.selectedTestRuns) {
+               $scope.selectedTestRuns[id].followed = true;
+               if($scope.selectedTestRuns.hasOwnProperty(id)) {
+                   count++;
+               }
+           }
+           var messageText = '';
+           switch(count) {
+               case 0:
+                   messageText = 'Select test runs for follow them';
+                   break;
+               case 1:
+                   messageText = 'Selected test run will be followed';
+                   break;
+               default:
+                   messageText = 'Selected ' + count + ' test runs will be followed';
+                   break;
+           }
+           alertify.warning(messageText);
+       };
 
         $scope.updateTestRunResults = function (testRun, test, changeByAmount) {
             switch (test.status) {
@@ -174,10 +219,11 @@
         };
 
         $scope.deleteTestRun = function (id, confirmation)
-        {
+
+         {
         		if(confirmation == null)
         		{
-        			confirmation = confirm("Do you really want to delete test run?");
+        			confirmation = confirm('Do you really want to delete "' + $scope.testRuns[id].testSuite.name + '" test run?');
         		}
             if (confirmation)
             {
@@ -330,6 +376,9 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
+            if ($location.$$path != $location.$$url){
+                $location.search({});
+            }
             if ($location.$$absUrl.match(new RegExp(testRun.id, 'gi')) == null){
                 window.open($location.$$absUrl + "/" + testRun.id, '_blank');
             }
@@ -388,6 +437,10 @@
             $scope.showBuildNowDialog(testRun, event);
         };
 
+        $scope.rerun = function (testRun, event) {
+            $scope.showRerunDialog(testRun, event);
+        };
+
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
         		{
@@ -435,6 +488,13 @@
             ConfigService.getConfig("jenkins").then(function (rs) {
                 $scope.isConnectedToJenkins = rs.data.connected;
             });
+        };
+
+        $scope.isUrlContainsJenkinsHost = function(url, testRun) {
+            if(url && testRun.job && url.includes(testRun.job.jenkinsHost)) {
+                return true;
+            }
+            return false;
         };
 
         $scope.showDetails = function (id) {
@@ -518,6 +578,23 @@
             });
         };
 
+        $scope.showCodeDialog = function(event, testRun) {
+            $mdDialog.show({
+                controller: CodeController,
+                templateUrl: 'app/_testruns/code_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    testRun: testRun
+                }
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+
         $scope.showBuildNowDialog = function(testRun, event) {
             $mdDialog.show({
                 controller: BuildNowController,
@@ -532,6 +609,23 @@
             })
                 .then(function(answer) {
                 }, function() {
+                });
+        };
+
+        $scope.showRerunDialog = function (testRun, event) {
+            $mdDialog.show({
+                controller: TestRunRerunController,
+                templateUrl: 'app/_testruns/testrun_rerun_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose: true,
+                fullscreen: true,
+                locals: {
+                    testRun: testRun
+                }
+            })
+                .then(function (answer) {
+                }, function () {
                 });
         };
 
@@ -590,6 +684,31 @@
                 });
         };
 
+
+
+        $scope.showAssignJiraTaskDialog = function(testTask, isNewTask, event) {
+                    $mdDialog.show({
+                        controller: TaskController,
+                        templateUrl: 'app/_testruns/task_assign_modal.html',
+                        parent: angular.element(document.body),
+                        targetEvent: event,
+                        clickOutsideToClose:true,
+                        fullscreen: true,
+                        locals: {
+                            testTask: testTask,
+                            isNewTask: isNewTask
+                        }
+                    })
+                        .then(function(answer) {
+                            if (answer == true) {
+                                $scope.loadTests($scope.lastTestRunOpened);
+                            }
+                        }, function() {
+                        });
+                };
+
+
+
 //        $scope.$watch('showRealTimeEvents', function () {
 //            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
 //        });
@@ -613,14 +732,41 @@
             }
          };
 
-        $scope.switchTestRunExpand = function (testRun) {
-            if(!testRun.expand) {
-                $scope.loadTests(testRun.id);
-                testRun.expand = true;
-            } else {
-                testRun.expand = false;
+        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
+            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
+                if (!testRun.expand) {
+                    if ((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
+                        $scope.loadTests(testRun.id);
+                    }
+                    testRun.expand = true;
+                } else {
+                    testRun.expand = false;
+                }
             }
+        };
 
+        var hasRightsToExpand = function (forceTrue, fromTestRun) {
+            if(!fromTestRun) {
+                var selectedText = window.getSelection().toString();
+                var unexpectedTokens = ['\n', '\t', ''];
+                if (forceTrue) return true;
+                for (var i = 0; i < unexpectedTokens.length; i++) {
+                    if (unexpectedTokens[i] === selectedText.trim()) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        var getJSONLength = function(jsonObj) {
+            var count = 0;
+            for(var id in jsonObj) {
+                count++;
+            }
+            return count;
         };
 
         $scope.splitPlatform = function (string) {
@@ -639,11 +785,21 @@
 
         $scope.reset = function () {
             $scope.sc = angular.copy(DEFAULT_SC);
+            $location.search({});
             $scope.search();
         };
 
         var toSc = function (qParams) {
             $scope.sc = qParams;
+        };
+
+        $scope.onChangeCriteria = function () {
+            for(var criteria in $scope.sc) {
+                if(!$scope.sc[criteria] || !$scope.sc[criteria].length) {
+                    delete $scope.sc[criteria];
+                }
+            }
+            $location.search($scope.sc);
         };
 
         (function init() {
@@ -861,6 +1017,47 @@
         })();
     }
 
+    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, ConfigService) {
+
+        $scope.rerunFailures = true;
+        $scope.testRun = testRun;
+
+        $scope.rebuild = function (testRun, rerunFailures) {
+            if ($scope.jenkinsEnabled) {
+                TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
+                    if(rs.success)
+                    {
+                        testRun.status = 'IN_PROGRESS';
+                        alertify.success("Rebuild triggered in CI service");
+                        $scope.hide(true);
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            else {
+                window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
+            }
+         };
+
+        ConfigService.getConfig("jenkins").then(function(rs) {
+            $scope.jenkinsEnabled = rs.data.connected;
+        });
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        (function initController() {
+        })();
+    }
+
+
     function KnownIssueController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, test, isNew) {
         $scope.jiraId;
         $scope.isConnectedToJira = false;
@@ -892,6 +1089,7 @@
                 }
             });
         };
+
 
         $scope.checkKnowIssue = function () {
             $scope.getRightToSearch();
@@ -1001,6 +1199,8 @@
                     $scope.knownIssues = rs.data;
                     if(test.workItems.length && ! isNew)
                         angular.copy($scope.testBugIssue, $scope.newKnownIssue);
+
+                        if(test.workItems.length == 0) test.has ==false;
                 }
                 else
                 {
@@ -1066,6 +1266,261 @@
             $scope.initNewKnownIssue();
             $scope.getKnownIssues();
             $scope.getJiraStatusesAsClosed();
+        })();
+    }
+
+
+ function TaskController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, testTask, isNewTask) {
+        $scope.jiraId;
+        $scope.isConnectedToJira = false;
+        $scope.isIssueFound = true;
+        $scope.isDataLoaded = false;
+        $scope.isFieldsDisabled = true;
+        $scope.isJiraIdExists = true;
+        $scope.isJiraIdClosed = false;
+
+        $scope.assignWorkItem = function () {
+                    var taskIssue = $scope.newTaskIssue;
+                    TestService.assignTestJiraTask(testTask.id, taskIssue).then(function(rs) {
+                        if(rs.success)
+                        {
+                            $scope.hide();
+                            if(isNewTask)
+                                alertify.success('A new work item "' + taskIssue.jiraId + '" was assigned');
+                            else{
+                               var index = testTask.workItems.indexOf(taskIssue);
+                                testTask.workItems.splice(index, 1);
+                                alertify.success('A new work item "' + taskIssue.jiraId + '" was updated');
+                                }
+                          testTask.workItems.push(rs.data);
+                        }
+                        else
+                        {
+                            if(isNewTask)
+                                alertify.error('Failed to assign "' + taskIssue.jiraId + '" new work item');
+                            else
+                                alertify.error('Failed to update "' + taskIssue.jiraId + '" work item');
+                        }
+                    });
+                };
+
+
+                $scope.deleteWorkItem = function () {
+                                    var taskIssue = $scope.newTaskIssue;
+                                    TestService.deleteTestJiraTask(testTask.id, taskIssue.id).then(function(rs) {
+                                        if(rs.success)
+                                        {
+                                        var index = testTask.workItems.indexOf(taskIssue);
+                                        testTask.workItems.splice(index, 1);
+                                        $scope.hide();
+                                        alertify.success('A work item "' + taskIssue.jiraId + '" was unassigned');
+                                        }
+                                        else
+                                        alertify.error('Failed to unassign "' + taskIssue.jiraId + '" work item');
+
+                                    });
+                                };
+
+
+        $scope.checkTaskIssue = function () {
+            $scope.getRightToSearch();
+            if ($scope.isRightToSearch && $scope.isConnectedToJira) {
+                $scope.isIssueFound = false;
+                TestService.getJiraIssue($scope.newTaskIssue.jiraId).then(function(rs) {
+                    if(rs.success)
+                    {
+                        var issue = rs.data;
+                        $scope.isIssueFound = true;
+                        checkIssueStatus(issue);
+                        if ($scope.isJiraIdExists) {
+                            $scope.newTaskIssue.description = issue.summary;
+                            $scope.newTaskIssue.assigneeMessage = 'Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name;
+                            $scope.newTaskIssue.status = issue.status.name;
+                        }
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+        };
+
+        var checkIssueStatus = function (issue) {
+            if (issue == '') {
+                $scope.isJiraIdClosed = false;
+                $scope.isJiraIdExists = false;
+                return;
+            }
+            $scope.checkStatusAsClosed(issue.status.name);
+            if($scope.isJiraIdClosed) {
+                $scope.isJiraIdExists = true;
+            }
+            else {
+                // Reset flags
+                $scope.isJiraIdExists = true;
+            }
+        };
+
+        $scope.isRightToSearch = false;
+
+
+        $scope.getRightToSearch = function () {
+            if ($scope.newTaskIssue.jiraId == null || !fieldIsChanged) {
+                $scope.isRightToSearch = false;
+                $scope.isIssueFound = true;
+            } else {
+                $scope.isRightToSearch = true;
+                fieldIsChanged = false;
+            }
+        };
+
+        var fieldIsChanged = false;
+
+        $scope.onTaskChangeAction = function () {
+            fieldIsChanged = true;
+            // Reset flags
+            $scope.newTaskIssue.description = '';
+            $scope.newTaskIssue.id = null;
+            $scope.newTaskIssue.status = null;
+            $scope.newTaskIssue.assigneeMessage = null;
+            $scope.isJiraIdExists = true;
+            $scope.isJiraIdClosed = false;
+            $scope.isIssueFound = false;
+
+        };
+
+        $scope.selectCurrentIssue = function(issue) {
+            checkTestHasIssues();
+            $scope.isNewTask = ! (issue.jiraId == $scope.testTaskIssue.jiraId);
+            $scope.newTaskIssue.id = issue.id;
+            $scope.newTaskIssue.jiraId = issue.jiraId;
+            $scope.newTaskIssue.description = issue.description;
+            $scope.newTaskIssue.status = issue.status.name;
+        };
+
+        $interval(function () {
+            $scope.checkTaskIssue();
+        }, 2000);
+
+
+
+        function checkTestHasIssues() {
+            $scope.testHasTaskIssues = testTask.workItems.filter(function (item) {
+                return item.type == 'TASK';
+            }).length;
+        }
+
+        function getTestTaskIssue() {
+            $scope.testTaskIssue = {};
+            $scope.testTaskIssue.jiraId = '';
+            if($scope.testHasTaskIssues)
+                $scope.testTaskIssue = testTask.workItems.filter(function (item) {
+                    return item.type == 'TASK';
+                })[0];
+        }
+
+        $scope.initNewTaskIssue = function () {
+            $scope.isNewTask = isNewTask;
+            $scope.newTaskIssue = {};
+            $scope.newTaskIssue.type = "TASK";
+            $scope.newTaskIssue.testCaseId = testTask.testCaseId;
+        };
+
+        $scope.cancel = function () {
+            $scope.hide();
+        };
+
+        $scope.getJiraStatusesAsClosed = function() {
+            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+                $scope.jiraStatusesAsClosed = rs.data.split(';');
+            }, function errorCallback(data) {
+                console.error(data);
+            });
+        };
+
+        $scope.checkStatusAsClosed = function (status) {
+            var newAr = $scope.jiraStatusesAsClosed.filter(function (jiraClosedStatus) {
+                return jiraClosedStatus.toLowerCase() == status.toLowerCase();
+            });
+            $scope.isJiraIdClosed = newAr.length != 0;
+        };
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+        (function initController() {
+            ConfigService.getConfig("jira").then(function(rs) {
+                $scope.isConnectedToJira = rs.data.connected;
+                $scope.isDataLoaded = true;
+                $scope.isFieldsDisabled = false;
+            });
+            checkTestHasIssues();
+            getTestTaskIssue();
+            $scope.initNewTaskIssue();
+            $scope.getJiraStatusesAsClosed();
+            angular.copy(testTask.workItems.filter(function(workItem) {
+                return workItem.type === 'TASK';
+            })[0], $scope.newTaskIssue);
+        })();
+    }
+
+
+    function CodeController($scope, $mdDialog, $interval, testRun, TestRunService) {
+
+        $scope.content = '';
+        $scope.count = 100;
+        $scope.fullCount = 0;
+
+        $scope.getContent = function () {
+            TestRunService.getConsoleOutput(testRun.id, $scope.count, $scope.fullCount).then(function(rs) {
+                if(rs.success)
+                {
+                    for(var fullCount in rs.data) {
+                        if(fullCount === '-1')
+                        {
+                            stopInterval();
+                            break;
+                        }
+                        $scope.content = $scope.content.concat(rs.data[fullCount]);
+                        $scope.fullCount = fullCount;
+                    }
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                    $scope.hide();
+                }
+            });
+        };
+
+        var interval;
+
+        var startInterval = function () {
+            interval = $interval(function() {
+                $scope.getContent();
+            }, 8000);
+        };
+
+        var stopInterval = function () {
+            $interval.cancel(interval);
+            interval = undefined;
+        };
+        $scope.$on('$destroy', function() {
+            stopInterval();
+        });
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+        (function initController() {
+            $scope.getContent();
+            startInterval();
         })();
     }
 })();
