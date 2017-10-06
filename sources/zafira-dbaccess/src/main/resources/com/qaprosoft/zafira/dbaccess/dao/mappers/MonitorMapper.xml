@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper">
+
+    <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+
+			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, IS_ACTIVE, CRON_EXPRESSION,
+			EXPECTED_RESPONSE_STATUS, RECIPIENTS, TYPE)
+			VALUES (
+				#{name},
+				#{url},
+			    #{httpMethod},
+				#{requestBody},
+				#{active},
+				#{cronExpression},
+				#{expectedResponseCode},
+				#{recipients},
+				#{type}
+			)
+
+        ]]>
+    </insert>
+
+    <sql id="deleteMonitor">
+        <![CDATA[
+
+			DELETE FROM zafira.MONITORS
+			WHERE ID = #{id}
+
+        ]]>
+    </sql>
+
+    <delete id="deleteMonitor">
+        <include refid="deleteMonitor"/>
+    </delete>
+
+    <delete id="deleteMonitorById">
+        <include refid="deleteMonitor"/>
+    </delete>
+
+    <update id="updateMonitor">
+        <![CDATA[
+
+			UPDATE
+			    zafira.MONITORS
+			SET
+                NAME = #{name},
+                URL = #{url},
+                HTTP_METHOD = #{httpMethod},
+                REQUEST_BODY = #{requestBody},
+                IS_ACTIVE = #{active},
+                CRON_EXPRESSION = #{cronExpression},
+                EXPECTED_RESPONSE_STATUS = #{expectedResponseCode},
+                RECIPIENTS = #{recipients},
+                TYPE = #{type}
+			WHERE
+			    ID = #{id}
+
+        ]]>
+    </update>
+
+
+    <sql id="getMonitors">
+        <![CDATA[
+			SELECT
+				M.ID AS MONITOR_ID,
+				M.NAME AS MONITOR_NAME,
+				M.URL AS MONITOR_URL,
+				M.HTTP_METHOD AS MONITOR_HTTP_METHOD,
+				M.REQUEST_BODY AS MONITOR_REQUEST_BODY,
+				M.IS_ACTIVE AS MONITOR_IS_ACTIVE,
+				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
+				M.RECIPIENTS AS MONITOR_RECIPIENTS,
+				M.EXPECTED_RESPONSE_STATUS AS MONITOR_EXPECTED_RESPONSE_STATUS,
+				M.TYPE AS MONITOR_TYPE,
+				M.CREATED_AT AS MONITOR_CREATED_AT,
+				M.MODIFIED_AT AS MONITOR_MODIFIED_AT
+			FROM
+				zafira.MONITORS M
+
+        ]]>
+    </sql>
+
+
+    <select id="getMonitorById" resultMap="MonitorResultMap">
+        <include refid="getMonitors"/>
+        <![CDATA[
+			WHERE M.ID = #{id};
+		]]>
+    </select>
+
+    <select id="getMonitorByMonitorName" resultMap="MonitorResultMap">
+        <include refid="getMonitors"/>
+        <![CDATA[
+			WHERE M.NAME = #{name};
+		]]>
+    </select>
+
+
+    <select id="getAllMonitors" resultMap="MonitorResultMap">
+        <include refid="getMonitors"/>
+    </select>
+
+
+    <sql id="getCount">
+        <![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				zafira.MONITORS M
+        ]]>
+    </sql>
+
+    <select id="getMonitorsCount" resultType="java.lang.Integer">
+        <include refid="getCount"/>
+    </select>
+
+
+    <resultMap type="com.qaprosoft.zafira.models.db.Monitor" id="MonitorResultMap" autoMapping="false">
+        <id column="MONITOR_ID" property="id"/>
+        <result column="MONITOR_NAME" property="name"/>
+        <result column="MONITOR_URL" property="url"/>
+        <result column="MONITOR_HTTP_METHOD" property="httpMethod"/>
+        <result column="MONITOR_REQUEST_BODY" property="requestBody"/>
+        <result column="MONITOR_IS_ACTIVE" property="active"/>
+        <result column="MONITOR_CRON_EXPRESSION" property="cronExpression"/>
+        <result column="MONITOR_EXPECTED_RESPONSE_STATUS" property="expectedResponseCode"/>
+        <result column="MONITOR_RECIPIENTS" property="recipients"/>
+        <result column="MONITOR_TYPE" property="type"/>
+        <result column="JOB_MODIFIED_AT" property="modifiedAt"/>
+        <result column="JOB_CREATED_AT" property="createdAt"/>
+    </resultMap>
+
+</mapper>

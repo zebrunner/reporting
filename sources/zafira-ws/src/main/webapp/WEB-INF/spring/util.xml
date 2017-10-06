@@ -32,6 +32,7 @@
 				<value>dozer/TestCase-dozer-mapping.xml</value>
 				<value>dozer/Test-dozer-mapping.xml</value>
 				<value>dozer/Job-dozer-mapping.xml</value>
+				<value>dozer/Monitor-dozer-mapping.xml</value>
 				<value>dozer/TestRun-dozer-mapping.xml</value>
 				<value>dozer/User-dozer-mapping.xml</value>
 				<value>dozer/Project-dozer-mapping.xml</value>
