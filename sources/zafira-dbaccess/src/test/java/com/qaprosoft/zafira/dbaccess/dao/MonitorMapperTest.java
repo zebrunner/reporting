@@ -33,12 +33,12 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
         {
             setName("n1" + KeyGenerator.getKey());
             setUrl("https://www.onliner.by/");
-            setExpectedResponseCode(KeyGenerator.getKey());
+            setExpectedCode(KeyGenerator.getKey());
             setHttpMethod(HttpMethod.GET);
             setCronExpression("0 * * ? * *");
             setRecipients("e.jhon@gmail.com");
             setRequestBody("{'k':'v'}");
-            setActive(true);
+            setNotificationEnabled(true);
             setType(Type.HTTP);
         }
     };
@@ -75,12 +75,12 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
     {
         MONITOR.setName("n1" + KeyGenerator.getKey());
         MONITOR.setUrl("https://mail.google.com/");
-        MONITOR.setExpectedResponseCode(KeyGenerator.getKey());
+        MONITOR.setExpectedCode(KeyGenerator.getKey());
         MONITOR.setHttpMethod(Monitor.HttpMethod.POST);
         MONITOR.setCronExpression("0 */3 * ? * *");
         MONITOR.setRecipients("paul@gmail.com");
         MONITOR.setRequestBody("{'kkk':'vvvv'}");
-        MONITOR.setActive(false);
+        MONITOR.setNotificationEnabled(false);
         MONITOR.setType(Monitor.Type.PING);
         monitorMapper.updateMonitor(MONITOR);
         checkMonitor(monitorMapper.getMonitorById(MONITOR.getId()));
@@ -121,10 +121,10 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
         assertEquals(monitor.getUrl(), MONITOR.getUrl(), "URL must match");
         assertEquals(monitor.getCronExpression(), MONITOR.getCronExpression(), "Cron expression must match");
         assertEquals(monitor.getRecipients(), MONITOR.getRecipients(), "Emails must match");
-        assertEquals(monitor.getExpectedResponseCode(), MONITOR.getExpectedResponseCode(), "Expected response status must match");
+        assertEquals(monitor.getExpectedCode(), MONITOR.getExpectedCode(), "Expected response status must match");
         assertEquals(monitor.getRequestBody(), MONITOR.getRequestBody(), "Request body must match");
         assertEquals(monitor.getType(), MONITOR.getType(), "Type must match");
-        assertEquals(monitor.isActive(), MONITOR.isActive(), "Enable notification must match");
+        assertEquals(monitor.isNotificationEnabled(), MONITOR.isNotificationEnabled(), "Enable notification must match");
         assertEquals(monitor.getHttpMethod(), MONITOR.getHttpMethod(), "HTTP method must match");
     }
 

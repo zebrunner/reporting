@@ -25,10 +25,14 @@ public class MonitorType extends AbstractEntity
 	@NotNull(message = "Type required")
 	private Monitor.Type type;
 	@NotNull(message = "Checkbox should be enabled or disabled")
-	private boolean active;
+	private boolean notificationEnabled;
+	@NotNull(message = "Checkbox should be enabled or disabled")
+	private boolean running;
 	private String recipients;
 	@NotNull(message = "Expected code required")
-	private int expectedResponseCode;
+	private int expectedCode;
+	private int lastCode;
+	private boolean lastRunPassed;
 
 	public String getName()
 	{
@@ -80,14 +84,24 @@ public class MonitorType extends AbstractEntity
 		this.cronExpression = cronExpression;
 	}
 
-	public boolean isActive()
+	public boolean isNotificationEnabled()
 	{
-		return active;
+		return notificationEnabled;
 	}
 
-	public void setActive(boolean active)
+	public void setNotificationEnabled(boolean notificationEnabled)
 	{
-		this.active = active;
+		this.notificationEnabled = notificationEnabled;
+	}
+
+	public boolean isRunning()
+	{
+		return running;
+	}
+
+	public void setRunning(boolean running)
+	{
+		this.running = running;
 	}
 
 	public String getRecipients()
@@ -100,14 +114,34 @@ public class MonitorType extends AbstractEntity
 		this.recipients = recipients;
 	}
 
-	public int getExpectedResponseCode()
+	public int getExpectedCode()
 	{
-		return expectedResponseCode;
+		return expectedCode;
 	}
 
-	public void setExpectedResponseCode(int expectedResponseCode)
+	public void setExpectedCode(int expectedCode)
 	{
-		this.expectedResponseCode = expectedResponseCode;
+		this.expectedCode = expectedCode;
+	}
+
+	public int getLastCode()
+	{
+		return lastCode;
+	}
+
+	public void setLastCode(int lastCode)
+	{
+		this.lastCode = lastCode;
+	}
+
+	public boolean isLastRunPassed()
+	{
+		return lastRunPassed;
+	}
+
+	public void setLastRunPassed(boolean lastRunPassed)
+	{
+		this.lastRunPassed = lastRunPassed;
 	}
 
 	public Monitor.Type getType()

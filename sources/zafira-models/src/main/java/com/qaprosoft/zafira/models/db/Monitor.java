@@ -19,10 +19,13 @@ public class Monitor extends AbstractEntity
 	private HttpMethod httpMethod;
 	private String requestBody;
 	private String cronExpression;
-	private boolean active;
+	private boolean notificationEnabled;
+	private boolean running;
 	private String recipients;
 	private Type type;
-	private int expectedResponseCode;
+	private int expectedCode;
+	private int lastCode;
+	private boolean lastRunPassed;
 
 	public String getName()
 	{
@@ -74,24 +77,34 @@ public class Monitor extends AbstractEntity
 		this.cronExpression = cronExpression;
 	}
 
-	public boolean isActive()
+	public boolean isNotificationEnabled()
 	{
-		return active;
+		return notificationEnabled;
 	}
 
-	public void setActive(boolean active)
+	public void setNotificationEnabled(boolean notificationEnabled)
 	{
-		this.active = active;
+		this.notificationEnabled = notificationEnabled;
 	}
 
-	public int getExpectedResponseCode()
+	public boolean isRunning()
 	{
-		return expectedResponseCode;
+		return running;
 	}
 
-	public void setExpectedResponseCode(int expectedResponseCode)
+	public void setRunning(boolean running)
 	{
-		this.expectedResponseCode = expectedResponseCode;
+		this.running = running;
+	}
+
+	public int getExpectedCode()
+	{
+		return expectedCode;
+	}
+
+	public void setExpectedCode(int expectedCode)
+	{
+		this.expectedCode = expectedCode;
 	}
 
 	public String getRecipients()
@@ -114,6 +127,26 @@ public class Monitor extends AbstractEntity
 		this.type = type;
 	}
 
+	public int getLastCode()
+	{
+		return lastCode;
+	}
+
+	public void setLastCode(int lastCode)
+	{
+		this.lastCode = lastCode;
+	}
+
+	public boolean isLastRunPassed()
+	{
+		return lastRunPassed;
+	}
+
+	public void setLastRunPassed(boolean lastRunPassed)
+	{
+		this.lastRunPassed = lastRunPassed;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -123,10 +156,10 @@ public class Monitor extends AbstractEntity
 				", httpMethod=" + httpMethod +
 				", requestBody='" + requestBody + '\'' +
 				", cronExpression='" + cronExpression + '\'' +
-				", active=" + active +
+				", active=" + notificationEnabled +
 				", emails='" + recipients + '\'' +
 				", type=" + type +
-				", expectedResponseCode=" + expectedResponseCode +
+				", expectedCode=" + expectedCode +
 				'}';
 	}
 }

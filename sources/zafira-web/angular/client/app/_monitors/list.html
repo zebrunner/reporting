@@ -25,12 +25,13 @@
                 <div class="col-md-4" data-ng-repeat="monitor in monitors | orderBy:'name'">
                     <div class="card bg-white">
                         <div style="min-height: 800px" class="card-content">
-                            <i ng-class="{'highlight_green': monitor.active, 'highlight_gray': !monitor.active}" class="material-icons material-icon-16px">fiber_manual_record</i>
+                            <i ng-class="{'highlight_green': monitor.lastRunPassed, 'highlight_red': !monitor.lastRunPassed, 'highlight_gray': !monitor.running}" class="material-icons material-icon-16px">fiber_manual_record</i>
                             <span class="card-title">
+                                <md-tooltip md-direction="top">Last code: {{ monitor.lastCode }}</md-tooltip>
                                 {{ monitor.name }}
                             </span>
                             <md-input-container style="float: right; margin: 0; padding: 0">
-                                <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, true)" ng-model="monitor.active" aria-label="notif-switch"></md-switch>
+                                <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, true)" ng-model="monitor.running" aria-label="notif-switch"></md-switch>
                             </md-input-container>
                             <div layout layout-sm="column" style="padding: 0">
                                 <md-input-container flex>
@@ -57,7 +58,6 @@
                                 <md-radio-button class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
                                 <md-radio-button class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
                                 <md-radio-button class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
-                                <md-radio-button class="checkbox-inline md-primary" value="DELETE">DELETE</md-radio-button>
                             </md-radio-group>
                             <div layout layout-sm="column" ng-if="isHttpBodyBlockPresent(monitor)" style="padding: 0">
                                 <span>Body</span>
@@ -74,7 +74,7 @@
                             <div layout layout-sm="column" style="padding: 0">
                                 <md-input-container flex>
                                     <label>Expected code</label>
-                                    <input name="value" type="number" data-ng-model="monitor.expectedResponseCode" required/>
+                                    <input name="value" type="number" data-ng-model="monitor.expectedCode" required/>
                                 </md-input-container>
                             </div>
                             <div layout layout-sm="column" style="padding: 0">
@@ -104,6 +104,11 @@
                                             </md-not-found>
                                         </md-autocomplete>
                                     </md-chips>
+                                </md-input-container>
+                            </div>
+                            <div layout layout-sm="column">
+                                <md-input-container style="float: right; margin-top: 0px">
+                                    <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationEnabled" aria-label="notif-switch">Enable notifications</md-switch>
                                 </md-input-container>
                             </div>
                         </div>
