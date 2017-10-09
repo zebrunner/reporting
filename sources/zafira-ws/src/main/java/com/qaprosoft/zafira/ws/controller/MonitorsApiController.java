@@ -62,11 +62,10 @@ public class MonitorsApiController extends AbstractController
 	@ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
-	MonitorType updateMonitor(@RequestParam(value = "notificationsOnly", required = false) boolean notificationsOnly,
+	MonitorType updateMonitor(@RequestParam(value = "switchJob", required = false) Boolean switchJob,
 			@Valid @RequestBody MonitorType monitor) throws ServiceException
 	{
-		return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), notificationsOnly),
-				MonitorType.class);
+		return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), switchJob, true), MonitorType.class);
 	}
 
 	@ResponseStatusDetails

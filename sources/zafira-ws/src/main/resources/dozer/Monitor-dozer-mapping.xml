@@ -31,8 +31,12 @@
             <b>cronExpression</b>
         </field>
         <field>
-            <a>active</a>
-            <b>active</b>
+            <a>notificationEnabled</a>
+            <b>notificationEnabled</b>
+        </field>
+        <field>
+            <a>running</a>
+            <b>running</b>
         </field>
         <field>
             <a>recipients</a>
@@ -43,8 +47,16 @@
             <b>type</b>
         </field>
         <field>
-            <a>expectedResponseCode</a>
-            <b>expectedResponseCode</b>
+            <a>expectedCode</a>
+            <b>expectedCode</b>
+        </field>
+        <field>
+            <a>lastCode</a>
+            <b>lastCode</b>
+        </field>
+        <field>
+            <a>lastRunPassed</a>
+            <b>lastRunPassed</b>
         </field>
     </mapping>
 </mappings>
