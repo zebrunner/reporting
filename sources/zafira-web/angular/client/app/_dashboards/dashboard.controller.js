@@ -267,15 +267,16 @@
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
-
+          // TODO: HOTFIX for PhantomJS, need additional refactorring
         	AuthService.RefreshToken(token)
-    		.then(
+    		  .then(
             function (rs) {
             	if(rs.success)
             	{
             		AuthService.SetCredentials(rs.data);
 
-            		DashboardService.GetDashboards().then(function (rs) {
+            		DashboardService.GetDashboards().then(function (rs)
+                {
                         if (rs.success) {
                             if ($stateParams.id) {
                                 $scope.dashboardId = $stateParams.id;
@@ -297,18 +298,19 @@
                                 }
                             }
                         }
-                    });
+                });
 
-            		DashboardService.GetWidgets().then(function (rs) {
-                        if (rs.success) {
-                            $scope.widgets = rs.data;
-                        } else {
-                            alertify.error(rs.message);
-                        }
-                    });
+            		DashboardService.GetWidgets().then(function (rs)
+                {
+                      if (rs.success) {
+                          $scope.widgets = rs.data;
+                      } else {
+                          alertify.error(rs.message);
+                      }
+                });
+                $scope.startRefreshing();
             	}
             });
-            $scope.startRefreshing();
         })();
     }
 
