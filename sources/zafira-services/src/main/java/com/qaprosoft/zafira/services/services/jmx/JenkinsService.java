@@ -224,18 +224,19 @@ public class JenkinsService implements IJMXService
                 Map<String, Object> param = (Map)iterator.next();
                 String name = String.valueOf(param.get("name"));
                 String value = String.valueOf(param.get("value"));
-                String buildParamClass = String.valueOf("_class");
+                String buildParamClass = String.valueOf(param.get("_class"));
                 buildParameter.setName(name);
                 buildParameter.setValue(value);
-                if (buildParamClass.matches("Hide")){
+                if (buildParamClass.contains("Hide")){
                     buildParameter.setParameterClass(HIDDEN);
                 }
-                else if (buildParamClass.matches("String")) {
+                else if (buildParamClass.contains("String")) {
                     buildParameter.setParameterClass(STRING);
                 }
-                else if (buildParamClass.matches("Boolean")) {
+                else if (buildParamClass.contains("Boolean")) {
                     buildParameter.setParameterClass(BOOLEAN);
                 }
+                if (!name.equals("ci_run_id"))
                 params.add(buildParameter);
             }
         }
