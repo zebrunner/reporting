@@ -22,11 +22,19 @@
                 <div data-ng-if="noValidJob" layout="row" layout-align="center center">
                     <small>Empty</small>
                 </div>
-                <div layout layout-sm="column" ng-repeat="(key, value) in jobParameters">
-                    <md-input-container flex>
-                        <label>{{key}}<span data-ng-if="'ci_run_id' == key"> (new)</span></label>
-                        <input ng-model="jobParameters[key]" type="text"/>
-                    </md-input-container>
+                <div layout layout-sm="column" ng-repeat="jobParameter in jobParameters" data-ng-if="jobParameter.parameterClass != 'HIDDEN'">
+                    <div data-ng-if="jobParameter.parameterClass == 'STRING'" class="raw">
+                        <md-input-container flex >
+                            <label>{{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span></label>
+                            <input ng-model="jobParameter.value" type="text" />
+                        </md-input-container>
+                    </div>
+                    <div data-ng-if="jobParameter.parameterClass == 'BOOLEAN'" class="raw">
+                        <label>{{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span></label>
+                        <md-input-container style="float: right; margin-top: 0" flex>
+                            <md-switch style="margin-top: 0" class="md-primary" ng-model="jobParameter.value" ng-required aria-label="integr-switch"></md-switch>
+                        </md-input-container>
+                    </div>
                 </div>
             </div>
         </md-dialog-content>
