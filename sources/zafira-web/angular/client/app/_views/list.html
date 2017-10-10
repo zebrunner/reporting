@@ -12,9 +12,11 @@
             </md-fab-trigger>
             <md-fab-actions>
                 <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
+                    <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" permission="['ROLE_ADMIN']">
+                    <md-tooltip md-direction="top">New view</md-tooltip>
                     <span class="fa fa-plus" aria-hidden="true"></span>
                 </md-button>
             </md-fab-actions>
