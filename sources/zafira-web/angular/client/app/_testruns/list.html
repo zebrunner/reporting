@@ -20,12 +20,15 @@
             </md-fab-trigger>
             <md-fab-actions>
                 <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()">
+                    <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" permission="['ROLE_ADMIN']">
+                    <md-tooltip md-direction="top">Delete</md-tooltip>
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
                 <md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
+                    <md-tooltip md-direction="top">Follow</md-tooltip>
                     <span class="fa fa-eye" aria-hidden="true"></span>
                 </md-button>
             </md-fab-actions>

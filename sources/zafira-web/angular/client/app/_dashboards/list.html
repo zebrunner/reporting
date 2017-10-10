@@ -14,12 +14,15 @@
             </md-fab-trigger>
             <md-fab-actions>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
+                    <md-tooltip md-direction="top">Send by email</md-tooltip>
                     <span class="fa fa-envelope-o"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, dashboard, false)"  permission="['ROLE_ADMIN']">
+                    <md-tooltip md-direction="top">Update dashboard</md-tooltip>
                     <span class="fa fa-cog"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, {}, true)"  permission="['ROLE_ADMIN']">
+                    <md-tooltip md-direction="top">New dashboard</md-tooltip>
                     <span class="fa fa-plus"></span>
                 </md-button>
             </md-fab-actions>
