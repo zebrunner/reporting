@@ -1,25 +1,21 @@
 package com.qaprosoft.zafira.services.services.jobs;
 
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.EmailService;
+import com.qaprosoft.zafira.services.services.MonitorService;
+import com.qaprosoft.zafira.services.services.emails.MonitorEmailMessageNotification;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SchedulerContext;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import com.qaprosoft.zafira.models.db.Monitor;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.EmailService;
-import com.qaprosoft.zafira.services.services.emails.MonitorEmailMessageNotification;
 
 @Service
 public class MonitorEmailNotificationTask implements Job
@@ -39,6 +35,9 @@ public class MonitorEmailNotificationTask implements Job
 			EmailService emailService = ((ApplicationContext) jobExecutionContext
 					.getScheduler().getContext().get("applicationContext")).getBean(EmailService.class);
 
+			MonitorService monitorService = ((ApplicationContext) jobExecutionContext
+					.getScheduler().getContext().get("applicationContext")).getBean(MonitorService.class);
+
 			SchedulerContext schedulerContext = jobExecutionContext.getScheduler().getContext();
 			if (schedulerContext == null)
 			{
@@ -48,8 +47,12 @@ public class MonitorEmailNotificationTask implements Job
 			Monitor monitor = (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
 
 			int actualResponseStatus = getResponseCode(monitor);
+			boolean codeMatch = monitor.getExpectedCode() == actualResponseStatus;
 
-			if (monitor.getExpectedResponseCode() != actualResponseStatus)
+			monitor.setSuccess(codeMatch);
+			monitorService.updateMonitor(monitor, false, false);
+
+			if (! codeMatch && monitor.isNotificationsEnabled())
 			{
 				MonitorEmailMessageNotification monitorEmailMessageNotification
 						= new MonitorEmailMessageNotification(EMAIL_SUBJECT, EMAIL_TEXT, monitor, actualResponseStatus);

@@ -37,7 +37,6 @@
                     <md-radio-button class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
                     <md-radio-button class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
                     <md-radio-button class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
-                    <md-radio-button class="checkbox-inline md-primary" value="DELETE">DELETE</md-radio-button>
                 </md-radio-group>
                 <div layout layout-sm="column" ng-if="isHttpBodyBlockPresent(monitor)">
                     <span>Body</span>
@@ -54,10 +53,15 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Expected code</label>
-                        <input name="value" type="number" data-ng-model="monitor.expectedResponseCode" required/>
+                        <input name="value" type="number" data-ng-model="monitor.expectedCode" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
+                    <md-input-container style="float: right; margin-top: 0px">
+                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column" ng-if="monitor.notificationsEnabled">
                     <md-input-container flex>
                         <label ng-if="monitor.emailList">Recepients ({{monitor.emailList.length}})</label>
                         <md-chips ng-model="monitor.emailList"
@@ -84,11 +88,6 @@
                                 </md-not-found>
                             </md-autocomplete>
                         </md-chips>
-                    </md-input-container>
-                </div>
-                <div layout layout-sm="column">
-                    <md-input-container style="float: right; margin-top: 0px">
-                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.active" aria-label="notif-switch">Enable notifications</md-switch>
                     </md-input-container>
                 </div>
             </div>

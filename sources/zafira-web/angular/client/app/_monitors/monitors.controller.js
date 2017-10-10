@@ -17,8 +17,7 @@
         $scope.HTTP_METHODS = {
             POST : 'POST',
             GET : 'GET',
-            PUT : 'PUT',
-            DELETE : 'DELETE'
+            PUT : 'PUT'
         };
 
         $scope.getAllMonitors = function () {
@@ -31,14 +30,14 @@
             })
         };
 
-        $scope.updateMonitor = function (monitor, isActive) {
+        $scope.updateMonitor = function (monitor, switchJob) {
             monitor.recipients = monitor.emailList.toString();
-            MonitorsService.updateMonitor(monitor, isActive).then(function (rs) {
+            MonitorsService.updateMonitor(monitor, switchJob).then(function (rs) {
                 if(rs.success)
                 {
-                    if(isActive)
+                    if(switchJob)
                     {
-                        var status = rs.data.active ? 'ran': 'stopped';
+                        var status = rs.data.monitorEnabled ? 'ran': 'stopped';
                         alertify.success("Monitor was " + status);
                     } else {
                         alertify.success('Monitor was updated');

@@ -43,18 +43,32 @@ public class MonitorService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Monitor updateMonitor(Monitor monitor, boolean notificationsOnly) throws ServiceException
+	public Monitor updateMonitor(Monitor monitor, Boolean switchJob, boolean updateJob) throws ServiceException
 	{
-		Monitor currentMonitor;
-		if (notificationsOnly)
+		Monitor currentMonitor = getMonitorById(monitor.getId());
+		if (switchJob)
 		{
-			currentMonitor = monitorMapper.getMonitorById(monitor.getId());
-			currentMonitor.setActive(monitor.isActive());
-			monitorJobService.switchMonitor(monitor.isActive(), monitor.getId());
+			currentMonitor.setMonitorEnabled(monitor.isMonitorEnabled());
+			monitorJobService.updateMonitor(currentMonitor);
+			monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
 		} else
 		{
-			currentMonitor = monitor;
-			monitorJobService.updateMonitor(currentMonitor);
+			currentMonitor.setName(monitor.getName());
+			currentMonitor.setUrl(monitor.getUrl());
+			currentMonitor.setHttpMethod(monitor.getHttpMethod());
+			currentMonitor.setRequestBody(monitor.getRequestBody());
+			currentMonitor.setCronExpression(monitor.getCronExpression());
+			currentMonitor.setNotificationsEnabled(monitor.isNotificationsEnabled());
+			currentMonitor.setRecipients(monitor.getRecipients());
+			currentMonitor.setType(monitor.getType());
+			currentMonitor.setExpectedCode(monitor.getExpectedCode());
+			currentMonitor.setSuccess(monitor.isSuccess());
+			if(updateJob) {
+				monitorJobService.updateMonitor(currentMonitor);
+			}
+			if(!currentMonitor.isMonitorEnabled()) {
+				monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
+			}
 		}
 		monitorMapper.updateMonitor(currentMonitor);
 		return currentMonitor;

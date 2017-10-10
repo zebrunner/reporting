@@ -25,10 +25,13 @@ public class MonitorType extends AbstractEntity
 	@NotNull(message = "Type required")
 	private Monitor.Type type;
 	@NotNull(message = "Checkbox should be enabled or disabled")
-	private boolean active;
+	private boolean notificationsEnabled;
+	@NotNull(message = "Checkbox should be enabled or disabled")
+	private boolean monitorEnabled;
 	private String recipients;
 	@NotNull(message = "Expected code required")
-	private int expectedResponseCode;
+	private int expectedCode;
+	private boolean success;
 
 	public String getName()
 	{
@@ -80,14 +83,24 @@ public class MonitorType extends AbstractEntity
 		this.cronExpression = cronExpression;
 	}
 
-	public boolean isActive()
+	public boolean isNotificationsEnabled()
 	{
-		return active;
+		return notificationsEnabled;
 	}
 
-	public void setActive(boolean active)
+	public void setNotificationsEnabled(boolean notificationsEnabled)
 	{
-		this.active = active;
+		this.notificationsEnabled = notificationsEnabled;
+	}
+
+	public boolean isMonitorEnabled()
+	{
+		return monitorEnabled;
+	}
+
+	public void setMonitorEnabled(boolean monitorEnabled)
+	{
+		this.monitorEnabled = monitorEnabled;
 	}
 
 	public String getRecipients()
@@ -100,14 +113,24 @@ public class MonitorType extends AbstractEntity
 		this.recipients = recipients;
 	}
 
-	public int getExpectedResponseCode()
+	public int getExpectedCode()
 	{
-		return expectedResponseCode;
+		return expectedCode;
 	}
 
-	public void setExpectedResponseCode(int expectedResponseCode)
+	public void setExpectedCode(int expectedCode)
 	{
-		this.expectedResponseCode = expectedResponseCode;
+		this.expectedCode = expectedCode;
+	}
+
+	public boolean isSuccess()
+	{
+		return success;
+	}
+
+	public void setSuccess(boolean success)
+	{
+		this.success = success;
 	}
 
 	public Monitor.Type getType()

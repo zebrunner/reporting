@@ -19,10 +19,12 @@ public class Monitor extends AbstractEntity
 	private HttpMethod httpMethod;
 	private String requestBody;
 	private String cronExpression;
-	private boolean active;
+	private boolean notificationsEnabled;
+	private boolean monitorEnabled;
 	private String recipients;
 	private Type type;
-	private int expectedResponseCode;
+	private int expectedCode;
+	private boolean success;
 
 	public String getName()
 	{
@@ -74,24 +76,34 @@ public class Monitor extends AbstractEntity
 		this.cronExpression = cronExpression;
 	}
 
-	public boolean isActive()
+	public boolean isNotificationsEnabled()
 	{
-		return active;
+		return notificationsEnabled;
 	}
 
-	public void setActive(boolean active)
+	public void setNotificationsEnabled(boolean notificationsEnabled)
 	{
-		this.active = active;
+		this.notificationsEnabled = notificationsEnabled;
 	}
 
-	public int getExpectedResponseCode()
+	public boolean isMonitorEnabled()
 	{
-		return expectedResponseCode;
+		return monitorEnabled;
 	}
 
-	public void setExpectedResponseCode(int expectedResponseCode)
+	public void setMonitorEnabled(boolean monitorEnabled)
 	{
-		this.expectedResponseCode = expectedResponseCode;
+		this.monitorEnabled = monitorEnabled;
+	}
+
+	public int getExpectedCode()
+	{
+		return expectedCode;
+	}
+
+	public void setExpectedCode(int expectedCode)
+	{
+		this.expectedCode = expectedCode;
 	}
 
 	public String getRecipients()
@@ -114,6 +126,16 @@ public class Monitor extends AbstractEntity
 		this.type = type;
 	}
 
+	public boolean isSuccess()
+	{
+		return success;
+	}
+
+	public void setSuccess(boolean success)
+	{
+		this.success = success;
+	}
+
 	@Override
 	public String toString()
 	{
@@ -123,10 +145,10 @@ public class Monitor extends AbstractEntity
 				", httpMethod=" + httpMethod +
 				", requestBody='" + requestBody + '\'' +
 				", cronExpression='" + cronExpression + '\'' +
-				", active=" + active +
+				", active=" + notificationsEnabled +
 				", emails='" + recipients + '\'' +
 				", type=" + type +
-				", expectedResponseCode=" + expectedResponseCode +
+				", expectedCode=" + expectedCode +
 				'}';
 	}
 }

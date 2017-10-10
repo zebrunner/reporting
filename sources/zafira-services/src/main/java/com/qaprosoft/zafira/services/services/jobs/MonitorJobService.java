@@ -40,7 +40,7 @@ public class MonitorJobService
 		for (Monitor monitor : monitors)
 		{
 			addJob(monitor);
-			if (!monitor.isActive())
+			if (! monitor.isMonitorEnabled())
 			{
 				pauseJob(monitor.getId());
 			}
