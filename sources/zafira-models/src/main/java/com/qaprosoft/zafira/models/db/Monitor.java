@@ -19,13 +19,12 @@ public class Monitor extends AbstractEntity
 	private HttpMethod httpMethod;
 	private String requestBody;
 	private String cronExpression;
-	private boolean notificationEnabled;
-	private boolean running;
+	private boolean notificationsEnabled;
+	private boolean monitorEnabled;
 	private String recipients;
 	private Type type;
 	private int expectedCode;
-	private int lastCode;
-	private boolean lastRunPassed;
+	private boolean success;
 
 	public String getName()
 	{
@@ -77,24 +76,24 @@ public class Monitor extends AbstractEntity
 		this.cronExpression = cronExpression;
 	}
 
-	public boolean isNotificationEnabled()
+	public boolean isNotificationsEnabled()
 	{
-		return notificationEnabled;
+		return notificationsEnabled;
 	}
 
-	public void setNotificationEnabled(boolean notificationEnabled)
+	public void setNotificationsEnabled(boolean notificationsEnabled)
 	{
-		this.notificationEnabled = notificationEnabled;
+		this.notificationsEnabled = notificationsEnabled;
 	}
 
-	public boolean isRunning()
+	public boolean isMonitorEnabled()
 	{
-		return running;
+		return monitorEnabled;
 	}
 
-	public void setRunning(boolean running)
+	public void setMonitorEnabled(boolean monitorEnabled)
 	{
-		this.running = running;
+		this.monitorEnabled = monitorEnabled;
 	}
 
 	public int getExpectedCode()
@@ -127,24 +126,14 @@ public class Monitor extends AbstractEntity
 		this.type = type;
 	}
 
-	public int getLastCode()
+	public boolean isSuccess()
 	{
-		return lastCode;
+		return success;
 	}
 
-	public void setLastCode(int lastCode)
+	public void setSuccess(boolean success)
 	{
-		this.lastCode = lastCode;
-	}
-
-	public boolean isLastRunPassed()
-	{
-		return lastRunPassed;
-	}
-
-	public void setLastRunPassed(boolean lastRunPassed)
-	{
-		this.lastRunPassed = lastRunPassed;
+		this.success = success;
 	}
 
 	@Override
@@ -156,7 +145,7 @@ public class Monitor extends AbstractEntity
 				", httpMethod=" + httpMethod +
 				", requestBody='" + requestBody + '\'' +
 				", cronExpression='" + cronExpression + '\'' +
-				", active=" + notificationEnabled +
+				", active=" + notificationsEnabled +
 				", emails='" + recipients + '\'' +
 				", type=" + type +
 				", expectedCode=" + expectedCode +

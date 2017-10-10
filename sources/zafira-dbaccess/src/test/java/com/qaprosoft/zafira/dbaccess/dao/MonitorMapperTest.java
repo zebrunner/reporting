@@ -38,7 +38,7 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
             setCronExpression("0 * * ? * *");
             setRecipients("e.jhon@gmail.com");
             setRequestBody("{'k':'v'}");
-            setNotificationEnabled(true);
+            setNotificationsEnabled(true);
             setType(Type.HTTP);
         }
     };
@@ -80,7 +80,7 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
         MONITOR.setCronExpression("0 */3 * ? * *");
         MONITOR.setRecipients("paul@gmail.com");
         MONITOR.setRequestBody("{'kkk':'vvvv'}");
-        MONITOR.setNotificationEnabled(false);
+        MONITOR.setNotificationsEnabled(false);
         MONITOR.setType(Monitor.Type.PING);
         monitorMapper.updateMonitor(MONITOR);
         checkMonitor(monitorMapper.getMonitorById(MONITOR.getId()));
@@ -124,7 +124,7 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
         assertEquals(monitor.getExpectedCode(), MONITOR.getExpectedCode(), "Expected response status must match");
         assertEquals(monitor.getRequestBody(), MONITOR.getRequestBody(), "Request body must match");
         assertEquals(monitor.getType(), MONITOR.getType(), "Type must match");
-        assertEquals(monitor.isNotificationEnabled(), MONITOR.isNotificationEnabled(), "Enable notification must match");
+        assertEquals(monitor.isNotificationsEnabled(), MONITOR.isNotificationsEnabled(), "Enable notification must match");
         assertEquals(monitor.getHttpMethod(), MONITOR.getHttpMethod(), "HTTP method must match");
     }
 

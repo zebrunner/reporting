@@ -48,9 +48,9 @@ public class MonitorService
 		Monitor currentMonitor = getMonitorById(monitor.getId());
 		if (switchJob)
 		{
-			currentMonitor.setRunning(monitor.isRunning());
+			currentMonitor.setMonitorEnabled(monitor.isMonitorEnabled());
 			monitorJobService.updateMonitor(currentMonitor);
-			monitorJobService.switchMonitor(monitor.isRunning(), monitor.getId());
+			monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
 		} else
 		{
 			currentMonitor.setName(monitor.getName());
@@ -58,17 +58,16 @@ public class MonitorService
 			currentMonitor.setHttpMethod(monitor.getHttpMethod());
 			currentMonitor.setRequestBody(monitor.getRequestBody());
 			currentMonitor.setCronExpression(monitor.getCronExpression());
-			currentMonitor.setNotificationEnabled(monitor.isNotificationEnabled());
+			currentMonitor.setNotificationsEnabled(monitor.isNotificationsEnabled());
 			currentMonitor.setRecipients(monitor.getRecipients());
 			currentMonitor.setType(monitor.getType());
 			currentMonitor.setExpectedCode(monitor.getExpectedCode());
-			currentMonitor.setLastRunPassed(monitor.isLastRunPassed());
-			currentMonitor.setLastCode(monitor.getLastCode());
+			currentMonitor.setSuccess(monitor.isSuccess());
 			if(updateJob) {
 				monitorJobService.updateMonitor(currentMonitor);
 			}
-			if(!currentMonitor.isRunning()) {
-				monitorJobService.switchMonitor(monitor.isRunning(), monitor.getId());
+			if(!currentMonitor.isMonitorEnabled()) {
+				monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
 			}
 		}
 		monitorMapper.updateMonitor(currentMonitor);

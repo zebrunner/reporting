@@ -49,11 +49,10 @@ public class MonitorEmailNotificationTask implements Job
 			int actualResponseStatus = getResponseCode(monitor);
 			boolean codeMatch = monitor.getExpectedCode() == actualResponseStatus;
 
-			monitor.setLastCode(actualResponseStatus);
-			monitor.setLastRunPassed(codeMatch);
+			monitor.setSuccess(codeMatch);
 			monitorService.updateMonitor(monitor, false, false);
 
-			if (! codeMatch && monitor.isNotificationEnabled())
+			if (! codeMatch && monitor.isNotificationsEnabled())
 			{
 				MonitorEmailMessageNotification monitorEmailMessageNotification
 						= new MonitorEmailMessageNotification(EMAIL_SUBJECT, EMAIL_TEXT, monitor, actualResponseStatus);

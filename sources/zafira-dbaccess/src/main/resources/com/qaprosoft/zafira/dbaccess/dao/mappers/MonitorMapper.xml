@@ -6,15 +6,15 @@
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 
-			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, IS_NOTIFICATION_ENABLED, IS_RUNNING, CRON_EXPRESSION,
+			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
 			EXPECTED_CODE, RECIPIENTS, TYPE)
 			VALUES (
 				#{name},
 				#{url},
 			    #{httpMethod},
 				#{requestBody},
-				#{notificationEnabled},
-				#{running},
+				#{notificationsEnabled},
+				#{monitorEnabled},
 				#{cronExpression},
 				#{expectedCode},
 				#{recipients},
@@ -51,12 +51,11 @@
                 URL = #{url},
                 HTTP_METHOD = #{httpMethod},
                 REQUEST_BODY = #{requestBody},
-                IS_NOTIFICATION_ENABLED = #{notificationEnabled},
-                IS_RUNNING = #{running},
+                NOTIFICATIONS_ENABLED = #{notificationsEnabled},
+                MONITOR_ENABLED = #{monitorEnabled},
                 CRON_EXPRESSION = #{cronExpression},
                 EXPECTED_CODE = #{expectedCode},
-                LAST_CODE = #{lastCode},
-                LAST_RUN_PASSED = #{lastRunPassed},
+                SUCCESS = #{success},
                 RECIPIENTS = #{recipients},
                 TYPE = #{type}
 			WHERE
@@ -74,13 +73,12 @@
 				M.URL AS MONITOR_URL,
 				M.HTTP_METHOD AS MONITOR_HTTP_METHOD,
 				M.REQUEST_BODY AS MONITOR_REQUEST_BODY,
-				M.IS_NOTIFICATION_ENABLED AS MONITOR_IS_NOTIFICATION_ENABLED,
-				M.IS_RUNNING AS MONITOR_IS_RUNNING,
+				M.NOTIFICATIONS_ENABLED AS MONITOR_NOTIFICATIONS_ENABLED,
+				M.MONITOR_ENABLED AS MONITOR_MONITOR_ENABLED,
 				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
 				M.RECIPIENTS AS MONITOR_RECIPIENTS,
 				M.EXPECTED_CODE AS MONITOR_EXPECTED_CODE,
-				M.LAST_CODE AS MONITOR_LAST_CODE,
-				M.LAST_RUN_PASSED AS MONITOR_LAST_RUN_PASSED,
+				M.SUCCESS AS MONITOR_SUCCESS,
 				M.TYPE AS MONITOR_TYPE,
 				M.CREATED_AT AS MONITOR_CREATED_AT,
 				M.MODIFIED_AT AS MONITOR_MODIFIED_AT
@@ -131,12 +129,11 @@
         <result column="MONITOR_URL" property="url"/>
         <result column="MONITOR_HTTP_METHOD" property="httpMethod"/>
         <result column="MONITOR_REQUEST_BODY" property="requestBody"/>
-        <result column="MONITOR_IS_NOTIFICATION_ENABLED" property="notificationEnabled"/>
-        <result column="MONITOR_IS_RUNNING" property="running"/>
+        <result column="MONITOR_NOTIFICATIONS_ENABLED" property="notificationsEnabled"/>
+        <result column="MONITOR_MONITOR_ENABLED" property="monitorEnabled"/>
         <result column="MONITOR_CRON_EXPRESSION" property="cronExpression"/>
         <result column="MONITOR_EXPECTED_CODE" property="expectedCode"/>
-        <result column="MONITOR_LAST_CODE" property="lastCode"/>
-        <result column="MONITOR_LAST_RUN_PASSED" property="lastRunPassed"/>
+        <result column="MONITOR_SUCCESS" property="success"/>
         <result column="MONITOR_RECIPIENTS" property="recipients"/>
         <result column="MONITOR_TYPE" property="type"/>
         <result column="JOB_MODIFIED_AT" property="modifiedAt"/>

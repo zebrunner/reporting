@@ -37,7 +37,7 @@
                 {
                     if(switchJob)
                     {
-                        var status = rs.data.running ? 'ran': 'stopped';
+                        var status = rs.data.monitorEnabled ? 'ran': 'stopped';
                         alertify.success("Monitor was " + status);
                     } else {
                         alertify.success('Monitor was updated');

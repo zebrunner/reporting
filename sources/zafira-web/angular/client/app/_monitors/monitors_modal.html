@@ -57,6 +57,11 @@
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
+                    <md-input-container style="float: right; margin-top: 0px">
+                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column" ng-if="monitor.notificationsEnabled">
                     <md-input-container flex>
                         <label ng-if="monitor.emailList">Recepients ({{monitor.emailList.length}})</label>
                         <md-chips ng-model="monitor.emailList"
@@ -83,11 +88,6 @@
                                 </md-not-found>
                             </md-autocomplete>
                         </md-chips>
-                    </md-input-container>
-                </div>
-                <div layout layout-sm="column">
-                    <md-input-container style="float: right; margin-top: 0px">
-                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationEnabled" aria-label="notif-switch">Enable notifications</md-switch>
                     </md-input-container>
                 </div>
             </div>
