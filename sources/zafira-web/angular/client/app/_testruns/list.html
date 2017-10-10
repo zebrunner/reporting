@@ -117,7 +117,7 @@
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun, true)">
+                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun, true)">
                                         <td md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
