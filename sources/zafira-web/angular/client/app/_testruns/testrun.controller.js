@@ -376,9 +376,6 @@
         // --------------------  Context menu ------------------------
 
         $scope.openTestRun = function (testRun) {
-            if ($location.$$path != $location.$$url){
-                $location.search({});
-            }
             if ($location.$$absUrl.match(new RegExp(testRun.id, 'gi')) == null){
                 window.open($location.$$absUrl + "/" + testRun.id, '_blank');
             }
@@ -854,6 +851,16 @@
                 if(rs.success)
                 {
                     $scope.jobParameters = rs.data;
+                    for (var i = 0; i < $scope.jobParameters.length; i++){
+                        if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
+                            if ($scope.jobParameters[i].value == 'true'){
+                                $scope.jobParameters[i].value = true;
+                            }
+                            else if ($scope.jobParameters[i].value == 'false') {
+                                $scope.jobParameters[i].value = false;
+                            }
+                        }
+                    }
                     $scope.isJobParametersLoaded = true;
                     $scope.noValidJob = $scope.jobParameters == '';
                 }
