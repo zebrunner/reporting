@@ -118,10 +118,18 @@
 														<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
 	                                                </td>
 	                                                <td class="text-center">
-	                                                	<span data-ng-if="test.status != IN_PROGRESS">
-							                            	<a data-ng-if="test.logURL" href="{{test.logURL}}" target="blank">Log</a>
-							                            	<a data-ng-if="test.demoURL" href="test.demoURL" target="blank">Demo</a>
-							                       		</span>
+                                                        <div data-ng-if="test.artifacts.length !=0" class="pull-right">
+                                                            <md-menu>
+                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                                    <md-icon class="material-icons">attachment</md-icon>
+                                                                </md-button>
+                                                                <md-menu-content>
+                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
+                                                                        <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
+                                                                    </md-menu-item>
+                                                                </md-menu-content>
+                                                            </md-menu>
+                                                        </div>
 	                                                </td>
 	                                        	</tr>
 	                                        </tbody>
