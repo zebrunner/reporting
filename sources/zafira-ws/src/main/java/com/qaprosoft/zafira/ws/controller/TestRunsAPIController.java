@@ -6,10 +6,7 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.dto.CommentType;
-import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.*;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -354,7 +351,7 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get job parameters", nickname = "getjobParameters", code = 200, httpMethod = "GET", response = Map.class)
 	@RequestMapping(value = "{id}/jobParameters", method = RequestMethod.GET)
-	public @ResponseBody Map<String, String> getjobParameters(@PathVariable(value = "id") long id)
+	public @ResponseBody List<BuildParameterType> getjobParameters(@PathVariable(value = "id") long id)
 			throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);

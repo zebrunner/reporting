@@ -1,19 +1,20 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.BuildWithDetails;
-import com.offbytwo.jenkins.model.FolderJob;
-import com.offbytwo.jenkins.model.JobWithDetails;
-import com.offbytwo.jenkins.model.QueueReference;
+import com.offbytwo.jenkins.model.*;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
+import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.*;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -133,7 +134,23 @@ public class JenkinsService implements IJMXService
 		return success;
 	}
 
-	public Map<String, String> getBuildParameters(Job ciJob, Integer buildNumber)
+    public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber)
+    {
+        List<BuildParameterType> jobParameters = null;
+        try
+        {
+            JobWithDetails job = getJobWithDetails(ciJob);
+            jobParameters = getJobParameters(job.getBuildByNumber(buildNumber).details().getActions());
+            BuildParameterType buildParameter = new BuildParameterType(HIDDEN, "ci_run_id", UUID.randomUUID().toString());
+            jobParameters.add(buildParameter);
+        } catch (Exception e)
+        {
+            LOGGER.error("Unable to get job:  " + e.getMessage());
+        }
+        return jobParameters;
+    }
+
+	public Map<String, String> getBuildParametersMap(Job ciJob, Integer buildNumber)
 	{
 		Map<String, String> jobParameters = null;
 		try
@@ -197,7 +214,37 @@ public class JenkinsService implements IJMXService
 		return logMap;
 	}
 
-	@Override
+    private List<BuildParameterType> getJobParameters(List actions) {
+        Collection parameters = Collections2.filter(actions, (Predicate<Map<String, Object>>) action -> action.containsKey("parameters"));
+        List<BuildParameterType> params = new ArrayList<>();
+        if (parameters != null && !parameters.isEmpty()) {
+            Iterator iterator = ((List)((Map)parameters.toArray()[0]).get("parameters")).iterator();
+            while(iterator.hasNext()) {
+                BuildParameterType buildParameter = new BuildParameterType();
+                Map<String, Object> param = (Map)iterator.next();
+                String name = String.valueOf(param.get("name"));
+                String value = String.valueOf(param.get("value"));
+                String buildParamClass = String.valueOf(param.get("_class"));
+                buildParameter.setName(name);
+                buildParameter.setValue(value);
+                if (buildParamClass.contains("Hide")){
+                    buildParameter.setParameterClass(HIDDEN);
+                }
+                else if (buildParamClass.contains("String")) {
+                    buildParameter.setParameterClass(STRING);
+                }
+                else if (buildParamClass.contains("Boolean")) {
+                    buildParameter.setParameterClass(BOOLEAN);
+                }
+                if (!name.equals("ci_run_id"))
+                params.add(buildParameter);
+            }
+        }
+        return params;
+    }
+
+
+    @Override
 	public boolean isConnected()
 	{
 		return this.server != null && this.server.isRunning();
