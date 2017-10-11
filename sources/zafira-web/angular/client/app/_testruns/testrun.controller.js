@@ -854,6 +854,16 @@
                 if(rs.success)
                 {
                     $scope.jobParameters = rs.data;
+                    for (var i = 0; i < $scope.jobParameters.length; i++){
+                        if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
+                            if ($scope.jobParameters[i].value == 'true'){
+                                $scope.jobParameters[i].value = true;
+                            }
+                            else if ($scope.jobParameters[i].value == 'false') {
+                                $scope.jobParameters[i].value = false;
+                            }
+                        }
+                    }
                     $scope.isJobParametersLoaded = true;
                     $scope.noValidJob = $scope.jobParameters == '';
                 }

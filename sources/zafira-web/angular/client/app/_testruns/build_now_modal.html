@@ -31,10 +31,8 @@
                         <div flex style="text-transform: capitalize; max-width:200px;">
                             {{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span>
                         </div>
-                        <md-radio-group ng-model="jobParameter.value" layout="row" layout-align="start center">
-                            <md-radio-button value="true" >true</md-radio-button>
-                            <md-radio-button value="false">false</md-radio-button>
-                        </md-radio-group>
+                        <md-checkbox ng-model="jobParameter.value"> {{jobParameter.value}}
+                         </md-checkbox>
                     </md-input-container>
                 </div>
             </div>
