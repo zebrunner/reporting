@@ -1,3 +1,4 @@
+set schema 'zafira';
 
 CREATE TABLE IF NOT EXISTS MONITORS (
   ID SERIAL,
