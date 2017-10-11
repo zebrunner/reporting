@@ -22,25 +22,26 @@
                 <div data-ng-if="noValidJob" layout="row" layout-align="center center">
                     <small>Empty</small>
                 </div>
-                <div layout layout-sm="column" ng-repeat="jobParameter in jobParameters" data-ng-if="jobParameter.parameterClass != 'HIDDEN'">
-                    <div data-ng-if="jobParameter.parameterClass == 'STRING'" class="raw">
-                        <md-input-container flex >
+                <div layout layout-sm="column" data-ng-repeat="jobParameter in jobParameters | orderBy:'-parameterClass'" data-ng-if="jobParameter.parameterClass != 'HIDDEN'">
+                        <md-input-container flex data-ng-if="jobParameter.parameterClass == 'STRING'">
                             <label>{{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span></label>
                             <input ng-model="jobParameter.value" type="text" />
                         </md-input-container>
-                    </div>
-                    <div data-ng-if="jobParameter.parameterClass == 'BOOLEAN'" class="raw">
-                        <label>{{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span></label>
-                        <md-input-container style="float: right; margin-top: 0" flex>
-                            <md-switch style="margin-top: 0" class="md-primary" ng-model="jobParameter.value" ng-required aria-label="integr-switch"></md-switch>
-                        </md-input-container>
-                    </div>
+                    <md-input-container flex data-ng-if="jobParameter.parameterClass == 'BOOLEAN'" layout="row">
+                        <div flex style="text-transform: capitalize; max-width:200px;">
+                            {{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span>
+                        </div>
+                        <md-radio-group ng-model="jobParameter.value" layout="row" layout-align="start center">
+                            <md-radio-button value="true" >true</md-radio-button>
+                            <md-radio-button value="false">false</md-radio-button>
+                        </md-radio-group>
+                    </md-input-container>
                 </div>
             </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button type="submit" data-ng-if="! noValidJob" class="btn btn-success" data-ng-disabled="build_now_form.$invalid">
+            <md-button type="submit" data-ng-if="! noValidJob" class="md-raised btn-w-md md-primary" data-ng-disabled="build_now_form.$invalid">
                 Build
             </md-button>
         </md-dialog-actions>

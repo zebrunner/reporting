@@ -828,7 +828,11 @@
 
         $scope.buildNow = function () {
             $scope.hide();
-            TestRunService.buildTestRun($scope.testRun.id, $scope.jobParameters).then(function(rs) {
+            var jobParametersMap = {};
+            for (var i = 0; i < $scope.jobParameters.length; i++){
+                jobParametersMap[$scope.jobParameters[i].name] = $scope.jobParameters[i].value;
+            }
+            TestRunService.buildTestRun($scope.testRun.id, jobParametersMap).then(function(rs) {
                 if(rs.success)
                 {
                     alertify.success('CI job is building, it may take some time before status is updated');
@@ -839,7 +843,7 @@
                 }
             });
         };
-        $scope.jobParameters = {};
+        $scope.jobParameters = [];
         $scope.isJobParametersLoaded = false;
         $scope.noValidJob = false;
         $scope.getJobParameters = function () {
