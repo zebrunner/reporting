@@ -125,12 +125,15 @@
                                         </md-menu>
 									</td>
                                 </tr>
+                                <tr md-row data-ng-if="sr.results.length == 0">
+                                    <td md-cell colspan="8" class="text-center">No data</td>
+                                </tr>
                             </tbody>
                         </table>
                          </form>
                     </md-table-container>
 
-                    <md-table-pagination md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                    <md-table-pagination ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>

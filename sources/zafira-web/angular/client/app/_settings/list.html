@@ -46,24 +46,12 @@
 	                                    <td md-cell>{{setting.value}}</td>
 	                                    <td md-cell style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
 	                                    <td md-cell class="no-padding">
-	                                        <md-menu>
-	                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-	                                                <md-icon class="material-icons">more_vert</md-icon>
-	                                            </md-button>
-	                                            <md-menu-content width="2">
-	                                                <md-menu-item>
-	                                                    <md-button data-ng-click="showSettingsDialog($event, setting)">
-	                                                        <md-icon class="material-icons">build</md-icon>
-	                                                        Edit setting
-	                                                    </md-button>
-	                                                </md-menu-item>
-	                                            </md-menu-content>
-	                                        </md-menu>
+                                            <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">settings</i>
 										</td>
 	                                </tr>
 	                                <tr md-row data-ng-if="settings.length == 0">
-	                                	<td md-cell colspan="4" class="text-center">No data</td>
-	                                </tr>
+                                        <td md-cell colspan="4" class="text-center">No data</td>
+                                    </tr>
 	                            </tbody>
 	                        </table>
 	                    </md-table-container>
