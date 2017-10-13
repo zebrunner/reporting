@@ -104,7 +104,7 @@ public class JenkinsService implements IJMXService
 				params.put("rerun_failures", "true");
 			}
 			QueueReference reference = job.build(params, true);
-			success = reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
+			success = checkReference(reference);
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
@@ -122,7 +122,7 @@ public class JenkinsService implements IJMXService
 			{
 				JobWithDetails job = getJobWithDetails(ciJob);
 				QueueReference reference = job.build(jobParameters, true);
-				success = reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
+				success = checkReference(reference);
 			} catch (Exception e)
 			{
 				LOGGER.error("Unable to run Jenkins job:  " + e.getMessage());
@@ -132,6 +132,38 @@ public class JenkinsService implements IJMXService
 			success = rerunJob(ciJob, buildNumber, false);
 		}
 		return success;
+	}
+
+	public boolean abortJob (Job ciJob, Integer buildNumber) {
+		boolean success = false;
+		try
+		{
+			JobWithDetails job = getJobWithDetails(ciJob);
+			QueueReference reference = stop(job, buildNumber);
+			success = checkReference(reference);
+			if (!checkReference(reference)){
+				reference = terminate(job, buildNumber);
+				success = checkReference(reference);
+			}
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to abort Jenkins job:  " + e.getMessage());
+		}
+		return success;
+	}
+
+	private QueueReference stop(JobWithDetails job, Integer buildNumber) throws IOException {
+		ExtractHeader location = (ExtractHeader)job.getClient().post(job.getUrl() + buildNumber +"/stop", (Object)null, ExtractHeader.class);
+		return new QueueReference(location.getLocation());
+	}
+
+	private QueueReference terminate(JobWithDetails job, Integer buildNumber) throws IOException {
+		ExtractHeader location = (ExtractHeader)job.getClient().post(job.getUrl() + buildNumber +"/term", (Object)null, ExtractHeader.class);
+		return new QueueReference(location.getLocation());
+	}
+
+	private boolean checkReference(QueueReference reference){
+		return reference != null && !StringUtils.isEmpty(reference.getQueueItemUrlPart());
 	}
 
     public List<BuildParameterType> getBuildParameters(Job ciJob, Integer buildNumber)

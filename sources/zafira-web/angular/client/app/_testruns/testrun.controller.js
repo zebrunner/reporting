@@ -448,6 +448,27 @@
         		}
         	});
 
+        $scope.abort = function (testRun) {
+            if($scope.jenkinsEnabled) {
+                TestRunService.abortCIJob(testRun.id).then(function (rs) {
+                    if(rs.success)
+                    {
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId).then(function(rs) {
+                            if(rs.success){
+                                testRun.status = 'ABORTED';
+                                alertify.success("Testrun is aborted");
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+        };
+
         $scope.rebuild = function (testRun, rerunFailures) {
             if ($scope.jenkinsEnabled) {
             		if(rerunFailures == null)

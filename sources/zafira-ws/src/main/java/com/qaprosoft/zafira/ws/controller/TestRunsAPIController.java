@@ -11,6 +11,7 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.ProjectService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
@@ -320,6 +321,26 @@ public class TestRunsAPIController extends AbstractController
 		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures))
 		{
 			throw new UnableToRebuildCIJobException();
+		}
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
+	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
+	public void abortCIJob(@PathVariable(value = "id") long id) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		if (testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber()))
+		{
+			throw new UnableToAbortCIJobException();
 		}
 	}
 

@@ -13,6 +13,7 @@
         service.updateTestRun = updateTestRun;
         service.finishTestRun = finishTestRun;
         service.abortTestRun = abortTestRun;
+        service.abortCIJob = abortCIJob;
         service.getTestRun = getTestRun;
         service.getTestRunByCiRunId = getTestRunByCiRunId;
         service.getTestRunResults = getTestRunResults;
@@ -88,6 +89,10 @@
 
         function buildTestRun(id, jobParameters, buildWithParameters) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
+        }
+
+        function abortCIJob(id) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/abort').then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
         }
 
         function getJobParameters(id) {
