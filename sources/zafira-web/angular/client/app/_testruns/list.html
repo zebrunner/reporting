@@ -207,6 +207,11 @@
                                                             Build now
                                                         </md-button>
                                                     </md-menu-item>
+                                                    <md-menu-item ng-if="testRun.status=='IN_PROGRESS'">
+                                                        <md-button data-ng-click="abort(testRun, $event)">
+                                                            Abort
+                                                        </md-button>
+                                                    </md-menu-item>
                                                     <md-menu-item>
                                                         <md-button data-ng-click="rerun(testRun, $event)">
                                                             Rebuild
