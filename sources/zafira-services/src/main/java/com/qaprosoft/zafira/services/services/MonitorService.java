@@ -63,6 +63,7 @@ public class MonitorService
 			currentMonitor.setType(monitor.getType());
 			currentMonitor.setExpectedCode(monitor.getExpectedCode());
 			currentMonitor.setSuccess(monitor.isSuccess());
+			currentMonitor.setMonitorEnabled(monitor.isMonitorEnabled());
 			if(updateJob) {
 				monitorJobService.updateMonitor(currentMonitor);
 			}

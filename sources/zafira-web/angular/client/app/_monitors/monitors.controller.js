@@ -20,6 +20,12 @@
             PUT : 'PUT'
         };
 
+        $scope.blockView = true;
+
+        $scope.switchViewType = function () {
+            $scope.blockView = !$scope.blockView;
+        };
+
         $scope.getAllMonitors = function () {
             MonitorsService.getAllMonitors().then(function (rs) {
                 if(rs.success)
@@ -144,14 +150,18 @@
             }
         };
 
-        $scope.openMonitorDialog = function () {
+        $scope.openMonitorDialog = function ($event, monitor) {
             $mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+                controller: function ($scope, $mdDialog, monitor) {
 
-                    $scope.monitor = {};
-                    $scope.monitor.emailList = [];
-                    $scope.monitor.type = $scope.TYPES['HTTP'];
-                    $scope.monitor.httpMethod = $scope.HTTP_METHODS['GET'];
+                    if(!monitor) {
+                        $scope.monitor = {};
+                        $scope.monitor.emailList = [];
+                        $scope.monitor.type = $scope.TYPES['HTTP'];
+                        $scope.monitor.httpMethod = $scope.HTTP_METHODS['GET'];
+                    } else {
+                        $scope.monitor = angular.copy(monitor);
+                    }
 
                     $scope.createMonitor = function () {
                         $scope.monitor.recipients = $scope.monitor.emailList.toString();
@@ -182,9 +192,18 @@
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: true,
-                scope: $scope,
-                preserveScope: true
-            })
+                scope: $scope.$new(),
+                preserveScope: true,
+                locals: {
+                    monitor: monitor
+                }
+            }).then(function(answer) {
+                    if(answer)
+                    {
+                        $state.reload();
+                    }
+                }, function() {
+                });
         };
 
         (function init(){

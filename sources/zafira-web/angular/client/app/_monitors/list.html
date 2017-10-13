@@ -5,6 +5,9 @@
             <div class="col-lg-12">
                 <h2 class="section-header">Monitors
                     <small data-ng-if="monitors.length">({{monitors.length}})</small>
+                    <!--<md-button data-ng-if="monitors.length" data-ng-click="switchViewType()" style="float: right" class="md-fab md-primary md-mini" aria-label="view type">
+                        <i ng-class="{'fa fa-tasks': blockView, 'fa fa-th-large': !blockView}" aria-hidden="true"></i>
+                    </md-button>-->
                 </h2>
             </div>
         </div>
@@ -21,7 +24,64 @@
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
-        <div class="row">
+        <div class="row" ng-if="blockView">
+            <div class="col-md-12">
+                <article class="article">
+                    <md-card class="no-margin-h">
+                        <md-table-container>
+                            <table class="table-hover" md-table>
+                                <thead md-head style="position: parent;">
+                                <tr md-row>
+                                    <th md-column>
+                                        Monitor status
+                                    </th>
+                                    <th md-column>
+                                        Url
+                                    </th>
+                                    <th md-column>
+                                        Type
+                                    </th>
+                                    <th md-column>
+                                        Crone expression
+                                    </th>
+                                    <th md-column>
+                                        Expected code
+                                    </th>
+                                    <th md-column>
+                                        Monitor enabled
+                                    </th>
+                                    <th md-column></th>
+                                </tr>
+                                </thead>
+                                <tbody md-body>
+                                <tr md-row ng-repeat="monitor in monitors | orderBy:'name'">
+                                    <td md-cell>
+                                        <i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
+                                        <b>{{monitor.name}}</b>
+                                    </td>
+                                    <td md-cell>{{monitor.url}}</td>
+                                    <td md-cell>{{monitor.type}}</td>
+                                    <td md-cell>{{monitor.cronExpression}}</td>
+                                    <td md-cell>{{monitor.expectedCode}}</td>
+                                    <td md-cell>
+                                        <!--<i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>-->
+                                        <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
+                                    </td>
+                                    <td md-cell class="no-padding">
+                                        <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">settings</i>
+                                    </td>
+                                </tr>
+                                <tr md-row data-ng-if="monitors.length == 0">
+                                    <td md-cell colspan="7" class="text-center">No data</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+                    </md-card>
+                </article>
+            </div>
+        </div>
+        <div class="row switch-view" ng-if="!blockView">
             <div class="col-md-12">
                 <div class="col-md-4" data-ng-repeat="monitor in monitors | orderBy:'name'">
                     <div class="card bg-white">

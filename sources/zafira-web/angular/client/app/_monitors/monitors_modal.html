@@ -13,6 +13,11 @@
         <md-dialog-content>
             <div class="md-dialog-content">
                 <div layout layout-sm="column">
+                    <md-input-container style="float: right; margin-top: 0px">
+                        <md-switch style="margin: 0; padding: 0" class="md-primary" ng-model="monitor.monitorEnabled" aria-label="notif-switch">Enable monitor</md-switch>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Name</label>
                         <input name="value" type="text" data-ng-model="monitor.name" required/>
@@ -94,8 +99,14 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
+            <md-button ng-if="!monitor.id" class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
                 Create
+            </md-button>
+            <md-button ng-if="monitor.id" class="md-raised btn-w-md md-primary" data-ng-click="updateMonitor(monitor, false); hide()" data-ng-disabled="monitor_form.$invalid">
+                Save
+            </md-button>
+            <md-button ng-if="monitor.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteMonitor(monitor.id); hide()" data-ng-disabled="monitor_form.$invalid">
+                Delete
             </md-button>
         </md-dialog-actions>
     </form>

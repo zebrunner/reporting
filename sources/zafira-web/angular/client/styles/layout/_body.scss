@@ -352,3 +352,23 @@ div.code {
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+div.switch-view div.card.bg-white {
+    animation-name: switchView;
+    animation-duration: 0.5s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes switchView {
+    /*from { height: 0; }
+    to { height: 800px; }*/
+    from {top: -1000px}
+    to {top: 0}
+}
+@-webkit-keyframes switchView {
+    /*from { height: 0; }
+    to { height: 800px; }*/
+    from {top: -1000px}
+    to {top: 0}
+}
