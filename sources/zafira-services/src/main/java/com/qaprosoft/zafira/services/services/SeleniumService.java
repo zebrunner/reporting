@@ -126,7 +126,7 @@ public class SeleniumService
 				
 				if(titleLocator != null)
 				{
-					name = wd.findElement(titleLocator).getAttribute("value");
+					name = "Test";//wd.findElement(titleLocator).getAttribute("value");
 				}
 				
 				if(areaLocator != null)
