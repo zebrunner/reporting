@@ -156,13 +156,13 @@ public class DashboardsAPIController extends AbstractController
     @ApiOperation(value = "Send dashboard by email", nickname = "sendDashboardByEmail", code = 200, httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Access-Token", paramType = "header") })
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken, @RequestBody @Valid DashboardEmailType email) throws Exception
+	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken, @RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
 	{
-    	User user = jwtService.parseRefreshToken(accessToken);
-    	if(user == null)
-    	{
-    		throw new BadCredentialsException("Invalid access token");
-    	}
+	    	User user = jwtService.parseRefreshToken(accessToken);
+	    	if(user == null)
+	    	{
+	    		throw new BadCredentialsException("Invalid access token");
+	    	}
     	
 		Dimension dimension = null;
 		if(!StringUtils.isEmpty(email.getDimension()))

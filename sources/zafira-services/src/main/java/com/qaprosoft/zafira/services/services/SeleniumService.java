@@ -97,7 +97,7 @@ public class SeleniumService
 		}
 	}
 
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws Exception 
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException 
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -126,7 +126,7 @@ public class SeleniumService
 				
 				if(titleLocator != null)
 				{
-					name = "Test";//wd.findElement(titleLocator).getAttribute("value");
+					name = wd.findElement(titleLocator).getAttribute("value");
 				}
 				
 				if(areaLocator != null)
@@ -139,7 +139,6 @@ public class SeleniumService
 		catch(Exception e)
 		{
 			LOGGER.error(e.getMessage());
-			throw e;
 		}
 		finally
 		{
