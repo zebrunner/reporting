@@ -97,7 +97,7 @@ public class SeleniumService
 		}
 	}
 
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException 
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws Exception 
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -139,6 +139,7 @@ public class SeleniumService
 		catch(Exception e)
 		{
 			LOGGER.error(e.getMessage());
+			throw e;
 		}
 		finally
 		{
