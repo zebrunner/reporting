@@ -158,7 +158,7 @@ public class SeleniumService
 	
 	private String normalizeDomain(String domain)
 	{
-		if(!Pattern.matches("\\d+.\\d+.\\d+.\\d+", domain) && Pattern.matches("([A-z0-9]+\\.)+[A-z0-9]+", domain))
+		if(!Pattern.matches("\\d+.\\d+.\\d+.\\d+", domain) && Pattern.matches("([A-z0-9-]+\\.)+[A-z0-9]+", domain))
 		{
 			String[] sd = domain.split("\\.");
 			domain = "." + sd[sd.length - 2] + "." + sd[sd.length - 1];
