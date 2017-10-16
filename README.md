@@ -1,3 +1,3 @@
 ## Zafira Reporting Portal
 
-* Wiki https://github.com/qaprosoft/zafira/wiki
+Spring-based web application that accumulates and represents test automation results.
