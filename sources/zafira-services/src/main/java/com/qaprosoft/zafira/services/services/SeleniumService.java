@@ -127,13 +127,9 @@ public class SeleniumService
 				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
 				String name = screenshot.getName();
 
-                try {
-                    if(titleLocator != null)
-                    {
-                        name = wd.findElement(titleLocator).getAttribute("value");
-                    }
-                } catch (Exception e) {
-                    name = userPreferenceService.getDefaultPreferenceValue("DEFAULT_DASHBOARD");
+                if(titleLocator != null)
+                {
+                    name = wd.findElement(titleLocator).getAttribute("value");
                 }
 
                 if(areaLocator != null)
