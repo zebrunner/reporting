@@ -255,7 +255,7 @@
         var getDashboardByTitle = function (){
             DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
                 if(rs.success)
-                {
+                {   $location.path('/dashboards/' + rs.data.id);
                     $scope.dashboardId = rs.data.id;
                     $scope.dashboard = rs.data;
                     $scope.getDataWithAttributes($scope.dashboard, false);
