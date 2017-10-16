@@ -45,7 +45,13 @@ public class UserPreferenceService
 	{
 		userPreferenceMapper.deleteUserPreferenceById(id);
 	}
-	
+
+    @Transactional(rollbackFor = Exception.class)
+    public String getDefaultPreferenceValue(String name) throws ServiceException
+    {
+        return userPreferenceMapper.getDefaultPreferenceValue(name);
+    }
+
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUserPreferencesByUserId(Long userId) throws ServiceException
 	{

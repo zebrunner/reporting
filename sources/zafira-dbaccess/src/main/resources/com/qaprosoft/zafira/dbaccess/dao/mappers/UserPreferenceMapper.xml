@@ -49,6 +49,17 @@
 		]]>
 	</select>
 
+	<select id="getDefaultPreferenceValue" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			UP.VALUE
+		    FROM
+			zafira.USER_PREFERENCES UP
+			WHERE
+				UP.USER_ID = (SELECT ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous') AND UP.NAME = #{name}
+		]]>
+	</select>
+
 	<update id="updateUserPreference">
 		<![CDATA[
 			UPDATE

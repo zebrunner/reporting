@@ -54,6 +54,9 @@ public class SeleniumService
 	@Autowired
 	private ResourceLoader resourceLoader;
 
+	@Autowired
+    private UserPreferenceService userPreferenceService;
+
 	/**
 	 * Initializes PhantomJS binary according to OS.
 	 */
@@ -120,16 +123,20 @@ public class SeleniumService
 				wd.get(url);
 				WebDriverUtil.pause(10, TimeUnit.SECONDS);
 				WebDriverUtil.waitForJSandJQueryToLoad(wd);
-				
+
 				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
 				String name = screenshot.getName();
-				
-				if(titleLocator != null)
-				{
-					name = wd.findElement(titleLocator).getAttribute("value");
-				}
-				
-				if(areaLocator != null)
+
+                try {
+                    if(titleLocator != null)
+                    {
+                        name = wd.findElement(titleLocator).getAttribute("value");
+                    }
+                } catch (Exception e) {
+                    name = userPreferenceService.getDefaultPreferenceValue("DEFAULT_DASHBOARD");
+                }
+
+                if(areaLocator != null)
 				{
 					cropRegion(wd, screenshot, areaLocator);
 				}
@@ -158,7 +165,6 @@ public class SeleniumService
 	
 	private String normalizeDomain(String domain)
 	{
-		if(!Pattern.matches("\\d+.\\d+.\\d+.\\d+", domain) && Pattern.matches("([A-z0-9-]+\\.)+[A-z0-9]+", domain))
 		{
 			String[] sd = domain.split("\\.");
 			domain = "." + sd[sd.length - 2] + "." + sd[sd.length - 1];

@@ -8,6 +8,8 @@ import java.util.List;
 public interface UserPreferenceMapper
 {
 	void createUserPreference(UserPreference userPreference);
+
+	String getDefaultPreferenceValue (String name);
 	
 	UserPreference getUserPreferenceById(long id);
 
