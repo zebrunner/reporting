@@ -30,6 +30,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -54,10 +56,7 @@ public class SeleniumService
 	@Autowired
 	private ResourceLoader resourceLoader;
 
-	@Autowired
-    private UserPreferenceService userPreferenceService;
-
-	/**
+     /**
 	 * Initializes PhantomJS binary according to OS.
 	 */
 	@PostConstruct
@@ -112,7 +111,10 @@ public class SeleniumService
 		WebDriver wd = null;
 		try
 		{
-			wd = new PhantomJSDriver();
+			DesiredCapabilities caps = new DesiredCapabilities();
+			caps.setJavascriptEnabled(true);
+			caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[] {"--web-security=no", "--ignore-ssl-errors=yes"});
+	 		wd = new PhantomJSDriver(caps);
 			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 			
