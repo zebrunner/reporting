@@ -43,7 +43,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "statusChangedAt",
     "status",
     "using",
-    "version"
+    "version",
+    "deviceType"
 })
 public class STFDevice {
 
@@ -187,6 +188,12 @@ public class STFDevice {
      */
     @JsonProperty("version")
     private String version;
+    /**
+     * 
+     */
+    @JsonProperty("deviceType")
+    private String deviceType = "Phone";
+    
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -748,6 +755,26 @@ public class STFDevice {
     @JsonProperty("version")
     public void setVersion(String version) {
         this.version = version;
+    }
+    
+    /**
+     * 
+     * @return
+     *     The deviceType
+     */
+    @JsonProperty("deviceType")
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    /**
+     * 
+     * @param deviceType
+     *     The device type
+     */
+    @JsonProperty("deviceType")
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     @JsonAnyGetter
