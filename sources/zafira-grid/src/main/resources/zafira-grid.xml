@@ -22,35 +22,18 @@
 		</property>
 	</bean>
 
-	<bean id="gridRequestQueueProcessorTask"
-		class="com.qaprosoft.zafira.grid.tasks.GridRequestQueueProcessorTask" />
-
 	<bean id="gridHealthCheckTask" class="com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask" />
 
-	<bean id="pubNubHealthCheckTask" class="com.qaprosoft.zafira.grid.tasks.PubNubHealthCheckTask" />
-	
 	<bean id="usbDeviceHealthCheckTask" class="com.qaprosoft.zafira.grid.tasks.UsbDeviceHealthCheckTask" />
 
 	<bean id="schedulerService"
 		class="com.qaprosoft.zafira.grid.services.impl.SchedulerService" />
 
 	<!-- Job Details -->
-	<bean id="gridRequestQueueProcessorTaskJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="executeGridRequestQueueTask" />
-	</bean>
-
 	<bean id="gridHealthCheckTaskJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="schedulerService" />
 		<property name="targetMethod" value="executeGridHealthCheckTask" />
-	</bean>
-
-	<bean id="pubNubHealthCheckTaskJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="executePubNubHealthCheckTask" />
 	</bean>
 
 	<bean id="usbDeviceHealthCheckTaskJobDetail"
@@ -60,25 +43,11 @@
 	</bean>
 
 	<!-- Triggers -->
-	<bean id="gridRequestQueueProcessorTaskTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="gridRequestQueueProcessorTaskJobDetail" />
-		<property name="cronExpression"
-			value="${zafira.batch.jobs.gridRequestQueueProcessor.trigger.cronExpression}" />
-	</bean>
-
 	<bean id="gridHealthCheckTaskTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="gridHealthCheckTaskJobDetail" />
 		<property name="cronExpression"
 			value="${zafira.batch.jobs.gridHealthCheck.trigger.cronExpression}" />
-	</bean>
-
-	<bean id="pubNubHealthCheckTaskTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="pubNubHealthCheckTaskJobDetail" />
-		<property name="cronExpression"
-			value="${zafira.batch.jobs.pubNubHealthCheck.trigger.cronExpression}" />
 	</bean>
 	
 	<bean id="usbDeviceHealthCheckTaskTrigger"
@@ -92,17 +61,13 @@
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
-				<ref bean="gridRequestQueueProcessorTaskJobDetail" />
 				<ref bean="gridHealthCheckTaskJobDetail" />
-				<ref bean="pubNubHealthCheckTaskJobDetail" />
 				<ref bean="usbDeviceHealthCheckTaskJobDetail" />
 			</list>
 		</property>
 		<property name="triggers">
 			<list>
-				<ref bean="gridRequestQueueProcessorTaskTrigger" />
 				<ref bean="gridHealthCheckTaskTrigger" />
-				<ref bean="pubNubHealthCheckTaskTrigger" />
 				<ref bean="usbDeviceHealthCheckTaskTrigger" />
 			</list>
 		</property>
@@ -112,17 +77,4 @@
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
 
-	<bean id="pubNubService" class="com.qaprosoft.zafira.grid.services.impl.PubNubService">
-		<constructor-arg index="0" value="${zafira.grid.pubnub.pub_key}" />
-		<constructor-arg index="1" value="${zafira.grid.pubnub.sub_key}" />
-		<constructor-arg index="2" value="${zafira.grid.pubnub.channel}" />
-	</bean>
-
-	<bean id="deviceMatcher" class="com.qaprosoft.zafira.grid.matchers.DeviceByModelMatcher" />
-
-	<bean id="gridRequestQueueService"
-		class="com.qaprosoft.zafira.grid.services.impl.GridRequestQueueService">
-		<constructor-arg index="0" ref="pubNubService" />
-		<constructor-arg index="1" ref="deviceMatcher" />
-	</bean>
 </beans>

@@ -5,7 +5,6 @@ import java.util.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +16,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 @Service
 public class EventService
 {
-	@Value("${zafira.grid.logging.enabled}")
-	private boolean loggingEnabled;
-	
 	private static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 	
 	@Autowired
@@ -58,36 +54,30 @@ public class EventService
 	
 	public void logEvent(Event event)
 	{
-		if(loggingEnabled)
+		try
 		{
-			try
-			{
-				createEvent(event);
-			}
-			catch(Exception e)
-			{
-				LOGGER.error("Unable log event: " + e.getMessage());
-			}
+			createEvent(event);
+		}
+		catch(Exception e)
+		{
+			LOGGER.error("Unable log event: " + e.getMessage());
 		}
 	}
 	
 	public void markEventReceived(Type type, String testRunId, String testId)
 	{
-		if(loggingEnabled)
+		try
 		{
-			try
+			Event event = getEventByTypeAndTestRunIdAndTestId(type, testRunId, testId);
+			if(event != null)
 			{
-				Event event = getEventByTypeAndTestRunIdAndTestId(type, testRunId, testId);
-				if(event != null)
-				{
-					event.setReceived(Calendar.getInstance().getTime());
-					updateEvent(event);
-				}
+				event.setReceived(Calendar.getInstance().getTime());
+				updateEvent(event);
 			}
-			catch(Exception e)
-			{
-				LOGGER.error("Unable to mark event as received: " + e.getMessage());
-			}
+		}
+		catch(Exception e)
+		{
+			LOGGER.error("Unable to mark event as received: " + e.getMessage());
 		}
 	}
 }
