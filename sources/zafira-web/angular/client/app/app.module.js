@@ -127,9 +127,7 @@
                     hljs.configure({
                         tabReplace: '    '
                     });
-                    $('pre code').each(function(i, block) {
-                        hljs.highlightBlock(block);
-                    });
+                    scope.refreshHighlighting();
                 };
 
                 scope.refreshHighlighting = function () {
@@ -149,7 +147,7 @@
                 $timeout(initHighlight, 100);
 
                 iElement.bind("blur keyup change", function() {
-                    ngModel.$setViewValue(iElement[0].innerText);
+                    ngModel.$setViewValue(iElement[0].innerText.trim());
                 });
             }
         };
