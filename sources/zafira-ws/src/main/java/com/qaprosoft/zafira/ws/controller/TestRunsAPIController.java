@@ -268,7 +268,7 @@ public class TestRunsAPIController extends AbstractController
 			@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
 			throws ServiceException, JAXBException
 	{
-		String[] recipients = !StringUtils.isBlank(email.getRecipients())
+		String[] recipients = !StringUtils.isEmpty(email.getRecipients())
 				? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[] {};
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
 	}
