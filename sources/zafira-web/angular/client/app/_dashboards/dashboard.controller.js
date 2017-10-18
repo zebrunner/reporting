@@ -22,7 +22,6 @@
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
-            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             if(!refresh){
                 $scope.isLoading = true;
             }
@@ -492,6 +491,7 @@
         }
 
         $scope.createWidget = function(widget){
+            $scope.splitEmptyLine (widget);
             DashboardService.CreateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget created");
@@ -504,6 +504,7 @@
         };
 
         $scope.updateWidget = function(widget){
+            $scope.splitEmptyLine (widget);
             DashboardService.UpdateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget updated");
@@ -518,7 +519,8 @@
 
         $scope.$on("$event:executeSQL", function () {
             if (widget.sql){
-                $scope.loadModalWidget($scope.widget, true);
+                $scope.splitEmptyLine (widget);
+                $scope.loadModalWidget(widget, true);
             }
             else {
                 alertify.warning('Add SQL query');
@@ -528,7 +530,8 @@
         $scope.$on("$event:showWidget", function () {
             if (widget.sql){
                 if(widget.type){
-                    $scope.loadModalWidget($scope.widget);
+                    $scope.splitEmptyLine (widget);
+                    $scope.loadModalWidget(widget);
                 }
                 else {
                     alertify.warning('Choose widget type');
@@ -546,7 +549,6 @@
         $scope.loadModalWidget = function (widget, table) {
 
             $scope.isLoading = true;
-            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
             var sqlAdapter = {'sql': widget.sql};
             var params = setQueryParams(table);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
@@ -595,6 +597,10 @@
                 params = params + "&stackTraceRequired=" + true;
             }
             return params;
+        };
+
+        $scope.splitEmptyLine = function (widget){
+            widget.sql = widget.sql.replace(/^\s*[\r\n]/gm, "");
         };
 
         $scope.sort = {
