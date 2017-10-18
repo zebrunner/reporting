@@ -11,7 +11,7 @@ public class Setting extends AbstractEntity
 {
 	private static final long serialVersionUID = -6809215085336377266L;
 
-	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD", "EMAIL_PASSWORD", "AMAZON_SECRET_KEY", "HIPCHAT_ACCESS_TOKEN");
+	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD", "EMAIL_PASSWORD", "AMAZON_SECRET_KEY", "HIPCHAT_ACCESS_TOKEN", "STF_TOKEN");
 
 	private String name;
 	private String value;
@@ -67,12 +67,13 @@ public class Setting extends AbstractEntity
 		EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD, EMAIL_ENABLED,
 		AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_BUCKET, AMAZON_ENABLED,
 		HIPCHAT_ACCESS_TOKEN, HIPCHAT_ENABLED,
+		STF_URL, STF_TOKEN, STF_ENABLED,
 		CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY
 	}
 
 	public enum Tool
 	{
-		JIRA, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP, CRYPTO
+		JIRA, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP, STF, CRYPTO
 	}
 
 	public boolean isValueForEncrypting()

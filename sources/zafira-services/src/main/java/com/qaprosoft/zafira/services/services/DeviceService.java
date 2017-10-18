@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ public class DeviceService
 	@Transactional(rollbackFor = Exception.class)
 	public Device createDevice(Device device) throws ServiceException
 	{
+
 		deviceMapper.createDevice(device);
 		return device;
 	}
@@ -75,7 +77,10 @@ public class DeviceService
 			device.setSerial(stfDevice.getSerial());
 			device.setEnabled(true);
 			device.setLastStatus(stfDevice.getReady() && stfDevice.getPresent());
-			createDevice(device);
+			if(!StringUtils.isBlank(device.getModel()) && !StringUtils.isBlank(device.getSerial()))
+			{
+				createDevice(device);
+			}
 		}
 	}
 }
