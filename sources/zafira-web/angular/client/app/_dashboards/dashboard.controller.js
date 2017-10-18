@@ -265,8 +265,9 @@
 
         (function init() {
 
-        	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth.refreshToken;
+        	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth ? $rootScope.globals.auth.refreshToken : undefined;
           // TODO: HOTFIX for PhantomJS, need additional refactorring
+            if(token)
         	AuthService.RefreshToken(token)
     		  .then(
             function (rs) {

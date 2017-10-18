@@ -60,7 +60,7 @@
         };
 
         $scope.disconnectWebsocket = function () {
-            if ($scope.stomp != null) {
+            if ($scope.stomp && $scope.stomp.connected) {
                 $scope.stomp.disconnect();
             }
         };
