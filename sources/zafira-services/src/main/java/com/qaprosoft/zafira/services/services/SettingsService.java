@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.jmx.*;
+import com.qaprosoft.zafira.services.services.stf.STFService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,9 @@ public class SettingsService
 
     @Autowired
     private HipchatService hipchatService;
+
+    @Autowired
+    private STFService stfService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -169,6 +173,9 @@ public class SettingsService
 				break;
 			case HIPCHAT:
 				service = hipchatService;
+				break;
+			case STF:
+				service = stfService;
 				break;
 			default:
 				break;

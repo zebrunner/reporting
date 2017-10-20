@@ -17,6 +17,7 @@
 				<entry key="bean:name=slackService" value-ref="slackService"/>
 				<entry key="bean:name=amazonService" value-ref="amazonService"/>
 				<entry key="bean:name=hipchatService" value-ref="hipchatService"/>
+				<entry key="bean:name=stfService" value-ref="stfService"/>
 				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
 			</map>
 		</property>
@@ -50,6 +51,8 @@
 	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.jmx.AmazonService"/>
 
 	<bean id="hipchatService" class="com.qaprosoft.zafira.services.services.jmx.HipchatService"/>
+
+	<bean id="stfService" class="com.qaprosoft.zafira.services.services.stf.STFService"/>
 
 	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
 		<property name="salt" value="${zafira.crypto_salt}" />
@@ -109,11 +112,6 @@
 		<property name="preferFileSystemAccess" value="true" />
 		<property name="templateLoaderPaths" value="classpath:templates" />
 		<property name="defaultEncoding" value="UTF-8"/>
-	</bean>
-
-	<bean id="stfService" class="com.qaprosoft.zafira.services.services.stf.STFService">
-		<constructor-arg index="0" value="${zafira.grid.stf.url}" />
-		<constructor-arg index="1" value="${zafira.grid.stf.token}" />
 	</bean>
 
 	<cache:annotation-driven />

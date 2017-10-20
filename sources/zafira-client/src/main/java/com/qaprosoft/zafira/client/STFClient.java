@@ -113,7 +113,7 @@ public class STFClient
 
 			HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+			isSuccess = response.getStatusLine().getStatusCode() == 200;
 
 		} catch (Exception e)
 		{
@@ -133,7 +133,7 @@ public class STFClient
 			request.addHeader("Authorization", "Bearer " + authToken); // header
 			HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+			isSuccess = response.getStatusLine().getStatusCode() == 200;
 
 		} catch (Exception e)
 		{
@@ -180,13 +180,31 @@ public class STFClient
 			request.addHeader("Authorization", "Bearer " + authToken); // header
 			HttpResponse response = client.execute(request);
 
-			isSuccess = response.getStatusLine().getStatusCode() == 200 ? true : false;
+			isSuccess = response.getStatusLine().getStatusCode() == 200;
 
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);
 		}
 
+		return isSuccess;
+	}
+
+	public boolean isConnected() {
+		boolean isSuccess = false;
+		try
+		{
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(serviceURL + DEVICES_PATH);
+			request.addHeader("Authorization", "Bearer " + authToken); // header
+			HttpResponse response = client.execute(request);
+
+			isSuccess = response.getStatusLine().getStatusCode() == 200;
+
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
 		return isSuccess;
 	}
 }
