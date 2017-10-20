@@ -46,7 +46,7 @@
 	                    {{widget.title}}
 	                    <i class="material-icons pull-right" data-ng-click="showDashboardWidgetDialog($event, widget, false)"  permission="['ROLE_ADMIN']">apps</i>
 	                </div>
-	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
+	                <div zafira-background-theme="graph" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                         <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-show="isLoading"></md-progress-circular>
                         <linechart data-ng-if="widget.type == 'linechart'" data="widget.data" options="widget.model"></linechart>
 	                     <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
@@ -86,7 +86,7 @@
             <article class="article">
                 <md-card class="no-margin-h">
                     <md-table-container>
-                        <table class="table-hover" md-table>
+                        <table class="table-hover" md-table zafira-background-theme="table">
                             <tbody md-body>
                                 <tr md-row ng-repeat="widget in widgets | orderBy : 'title'">
                                     <td md-cell>{{widget.title}}</td>

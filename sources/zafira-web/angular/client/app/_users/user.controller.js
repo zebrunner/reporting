@@ -150,6 +150,8 @@
                 }
                 else if (preferences[i].name === 'REFRESH_INTERVAL'){
                     preferences[i].value = preferenceForm.refreshInterval;
+                } else if (preferences[i].name === 'THEME'){
+                    preferences[i].value = $scope.main.skin;
                 }
             }
             UserService.updateUserPreferences($scope.user.id, preferences).then(function (rs) {

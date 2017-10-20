@@ -6,7 +6,7 @@
         </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
@@ -64,27 +64,34 @@
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Preferences</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
                                 <div layout-padding >
                                     <form name="preference_form" ng-submit="updateUserPreferences(preferenceForm);" >
-                                        <div layout layout-sm="column">
-                                            <md-input-container class="md-block" style="min-width: 450px;">
-                                                <label>Default Dashboard</label>
-                                                <md-select  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
-                                                    <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
-                                                </md-select>
-                                            </md-input-container>
+                                        <div class="col-lg-6">
+                                            <div layout layout-sm="column">
+                                                <md-input-container class="md-block" style="min-width: 450px;">
+                                                    <label>Default Dashboard</label>
+                                                    <md-select  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
+                                                        <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                            </div>
+                                            <div layout layout-sm="column">
+                                                <md-input-container class="md-block"  style="min-width: 450px;">
+                                                    <label>Widget Refresh Interval</label>
+                                                    <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
+                                                        <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
+                                                    </md-select>
+                                                </md-input-container>
+                                            </div>
                                         </div>
-                                        <div layout layout-sm="column">
-                                            <md-input-container class="md-block"  style="min-width: 450px;">
-                                                <label>Widget Refresh Interval</label>
-                                                <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
-                                                    <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
-                                                </md-select>
-                                            </md-input-container>
+                                        <div class="col-lg-6">
+                                            <section style="float: right" id="quickview-customizer">
+                                                <section ng-include="'app/layout/customizer-color.html'"></section>
+                                            </section>
                                         </div>
                                             <md-button type="submit" class="md-raised btn-w-md md-primary">Set</md-button>
                                             <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset</md-button>
@@ -102,7 +109,7 @@
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
@@ -141,7 +148,7 @@
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Access token</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">

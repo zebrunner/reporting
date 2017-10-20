@@ -1,4 +1,4 @@
-<md-dialog flex="50" aria-label="User profile">
+<md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal">
     <form class="form-validation" name="email_form" ng-submit="sendEmail(); UtilService.untouchForm(email_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
@@ -24,34 +24,34 @@
             <div class="md-dialog-content">
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                    <label>Recepients ({{email.recipients.length}})</label>
-                    <md-content class="md-padding autocomplete" layout="column" style="padding-top: 0px; background-color: white">
-                        <md-chips ng-model="users"
-                                  filter-selected=true
-                                  md-autocomplete-snap
-                                  md-transform-chip="checkAndTransformRecipient($chip)"
-                                  md-on-remove="removeRecipient($chip)"
-                                  md-separator-keys="keys">
-                            <md-chip-template>
-                                {{$chip.email}}
-                            </md-chip-template>
-                            <md-autocomplete
-                                    md-search-text="searchText"
-                                    md-items="user in querySearch(searchText, users)"
-                                    md-item-text="user.email"
-                                    md-selected-item="currentUser"
-                                    md-autoselect
-                                    md-no-cache="true"
-                                    placeholder="add email">
-                            <md-item-template>
-                                <span>{{user.email}}</span>
-                            </md-item-template>
-                            <md-not-found>
-                                No users matching "{{searchText}}" were found.
-                            </md-not-found>
-                            </md-autocomplete>
-                        </md-chips>
-                    </md-content>
+                        <label>Recepients ({{email.recipients.length}})</label>
+                        <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
+                            <md-chips ng-model="users"
+                                      filter-selected=true
+                                      md-autocomplete-snap
+                                      md-transform-chip="checkAndTransformRecipient($chip)"
+                                      md-on-remove="removeRecipient($chip)"
+                                      md-separator-keys="keys">
+                                <md-chip-template>
+                                    {{$chip.email}}
+                                </md-chip-template>
+                                <md-autocomplete
+                                        md-search-text="searchText"
+                                        md-items="user in querySearch(searchText, users)"
+                                        md-item-text="user.email"
+                                        md-selected-item="currentUser"
+                                        md-autoselect
+                                        md-no-cache="true"
+                                        placeholder="add email">
+                                <md-item-template>
+                                    <span>{{user.email}}</span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No users matching "{{searchText}}" were found.
+                                </md-not-found>
+                                </md-autocomplete>
+                            </md-chips>
+                        </md-content>
                     </md-input-container>
                 </div>
             </div>
