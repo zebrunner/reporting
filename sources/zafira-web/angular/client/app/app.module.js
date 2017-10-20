@@ -151,6 +151,55 @@
                 });
             }
         };
+    }]).directive('zafiraBackgroundTheme', ['$rootScope', function ($rootScope) {
+        return {
+            restrict: 'A',
+            link:function($scope, iElement, attrs) {
+
+                var element = attrs.zafiraBackgroundTheme;
+
+                var darkThemes = $scope.darkThemes;
+
+                var addTheme = function (mainSkinValue) {
+                    iElement.addClass(getTheme(mainSkinValue));
+                };
+
+                var getTheme = function (mainSkinValue) {
+                    var themeBackgroundClass;
+                    switch (element) {
+                        case 'graph':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            break;
+                        case 'table':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            break;
+                        case 'modal':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            break;
+                        case 'pagination':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            break;
+                        default:
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            break;
+                    }
+                    return themeBackgroundClass;
+                };
+
+                $scope.$watch("main.skin",function(newValue,oldValue) {
+                    if(! newValue && !oldValue) {
+                        newValue = $rootScope.main.skin;
+                        oldValue = $rootScope.main.skin;
+                    } else {
+                        $rootScope.main.skin = newValue;
+                        $scope.main.default = darkThemes.indexOf(newValue) >= 0 ? 'darkZafiraTheme' : 'default';
+                    }
+                    var a = iElement[0].classList;
+                    iElement[0].classList.remove(getTheme(oldValue));
+                    addTheme(newValue);
+                });
+            }
+        };
     }]).filter('subString', function() {
         return function(str, start, end) {
             if (str != undefined) {
