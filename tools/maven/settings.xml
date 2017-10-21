@@ -16,6 +16,9 @@
         <zafira.ws.path>/zafira-ws</zafira.ws.path>
         <zafira.web.path>/zafira</zafira.web.path>
 
+        <zafira.admin.username></zafira.admin.username>
+        <zafira.admin.password></zafira.admin.password>
+
 				<zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
 				<zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
 				<zafira.db.jdbc.user>{user}</zafira.db.jdbc.user>

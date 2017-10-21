@@ -1,11 +1,13 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.services.util.PeriodCalculator;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,19 @@ import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+import com.qaprosoft.zafira.services.util.PeriodCalculator;
 
 @Service
 public class UserService
 {
+	private static final Logger LOGGER = Logger.getLogger(UserService.class);
+	
+	@Value("${zafira.admin.username}")
+	private String adminUsername;
+	
+	@Value("${zafira.admin.password}")
+	private String adminPassword;
+	
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -29,6 +40,35 @@ public class UserService
 
 	@Autowired
 	private PasswordEncryptor passwordEncryptor;
+	
+	@PostConstruct
+	public void init()
+	{
+		try
+		{
+			if(!StringUtils.isEmpty(adminUsername) && !StringUtils.isEmpty(adminPassword))
+			{
+				User user = getUserByUsername(adminUsername);
+				if(user == null)
+				{
+					user = new User(adminUsername);
+					user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
+					createUser(user);
+					
+					Group group = groupService.getPrimaryGroupByRole(Role.ROLE_ADMIN);
+					if(group != null)
+					{
+						addUserToGroup(user, group.getId());
+						user.getGroups().add(group);
+					}
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			LOGGER.error("Unable to init admin: " + e.getMessage());
+		}
+	}
 
 	@Transactional(readOnly = true)
 	public User getUserById(long id) throws ServiceException

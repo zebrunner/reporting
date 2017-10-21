@@ -123,7 +123,7 @@
 		<module>zafira-client</module>
 		<module>zafira-dbaccess</module>
 		<module>zafira-services</module>
-        <module>zafira-ws</module>
+    <module>zafira-ws</module>
 		<module>zafira-batch-services</module>
 		<module>zafira-grid</module>
 		<module>zafira-web</module>
