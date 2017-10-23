@@ -12,6 +12,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
+        <zafira.service.version>1.0</zafira.service.version>
+        <zafira.client.version>1.0</zafira.client.version>
+
         <zafira.url>http://localhost:8888</zafira.url>
         <zafira.ws.path>/zafira-ws</zafira.ws.path>
         <zafira.web.path>/zafira</zafira.web.path>
