@@ -32,42 +32,42 @@
                             <table class="table-hover" md-table>
                                 <thead md-head style="position: parent;">
                                 <tr md-row>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Monitor status
                                     </th>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Url
                                     </th>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Type
                                     </th>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Crone expression
                                     </th>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Expected code
                                     </th>
-                                    <th md-column>
+                                    <th md-column class="col-md-2">
                                         Monitor enabled
                                     </th>
-                                    <th md-column></th>
+                                    <th md-column class="col-md-2"></th>
                                 </tr>
                                 </thead>
                                 <tbody md-body>
                                 <tr md-row ng-repeat="monitor in monitors | orderBy:'name'">
-                                    <td md-cell>
+                                    <td md-cell class="col-md-2">
                                         <i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
                                         <b>{{monitor.name}}</b>
                                     </td>
-                                    <td md-cell>{{monitor.url}}</td>
-                                    <td md-cell>{{monitor.type}}</td>
-                                    <td md-cell>{{monitor.cronExpression}}</td>
-                                    <td md-cell>{{monitor.expectedCode}}</td>
-                                    <td md-cell>
+                                    <td md-cell class="col-md-2">{{monitor.url}}</td>
+                                    <td md-cell class="col-md-2">{{monitor.type}}</td>
+                                    <td md-cell class="col-md-2">{{monitor.cronExpression}}</td>
+                                    <td md-cell class="col-md-2">{{monitor.expectedCode}}</td>
+                                    <td md-cell class="col-md-2">
                                         <!--<i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>-->
                                         <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
-                                    <td md-cell>
+                                    <td md-cell class="col-md-2">
                                         <div class="pull-right">
                                             <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">settings</i>
                                         </div>
