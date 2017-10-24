@@ -4,8 +4,8 @@ services:
   db:
     image: postgres:9.6
     volumes:
-     - ./db:/var/lib/postgresql
-     - ./initdb.d/:/docker-entrypoint-initdb.d
+     - /postgresql:/var/lib/postgresql
+     - /database/initdb.d/:/docker-entrypoint-initdb.d
     ports:
      - "5432:5432"
     environment:

@@ -14,11 +14,11 @@ echo "" >> $file
 echo "psql -v ON_ERROR_STOP=1 --username "\$POSTGRES_USER" <<-EOSQL" >> $file
 while IFS= read -r line;do
     echo "$line" | sed -e 's#\$#\\$#g' >> $file
-done < "../database/db-pg.sql"
+done < "db-pg.sql"
 echo "" >> $file
 while IFS= read -r line;do
     echo "$line" | sed -e 's#\$#\\$#g' >> $file
-done < "../database/db-data.sql"
+done < "db-data.sql"
 echo "EOSQL" >> $file
 
 chmod a+x $file
