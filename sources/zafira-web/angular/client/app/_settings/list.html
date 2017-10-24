@@ -28,26 +28,28 @@
 	                        <table class="table-hover" md-table>
 	                            <thead md-head style="position: parent;">
 	                                <tr md-row>
-	                                    <th md-column>
+	                                    <th md-column class="col-md-5">
 	                                    	Name
 	                                    </th>
-	                                    <th md-column>
+	                                    <th md-column class="col-md-5">
 	                                    	Value
 	                                    </th>
-	                                    <th md-column>
+	                                    <th md-column class="col-md-1">
 											Modified
 										</th>
-	                                    <th md-column></th>
+	                                    <th md-column class="col-md-1"></th>
 	                                </tr>
 	                            </thead>
 	                            <tbody md-body>
 	                                <tr md-row ng-repeat="setting in settings | orderBy:'name'">
-	                                    <td md-cell><b>{{setting.name}}</b></td>
-	                                    <td md-cell>{{setting.value}}</td>
-	                                    <td md-cell style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
-	                                    <td md-cell>
-                                            <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">settings</i>
-										                  </td>
+	                                    <td md-cell class="col-md-5"><b>{{setting.name}}</b></td>
+	                                    <td md-cell class="col-md-5">{{setting.value}}</td>
+	                                    <td md-cell class="col-md-1" style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
+	                                    <td md-cell class="col-md-1">
+                                            <div class="pull-right">
+                                                <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">settings</i>
+                                            </div>
+                                        </td>
 	                                </tr>
 	                                <tr md-row data-ng-if="settings.length == 0">
                                         <td md-cell colspan="4" class="text-center">No data</td>
