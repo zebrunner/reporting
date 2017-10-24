@@ -68,7 +68,9 @@
                                         <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
                                     <td md-cell>
-                                        <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">settings</i>
+                                        <div class="pull-right">
+                                            <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">settings</i>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr md-row data-ng-if="monitors.length == 0">

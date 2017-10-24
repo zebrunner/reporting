@@ -46,8 +46,10 @@
 	                                    <td md-cell>{{setting.value}}</td>
 	                                    <td md-cell style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
 	                                    <td md-cell>
-                                            <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">settings</i>
-										                  </td>
+                                            <div class="pull-right">
+                                                <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">settings</i>
+                                            </div>
+                                        </td>
 	                                </tr>
 	                                <tr md-row data-ng-if="settings.length == 0">
                                         <td md-cell colspan="4" class="text-center">No data</td>
