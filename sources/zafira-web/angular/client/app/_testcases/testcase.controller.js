@@ -57,7 +57,7 @@
 
         	if(testCase.expand)
         	{
-        		TestService.searchTests({page: 1, pageSize: 10, testCaseId : testCase.id}).then(function(rs) {
+        		TestService.searchTests({page: 1, pageSize: 10, sortOrder: 'DESC', testCaseId : testCase.id}).then(function(rs) {
     				if(rs.success)
             		{
     					$scope.tests[testCase.id] = rs.data.results;
