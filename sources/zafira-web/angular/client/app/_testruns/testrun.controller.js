@@ -143,6 +143,16 @@
 
         $scope.selectedTestRuns = {};
 
+        $scope.getLengthOfSelectedTestRuns = function () {
+            var count = 0;
+            for(var id in $scope.selectedTestRuns) {
+                if($scope.selectedTestRuns.hasOwnProperty(id)) {
+                    count++;
+                }
+            }
+            return count;
+        };
+
        $scope.addToSelectedTestRuns = function (testRun) {
            $timeout(function () {
                if(testRun.selected) {
@@ -153,13 +163,18 @@
            }, 100);
        };
 
+        $scope.addToSelectedTestRunsAll = function () {
+            $timeout(function () {
+                for(var id in $scope.testRuns) {
+                    $scope.addToSelectedTestRuns($scope.testRuns[id]);
+                }
+            }, 100);
+        };
+
        $scope.followSelectedTestRuns = function () {
-           var count = 0;
+           var count = $scope.getLengthOfSelectedTestRuns();
            for(var id in $scope.selectedTestRuns) {
                $scope.selectedTestRuns[id].followed = true;
-               if($scope.selectedTestRuns.hasOwnProperty(id)) {
-                   count++;
-               }
            }
            var messageText = '';
            switch(count) {
@@ -328,6 +343,7 @@
                     $scope.sr = rs.data;
 
                     $scope.testRuns = {};
+                    $scope.selectedTestRuns = {};
 
                     $scope.sc.page = data.page;
                     $scope.sc.pageSize = data.pageSize;
@@ -465,7 +481,7 @@
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
-                                alertify.success("Testrun is aborted");
+                                alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
                             } else {
                                 alertify.error(rs.message);
                             }
@@ -475,6 +491,20 @@
                         alertify.error(rs.message);
                     }
                 });
+            } else {
+                alertify.error('Unable connect to jenkins');
+            }
+        };
+
+        $scope.abortSelectedTestRuns = function () {
+            if($scope.jenkinsEnabled) {
+                for (var id in $scope.selectedTestRuns) {
+                    if ($scope.selectedTestRuns[id].status == 'IN_PROGRESS') {
+                        $scope.abort($scope.selectedTestRuns[id]);
+                    }
+                }
+            } else {
+                alertify.error('Unable connect to jenkins');
             }
         };
 
