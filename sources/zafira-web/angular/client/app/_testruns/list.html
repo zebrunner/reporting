@@ -27,9 +27,13 @@
                     <md-tooltip md-direction="top">Delete</md-tooltip>
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
-                <md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
+                <!--<md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
                     <md-tooltip md-direction="top">Follow</md-tooltip>
                     <span class="fa fa-eye" aria-hidden="true"></span>
+                </md-button>-->
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 0" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()">
+                    <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
+                    <span class="fa fa-ban" aria-hidden="true"></span>
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
@@ -47,7 +51,7 @@
 		                                   			aria-label="Select"
 		                                   			data-ng-model="selectAll"
 		                                   			data-ng-true-value="true"
-		                                   			data-ng-false-value="false">
+		                                   			data-ng-false-value="false" ng-click="addToSelectedTestRunsAll()">
 		                                   		</md-checkbox>
                                             </md-input-container>
                                     	   </th>
