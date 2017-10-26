@@ -5,7 +5,7 @@ file="initdb.d/1-init.sh"
 echo "#!/bin/bash" > $file
 echo "" >> $file
 
-echo "if [ "\$\( psql -v ON_ERROR_STOP=1 --username \$POSTGRES_USER" -tAc \"SELECT 1 FROM pg_namespace WHERE nspname = 'zafira'\" ) = '1' ]; then" >> $file
+echo "if [ "\$\( psql -v ON_ERROR_STOP=1 --username \$POSTGRES_USER" -tAc \"SELECT 1 FROM pg_namespace WHERE nspname = 'zafira'\" ) == '1' ]; then" >> $file
 echo "echo \"Schema already exists\"" >> $file
 echo "exit 1" >> $file
 echo "fi" >> $file

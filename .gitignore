@@ -20,7 +20,7 @@ etc
 .tmp
 dist
 bower_components
-/postgresql
+/pgdata
 /sources/rapid-dbaccess/test-output
 /sources/rapid-services/test-output
 /sources/zafira-conf/.project

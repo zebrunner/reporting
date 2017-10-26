@@ -4,10 +4,10 @@ services:
   db:
     image: postgres:9.6
     volumes:
-     - /postgresql:/var/lib/postgresql
-     - /database/initdb.d/:/docker-entrypoint-initdb.d
+     - ./pgdata:/var/lib/postgresql/data
+     - ./database/initdb.d/:/docker-entrypoint-initdb.d
     ports:
-     - "5432:5432"
+     - "5433:5432"
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
