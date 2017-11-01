@@ -151,6 +151,19 @@ public class DashboardsAPIController extends AbstractController
 	{
 		return dashboardService.updateDashboardWidget(dashboardId, widget);
 	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", code = 200, httpMethod = "PUT", response = Widget.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value="{dashboardId}/widgets/all", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Widget> updateDashboardWidgets(@PathVariable(value="dashboardId") long dashboardId, @RequestBody List<Widget> widgets) throws ServiceException
+	{
+		for(Widget widget : widgets)
+		{
+			dashboardService.updateDashboardWidget(dashboardId, widget);
+		}
+		return widgets;
+	}
 	
     @ResponseStatusDetails
     @ApiOperation(value = "Send dashboard by email", nickname = "sendDashboardByEmail", code = 200, httpMethod = "POST")
