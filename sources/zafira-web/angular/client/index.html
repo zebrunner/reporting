@@ -38,6 +38,9 @@
         <!-- build:css({.tmp,client}) styles/main.css -->
         <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
         <link rel="stylesheet" href="bower_components/alertify-js/build/css/alertify.min.css">
+        <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css">
+        <link rel="stylesheet" href="bower_components/gridstack/dist/gridstack.min.css">
+        <link rel="stylesheet" href="bower_components/gridstack/dist/gridstack-extra.min.css">
         <!--<link rel="stylesheet" href="bower_components/push.js/bin/push.min.js">-->
         <link rel="stylesheet" href="styles/bootstrap.css">
         <link rel="stylesheet" href="styles/ui.css">
@@ -147,6 +150,10 @@
 
         <script src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
         <script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+        <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+        <script src="bower_components/lodash/dist/lodash.min.js"></script>
+        <script src="bower_components/gridstack/dist/gridstack.all.js"></script>
+        <script src="bower_components/gridstack-angular/dist/gridstack-angular.min.js"></script>
 
         <script src="vendors/highlight.pack.js"></script>
         <!-- endbuild -->
@@ -155,8 +162,8 @@
         <!-- build:js scripts/app.js -->
         <!-- inject:js -->
         <script src="app/app.module.js"></script>
-        <script src="app/layout/layout.module.js"></script>
         <script src="app/core/core.module.js"></script>
+        <script src="app/layout/layout.module.js"></script>
         <script src="app/page/page.module.js"></script>
         <script src="app/_auth/auth.module.js"></script>
         <script src="app/_certifications/certification.module.js"></script>
@@ -170,15 +177,15 @@
         <script src="app/_testruns/testrun.module.js"></script>
         <script src="app/_users/user.module.js"></script>
         <script src="app/_views/view.module.js"></script>
-        <script src="app/layout/customizer.controller.js"></script>
-        <script src="app/layout/layout.diretive.js"></script>
-        <script src="app/layout/loader.js"></script>
-        <script src="app/layout/sidebar.directive.js"></script>
         <script src="app/core/app.config.js"></script>
         <script src="app/core/app.controller.js"></script>
         <script src="app/core/config.lazyload.js"></script>
         <script src="app/core/config.route.js"></script>
         <script src="app/core/i18n.js"></script>
+        <script src="app/layout/customizer.controller.js"></script>
+        <script src="app/layout/layout.diretive.js"></script>
+        <script src="app/layout/loader.js"></script>
+        <script src="app/layout/sidebar.directive.js"></script>
         <script src="app/page/page.controller.js"></script>
         <script src="app/page/page.directive.js"></script>
         <script src="app/_auth/auth.controller.js"></script>

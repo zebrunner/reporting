@@ -12,11 +12,24 @@
 
         $scope.dashboard = {};
 
+        /*$timeout(function () {
+            for (var i = 0; i < $scope.dashboard.widgets.length; i++) {
+                var currentWidget = $scope.dashboard.widgets[i];
+                currentWidget.position = {'x':0, 'y': i, 'height': 1, 'width': 1};
+            }
+        }, 4000);*/
+
+        var grid = $('.grid-stack').gridstack();
+
+        $scope.gridstackOptions = {verticalMargin: 20,resizable: {handles: 'se, sw'}};
+
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
-                    if (!refresh || refresh && dashboard.widgets[i].refreshable) {
-                        $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
-                    }
+                var currentWidget = dashboard.widgets[i];
+                currentWidget.position = JSON.parse(currentWidget.position)/*{'x':0, 'y': i, 'height': 1, 'width': 1}*/;
+                if (!refresh || refresh && currentWidget.refreshable) {
+                    $scope.loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
+                }
             }
         };
 
@@ -47,6 +60,23 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        $scope.updateWidgetsPosition = function(){
+            for(var i = 0; i < $scope.dashboard.widgets.length; i++) {
+                var currentWidget = $scope.dashboard.widgets[i];
+                var widgetData = {};
+                angular.copy(currentWidget, widgetData);
+                widgetData.position = JSON.stringify(widgetData.position);
+                DashboardService.UpdateDashboardWidget($scope.dashboardId, {'id': currentWidget.id, 'position': widgetData.position}).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Widget position updated");
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
         };
 
         var setQueryParams = function(dashboardName){
