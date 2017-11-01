@@ -8,6 +8,7 @@
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
+	        $scope.darkThemes = ['11', '21', '31'];
 
 	        $scope.$watch('main', function(newVal, oldVal) {
 
@@ -109,6 +110,9 @@
                     }
                     else if (userPreferences[i].name === 'REFRESH_INTERVAL'){
                         $rootScope.refreshInterval = userPreferences[i].value;
+                    }
+                    else if (userPreferences[i].name === 'THEME'){
+                        $scope.main.skin = userPreferences[i].value;
                     }
                 }
                 $rootScope.$broadcast("event:defaultPreferencesInitialized");
