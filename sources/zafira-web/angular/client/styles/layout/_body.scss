@@ -13,6 +13,18 @@ body {
     bottom: 70px;
 }
 
+#save-fab {
+    position: fixed;
+    right: 180px;
+    bottom: 70px;
+}
+
+#cancel-fab {
+    position: fixed;
+    right: 240px;
+    bottom: 70px;
+}
+
 .result {
   border-left: 8px solid #777777;
   height: 55px;

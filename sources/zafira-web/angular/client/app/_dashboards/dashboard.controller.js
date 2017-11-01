@@ -10,18 +10,16 @@
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
+        $scope.pristineWidgets = [];
+
         $scope.dashboard = {};
 
-        /*$timeout(function () {
-            for (var i = 0; i < $scope.dashboard.widgets.length; i++) {
-                var currentWidget = $scope.dashboard.widgets[i];
-                currentWidget.position = {'x':0, 'y': i, 'height': 1, 'width': 1};
+        $scope.gridstackOptions = {
+            verticalMargin: 20,
+            resizable: {
+                handles: 'se, sw'
             }
-        }, 4000);*/
-
-        var grid = $('.grid-stack').gridstack();
-
-        $scope.gridstackOptions = {verticalMargin: 20,resizable: {handles: 'se, sw'}};
+        };
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
@@ -31,6 +29,7 @@
                     $scope.loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
                 }
             }
+            angular.copy(dashboard.widgets, $scope.pristineWidgets);
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
@@ -63,20 +62,46 @@
         };
 
         $scope.updateWidgetsPosition = function(){
+            var widgets = [];
             for(var i = 0; i < $scope.dashboard.widgets.length; i++) {
                 var currentWidget = $scope.dashboard.widgets[i];
                 var widgetData = {};
                 angular.copy(currentWidget, widgetData);
                 widgetData.position = JSON.stringify(widgetData.position);
-                DashboardService.UpdateDashboardWidget($scope.dashboardId, {'id': currentWidget.id, 'position': widgetData.position}).then(function (rs) {
-                    if (rs.success) {
-                        alertify.success("Widget position updated");
-                    }
-                    else {
-                        alertify.error(rs.message);
-                    }
-                });
+                widgets.push({'id': currentWidget.id, 'position': widgetData.position});
             }
+            DashboardService.UpdateDashboardWidgets($scope.dashboardId, widgets).then(function (rs) {
+                if (rs.success) {
+                    angular.copy(rs.data, $scope.pristineWidgets);
+                    $scope.resetGrid();
+                    alertify.success("Widget positions was updated");
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.onGridChange = function () {
+            $scope.gridWasChanged = true;
+        };
+
+
+        $scope.resetGrid = function () {
+            var gridstack = angular.element('.grid-stack').gridstack().data('gridstack');
+            for(var i = 0; i < $scope.pristineWidgets.length; i++) {
+                var currentPristineWidget = $scope.pristineWidgets[i];
+                $scope.dashboard.widgets.filter(function (widget) {
+                    if(widget.id == $scope.pristineWidgets[i].id) {
+                        var element = angular.element('#widget-' + widget.id);
+                        gridstack.update(element, currentPristineWidget.position.x, currentPristineWidget.position.y,
+                            currentPristineWidget.position.width, currentPristineWidget.position.height);
+                        return true;
+                    }
+                    return false;
+                })
+            }
+            $scope.gridWasChanged = false;
         };
 
         var setQueryParams = function(dashboardName){
