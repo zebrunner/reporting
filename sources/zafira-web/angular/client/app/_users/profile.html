@@ -72,28 +72,31 @@
                                             <md-input-container class="md-block">
                                                 <md-radio-group ng-model="main.skin" class="md-primary">
                                                     <md-radio-button value="32" class="radio-inline">Light color schema</md-radio-button>
-                                                    <md-radio-button value="31" class="radio-inline">Dark color schema</md-radio-button>
+                                                    <md-radio-button value="22" class="radio-inline">Dark color schema</md-radio-button>
                                                 </md-radio-group>
                                             </md-input-container>
                                         </div>
-                                        <div layout-sm="column" flex="50">
-                                            <md-input-container class="md-block">
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="flex">
                                                 <label>Default Dashboard</label>
                                                 <md-select  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
                                                     <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
-                                        <div layout-sm="column" flex="50">
-                                            <md-input-container class="md-block">
+                                        <div layout layout-sm="column">
+                                            <md-input-container class="flex">
                                                 <label>Widget Refresh Interval</label>
                                                 <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
                                                     <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
-                                        <md-button type="submit" class="md-raised btn-w-md md-primary">Save</md-button>
-                                        <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset to default</md-button>
+                                        <br/>
+                                        <div>
+	                                        <md-button type="submit" class="md-raised btn-w-md md-primary">Save</md-button>
+	                                        <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset to default</md-button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
