@@ -1,28 +1,31 @@
 package com.qaprosoft.zafira.services.services.stf;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.STF;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.qaprosoft.zafira.client.STFClient;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.stf.RemoteConnectUserDevice;
 import com.qaprosoft.zafira.models.stf.STFDevice;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-
-import javax.annotation.PostConstruct;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.STF;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
 
 @ManagedResource(objectName = "bean:name=stfService", description = "STF init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)

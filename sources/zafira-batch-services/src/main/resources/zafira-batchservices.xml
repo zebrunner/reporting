@@ -20,6 +20,9 @@
 				<value>classpath:environment.properties</value>
 			</array>
 		</property>
+		<property name="systemPropertiesModeName">
+			<value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+		</property>
 	</bean>
 
 	<bean id="abortFrozenTestRunsTask"

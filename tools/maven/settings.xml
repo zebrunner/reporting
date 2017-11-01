@@ -12,9 +12,15 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
+        <zafira.service.version>1.0</zafira.service.version>
+        <zafira.client.version>1.0</zafira.client.version>
+
         <zafira.url>http://localhost:8888</zafira.url>
         <zafira.ws.path>/zafira-ws</zafira.ws.path>
         <zafira.web.path>/zafira</zafira.web.path>
+
+        <zafira.admin.username></zafira.admin.username>
+        <zafira.admin.password></zafira.admin.password>
 
 				<zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
 				<zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>

@@ -108,7 +108,6 @@
 
 		<jira-client.version>0.5</jira-client.version>
 		<hipchat-client.version>0.4.3</hipchat-client.version>
-		<jasypt>1.9.2</jasypt>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 
 		<jjwt.version>0.7.0</jjwt.version>
@@ -123,7 +122,7 @@
 		<module>zafira-client</module>
 		<module>zafira-dbaccess</module>
 		<module>zafira-services</module>
-        <module>zafira-ws</module>
+    <module>zafira-ws</module>
 		<module>zafira-batch-services</module>
 		<module>zafira-grid</module>
 		<module>zafira-web</module>
@@ -614,12 +613,6 @@
 				<groupId>io.evanwong.oss</groupId>
 				<artifactId>hipchat-java</artifactId>
 				<version>${hipchat-client.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jasypt</groupId>
-				<artifactId>jasypt</artifactId>
-				<version>${jasypt}</version>
 			</dependency>
 
 			<dependency>
