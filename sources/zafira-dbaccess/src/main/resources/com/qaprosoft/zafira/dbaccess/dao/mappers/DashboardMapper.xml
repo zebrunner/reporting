@@ -29,7 +29,6 @@
 				W.SQL AS WIDGET_SQL,
 				W.MODEL AS WIDGET_MODEL,
                 W.REFRESHABLE AS WIDGET_REFRESHABLE,
-				DW.SIZE AS DASHBOARD_WIDGET_SIZE,
 				W.TYPE AS WIDGET_TYPE,
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
 				W.CREATED_AT AS WIDGET_CREATED_AT,
@@ -125,12 +124,11 @@
     
     <insert id="addDashboardWidget" useGeneratedKeys="true">
         <![CDATA[
-            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE)
+            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION)
             VALUES (
                 #{dashboardId},
                 #{widget.id},
-                #{widget.position},
-                #{widget.size}
+                #{widget.position}
             )
         ]]>
     </insert>
@@ -152,11 +150,6 @@
             <if test="null != widget.position">
                 <![CDATA[
                     POSITION = #{widget.position},
-                ]]>
-            </if>
-            <if test="null != widget.size">
-                <![CDATA[
-                    SIZE = #{widget.size}
                 ]]>
             </if>
         </set>
