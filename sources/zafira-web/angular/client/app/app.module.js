@@ -158,7 +158,7 @@
 
                 var element = attrs.zafiraBackgroundTheme;
 
-                var darkThemes = $scope.darkThemes;
+                var darkThemes = $rootScope.darkThemes;
 
                 var addTheme = function (mainSkinValue) {
                     iElement.addClass(getTheme(mainSkinValue));
@@ -168,19 +168,19 @@
                     var themeBackgroundClass;
                     switch (element) {
                         case 'graph':
-                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
                         case 'table':
-                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
                         case 'modal':
-                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
                         case 'pagination':
-                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
                         default:
-                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-white' : 'background-clear-white';
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
                     }
                     return themeBackgroundClass;
@@ -192,7 +192,7 @@
                         oldValue = $rootScope.main.skin;
                     } else {
                         $rootScope.main.skin = newValue;
-                        $scope.main.default = darkThemes.indexOf(newValue) >= 0 ? 'darkZafiraTheme' : 'default';
+                        $scope.main.default = darkThemes.indexOf(newValue) >= 0 ? 'default' : 'default';
                     }
                     var a = iElement[0].classList;
                     iElement[0].classList.remove(getTheme(oldValue));
