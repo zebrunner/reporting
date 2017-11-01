@@ -69,6 +69,17 @@
             .definePalette('cyanAlt', cyanAlt)
             .definePalette('lightGreenAlt', lightGreenAlt);
 
+        $mdThemingProvider.theme('darkZafiraTheme')
+            .primaryPalette('teal', {
+                'default': '900'
+            })
+            .accentPalette('cyanAlt', {
+                'default': '900'
+            })
+            .warnPalette('red', {
+                'default': '900'
+            });
+
 
         $mdThemingProvider.theme('default')
             .primaryPalette('teal', {

@@ -34,7 +34,7 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                     	<form ng-submit="search()" name="search_form">
-                        <table class="table-hover" md-table>
+                        <table class="table-hover" md-table zafira-background-theme="table">
                             <thead md-head style="position: parent;">
                                 <tr md-row>
                                     <th md-column>
@@ -145,7 +145,7 @@
                          </form>
                     </md-table-container>
 
-                    <md-table-pagination ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                    <md-table-pagination zafira-background-theme="pagination" ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>
