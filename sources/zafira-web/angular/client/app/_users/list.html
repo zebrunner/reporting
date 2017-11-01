@@ -90,7 +90,19 @@
                                     <td md-cell><b>{{user.username}}</b></td>
                                     <td md-cell>{{user.email}}</td>
                                     <td md-cell>{{user.firstName}} {{user.lastName}}</td>
-                                    <td md-cell class="text-center">{{user.createdAt | date}}</td>
+                                    <td md-cell>
+                                      <span>
+                                        {{user.createdAt | date}}
+                                      </span>
+                                      <b>
+                                        <span class="time" data-ng-if="user.lastLogin">
+                                            last login <time am-time-ago="user.lastLogin" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                        </span>
+                                        <span class="time" data-ng-if="!user.lastLogin">
+                                          never logged in
+                                        </span>
+                                      </b>
+                                    </td>
                                     <td md-cell>
                                     	<span ng-switch on="user.password != null && user.password != ''">
                                     		<span class="label label-success" ng-switch-when="true">Active</span>

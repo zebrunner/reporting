@@ -19,7 +19,7 @@
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-dbaccess</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.qaprosoft</groupId>
 			<artifactId>zafira-client</artifactId>
@@ -72,6 +72,10 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
 		</dependency>
 
 		<dependency>
@@ -179,7 +183,7 @@
 			<groupId>io.evanwong.oss</groupId>
 			<artifactId>hipchat-java</artifactId>
 		</dependency>
-		
+
 		<dependency>
 		  <groupId>com.offbytwo.jenkins</groupId>
 		  <artifactId>jenkins-client</artifactId>
@@ -194,7 +198,7 @@
 	        </exclusion>
 	      </exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.rcarz</groupId>
 			<artifactId>jira-client</artifactId>
@@ -216,12 +220,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>io.jsonwebtoken</groupId>
 		    <artifactId>jjwt</artifactId>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>in.ashwanthkumar</groupId>
 		  	<artifactId>slack-java-webhook</artifactId>

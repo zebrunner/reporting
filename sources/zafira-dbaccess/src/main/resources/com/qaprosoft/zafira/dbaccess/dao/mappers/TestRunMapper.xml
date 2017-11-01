@@ -244,6 +244,11 @@
 	               AND TR.STATUS = #{status}
 	            ]]>
 			</if>
+			<if test="null != reviewed">
+	            <![CDATA[
+	               AND TR.REVIEWED = #{reviewed}
+	            ]]>
+			</if>
 		</trim>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
@@ -333,6 +338,11 @@
 			<if test="null != status">
 	            <![CDATA[
 	               AND TR.STATUS = #{status}
+	            ]]>
+			</if>
+			<if test="null != reviewed">
+	            <![CDATA[
+	               AND TR.REVIEWED = #{reviewed}
 	            ]]>
 			</if>
 		</trim>

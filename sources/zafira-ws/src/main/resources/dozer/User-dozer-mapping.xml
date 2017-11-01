@@ -34,5 +34,9 @@
 			<a>roles</a>
 			<b>roles</b>
 		</field>
+		<field>
+			<a>lastLogin</a>
+			<b>lastLogin</b>
+		</field>
 	</mapping>
 </mappings>
