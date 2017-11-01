@@ -284,8 +284,41 @@ span.light_text {
     color: lightgrey !important;
 }
 
+/*Page backgrounds*/
+.bg-page-light-grey > div.page {
+    background-color: #E3E3E3 !important;
+}
+
+.bg-page-grey > div.page {
+    background-color: #EFEDF0 !important;
+}
+
+/*Sections color*/
+section.zaf-dark .section-header,
+section.zaf-dark .article-title {
+    color: $text-color;
+}
+
+section.zaf-light .section-header,
+section.zaf-light .article-title {
+    color: $brand-primary;
+}
+
+/*Element backgrounds*/
+.background-white {
+    background-color: #f6f6f6 !important;
+}
+
+.background-clear-white {
+    background-color: #ffffff !important;
+}
+
 .background-gray {
     background-color: #EFEDF0 !important;
+}
+
+.teal-dark {
+    background-color: #00695C !important;
 }
 
 .progress-circular_align {
