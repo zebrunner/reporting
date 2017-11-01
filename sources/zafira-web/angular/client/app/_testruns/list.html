@@ -42,7 +42,7 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                         <form ng-submit="search()" name="search_form">
-                            <table md-table>
+                            <table md-table zafira-background-theme="table">
                                 <thead md-head>
                                     <tr md-row>
                                     	   <th md-column>
@@ -313,7 +313,7 @@
                             </table>
                         </form>
                     </md-table-container>
-                    <md-table-pagination ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                    <md-table-pagination zafira-background-theme="pagination" ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>

@@ -1,8 +1,9 @@
 (function () {
     angular.module('app.layout')
-        .controller('CustomizerCtrl', ['$scope', CustomizerCtrl]);
+        .controller('CustomizerCtrl', ['$scope', '$rootScope', CustomizerCtrl]);
 
-    function CustomizerCtrl ($scope) {
+    function CustomizerCtrl ($scope, $rootScope) {
+        $rootScope.main = {};
 
     }
 

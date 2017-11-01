@@ -1,12 +1,12 @@
 <div class="page page-profile" ng-controller="UserProfileController">
 
     <div class="row">
-        <div class="col-lg-8 clearfix">
+        <div class="col-lg-12 clearfix">
         	<h2 class="section-header">User profile</h2>
         </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
@@ -58,37 +58,43 @@
         </div>
     </div>
 
-
-
     <div class="row">
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Preferences</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
                                 <div layout-padding >
-                                    <form name="preference_form" ng-submit="updateUserPreferences(preferenceForm);" >
-                                        <div layout layout-sm="column">
-                                            <md-input-container class="md-block" style="min-width: 450px;">
+                                    <form class="form-validation" name="preference_form" ng-submit="updateUserPreferences(preferenceForm);" >
+                                        <div layout-sm="column">
+                                            <md-input-container class="md-block">
+                                                <md-radio-group ng-model="main.skin" class="md-primary">
+                                                    <md-radio-button value="32" class="radio-inline">Light color schema</md-radio-button>
+                                                    <md-radio-button value="31" class="radio-inline">Dark color schema</md-radio-button>
+                                                </md-radio-group>
+                                            </md-input-container>
+                                        </div>
+                                        <div layout-sm="column" flex="50">
+                                            <md-input-container class="md-block">
                                                 <label>Default Dashboard</label>
                                                 <md-select  ng-model="preferenceForm.defaultDashboard" name="defaultDashboard" placeholder="Default Dashboard">
                                                     <md-option ng-repeat="dashboard in dashboards" ng-value="dashboard.title" ng-selected="selectDashboard(dashboard)">{{dashboard.title}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
-                                        <div layout layout-sm="column">
-                                            <md-input-container class="md-block"  style="min-width: 450px;">
+                                        <div layout-sm="column" flex="50">
+                                            <md-input-container class="md-block">
                                                 <label>Widget Refresh Interval</label>
                                                 <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
                                                     <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
                                                 </md-select>
                                             </md-input-container>
                                         </div>
-                                            <md-button type="submit" class="md-raised btn-w-md md-primary">Set</md-button>
-                                            <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset</md-button>
-                                  </form>
+                                        <md-button type="submit" class="md-raised btn-w-md md-primary">Save</md-button>
+                                        <md-button  class="md-raised btn-w-md md-warn" ng-click="resetPreferences()">Reset to default</md-button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +108,7 @@
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">
@@ -141,7 +147,7 @@
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Access token</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" zafira-background-theme>
                     <div class="row">
                         <div class="col-lg-8 col-lg-offset-2">
                             <div class="md-inline-form">

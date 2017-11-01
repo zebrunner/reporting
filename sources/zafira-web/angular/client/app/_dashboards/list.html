@@ -46,7 +46,7 @@
 	                    {{widget.title}}
 	                    <i class="material-icons pull-right" data-ng-click="showDashboardWidgetDialog($event, widget, false)"  permission="['ROLE_ADMIN']">apps</i>
 	                </div>
-	                <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
+	                <div zafira-background-theme="graph" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                         <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>
                         <div class="text-center" style="margin-top: 150px;" data-ng-if="widget.data.dataset == 0 && widget.type != 'table'">
                             <span>No data</span>
