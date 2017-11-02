@@ -3,21 +3,42 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
+        $scope.pristineWidgets = [];
+
         $scope.dashboard = {};
+
+        $scope.isAdmin = function(){
+            return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        };
+
+        $scope.gridstackOptions = {
+            disableDrag: !$scope.isAdmin(),
+            disableResize: !$scope.isAdmin(),
+            verticalMargin: 20,
+            resizable: {
+                handles: 'se, sw'
+            }
+        };
+
+        var defaultWidgetPosition = '{ "x":0, "y":0, "width":4, "height":4 }';
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
-                    if (!refresh || refresh && dashboard.widgets[i].refreshable) {
-                        $scope.loadWidget(dashboard.title, dashboard.widgets[i], dashboard.attributes, refresh);
-                    }
+                var currentWidget = dashboard.widgets[i];
+                currentWidget.position = JSON.parse(currentWidget.position);
+                if (!refresh || refresh && currentWidget.refreshable) {
+                    $scope.loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
+                }
             }
+            angular.copy(dashboard.widgets, $scope.pristineWidgets);
+            $scope.updateWidgetsToAdd();
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
@@ -34,7 +55,7 @@
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
-                    if(!refresh){
+                    if(!refresh && !isJSON(widget.model)){
                         widget.model = JSON.parse(widget.model);
                     }
                     widget.data = {};
@@ -46,6 +67,132 @@
                 else {
                     alertify.error(rs.message);
                 }
+            });
+        };
+
+        $scope.addDashboardWidget = function (widget) {
+            widget.position = defaultWidgetPosition;
+            var data = {"id": widget.id, "position": widget.position};
+            DashboardService.AddDashboardWidget($scope.dashboardId, data).then(function (rs) {
+                if (rs.success) {
+                    $scope.dashboard.widgets.push(widget);
+                    $scope.dashboard.widgets.forEach(function (widget) {
+                        if(isJSON(widget.position))
+                            widget.position = JSON.stringify(widget.position);
+                    });
+                    $scope.loadDashboardData($scope.dashboard, false);
+                    alertify.success("Widget added");
+                    $scope.updateWidgetsToAdd();
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.deleteDashboardWidget = function (widget) {
+            var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" from dashboard?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboardWidget($scope.dashboardId, widget.id).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
+                        $scope.dashboard.widgets.forEach(function (widget) {
+                            if(isJSON(widget.position))
+                                widget.position = JSON.stringify(widget.position);
+                        });
+                        $scope.loadDashboardData($scope.dashboard, false);
+                        alertify.success("Widget deleted");
+                        $scope.updateWidgetsToAdd();
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+        };
+
+        var isJSON = function (json) {
+            try {
+                JSON.parse(json);
+                return false;
+            } catch (e) {
+                return true;
+            }
+        };
+
+        $scope.unexistWidgets = [];
+        $scope.updateWidgetsToAdd = function () {
+            $scope.unexistWidgets =  $scope.widgets.filter(function(widget) {
+                var existingWidget = $scope.dashboard.widgets.filter(function(w) {
+                    return w.id == widget.id;
+                });
+                return !existingWidget.length || widget.id != existingWidget[0].id;
+            });
+            return $scope.unexistWidgets;
+        };
+
+        $scope.onGridChange = function () {
+            if(!$scope.gridActionToastIsVisible)
+                $scope.showGridActionToast();
+        };
+
+        $scope.showGridActionToast = function() {
+            $mdToast.show({
+                hideDelay: 0,
+                position: 'bottom right',
+                scope: $scope,
+                preserveScope: true,
+                controller  : function ($scope, $mdToast) {
+                    $scope.gridActionToastIsVisible = true;
+                    $scope.updateWidgetsPosition = function(){
+                        var widgets = [];
+                        for(var i = 0; i < $scope.dashboard.widgets.length; i++) {
+                            var currentWidget = $scope.dashboard.widgets[i];
+                            var widgetData = {};
+                            angular.copy(currentWidget, widgetData);
+                            widgetData.position = JSON.stringify(widgetData.position);
+                            widgets.push({'id': currentWidget.id, 'position': widgetData.position});
+                        }
+                        DashboardService.UpdateDashboardWidgets($scope.dashboardId, widgets).then(function (rs) {
+                            if (rs.success) {
+                                angular.copy(rs.data, $scope.pristineWidgets);
+                                $scope.resetGrid();
+                                alertify.success("Widget positions were updated");
+                            }
+                            else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    };
+
+                    $scope.resetGrid = function () {
+                        var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+                        for(var i = 0; i < $scope.pristineWidgets.length; i++) {
+                            var currentPristineWidget = $scope.pristineWidgets[i];
+                            $scope.dashboard.widgets.filter(function (widget) {
+                                if(widget.id == $scope.pristineWidgets[i].id) {
+                                    var element = angular.element('#widget-' + widget.id);
+                                    if(!isJSON(currentPristineWidget.position))
+                                        currentPristineWidget.position = JSON.parse(currentPristineWidget.position);
+                                    gridstack.update(element, currentPristineWidget.position.x, currentPristineWidget.position.y,
+                                        currentPristineWidget.position.width, currentPristineWidget.position.height);
+                                    return true;
+                                }
+                                return false;
+                            })
+                        }
+                        $scope.closeToast();
+                    };
+
+                    $scope.closeToast = function() {
+                        $mdToast
+                            .hide()
+                            .then(function() {
+                                $scope.gridActionToastIsVisible = false;
+                            });
+                    };
+                },
+                templateUrl : 'app/_dashboards/widget-placement_toast.html'
             });
         };
 
@@ -625,9 +772,9 @@
         };
 
         $scope.closeWidget = function(){
-            $scope.widget.data = null;
+            /*$scope.widget.data = null;
             $scope.widget.executeType = null;
-            $scope.showWidget = false;
+            $scope.showWidget = false;*/
         };
 
         $scope.hide = function (result) {
