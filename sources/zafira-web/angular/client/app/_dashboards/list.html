@@ -27,12 +27,6 @@
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
-        <md-button id="save-fab" ng-if="gridWasChanged" class="md-primary md-fab md-fab-bottom-right" aria-label="widget save" data-ng-click="updateWidgetsPosition()">
-            <span class="fa fa-save"></span>
-        </md-button>
-        <md-button id="cancel-fab" ng-if="gridWasChanged" class="md-warn md-fab md-fab-bottom-right" aria-label="widget cancel" data-ng-click="resetGrid()">
-            <span class="fa fa-ban"></span>
-        </md-button>
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
@@ -48,12 +42,13 @@
 			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
             <div gridstack class="grid-stack" options="gridstackOptions"
                  on-change="" on-drag-start="" on-drag-stop="onGridChange()" on-resize-start="" on-resize-stop="onGridChange()" style="margin-bottom: 20px">
-                <div class="grid-stack-item" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets" gridstack-item gs-item-x="widget.position.x" gs-item-y="widget.position.y"
-                     gs-item-width="widget.position.width" gs-item-height="widget.position.height" on-item-added="" on-item-removed="" gridstack-handler="gridHandle()">
-                    <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
+                <div class="grid-stack-item" data-gs-min-height="4" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets" gridstack-item gs-item-x="widget.position.x" gs-item-y="widget.position.y"
+                     gs-item-width="widget.position.width" gs-item-height="widget.position.height" on-item-added="" on-item-removed="">
+                    <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph" style="overflow: hidden">
                         <div class="panel-heading">
                             {{widget.title}}
-                            <i class="material-icons pull-right" data-ng-click="showDashboardWidgetDialog($event, widget, false)"  permission="['ROLE_ADMIN']">apps</i>
+                            <i class="material-icons pull-right" data-ng-click="showWidgetDialog($event, widget, false, dashboard)"  permission="['ROLE_ADMIN']">settings</i>
+                            <i class="material-icons pull-right" data-ng-click="deleteDashboardWidget(widget)"  permission="['ROLE_ADMIN']">delete</i>
                         </div>
                         <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                             <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>
@@ -101,11 +96,11 @@
                     <md-table-container>
                         <table class="table-hover" md-table>
                             <tbody md-body>
-                                <tr md-row ng-repeat="widget in widgets | orderBy : 'title'">
+                                <tr md-row ng-repeat="widget in unexistWidgets | orderBy : 'title'">
                                     <td md-cell>{{widget.title}}</td>
                                     <td md-cell>{{widget.type}}</td>
                                     <td md-cell class="text-center">
-                                    	<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="showDashboardWidgetDialog($event, widget, true)">Add widget to dashboard</button>
+                                    	<button type="button" class="btn btn-outline btn-primary btn-xs" data-ng-click="addDashboardWidget(widget)">Add widget to dashboard</button>
                                     </td>
                                    	<td md-cell>
                                         <md-menu class="pull-right">
