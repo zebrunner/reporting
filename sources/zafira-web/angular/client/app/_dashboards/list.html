@@ -52,7 +52,7 @@
                         </div>
                         <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                             <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>
-                            <div class="text-center" style="margin-top: 150px;" data-ng-if="widget.data.dataset == 0 && widget.type != 'table'">
+                            <div align="center center" class="text-center" data-ng-if="widget.data.dataset == 0 && widget.type != 'table'">
                                 <span>No data</span>
                             </div>
                             <linechart data-ng-if="widget.type == 'linechart' && widget.data.dataset != 0" data="widget.data" options="widget.model"></linechart>

@@ -14,15 +14,21 @@
 
         $scope.dashboard = {};
 
-        var gridstack = angular.element('.grid-stack').gridstack().data('gridstack');
-        var defaultWidgetPosition = '{ "x":0, "y":0, "width":4, "height":4 }';
+        $scope.isAdmin = function(){
+            return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        };
 
         $scope.gridstackOptions = {
+            disableDrag: !$scope.isAdmin(),
+            disableResize: !$scope.isAdmin(),
             verticalMargin: 20,
             resizable: {
                 handles: 'se, sw'
             }
         };
+
+        var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+        var defaultWidgetPosition = '{ "x":0, "y":0, "width":4, "height":4 }';
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
