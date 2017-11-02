@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.models.dto.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.qaprosoft.zafira.models.db.UserPreference;
@@ -24,6 +25,7 @@ public class UserType extends AbstractType
 	private String password;
 	private List<Role> roles = new ArrayList<>();
 	private List<UserPreference> preferences = new ArrayList<>();
+	private Date lastLogin;
 
 	public UserType() 
 	{
@@ -103,5 +105,15 @@ public class UserType extends AbstractType
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+	
+	public Date getLastLogin()
+	{
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin)
+	{
+		this.lastLogin = lastLogin;
 	}
 }

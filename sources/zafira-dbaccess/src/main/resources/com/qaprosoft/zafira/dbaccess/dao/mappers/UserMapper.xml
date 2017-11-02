@@ -30,6 +30,7 @@
 				G.ROLE AS GROUP_ROLE,
 				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
 				G.CREATED_AT AS GROUP_CREATED_AT,
+				U.LAST_LOGIN AS USER_LAST_LOGIN,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT,
 				UP.ID          AS USER_PREFERENCE_ID,
@@ -200,8 +201,24 @@
 		               PASSWORD = #{password}	
 		            ]]>
 				</if>
+				<if test="null != lastLogin">
+		            <![CDATA[
+		               LAST_LOGIN = #{lastLogin}	
+		            ]]>
+				</if>
 			</set>
 		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+	
+	<update id="updateLastLoginDate">
+		<![CDATA[
+			UPDATE
+			    zafira.USERS
+			SET
+				LAST_LOGIN = CURRENT_TIMESTAMP
 			WHERE
 			    ID = #{id}
 		]]>
@@ -229,6 +246,7 @@
 		<result column="USER_FIRST_NAME" property="firstName" />
 		<result column="USER_LAST_NAME" property="lastName" />
 		<result column="USER_EMAIL" property="email" />
+		<result column="USER_LAST_LOGIN" property="lastLogin" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
 		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.GroupResultMap"/>

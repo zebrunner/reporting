@@ -43,7 +43,8 @@
 
         var DEFAULT_SC = {
             'page': 1,
-            'pageSize': 20
+            'pageSize': 20,
+            'reviewed': null
         };
 
         $scope.sc = angular.copy(DEFAULT_SC);

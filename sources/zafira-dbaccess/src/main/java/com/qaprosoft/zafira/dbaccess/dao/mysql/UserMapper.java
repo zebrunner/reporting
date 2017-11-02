@@ -15,6 +15,8 @@ public interface UserMapper
 	User getUserByUserName(String username);
 
 	void updateUser(User user);
+	
+	void updateLastLoginDate(long userId);
 
 	void deleteUserById(long id);
 

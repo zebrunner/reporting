@@ -20,6 +20,7 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	private Date toDate;
 	private Status status;
 	private String period;
+	private Boolean reviewed;
 	
 	public TestRunSearchCriteria()
 	{
@@ -152,5 +153,15 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	public void setAppVersion(String appVersion)
 	{
 		this.appVersion = appVersion;
+	}
+
+	public Boolean getReviewed() 
+	{
+		return reviewed;
+	}
+
+	public void setReviewed(Boolean reviewed) 
+	{
+		this.reviewed = reviewed;
 	}
 }
