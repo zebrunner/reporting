@@ -1,11 +1,13 @@
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
-import freemarker.template.Configuration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+
+import javax.mail.internet.MimeMessage;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -14,8 +16,12 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import javax.mail.internet.MimeMessage;
-import java.util.concurrent.Executors;
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
+
+import freemarker.template.Configuration;
 
 @Service
 public class EmailService
@@ -31,10 +37,14 @@ public class EmailService
 	@Autowired
 	private AutowireCapableBeanFactory autowireizer;
 	
-	public String sendEmail(final IEmailMessage message, final String... recipients) throws ServiceException
+	private EmailValidator validator = EmailValidator.getInstance();
+	
+	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
 		final String text = getFreeMarkerTemplateContent(message);
-		if(recipients != null && recipients.length > 0)
+		final String [] recipients = processRecipients(emails);
+		
+		if(recipients.length > 0)
 		{
 			MimeMessagePreparator preparator = new MimeMessagePreparator()
 			{
@@ -77,5 +87,22 @@ public class EmailService
 			throw new ServiceException(e.getMessage());
 		}
 		return content.toString();
+	}
+	
+	private String [] processRecipients(String ... emails)
+	{
+		List<String> recipients = new ArrayList<>();
+		for(String email : emails)
+		{
+			if(validator.isValid(email))
+			{
+				recipients.add(email);
+			}
+			else
+			{
+				LOGGER.info("Not valid recipient specified: " + email);
+			}
+		}
+		return recipients.toArray(new String[0]);
 	}
 }

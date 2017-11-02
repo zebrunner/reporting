@@ -8,7 +8,7 @@
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
-	        $scope.darkThemes = ['11', '21', '31'];
+	        $rootScope.darkThemes = ['11', '21', '31', '22'];
 
 	        $scope.$watch('main', function(newVal, oldVal) {
 

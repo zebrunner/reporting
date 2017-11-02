@@ -92,6 +92,12 @@ public class UserService
 	{
 		return userMapper.getUserByUserName(username);
 	}
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void updateLastLoginDate(long userId)
+	{
+		userMapper.updateLastLoginDate(userId);
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void createUser(User user) throws ServiceException

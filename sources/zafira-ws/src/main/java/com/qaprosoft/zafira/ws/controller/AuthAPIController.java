@@ -77,6 +77,8 @@ public class AuthAPIController extends AbstractController
 					jwtService.generateAuthToken(user), 
 					jwtService.generateRefreshToken(user), 
 					jwtService.getExpiration());
+			
+			userService.updateLastLoginDate(user.getId());
 		}
 		catch(Exception e)
 		{
@@ -118,6 +120,8 @@ public class AuthAPIController extends AbstractController
 					jwtService.generateAuthToken(user), 
 					jwtService.generateRefreshToken(user), 
 					jwtService.getExpiration());
+			
+			userService.updateLastLoginDate(user.getId());
 		}
 		catch(Exception e)
 		{

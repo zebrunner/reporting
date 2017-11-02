@@ -47,7 +47,7 @@
                                     <tr md-row>
                                     	   <th md-column>
                                     	   	   <md-input-container>
-	                                            	<md-checkbox class="md-secondary"
+	                                        <md-checkbox class="md-secondary"
 		                                   			aria-label="Select"
 		                                   			data-ng-model="selectAll"
 		                                   			data-ng-true-value="true"
@@ -55,7 +55,7 @@
 		                                   		</md-checkbox>
                                             </md-input-container>
                                     	   </th>
-                                        <th md-column style="min-width: 360px;">
+                                        <th md-column style="min-width: 385px;">
                                             <md-input-container class="searchable select">
                                                 <md-select ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
                                                     <md-option value="" disabled>Status</md-option>
@@ -73,6 +73,7 @@
                                             <md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
+                                            <span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
@@ -93,7 +94,7 @@
                                       <th md-column>
                                         	<md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
-                                            </md-input-container>
+                                          </md-input-container>
                                         </th>
                                         <th md-column colspan="2">
                                             <md-input-container class="searchable select">
@@ -165,7 +166,7 @@
                                             <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="{'label-info-empty': testRun.inProgress == 0, 'label-info': testRun.inProgress > 0}">{{testRun.inProgress}}</span>
                                         </td>
                                         <td md-cell>
-                                       		<span class="time">
+                                       		  <span class="time">
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </span>
                                         </td>

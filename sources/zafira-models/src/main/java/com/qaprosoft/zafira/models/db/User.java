@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.models.db;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private String lastName;
 	private List<Group> groups = new ArrayList<>();
 	private List<UserPreference> preferences = new ArrayList<>();
+	private Date lastLogin;
 
 	public User()
 	{
@@ -95,28 +97,40 @@ public class User extends AbstractEntity implements Comparable<User>
 	{
 		this.groups = groups;
 	}
-	
+
 	public void setRoles(List<Role> roles)
 	{
 		// Do nothing just treak for dozer mapper
 	}
-	
+
 	public List<Role> getRoles()
 	{
 		Set<Role> roles = new HashSet<>();
-		for(Group group : groups)
+		for (Group group : groups)
 		{
 			roles.add(group.getRole());
 		}
 		return new ArrayList<>(roles);
 	}
 
-	public List<UserPreference> getPreferences() {
+	public List<UserPreference> getPreferences()
+	{
 		return preferences;
 	}
 
-	public void setPreferences(List<UserPreference> preferences) {
+	public void setPreferences(List<UserPreference> preferences)
+	{
 		this.preferences = preferences;
+	}
+	
+	public Date getLastLogin()
+	{
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin)
+	{
+		this.lastLogin = lastLogin;
 	}
 
 	@Override
