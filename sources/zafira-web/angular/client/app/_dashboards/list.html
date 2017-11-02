@@ -42,7 +42,7 @@
 			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
             <div gridstack class="grid-stack" options="gridstackOptions"
                  on-change="" on-drag-start="" on-drag-stop="onGridChange()" on-resize-start="" on-resize-stop="onGridChange()" style="margin-bottom: 20px">
-                <div class="grid-stack-item" data-gs-min-height="4" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets" gridstack-item gs-item-x="widget.position.x" gs-item-y="widget.position.y"
+                <div class="grid-stack-item" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets" gridstack-item gs-item-x="widget.position.x" gs-item-y="widget.position.y"
                      gs-item-width="widget.position.width" gs-item-height="widget.position.height" on-item-added="" on-item-removed="">
                     <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph" style="overflow: hidden">
                         <div class="panel-heading">
