@@ -139,8 +139,8 @@
 
         $scope.showGridActionToast = function() {
             $mdToast.show({
-                hideDelay   : 0,
-                position    : 'top right',
+                hideDelay: 0,
+                position: 'bottom right',
                 scope: $scope,
                 preserveScope: true,
                 controller  : function ($scope, $mdToast) {
