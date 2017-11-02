@@ -27,7 +27,6 @@
             }
         };
 
-        var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
         var defaultWidgetPosition = '{ "x":0, "y":0, "width":4, "height":4 }';
 
         $scope.loadDashboardData = function (dashboard, refresh) {
@@ -167,11 +166,14 @@
                     };
 
                     $scope.resetGrid = function () {
+                        var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
                         for(var i = 0; i < $scope.pristineWidgets.length; i++) {
                             var currentPristineWidget = $scope.pristineWidgets[i];
                             $scope.dashboard.widgets.filter(function (widget) {
                                 if(widget.id == $scope.pristineWidgets[i].id) {
                                     var element = angular.element('#widget-' + widget.id);
+                                    if(!isJSON(currentPristineWidget.position))
+                                        currentPristineWidget.position = JSON.parse(currentPristineWidget.position);
                                     gridstack.update(element, currentPristineWidget.position.x, currentPristineWidget.position.y,
                                         currentPristineWidget.position.width, currentPristineWidget.position.height);
                                     return true;
