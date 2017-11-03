@@ -26,6 +26,7 @@
         ,'ngSanitize'
         ,'chieffancypants.loadingBar'
         ,'textAngular'
+        ,'gridstack-angular'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;

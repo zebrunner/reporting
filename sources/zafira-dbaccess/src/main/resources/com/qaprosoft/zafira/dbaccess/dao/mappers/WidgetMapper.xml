@@ -111,7 +111,8 @@
 		
 		<result column="DASHBOARD_WIDGET_SIZE" property="size" />
 		<result column="DASHBOARD_WIDGET_POSITION" property="position" />
-		
+		<result column="DASHBOARD_WIDGET_LOCATION" property="location" />
+
 		<result column="WIDGET_MODIFIED_AT" property="modifiedAt" />
 		<result column="WIDGET_CREATED_AT" property="createdAt" />
 	</resultMap>

@@ -5,11 +5,12 @@ public class Widget extends AbstractEntity
 	private static final long serialVersionUID = -750759195176951157L;
 	
 	private String title;
+	private Integer size;
 	private Integer position;
+	private String location;
 	private String sql;
 	private String model;
 	private boolean refreshable;
-	private Integer size;
 	private String type;
 
 	public String getTitle()
@@ -22,6 +23,16 @@ public class Widget extends AbstractEntity
 		this.title = title;
 	}
 
+	public Integer getSize()
+	{
+		return size;
+	}
+
+	public void setSize(Integer size)
+	{
+		this.size = size;
+	}
+
 	public Integer getPosition()
 	{
 		return position;
@@ -30,6 +41,16 @@ public class Widget extends AbstractEntity
 	public void setPosition(Integer position)
 	{
 		this.position = position;
+	}
+
+	public String getLocation()
+	{
+		return location;
+	}
+
+	public void setLocation(String location)
+	{
+		this.location = location;
 	}
 
 	public String getSql()
@@ -58,16 +79,6 @@ public class Widget extends AbstractEntity
 	public void setModel(String model)
 	{
 		this.model = model;
-	}
-
-	public Integer getSize()
-	{
-		return size;
-	}
-
-	public void setSize(Integer size)
-	{
-		this.size = size;
 	}
 
 	public String getType()
