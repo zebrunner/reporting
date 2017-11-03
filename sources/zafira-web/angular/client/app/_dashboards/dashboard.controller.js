@@ -28,7 +28,7 @@
             cellHeight: 20
         };
 
-        var defaultWidgetLocation = '{ "x":0, "y":0, "width":4, "height":4 }';
+        var defaultWidgetLocation = '{ "x":0, "y":0, "width":4, "height":11 }';
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
