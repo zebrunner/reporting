@@ -25,11 +25,12 @@
 				D.CREATED_AT AS DASHBOARD_CREATED_AT,
 				W.ID AS WIDGET_ID,
 				W.TITLE AS WIDGET_TITLE,
+				DW.SIZE AS DASHBOARD_WIDGET_SIZE,
 				DW.POSITION AS DASHBOARD_WIDGET_POSITION,
+				DW.LOCATION AS DASHBOARD_WIDGET_LOCATION,
 				W.SQL AS WIDGET_SQL,
 				W.MODEL AS WIDGET_MODEL,
                 W.REFRESHABLE AS WIDGET_REFRESHABLE,
-				DW.SIZE AS DASHBOARD_WIDGET_SIZE,
 				W.TYPE AS WIDGET_TYPE,
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
 				W.CREATED_AT AS WIDGET_CREATED_AT,
@@ -125,12 +126,13 @@
     
     <insert id="addDashboardWidget" useGeneratedKeys="true">
         <![CDATA[
-            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE)
+            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, SIZE, POSITION, LOCATION)
             VALUES (
                 #{dashboardId},
                 #{widget.id},
+                #{widget.size},
                 #{widget.position},
-                #{widget.size}
+                #{widget.location}
             )
         ]]>
     </insert>
@@ -149,14 +151,19 @@
               zafira.DASHBOARDS_WIDGETS
         ]]>
         <set>
+            <if test="null != widget.size">
+                <![CDATA[
+                    SIZE = #{widget.size},
+                ]]>
+            </if>
             <if test="null != widget.position">
                 <![CDATA[
                     POSITION = #{widget.position},
                 ]]>
             </if>
-            <if test="null != widget.size">
+            <if test="null != widget.location">
                 <![CDATA[
-                    SIZE = #{widget.size}
+                    LOCATION = #{widget.location},
                 ]]>
             </if>
         </set>

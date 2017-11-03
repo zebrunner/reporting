@@ -25,7 +25,11 @@
     "angular-wizard": "^0.10.0",
     "ngECharts": "ngecharts#^0.2.0",
     "ngmap": "~1.18.4",
-    "alertify-js": "~1.8.0"
+    "alertify-js": "~1.8.0",
+    "gridstack": "^0.3.0",
+    "jquery-ui": "^1.12.1",
+    "lodash": "^4.17.4",
+    "gridstack-angular": "^0.5.0"
   },
   "devDependencies": {
     "bootstrap-sass-official": "~3.3.0"
