@@ -24,15 +24,16 @@
             verticalMargin: 20,
             resizable: {
                 handles: 'se, sw'
-            }
+            },
+            cellHeight: 20
         };
 
-        var defaultWidgetPosition = '{ "x":0, "y":0, "width":4, "height":4 }';
+        var defaultWidgetLocation = '{ "x":0, "y":0, "width":4, "height":4 }';
 
         $scope.loadDashboardData = function (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 var currentWidget = dashboard.widgets[i];
-                currentWidget.position = JSON.parse(currentWidget.position);
+                currentWidget.location = $scope.jsonSafeParse(currentWidget.location);
                 if (!refresh || refresh && currentWidget.refreshable) {
                     $scope.loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
                 }
@@ -55,8 +56,8 @@
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
-                    if(!refresh && !isJSON(widget.model)){
-                        widget.model = JSON.parse(widget.model);
+                    if(!refresh){
+                        widget.model = $scope.jsonSafeParse(widget.model);
                     }
                     widget.data = {};
                     widget.data.dataset = data;
@@ -71,14 +72,13 @@
         };
 
         $scope.addDashboardWidget = function (widget) {
-            widget.position = defaultWidgetPosition;
-            var data = {"id": widget.id, "position": widget.position};
+            widget.location = defaultWidgetLocation;
+            var data = {"id": widget.id, "location": widget.location};
             DashboardService.AddDashboardWidget($scope.dashboardId, data).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard.widgets.push(widget);
                     $scope.dashboard.widgets.forEach(function (widget) {
-                        if(isJSON(widget.position))
-                            widget.position = JSON.stringify(widget.position);
+                        widget.location = $scope.jsonSafeStringify(widget.location);
                     });
                     $scope.loadDashboardData($scope.dashboard, false);
                     alertify.success("Widget added");
@@ -97,8 +97,7 @@
                     if (rs.success) {
                         $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
                         $scope.dashboard.widgets.forEach(function (widget) {
-                            if(isJSON(widget.position))
-                                widget.position = JSON.stringify(widget.position);
+                            widget.location = $scope.jsonSafeStringify(widget.location);
                         });
                         $scope.loadDashboardData($scope.dashboard, false);
                         alertify.success("Widget deleted");
@@ -122,12 +121,14 @@
 
         $scope.unexistWidgets = [];
         $scope.updateWidgetsToAdd = function () {
-            $scope.unexistWidgets =  $scope.widgets.filter(function(widget) {
-                var existingWidget = $scope.dashboard.widgets.filter(function(w) {
-                    return w.id == widget.id;
+            $timeout(function () {
+                $scope.unexistWidgets =  $scope.widgets.filter(function(widget) {
+                    var existingWidget = $scope.dashboard.widgets.filter(function(w) {
+                        return w.id == widget.id;
+                    });
+                    return !existingWidget.length || widget.id != existingWidget[0].id;
                 });
-                return !existingWidget.length || widget.id != existingWidget[0].id;
-            });
+            }, 400);
             return $scope.unexistWidgets;
         };
 
@@ -150,8 +151,8 @@
                             var currentWidget = $scope.dashboard.widgets[i];
                             var widgetData = {};
                             angular.copy(currentWidget, widgetData);
-                            widgetData.position = JSON.stringify(widgetData.position);
-                            widgets.push({'id': currentWidget.id, 'position': widgetData.position});
+                            widgetData.location = JSON.stringify(widgetData.location);
+                            widgets.push({'id': currentWidget.id, 'location': widgetData.location});
                         }
                         DashboardService.UpdateDashboardWidgets($scope.dashboardId, widgets).then(function (rs) {
                             if (rs.success) {
@@ -167,20 +168,23 @@
 
                     $scope.resetGrid = function () {
                         var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
-                        for(var i = 0; i < $scope.pristineWidgets.length; i++) {
-                            var currentPristineWidget = $scope.pristineWidgets[i];
-                            $scope.dashboard.widgets.filter(function (widget) {
-                                if(widget.id == $scope.pristineWidgets[i].id) {
-                                    var element = angular.element('#widget-' + widget.id);
-                                    if(!isJSON(currentPristineWidget.position))
-                                        currentPristineWidget.position = JSON.parse(currentPristineWidget.position);
-                                    gridstack.update(element, currentPristineWidget.position.x, currentPristineWidget.position.y,
-                                        currentPristineWidget.position.width, currentPristineWidget.position.height);
-                                    return true;
-                                }
-                                return false;
-                            })
-                        }
+                        gridstack.batchUpdate();
+                        $scope.pristineWidgets.forEach(function (widget) {
+                            var currentWidget = $scope.dashboard.widgets.filter(function(w) {
+                                return widget.id === w.id;
+                            })[0];
+                            if(currentWidget) {
+                                var element = angular.element('#widget-' + currentWidget.id);
+                                widget.location = $scope.jsonSafeParse(widget.location);
+                                currentWidget.location.x = widget.location.x;
+                                currentWidget.location.y = widget.location.y;
+                                currentWidget.location.height = widget.location.height;
+                                currentWidget.location.width = widget.location.width;
+                                gridstack.update(element, widget.location.x, widget.location.y,
+                                    widget.location.width, widget.location.height);
+                            }
+                        });
+                        gridstack.commit();
                         $scope.closeToast();
                     };
 
@@ -215,6 +219,20 @@
                 value = value.toString();
             }
             return value;
+        };
+
+        $scope.jsonSafeParse = function (preparedJson) {
+            if(!isJSON(preparedJson)) {
+                return JSON.parse(preparedJson);
+            }
+            return preparedJson;
+        };
+
+        $scope.jsonSafeStringify = function (preparedJson) {
+            if(isJSON(preparedJson)) {
+                return JSON.stringify(preparedJson);
+            }
+            return preparedJson;
         };
 
         $scope.sort = {
@@ -468,7 +486,7 @@
         $scope.widget = widget;
 
         if (isNew) {
-            $scope.widget.position = 0;
+            $scope.widget.location = 0;
             $scope.widget.size = 4;
         }
 
@@ -503,7 +521,7 @@
             DashboardService.UpdateDashboardWidget(dashboardId, {
                 "id": widget.id,
                 "size": widget.size,
-                "position": widget.position
+                "position": widget.location
             }).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget updated");

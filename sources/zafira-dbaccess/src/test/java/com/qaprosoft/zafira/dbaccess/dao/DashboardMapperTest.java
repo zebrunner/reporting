@@ -40,7 +40,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
                 {
                     setModel("m1");
                     setSql("s1");
-                    setPosition("");
+                    setLocation("");
                     setTitle("t1");
                     setType("wt1");
                 }
@@ -63,7 +63,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         {
             setModel("m1");
             setSql("s1");
-            setPosition("");
+            setLocation("");
             setTitle("t1");
             setType("wt1");
         }
@@ -135,7 +135,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
             "addWidgetToDashboard"})
     public void updateWidgetOnDashboard() {
 
-        DASHBOARD.getWidgets().get(0).setPosition("");
+        DASHBOARD.getWidgets().get(0).setLocation("");
         dashboardMapper.updateDashboardWidget(DASHBOARD.getId(), DASHBOARD.getWidgets().get(0));
         checkDashboard(dashboardMapper.getDashboardById(DASHBOARD.getId()));
     }
@@ -145,7 +145,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     public void removeWidgetFromDashboard() {
         dashboardMapper.deleteDashboardWidget(DASHBOARD.getId(), DASHBOARD.getWidgets().get(0).getId());
     }
-    
+
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "getDashboardById", "getAllDashboards", "updateDashboard", "updateWidgetOnDashboard", "removeWidgetFromDashboard"})
     public void deleteDashboardById()
     {
@@ -195,7 +195,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
         	assertEquals(widgets.get(i).getType(), DASHBOARD.getWidgets().get(i).getType(), "Widget type must match");
         	assertEquals(widgets.get(i).getSql(), DASHBOARD.getWidgets().get(i).getSql(), "Widget sql must match");
         	assertEquals(widgets.get(i).getModel(), DASHBOARD.getWidgets().get(i).getModel(), "Widget model must match");
-        	assertEquals(widgets.get(i).getPosition(), DASHBOARD.getWidgets().get(i).getPosition(), "Widget position must match");
+        	assertEquals(widgets.get(i).getLocation(), DASHBOARD.getWidgets().get(i).getLocation(), "Widget location must match");
         }
     }
 }
