@@ -47,8 +47,8 @@
                     <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
                         <div class="panel-heading">
                             {{widget.title}}
-                            <i class="material-icons pull-right" data-ng-click="showWidgetDialog($event, widget, false, dashboard)"  permission="['ROLE_ADMIN']">settings</i>
-                            <i class="material-icons pull-right" data-ng-click="deleteDashboardWidget(widget)"  permission="['ROLE_ADMIN']">delete</i>
+                            <i class="material-icons pull-right" data-ng-click="deleteDashboardWidget(widget)"  permission="['ROLE_ADMIN']">close</i>
+                            <i class="material-icons pull-right" data-ng-click="showWidgetDialog($event, widget, false, dashboard)"  permission="['ROLE_ADMIN']">settings_applications</i>
                         </div>
                         <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                             <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>

@@ -489,8 +489,9 @@ CREATE TABLE IF NOT EXISTS DASHBOARDS_WIDGETS (
   ID SERIAL,
   DASHBOARD_ID INT NOT NULL,
   WIDGET_ID INT NOT NULL,
-  POSITION INT NOT NULL DEFAULT 0,
-  SIZE INT NOT NULL DEFAULT 1,
+  POSITION INT NULL DEFAULT 0,
+  SIZE INT NULL DEFAULT 1,
+  LOCATION VARCHAR(255) NOT NULL DEFAULT '',
   MODIFIED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CREATED_AT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (ID),
@@ -665,7 +666,8 @@ BEGIN
 
 	INSERT INTO zafira.user_preferences (NAME, VALUE, USER_ID) VALUES
 		('REFRESH_INTERVAL', '0', USER_ID),
-		('DEFAULT_DASHBOARD', 'General', USER_ID);
+		('DEFAULT_DASHBOARD', 'General', USER_ID),
+		('THEME', '32', USER_ID);
 
   INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Performance dashboard', TRUE) RETURNING id INTO dashboard_id;
 
@@ -684,7 +686,7 @@ ORDER BY env, "CREATED_AT"',
     	"type":["line","dot"],"id":"ELAPSED"}],"axes":{"x":{"key":"CREATED_AT","type":"int","ticks": "functions(value) {return ''wow!''}"}}}')
     RETURNING id INTO widget_id;
 
-	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE) VALUES (dashboard_id, widget_id, 1, 12);
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (dashboard_id, widget_id, 1, 12, '{"x": 0, "y": 0, "height": 11, "width": 12}');
 
 
 
@@ -827,8 +829,8 @@ ORDER BY TEST_CASES.CREATED_AT::date ASC;',
 }')
 		RETURNING id INTO progress_widget_id;
 
-		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE) VALUES (general_dashboard_id, result_widget_id, 0, 12);
-		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE) VALUES (general_dashboard_id, top_widget_id, 1, 4);
-		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE) VALUES (general_dashboard_id, progress_widget_id, 3, 8);
+		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (general_dashboard_id, result_widget_id, 0, 12, '{"x": 0, "y": 0, "height": 11, "width": 12}');
+		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (general_dashboard_id, top_widget_id, 1, 4, '{"x": 0, "y": 11, "height": 11, "width": 4}');
+		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (general_dashboard_id, progress_widget_id, 3, 8, '{"x": 4, "y": 11, "height": 11, "width": 8}');
 END\$\$;
 EOSQL
