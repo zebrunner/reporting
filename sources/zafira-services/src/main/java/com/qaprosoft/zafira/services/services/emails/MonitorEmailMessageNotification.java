@@ -1,10 +1,9 @@
 package com.qaprosoft.zafira.services.services.emails;
 
+import java.util.List;
+
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Monitor;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
 
 public class MonitorEmailMessageNotification implements IEmailMessage
 {

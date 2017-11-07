@@ -28,7 +28,6 @@ public class MonitorEmailNotificationTask implements Job
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
 	{
-
 		try
 		{
 			// Initialize email service for quartz
