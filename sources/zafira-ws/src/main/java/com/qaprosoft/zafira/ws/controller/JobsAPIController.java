@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.ws.rs.QueryParam;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
