@@ -98,7 +98,7 @@
                                         </th>
                                         <th md-column colspan="2">
                                             <md-input-container class="searchable select">
-                                                <md-select ng-change="onChangeCriteria()" ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
+                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod(); onChangeCriteria();" >
                                                     <md-option value="" ng-selected="true"></md-option>
                                                     <md-option value="before">Before</md-option>
                                                     <md-option value="after">After</md-option>
@@ -170,8 +170,8 @@
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </span>
                                         </td>
-                                        <td md-cell class="no-padding">
-                                            <md-menu>
+                                        <td md-cell>
+                                            <md-menu class="pull-right">
                                                 <md-button aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); $mdMenu.open($event); ">
                                                     <md-icon class="material-icons">more_vert</md-icon>
                                                 </md-button>

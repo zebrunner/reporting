@@ -64,7 +64,6 @@
                                     <td md-cell class="col-md-2">{{monitor.cronExpression}}</td>
                                     <td md-cell class="col-md-2">{{monitor.expectedCode}}</td>
                                     <td md-cell class="col-md-2">
-                                        <!--<i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>-->
                                         <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
                                     <td md-cell class="col-md-2">
