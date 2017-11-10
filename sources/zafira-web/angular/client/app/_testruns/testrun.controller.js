@@ -1150,9 +1150,9 @@
                     $scope.getKnownIssues();
                     $scope.hide();
                     if(isNew)
-                        alertify.success('A new know issue "' + knownIssue.jiraId + '" was created');
+                        alertify.success('A new known issue "' + knownIssue.jiraId + '" was created');
                     else
-                        alertify.success('A know issue "' + knownIssue.jiraId + '" was updated');
+                        alertify.success('A known issue "' + knownIssue.jiraId + '" was updated');
                     $scope.initNewKnownIssue();
                 }
                 else
