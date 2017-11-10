@@ -59,14 +59,14 @@
                 </div>
                 <div layout layout-sm="column">
                     <label>SQL</label>
-                    <md-input-container flex>
+                    <md-input-container class="sql-widget-width">
                         <code-textarea id="sql" ng-model="widget.sql" code-data="{{widget.sql}}" code-class="sql"></code-textarea>
                         <!--<textarea class="code" data-ng-model="widget.sql" rows="15" required></textarea>-->
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column" data-ng-if="'sql' != widget.type">
                     <label>Model</label>
-                    <md-input-container flex>
+                    <md-input-container class="sql-widget-width">
                         <code-textarea id="model" ng-model="widget.model" code-data="{{widget.model}}"></code-textarea>
                     </md-input-container>
                 </div>
@@ -93,3 +93,4 @@
         </md-dialog-actions>
     </form>
 </md-dialog>
+

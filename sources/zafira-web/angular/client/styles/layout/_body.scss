@@ -72,6 +72,11 @@ body {
   text-align: center !important;
 }
 
+.sql-widget-width {
+    min-width: 900px;
+    max-width: fit-content;
+}
+
 .body-auth,
 .body-err {
     &.app > .main-container:before {
