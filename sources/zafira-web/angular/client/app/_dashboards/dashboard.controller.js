@@ -431,7 +431,7 @@
         (function init() {
 
         	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth ? $rootScope.globals.auth.refreshToken : undefined;
-          // TODO: HOTFIX for PhantomJS, need additional refactorring
+          // TODO: HOTFIX for PhantomJS, need additional refactoring
             if(token)
         	AuthService.RefreshToken(token)
     		  .then(
@@ -643,13 +643,20 @@
     }
 
     function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
-
-        $scope.currentUserId = currentUserId;
-        $scope.isNew = isNew;
-        $scope.widget = widget;
-        $scope.dashboard = dashboard;
+        $scope.currentUserId = null;
+        $scope.isNew = false;
+        $scope.widget = {};
+        $scope.dashboard = {};
+        angular.copy(currentUserId, $scope.currentUserId);
+        angular.copy(isNew, $scope.isNew);
+        angular.copy(widget, $scope.widget);
+        angular.copy(dashboard, $scope.dashboard);
         $scope.showWidget = false;
 
+        if (typeof $scope.widget.model ==='object'){
+            $scope.widget.model = JSON.stringify($scope.widget.model, null, 4);
+            $scope.widget.location = JSON.stringify($scope.widget.location, null, 4);
+        }
 
         if($scope.isNew && $scope.widget)
         {
@@ -678,12 +685,11 @@
                     alertify.error(rs.message);
                 }
             });
-            $scope.hide(true);
         };
 
         $scope.$on("$event:executeSQL", function () {
             if (widget.sql){
-                $scope.loadModalWidget(widget, true);
+                $scope.loadModalWidget($scope.widget, true);
             }
             else {
                 alertify.warning('Add SQL query');
@@ -693,7 +699,7 @@
         $scope.$on("$event:showWidget", function () {
             if (widget.sql){
                 if(widget.type){
-                    $scope.loadModalWidget(widget);
+                    $scope.loadModalWidget($scope.widget);
                 }
                 else {
                     alertify.warning('Choose widget type');
@@ -702,10 +708,6 @@
             else {
                 alertify.warning('Add SQL query');
             }
-        });
-
-        $scope.$on('$destroy', function() {
-            $scope.closeWidget();
         });
 
         $scope.loadModalWidget = function (widget, table) {
@@ -790,9 +792,9 @@
         };
 
         $scope.closeWidget = function(){
-            /*$scope.widget.data = null;
+            $scope.widget.data.dataset = [];
             $scope.widget.executeType = null;
-            $scope.showWidget = false;*/
+            $scope.showWidget = false;
         };
 
         $scope.hide = function (result) {
