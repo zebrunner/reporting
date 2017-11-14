@@ -96,7 +96,42 @@
                     <md-table-container>
                         <table class="table-hover" md-table>
                             <tbody md-body>
-                                <tr md-row ng-repeat="widget in unexistWidgets | orderBy : 'title'">
+                            <tr md-row ng-repeat="widget in dashboard.widgets | orderBy : 'title'">
+                                <td md-cell>{{widget.title}}</td>
+                                <td md-cell>{{widget.type}}</td>
+                                <td md-cell class="text-center">
+                                    <button type="button" ng-disabled="true" class="btn btn-outline btn-primary btn-xs" data-ng-click="addDashboardWidget(widget)">Add widget to dashboard</button>
+                                </td>
+                                <td md-cell>
+                                    <md-menu class="pull-right">
+                                        <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                            <md-icon class="material-icons">more_vert</md-icon>
+                                        </md-button>
+                                        <md-menu-content width="2">
+                                            <md-menu-item>
+                                                <md-button data-ng-click="showWidgetDialog($event, widget, false, dashboard)">
+                                                    <md-icon class="material-icons">settings</md-icon>
+                                                    Edit widget
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button data-ng-click="showWidgetDialog($event, widget, true, dashboard, currentUserId)">
+                                                    <md-icon class="material-icons">content_copy</md-icon>
+                                                    Copy widget
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button data-ng-click="deleteWidget($event, widget)">
+                                                    <md-icon class="material-icons">delete</md-icon>
+                                                    Delete widget
+                                                </md-button>
+                                            </md-menu-item>
+                                        </md-menu-content>
+                                    </md-menu>
+                                </td>
+                            </tr>
+
+                            <tr md-row ng-repeat="widget in unexistWidgets | orderBy : 'title'">
                                     <td md-cell>{{widget.title}}</td>
                                     <td md-cell>{{widget.type}}</td>
                                     <td md-cell class="text-center">
