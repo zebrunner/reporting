@@ -198,7 +198,7 @@
 				</if>
 				<if test="null != password">
 		            <![CDATA[
-		               PASSWORD = #{password}	
+		               PASSWORD = #{password},	
 		            ]]>
 				</if>
 				<if test="null != lastLogin">
