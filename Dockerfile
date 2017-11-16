@@ -12,6 +12,15 @@ ENV ZAFIRA_JDBC_URL=jdbc:postgresql://localhost:5432/postgres
 ENV ZAFIRA_JDBC_USER=postgres
 ENV ZAFIRA_JDBC_PASS=postgres
 
+ENV ZAFIRA_LDAP_ENABLED=false
+ENV ZAFIRA_LDAP_PROTOCOL=ldap
+ENV ZAFIRA_LDAP_SERVER=localhost
+ENV ZAFIRA_LDAP_PORT=369
+ENV ZAFIRA_LDAP_DN=ou=People,dc=qaprosoft,dc=com
+ENV ZAFIRA_LDAP_SEARCH_FILTER=uid
+ENV ZAFIRA_LDAP_USER=
+ENV ZAFIRA_LDAP_PASSWORD=
+
 RUN apt-get update && apt-get install zip
 
 COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/zafira-ws.war
