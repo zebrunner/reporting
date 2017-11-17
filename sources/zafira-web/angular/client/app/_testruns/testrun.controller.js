@@ -13,15 +13,6 @@
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
-        $window.onblur = function() {
-            $scope.disconnectWebsocket();
-        };
-        $window.onfocus = function() {
-            if ($scope.stomp && ! $scope.stomp.connected) {
-                $scope.initWebsocket();
-            }
-        };
-
         $scope.predicate = 'startTime';
         $scope.reverse = false;
 
