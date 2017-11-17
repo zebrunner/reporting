@@ -137,6 +137,28 @@
                 $scope.showGridActionToast();
         };
 
+        $scope.resetGrid = function () {
+            var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+            gridstack.batchUpdate();
+            $scope.pristineWidgets.forEach(function (widget) {
+                var currentWidget = $scope.dashboard.widgets.filter(function(w) {
+                    return widget.id === w.id;
+                })[0];
+                if(currentWidget) {
+                    var element = angular.element('#widget-' + currentWidget.id);
+                    widget.location = $scope.jsonSafeParse(widget.location);
+                    currentWidget.location.x = widget.location.x;
+                    currentWidget.location.y = widget.location.y;
+                    currentWidget.location.height = widget.location.height;
+                    currentWidget.location.width = widget.location.width;
+                    gridstack.update(element, widget.location.x, widget.location.y,
+                        widget.location.width, widget.location.height);
+                }
+            });
+            gridstack.commit();
+            $scope.closeToast();
+        };
+
         $scope.showGridActionToast = function() {
             $mdToast.show({
                 hideDelay: 0,
@@ -164,28 +186,6 @@
                                 alertify.error(rs.message);
                             }
                         });
-                    };
-
-                    $scope.resetGrid = function () {
-                        var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
-                        gridstack.batchUpdate();
-                        $scope.pristineWidgets.forEach(function (widget) {
-                            var currentWidget = $scope.dashboard.widgets.filter(function(w) {
-                                return widget.id === w.id;
-                            })[0];
-                            if(currentWidget) {
-                                var element = angular.element('#widget-' + currentWidget.id);
-                                widget.location = $scope.jsonSafeParse(widget.location);
-                                currentWidget.location.x = widget.location.x;
-                                currentWidget.location.y = widget.location.y;
-                                currentWidget.location.height = widget.location.height;
-                                currentWidget.location.width = widget.location.width;
-                                gridstack.update(element, widget.location.x, widget.location.y,
-                                    widget.location.width, widget.location.height);
-                            }
-                        });
-                        gridstack.commit();
-                        $scope.closeToast();
                     };
 
                     $scope.closeToast = function() {
@@ -427,6 +427,10 @@
             });
 
         };
+
+        $scope.$on('$destroy', function () {
+            $scope.resetGrid();
+        });
 
         (function init() {
 
