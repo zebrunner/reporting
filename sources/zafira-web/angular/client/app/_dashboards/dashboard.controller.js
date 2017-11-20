@@ -156,7 +156,6 @@
                 }
             });
             gridstack.commit();
-            $scope.closeToast();
         };
 
         $scope.showGridActionToast = function() {
@@ -180,6 +179,7 @@
                             if (rs.success) {
                                 angular.copy(rs.data, $scope.pristineWidgets);
                                 $scope.resetGrid();
+                                $scope.closeToast();
                                 alertify.success("Widget positions were updated");
                             }
                             else {
