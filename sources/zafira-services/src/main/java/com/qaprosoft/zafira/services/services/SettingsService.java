@@ -47,6 +47,9 @@ public class SettingsService
 
 	@Autowired
 	private CryptoService cryptoService;
+	
+	@Autowired
+	private RabbitMQService rabbitMQService;
 
 
 	@Transactional(readOnly = true)
@@ -177,6 +180,9 @@ public class SettingsService
 			case STF:
 				service = stfService;
 				break;
+			case RABBITMQ:
+				service = rabbitMQService;
+				break;	
 			default:
 				break;
 		}

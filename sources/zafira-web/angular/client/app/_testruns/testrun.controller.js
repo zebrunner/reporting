@@ -23,6 +23,7 @@
         $scope.compareQueryString = "";
 
         $scope.testRuns = {};
+        $scope.logs = {};
         $scope.totalResults = 0;
 
         $scope.showRealTimeEvents = true;
@@ -59,6 +60,34 @@
                  });
              });
         };
+        
+        $scope.initRabbitMQSocket = function (ciRunId) {
+            var sockJS = new SockJS("http://localhost:15674/stomp");
+            $scope.stomp2 = Stomp.over(sockJS);
+            //stomp.debug = null;
+            $scope.stomp2.connect("guest", "guest", function () {
+                $scope.stomp2.subscribe("/queue/" + ciRunId, function (data) {
+                		if(!$scope.logs[ciRunId])
+                		{
+                			$scope.logs[ciRunId] = {};
+                		}
+                	
+                		if(data.headers['correlation-id'])
+                		{
+                			var logs = $scope.logs[ciRunId][data.headers['correlation-id']];
+                			if(logs == null)
+                			{
+                				logs = data.body;
+                			}
+                			else
+                			{
+                				logs = logs.concat(data.body);
+                			}
+                			$scope.logs[ciRunId][data.headers['correlation-id']]  = logs;
+                		}
+                });
+            });
+       };
 
         $scope.disconnectWebsocket = function () {
             if ($scope.stomp && $scope.stomp.connected) {
@@ -248,6 +277,7 @@
         };
 
         $scope.addTestRun = function (testRun) {
+        	
             testRun.expand = $scope.testRunId ? true : false;
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
@@ -781,6 +811,7 @@
                         $scope.loadTests(testRun.id);
                     }
                     testRun.expand = true;
+                    $scope.initRabbitMQSocket(testRun.ciRunId);
                 } else {
                     testRun.expand = false;
                 }
