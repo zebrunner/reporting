@@ -30,6 +30,10 @@
 		</encoder>
 	</appender>
 
+	<!--<logger name="org.springframework.cache" level="all">
+		<appender-ref ref="console" />
+	</logger>-->
+
 	<root level="error">
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />

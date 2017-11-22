@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
+import com.qaprosoft.zafira.services.services.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,19 +26,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
-import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.jmx.JiraService;
-import com.qaprosoft.zafira.services.services.TestMetricService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.WorkItemService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
@@ -71,6 +69,9 @@ public class TestsAPIController extends AbstractController
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
 
+	@Autowired
+	private StatisticsService statisticsService;
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Start test", nickname = "startTest", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -81,7 +82,8 @@ public class TestsAPIController extends AbstractController
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 
@@ -98,7 +100,8 @@ public class TestsAPIController extends AbstractController
 		t.setId(id);
 		Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
 		testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
 
@@ -112,10 +115,8 @@ public class TestsAPIController extends AbstractController
 			throws ServiceException, InterruptedException
 	{
 		Test test = testService.markTestAsPassed(id);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
-
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 
 		return mapper.map(test, TestType.class);
 	}
@@ -194,16 +195,12 @@ public class TestsAPIController extends AbstractController
 		workItem = testService.createTestKnownIssue(id, workItem);
 
 		Test test = testService.getTestById(id);
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
 
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 
 		return workItem;
 	}
-
-
-
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", code = 200, httpMethod = "PUT", response = WorkItem.class)
@@ -230,9 +227,12 @@ public class TestsAPIController extends AbstractController
 			@PathVariable(value = "testId") long testId) throws ServiceException, InterruptedException
 	{
 		Test test = testService.getTestById(testId);
-		TestRun testRun = testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRun));
+		testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
+		if(test.isBlocker())
+			testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
+		testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 	}
 
 	@ApiIgnore
