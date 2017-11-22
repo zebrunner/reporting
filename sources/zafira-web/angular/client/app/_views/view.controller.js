@@ -20,25 +20,25 @@
             'pageSize': 100000
         };*/
 
-        $scope.initWebsocket = function () {
+        $scope.initStatisticWebsocket = function () {
             var sockJS = new SockJS(API_URL + "/websockets");
-            $scope.stomp = Stomp.over(sockJS);
-            //stomp.debug = null;
-            $scope.stomp.connect({withCredentials: false}, function () {
-                $scope.stomp.subscribe("/topic/tests", function (data) {
+            $scope.statisticsStomp = Stomp.over(sockJS);
+            //statisticsStomp.debug = null;
+            $scope.statisticsStomp.connect({withCredentials: false}, function () {
+                $scope.statisticsStomp.subscribe("/topic/tests", function (data) {
                     $scope.getMessage(data.body);
                 });
             });
         };
 
-        $scope.disconnectWebsocket = function () {
-            if ($scope.stomp != null) {
-                $scope.stomp.disconnect();
+        $scope.disconnectStatisticWebsocket = function () {
+            if ($scope.statisticsStomp != null) {
+                $scope.statisticsStomp.disconnect();
             }
         };
 
         $scope.$on('$destroy', function () {
-            $scope.disconnectWebsocket();
+            $scope.disconnectStatisticWebsocket();
         });
 
         $scope.getMessage = function (message) {
@@ -319,7 +319,7 @@
 
 
         (function initController() {
-            $scope.initWebsocket();
+            $scope.initStatisticWebsocket();
             $scope.loadJobs();
             $scope.loadView();
             $scope.loadJobViews();
