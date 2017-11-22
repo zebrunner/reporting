@@ -9,14 +9,12 @@ import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.*;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
+import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.TestConfigService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.*;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -68,6 +66,9 @@ public class TestRunsAPIController extends AbstractController
 	@Autowired
 	private SimpMessagingTemplate websocketTemplate;
 
+	@Autowired
+	private StatisticsService statisticsService;
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -82,7 +83,7 @@ public class TestRunsAPIController extends AbstractController
 		testRun.setProject(projectService.getProjectByName(project));
 		testRun = testRunService.startTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -125,7 +126,7 @@ public class TestRunsAPIController extends AbstractController
 	{
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
 	}
@@ -148,9 +149,11 @@ public class TestRunsAPIController extends AbstractController
 
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		testRunService.abortTestRun(testRun);
+		testRunService.updateStatistics(testRun.getId(), Status.ABORTED);
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			websocketTemplate.convertAndSend(WEBSOCKET_PATH,
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH,
 					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
 		}
 
@@ -158,7 +161,7 @@ public class TestRunsAPIController extends AbstractController
 		{
 			if (Status.ABORTED.equals(test.getStatus()))
 			{
-				websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestPush(test));
+				websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 			}
 		}
 
@@ -297,9 +300,11 @@ public class TestRunsAPIController extends AbstractController
 		testRunService.addComment(id, comment.getComment());
 
 		TestRun tr = testRunService.getTestRunByIdFull(id);
+		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+		testRunService.updateStatistics(tr.getId(), action);
 		tr.setReviewed(true);
 		tr = testRunService.updateTestRun(tr);
-		websocketTemplate.convertAndSend(WEBSOCKET_PATH, new TestRunPush(tr));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
 	}
 
 	@ResponseStatusDetails

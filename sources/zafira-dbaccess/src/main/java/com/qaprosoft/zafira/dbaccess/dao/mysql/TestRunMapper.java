@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 import java.util.Date;
 import java.util.List;
 
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
@@ -20,7 +21,9 @@ public interface TestRunMapper
 	TestRun getTestRunByIdFull(long id);
 	
 	TestRun getTestRunByCiRunId(String ciRunId);
-	
+
+	TestRunStatistics getTestRunStatistics(Long id);
+
 	List<TestRun> getTestRunsForRerun(@Param("testSuiteId") long testSuiteId, @Param("jobId") long jobId, @Param("upstreamJobId") long upstreamJobId, @Param("upstreamBuildNumber") long upstreamBuildNumber, @Param("uniqueArgs") List<Argument> uniqueArgs);
 	
 	void updateTestRun(TestRun testRun);
