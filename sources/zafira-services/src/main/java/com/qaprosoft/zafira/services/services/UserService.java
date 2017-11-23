@@ -19,7 +19,6 @@ import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-import com.qaprosoft.zafira.services.util.PeriodCalculator;
 
 @Service
 public class UserService
@@ -181,9 +180,6 @@ public class UserService
 	@Transactional(readOnly = true)
 	public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException
 	{
-		if (sc.getPeriod()!=null){
-			PeriodCalculator.setPeriod(sc);
-		}
 		SearchResult<User> results = new SearchResult<User>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());

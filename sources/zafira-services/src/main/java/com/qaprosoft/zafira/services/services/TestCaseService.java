@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -120,9 +119,6 @@ public class TestCaseService
 	@Transactional(readOnly = true)
 	public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) throws ServiceException
 	{
-		if (sc.getPeriod()!=null){
-			PeriodCalculator.setPeriod(sc);
-		}
 		SearchResult<TestCase> results = new SearchResult<TestCase>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());

@@ -27,6 +27,7 @@
         ,'chieffancypants.loadingBar'
         ,'textAngular'
         ,'gridstack-angular'
+        ,'ngMaterialDateRangePicker'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;

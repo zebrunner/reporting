@@ -9,7 +9,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.util.PeriodCalculator;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -75,9 +74,6 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
-	    if (sc.getPeriod()!=null && !sc.getPeriod().equals("")){
-	        PeriodCalculator.setPeriod(sc);
-        }
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
