@@ -1128,7 +1128,6 @@
                     {
                         testRun.status = 'IN_PROGRESS';
                         alertify.success("Rebuild triggered in CI service");
-                        $scope.hide(true);
                     }
                     else
                     {
@@ -1139,6 +1138,7 @@
             else {
                 window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
             }
+            $scope.hide(true);
          };
 
         ConfigService.getConfig("jenkins").then(function(rs) {
