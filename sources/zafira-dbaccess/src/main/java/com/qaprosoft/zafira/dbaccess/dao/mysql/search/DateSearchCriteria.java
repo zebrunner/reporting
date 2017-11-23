@@ -19,7 +19,4 @@ public interface DateSearchCriteria {
 
     void setToDate(Date toDate);
 
-    String getPeriod();
-
-    void setPeriod(String period);
 }
