@@ -173,6 +173,29 @@
 			WHERE TR.CI_RUN_ID = #{ciRunId};
 		]]>
 	</select>
+
+	<sql id="getTestRunStatistic">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.KNOWN_ISSUE = TRUE) AS TEST_RUN_FAILED_AS_KNOWN,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.BLOCKER = TRUE) AS TEST_RUN_FAILED_AS_BLOCKER,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED
+			FROM
+				zafira.TEST_RUNS TR
+		]]>
+	</sql>
+
+	<select id="getTestRunStatistics" resultMap="TestRunStatisticResultMap">
+		<include refid="getTestRunStatistic"/>
+		<![CDATA[
+			WHERE
+				TR.ID = #{id}
+		]]>
+	</select>
 	
 	<select id="getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber" resultMap="TestRunResultMap">
 		<include refid="getTestRun" />
@@ -541,18 +564,18 @@
 
 	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="id" />
-		
+
 		<result column="TEST_RUN_USER_ID" property="user.id" />
 		<result column="TEST_RUN_USER_USER_NAME" property="user.username" />
 		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
 		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
-		
+
 		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
 		<result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
 		<result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
 		<result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
-		
+
 		<result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
 		<result column="TEST_RUN_STATUS" property="status" />
 		<result column="TEST_RUN_SCM_URL" property="scmURL" />
@@ -582,17 +605,27 @@
 		<result column="TEST_RUN_SKIPPED" property="skipped" />
 		<result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_RUN_CREATED_AT" property="createdAt" />
-		
+
 		<result column="TEST_RUN_JOB_ID" property="job.id" />
 		<result column="TEST_RUN_JOB_NAME" property="job.name" />
 		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
 		<result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
-		
+
 		<result column="TEST_RUN_PROJECT_ID" property="project.id" />
 		<result column="TEST_RUN_PROJECT_NAME" property="project.name" />
 		<result column="TEST_RUN_PROJECT_DESCRIPTION" property="project.description" />
 		<result column="TEST_RUN_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
 		<result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
+	</resultMap>
+
+	<resultMap type="com.qaprosoft.zafira.models.dto.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
+		<id column="TEST_RUN_ID" property="testRunId" />
+		<result column="TEST_RUN_REVIEWED" property="reviewed" />
+		<result column="TEST_RUN_PASSED" property="passed" />
+		<result column="TEST_RUN_FAILED" property="failed" />
+		<result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
+		<result column="TEST_RUN_FAILED_AS_BLOCKER" property="failedAsBlocker" />
+		<result column="TEST_RUN_SKIPPED" property="skipped" />
 	</resultMap>
 
 </mapper>

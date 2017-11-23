@@ -6,7 +6,7 @@ public class AbstractPush
 {
 	public static enum Type 
 	{
-		TEST_RUN, TEST
+		TEST_RUN, TEST, TEST_RUN_STATISTICS
 	}
 
 	private Type type;

@@ -32,6 +32,8 @@
         $scope.showReset = $scope.testRunId != null;
         $scope.selectAll = false;
 
+        $scope.testsStomps = [];
+
         var DEFAULT_SC = {
             'page': 1,
             'pageSize': 20,
@@ -49,45 +51,118 @@
             $scope.jenkinsEnabled = rs.data.connected;
         });
 
-        $scope.initWebsocket = function () {
+        $scope.initStatisticWebsocket = function () {
              var sockJS = new SockJS(API_URL + "/websockets");
-             $scope.stomp = Stomp.over(sockJS);
-             //stomp.debug = null;
-             $scope.stomp.connect({withCredentials: false}, function () {
-                 $scope.stomp.subscribe("/topic/tests", function (data) {
+             $scope.statisticsStomp = Stomp.over(sockJS);
+             $scope.statisticsStomp.connect({withCredentials: false}, function () {
+                 $scope.statisticsStomp.subscribe("/topic/statistics", function (data) {
                      $scope.getMessage(data.body);
                  });
              });
         };
 
-        $scope.disconnectWebsocket = function () {
-            if ($scope.stomp && $scope.stomp.connected) {
-                $scope.stomp.disconnect();
+        $scope.initTestRunWebsocket = function () {
+            var sockJS = new SockJS(API_URL + "/websockets");
+            $scope.testRunsStomp = Stomp.over(sockJS);
+            //statisticsStomp.debug = null;
+            $scope.testRunsStomp.connect({withCredentials: false}, function () {
+                $scope.testRunsStomp.subscribe("/topic/testRuns", function (data) {
+                    $scope.getMessage(data.body);
+                });
+            });
+        };
+
+        $scope.initTestWebsocket = function (testRunId) {
+            var sockJS = new SockJS(API_URL + "/websockets");
+            $scope.testsStomps[testRunId] = Stomp.over(sockJS);
+            //statisticsStomp.debug = null;
+            $scope.testsStomps[testRunId].connect({withCredentials: false}, function () {
+                $scope.testsStomps[testRunId].subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
+                    $scope.getMessage(data.body);
+                });
+            });
+        };
+
+        $scope.disconnectStatisticWebsocket = function () {
+            if ($scope.statisticsStomp && $scope.statisticsStomp.connected) {
+                $scope.statisticsStomp.disconnect();
+            }
+        };
+
+        $scope.disconnectTestRunsWebsocket = function () {
+            if ($scope.testRunsStomp && $scope.testRunsStomp.connected) {
+                $scope.testRunsStomp.disconnect();
+            }
+        };
+
+        $scope.disconnectTestsWebsocket = function (testRunId) {
+            if ($scope.testsStomps[testRunId] && $scope.testsStomps[testRunId].connected) {
+                $scope.testsStomps[testRunId].disconnect();
+                delete $scope.testsStomps[testRunId];
+            }
+        };
+
+        $scope.disconnectStomp = function (stomp) {
+            if (stomp && stomp.connected) {
+                stomp.disconnect();
             }
         };
 
         $scope.$on('$destroy', function () {
-            $scope.disconnectWebsocket();
+            $scope.disconnectStatisticWebsocket();
+            $scope.disconnectTestRunsWebsocket();
+            for(var testRunId in $scope.testsStomps) {
+                $scope.disconnectStomp($scope.testsStomps[testRunId]);
+            }
         });
 
         $scope.getMessage = function (message) {
-            var event = JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
-            if (event.type == 'TEST_RUN') {
-                if (($scope.testRunId && $scope.testRunId != event.testRun.id)
-                    || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
-                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)
-                    || !$scope.checkSearchCriteria($scope.sc)) {
-                    return;
-                }
+            var event = $scope.getEventFromMessage(message);
+            switch(event.type) {
+                case 'TEST_RUN':
+                    if (($scope.testRunId && $scope.testRunId != event.testRun.id)
+                        || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
+                        || ($scope.project != null && $scope.project.id != event.testRun.project.id)
+                        || !$scope.checkSearchCriteria($scope.sc)) {
+                        return;
+                    }
 
-                $scope.addTestRun(event.testRun);
-                $scope.$apply();
+                    $scope.addTestRun(event.testRun);
+                    break;
+                case 'TEST':
+                    $scope.addTest(event.test);
+                    break;
+                case 'TEST_RUN_STATISTICS':
+                    if($scope.checkStatisticEvent(event)) {
+                        return;
+                    }
+                    var currentTestRun = $scope.testRuns[event.testRunStatistics.testRunId];
+                    if(currentTestRun) {
+                        currentTestRun.inProgress = event.testRunStatistics.inProgress;
+                        currentTestRun.passed = event.testRunStatistics.passed;
+                        currentTestRun.failed = event.testRunStatistics.failed;
+                        currentTestRun.failedAsKnown = event.testRunStatistics.failedAsKnown;
+                        currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
+                        currentTestRun.skipped = event.testRunStatistics.skipped;
+                        currentTestRun.reviewed = event.testRunStatistics.reviewed;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else if (event.type == 'TEST') {
-                $scope.addTest(event.test, true);
-                $scope.$apply();
-            }
+            $scope.$apply();
             return true;
+        };
+
+        $scope.getEventFromMessage = function (message) {
+            return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+        };
+
+        $scope.checkStatisticEvent = function (event) {
+            return ($scope.testRunId && $scope.testRunId != event.testStatistic.testRunId)
+            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testStatistic.testRunId] == null)
+            || ($scope.project != null)
+            || !$scope.checkSearchCriteria($scope.sc);
         };
 
         $scope.checkSearchCriteria = function (sc) {
@@ -102,7 +177,7 @@
         };
 
 
-        $scope.addTest = function (test, isEvent) {
+        $scope.addTest = function (test) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
@@ -111,16 +186,7 @@
                 return;
             }
 
-            if (isEvent) {
-                if (testRun.tests[test.id] != null) {
-                    $scope.updateTestRunResults(testRun, testRun.tests[test.id], -1);
-                }
-                testRun.tests[test.id] = test;
-                $scope.updateTestRunResults(testRun, test, 1);
-            }
-            else {
-                testRun.tests[test.id] = test;
-            }
+            testRun.tests[test.id] = test;
         };
 
         $scope.selectedTestRuns = {};
@@ -172,32 +238,6 @@
            }
            alertify.warning(messageText);
        };
-
-        $scope.updateTestRunResults = function (testRun, test, changeByAmount) {
-            switch (test.status) {
-                case "PASSED":
-                    testRun.passed = testRun.passed + changeByAmount;
-                    break;
-                case "FAILED":
-                    testRun.failed = testRun.failed + changeByAmount;
-                    if (test.knownIssue) {
-                        testRun.failedAsKnown = testRun.failedAsKnown + changeByAmount;
-                    }
-                    if (test.blocker) {
-                        testRun.failedAsBlocker = testRun.failedAsBlocker + changeByAmount;
-                    }
-                    testRun.blocker = test.blocker;
-                    break;
-                case "SKIPPED":
-                    testRun.skipped = testRun.skipped + changeByAmount;
-                    break;
-                case "IN_PROGRESS":
-                    testRun.inProgress = testRun.inProgress + changeByAmount;
-                    break;
-                default:
-                    break;
-            }
-        };
 
         $scope.batchRerun = function()
         {
@@ -370,7 +410,7 @@
                         if (test.status == 'IN_PROGRESS') {
                             inProgressTests++;
                         }
-                        $scope.addTest(test, false);
+                        $scope.addTest(test);
                     }
                     testRun.inProgress = inProgressTests;
                 }
@@ -750,9 +790,11 @@
                     if ((!testRun.tests || getJSONLength(testRun.tests) === 0) || testRun.status === 'IN_PROGRESS') {
                         $scope.loadTests(testRun.id);
                     }
+                    $scope.initTestWebsocket(testRun.id);
                     testRun.expand = true;
                 } else {
                     testRun.expand = false;
+                    $scope.disconnectTestsWebsocket(testRun.id);
                 }
             }
         };
@@ -860,7 +902,8 @@
         (function init() {
 
             toSc($location.search());
-            $scope.initWebsocket();
+            $scope.initStatisticWebsocket();
+            $scope.initTestRunWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
@@ -1098,7 +1141,6 @@
                     {
                         testRun.status = 'IN_PROGRESS';
                         alertify.success("Rebuild triggered in CI service");
-                        $scope.hide(true);
                     }
                     else
                     {
@@ -1109,6 +1151,7 @@
             else {
                 window.open(testRun.jenkinsURL + '/rebuild/parameterized', '_blank');
             }
+            $scope.hide(true);
          };
 
         ConfigService.getConfig("jenkins").then(function(rs) {
