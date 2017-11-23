@@ -70,7 +70,20 @@
 	</select>
 	
 	<select id="searchUsers" resultMap="UserResultMap">
-		<include refid="getUser" />
+		<![CDATA[
+			SELECT
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.PASSWORD AS USER_PASSWORD,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.LAST_LOGIN AS USER_LAST_LOGIN,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT
+			FROM
+				zafira.USERS U
+		]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
 	            <![CDATA[
@@ -105,11 +118,6 @@
 			<if test="null != toDate">
 				<![CDATA[
 	               AND U.CREATED_AT::date <= #{toDate}::date
-	            ]]>
-			</if>
-			<if test="null != groupName">
-				<![CDATA[
-	               AND LOWER(G.NAME) LIKE LOWER(CONCAT(#{groupName}, '%'))
 	            ]]>
 			</if>
 		</trim>
