@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -343,18 +343,14 @@
                 $scope.sc.date = new Date(Date.parse($scope.startedAt) + OFFSET);
             }
 
-            if ($scope.sc.period == ""){
-                $scope.sc.date = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "before"){
-                $scope.sc.toDate =  $scope.sc.chosenDate;
-             }
-            else if ($scope.sc.period == "after") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "between") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-                $scope.sc.toDate =  $scope.sc.endDate;
+            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
+                if(!$scope.isEqualDate()){
+                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
+                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
+                }
+                else {
+                    $scope.sc.date = $scope.selectedRange.dateStart;
+                }
             }
 
             TestRunService.searchTestRuns($scope.sc).then(function(rs) {
@@ -391,6 +387,11 @@
             });
         };
 
+        $scope.isEqualDate = function() {
+            if($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd){
+                return $scope.selectedRange.dateStart.getTime() === $scope.selectedRange.dateEnd.getTime();
+            }
+        };
 
         $scope.loadTests = function (testRunId) {
             $scope.lastTestRunOpened = testRunId;
@@ -613,18 +614,7 @@
             });
         };
 
-        $scope.resetSearchCriteria = function () {
-            $location.url($location.path());
-            $scope.sc = {
-                'page': 1,
-                'pageSize': 20
-            };
-            $scope.startedAt = null;
-            $scope.showReset = false;
-            $scope.selectAll = false;
-        };
-
-        $scope.populateSearchQuery = function () {
+         $scope.populateSearchQuery = function () {
             if ($location.search().testSuite) {
                 $scope.sc.testSuite = $location.search().testSuite;
             }
@@ -766,8 +756,6 @@
                 });
         };
 
-
-
         $scope.showAssignJiraTaskDialog = function(testTask, isNewTask, event) {
                     $mdDialog.show({
                         controller: TaskController,
@@ -795,24 +783,6 @@
 //            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
 //        });
 
-
-        $scope.isDateChosen = true;
-        $scope.isDateBetween = false;
-
-        $scope.changePeriod = function () {
-            if ($scope.sc.period == "between") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = true;
-            }
-            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = false;
-            }
-            else {
-                $scope.isDateChosen = false;
-                $scope.isDateBetween = false;
-            }
-         };
 
         $scope.switchTestRunExpand = function (testRun, fromTestRun) {
             if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
@@ -868,6 +838,8 @@
         };
 
         $scope.reset = function () {
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
             $location.search({});
             $scope.search();
@@ -885,6 +857,47 @@
             }
             $location.search($scope.sc);
         };
+
+        /**
+        DataRangePicker functionality
+        */
+
+        var tmpToday = new Date();
+        $scope.selectedRange = {
+            selectedTemplate: null,
+            selectedTemplateName: null,
+            dateStart: null,
+            dateEnd: null,
+            showTemplate: false,
+            fullscreen: false
+        };
+
+        $scope.onSelect = function(scope) {
+            console.log($scope.selectedRange.selectedTemplateName);
+            return $scope.selectedRange.selectedTemplateName;
+        };
+
+        $scope.pick = function($event, showTemplate) {
+            $scope.selectedRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: $scope.selectedRange
+            }).then(function(result) {
+                if (result) $scope.selectedRange = result;
+            })
+        };
+
+        $scope.clear = function() {
+            $scope.selectedRange.selectedTemplate = null;
+            $scope.selectedRange.selectedTemplateName = null;
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
+        };
+
+        $scope.isFuture = function($date) {
+            return $date.getTime() < new Date().getTime();
+        };
+
 
         (function init() {
 

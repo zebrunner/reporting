@@ -43,5 +43,7 @@
   "engines": {
     "node": ">=0.10.20"
   },
-  "dependencies": {}
+  "dependencies": {
+    "md-date-range-picker": "^0.7.2"
+  }
 }

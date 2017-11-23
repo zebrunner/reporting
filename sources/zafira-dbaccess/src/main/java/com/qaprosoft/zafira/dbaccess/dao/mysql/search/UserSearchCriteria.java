@@ -12,7 +12,6 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 	private String groupName;
 	private Date fromDate;
 	private Date toDate;
-	private String period;
 
 	public Long getId()
 	{
@@ -86,13 +85,5 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
-	}
-
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
 	}
 }
