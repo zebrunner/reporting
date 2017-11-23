@@ -3,10 +3,10 @@
 
     angular
         .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$location', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
+        .controller('TestCaseListController', ['$scope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
 
        // **************************************************************************
-    function TestCaseListController($scope, $location, TestService, TestCaseService, UtilService, ProjectProvider) {
+    function TestCaseListController($scope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -25,18 +25,14 @@
     			$scope.sc.page = page;
     		}
 
-            if ($scope.sc.period == ""){
-                $scope.sc.date = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "before"){
-                $scope.sc.toDate =  $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "after") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "between") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-                $scope.sc.toDate =  $scope.sc.endDate;
+            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
+                if(!$scope.isEqualDate()){
+                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
+                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
+                }
+                else {
+                    $scope.sc.date = $scope.selectedRange.dateStart;
+                }
             }
 
     		TestCaseService.searchTestCases(ProjectProvider.initProject($scope.sc)).then(function(rs) {
@@ -49,6 +45,12 @@
         			alertify.error(rs.message);
         		}
 			});
+        };
+
+        $scope.isEqualDate = function() {
+            if($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd){
+                return $scope.selectedRange.dateStart.getTime() === $scope.selectedRange.dateEnd.getTime();
+            }
         };
 
         $scope.loadTests = function(testCase) {
@@ -71,26 +73,10 @@
 
         };
 
-        $scope.isDateChosen = true;
-        $scope.isDateBetween = false;
-
-        $scope.changePeriod = function () {
-            if ($scope.sc.period == "between") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = true;
-            }
-            else if ($scope.sc.period == "before" || $scope.sc.period == "after" || $scope.sc.period == "") {
-                $scope.isDateChosen = true;
-                $scope.isDateBetween = false;
-            }
-            else {
-                $scope.isDateChosen = false;
-                $scope.isDateBetween = false;
-            }
-        };
-
         $scope.reset = function () {
-        	$scope.sc = angular.copy(DEFAULT_SC);
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
+            $scope.sc = angular.copy(DEFAULT_SC);
         	$scope.search();
         };
 
@@ -99,7 +85,47 @@
     		return parts[parts.length - 1];
     	};
 
-		(function initController() {
+        /**
+         DataRangePicker functionality
+         */
+
+        var tmpToday = new Date();
+        $scope.selectedRange = {
+            selectedTemplate: null,
+            selectedTemplateName: null,
+            dateStart: null,
+            dateEnd: null,
+            showTemplate: false,
+            fullscreen: false
+        };
+
+        $scope.onSelect = function(scope) {
+            console.log($scope.selectedRange.selectedTemplateName);
+            return $scope.selectedRange.selectedTemplateName;
+        };
+
+        $scope.pick = function($event, showTemplate) {
+            $scope.selectedRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: $scope.selectedRange
+            }).then(function(result) {
+                if (result) $scope.selectedRange = result;
+            })
+        };
+
+        $scope.clear = function() {
+            $scope.selectedRange.selectedTemplate = null;
+            $scope.selectedRange.selectedTemplateName = null;
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
+        };
+
+        $scope.isFuture = function($date) {
+            return $date.getTime() < new Date().getTime();
+        };
+
+        (function initController() {
 			$scope.search(1);
 		})();
 	}
