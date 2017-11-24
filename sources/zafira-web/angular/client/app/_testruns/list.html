@@ -1,5 +1,4 @@
 <div class="page page-profile" ng-controller="TestRunListController">
-
     <div class="row ui-section">
         <div class="col-lg-12" style="min-width: 360px;">
             <h2 class="section-header">Test runs
@@ -45,7 +44,7 @@
                             <table md-table zafira-background-theme="table">
                                 <thead md-head>
                                     <tr md-row>
-                                    	   <th md-column>
+                                          <th md-column>
                                     	   	   <md-input-container>
 	                                        <md-checkbox class="md-secondary"
 		                                   			aria-label="Select"
@@ -91,32 +90,15 @@
                                                 </md-select>
                                             </md-input-container>
                                         </th>
-                                      <th md-column>
+                                        <th md-column>
                                         	<md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                           </md-input-container>
                                         </th>
                                         <th md-column colspan="2">
-                                            <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod(); onChangeCriteria();" >
-                                                    <md-option value="" ng-selected="true"></md-option>
-                                                    <md-option value="before">Before</md-option>
-                                                    <md-option value="after">After</md-option>
-                                                    <md-option value="between">Between</md-option>
-                                                    <md-option value="today">Today</md-option>
-                                                    <md-option value="yesterday">Yesterday</md-option>
-                                                    <md-option value="this_week">This Week</md-option>
-                                                    <md-option value="last_week">Last Week</md-option>
-                                                    <md-option value="this_month">This Month</md-option>
-                                                    <md-option value="last_month">Last Month</md-option>
-                                                    <md-option value="this_qtr">This Quarter</md-option>
-                                                    <md-option value="last_qtr">Last Quarter</md-option>
-                                                    <md-option value="this_year">This Year</md-option>
-                                                    <md-option value="last_year">Last Year</md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Started" ></md-datepicker>
-                                            <md-datepicker ng-change="onChangeCriteria()" data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Ended"></md-datepicker>
+                                            <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
+                                            <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
+                                            <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
                                         </th>
                                     </tr>
                                     <md-button type="submit" class="hide">Search</md-button>
@@ -165,8 +147,8 @@
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
                                             <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="{'label-info-empty': testRun.inProgress == 0, 'label-info': testRun.inProgress > 0}">{{testRun.inProgress}}</span>
                                         </td>
-                                        <td md-cell>
-                                       		  <span class="time">
+                                        <td md-cell style="padding-right: 0px; min-width: 75px;">
+                                            <span class="time">
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </span>
                                         </td>

@@ -30,10 +30,17 @@ import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 public abstract class AbstractController
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractController.class);
-	protected static final String WEBSOCKET_PATH = "/topic/tests";
-	
+	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/testRuns";
+	private static final String TESTS_WEBSOCKET_PATH = "/topic/testRuns/%s/tests";
+	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/statistics";
+
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
+
+	protected String getTestsWebsocketPath(Long testRunId)
+	{
+		return String.format(TESTS_WEBSOCKET_PATH, testRunId);
+	}
 	
 	protected JwtUserType getPrincipal()
 	{
