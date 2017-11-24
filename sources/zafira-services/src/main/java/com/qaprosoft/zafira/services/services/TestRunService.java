@@ -4,12 +4,20 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.util.PeriodCalculator;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -18,7 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +44,7 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
+import static com.qaprosoft.zafira.models.db.Status.*;
 
 @Service
 public class TestRunService
@@ -60,6 +72,21 @@ public class TestRunService
 	@Autowired
 	private SettingsService settingsService;
 
+	@Autowired
+	private StatisticsService statisticsService;
+
+	private static LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
+			.maximumSize(100000)
+			.expireAfterWrite(15, TimeUnit.SECONDS)
+			.build(
+					new CacheLoader<Long, Lock>()
+					{
+						public Lock load(Long key)
+						{
+							return new ReentrantLock();
+						}
+					});
+
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestRun(TestRun testRun) throws ServiceException
 	{
@@ -75,9 +102,6 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
-	    if (sc.getPeriod()!=null && !sc.getPeriod().equals("")){
-	        PeriodCalculator.setPeriod(sc);
-        }
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
@@ -237,13 +261,13 @@ public class TestRunService
 			{
 				testRun.setWorkItem(workItemService.createOrGetWorkItem(testRun.getWorkItem()));
 			}
-			testRun.setStatus(Status.IN_PROGRESS);
+			testRun.setStatus(IN_PROGRESS);
 			createTestRun(testRun);
 		}
 		// Existing test run
 		else
 		{
-			testRun.setStatus(Status.IN_PROGRESS);
+			testRun.setStatus(IN_PROGRESS);
 			updateTestRun(testRun);
 		}
 		
@@ -253,7 +277,7 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun) throws ServiceException
 	{
-		if(testRun != null && Status.IN_PROGRESS.equals(testRun.getStatus()))
+		if(testRun != null && IN_PROGRESS.equals(testRun.getStatus()))
 		{
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
@@ -261,7 +285,7 @@ public class TestRunService
 			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 			for(Test test : tests)
 			{
-				if(Status.IN_PROGRESS.equals(test.getStatus()))
+				if(IN_PROGRESS.equals(test.getStatus()))
 				{
 					testService.abortTest(test);
 				}
@@ -283,13 +307,13 @@ public class TestRunService
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 		
 		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
-		if(finishTestRun || !Status.IN_PROGRESS.equals(testRun.getStatus()))
+		if(finishTestRun || !IN_PROGRESS.equals(testRun.getStatus()))
 		{
 			// Make sure that all tests managed to register results before we calculate test run status
 			for(Test test : tests)
 			{
 				// If any test IN_PROGRESS search tests once again after timeout
-				if(Status.IN_PROGRESS.equals(test.getStatus()))
+				if(IN_PROGRESS.equals(test.getStatus()))
 				{
 					final long TIMEOUT = 10 * 1000;
 					Thread.sleep(TIMEOUT);
@@ -298,7 +322,7 @@ public class TestRunService
 				}
 			}
 			
-			testRun.setStatus(tests.size() > 0 ? Status.PASSED : Status.SKIPPED);
+			testRun.setStatus(tests.size() > 0 ? PASSED : SKIPPED);
 			testRun.setKnownIssue(false);
 			testRun.setBlocker(false);
 			for(Test test : tests)
@@ -311,9 +335,9 @@ public class TestRunService
 				{
 					testRun.setBlocker(true);
 				}
-				if(Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
+				if(Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
 				{
-					testRun.setStatus(Status.FAILED);
+					testRun.setStatus(FAILED);
 					break;
 				}
 			}
@@ -445,4 +469,122 @@ public class TestRunService
 	{
 		return testRunMapper.getPlatforms();
 	}
+
+	/**
+	 * Evict all entries in cache in several hours after start crone expression
+	 */
+	@CacheEvict(value = "testRunStatistics", allEntries = true)
+	@Scheduled(cron = "0 0 0/4 ? * * *")
+	public void cacheEvict() {
+	}
+
+	/**
+	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics Status}
+	 * @param testRunId
+	 * @param status
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (status)
+			{
+				case MARK_AS_KNOWN_ISSUE:
+					testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() + 1);
+					break;
+				case REMOVE_KNOWN_ISSUE:
+					testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() - 1);
+					break;
+				case MARK_AS_BLOCKER:
+					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() + 1);
+					break;
+				case REMOVE_BLOCKER:
+					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
+					break;
+				case MARK_AS_PASSED:
+					testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+					break;
+				case MARK_AS_REVIEWED:
+					testRunStatistics.setReviewed(true);
+					break;
+				case MARK_AS_NOT_REVIEWED:
+					testRunStatistics.setReviewed(false);
+					break;
+				default:
+					break;
+			}
+		} catch(Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage());
+			}
+		}
+		return testRunStatistics;
+	}
+
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId
+	 * @param status
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, Status status)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (status)
+			{
+				case IN_PROGRESS:
+					testRunStatistics.setInProgress(
+							testRunStatistics.getInProgress() == null ? 0 : testRunStatistics.getInProgress());
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
+					break;
+				case PASSED:
+					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					break;
+				case FAILED:
+					testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					break;
+				case SKIPPED:
+					testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					break;
+				case ABORTED:
+					break;
+				default:
+					break;
+			}
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage());
+			}
+		}
+		return testRunStatistics;
+	}
+
 }

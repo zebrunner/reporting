@@ -57,29 +57,12 @@
                                             <input type="text" ng-model="sc.firstLastName" name="firstLastName" placeholder="First/Last name"/>
                                         </md-input-container>
 									</th>
-                                    <th md-column class="no-padding">
-                                             <md-input-container class="searchable select">
-                                                <md-select ng-model="sc.period" name="period" placeholder="Period" ng-change="changePeriod()" >
-                                                    <md-option value="" ng-selected="true"></md-option>
-                                                    <md-option value="before">Before</md-option>
-                                                    <md-option value="after">After</md-option>
-                                                    <md-option value="between">Between</md-option>
-                                                    <md-option value="today">Today</md-option>
-                                                    <md-option value="yesterday">Yesterday</md-option>
-                                                    <md-option value="this_week">This Week</md-option>
-                                                    <md-option value="last_week">Last Week</md-option>
-                                                    <md-option value="this_month">This Month</md-option>
-                                                    <md-option value="last_month">Last Month</md-option>
-                                                    <md-option value="this_qtr">This Quarter</md-option>
-                                                    <md-option value="last_qtr">Last Quarter</md-option>
-                                                    <md-option value="this_year">This Year</md-option>
-                                                    <md-option value="last_year">Last Year</md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        <md-datepicker data-ng-if="isDateChosen == true" ng-model="sc.chosenDate" md-placeholder="Registered" ></md-datepicker>
-                                        <md-datepicker data-ng-if="isDateBetween == true" ng-model="sc.endDate" md-placeholder="Registered"></md-datepicker>
-                                    </th>
                                     <th md-column>Status</th>
+                                    <th md-column class="no-padding">
+                                        <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
+                                        <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
+                                        <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
+                                    </th>
                                     <th md-column></th>
                                 </tr>
                                	<md-button type="submit" class="hide">Search</md-button>
@@ -91,6 +74,12 @@
                                     <td md-cell>{{user.email}}</td>
                                     <td md-cell>{{user.firstName}} {{user.lastName}}</td>
                                     <td md-cell>
+                                    	<span ng-switch on="user.password != null && user.password != ''">
+                                    		<span class="label label-success" ng-switch-when="true">Active</span>
+                                    		<span class="label label-danger" ng-switch-when="false">Inactive</span>
+                                    	</span>
+                                    </td>
+                                    <td md-cell style="padding-right: 0;">
                                       <span>
                                         {{user.createdAt | date}}
                                       </span>
@@ -102,12 +91,6 @@
                                           never logged in
                                         </span>
                                       </b>
-                                    </td>
-                                    <td md-cell>
-                                    	<span ng-switch on="user.password != null && user.password != ''">
-                                    		<span class="label label-success" ng-switch-when="true">Active</span>
-                                    		<span class="label label-danger" ng-switch-when="false">Inactive</span>
-                                    	</span>
                                     </td>
                                     <td md-cell>
                                         <md-menu class="pull-right">

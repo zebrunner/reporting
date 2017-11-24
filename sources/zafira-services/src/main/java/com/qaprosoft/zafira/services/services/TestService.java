@@ -3,6 +3,8 @@ package com.qaprosoft.zafira.services.services;
 import java.util.*;
 
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.services.jmx.JiraService;
 import net.rcarz.jiraclient.Issue;
 
@@ -23,6 +25,8 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.*;
+
 @Service
 public class TestService
 {
@@ -33,7 +37,7 @@ public class TestService
 	private static final String SPACE = " ";
 	
 	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
-	
+
 	@Autowired
 	private TestMapper testMapper;
 	
@@ -89,6 +93,7 @@ public class TestService
 			workItemService.deleteKnownIssuesByTestId(test.getId());
 			testArtifactService.deleteTestArtifactsByTestId(test.getId());
 		}
+		testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
 		return test;
 	}
 	
@@ -105,6 +110,8 @@ public class TestService
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
 		existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
+
+		testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
 		
 		String message = test.getMessage();
 		if(message != null)
@@ -133,6 +140,9 @@ public class TestService
 				if(! isJiraIdClosed) {
 					existingTest.setKnownIssue(true);
 					existingTest.setBlocker(knownIssue.isBlocker());
+					testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+					if(existingTest.isBlocker())
+						testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
 					testMapper.createTestWorkItem(existingTest, knownIssue);
 					if (existingTest.getWorkItems() == null) {
 						existingTest.setWorkItems(new ArrayList<WorkItem>());
@@ -192,6 +202,8 @@ public class TestService
 		}
 		
 		test.setStatus(Status.PASSED);
+
+		testRunService.updateStatistics(test.getTestRunId(), MARK_AS_PASSED);
 		updateTest(test);
 		
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
@@ -297,6 +309,14 @@ public class TestService
 		WorkItem existingBug = test.getWorkItem(Type.BUG);
 		
 		workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+
+		if(!test.isKnownIssue())
+			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+		if(!test.isBlocker() && workItem.isBlocker())
+			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
+		else if(test.isBlocker() && !workItem.isBlocker())
+			testRunService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
+
 		test.setKnownIssue(true);
 		test.setBlocker(workItem.isBlocker());
 		updateTest(test);

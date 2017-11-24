@@ -4,7 +4,7 @@
     angular
         .module('app.user')
         .controller('UserProfileController', ['$scope', '$rootScope', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', UserProfileController])
-        .controller('UserListController', ['$scope', '$rootScope', '$location', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
+        .controller('UserListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
     function UserProfileController($scope, $rootScope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
@@ -213,7 +213,7 @@
     }
 
     // **************************************************************************
-    function UserListController($scope, $rootScope, $location, $state, $mdDialog, UserService, GroupService, UtilService, DashboardService) {
+    function UserListController($scope, $rootScope, $location, $mdDateRangePicker, $state, $mdDialog, UserService, GroupService, UtilService, DashboardService) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -234,21 +234,17 @@
                 $scope.sc.page = page;
             }
 
-            if ($scope.sc.period == ""){
-                $scope.sc.date = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "before"){
-                $scope.sc.toDate =  $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "after") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-            }
-            else if ($scope.sc.period == "between") {
-                $scope.sc.fromDate = $scope.sc.chosenDate;
-                $scope.sc.toDate =  $scope.sc.endDate;
+            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
+                if(!$scope.isEqualDate()){
+                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
+                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
+                }
+                else {
+                    $scope.sc.date = $scope.selectedRange.dateStart;
+                }
             }
 
-  		UserService.searchUsers($scope.sc).then(function(rs) {
+            UserService.searchUsers($scope.sc).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;
@@ -260,8 +256,16 @@
 			});
         };
 
+        $scope.isEqualDate = function() {
+            if($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd){
+                return $scope.selectedRange.dateStart.getTime() === $scope.selectedRange.dateEnd.getTime();
+            }
+        };
+
         $scope.reset = function () {
-        	$scope.sc = angular.copy(DEFAULT_SC);
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
+            $scope.sc = angular.copy(DEFAULT_SC);
         	$scope.search();
         };
 
@@ -429,14 +433,49 @@
                 $scope.isDateBetween = false;
             }
         };
+
+        /**
+         DataRangePicker functionality
+         */
+
+        var tmpToday = new Date();
+        $scope.selectedRange = {
+            selectedTemplate: null,
+            selectedTemplateName: null,
+            dateStart: null,
+            dateEnd: null,
+            showTemplate: false,
+            fullscreen: false
+        };
+
+        $scope.onSelect = function(scope) {
+            console.log($scope.selectedRange.selectedTemplateName);
+            return $scope.selectedRange.selectedTemplateName;
+        };
+
+        $scope.pick = function($event, showTemplate) {
+            $scope.selectedRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: $scope.selectedRange
+            }).then(function(result) {
+                if (result) $scope.selectedRange = result;
+            })
+        };
+
+        $scope.clear = function() {
+            $scope.selectedRange.selectedTemplate = null;
+            $scope.selectedRange.selectedTemplateName = null;
+            $scope.selectedRange.dateStart = null;
+            $scope.selectedRange.dateEnd = null;
+        };
+
+        $scope.isFuture = function($date) {
+            return $date.getTime() < new Date().getTime();
+        };
+
 		(function initController() {
 			 $scope.search(1);
-//			 DashboardService.GetDashboards("USER_PERFORMANCE").then(function(rs) {
-//                if(rs.success && rs.data.length > 0)
-//                {
-//                	$scope.pefrDashboardId = rs.data[0].id;
-//                }
-//            });
 		})();
 	}
 
