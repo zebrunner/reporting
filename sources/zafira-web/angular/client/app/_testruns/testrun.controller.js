@@ -3,24 +3,23 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', 'DEFAULT_SC', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL, DEFAULT_SC) {
-
-        var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
+    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
 
         $scope.UtilService = UtilService;
+        
         $scope.testRunId = $stateParams.id;
-
         $scope.testRuns = {};
         $scope.totalResults = 0;
+        $scope.selectedTestRuns = {};
 
         $scope.showRealTimeEvents = true;
 
@@ -29,137 +28,100 @@
         $scope.showReset = $scope.testRunId != null;
         $scope.selectAll = false;
 
-        $scope.testsStomps = [];
+        $scope.wsConnections = {};
         
         $scope.sc = angular.copy(DEFAULT_SC);
-
-        $scope.testSearchCriteria = {
-            'page': 1,
-            'pageSize': 100000
-        };
         
-        // Integrations
-        $scope.rabbitMQ = { enabled: false };
-        $scope.jira = { enabled: false };
-
-        ConfigService.getConfig("jenkins").then(function(rs) {
-            $scope.jenkinsEnabled = rs.data.connected;
-        });
+        // ************** Integrations **************
         
-        SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
-        		var settings = UtilService.settingsAsMap(rs.data);
-            $scope.rabbitMQ.enabled = settings["RABBITMQ_ENABLED"];
-            $scope.rabbitMQ.user = settings["RABBITMQ_USER"];
-            $scope.rabbitMQ.pass = settings["RABBITMQ_PASSWORD"];
-            $scope.rabbitMQ.ws = settings["RABBITMQ_WS"];
-        });
+        $scope.rabbitmq = $rootScope.rabbitmq;
+        $scope.jira     = $rootScope.jira;
+        $scope.jenkins  = $rootScope.jenkins;
         
-        SettingsService.getSettingByTool("JIRA").then(function(rs) {
-	    		var settings = UtilService.settingsAsMap(rs.data);
-	        $scope.jira.enabled = settings["JIRA_ENABLED"];
-	        $scope.jira.url = settings["JIRA_URL"];
-	    });
 
-        $scope.initStatisticWebsocket = function () {
-             var sockJS = new SockJS(API_URL + "/websockets");
-             $scope.statisticsStomp = Stomp.over(sockJS);
-             $scope.statisticsStomp.connect({withCredentials: false}, function () {
-                 $scope.statisticsStomp.subscribe("/topic/statistics", function (data) {
-                     $scope.getMessage(data.body);
+        // ************** Websockets **************
+        
+        $scope.initStatisticsWebsocket = function () {
+             var statisticsStomp = Stomp.over(new SockJS(API_URL + "/websockets"));
+             statisticsStomp.debug = null;
+             $scope.wsConnections["statistics"] = statisticsStomp;
+             statisticsStomp.connect({withCredentials: false}, function () {
+                 statisticsStomp.subscribe("/topic/statistics", function (data) {
+                	     var event = $scope.getEventFromMessage(data.body);
+                	     if($scope.checkStatisticEvent(event)) {
+                         return;
+                     }
+                     var currentTestRun = $scope.testRuns[event.testRunStatistics.testRunId];
+                     if(currentTestRun) {
+                         currentTestRun.inProgress = event.testRunStatistics.inProgress;
+                         currentTestRun.passed = event.testRunStatistics.passed;
+                         currentTestRun.failed = event.testRunStatistics.failed;
+                         currentTestRun.failedAsKnown = event.testRunStatistics.failedAsKnown;
+                         currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
+                         currentTestRun.skipped = event.testRunStatistics.skipped;
+                         currentTestRun.reviewed = event.testRunStatistics.reviewed;
+                     }
+                     $scope.$apply();
                  });
              });
         };
 
         $scope.initTestRunWebsocket = function () {
-            var sockJS = new SockJS(API_URL + "/websockets");
-            $scope.testRunsStomp = Stomp.over(sockJS);
-            $scope.testRunsStomp.connect({withCredentials: false}, function () {
-                $scope.testRunsStomp.subscribe("/topic/testRuns", function (data) {
-                    $scope.getMessage(data.body);
-                });
-            });
-        };
-
-        $scope.initTestWebsocket = function (testRunId) {
-            var sockJS = new SockJS(API_URL + "/websockets");
-            $scope.testsStomps[testRunId] = Stomp.over(sockJS);
-            $scope.testsStomps[testRunId].connect({withCredentials: false}, function () {
-                $scope.testsStomps[testRunId].subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
-                    $scope.getMessage(data.body);
-                });
-            });
-        };
-
-        $scope.disconnectStatisticWebsocket = function () {
-            if ($scope.statisticsStomp && $scope.statisticsStomp.connected) {
-                $scope.statisticsStomp.disconnect();
-            }
-        };
-
-        $scope.disconnectTestRunsWebsocket = function () {
-            if ($scope.testRunsStomp && $scope.testRunsStomp.connected) {
-                $scope.testRunsStomp.disconnect();
-            }
-        };
-
-        $scope.disconnectTestsWebsocket = function (testRunId) {
-            if ($scope.testsStomps[testRunId] && $scope.testsStomps[testRunId].connected) {
-                $scope.testsStomps[testRunId].disconnect();
-                delete $scope.testsStomps[testRunId];
-            }
-        };
-
-        $scope.disconnectStomp = function (stomp) {
-            if (stomp && stomp.connected) {
-                stomp.disconnect();
-            }
-        };
-
-        $scope.$on('$destroy', function () {
-            $scope.disconnectStatisticWebsocket();
-            $scope.disconnectTestRunsWebsocket();
-            for(var testRunId in $scope.testsStomps) {
-                $scope.disconnectStomp($scope.testsStomps[testRunId]);
-            }
-        });
-
-        $scope.getMessage = function (message) {
-            var event = $scope.getEventFromMessage(message);
-            switch(event.type) {
-                case 'TEST_RUN':
+            var testRunsStomp = Stomp.over(new SockJS(API_URL + "/websockets"));
+            testRunsStomp.debug = null;
+            $scope.wsConnections["testRuns"] = testRunsStomp;
+            testRunsStomp.connect({withCredentials: false}, function () {
+                testRunsStomp.subscribe("/topic/testRuns", function (data) {
+                    var event = $scope.getEventFromMessage(data.body);
                     if (($scope.testRunId && $scope.testRunId != event.testRun.id)
                         || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
                         || ($scope.project != null && $scope.project.id != event.testRun.project.id)
                         || !$scope.checkSearchCriteria($scope.sc)) {
                         return;
                     }
-
                     $scope.addTestRun(event.testRun);
-                    break;
-                case 'TEST':
-                    $scope.addTest(event.test);
-                    break;
-                case 'TEST_RUN_STATISTICS':
-                    if($scope.checkStatisticEvent(event)) {
-                        return;
-                    }
-                    var currentTestRun = $scope.testRuns[event.testRunStatistics.testRunId];
-                    if(currentTestRun) {
-                        currentTestRun.inProgress = event.testRunStatistics.inProgress;
-                        currentTestRun.passed = event.testRunStatistics.passed;
-                        currentTestRun.failed = event.testRunStatistics.failed;
-                        currentTestRun.failedAsKnown = event.testRunStatistics.failedAsKnown;
-                        currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
-                        currentTestRun.skipped = event.testRunStatistics.skipped;
-                        currentTestRun.reviewed = event.testRunStatistics.reviewed;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            $scope.$apply();
-            return true;
+                    $scope.$apply();
+                });
+            });
         };
+
+        $scope.initTestWebsocket = function (testRunId) {
+            var testStomp = Stomp.over(new SockJS(API_URL + "/websockets"));
+            testStomp.debug = null;
+            $scope.wsConnections[testRunId] = testStomp;
+            testStomp.connect({withCredentials: false}, function () {
+                testStomp.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
+                   var event = $scope.getEventFromMessage(data.body);
+                	   $scope.addTest(event.test);
+                	   $scope.$apply();
+                });
+            });
+        };
+
+        $scope.initTestLogsWebsocket = function (ciRunId, testId) {
+            var testLogsStomp = Stomp.over(new SockJS($scope.rabbitmq.ws));
+            testLogsStomp.debug = null;
+            $scope.wsConnections[testId] = testLogsStomp;
+            testLogsStomp.connect($scope.user, $scope.pass, function () {
+            	testLogsStomp.subscribe("/queue/" + ciRunId, function (data) {
+                   var event = $scope.getEventFromMessage(data.body);
+                	   console.log(event);
+                	   $scope.$apply();
+                });
+            });
+        };
+        
+        $scope.disconnectWebsocket = function (connection) {
+            if (connection && connection.connected) {
+            		connection.disconnect();
+            }
+        };
+
+        $scope.$on('$destroy', function () {
+        		for (var ws in $scope.wsConnections){
+        			$scope.disconnectWebsocket($scope.wsConnections[ws]);
+        		}
+        });
 
         $scope.getEventFromMessage = function (message) {
             return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
@@ -183,7 +145,6 @@
             return isEmpty;
         };
 
-
         $scope.addTest = function (test) {
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
@@ -195,8 +156,6 @@
 
             testRun.tests[test.id] = test;
         };
-
-        $scope.selectedTestRuns = {};
 
         $scope.getLengthOfSelectedTestRuns = function () {
             var count = 0;
@@ -402,14 +361,15 @@
 
         $scope.loadTests = function (testRunId) {
             $scope.lastTestRunOpened = testRunId;
-            $scope.testSearchCriteria.testRunId = testRunId;
-            TestService.searchTests($scope.testSearchCriteria).then(function(rs) {
+            var testSearchCriteria = {
+                    'page': 1,
+                    'pageSize': 100000,
+                    'testRunId': testRunId
+            }
+            TestService.searchTests(testSearchCriteria).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
-                    $scope.userSearchResult = data;
-                    $scope.testSearchCriteria.page = data.page;
-                    $scope.testSearchCriteria.pageSize = data.pageSize;
                     var inProgressTests = 0;
                     var testRun = $scope.testRuns[testRunId];
                     for (var i = 0; i < data.results.length; i++) {
@@ -504,7 +464,7 @@
         	});
 
         $scope.abort = function (testRun) {
-            if($scope.jenkinsEnabled) {
+            if($scope.jenkins.enabled) {
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
                     if(rs.success)
                     {
@@ -527,7 +487,7 @@
         };
 
         $scope.abortSelectedTestRuns = function () {
-            if($scope.jenkinsEnabled) {
+            if($scope.jenkins.enabled) {
                 for (var id in $scope.selectedTestRuns) {
                     if ($scope.selectedTestRuns[id].status == 'IN_PROGRESS') {
                         $scope.abort($scope.selectedTestRuns[id]);
@@ -539,7 +499,7 @@
         };
 
         $scope.rebuild = function (testRun, rerunFailures) {
-            if ($scope.jenkinsEnabled) {
+            if ($scope.jenkins.enabled) {
             		if(rerunFailures == null)
             		{
             			rerunFailures = confirm('Would you like to rerun only failures, otherwise all the tests will be restarted?');
@@ -567,18 +527,11 @@
 
         $scope.initMenuRights = function (testRun) {
             $scope.showNotifyInSlackOption = testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed;
-            $scope.showBuildNowOption = $scope.isConnectedToJenkins;
-            $scope.showDeleteTestRunOption = true/*$rootScope.currentRole == 'ROLE_ADMIN'*/;
+            $scope.showBuildNowOption = $scope.jenkins.enabled;
+            $scope.showDeleteTestRunOption = true;
         };
 
         // -----------------------------------------------------------
-
-        $scope.isConnectedToJenkins = false;
-        $scope.getJenkinsConnection = function() {
-            ConfigService.getConfig("jenkins").then(function (rs) {
-                $scope.isConnectedToJenkins = rs.data.connected;
-            });
-        };
 
         $scope.isUrlContainsJenkinsHost = function(url, testRun) {
             if(url && testRun.job && url.includes(testRun.job.jenkinsHost)) {
@@ -700,7 +653,8 @@
                 clickOutsideToClose: true,
                 fullscreen: true,
                 locals: {
-                    testRun: testRun
+                    testRun: testRun,
+                    jenkins: $scope.jenkins
                 }
             })
                 .then(function (answer) {
@@ -796,7 +750,8 @@
                     testRun.expand = true;
                 } else {
                     testRun.expand = false;
-                    $scope.disconnectTestsWebsocket(testRun.id);
+                    $scope.disconnectWebsocket($scope.wsConnections[testRun.id]);
+                    delete $scope.wsConnections[testRun.id];
                 }
             }
         };
@@ -903,13 +858,12 @@
 
         (function init() {
             toSc($location.search());
-            $scope.initStatisticWebsocket();
+            $scope.initStatisticsWebsocket();
             $scope.initTestRunWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
             $scope.loadPlatforms();
-            $scope.getJenkinsConnection();
         })();
     }
 
@@ -1122,13 +1076,13 @@
         })();
     }
 
-    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, ConfigService) {
+    function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, jenkins) {
 
         $scope.rerunFailures = true;
         $scope.testRun = testRun;
 
         $scope.rebuild = function (testRun, rerunFailures) {
-            if ($scope.jenkinsEnabled) {
+            if (jenkins.enabled) {
                 TestRunService.rerunTestRun(testRun.id, rerunFailures).then(function(rs) {
                     if(rs.success)
                     {
@@ -1146,10 +1100,6 @@
             }
             $scope.hide(true);
          };
-
-        ConfigService.getConfig("jenkins").then(function(rs) {
-            $scope.jenkinsEnabled = rs.data.connected;
-        });
 
         $scope.hide = function() {
             $mdDialog.hide();

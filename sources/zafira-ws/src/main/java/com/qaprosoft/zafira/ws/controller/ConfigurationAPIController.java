@@ -111,7 +111,9 @@ public class ConfigurationAPIController extends AbstractController {
         if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null && slackService.isConnected())
         {
             config.put("available", true);
-        }else{
+        }
+        else
+        {
             config.put("available", false);
         }
         return config;

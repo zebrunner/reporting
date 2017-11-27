@@ -2,13 +2,20 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
 	        $rootScope.darkThemes = ['11', '21', '31', '22'];
+	        
+	        
+	        // ************** Integrations **************
+	        
+	        $rootScope.jenkins  = { enabled : false };
+	        $rootScope.jira     = { enabled : false };
+	        $rootScope.rabbitmq = { enabled : false };
 
 	        $scope.$watch('main', function(newVal, oldVal) {
 
@@ -68,6 +75,38 @@
                 });
 
 	        };
+	        
+	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
+	        		
+	        		if(data["RABBITMQ"])
+	        		{
+	        			SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
+	        	            var settings = UtilService.settingsAsMap(rs.data);
+	        	            $rootScope.rabbitmq.enabled = settings["RABBITMQ_ENABLED"];
+	        	            $rootScope.rabbitmq.user = settings["RABBITMQ_USER"];
+	        	            $rootScope.rabbitmq.pass = settings["RABBITMQ_PASSWORD"];
+	        	            $rootScope.rabbitmq.ws = settings["RABBITMQ_WS"];
+	        	        });
+	        		}
+	        		
+	        		if(data["JIRA"])
+	        		{
+	        			SettingsService.getSettingByTool("JIRA").then(function(rs) {
+	        	            var settings = UtilService.settingsAsMap(rs.data);
+	        	            $rootScope.jira.enabled = settings["JIRA_ENABLED"];
+	        	            $rootScope.jira.user = settings["JIRA_URL"];
+	        	        });
+	        		}
+	        		
+	        		if(data["JENKINS"])
+	        		{
+	        			SettingsService.getSettingByTool("JENKINS").then(function(rs) {
+	        	            var settings = UtilService.settingsAsMap(rs.data);
+	        	            $rootScope.jenkins.enabled = settings["JENKINS_ENABLED"];
+	        	            $rootScope.jenkins.user = settings["JENKINS_URL"];
+	        	        });
+	        		}
+	        	});
 
             $scope.initUserProfile = function (){
                 UserService.getUserProfile().then(function (rs) {
