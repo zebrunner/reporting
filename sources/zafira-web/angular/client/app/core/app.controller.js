@@ -2,13 +2,14 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$window', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $window, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
 	        $rootScope.darkThemes = ['11', '21', '31', '22'];
+            $rootScope.currentOffset = 0;
 
 	        $scope.$watch('main', function(newVal, oldVal) {
 
@@ -81,6 +82,15 @@
                     });
                 };*/
 	        };
+
+	        $scope.setOffset = function (event) {
+                $rootScope.currentOffset = 0;
+                var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
+                if(bottomHeight < 400) {
+                    $rootScope.currentOffset = -250 + bottomHeight;
+                }
+            };
+
 
             $scope.initUserProfile = function (){
                 UserService.getUserProfile().then(function (rs) {
