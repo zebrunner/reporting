@@ -5,15 +5,25 @@ services:
     image: postgres:9.6
     volumes:
      - ./pgdata:/var/lib/postgresql/data
-     - ./database/initdb.d/:/docker-entrypoint-initdb.d
+     - ./database/:/docker-entrypoint-initdb.d
     ports:
      - "5433:5432"
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
     restart: always
+  rabbitmq:
+    image: qaprosoft/rabbitmq:latest
+    ports:
+     - 15672:15672
+     - 15674:15674
+     - 5672:5672
+    environment:
+     - RABBITMQ_DEFAULT_USER=guest
+     - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
   zafira:
-    image: qaprosoft/zafira:rabbit
+    image: qaprosoft/zafira:latest
     ports:
      - "8080:8080"
     environment:
@@ -25,4 +35,5 @@ services:
      - ZAFIRA_JDBC_PASS=postgres
     depends_on:
      - "db"
+     - "rabbitmq"
     restart: always

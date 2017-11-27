@@ -45,16 +45,14 @@
 	               }
 		        });
 
-		   		AuthService.GenerateAccessToken()
-	        		.then(
-		            function (rs) {
-	            	if(rs.success)
-	            	{
-	            		$rootScope.accessToken = rs.data.token;
-	            	}
+		   		AuthService.GenerateAccessToken().then(function (rs) {
+		            	if(rs.success)
+		            	{
+		            		$rootScope.accessToken = rs.data.token;
+		            	}
 	            });
 
-	        	ConfigService.getConfig("version").then(function(rs) {
+		   		ConfigService.getConfig("version").then(function(rs) {
 	                if(rs.success)
 	                {
 	                    $rootScope.version = rs.data;
@@ -69,17 +67,6 @@
                     }
                 });
 
-                /*$rootScope.pushNotification = function (title, bodyText, timeout) {
-                    Push.create(title, {
-                        body: bodyText,
-                        icon: 'favicon.ico',
-                        timeout: timeout,
-                        onClick: function () {
-                            window.focus();
-                            this.close();
-                        }
-                    });
-                };*/
 	        };
 
             $scope.initUserProfile = function (){

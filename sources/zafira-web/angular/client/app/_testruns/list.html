@@ -255,9 +255,6 @@
                                                         	<div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                                                               <div class="white-space-pre-line"><show-more element-id="test.id" text="test.message" limit="100" ></show-more></div>
                                                          </div>
-                                                         <div class="test_logs" data-ng-if="logs[testRun.ciRunId][test.id]" style="overflow:scroll; height:100px;">
-                                                         		{{logs}}
-                                                         </div>
                                                         </td>
                                                         <td class="text-center">
                                                         	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
@@ -268,8 +265,8 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">
-                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
-                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
+                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
+                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
                                                         <td>

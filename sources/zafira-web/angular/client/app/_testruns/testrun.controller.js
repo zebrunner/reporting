@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', 'DEFAULT_SC', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL) {
+    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL, DEFAULT_SC) {
 
         var OFFSET = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -19,11 +19,7 @@
         $scope.UtilService = UtilService;
         $scope.testRunId = $stateParams.id;
 
-        $scope.testRunsToCompare = [];
-        $scope.compareQueryString = "";
-
         $scope.testRuns = {};
-        $scope.logs = {};
         $scope.totalResults = 0;
 
         $scope.showRealTimeEvents = true;
@@ -34,23 +30,35 @@
         $scope.selectAll = false;
 
         $scope.testsStomps = [];
-
-        var DEFAULT_SC = {
-            'page': 1,
-            'pageSize': 20,
-            'reviewed': null
-        };
-
+        
         $scope.sc = angular.copy(DEFAULT_SC);
 
         $scope.testSearchCriteria = {
             'page': 1,
             'pageSize': 100000
         };
+        
+        // Integrations
+        $scope.rabbitMQ = { enabled: false };
+        $scope.jira = { enabled: false };
 
         ConfigService.getConfig("jenkins").then(function(rs) {
             $scope.jenkinsEnabled = rs.data.connected;
         });
+        
+        SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
+        		var settings = UtilService.settingsAsMap(rs.data);
+            $scope.rabbitMQ.enabled = settings["RABBITMQ_ENABLED"];
+            $scope.rabbitMQ.user = settings["RABBITMQ_USER"];
+            $scope.rabbitMQ.pass = settings["RABBITMQ_PASSWORD"];
+            $scope.rabbitMQ.ws = settings["RABBITMQ_WS"];
+        });
+        
+        SettingsService.getSettingByTool("JIRA").then(function(rs) {
+	    		var settings = UtilService.settingsAsMap(rs.data);
+	        $scope.jira.enabled = settings["JIRA_ENABLED"];
+	        $scope.jira.url = settings["JIRA_URL"];
+	    });
 
         $scope.initStatisticWebsocket = function () {
              var sockJS = new SockJS(API_URL + "/websockets");
@@ -61,39 +69,10 @@
                  });
              });
         };
-        
-        $scope.initRabbitMQSocket = function (ciRunId) {
-            var sockJS = new SockJS("http://localhost:15674/stomp");
-            $scope.stomp2 = Stomp.over(sockJS);
-            //stomp.debug = null;
-            $scope.stomp2.connect("guest", "guest", function () {
-                $scope.stomp2.subscribe("/queue/" + ciRunId, function (data) {
-                		if(!$scope.logs[ciRunId])
-                		{
-                			$scope.logs[ciRunId] = {};
-                		}
-                	
-                		if(data.headers['correlation-id'])
-                		{
-                			var logs = $scope.logs[ciRunId][data.headers['correlation-id']];
-                			if(logs == null)
-                			{
-                				logs = data.body;
-                			}
-                			else
-                			{
-                				logs = logs.concat(data.body);
-                			}
-                			$scope.logs[ciRunId][data.headers['correlation-id']]  = logs;
-                		}
-                });
-            });
-       };
 
         $scope.initTestRunWebsocket = function () {
             var sockJS = new SockJS(API_URL + "/websockets");
             $scope.testRunsStomp = Stomp.over(sockJS);
-            //statisticsStomp.debug = null;
             $scope.testRunsStomp.connect({withCredentials: false}, function () {
                 $scope.testRunsStomp.subscribe("/topic/testRuns", function (data) {
                     $scope.getMessage(data.body);
@@ -104,7 +83,6 @@
         $scope.initTestWebsocket = function (testRunId) {
             var sockJS = new SockJS(API_URL + "/websockets");
             $scope.testsStomps[testRunId] = Stomp.over(sockJS);
-            //statisticsStomp.debug = null;
             $scope.testsStomps[testRunId].connect({withCredentials: false}, function () {
                 $scope.testsStomps[testRunId].subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
                     $scope.getMessage(data.body);
@@ -294,7 +272,6 @@
         };
 
         $scope.deleteTestRun = function (id, confirmation)
-
          {
         		if(confirmation == null)
         		{
@@ -787,31 +764,26 @@
         };
 
         $scope.showAssignJiraTaskDialog = function(testTask, isNewTask, event) {
-                    $mdDialog.show({
-                        controller: TaskController,
-                        templateUrl: 'app/_testruns/task_assign_modal.html',
-                        parent: angular.element(document.body),
-                        targetEvent: event,
-                        clickOutsideToClose:true,
-                        fullscreen: true,
-                        locals: {
-                            testTask: testTask,
-                            isNewTask: isNewTask
-                        }
-                    })
-                        .then(function(answer) {
-                            if (answer == true) {
-                                $scope.loadTests($scope.lastTestRunOpened);
-                            }
-                        }, function() {
-                        });
-                };
+            $mdDialog.show({
+                controller: TaskController,
+                templateUrl: 'app/_testruns/task_assign_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    testTask: testTask,
+                    isNewTask: isNewTask
+                }
+            })
+                .then(function(answer) {
+                    if (answer == true) {
+                        $scope.loadTests($scope.lastTestRunOpened);
+                    }
+                }, function() {
+                });
+        };
 
-
-
-//        $scope.$watch('showRealTimeEvents', function () {
-//            $cookieStore.put("showRealTimeEvents", $scope.showRealTimeEvents);
-//        });
 
 
         $scope.switchTestRunExpand = function (testRun, fromTestRun) {
@@ -822,7 +794,6 @@
                     }
                     $scope.initTestWebsocket(testRun.id);
                     testRun.expand = true;
-                    $scope.initRabbitMQSocket(testRun.ciRunId);
                 } else {
                     testRun.expand = false;
                     $scope.disconnectTestsWebsocket(testRun.id);
@@ -931,7 +902,6 @@
 
 
         (function init() {
-
             toSc($location.search());
             $scope.initStatisticWebsocket();
             $scope.initTestRunWebsocket();
@@ -940,14 +910,6 @@
             $scope.loadEnvironments();
             $scope.loadPlatforms();
             $scope.getJenkinsConnection();
-
-            SettingsService.getSettingByName("JIRA_URL").then(function(rs) {
-                if(rs.success)
-                {
-                	 $scope.jiraURL = rs.data;
-                }
-            });
-
         })();
     }
 

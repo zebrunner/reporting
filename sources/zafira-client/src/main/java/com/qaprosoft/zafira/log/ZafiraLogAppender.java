@@ -3,7 +3,6 @@ package com.qaprosoft.zafira.log;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -53,7 +52,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	private boolean durable = false;
 	private String queue = "common";
 	private String routingKey = "";
-	private boolean enabled = false;
+	private boolean zafiraConnected = false;
 	
 	private ExecutorService threadPool = Executors.newCachedThreadPool();
 
@@ -81,9 +80,9 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	{
 		super.activateOptions();
 		
-		enabled = this.connectZafira();
+		zafiraConnected = this.connectZafira();
 		
-		if(enabled)
+		if(zafiraConnected)
 		{
 			// Creating connection
 			try
@@ -381,7 +380,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		{
 			synchronized (this.channel)
 			{
-				this.channel.queueDeclare(this.queue, true, false, false, null);
+				this.channel.queueDeclare(this.queue, false, false, true, null);
 				this.channel.queueBind(this.queue, this.exchange, this.routingKey);
 			}
 		}
@@ -549,17 +548,11 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		
 		LoggingEvent loggingEvent;
 
-		Map<String, Object> headers = new HashMap<String, Object>();
-		
 		AppenderTask(LoggingEvent loggingEvent)
 		{
 			this.loggingEvent = loggingEvent;
 			TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
-			if(test != null)
-			{
-				headers.put("testId", test.getId());
-				testId = test.getId();
-			}
+			this.testId = test != null ? test.getId() : null;
 		}
 
 		/**
@@ -571,17 +564,14 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		@Override
 		public LoggingEvent call() throws Exception
 		{
-			if(enabled)
+			if(zafiraConnected)
 			{
 				String payload = layout.format(loggingEvent);
-				
-				String correlationId = String.valueOf(System.currentTimeMillis());
 				
 				AMQP.BasicProperties.Builder b = new AMQP.BasicProperties().builder();
 				b.appId(identifier)
 						.type(loggingEvent.getLevel().toString())
 						.correlationId(String.valueOf(testId))
-						.headers(headers)
 						.contentType("text/json");
 
 				createChannel().basicPublish(exchange, routingKey, b.build(), payload.toString().getBytes());
