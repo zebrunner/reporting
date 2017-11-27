@@ -153,8 +153,8 @@
                                             </span>
                                         </td>
                                         <td md-cell>
-                                            <md-menu class="pull-right">
-                                                <md-button aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); $mdMenu.open($event); ">
+                                            <md-menu class="pull-right" md-offset="0 {{currentOffset}}">
+                                                <md-button aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); setOffset($event); $mdMenu.open($event);">
                                                     <md-icon class="material-icons">more_vert</md-icon>
                                                 </md-button>
                                                 <md-menu-content width="2" style="max-height: 450px;">
