@@ -4,7 +4,8 @@
     angular.module('app.core')
         .factory('appConfig', [appConfig])
         .config(['$mdThemingProvider', mdConfig])
-        .constant('API_URL', 'http://localhost:8080/zafira-ws');
+        .constant('API_URL', 'http://localhost:8080/zafira-ws')
+        .constant('DEFAULT_SC', { 'page': 1, 'pageSize': 20, 'reviewed': null });
 
     function appConfig() {
         var pageTransitionOpts = [

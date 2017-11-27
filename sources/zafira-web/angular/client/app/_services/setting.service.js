@@ -20,7 +20,6 @@
         service.getSettingTools = getSettingTools;
         service.regenerateKey = regenerateKey;
 
-
         return service;
 
         function getAllSettings() {
@@ -34,7 +33,7 @@
             return $http.get(API_URL + '/api/settings/integration', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings by integration list'));
         }
 
-         function getSettingByTool(tool) {
+        function getSettingByTool(tool) {
             return $http.get(API_URL + '/api/settings/tool/' + tool).then(UtilService.handleSuccess, UtilService.handleError('Unable to load' + tool + 'settings'));
         }
 
