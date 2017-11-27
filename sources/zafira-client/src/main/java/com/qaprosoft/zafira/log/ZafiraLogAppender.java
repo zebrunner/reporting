@@ -380,7 +380,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		{
 			synchronized (this.channel)
 			{
-				this.channel.queueDeclare(this.queue, false, false, true, null);
+				this.channel.queueDeclare(this.queue, false, false, false, null);
 				this.channel.queueBind(this.queue, this.exchange, this.routingKey);
 			}
 		}

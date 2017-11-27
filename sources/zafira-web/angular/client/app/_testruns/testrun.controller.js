@@ -30,6 +30,8 @@
 
         $scope.wsConnections = {};
         
+        $scope.logs = [];
+        
         $scope.sc = angular.copy(DEFAULT_SC);
         
         // ************** Integrations **************
@@ -98,19 +100,6 @@
             });
         };
 
-        $scope.initTestLogsWebsocket = function (ciRunId, testId) {
-            var testLogsStomp = Stomp.over(new SockJS($scope.rabbitmq.ws));
-            testLogsStomp.debug = null;
-            $scope.wsConnections[testId] = testLogsStomp;
-            testLogsStomp.connect($scope.user, $scope.pass, function () {
-            	testLogsStomp.subscribe("/queue/" + ciRunId, function (data) {
-                   var event = $scope.getEventFromMessage(data.body);
-                	   console.log(event);
-                	   $scope.$apply();
-                });
-            });
-        };
-        
         $scope.disconnectWebsocket = function (connection) {
             if (connection && connection.connected) {
             		connection.disconnect();
@@ -620,6 +609,25 @@
                 fullscreen: true,
                 locals: {
                     testRun: testRun
+                }
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+        
+        $scope.showLogsDialog = function(testRun, test) {
+            $mdDialog.show({
+                controller: LogsController,
+                templateUrl: 'app/_testruns/logs_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    testRun: testRun,
+                    test: test,
+                    rabbitmq: $scope.rabbitmq
                 }
             })
                 .then(function(answer) {
@@ -1522,6 +1530,39 @@
         })();
     }
 
+	 function LogsController($scope, $mdDialog, $interval, rabbitmq, testRun, test) {
+	
+		 $scope.testLogsStomp = null;
+		 $scope.logs = [];
+	    
+	     $scope.$on('$destroy', function() {
+	    	 	$scope.testLogsStomp.disconnect();
+	    	 	$scope.logs = [];
+	     });
+	
+	     $scope.hide = function() {
+	         $mdDialog.hide();
+	     };
+	     $scope.cancel = function() {
+	         $mdDialog.cancel();
+	     };
+	     
+	     (function initController() {
+	    	 	 $scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
+	    	 	 $scope.testLogsStomp.debug = null;
+	    	 	 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
+             		$scope.logs = [];
+             		$scope.testLogsStomp.subscribe("/queue/" + testRun.ciRunId, function (data) {
+                 	   if(test != null && test.id == data.headers['correlation-id'])
+                 	   {
+                 		  $scope.logs.push(JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')).message);
+                    	   	  $scope.$apply();
+                 	   }
+                 }, { 'auto-delete' : false, 'durable' : false, 'exclusive' : false });
+             });
+	     })();
+	 }
+ 
 
     function CodeController($scope, $mdDialog, $interval, testRun, TestRunService) {
 

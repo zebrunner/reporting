@@ -1,0 +1,21 @@
+<md-dialog flex="100" style="height: 100%;" aria-label="Code" zafira-background-theme="modal">
+    <form class="form-validation" name="code_form" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Logs</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container flex>
+                		<div ng-repeat="log in logs">{{log}}</div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>
