@@ -9,10 +9,10 @@
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
 	        $rootScope.darkThemes = ['11', '21', '31', '22'];
-	        
-	        
+	        $rootScope.currentOffset = 0;
+
 	        // ************** Integrations **************
-	        
+
 	        $rootScope.jenkins  = { enabled : false };
 	        $rootScope.jira     = { enabled : false };
 	        $rootScope.rabbitmq = { enabled : false };
@@ -40,6 +40,13 @@
 	            }
 	        }, true);
 
+          $scope.setOffset = function (event) {
+              $rootScope.currentOffset = 0;
+              var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
+              if(bottomHeight < 400) {
+                  $rootScope.currentOffset = -250 + bottomHeight;
+              }
+          };
 
 	        $scope.initSession = function()
 	        {
@@ -75,9 +82,9 @@
                 });
 
 	        };
-	        
+
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
-	        		
+
 	        		if(data["RABBITMQ"])
 	        		{
 	        			SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
@@ -88,7 +95,7 @@
 	        	            $rootScope.rabbitmq.ws = settings["RABBITMQ_WS"];
 	        	        });
 	        		}
-	        		
+
 	        		if(data["JIRA"])
 	        		{
 	        			SettingsService.getSettingByTool("JIRA").then(function(rs) {
@@ -97,7 +104,7 @@
 	        	            $rootScope.jira.user = settings["JIRA_URL"];
 	        	        });
 	        		}
-	        		
+
 	        		if(data["JENKINS"])
 	        		{
 	        			SettingsService.getSettingByTool("JENKINS").then(function(rs) {
