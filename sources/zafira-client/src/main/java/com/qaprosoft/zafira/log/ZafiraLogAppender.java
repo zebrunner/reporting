@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.log;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -48,11 +49,11 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	private String password = "guest";
 	private String virtualHost = "/";
 	private String exchange = "logs";
-	private String type = "direct";
+	private String type = "topic";
 	private boolean durable = false;
-	private String queue = "common";
 	private String routingKey = "";
 	private boolean zafiraConnected = false;
+	private int history = 1000;
 	
 	private ExecutorService threadPool = Executors.newCachedThreadPool();
 
@@ -108,16 +109,6 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			try
 			{
 				this.createExchange();
-			}
-			catch (Exception e)
-			{
-				errorHandler.error(e.getMessage(), e, ErrorCode.GENERIC_FAILURE);
-			}
-
-			// Create queue
-			try
-			{
-				this.createQueue();
 			}
 			catch (Exception e)
 			{
@@ -298,26 +289,6 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		this.type = type;
 	}
 
-	/**
-	 * Returns queue property as set in appender configuration
-	 * 
-	 * @return
-	 */
-	public String getQueue()
-	{
-		return queue;
-	}
-
-	/**
-	 * Sets host property from parameter in appender configuration
-	 * 
-	 * @param queue
-	 */
-	public void setQueue(String queue)
-	{
-		this.queue = queue;
-	}
-
 	public boolean isDurable()
 	{
 		return durable;
@@ -352,6 +323,26 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	{
 		this.routingKey = routingKey;
 	}
+	
+	/**
+	 * Returns history property as set in appender configuration
+	 * 
+	 * @return
+	 */
+	public int getHistory() 
+	{
+		return history;
+	}
+
+	/**
+	 * Sets history property from parameter in appender configuration
+	 * 
+	 * @param history
+	 */
+	public void setHistory(int history) 
+	{
+		this.history = history;
+	}
 
 	/**
 	 * Declares the exchange on RabbitMQ server according to properties set
@@ -364,24 +355,9 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		{
 			synchronized (this.channel)
 			{
-				this.channel.exchangeDeclare(this.exchange, this.type, this.durable);
-			}
-		}
-	}
-
-	/**
-	 * Declares and binds queue on rabbitMQ server according to properties
-	 * 
-	 * @throws IOException
-	 */
-	private void createQueue() throws IOException
-	{
-		if (this.channel != null && this.channel.isOpen())
-		{
-			synchronized (this.channel)
-			{
-				this.channel.queueDeclare(this.queue, false, false, false, null);
-				this.channel.queueBind(this.queue, this.exchange, this.routingKey);
+				Map<String, Object> args = new HashMap<String, Object>();
+				args.put("x-recent-history-length", history);
+				channel.exchangeDeclare(this.exchange, "x-recent-history", false, false, args);
 			}
 		}
 	}
@@ -419,7 +395,11 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		return this.connection;
 	}
 	
-	
+	/**
+	 * Connects to Zafira API and retrieves RabbitMQ configuration.
+	 * 
+	 * @return connection status
+	 */
 	private boolean connectZafira()
 	{
 		boolean connected = false;
@@ -448,11 +428,11 @@ public class ZafiraLogAppender extends AppenderSkeleton
 					}
 					
 					// Queue referenced to ci_run_id
-					queue = config.getString("ci_run_id", null);
-					if(StringUtils.isEmpty(queue))
+					routingKey = config.getString("ci_run_id", null);
+					if(StringUtils.isEmpty(routingKey))
 					{
-						queue = UUID.randomUUID().toString();
-						System.setProperty("ci_run_id", queue);
+						routingKey = UUID.randomUUID().toString();
+						System.setProperty("ci_run_id", routingKey);
 					}
 					
 					Response<List<HashMap<String, String>>> rs = zc.getToolSettings("RABBITMQ");
@@ -544,7 +524,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	 */
 	class AppenderTask implements Callable<LoggingEvent>
 	{
-		Long testId;
+		String correlationId;
 		
 		LoggingEvent loggingEvent;
 
@@ -552,7 +532,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		{
 			this.loggingEvent = loggingEvent;
 			TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
-			this.testId = test != null ? test.getId() : null;
+			this.correlationId = test != null ? routingKey + "/" + String.valueOf(test.getId()) : routingKey;
 		}
 
 		/**
@@ -571,7 +551,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 				AMQP.BasicProperties.Builder b = new AMQP.BasicProperties().builder();
 				b.appId(identifier)
 						.type(loggingEvent.getLevel().toString())
-						.correlationId(String.valueOf(testId))
+						.correlationId(String.valueOf(correlationId))
 						.contentType("text/json");
 
 				createChannel().basicPublish(exchange, routingKey, b.build(), payload.toString().getBytes());

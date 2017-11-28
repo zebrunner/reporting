@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$window', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $window, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -40,13 +40,13 @@
 	            }
 	        }, true);
 
-          $scope.setOffset = function (event) {
-              $rootScope.currentOffset = 0;
-              var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
-              if(bottomHeight < 400) {
-                  $rootScope.currentOffset = -250 + bottomHeight;
-              }
-          };
+            $scope.setOffset = function (event) {
+	              $rootScope.currentOffset = 0;
+	              var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
+	              if(bottomHeight < 400) {
+	                  $rootScope.currentOffset = -250 + bottomHeight;
+	              }
+            };
 
 	        $scope.initSession = function()
 	        {

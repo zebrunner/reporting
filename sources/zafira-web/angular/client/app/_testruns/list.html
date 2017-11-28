@@ -72,7 +72,6 @@
                                             <md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
-                                            <span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
@@ -91,9 +90,10 @@
                                             </md-input-container>
                                         </th>
                                         <th md-column>
-                                        	<md-input-container class="searchable">
+                                        		<md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
-                                          </md-input-container>
+                                          	</md-input-container>
+                                          	<span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
                                         </th>
                                         <th md-column colspan="2">
                                             <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
@@ -204,11 +204,16 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item>
+                                                    <md-menu-item data-ng-if="testRun.status=='IN_PROGRESS'">
+                                                        <md-button data-ng-click="showLogsDialog(testRun)">
+                                                            Live logs
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <!-- md-menu-item>
                                                         <md-button data-ng-click="showCodeDialog($event, testRun)">
                                                             Show log
                                                         </md-button>
-                                                    </md-menu-item>
+                                                    </md-menu-item -->
                                                     <md-divider permission="['ROLE_ADMIN']"></md-divider>
                                                     <md-menu-item ng-if="showDeleteTestRunOption" permission="['ROLE_ADMIN']">
                                                         <md-button data-ng-click="deleteTestRunAction(testRun)">
@@ -277,7 +282,9 @@
                                                                 </md-button>
                                                                 <md-menu-content>
                                                                 	  <md-menu-item data-ng-if="testRun.status == 'IN_PROGRESS'">
-                                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">Live logs</md-button>
+                                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">
+                                                                        		Live logs
+                                                                        </md-button>
                                                                     </md-menu-item>
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
                                                                         <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>

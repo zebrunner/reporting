@@ -9,11 +9,10 @@
                 </md-button>
             </div>
         </md-toolbar>
-
-        <md-dialog-content>
+        <md-dialog-content id="logs_scroll">
             <div class="md-dialog-content">
                 <md-input-container flex>
-                		<div ng-repeat="log in logs">{{log}}</div>
+                		<div ng-repeat="log in logs track by $index"><small data-ng-class="{'text-warning': 'WARN' == log.level, 'text-danger': 'ERROR' == log.level}"><b>{{log.timestamp | date : 'hh:mm:ss'}}</b> [{{log.level}}] {{log.message}}</small></div>
                 </md-input-container>
             </div>
         </md-dialog-content>
