@@ -1531,26 +1531,29 @@
 	     };
 	     
 	     (function initController() {
-	    	 	 $scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
-	    	 	 $scope.testLogsStomp.debug = null;
-	    	 	 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
-             		$scope.logs = [];
-             		
-             		$scope.$watch('logs', function (logs) {
-             			var scroll = document.getElementsByTagName("md-dialog-content")[0];
-             			scroll.scrollTop = scroll.scrollHeight;
-             		}, true);
-             		
-             		$scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-                 	   if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id']) 
-                 	   || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
-                 	   {
-                 		   var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
-                    	   	   $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
-               	   	  	   $scope.$apply();
-                 	   }
-             		});
-             });
+	    	 	 if(rabbitmq.enabled)
+	    	 	 {
+	    	 		$scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
+		    	 	 $scope.testLogsStomp.debug = null;
+		    	 	 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
+	             		$scope.logs = [];
+	             		
+	             		$scope.$watch('logs', function (logs) {
+	             			var scroll = document.getElementsByTagName("md-dialog-content")[0];
+	             			scroll.scrollTop = scroll.scrollHeight;
+	             		}, true);
+	             		
+	             		$scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
+	                 	   if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id']) 
+	                 	   || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
+	                 	   {
+	                 		   var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+	                    	   	   $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
+	               	   	  	   $scope.$apply();
+	                 	   }
+	             		});
+	             });
+	    	 	 }
 	     })();
 	 }
 
