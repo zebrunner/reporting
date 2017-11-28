@@ -44,12 +44,12 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	private Channel channel = null;
 	private String identifier = null;
 	private String host = "localhost";
-	private int port = 5762;
+	private int port = 5672;
 	private String username = "guest";
 	private String password = "guest";
 	private String virtualHost = "/";
 	private String exchange = "logs";
-	private String type = "topic";
+	private String type = "x-recent-history";
 	private boolean durable = false;
 	private String routingKey = "";
 	private boolean zafiraConnected = false;
@@ -356,7 +356,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			synchronized (this.channel)
 			{
 				Map<String, Object> args = new HashMap<String, Object>();
-				args.put("x-recent-history-length", history);
+				args.put(this.type, history);
 				channel.exchangeDeclare(this.exchange, "x-recent-history", false, false, args);
 			}
 		}
