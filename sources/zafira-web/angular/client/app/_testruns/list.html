@@ -204,7 +204,7 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item data-ng-if="testRun.status=='IN_PROGRESS'">
+                                                    <md-menu-item data-ng-if="testRun.status=='IN_PROGRESS' && rabbitmq.enabled">
                                                         <md-button data-ng-click="showLogsDialog(testRun)">
                                                             Live logs
                                                         </md-button>
@@ -281,7 +281,7 @@
                                                                     <md-icon class="material-icons">attachment</md-icon>
                                                                 </md-button>
                                                                 <md-menu-content>
-                                                                	  <md-menu-item data-ng-if="testRun.status == 'IN_PROGRESS'">
+                                                                	  <md-menu-item data-ng-if="testRun.status == 'IN_PROGRESS' && rabbitmq.enabled">
                                                                         <md-button data-ng-click="showLogsDialog(testRun, test)">
                                                                         		Live logs
                                                                         </md-button>
