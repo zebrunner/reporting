@@ -20,6 +20,8 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
+import static com.qaprosoft.zafira.services.util.DateFormatter.*;
+
 @Service
 public class TestCaseService
 {
@@ -119,6 +121,7 @@ public class TestCaseService
 	@Transactional(readOnly = true)
 	public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) throws ServiceException
 	{
+		actualizeSearchCriteriaDate(sc);
 		SearchResult<TestCase> results = new SearchResult<TestCase>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
