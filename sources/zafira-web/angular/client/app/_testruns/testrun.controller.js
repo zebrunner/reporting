@@ -598,23 +598,6 @@
                 }
             });
         };
-
-        $scope.showCodeDialog = function(event, testRun) {
-            $mdDialog.show({
-                controller: CodeController,
-                templateUrl: 'app/_testruns/code_modal.html',
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose:true,
-                fullscreen: true,
-                locals: {
-                    testRun: testRun
-                }
-            })
-                .then(function(answer) {
-                }, function() {
-                });
-        };
         
         $scope.showLogsDialog = function(testRun, test) {
             $mdDialog.show({
@@ -1552,71 +1535,23 @@
 	    	 	 $scope.testLogsStomp.debug = null;
 	    	 	 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
              		$scope.logs = [];
-             		$scope.testLogsStomp.subscribe("/queue/" + testRun.ciRunId, function (data) {
-                 	   if(test != null && test.id == data.headers['correlation-id'])
+             		
+             		$scope.$watch('logs', function (logs) {
+             			var scroll = document.getElementsByTagName("md-dialog-content")[0];
+             			scroll.scrollTop = scroll.scrollHeight;
+             		}, true);
+             		
+             		$scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
+                 	   if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id']) 
+                 	   || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
                  	   {
-                 		  $scope.logs.push(JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')).message);
-                    	   	  $scope.$apply();
+                 		   var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+                    	   	   $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
+               	   	  	   $scope.$apply();
                  	   }
-                 }, { 'auto-delete' : false, 'durable' : false, 'exclusive' : false });
+             		});
              });
 	     })();
 	 }
- 
 
-    function CodeController($scope, $mdDialog, $interval, testRun, TestRunService) {
-
-        $scope.content = '';
-        $scope.count = 100;
-        $scope.fullCount = 0;
-
-        $scope.getContent = function () {
-            TestRunService.getConsoleOutput(testRun.id, $scope.count, $scope.fullCount).then(function(rs) {
-                if(rs.success)
-                {
-                    for(var fullCount in rs.data) {
-                        if(fullCount === '-1')
-                        {
-                            stopInterval();
-                            break;
-                        }
-                        $scope.content = $scope.content.concat(rs.data[fullCount]);
-                        $scope.fullCount = fullCount;
-                    }
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                    $scope.hide();
-                }
-            });
-        };
-
-        var interval;
-
-        var startInterval = function () {
-            interval = $interval(function() {
-                $scope.getContent();
-            }, 8000);
-        };
-
-        var stopInterval = function () {
-            $interval.cancel(interval);
-            interval = undefined;
-        };
-        $scope.$on('$destroy', function() {
-            stopInterval();
-        });
-
-        $scope.hide = function() {
-            $mdDialog.hide();
-        };
-        $scope.cancel = function() {
-            $mdDialog.cancel();
-        };
-        (function initController() {
-            $scope.getContent();
-            startInterval();
-        })();
-    }
 })();
