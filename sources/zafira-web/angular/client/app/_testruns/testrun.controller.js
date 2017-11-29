@@ -339,10 +339,6 @@
                 $scope.sc = ProjectProvider.initProject($scope.sc);
             }
 
-            if ($scope.startedAt) {
-                $scope.sc.date = new Date(Date.parse($scope.startedAt) + OFFSET);
-            }
-
             if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
                 if(!$scope.isEqualDate()){
                     $scope.sc.fromDate = $scope.selectedRange.dateStart;
@@ -351,7 +347,7 @@
                 else {
                     $scope.sc.date = $scope.selectedRange.dateStart;
                 }
-            }
+           }
 
             TestRunService.searchTestRuns($scope.sc).then(function(rs) {
                 if(rs.success)
@@ -1207,17 +1203,18 @@
             $scope.getRightToSearch();
             if ($scope.isRightToSearch && $scope.isConnectedToJira) {
                 $scope.isIssueFound = false;
+                $scope.isJiraIdClosed = true;
                 TestService.getJiraIssue($scope.newKnownIssue.jiraId).then(function(rs) {
                     if(rs.success)
                     {
                         var issue = rs.data;
-                        $scope.isIssueFound = true;
                         checkIssueStatus(issue);
                         if ($scope.isJiraIdExists) {
                             $scope.newKnownIssue.description = issue.summary;
                             $scope.newKnownIssue.assigneeMessage = 'Assigned to ' + issue.assignee.name + ' by ' + issue.reporter.name;
                             $scope.newKnownIssue.status = issue.status.name;
                         }
+                        $scope.isIssueFound = true;
                     }
                     else
                     {
@@ -1279,6 +1276,7 @@
         };
 
         $scope.selectCurrentIssue = function(issue) {
+            $scope.onChangeAction();
             checkTestHasIssues();
             $scope.isNew = ! (issue.jiraId == $scope.testBugIssue.jiraId);
             $scope.newKnownIssue.id = issue.id;
@@ -1287,9 +1285,14 @@
             $scope.newKnownIssue.status = issue.status.name;
         };
 
-        $interval(function () {
+        var issueCheckInterval = $interval(function () {
             $scope.checkKnowIssue();
         }, 2000);
+
+        $scope.$on('$destroy', function() {
+            if(issueCheckInterval)
+                $interval.cancel(issueCheckInterval);
+        });
 
         $scope.deleteKnownIssue = function (id) {
             TestService.deleteTestKnownIssue(test.id, id).then(function(rs) {
