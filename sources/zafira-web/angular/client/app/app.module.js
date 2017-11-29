@@ -222,7 +222,11 @@
             if(reverse) filtered.reverse();
             return filtered;
         };
-    })
+    }).filter('isEmpty', [function() {
+	  return function(object) {
+	    return angular.equals({}, object);
+	  }
+	}])
     .run(['$rootScope', '$location', '$cookies', '$http',
             function($rootScope, $location, $cookies, $http)
             {

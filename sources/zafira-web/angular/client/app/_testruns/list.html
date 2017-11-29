@@ -95,7 +95,7 @@
                                           	</md-input-container>
                                           	<span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
                                         </th>
-                                        <th md-column colspan="2">
+                                        <th md-column>
                                             <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                             <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
                                             <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
@@ -134,15 +134,15 @@
                                            	<small><md-icon class="material-icons" style="font-size:12px;display: inline;" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
-                                        	<div class="label label-default pull-left">{{testRun.env}}</div>
-                                         </td>
+                                        		<div class="label label-default pull-left">{{testRun.env}}</div>
+                                        </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                        	 	<span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
                                              <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 260px;">
-                                        	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
+                                        		<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
                                             <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
                                             <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="{'label-info-empty': testRun.inProgress == 0, 'label-info': testRun.inProgress > 0}">{{testRun.inProgress}}</span>
@@ -204,7 +204,7 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item data-ng-if="testRun.status=='IN_PROGRESS' && rabbitmq.enabled">
+                                                    <md-menu-item >
                                                         <md-button data-ng-click="showLogsDialog(testRun)">
                                                             Live logs
                                                         </md-button>
@@ -298,8 +298,8 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <tr md-row data-ng-if="sr.results.length == 0">
-                                        <td md-cell colspan="6" class="text-center">No data</td>
+                                    <tr md-row data-ng-hide="sr.results.length || !(testRuns | isEmpty)">
+                                        <td md-cell colspan="7" class="text-center">No data</td>
                                     </tr>
                                 </tbody>
                             </table>
