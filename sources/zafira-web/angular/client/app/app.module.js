@@ -204,20 +204,43 @@
                 });
             }
         };
-    }]).filter('subString', function() {
+    }]).directive('sortItem', function () {
+        "use strict";
+        return {
+            restrict: 'A',
+            template: '<span ng-transclude></span><md-icon class="md-sort-icon" md-svg-icon="arrow-up.svg"></md-icon>',
+            replace: false,
+            transclude: true,
+            link: function (scope, iElement, iAttrs) {
+                iElement.bind("click",function() {
+                    var classToAdd = iAttrs.sortItem === 'true' ? 'md-asc' : 'md-desc';
+                    var classToDelete = iAttrs.sortItem === 'true' ? 'md-desc' : 'md-asc';
+                    iElement.children('md-icon')[0].classList.remove(classToDelete);
+                    iElement.children('md-icon').addClass(classToAdd);
+                });
+            }
+        };
+    }).filter('subString', function() {
         return function(str, start, end) {
             if (str != undefined) {
                 return str.substr(start, end);
             }
         }
     }).filter('orderObjectBy', function() {
+        var STATUSES_ORDER = {
+            'PASSED': 0,
+            'FAILED': 1,
+            'SKIPPED': 2,
+            'IN_PROGRESS': 3,
+            'ABORTED': 4
+        };
         return function(items, field, reverse) {
             var filtered = [];
             angular.forEach(items, function(item) {
                 filtered.push(item);
             });
             filtered.sort(function (a, b) {
-                return (a[field] > b[field] ? 1 : -1);
+                return field == 'status' ? (STATUSES_ORDER[a[field]] > STATUSES_ORDER[b[field]] ? 1 : -1) : (a[field] > b[field] ? 1 : -1);
             });
             if(reverse) filtered.reverse();
             return filtered;
