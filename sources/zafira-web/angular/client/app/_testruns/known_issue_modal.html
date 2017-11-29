@@ -54,10 +54,10 @@
             <md-button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="known_issue_form.$invalid">
                 Clear
             </md-button>
-            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid">
+            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
                 Create
             </md-button>
-            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid">
+            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
                 Update
             </md-button>
         </md-dialog-actions>
