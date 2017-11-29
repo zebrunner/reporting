@@ -45,6 +45,7 @@ import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 import static com.qaprosoft.zafira.models.db.Status.*;
+import static com.qaprosoft.zafira.services.util.DateFormatter.*;
 
 @Service
 public class TestRunService
@@ -102,6 +103,7 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
+		actualizeSearchCriteriaDate(sc);
 		SearchResult<TestRun> results = new SearchResult<TestRun>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());

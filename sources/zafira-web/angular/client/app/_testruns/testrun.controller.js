@@ -339,10 +339,6 @@
                 $scope.sc = ProjectProvider.initProject($scope.sc);
             }
 
-            if ($scope.startedAt) {
-                $scope.sc.date = new Date(Date.parse($scope.startedAt) + OFFSET);
-            }
-
             if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
                 if(!$scope.isEqualDate()){
                     $scope.sc.fromDate = $scope.selectedRange.dateStart;
@@ -351,7 +347,7 @@
                 else {
                     $scope.sc.date = $scope.selectedRange.dateStart;
                 }
-            }
+           }
 
             TestRunService.searchTestRuns($scope.sc).then(function(rs) {
                 if(rs.success)
