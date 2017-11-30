@@ -145,7 +145,7 @@
                                         	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
                                             <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
-                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="{'label-info-empty': testRun.inProgress == 0, 'label-info': testRun.inProgress > 0}">{{testRun.inProgress}}</span>
+                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.status == 'IN_PROGRESS' ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
                                         </td>
                                         <td md-cell style="padding-right: 0px; min-width: 90px;">
                                             <div class="time">
@@ -273,7 +273,7 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div data-ng-if="test.status != STARTED && test.artifacts.length !=0 && testRun.status != 'IN_PROGRESS'" class="pull-right">
+                                                            <div data-ng-if="test.artifacts.length !=0 && test.status != 'IN_PROGRESS'" class="pull-right">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                                     <md-icon class="material-icons">attachment</md-icon>
