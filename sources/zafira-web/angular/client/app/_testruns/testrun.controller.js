@@ -110,7 +110,7 @@
 
         $scope.$on('$destroy', function () {
             if($scope.zafiraWebsocket && $scope.zafiraWebsocket.connected) {
-                $scope.disconnectWebsocket($scope.zafiraWebsocket);
+            		$scope.zafiraWebsocket.disconnect();
             }
         });
 
