@@ -255,6 +255,7 @@
             else {
                 $scope.testRuns[testRun.id].status = testRun.status;
                 $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
+                $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
             }
             ConfigService.getConfig("slack/" + testRun.id).then(function successCallback(rs){
                 $scope.testRuns[testRun.id].isSlackAvailable = rs.available;

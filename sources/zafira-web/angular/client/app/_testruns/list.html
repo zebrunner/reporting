@@ -208,9 +208,9 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item>
-                                                        <md-button data-ng-click="showCodeDialog($event, testRun)">
-                                                            Show log
+                                                    <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
+                                                        <md-button data-ng-click="showLogsDialog(testRun)">
+                                                            Live logs
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider permission="['ROLE_ADMIN']"></md-divider>
@@ -283,6 +283,9 @@
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
                                                                         <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
                                                                    </md-menu-item>
+                                                                    <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
+				                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">Live logs</md-button>
+				                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
                                                             </div>
