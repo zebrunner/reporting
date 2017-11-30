@@ -30,8 +30,8 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('CRYPTO_KEY_TYPE', 'AES', 'CRYPTO'),
 	('RABBITMQ_HOST', 'localhost', 'RABBITMQ'),
 	('RABBITMQ_PORT', '5672', 'RABBITMQ'),
-	('RABBITMQ_USER', 'guest', 'RABBITMQ'),
-	('RABBITMQ_PASSWORD', 'guest', 'RABBITMQ'),
+	('RABBITMQ_USER', 'qpsdemo', 'RABBITMQ'),
+	('RABBITMQ_PASSWORD', 'qpsdemo', 'RABBITMQ'),
 	('RABBITMQ_WS', 'http://localhost:15674/stomp', 'RABBITMQ'),
 	('RABBITMQ_ENABLED', false, 'RABBITMQ');
 
