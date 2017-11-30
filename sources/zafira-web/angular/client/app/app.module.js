@@ -33,16 +33,24 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
     }
-    ]).directive('ngReallyClick', [function() {
+    ]).directive('ngReallyClick', ['$mdDialog', function($mdDialog) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
                 element.bind('click', function(e) {
-                    e.stopPropagation();
-                    var message = attrs.ngReallyMessage;
-                    if (message && confirm(message)) {
-                        scope.$apply(attrs.ngReallyClick);
-                    }
+                    var confirm = $mdDialog.confirm()
+                        .title(attrs.ngReallyMessage)
+                        .textContent('All changes will be saved')
+                        .ariaLabel('Really click')
+                        .targetEvent(e)
+                        .ok('Yes')
+                        .cancel('No');
+
+                    $mdDialog.show(confirm).then(function() {
+                        e.stopPropagation();
+                        scope.$applyAsync(attrs.ngReallyClick);
+                    }, function() {
+                    });
                 });
             }
         }
