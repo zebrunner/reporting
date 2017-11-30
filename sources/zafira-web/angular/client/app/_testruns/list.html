@@ -95,7 +95,7 @@
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
                                           </md-input-container>
                                         </th>
-                                        <th md-column colspan="2">
+                                        <th md-column>
                                             <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                             <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
                                             <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
@@ -292,8 +292,8 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <tr md-row data-ng-if="sr.results.length == 0">
-                                        <td md-cell colspan="6" class="text-center">No data</td>
+                                    <tr md-row data-ng-hide="sr.results.length && !(testRuns | isEmpty)">
+                                        <td md-cell colspan="7" class="text-center">No data</td>
                                     </tr>
                                 </tbody>
                             </table>
