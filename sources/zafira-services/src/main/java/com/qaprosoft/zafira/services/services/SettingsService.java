@@ -20,37 +20,35 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 @Service
 public class SettingsService
 {
-
 	@Autowired
 	private SettingsMapper settingsMapper;
 
-    @Autowired
-    private JiraService jiraService;
+	@Autowired
+	private JiraService jiraService;
 
-    @Autowired
-    private JenkinsService jenkinsService;
+	@Autowired
+	private JenkinsService jenkinsService;
 
-    @Autowired
-    private SlackService slackService;
+	@Autowired
+	private SlackService slackService;
 
-    @Autowired
-    private AsynSendEmailTask emailTask;
+	@Autowired
+	private AsynSendEmailTask emailTask;
 
-    @Autowired
-    private AmazonService amazonService;
+	@Autowired
+	private AmazonService amazonService;
 
-    @Autowired
-    private HipchatService hipchatService;
+	@Autowired
+	private HipchatService hipchatService;
 
-    @Autowired
-    private STFService stfService;
+	@Autowired
+	private STFService stfService;
 
 	@Autowired
 	private CryptoService cryptoService;
-	
+
 	@Autowired
 	private RabbitMQService rabbitMQService;
-
 
 	@Transactional(readOnly = true)
 	public Setting getSettingByName(String name) throws ServiceException
@@ -61,7 +59,7 @@ public class SettingsService
 	@Transactional(readOnly = true)
 	public Setting getSettingByType(SettingType type)
 	{
-        return settingsMapper.getSettingByName(type.name());
+		return settingsMapper.getSettingByName(type.name());
 	}
 
 	@Transactional(readOnly = true)
@@ -73,7 +71,7 @@ public class SettingsService
 	@Transactional(readOnly = true)
 	public List<Setting> getSettingsByTool(Tool tool) throws ServiceException
 	{
-        return settingsMapper.getSettingsByTool(tool);
+		return settingsMapper.getSettingsByTool(tool);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -94,19 +92,21 @@ public class SettingsService
 		return settingsMapper.getSettingsByIntegration(isIntegrationTool);
 	}
 
-    @Transactional(readOnly = true)
-    public Map<Tool, Boolean> getTools() throws ServiceException
-    {
-    	Map<Tool, Boolean> tools = new HashMap<>();
-    	Boolean value;
-        for(Tool tool : settingsMapper.getTools()) {
-        	if(tool != null && ! tool.equals(Tool.CRYPTO)) {
-         		value = getServiceByTool(tool).isConnected();
+	@Transactional(readOnly = true)
+	public Map<Tool, Boolean> getTools() throws ServiceException
+	{
+		Map<Tool, Boolean> tools = new HashMap<>();
+		Boolean value;
+		for (Tool tool : settingsMapper.getTools())
+		{
+			if (tool != null && !tool.equals(Tool.CRYPTO))
+			{
+				value = getServiceByTool(tool).isConnected();
 				tools.put(tool, value);
 			}
 		}
 		return tools;
-    }
+	}
 
 	@Transactional(readOnly = true)
 	public String getSettingValue(Setting.SettingType type) throws ServiceException
@@ -120,7 +120,6 @@ public class SettingsService
 		settingsMapper.updateSetting(setting);
 	}
 
-
 	@Transactional(rollbackFor = Exception.class)
 	public Setting createSetting(Setting setting) throws Exception
 	{
@@ -128,63 +127,67 @@ public class SettingsService
 		return setting;
 	}
 
-
 	@Transactional(rollbackFor = Exception.class)
-	public void reEncrypt() throws Exception {
+	public void reEncrypt() throws Exception
+	{
 		List<Setting> settings = getSettingsByEncrypted(true);
-		for(Setting setting: settings){
+		for (Setting setting : settings)
+		{
 			String decValue = cryptoService.decrypt(setting.getValue());
 			setting.setValue(decValue);
 		}
 		cryptoService.generateKey();
-        reinstantiateTool(Tool.CRYPTO);
-		for(Setting setting: settings){
+		reinstantiateTool(Tool.CRYPTO);
+		for (Setting setting : settings)
+		{
 			String encValue = cryptoService.encrypt(setting.getValue());
 			setting.setValue(encValue);
 			updateSetting(setting);
 		}
 	}
 
-	public void reinstantiateTool(Tool tool) {
+	public void reinstantiateTool(Tool tool)
+	{
 		if (getServiceByTool(tool) != null)
 		{
 			getServiceByTool(tool).init();
 		}
 	}
 
-
-	public IJMXService getServiceByTool(Tool tool) {
+	public IJMXService getServiceByTool(Tool tool)
+	{
 		IJMXService service = null;
-		switch (tool) {
-			case JIRA:
-				service = jiraService;
-				break;
-			case JENKINS:
-				service = jenkinsService;
-				break;
-			case SLACK:
-				service = slackService;
-				break;
-			case CRYPTO:
-				service = cryptoService;
-				break;
-			case EMAIL:
-				service = emailTask;
-				break;
-			case AMAZON:
-				service = amazonService;
-				break;
-			case HIPCHAT:
-				service = hipchatService;
-				break;
-			case STF:
-				service = stfService;
-				break;
-			case RABBITMQ:
-				service = rabbitMQService;
-				break;	
-			default:
-				break;
+		switch (tool)
+		{
+		case JIRA:
+			service = jiraService;
+			break;
+		case JENKINS:
+			service = jenkinsService;
+			break;
+		case SLACK:
+			service = slackService;
+			break;
+		case CRYPTO:
+			service = cryptoService;
+			break;
+		case EMAIL:
+			service = emailTask;
+			break;
+		case AMAZON:
+			service = amazonService;
+			break;
+		case HIPCHAT:
+			service = hipchatService;
+			break;
+		case STF:
+			service = stfService;
+			break;
+		case RABBITMQ:
+			service = rabbitMQService;
+			break;
+		default:
+			break;
 		}
 		return service;
 	}
