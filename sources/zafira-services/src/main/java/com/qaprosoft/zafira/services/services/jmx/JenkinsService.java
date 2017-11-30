@@ -286,6 +286,7 @@ public class JenkinsService implements IJMXService
 		return logMap;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<BuildParameterType> getJobParameters(List actions)
 	{
 		Collection parameters = Collections2.filter(actions, (Predicate<Map<String, Object>>) action -> action.containsKey("parameters"));
