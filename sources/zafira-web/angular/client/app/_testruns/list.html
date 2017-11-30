@@ -18,7 +18,7 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button data-ng-if="jenkins.enabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()">
+                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
@@ -72,6 +72,7 @@
                                             <md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.executionURL" name="jobURL" placeholder="Job URL"/>
                                             </md-input-container>
+                                            <span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
                                         </th>
                                         <th md-column>
                                             <md-input-container class="searchable select">
@@ -90,12 +91,11 @@
                                             </md-input-container>
                                         </th>
                                         <th md-column>
-                                        		<md-input-container class="searchable">
+                                        	<md-input-container class="searchable">
                                                 <input ng-change="onChangeCriteria()" type="text" ng-model="sc.appVersion" name="appVersion" placeholder="App version"/>
-                                          	</md-input-container>
-                                          	<span class="label" data-ng-class="{'label-blank': sc.reviewed == null, 'label-success': sc.reviewed == true, 'label-default': sc.reviewed == false}" data-ng-click="sc.reviewed = !sc.reviewed">R</span>
+                                          </md-input-container>
                                         </th>
-                                        <th md-column>
+                                        <th md-column colspan="2">
                                             <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                             <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
                                             <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
@@ -134,25 +134,26 @@
                                            	<small><md-icon class="material-icons" style="font-size:12px;display: inline;" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
-                                        		<div class="label label-default pull-left">{{testRun.env}}</div>
-                                        </td>
+                                        	<div class="label label-default pull-left">{{testRun.env}}</div>
+                                         </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 	<span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
                                              <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 260px;">
-                                        		<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
+                                        	<span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="{'label-success-empty': testRun.passed == 0, 'label-success': testRun.passed > 0}">{{testRun.passed}}</span>
                                             <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="{'label-danger-empty': testRun.failed == 0, 'label-danger': testRun.failed > 0}">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="{'label-warning-empty': testRun.skipped == 0, 'label-warning': testRun.skipped > 0}">{{testRun.skipped}}</span>
-                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="{'label-info-empty': testRun.inProgress == 0, 'label-info': testRun.inProgress > 0}">{{testRun.inProgress}}</span>
+                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.status == 'IN_PROGRESS' ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
                                         </td>
                                         <td md-cell style="padding-right: 0px; min-width: 90px;">
                                             <div class="time">
+                                                Started
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </div>
                                             <div data-ng-if="testRun.elapsed && testRun.elapsed > 0" class="light_text">
-                                                <i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="testRun.elapsed">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer>
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
                                             </div>
                                         </td>
                                         <td md-cell>
@@ -173,7 +174,7 @@
                                                     </md-menu-item>
                                                     <md-menu-item>
                                                         <md-button data-ng-click="markAsReviewed(testRun)">
-                                                            Marked as reviewed
+                                                            Mark as reviewed
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item>
@@ -207,16 +208,11 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item >
-                                                        <md-button data-ng-click="showLogsDialog(testRun)">
-                                                            Live logs
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <!-- md-menu-item>
+                                                    <md-menu-item>
                                                         <md-button data-ng-click="showCodeDialog($event, testRun)">
                                                             Show log
                                                         </md-button>
-                                                    </md-menu-item -->
+                                                    </md-menu-item>
                                                     <md-divider permission="['ROLE_ADMIN']"></md-divider>
                                                     <md-menu-item ng-if="showDeleteTestRunOption" permission="['ROLE_ADMIN']">
                                                         <md-button data-ng-click="deleteTestRunAction(testRun)">
@@ -261,11 +257,11 @@
                                                                 </span>
                                                             </div>
                                                         	<div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
-                                                              <div class="white-space-pre-line"><show-more element-id="test.id" text="test.message" limit="100" ></show-more></div>
-                                                         </div>
+                                                                <div class="white-space-pre-line"><show-more element-id="test.id" text="test.message" limit="100" ></show-more></div>
+                                                            </div>
                                                         </td>
                                                         <td class="text-center">
-                                                        	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-click="markTestAsPassed(test.id)">Mark as passed</a>
+                                                        	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-really-message="Do you really want to mark test run as passed?" data-ng-really-click="markTestAsPassed(test.id)">Mark as passed</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
                                                             <a href="" class="float_right label-primary-empty clearfix" data-ng-if="test.workItems.length==0 || (test.workItems.length==1 && test.workItems[0].type=='BUG')" data-ng-click="showAssignJiraTaskDialog(test, true, $event)">Assign task</a>
@@ -273,25 +269,20 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">
-                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
-                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
+                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
+                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div class="pull-right">
+                                                            <div data-ng-if="test.artifacts.length !=0 && test.status != 'IN_PROGRESS'" class="pull-right">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                                     <md-icon class="material-icons">attachment</md-icon>
                                                                 </md-button>
                                                                 <md-menu-content>
-                                                                	  <md-menu-item data-ng-if="testRun.status == 'IN_PROGRESS' && rabbitmq.enabled">
-                                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">
-                                                                        		Live logs
-                                                                        </md-button>
-                                                                    </md-menu-item>
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
                                                                         <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
-                                                                    </md-menu-item>
+                                                                   </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
                                                             </div>
@@ -301,8 +292,8 @@
                                             </table>
                                         </td>
                                     </tr>
-                                    <tr md-row data-ng-hide="sr.results.length || !(testRuns | isEmpty)">
-                                        <td md-cell colspan="7" class="text-center">No data</td>
+                                    <tr md-row data-ng-if="sr.results.length == 0">
+                                        <td md-cell colspan="6" class="text-center">No data</td>
                                     </tr>
                                 </tbody>
                             </table>
