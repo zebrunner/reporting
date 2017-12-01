@@ -23,7 +23,7 @@
             <zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
             <zafira.db.jdbc.user>{user}</zafira.db.jdbc.user>
             <zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
-            <zafira.db.c3p0.maxPoolSize>2</zafira.db.c3p0.maxPoolSize>
+            <zafira.db.c3p0.maxPoolSize>100</zafira.db.c3p0.maxPoolSize>
 
             <zafira.ldap.protocol>ldap</zafira.ldap.protocol>
             <zafira.ldap.server>localhost</zafira.ldap.server>
