@@ -15,7 +15,6 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.EventType;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
@@ -24,7 +23,6 @@ import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
-import com.qaprosoft.zafira.models.dto.ua.UAInspectionType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -490,40 +488,6 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<EventType> logEvent(EventType event)
-	{
-		Response<EventType> response = new Response<EventType>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + EVENTS_PATH);
-			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, event);
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(EventType.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to log event", e);
-		}
-		return response;
-	}
-	
-	public void markEventReceived(EventType event)
-	{
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + EVENTS_RECEIVED_PATH);
-			initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).put(ClientResponse.class, event);
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to mark event received", e);
-		}
-	}
-	
 	public class Response<T>
 	{
 		private int status;
@@ -912,28 +876,6 @@ public class ZafiraClient
 			LOGGER.debug("Registered test restart details:'" + testName + "'; startTime: " + new Date(test.getStartTime()));
 		}
 		return test;
-	}
-	
-	/**
-	 * Registers UI inspection.
-	 * 
-	 * @param uiInspection
-	 * @return status
-	 */
-	public boolean createUAInspection(UAInspectionType uiInspection)
-	{
-		boolean created = false;
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + UA_INSPECTIONS_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON)).post(ClientResponse.class, uiInspection);
-			created = clientRS.getStatus() == 200;
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to create UI inspection", e);
-		}
-		return created;
 	}
 	
 	/**

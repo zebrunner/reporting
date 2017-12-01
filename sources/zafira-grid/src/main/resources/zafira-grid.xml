@@ -25,19 +25,12 @@
 		</property>
 	</bean>
 
-	<bean id="gridHealthCheckTask" class="com.qaprosoft.zafira.grid.tasks.GridHealthCheckTask" />
-
 	<bean id="usbDeviceHealthCheckTask" class="com.qaprosoft.zafira.grid.tasks.UsbDeviceHealthCheckTask" />
 
 	<bean id="schedulerService"
 		class="com.qaprosoft.zafira.grid.services.impl.SchedulerService" />
 
 	<!-- Job Details -->
-	<bean id="gridHealthCheckTaskJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="executeGridHealthCheckTask" />
-	</bean>
 
 	<bean id="usbDeviceHealthCheckTaskJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -46,12 +39,6 @@
 	</bean>
 
 	<!-- Triggers -->
-	<bean id="gridHealthCheckTaskTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="gridHealthCheckTaskJobDetail" />
-		<property name="cronExpression"
-			value="${zafira.batch.jobs.gridHealthCheck.trigger.cronExpression}" />
-	</bean>
 	
 	<bean id="usbDeviceHealthCheckTaskTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
@@ -64,13 +51,11 @@
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
-				<ref bean="gridHealthCheckTaskJobDetail" />
 				<ref bean="usbDeviceHealthCheckTaskJobDetail" />
 			</list>
 		</property>
 		<property name="triggers">
 			<list>
-				<ref bean="gridHealthCheckTaskTrigger" />
 				<ref bean="usbDeviceHealthCheckTaskTrigger" />
 			</list>
 		</property>
