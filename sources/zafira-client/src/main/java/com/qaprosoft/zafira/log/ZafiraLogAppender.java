@@ -59,6 +59,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Submits LoggingEvent for publishing if it reaches severity threshold.
+	 * 
+	 * @param loggingEvent - log event
 	 */
 	@Override
 	protected void append(LoggingEvent loggingEvent)
@@ -129,6 +131,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns identifier property as set in appender configuration
+	 * 
+	 * @return identifier
 	 */
 	public String getIdentifier()
 	{
@@ -137,6 +141,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets identifier property from parameter in appender configuration
+	 * 
+	 * @param identifier - identifier property
 	 */
 	public void setIdentifier(String identifier)
 	{
@@ -145,6 +151,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns host property as set in appender configuration
+	 * 
+	 * @return host
 	 */
 	public String getHost()
 	{
@@ -153,6 +161,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets host property from parameter in appender configuration
+	 * 
+	 * @param host - host property
 	 */
 	public void setHost(String host)
 	{
@@ -161,6 +171,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns port property as set in appender configuration
+	 * 
+	 * @return port
 	 */
 	public int getPort()
 	{
@@ -169,6 +181,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets port property from parameter in appender configuration
+	 * 
+	 * @param port - port property
 	 */
 	public void setPort(int port)
 	{
@@ -177,6 +191,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns username property as set in appender configuration
+	 * 
+	 * @return username
 	 */
 	public String getUsername()
 	{
@@ -185,6 +201,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets username property from parameter in appender configuration
+	 * 
+	 * @param username - username property
 	 */
 	public void setUsername(String username)
 	{
@@ -193,6 +211,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns password property as set in appender configuration
+	 * 
+	 * @return password
 	 */
 	public String getPassword()
 	{
@@ -201,6 +221,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets password property from parameter in appender configuration
+	 * 
+	 * @param password - password property
 	 */
 	public void setPassword(String password)
 	{
@@ -209,6 +231,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns virtualHost property as set in appender configuration
+	 * 
+	 * @return virtualHost
 	 */
 	public String getVirtualHost()
 	{
@@ -217,6 +241,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets virtualHost property from parameter in appender configuration
+	 * 
+	 * @param virtualHost - virtualHost property
 	 */
 	public void setVirtualHost(String virtualHost)
 	{
@@ -225,6 +251,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns exchange property as set in appender configuration
+	 * 
+	 * @return exchange
 	 */
 	public String getExchange()
 	{
@@ -233,6 +261,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets exchange property from parameter in appender configuration
+	 * 
+	 * @param exchange - exchange property
 	 */
 	public void setExchange(String exchange)
 	{
@@ -241,6 +271,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns type property as set in appender configuration
+	 * 
+	 * @return type
 	 */
 	public String getType()
 	{
@@ -249,6 +281,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets type property from parameter in appender configuration
+	 * 
+	 * @param type - type property
 	 */
 	public void setType(String type)
 	{
@@ -262,6 +296,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets durable property from parameter in appender configuration
+	 * 
+	 *  @param durable - durable property
 	 */
 	public void setDurable(boolean durable)
 	{
@@ -270,6 +306,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Returns routingKey property as set in appender configuration
+	 * 
+	 * @return routingKey
 	 */
 	public String getRoutingKey()
 	{
@@ -278,6 +316,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets routingKey property from parameter in appender configuration
+	 * 
+	 * @param routingKey - routingKey property
 	 */
 	public void setRoutingKey(String routingKey)
 	{
@@ -286,6 +326,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	
 	/**
 	 * Returns history property as set in appender configuration
+	 * 
+	 * @return history
 	 */
 	public int getHistory() 
 	{
@@ -294,6 +336,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Sets history property from parameter in appender configuration
+	 * 
+	 * @param history - history property
 	 */
 	public void setHistory(int history) 
 	{
@@ -318,6 +362,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Creates channel on RabbitMQ server
+	 * 
+	 * @return channel
 	 */
 	private Channel createChannel() throws IOException
 	{
@@ -330,6 +376,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Creates connection to RabbitMQ server according to properties
+	 * 
+	 * @return connection
 	 */
 	private Connection createConnection() throws IOException, TimeoutException
 	{
@@ -457,6 +505,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 	/**
 	 * Ensures that a Layout property is required
+	 * 
+	 * @return requires layout flag
 	 */
 	@Override
 	public boolean requiresLayout()
@@ -482,6 +532,8 @@ public class ZafiraLogAppender extends AppenderSkeleton
 
 		/**
 		 * Method is called by ExecutorService and publishes message on RabbitMQ
+		 * 
+		 * @return loggingEvent
 		 */
 		@Override
 		public LoggingEvent call() throws Exception

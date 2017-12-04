@@ -740,7 +740,7 @@ public class ZafiraClient
 	 * @param ciConfig - ci config
 	 * @param startedBy - user id who started the suite
 	 * @param workItem - test work item
-	 * @param classMode - class mode flag
+	 * @param driverMode - driver mode
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -772,7 +772,7 @@ public class ZafiraClient
 	 * @param ciConfig - ci config
 	 * @param startedBy - user id who started the suite
 	 * @param workItem - test work item
-	 * @param classMode - class mode flag
+	 * @param driverMode - driver mode
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -807,7 +807,7 @@ public class ZafiraClient
 	 * @param ciConfig - ci config
 	 * @param startedBy - user id who started the suite
 	 * @param workItem - test work item
-	 * @param classMode - class mode flag
+	 * @param driverMode - driver mode
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -837,7 +837,7 @@ public class ZafiraClient
 	/**
 	 * Finalizes test run calculating test results.
 	 * 
-	 * @param testRun
+	 * @param testRun - test run object
 	 * @return updated test run
 	 */
 	public TestRunType registerTestRunResults(TestRunType testRun)
@@ -856,9 +856,9 @@ public class ZafiraClient
 	 * @param testArgs - test args
 	 * @param testRunId - test run id
 	 * @param testCaseId - test case id
-	 * @param demoURL - demo URL
-	 * @param logURL - log URL
 	 * @param retry - retry count
+	 * @param dependsOnMethods - list of dependent tests
+	 * @param configXML - config XML
 	 * @return registered test
 	 */
 	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods)
