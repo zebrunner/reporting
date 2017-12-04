@@ -586,9 +586,9 @@ public class ZafiraClient
 	 * Registers user in Zafira, it may be a new one or existing returned by service.
 	 * 
 	 * @param userName - in general LDAP user name
-	 * @param email
-	 * @param firstName
-	 * @param lastName
+	 * @param email - user email
+	 * @param firstName - user first name
+	 * @param lastName - user last name
 	 * @return registered user
 	 */
 	public UserType registerUser(String userName, String email, String firstName, String lastName) 
@@ -620,12 +620,12 @@ public class ZafiraClient
 	/**
 	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
 	 * 
-	 * @param suiteId
-	 * @param primaryOwnerId
-	 * @param secondaryOwnerId
-	 * @param testClass
-	 * @param testMethod
-	 * @return registred test case
+	 * @param suiteId - test suite id
+	 * @param primaryOwnerId - primary owner user id
+	 * @param secondaryOwnerId - secondary owner user id
+	 * @param testClass - test class name
+	 * @param testMethod - test method name
+	 * @return registered test case
 	 */
 	public TestCaseType registerTestCase(Long suiteId, Long primaryOwnerId, Long secondaryOwnerId, String testClass, String testMethod) 
 	{
@@ -649,9 +649,9 @@ public class ZafiraClient
 	/**
 	 * Registers test work items.
 	 * 
-	 * @param testId
-	 * @param workItems
-	 * @return test for which we registers work items.
+	 * @param testId - test id
+	 * @param workItems - test work items
+	 * @return test for which we registers work items
 	 */
 	public TestType registerWorkItems(Long testId, List<String> workItems) 
 	{
@@ -733,14 +733,14 @@ public class ZafiraClient
 	/**
 	 * Registers new test run triggered by human.
 	 * 
-	 * @param testSuiteId
-	 * @param userId
-	 * @param configXML
-	 * @param jobId
-	 * @param ciConfig
-	 * @param startedBy
-	 * @param workItem
-	 * @param classMode
+	 * @param testSuiteId - test suited id
+	 * @param userId - user id
+	 * @param configXML - test config XML
+	 * @param jobId - job id
+	 * @param ciConfig - ci config
+	 * @param startedBy - user id who started the suite
+	 * @param workItem - test work item
+	 * @param classMode - class mode flag
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunByHUMAN(Long testSuiteId, Long userId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -766,13 +766,13 @@ public class ZafiraClient
 	/**
 	 * Registers new test run triggered by scheduler.
 	 * 
-	 * @param testSuiteId
-	 * @param configXML
-	 * @param jobId
-	 * @param ciConfig
-	 * @param startedBy
-	 * @param workItem
-	 * @param classMode
+	 * @param testSuiteId - test suited id
+	 * @param configXML - test config XML
+	 * @param jobId - job id
+	 * @param ciConfig - ci config
+	 * @param startedBy - user id who started the suite
+	 * @param workItem - test work item
+	 * @param classMode - class mode flag
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunBySCHEDULER(Long testSuiteId, String configXML, Long jobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -800,14 +800,14 @@ public class ZafiraClient
 	/**
 	 * Registers new test run triggered by upstream job.
 	 * 
-	 * @param testSuiteId
-	 * @param configXML
-	 * @param jobId
-	 * @param parentJobId
-	 * @param ciConfig
-	 * @param startedBy
-	 * @param workItem
-	 * @param classMode
+	 * @param testSuiteId - test suited id
+	 * @param configXML - test config XML
+	 * @param jobId - job id
+	 * @param parentJobId - parent job id
+	 * @param ciConfig - ci config
+	 * @param startedBy - user id who started the suite
+	 * @param workItem - test work item
+	 * @param classMode - class mode flag
 	 * @return created test run
 	 */
 	public TestRunType registerTestRunUPSTREAM_JOB(Long testSuiteId, String configXML, Long jobId, Long parentJobId, CIConfig ciConfig, Initiator startedBy, String workItem, DriverMode driverMode) 
@@ -850,15 +850,15 @@ public class ZafiraClient
 	/**
 	 * Registers test run in Zafira.
 	 * 
-	 * @param name
-	 * @param group
-	 * @param status
-	 * @param testArgs
-	 * @param testRunId
-	 * @param testCaseId
-	 * @param demoURL
-	 * @param logURL
-	 * @param retry
+	 * @param name - test name
+	 * @param group - test group
+	 * @param status - test status
+	 * @param testArgs - test args
+	 * @param testRunId - test run id
+	 * @param testCaseId - test case id
+	 * @param demoURL - demo URL
+	 * @param logURL - log URL
+	 * @param retry - retry count
 	 * @return registered test
 	 */
 	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods)
@@ -897,7 +897,7 @@ public class ZafiraClient
 	/**
 	 * Registers test re-run in Zafira.
 	 * 
-	 * @param test
+	 * @param test - test object
 	 * @return registered test
 	 */
 	public TestType registerTestRestart(TestType test) 
@@ -919,7 +919,7 @@ public class ZafiraClient
 	/**
 	 * Registers UI inspection.
 	 * 
-	 * @param uiInspection
+	 * @param uiInspection - UI inspection
 	 * @return status
 	 */
 	public boolean createUAInspection(UAInspectionType uiInspection)
