@@ -7,8 +7,34 @@
 	<artifactId>zafira</artifactId>
 	<version>2.0</version>
 	<packaging>pom</packaging>
-
+	<url>http://www.qaprosoft.com/</url>
 	<name>Zafira :: Root project</name>
+	<description>Zafira reporting portal</description>
+
+	<licenses>
+    <license>
+      <name>Apache Software License v2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Alex Khursevich</name>
+      <email>alex@qaprosoft.com</email>
+      <organization>Qaprosoft</organization>
+      <organizationUrl>http://qaprosoft.com</organizationUrl>
+    </developer>
+    <developer>
+      <name>Vadim Delendin</name>
+      <email>vadim@qaprosoft.com</email>
+      <organization>Qaprosoft</organization>
+      <organizationUrl>http://qaprosoft.com</organizationUrl>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/qaprosoft/alice-client.git</url>
+  </scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -830,10 +856,10 @@
 
 	<distributionManagement>
 		<repository>
-			<id>deploymentRepo</id>
-			<name>Releases</name>
-			<url>http://ci.qaprosoft.com:8081/nexus/content/repositories/releases/</url>
-		</repository>
+      <id>QPS_Nexus</id>
+      <name>Qaprosoft Releases</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
 		<snapshotRepository>
 			<id>deploymentRepo</id>
 			<name>Snapshots</name>
