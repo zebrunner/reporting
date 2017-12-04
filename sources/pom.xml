@@ -103,6 +103,9 @@
 		<tomcat-maven-plugin.version>1.1</tomcat-maven-plugin.version>
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
 		<frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
+		<maven-source-plugin.version>2.0.4</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>2.3</maven-javadoc-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 
 		<tomcat.version>7.0.52</tomcat.version>
 
@@ -699,7 +702,7 @@
 			<plugin>
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-source-plugin</artifactId>
-				<version>2.0.4</version>
+				<version>${maven-source-plugin.version}</version>
 			  <executions>
 			    <execution>
 			      <id>attach-sources</id>
@@ -712,7 +715,7 @@
 			<plugin>
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.3</version>
+				<version>${maven-javadoc-plugin.version}</version>
 			  <executions>
 			    <execution>
 			      <id>attach-javadocs</id>
@@ -725,7 +728,7 @@
 			<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
+				<version>${maven-gpg-plugin.version}</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
