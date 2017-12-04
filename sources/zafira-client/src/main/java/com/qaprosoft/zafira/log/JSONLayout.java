@@ -49,7 +49,7 @@ public class JSONLayout extends Layout
 	 * 
 	 * @param json - to write the log event
 	 * @param event - event from logger
-	 * @throws JSONException
+	 * @throws JSONException - unable to parse json
 	 */
 	protected void writeThrowable(JSONObject json, LoggingEvent event) throws JSONException
 	{
@@ -82,7 +82,7 @@ public class JSONLayout extends Layout
 	 * 
 	 * @param json - to write the log event
 	 * @param event - event from logger
-	 * @throws JSONException
+	 * @throws JSONException - unable to parse json
 	 */
 	protected void writeBasic(JSONObject json, LoggingEvent event) throws JSONException
 	{
@@ -96,7 +96,7 @@ public class JSONLayout extends Layout
 	/**
 	 * Declares that this layout does not ignore throwable if available
 	 * 
-	 * @return
+	 * @return ignores flag
 	 */
 	@Override
 	public boolean ignoresThrowable()
