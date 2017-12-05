@@ -26,7 +26,7 @@ public class JWTService
 	
 	/**
 	 * Generates JWT auth token storing id, username, email, roles of the user and specifies expiration date.
-	 * @param user that is used for token generation
+	 * @param user - for token generation
 	 * @return generated JWT token
 	 */
 	public String generateAuthToken(User user)
@@ -39,7 +39,7 @@ public class JWTService
 	
 	/**
 	 * Parses user details from JWT token.
-	 * @param JWT token to parse
+	 * @param token - to parse
 	 * @return retrieved user details
 	 */
 	@SuppressWarnings("unchecked")
@@ -60,9 +60,8 @@ public class JWTService
 	
 	/**
 	 * Verifies JWT refresh token.
-	 * @param refresh token
-	 * @param user to verify
-	 * @return verification status
+	 * @param token - tp refresh
+	 * @return parsed user
 	 */
 	public User parseRefreshToken(String token)
 	{
@@ -77,7 +76,7 @@ public class JWTService
 
 	/**
 	 * Generates JWT refresh token storing id, username, password of the user and specifies expiration date.
-	 * @param user that is used for token generation
+	 * @param user - for token refresh
 	 * @return generated JWT token
 	 */
 	public String generateRefreshToken(User user)
@@ -89,7 +88,7 @@ public class JWTService
 	
 	/**
 	 * Generates JWT access token storing id, password of the user and specifies expiration (that never expires).
-	 * @param user that is used for token generation
+	 * @param user - for token generation
 	 * @return generated JWT token
 	 */
 	public String generateAccessToken(User user)

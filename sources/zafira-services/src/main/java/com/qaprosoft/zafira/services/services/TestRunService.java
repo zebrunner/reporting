@@ -482,8 +482,9 @@ public class TestRunService
 
 	/**
 	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics Status}
-	 * @param testRunId
-	 * @param status
+	 * @param testRunId - test run id
+	 * @param status - new status
+	 * @return new statistics
 	 */
 	@CachePut(value = "testRunStatistics", key = "#testRunId")
 	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
@@ -538,8 +539,9 @@ public class TestRunService
 
 	/**
 	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
-	 * @param testRunId
-	 * @param status
+	 * @param testRunId - test run id 
+	 * @param status - new status
+	 * @return new statistics
 	 */
 	@CachePut(value = "testRunStatistics", key = "#testRunId")
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)

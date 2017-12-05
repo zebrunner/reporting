@@ -19,8 +19,8 @@ public class StatisticsService
 
 	/**
 	 * Get and put (unique) into cache test run statistic by {@link com.qaprosoft.zafira.models.db.TestRun} id key
-	 * @param testRunId
-	 * @return
+	 * @param testRunId - to get statistic for
+	 * @return test run statistics
 	 */
 	@Cacheable(value = "testRunStatistics", key = "#testRunId")
 	@Transactional(readOnly = true)
