@@ -18,7 +18,7 @@ public class JSONLayout extends Layout
 	/**
 	 * format a given LoggingEvent to a string, in this case JSONified string
 	 * 
-	 * @param loggingEvent
+	 * @param loggingEvent - event from logger
 	 * @return String representation of LoggingEvent
 	 */
 	@Override
@@ -47,9 +47,9 @@ public class JSONLayout extends Layout
 	/**
 	 * Converts LoggingEvent Throwable to JSON object
 	 * 
-	 * @param json
-	 * @param event
-	 * @throws JSONException
+	 * @param json - to write the log event
+	 * @param event - event from logger
+	 * @throws JSONException - unable to parse json
 	 */
 	protected void writeThrowable(JSONObject json, LoggingEvent event) throws JSONException
 	{
@@ -80,9 +80,9 @@ public class JSONLayout extends Layout
 	/**
 	 * Converts basic LogginEvent properties to JSON object
 	 * 
-	 * @param json
-	 * @param event
-	 * @throws JSONException
+	 * @param json - to write the log event
+	 * @param event - event from logger
+	 * @throws JSONException - unable to parse json
 	 */
 	protected void writeBasic(JSONObject json, LoggingEvent event) throws JSONException
 	{
@@ -96,7 +96,7 @@ public class JSONLayout extends Layout
 	/**
 	 * Declares that this layout does not ignore throwable if available
 	 * 
-	 * @return
+	 * @return ignores flag
 	 */
 	@Override
 	public boolean ignoresThrowable()

@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.models.db;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import org.springframework.data.annotation.Transient;
 
 /**
