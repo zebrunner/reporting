@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    image: postgres:9.6
+    image: qaprosoft/postgres:9.6
     volumes:
      - ./pgdata:/var/lib/postgresql/data
      - ./database/:/docker-entrypoint-initdb.d
