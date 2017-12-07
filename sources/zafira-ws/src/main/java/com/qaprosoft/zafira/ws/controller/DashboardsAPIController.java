@@ -62,7 +62,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Create dashboard", nickname = "createDashboard", code = 200, httpMethod = "POST", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Dashboard createDashboard(@RequestBody @Valid Dashboard dashboard) throws ServiceException, IOException, InterruptedException
 	{
@@ -76,7 +76,7 @@ public class DashboardsAPIController extends AbstractController
 	public @ResponseBody List<Dashboard> getAllDashboards(@RequestParam(value="hidden", required=false) boolean hidden) throws ServiceException
 	{
 		List<Dashboard> dashboards;
-		if(!hidden && hasPermission(Permission.Name.READ_HIDDEN_DASHBOARD))
+		if(!hidden && hasPermission(Permission.Name.VIEW_HIDDEN_DASHBOARDS))
 		{
 			dashboards = (dashboardService.getAllDashboards());
 		}
@@ -109,7 +109,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Delete dashboard", nickname = "deleteDashboard", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
 	public void deleteDashboard(@PathVariable(value="id") long id) throws ServiceException
 	{
@@ -119,7 +119,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard", nickname = "updateDashboard", code = 200, httpMethod = "PUT", response = Dashboard.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Dashboard updateDashboard(@RequestBody Dashboard dashboard) throws ServiceException
 	{
@@ -129,7 +129,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Add dashboard widget", nickname = "addDashboardWidget", code = 200, httpMethod = "POST", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_WIDGET')")
+	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(value="{dashboardId}/widgets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Widget addDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
 	{
@@ -139,7 +139,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Delete dashboard widget", nickname = "deleteDashboardWidget", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_WIDGET')")
+	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(value="{dashboardId}/widgets/{widgetId}", method = RequestMethod.DELETE)
 	public void deleteDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="widgetId") long widgetId) throws ServiceException
 	{
@@ -149,7 +149,7 @@ public class DashboardsAPIController extends AbstractController
     @ResponseStatusDetails
     @ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", code = 200, httpMethod = "PUT", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_WIDGET')")
+	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(value="{dashboardId}/widgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Widget updateDashboardWidget(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Widget widget) throws ServiceException
 	{
@@ -159,7 +159,7 @@ public class DashboardsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update dashboard widget", nickname = "updateDashboardWidget", code = 200, httpMethod = "PUT", response = Widget.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_WIDGET')")
+	@PreAuthorize("hasPermission('MODIFY_WIDGETS')")
 	@RequestMapping(value="{dashboardId}/widgets/all", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Widget> updateDashboardWidgets(@PathVariable(value="dashboardId") long dashboardId, @RequestBody List<Widget> widgets) throws ServiceException
 	{
@@ -204,7 +204,7 @@ public class DashboardsAPIController extends AbstractController
 	@ResponseStatusDetails
     @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Attribute> createDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
@@ -215,7 +215,7 @@ public class DashboardsAPIController extends AbstractController
 	@ResponseStatusDetails
     @ApiOperation(value = "Update dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Attribute> updateDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @RequestBody Attribute attribute)
 	{
@@ -228,7 +228,7 @@ public class DashboardsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_DASHBOARD')")
+	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(value="{dashboardId}/attributes/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Attribute> deleteDashboardAttribute(@PathVariable(value="dashboardId") long dashboardId, @PathVariable(value="id") long id)
 	{

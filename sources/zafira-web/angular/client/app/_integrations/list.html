@@ -8,7 +8,7 @@
                 </h2>
             </div>
         </div>
-        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['WRITE_INTEGRATION']">
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_INTEGRATIONS']">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
@@ -31,7 +31,7 @@
                                 {{ tool.name }}
                                 <!--<i ng-class="{'jira-icon': tool.name == 'JIRA', 'slack-icon': tool.name == 'SLACK'}"></i>-->
                             </span>
-                            <md-input-container has-any-permission="['WRITE_INTEGRATION']" style="float: right; margin-top: 0px">
+                            <md-input-container has-any-permission="['MODIFY_INTEGRATIONS']" style="float: right; margin-top: 0px">
                                 <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled" ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
                             </md-input-container>
                             <div data-ng-if="tool.isEnabled" class="row col-lg-12" ng-repeat="setting in tool.settings">
@@ -53,7 +53,7 @@
                                     </md-input-container>
                                 </div>
                             </div>
-                            <div has-any-permission="['WRITE_INTEGRATION']" data-ng-if="tool.isEnabled && tool.name == 'SLACK'" class="row col-lg-12" style="position: relative">
+                            <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled && tool.name == 'SLACK'" class="row col-lg-12" style="position: relative">
                                 <div class="col-lg-6" style="padding: 0">
                                     <md-input-container class="md-block">
                                         <label>NEW {{ tool.name }} SETTING</label>
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                        </div>
-                        <div has-any-permission="['WRITE_INTEGRATION']" data-ng-if="tool.isEnabled" class="card-action text-right" style="border-top: none;">
+                        <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action text-right" style="border-top: none;">
                             <md-button data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
                             <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
                         </div>

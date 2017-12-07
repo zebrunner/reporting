@@ -71,7 +71,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException
 	{
@@ -83,7 +83,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException
 	{
@@ -95,7 +95,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUN_VIEWS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteView(@PathVariable(value = "id") long id) throws ServiceException
 	{

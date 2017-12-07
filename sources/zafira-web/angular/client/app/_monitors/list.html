@@ -11,7 +11,7 @@
                 </h2>
             </div>
         </div>
-        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['WRITE_MONITOR']">
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_MONITORS']">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
@@ -47,10 +47,10 @@
                                     <th md-column class="col-md-2">
                                         Expected code
                                     </th>
-                                    <th md-column class="col-md-2" has-any-permission="['WRITE_MONITOR']">
+                                    <th md-column class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
                                         Monitor enabled
                                     </th>
-                                    <th md-column class="col-md-2" has-any-permission="['WRITE_MONITOR']"></th>
+                                    <th md-column class="col-md-2" has-any-permission="['MODIFY_MONITORS']"></th>
                                 </tr>
                                 </thead>
                                 <tbody md-body>
@@ -63,10 +63,10 @@
                                     <td md-cell class="col-md-2">{{monitor.type}}</td>
                                     <td md-cell class="col-md-2">{{monitor.cronExpression}}</td>
                                     <td md-cell class="col-md-2">{{monitor.expectedCode}}</td>
-                                    <td md-cell class="col-md-2" has-any-permission="['WRITE_MONITOR']">
+                                    <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
                                         <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
-                                    <td md-cell class="col-md-2" has-any-permission="['WRITE_MONITOR']">
+                                    <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
                                         <div class="pull-right">
                                             <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">edit</i>
                                         </div>

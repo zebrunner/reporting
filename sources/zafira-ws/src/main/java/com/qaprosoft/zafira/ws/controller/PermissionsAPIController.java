@@ -33,7 +33,7 @@ public class PermissionsAPIController
 	@ApiOperation(value = "Get all permission", nickname = "getAllPermissions", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_USER_GROUP')")
+	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Permission> getAllPermissions() throws ServiceException
 	{

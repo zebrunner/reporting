@@ -43,7 +43,7 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_PROJECT')")
+	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Project createProject(@RequestBody @Valid Project project) throws ServiceException
 	{
@@ -55,7 +55,7 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_PROJECT')")
+	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteProject(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -67,7 +67,7 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_PROJECT')")
+	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Project updateProject(@RequestBody Project project) throws ServiceException
 	{

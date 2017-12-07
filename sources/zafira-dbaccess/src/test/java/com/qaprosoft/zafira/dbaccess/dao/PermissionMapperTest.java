@@ -31,7 +31,7 @@ public class PermissionMapperTest extends AbstractTestNGSpringContextTests
 	{
 		private static final long serialVersionUID = 1L;
 		{
-			setName(Name.READ_HIDDEN_DASHBOARD);
+			setName(Name.VIEW_HIDDEN_DASHBOARDS);
 			setBlock(Block.DASHBOARDS);
 		}
 	};
@@ -65,7 +65,7 @@ public class PermissionMapperTest extends AbstractTestNGSpringContextTests
 	@Test(enabled = ENABLED, dependsOnMethods = {"createPermission"})
 	public void updatePermission()
 	{
-		PERMISSION.setName(Permission.Name.READ_INTEGRATION);
+		PERMISSION.setName(Permission.Name.VIEW_INTEGRATIONS);
 		PERMISSION.setBlock(Permission.Block.TEST_RUNS);
 
 		permissionMapper.updatePermission(PERMISSION);

@@ -114,7 +114,7 @@ public class TestsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_TEST')")
+	@PreAuthorize("hasPermission('MODIFY_TESTS')")
 	@RequestMapping(value = "{id}/passed", method = RequestMethod.POST)
 	public @ResponseBody TestType markTestAsPassed(@PathVariable(value = "id") long id)
 			throws ServiceException, InterruptedException

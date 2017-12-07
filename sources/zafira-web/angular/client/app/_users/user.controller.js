@@ -21,7 +21,7 @@
 
 
         $scope.hasHiddenDashboardsPermission = function(){
-             return AuthService.UserHasAnyPermission(["READ_HIDDEN_DASHBOARD"]);
+             return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
         };
 
         $scope.updateUserProfile = function(profile)
