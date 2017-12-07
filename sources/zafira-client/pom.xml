@@ -10,15 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>zafira-client</artifactId>
 	<packaging>jar</packaging>
-
 	<name>Zafira :: Client</name>
-
-	<properties>
-		<source.version>1.8</source.version>
-		<target.version>1.8</target.version>
-		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-		
-	</properties>
 
 	<dependencies>
 		<dependency>

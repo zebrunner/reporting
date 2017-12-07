@@ -141,11 +141,12 @@ public class SlackService implements IJMXService
 	}
 
 	/**
+	 * Sends reviewed status
 	 * 
-	 * @param tr
+	 * @param tr - test run
 	 * @return 'true' if notification about review was successfully sent
-	 * @throws IOException
-	 * @throws ServiceException
+	 * @throws IOException - read exception
+	 * @throws ServiceException - common exception
 	 */
 	public boolean sendReviwedStatus(TestRun tr) throws IOException, ServiceException
 	{

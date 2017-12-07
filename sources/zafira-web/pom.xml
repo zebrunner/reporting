@@ -15,6 +15,7 @@
     <!--finalName>${project.artifactId}</finalName-->
     <plugins>
         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-clean-plugin</artifactId>
             <version>3.0.0</version>
             <configuration>
@@ -38,6 +39,7 @@
         <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.6</version>
             <configuration>
                 <workingDirectory>angular</workingDirectory>
                 <installDirectory>angular</installDirectory>
@@ -87,27 +89,27 @@
             </executions>
         </plugin>
         <plugin>
-   		    <groupId>com.google.code.maven-replacer-plugin</groupId>
-   		    <artifactId>replacer</artifactId>
-   		    <version>1.5.3</version>
-   		    <executions>
-   		        <execution>
-   		            <phase>prepare-package</phase>
-   		            <goals>
-   		                <goal>replace</goal>
-   		            </goals>
-   		        </execution>
-   		    </executions>
-   		    <configuration>
-   		        <file>${project.basedir}/angular/dist/scripts/app.js</file>
-   		        <replacements>
-   		            <replacement>
-   		                <token>http://127.0.0.1:8080/zafira-ws</token>
-   		                <value>${zafira.url}${zafira.ws.path}</value>
-   		            </replacement>
-   		        </replacements>
-   		    </configuration>
-   		</plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>1.5.3</version>
+            <executions>
+                <execution>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <file>${project.basedir}/angular/dist/scripts/app.js</file>
+                <replacements>
+                    <replacement>
+                        <token>http://127.0.0.1:8080/zafira-ws</token>
+                        <value>${zafira.url}${zafira.ws.path}</value>
+                    </replacement>
+                </replacements>
+            </configuration>
+        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
@@ -131,6 +133,36 @@
                 <path>${zafira.web.path}</path>
                 <ignorePackaging>true</ignorePackaging>
             </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <phase/>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <phase/>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>sign-artifacts</id>
+                    <phase/>
+                </execution>
+            </executions>
         </plugin>
     </plugins>
 </build>
