@@ -72,7 +72,6 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS')")
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
 	{
@@ -84,7 +83,6 @@ public class SettingsAPIController extends AbstractController
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = Map.class)
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS')")
     @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<Tool, Boolean> getTools() throws ServiceException
     {
