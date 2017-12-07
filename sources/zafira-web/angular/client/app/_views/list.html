@@ -15,7 +15,7 @@
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" permission="['ROLE_ADMIN']">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" has-any-role="['ROLE_ADMIN']">
                     <md-tooltip md-direction="top">New view</md-tooltip>
                     <span class="fa fa-plus" aria-hidden="true"></span>
                 </md-button>
@@ -42,7 +42,7 @@
 					                    	</span>
                                         </th>
                                         <th md-column>
-                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" permission="['ROLE_ADMIN']">settings</i>
+                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" has-any-role="['ROLE_ADMIN']">settings</i>
                                         </th>
                                 </tr>
 	                    	   </thead>

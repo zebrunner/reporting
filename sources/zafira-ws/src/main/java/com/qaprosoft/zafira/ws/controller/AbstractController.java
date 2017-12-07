@@ -2,11 +2,14 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.annotation.Resource;
 
+import com.qaprosoft.zafira.models.db.Permission;
+import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +29,9 @@ import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class AbstractController
 {
@@ -62,7 +68,15 @@ public abstract class AbstractController
 	
 	protected boolean isAdmin()
 	{
-		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+	}
+
+	protected boolean hasPermission(Permission.Name name)
+	{
+		return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.flatMap(grantedAuthority -> ((UserGrantedAuthority) grantedAuthority).getPermissions().stream())
+				.anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
 	}
 
 	protected boolean isAuthenticated() {

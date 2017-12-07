@@ -8,6 +8,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,6 +71,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ViewType createView(@RequestBody @Valid ViewType view) throws ServiceException
 	{
@@ -81,6 +83,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ViewType updateView(@RequestBody @Valid ViewType view) throws ServiceException
 	{
@@ -92,6 +95,7 @@ public class ViewsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_TEST_RUN_VIEW')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteView(@PathVariable(value = "id") long id) throws ServiceException
 	{

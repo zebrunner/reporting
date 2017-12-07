@@ -1,6 +1,9 @@
 package com.qaprosoft.zafira.models.db;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Group extends AbstractEntity
 {
@@ -9,14 +12,17 @@ public class Group extends AbstractEntity
 	private String name;
 	private Role role;
 	private List<User> users;
+	private Set<Permission> permissions;
 	
 	public Group()
 	{
 	}
 	
-	public Group(Role role)
+	public Group(String name, Role role, Set<Permission> permissions)
 	{
+		this.name = name;
 		this.role = role;
+		this.permissions = permissions;
 	}
 	
 	public enum Role
@@ -52,5 +58,26 @@ public class Group extends AbstractEntity
 	public void setUsers(List<User> users)
 	{
 		this.users = users;
+	}
+
+	public Set<Permission> getPermissions()
+	{
+		return permissions;
+	}
+
+	public Set<String> getPermissionNames()
+	{
+		return this.permissions.stream().map(permission -> permission.getName().name())
+				.collect(Collectors.toSet());
+	}
+
+	public void setPermissions(Set<Permission> permissions)
+	{
+		this.permissions = permissions;
+	}
+
+	public boolean hasPermissions()
+	{
+		return this.permissions != null && this.permissions.size() > 0;
 	}
 }

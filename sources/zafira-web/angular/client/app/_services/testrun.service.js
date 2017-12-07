@@ -9,9 +9,6 @@
         var service = {};
 
         service.searchTestRuns = searchTestRuns;
-        service.startTestRun = startTestRun;
-        service.updateTestRun = updateTestRun;
-        service.finishTestRun = finishTestRun;
         service.abortTestRun = abortTestRun;
         service.abortCIJob = abortCIJob;
         service.getTestRun = getTestRun;
@@ -33,18 +30,6 @@
 
         function searchTestRuns(criteria) {
             return $http.post(API_URL + '/api/tests/runs/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test runs'));
-        }
-
-        function startTestRun(testRun, project) {
-            return $http.post(API_URL + '/api/tests/runs', {headers:{'Project': project}}, testRun).then(UtilService.handleSuccess, UtilService.handleError('Unable to start test run'));
-        }
-
-        function updateTestRun(testRun) {
-            return $http.put(API_URL + '/api/tests/runs', testRun).then(UtilService.handleSuccess, UtilService.handleError('Unable to update test run'));
-        }
-
-        function finishTestRun(id) {
-            return $http.post(API_URL + '/api/tests/runs/' + id + '/finish').then(UtilService.handleSuccess, UtilService.handleError('Unable to finish test run'));
         }
 
         function abortTestRun(id, ciRunId) {

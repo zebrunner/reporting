@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_SETTING', 'WRITE_SETTING', 'READ_INTEGRATIONS', 'WRITE_INTEGRATIONS')")
 	@RequestMapping(value = "list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getAllSettings() throws ServiceException
 	{
@@ -51,6 +53,7 @@ public class SettingsAPIController extends AbstractController
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_SETTING', 'WRITE_SETTING', 'READ_INTEGRATIONS', 'WRITE_INTEGRATIONS')")
     @RequestMapping(value = "integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Setting> getAllSettings(@RequestParam(value="isIntegrationTool", required = false) boolean isIntegrationTool) throws ServiceException
     {
@@ -70,6 +73,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_SETTING', 'WRITE_SETTING', 'READ_INTEGRATIONS', 'WRITE_INTEGRATIONS')")
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
 	{
@@ -81,9 +85,9 @@ public class SettingsAPIController extends AbstractController
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = Map.class)
+	@PreAuthorize("hasAnyPermission('READ_SETTING', 'WRITE_SETTING', 'READ_INTEGRATIONS', 'WRITE_INTEGRATIONS')")
     @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Map<Tool, Boolean> getTools() throws ServiceException
+    public @ResponseBody Map<Tool, Boolean> getTools() throws ServiceException
     {
         return settingsService.getTools();
     }
@@ -93,6 +97,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_SETTING', 'WRITE_SETTING', 'READ_INTEGRATIONS', 'WRITE_INTEGRATIONS')")
 	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String getSettingValue(@PathVariable(value = "name") String name) throws ServiceException
 	{
@@ -104,6 +109,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_SETTING')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteSetting(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -115,6 +121,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_SETTING')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Setting createSetting(@RequestBody Setting setting) throws Exception
 	{
@@ -126,6 +133,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_SETTING')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody void editSetting(@RequestBody Setting setting) throws Exception
 	{
@@ -137,9 +145,9 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_SETTING')")
 	@RequestMapping(value = "tool", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	ConnectedToolType editSettings(@RequestBody List<Setting> settings) throws Exception
+	public @ResponseBody ConnectedToolType editSettings(@RequestBody List<Setting> settings) throws Exception
 	{
 		ConnectedToolType connectedTool = new ConnectedToolType();
         Tool tool = settings.get(0).getTool();
@@ -171,6 +179,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('WRITE_SETTING')")
 	@RequestMapping(value = "key/regenerate", method = RequestMethod.POST)
 	public void reEncrypt() throws Exception
 	{

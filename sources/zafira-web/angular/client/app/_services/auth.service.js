@@ -16,7 +16,8 @@
 	        service.RefreshToken = RefreshToken;
 	        service.GenerateAccessToken = GenerateAccessToken;
 	        service.IsLoggedIn = IsLoggedIn;
-	        service.UserHasPermission = UserHasPermission;
+	        service.UserHasAnyRole = UserHasAnyRole;
+	        service.UserHasAnyPermission = UserHasAnyPermission;
 
 	        function Login(username, password) {
 	        	 return $http.post(API_URL + '/api/auth/login', {'username' : username, 'password': password}).then(UtilService.handleSuccess, UtilService.handleError('Invalid credentials'));
@@ -51,15 +52,14 @@
 	            return $rootScope.currentUser != null && $rootScope.globals.auth != null;
 	        }
 
-	        function UserHasPermission(permissions){
+	        function UserHasAnyRole(roles){
 	            if(!IsLoggedIn()){
 	                return false;
 	            }
-
 	            var found = false;
-	            angular.forEach(permissions, function(permission, index)
+	            angular.forEach(roles, function(role, index)
 	            {
-	                if ($rootScope.currentUser.roles.indexOf(permission) >= 0)
+	                if ($rootScope.currentUser.roles.indexOf(role) >= 0)
 	                {
 	                    found = true;
 	                    return;
@@ -68,19 +68,38 @@
 	            return found;
 	        }
 
+            function UserHasAnyPermission(permissions){
+                if(!IsLoggedIn()){
+                    return false;
+                }
+                var found = false;
+                angular.forEach(permissions, function(permission, index)
+                {
+                    angular.forEach($rootScope.currentUser.permissions, function(userPermission, index)
+                    {
+                        if (userPermission.name === permission)
+                        {
+                            found = true;
+                            return;
+                        }
+                    });
+                });
+                return found;
+            }
+
 	        return service;
     }
 
     angular.module('app')
-    	.directive('permission', ['AuthService', function(AuthService) {
+    	.directive('hasAnyRole', ['AuthService', function(AuthService) {
 	       return {
 	           restrict: 'A',
 	           scope: {
-	              permission: '='
+                   hasAnyRole: '='
 	           },
 	           link: function (scope, elem, attrs) {
 	                scope.$watch(AuthService.IsLoggedIn, function() {
-	                    if (AuthService.UserHasPermission(scope.permission)) {
+	                    if (AuthService.UserHasAnyRole(scope.hasAnyRole)) {
 	                        elem.show();
 	                    } else {
 	                        elem.hide();
@@ -88,5 +107,18 @@
 	                });
 	           }
 	       }
+    }]).directive('hasAnyPermission', ['AuthService', function(AuthService) {
+        return {
+            restrict: 'A',
+            link: function (scope, elem, attrs) {
+                scope.$watch(AuthService.IsLoggedIn, function() {
+                    if (AuthService.UserHasAnyPermission(eval(attrs.hasAnyPermission))) {
+                        elem.show();
+                    } else {
+                        elem.hide();
+                    }
+                });
+            }
+        }
     }]);
 })();

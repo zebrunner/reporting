@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,9 +43,8 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_PROJECT')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured(
-	{ "ROLE_ADMIN" })
 	public @ResponseBody Project createProject(@RequestBody @Valid Project project) throws ServiceException
 	{
 		return projectService.createProject(project);
@@ -55,9 +55,8 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_PROJECT')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	@Secured(
-	{ "ROLE_ADMIN" })
 	public void deleteProject(@PathVariable(value = "id") long id) throws ServiceException
 	{
 		projectService.deleteProjectById(id);
@@ -68,9 +67,8 @@ public class ProjectsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_PROJECT')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Secured(
-	{ "ROLE_ADMIN" })
 	public @ResponseBody Project updateProject(@RequestBody Project project) throws ServiceException
 	{
 		return projectService.updateProject(project);

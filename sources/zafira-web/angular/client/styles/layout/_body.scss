@@ -167,7 +167,7 @@ button.red {
 
 .scrollable {
     overflow-y: scroll;
-    height: 300px;
+    height: 500px;
     border: 1px solid #cccccc
 }
 
@@ -450,4 +450,30 @@ div.switch-view div.card.bg-white {
 
 div.md-open-menu-container {
     position: absolute !important;
+}
+
+.text-capitalize {
+    text-transform: lowercase;
+}
+.text-capitalize:first-letter {
+    text-transform: capitalize !important;
+}
+
+.perm-block-label {
+    background-color: #e6e6e6;
+    border-radius: 10px;
+    margin-bottom: 20px !important;
+}
+.checkbox-clear-inline md-checkbox.main-checkbox {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+.checkbox-clear-inline md-checkbox {
+    width: 0;
+    margin-right: 10px;
+}
+
+md-checkbox.main-checkbox div.md-icon {
+    border-color: #009688 !important;
 }

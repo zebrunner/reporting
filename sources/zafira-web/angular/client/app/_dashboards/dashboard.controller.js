@@ -14,13 +14,13 @@
 
         $scope.dashboard = {};
 
-        $scope.isAdmin = function(){
-            return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        $scope.rightsToWidgetUpdate = function(){
+            return AuthService.UserHasAnyPermission(["WRITE_WIDGET"]);
         };
 
         $scope.gridstackOptions = {
-            disableDrag: !$scope.isAdmin(),
-            disableResize: !$scope.isAdmin(),
+            disableDrag: !$scope.rightsToWidgetUpdate(),
+            disableResize: !$scope.rightsToWidgetUpdate(),
             verticalMargin: 20,
             resizable: {
                 handles: 'se, sw'

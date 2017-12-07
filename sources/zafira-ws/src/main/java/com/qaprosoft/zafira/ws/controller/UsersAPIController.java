@@ -8,6 +8,8 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +65,7 @@ public class UsersAPIController extends AbstractController
 		UserType userType = mapper.map(user, UserType.class);
 		userType.setRoles(user.getRoles());
 		userType.setPreferences(user.getPreferences());
+		userType.setPermissions(user.getPermissions());
 		return userType;
 	}
 
@@ -89,10 +92,7 @@ public class UsersAPIController extends AbstractController
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
 	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
 	{
-		if(!isAdmin() && !Objects.equals(getPrincipalId(), password.getUserId()))
-		{
-			throw new ForbiddenOperationException("No permissions to update password");
-		}
+		checkCurrentUserAccess(password.getUserId());
 		userService.updateUserPassword(password.getUserId(), password.getPassword());
 	}
 
@@ -101,6 +101,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_USER', 'WRITE_USER', 'WRITE_USER_GROUP')")
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
 			throws ServiceException
@@ -113,6 +114,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('WRITE_USER')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user,
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
@@ -125,6 +127,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('WRITE_USER')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -136,6 +139,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
+	@PreAuthorize("hasPermission('WRITE_USER_GROUP')")
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id)
 			throws ServiceException
@@ -148,6 +152,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
+	@PreAuthorize("hasPermission('WRITE_USER_GROUP')")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId,
 			@PathVariable(value = "userId") long userId) throws ServiceException
