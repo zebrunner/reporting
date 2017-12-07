@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -111,6 +112,24 @@ public class User extends AbstractEntity implements Comparable<User>
 			roles.add(group.getRole());
 		}
 		return new ArrayList<>(roles);
+	}
+
+	public Set<Permission> getPermissions()
+	{
+		return this.groups.stream().flatMap(group -> group.getPermissions().stream())
+				.collect(Collectors.toSet());
+	}
+
+	public List<Group> getGrantedGroups()
+	{
+		this.groups.forEach(group -> {
+			group.setUsers(null);
+			group.setId(null);
+			group.setCreatedAt(null);
+			group.setModifiedAt(null);
+			group.getPermissions().forEach(permission -> permission.setId(null));
+		});
+		return this.groups;
 	}
 
 	public List<UserPreference> getPreferences()

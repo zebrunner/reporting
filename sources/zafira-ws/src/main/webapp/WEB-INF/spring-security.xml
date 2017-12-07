@@ -28,13 +28,20 @@
 	<bean id="unauthorizedEntryPoint" class="com.qaprosoft.zafira.ws.security.filter.SecurityAuthenticationEntryPoint" />
 	
 	<bean id="accessDeniedHandler" class="com.qaprosoft.zafira.ws.security.filter.RestAccessDeniedHandler" />
+
+	<bean id="userPermissionEvaluator" class="com.qaprosoft.zafira.ws.security.expressions.UserPermissionEvaluator" />
+
+	<bean id="methodSecurityExpressionHandler" class="com.qaprosoft.zafira.ws.security.expressions.RestMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator" ref="userPermissionEvaluator" />
+	</bean>
 	
 	<security:http pattern="/api/auth/login" security="none" />
+	<security:http pattern="/api/config/**" security="none" />
 	<security:http pattern="/api/auth/refresh" security="none" />
 	<security:http pattern="/api/status/**" security="none" />
 	<security:http pattern="/api/dashboards/email" security="none" />
 	<security:http pattern="/websockets/**" security="none" />
-	
+
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
 		
@@ -43,7 +50,7 @@
 		<security:access-denied-handler ref="accessDeniedHandler" />
 		
 		<security:custom-filter ref="authenticationTokenProcessingFilter" after="EXCEPTION_TRANSLATION_FILTER" />
-		
+
 		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
@@ -51,6 +58,7 @@
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/groups/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/permissions/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/devices/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/settings/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/jobs/**" access="isAuthenticated()" />
@@ -61,7 +69,8 @@
 		<security:intercept-url pattern="/api/uainspections/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
-		
+		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+
 	</security:http>
 	
 	<!-- ####################### LDAP configuration ####################### -->

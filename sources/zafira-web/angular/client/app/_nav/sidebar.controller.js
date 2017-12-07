@@ -18,8 +18,8 @@
         $scope.tools = {};
 
 
-        $scope.isAdmin = function(){
-        	return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        $scope.hasHiddenDashboardPermission = function(){
+        	return AuthService.UserHasAnyPermission(["READ_HIDDEN_DASHBOARD"]);
         };
 
         $scope.loadProjects = function(){
@@ -49,7 +49,7 @@
 
         $scope.loadDashboards = function () {
 
-            if ($scope.isAdmin() == true) {
+            if ($scope.hasHiddenDashboardPermission() == true) {
                 DashboardService.GetDashboards().then(function (rs) {
                     if (rs.success) {
                         $scope.dashboards = rs.data;

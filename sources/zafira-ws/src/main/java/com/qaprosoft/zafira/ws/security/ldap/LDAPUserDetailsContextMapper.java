@@ -41,7 +41,7 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 		{
 			LOGGER.error(e.getMessage());
 		}
-		return new JwtUserType(user.getId(), username, user.getPassword(), user.getRoles());
+		return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
 	}
 
 	@Override

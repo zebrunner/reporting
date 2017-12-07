@@ -24,6 +24,8 @@
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	
-	<security:global-method-security secured-annotations="enabled"></security:global-method-security>
+	<security:global-method-security secured-annotations="enabled" pre-post-annotations="enabled">
+		<security:expression-handler ref="methodSecurityExpressionHandler"/>
+	</security:global-method-security>
 	
 </beans>

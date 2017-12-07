@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('app.monitors')
+        .module('app.services')
         .factory('MonitorsService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', MonitorsService])
 
     function MonitorsService($http, $cookies, $rootScope, UtilService, API_URL) {

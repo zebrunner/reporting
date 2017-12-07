@@ -1,5 +1,5 @@
 <md-dialog flex="80" aria-label="User profile" zafira-background-theme="modal">
-    <form class="form-validation" name="group_form" ng-submit="createGroup(group); UtilService.untouchForm(group_form)" ng-cloak>
+    <form class="form-validation" name="group_form" ng-submit="createGroup(group); switchMode(false); UtilService.untouchForm(group_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Groups</h2>
@@ -12,8 +12,8 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-            	<div layout layout-sm="column">
-            		<md-input-container flex>
+            	<div layout layout-sm="column" ng-if="!createGroupMode">
+            		<div flex>
 						<label>Groups({{count}})</label>
 						<div data-ng-if="groups.length != 0" class="md-dialog-content ng-scope scrollable">
 			                <div class="ng-scope" layout="column" data-ng-repeat="group in groups | orderBy:'name'">
@@ -21,6 +21,9 @@
 			                        <b class="ng-binding">{{group.name}}</b>
 			                        ({{group.role}})
 			                        <span>({{group.users.length}} users)</span>
+                                    <button type="button" class="md-fab btn-circle" data-ng-click="switchMode(true, group)" style="float: right;margin-left: 10px">
+                                        <span class="fa fa-cog"></span>
+                                    </button>
 			                        <button type="button" class="md-fab red btn-circle" data-ng-click="deleteGroup(group)" style="float: right">
 			                            <span class="fa fa-trash"></span>
 			                        </button>
@@ -56,21 +59,58 @@
 			                </div>
 			            </div>
 			            <div data-ng-if="groups.length == 0" class="ng-hide" align="center">No groups created</div>
-            		</md-input-container>
+            		</div>
             	</div>
-                <div layout layout-sm="column">
-                    <md-input-container flex>
-                        <label>Name</label>
-                        <input type="text" name="name" data-ng-model="group.name" required/>
-                    </md-input-container>
-                    <md-input-container class="md-block" flex>
-                        <label>Role</label>
-                        <md-select name="role" ng-model="group.role" required>
-                            <md-option ng-repeat="role in roles" value="{{role}}">
-                                {{role}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
+                <div ng-if="createGroupMode">
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label>Name</label>
+                            <input type="text" name="name" data-ng-model="group.name" required/>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex>
+                            <label>Role</label>
+                            <md-select name="role" ng-model="group.role" required>
+                                <md-option ng-repeat="role in roles" value="{{role}}">
+                                    {{role}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="radioButtondemoMultiColumn">
+                        <div ng-repeat="(key, value) in blocks" class="row checkbox-clear-inline" style="margin: 0">
+                            <div flex layout='row' layout-padding layout-align="start center" >
+                                <md-checkbox class="md-primary main-checkbox" aria-label="Select All"
+                                             ng-checked="isCheckedBlock(key)"
+                                             md-indeterminate="isIndeterminateBlock(key)"
+                                             ng-click="toggleAllPermissions(key)">
+                                </md-checkbox>
+                                <div flex style="max-width:200px;" class="text-capitalize">
+                                    <h5>{{ key.split('_').join(' ') }}</h5>
+                                </div>
+                                <div flex="20" style="margin-top: 16px;" ng-repeat="permission in value.permissions">
+                                    <md-checkbox ng-true-value="true" ng-false-value="false" ng-model="permission.value" aria-label="Block" class="md-primary"></md-checkbox>
+                                    <span class="text-capitalize">{{ permission.name.split('_').join(' ') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div ng-repeat="(key, value) in blocks" layout-wrap flex layout layout-sm="column">
+                        <div class="col-lg-12 perm-block-label">
+                            <md-checkbox class="md-primary" aria-label="Select All"
+                                         ng-checked="isCheckedBlock(key)"
+                                         md-indeterminate="isIndeterminateBlock(key)"
+                                         ng-click="toggleAllPermissions(key)">
+                            </md-checkbox>
+                            <span class="text-capitalize" style="height: 20px; display: inline-block">{{ key.split('_').join(' ') }}</span>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="col-lg-2" ng-repeat="permission in value.permissions">
+                                <md-checkbox ng-true-value="true" ng-false-value="false" ng-model="permission.value" aria-label="Block" class="md-primary">
+                                    <span class="text-capitalize">{{ permission.name.split('_').join(' ') }}</span>
+                                </md-checkbox>
+                            </div>
+                        </div>
+                    </div>-->
                 </div>
             </div>
         </md-dialog-content>
@@ -78,8 +118,17 @@
         <md-dialog-actions layout="row">
             <md-button type="submit"
                        class="md-raised btn-w-md md-primary"
-                       ng-disabled="group_form.$invalid">
+                       ng-disabled="group_form.$invalid" ng-if="createGroupMode && !group.id">
                 Create
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" ng-disabled="group_form.$invalid" ng-click="updateGroup(group)" ng-if="group.id">
+                Update
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" ng-click="switchMode(true)" ng-if="!createGroupMode">
+                Create group
+            </md-button>
+            <md-button class="md-raised btn-w-md md-primary" ng-click="switchMode(false)" ng-if="createGroupMode">
+                Cancel
             </md-button>
         </md-dialog-actions>
     </form>

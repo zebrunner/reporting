@@ -1,14 +1,17 @@
 package com.qaprosoft.zafira.models.dto.auth;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.qaprosoft.zafira.models.db.Group.Role;
+
+import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_USER;
 
 /**
  * All user information handled by the JWT token
@@ -25,24 +28,22 @@ public class JwtUserType implements UserDetails
 	
 	private List<GrantedAuthority> authorities = new ArrayList<>();
 
-	public JwtUserType(long id, String username, List<Role> roles)
+	public JwtUserType(long id, String username, List<Group> groups)
 	{
 		this.id = id;
 		this.username = username;
-		for(Role role : roles)
-		{
-			this.authorities.add(new SimpleGrantedAuthority(role.name()));
-		}
+		this.authorities = groups.stream().map(group -> new UserGrantedAuthority(group.getRole().name(), group.getPermissionNames()))
+				.collect(Collectors.toList());
 		// TODO: removed when default role populated for all
 		if(this.authorities.isEmpty())
 		{
-			this.authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+			this.authorities.add(new UserGrantedAuthority("ROLE_USER", new HashSet<String>()));
 		}
 	}
 	
-	public JwtUserType(long id, String username, String password, List<Role> roles)
+	public JwtUserType(long id, String username, String password, List<Group> groups)
 	{
-		this(id, username, roles);
+		this(id, username, groups);
 		this.password = password;
 	}
 

@@ -1,9 +1,8 @@
 package com.qaprosoft.zafira.models.dto.user;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.UserPreference;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -24,6 +23,7 @@ public class UserType extends AbstractType
 	private String lastName;
 	private String password;
 	private List<Role> roles = new ArrayList<>();
+	private Set<Permission> permissions = new HashSet<>();
 	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
 
@@ -95,6 +95,16 @@ public class UserType extends AbstractType
 
 	public void setPreferences(List<UserPreference> preferences) {
 		this.preferences = preferences;
+	}
+
+	public Set<Permission> getPermissions()
+	{
+		return permissions;
+	}
+
+	public void setPermissions(Set<Permission> permissions)
+	{
+		this.permissions = permissions;
 	}
 
 	public String getPassword()

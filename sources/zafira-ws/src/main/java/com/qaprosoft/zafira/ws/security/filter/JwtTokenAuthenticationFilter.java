@@ -102,7 +102,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean
 
 	private Authentication buildAuthenticationFromJwt(User user, HttpServletRequest request) throws ParseException
 	{
-		JwtUserType userDetails = new JwtUserType(user.getId(), user.getUsername(), user.getRoles());
+		JwtUserType userDetails = new JwtUserType(user.getId(), user.getUsername(), user.getGroups());
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		return authentication;

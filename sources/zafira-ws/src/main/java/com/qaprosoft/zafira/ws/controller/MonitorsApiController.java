@@ -14,6 +14,8 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,7 @@ public class MonitorsApiController extends AbstractController
 	@ApiOperation(value = "Create monitor", nickname = "createMonitor", code = 200, httpMethod = "POST", response = Monitor.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_MONITOR')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	MonitorType createMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException
@@ -48,8 +51,8 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('WRITE_MONITOR')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteMonitor(@PathVariable(value = "id") long id)
 	{
@@ -60,9 +63,9 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
+	@PreAuthorize("hasPermission('WRITE_MONITOR')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	MonitorType updateMonitor(@RequestParam(value = "switchJob", required = false) Boolean switchJob,
+	public @ResponseBody MonitorType updateMonitor(@RequestParam(value = "switchJob", required = false) Boolean switchJob,
 			@Valid @RequestBody MonitorType monitor) throws ServiceException
 	{
 		return mapper.map(monitorsService.updateMonitor(mapper.map(monitor, Monitor.class), switchJob, true), MonitorType.class);
@@ -72,6 +75,7 @@ public class MonitorsApiController extends AbstractController
 	@ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasAnyPermission('READ_MONITOR', 'WRITE_MONITOR')")
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody
 	List<MonitorType> getAllMonitors() throws ServiceException
@@ -89,9 +93,9 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", code = 200, httpMethod = "GET", response = Monitor.class)
+	@PreAuthorize("hasAnyPermission('READ_MONITOR', 'WRITE_MONITOR')")
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException
+	public @ResponseBody MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException
 	{
 		return mapper.map(monitorsService.getMonitorById(id), MonitorType.class);
 	}
@@ -100,9 +104,9 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", code = 200, httpMethod = "GET", response = Integer.class)
+	@PreAuthorize("hasAnyPermission('READ_MONITOR', 'WRITE_MONITOR')")
 	@RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-	Integer getMonitorsCount() throws ServiceException
+	public @ResponseBody Integer getMonitorsCount() throws ServiceException
 	{
 		return monitorsService.getMonitorsCount();
 	}

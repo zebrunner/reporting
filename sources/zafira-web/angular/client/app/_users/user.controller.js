@@ -4,7 +4,7 @@
     angular
         .module('app.user')
         .controller('UserProfileController', ['$scope', '$rootScope', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', UserProfileController])
-        .controller('UserListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'UtilService', 'DashboardService', UserListController])
+        .controller('UserListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'PermissionService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
     function UserProfileController($scope, $rootScope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
@@ -20,14 +20,13 @@
     	$scope.accessToken = null;
 
 
-        $scope.isAdmin = function(){
-             return AuthService.UserHasPermission(["ROLE_ADMIN"]);
+        $scope.hasHiddenDashboardsPermission = function(){
+             return AuthService.UserHasAnyPermission(["READ_HIDDEN_DASHBOARD"]);
         };
 
         $scope.updateUserProfile = function(profile)
         {
-            var userPreferences = profile.preferences;
-            profile.preferences.push($scope.preferences);
+            delete profile.preferences;
         	UserService.updateUserProfile(profile)
         	.then(function (rs) {
         		if(rs.success)
@@ -74,7 +73,7 @@
 
         $scope.loadDashboards = function () {
 
-            if ($scope.isAdmin() === true) {
+            if ($scope.hasHiddenDashboardsPermission() === true) {
                 DashboardService.GetDashboards().then(function (rs) {
                     if (rs.success) {
                         $scope.dashboards = rs.data;
@@ -480,13 +479,15 @@
 	}
 
     // **************************************************************************
-    function GroupController($scope, $mdDialog, UserService, GroupService, UtilService) {
+    function GroupController($scope, $mdDialog, UserService, GroupService, PermissionService, UtilService) {
         $scope.UtilService = UtilService;
         $scope.group = {};
         $scope.groups = [];
+        $scope.blocks = {};
         $scope.roles = [];
         $scope.group.users = [];
         $scope.showGroups = false;
+        $scope.createGroupMode = false;
         $scope.getRoles = function() {
             GroupService.getRoles().then(function(rs) {
                 if(rs.success)
@@ -523,7 +524,23 @@
                 }
             });
         };
+        $scope.getAllPermissions = function() {
+            PermissionService.getAllPermissions().then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.permissions = rs.data;
+                    $scope.aggregatePermissionsByBlocks(rs.data);
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
         $scope.createGroup = function(group) {
+            group.permissions = $scope.permissions.filter(function(permission) {
+                return permission.value;
+            });
             GroupService.createGroup(group).then(function(rs) {
                 if(rs.success)
                 {
@@ -551,9 +568,18 @@
             });
         };
         $scope.updateGroup = function(group) {
+            group.permissions = $scope.permissions.filter(function(permission) {
+                return permission.value;
+            });
             GroupService.updateGroup(group).then(function(rs) {
                 if(rs.success)
                 {
+                    $scope.groups.forEach(function(g) {
+                        if(g.id == group.id) {
+                            g.permissions = group.permissions;
+                        }
+                    });
+                    alertify.success('Group updated');
                 }
                 else
                 {
@@ -600,6 +626,72 @@
             });
         };
 
+        $scope.aggregatePermissionsByBlocks = function (permissions) {
+            permissions.forEach(function(p, index) {
+                if(!$scope.blocks[p.block]) {
+                    $scope.blocks[p.block] = {};
+                    $scope.blocks[p.block].selected = [];
+                    $scope.blocks[p.block].permissions = [];
+                }
+                $scope.blocks[p.block].permissions.push(p);
+            })
+        };
+
+        $scope.switchMode = function (isCreateGroupMode, group) {
+            $scope.group = {};
+            $scope.createGroupMode = isCreateGroupMode;
+            $scope.clearPermissions();
+            if(group) {
+                angular.copy(group, $scope.group);
+                $scope.group.permissions.forEach(function(p) {
+                    if($scope.blocks[p.block].selected) {
+                        $scope.blocks[p.block].selected = [];
+                    }
+                    $scope.blocks[p.block].permissions.forEach(function(perm) {
+                        if(perm.id === p.id) {
+                            perm.value = true;
+                        }
+                    });
+                });
+            }
+        };
+
+        $scope.isCheckedBlock = function(blockName) {
+            return $scope.getCheckedPermissions(blockName).length === $scope.blocks[blockName].permissions.length;
+        };
+
+        $scope.getCheckedPermissions = function (blockName) {
+            return $scope.blocks[blockName].permissions.filter(function(permission) {
+                return permission.value;
+            })
+        };
+
+        $scope.setPermissionsValue = function (blockName, value) {
+            $scope.blocks[blockName].permissions.forEach(function(permission) {
+                permission.value = value;
+            })
+        };
+
+        $scope.toggleAllPermissions = function(blockName) {
+            var checkedPermissionsCount = $scope.getCheckedPermissions(blockName).length;
+            if (checkedPermissionsCount === $scope.blocks[blockName].permissions.length) {
+                $scope.setPermissionsValue(blockName, false);
+            } else if (checkedPermissionsCount === 0 || checkedPermissionsCount > 0) {
+                $scope.setPermissionsValue(blockName, true);
+            }
+        };
+
+        $scope.isIndeterminateBlock = function(blockName) {
+            var checkedPermissionsCount = $scope.getCheckedPermissions(blockName).length;
+            return (checkedPermissionsCount !== 0 && checkedPermissionsCount !== $scope.blocks[blockName].permissions.length);
+        };
+
+        $scope.clearPermissions = function () {
+            $scope.permissions.forEach(function(permission) {
+                delete permission.value;
+            })
+        };
+
         $scope.usersSearchCriteria = {};
         $scope.querySearch = querySearch;
         function querySearch (criteria, group) {
@@ -607,7 +699,6 @@
             return UserService.searchUsersWithQuery($scope.usersSearchCriteria).then(function(rs) {
                 if(rs.success)
                 {
-                    console.log(Array.isArray(rs.data.results));
                     return rs.data.results.filter(searchFilter(group));
                 }
                 else
@@ -638,6 +729,7 @@
             $scope.getRoles();
             $scope.getGroupsCount();
             $scope.getAllGroups();
+            $scope.getAllPermissions();
         })();
     }
 })();

@@ -12,6 +12,23 @@
         ]]>
     </insert>
 
+    <insert id="addPermissionsToGroup">
+        <if test="null != permissions and permissions.size() > 0">
+            <![CDATA[
+              INSERT INTO zafira.GROUP_PERMISSIONS(GROUP_ID, PERMISSION_ID)
+              VALUES
+            ]]>
+              <foreach item="permission" index="index" collection="permissions" open="" separator="," close=";">
+                    <![CDATA[
+                        (
+                            #{groupId},
+                            #{permission.id}
+                        )
+                    ]]>
+              </foreach>
+        </if>
+    </insert>
+
     <sql id="getGroup">
         <![CDATA[
 			SELECT
@@ -27,7 +44,13 @@
 				U.LAST_NAME AS USER_LAST_NAME,
 				U.EMAIL AS USER_EMAIL,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
-				U.CREATED_AT AS USER_CREATED_AT
+				U.CREATED_AT AS USER_CREATED_AT,
+
+				P.ID AS PERMISSION_ID,
+				P.NAME AS PERMISSION_NAME,
+				P.BLOCK AS PERMISSION_BLOCK,
+				P.MODIFIED_AT AS PERMISSION_MODIFIED_AT,
+				P.CREATED_AT AS PERMISSION_CREATED_AT
 			FROM
 				zafira.GROUPS G
 			LEFT JOIN
@@ -38,6 +61,14 @@
 				zafira.USERS U
 			ON
 				UG.USER_ID = U.ID
+            LEFT JOIN
+                zafira.GROUP_PERMISSIONS GP
+            ON
+                GP.GROUP_ID = G.ID
+            LEFT JOIN
+                zafira.PERMISSIONS P
+            ON
+                P.ID = GP.PERMISSION_ID
 		]]>
     </sql>
 
@@ -119,6 +150,12 @@
 		]]>
     </delete>
 
+    <delete id="deletePermissionFromGroup">
+        <![CDATA[
+            DELETE FROM zafira.GROUP_PERMISSIONS
+			    WHERE GROUP_ID = #{groupId} AND PERMISSION_ID = #{permissionId}
+		]]>
+    </delete>
 
     <resultMap type="com.qaprosoft.zafira.models.db.Group" id="GroupResultMap" autoMapping="false">
         <id column="GROUP_ID" property="id" />
@@ -128,6 +165,8 @@
         <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
         <result column="GROUP_CREATED_AT" property="createdAt" />
         <collection property="users" ofType="com.qaprosoft.zafira.models.db.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper.UserResultMap"/>
+        <collection property="permissions" javaType="java.util.Set" ofType="com.qaprosoft.zafira.models.db.Permission"
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.PermissionMapper.PermissionResultMap"/>
     </resultMap>
 
     <resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
