@@ -102,7 +102,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
 	private Set<String> classesToRerun = new HashSet<>();
-	private final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
+	private static final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
 	
 	private Marshaller marshaller;
 	
@@ -749,4 +749,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		}
 	}
 
+	public static ConcurrentHashMap<Long, TestType> getTestbythread() 
+	{
+		return testByThread;
+	}
 }

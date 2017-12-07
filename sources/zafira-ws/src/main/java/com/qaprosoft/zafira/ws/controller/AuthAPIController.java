@@ -1,11 +1,14 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,13 +24,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -36,9 +43,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @Api(value = "Auth API")
@@ -57,6 +61,9 @@ public class AuthAPIController extends AbstractController
 
 	@Autowired
 	private Mapper mapper;
+	
+	@Value("${zafira.admin.username}")
+	private String adminUsername;
 	
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
@@ -110,10 +117,17 @@ public class AuthAPIController extends AbstractController
 		try
 		{
 			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
+			
 			User user = userService.getUserById(jwtUser.getId());
-			if(user == null || !user.getPassword().equals(jwtUser.getPassword()))
+			if(user == null)
 			{
-				throw new Exception("User password changed");
+				throw new UserNotFoundException();
+			}
+			
+			// TODO: Do not verify password for demo user as far as it breaks demo JWT token
+			if(!StringUtils.equals(adminUsername, user.getUsername()) && !StringUtils.equals(user.getPassword(), jwtUser.getPassword()))
+			{
+				throw new InvalidCredentialsException();
 			}
 			
 			authToken = new AuthTokenType("Bearer", 
