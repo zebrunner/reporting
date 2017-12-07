@@ -35,7 +35,6 @@ public class SettingsAPIController extends AbstractController
 	@Autowired
 	private CryptoService cryptoService;
 
-
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)

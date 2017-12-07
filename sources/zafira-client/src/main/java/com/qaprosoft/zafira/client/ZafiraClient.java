@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.client;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -59,6 +60,7 @@ public class ZafiraClient
 	private static final String EVENTS_PATH = "/api/events";
 	private static final String EVENTS_RECEIVED_PATH = "/api/events/received";
 	private static final String UA_INSPECTIONS_PATH = "/api/uainspections";
+	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 
 	private String serviceURL;
 	private Client client;
@@ -898,5 +900,27 @@ public class ZafiraClient
 			LOGGER.error("Unable to find test run by id", e);
 		}
 		return aborted;
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	public synchronized Response<List<HashMap<String, String>>> getToolSettings(String tool)
+	{
+		Response<List<HashMap<String, String>>> response = new Response<List<HashMap<String, String>>>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(SETTINGS_TOOL_PATH, tool));
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(List.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to authorize user", e);
+		}
+		return response;
 	}
 }

@@ -13,6 +13,7 @@
         service.handleSuccess = handleSuccess;
         service.handleError = handleError;
         service.isEmpty = isEmpty;
+        service.settingsAsMap = settingsAsMap;
  
         return service;
  
@@ -44,7 +45,16 @@
         }
         
         function isEmpty(obj) {
-        	return jQuery.isEmptyObject(obj);
+        		return jQuery.isEmptyObject(obj);
         };
+        
+        function settingsAsMap(settings) {
+        		var map = {};
+        		for(var i = 0; i < settings.length; i++)
+        		{
+        			map[settings[i].name] = settings[i].value;
+        		}
+	    		return map;
+	    };
     }
 })();

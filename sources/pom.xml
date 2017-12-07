@@ -115,6 +115,8 @@
 
 		<slack-java-webhook.version>0.0.7</slack-java-webhook.version>
 		<carina.version>5.25.0-SNAPSHOT</carina.version>
+
+		<amqp-client.version>5.0.0</amqp-client.version>
 	</properties>
 
 	<modules>
@@ -639,7 +641,13 @@
 				<version>${slack-java-webhook.version}</version>
 			</dependency>
 
-        </dependencies>
+			<dependency>
+		    <groupId>com.rabbitmq</groupId>
+		    <artifactId>amqp-client</artifactId>
+		    <version>${amqp-client.version}</version>
+		</dependency>
+
+    </dependencies>
 
 	</dependencyManagement>
 
