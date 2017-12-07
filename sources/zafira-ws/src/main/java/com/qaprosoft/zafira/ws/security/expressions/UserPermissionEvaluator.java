@@ -1,10 +1,8 @@
 package com.qaprosoft.zafira.ws.security.expressions;
 
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 import java.util.Arrays;
