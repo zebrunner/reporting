@@ -32,7 +32,7 @@
                                     <h3 class="highlight_red">Clear</h3>
                                 </div>
                             </md-list-item>
-                            <md-list-item class="md-2-line" ng-click="showProjectDialog()" has-any-permission="['WRITE_PROJECT']">
+                            <md-list-item class="md-2-line" ng-click="showProjectDialog()" has-any-permission="['MODIFY_PROJECTS']">
                                 <md-icon class="material-icons highlight_green">add</md-icon>
                                 <div class="md-list-item-text">
                                     <h3 class="highlight_green">Create</h3>
@@ -57,7 +57,7 @@
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{pefrDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
-                        <md-menu-item has-any-permission="['READ_INTEGRATION']"><md-button aria-label="menu" ng-href="#!/integrations"><md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button></md-menu-item>
+                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']"><md-button aria-label="menu" ng-href="#!/integrations"><md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button></md-menu-item>
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
                     </md-menu-content>
                 </md-menu>

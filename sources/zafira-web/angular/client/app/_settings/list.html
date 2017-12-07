@@ -7,7 +7,7 @@
                 </h2>
             </div>
         </div>
-		<md-fab-speed-dial has-any-permission="['WRITE_SETTING']" id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
+		<md-fab-speed-dial has-any-permission="['MODIFY_SETTINGS']" id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
@@ -37,7 +37,7 @@
 	                                    <th md-column class="col-md-1">
 											Modified
 										</th>
-	                                    <th md-column class="col-md-1" has-any-permission="['WRITE_SETTING']"></th>
+	                                    <th md-column class="col-md-1" has-any-permission="['MODIFY_SETTINGS']"></th>
 	                                </tr>
 	                            </thead>
 	                            <tbody md-body>
@@ -45,7 +45,7 @@
 	                                    <td md-cell class="col-md-5"><b>{{setting.name}}</b></td>
 	                                    <td md-cell class="col-md-5">{{setting.value}}</td>
 	                                    <td md-cell class="col-md-1" style="min-width: 150px;">{{setting.modifiedAt | date}}</td>
-	                                    <td md-cell class="col-md-1" has-any-permission="['WRITE_SETTING']">
+	                                    <td md-cell class="col-md-1" has-any-permission="['MODIFY_SETTINGS']">
                                             <div class="pull-right">
                                                 <i data-ng-click="showSettingsDialog($event, setting)" class="material-icons">edit</i>
                                             </div>

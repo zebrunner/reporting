@@ -101,7 +101,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('READ_USER', 'WRITE_USER', 'WRITE_USER_GROUP')")
+	@PreAuthorize("hasAnyPermission('VIEW_USERS', 'MODIFY_USERS', 'MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
 			throws ServiceException
@@ -114,7 +114,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('WRITE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user,
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
@@ -127,7 +127,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('WRITE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -139,7 +139,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
-	@PreAuthorize("hasPermission('WRITE_USER_GROUP')")
+	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id)
 			throws ServiceException
@@ -152,7 +152,7 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
-	@PreAuthorize("hasPermission('WRITE_USER_GROUP')")
+	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId,
 			@PathVariable(value = "userId") long userId) throws ServiceException

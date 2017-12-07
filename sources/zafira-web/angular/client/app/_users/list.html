@@ -12,18 +12,18 @@
 	            </button>
         	</h2>
         </div>
-        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['WRITE_USER', 'WRITE_USER_GROUP']">
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_USERS', 'MODIFY_USER_GROUPS']">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showGroupDialog()" has-any-permission="['WRITE_USER_GROUP']">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showGroupDialog()" has-any-permission="['MODIFY_USER_GROUPS']">
                     <md-tooltip md-direction="top">Groups</md-tooltip>
                     <span class="fa fa-users"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showCreateUserDialog()" has-any-permission="['WRITE_USER']">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showCreateUserDialog()" has-any-permission="['MODIFY_USERS']">
                     <md-tooltip md-direction="top">New user</md-tooltip>
                     <span class="fa fa-plus"></span>
                 </md-button>
@@ -98,13 +98,13 @@
                                                 <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2">
-                                                <md-menu-item has-any-permission="['WRITE_USER']">
+                                                <md-menu-item has-any-permission="['MODIFY_USERS']">
                                                     <md-button data-ng-click="showEditProfileDialog($event, user, false)">
                                                         <md-icon class="material-icons">build</md-icon>
                                                         Edit profile
                                                     </md-button>
                                                 </md-menu-item>
-                                                <md-menu-item has-any-permission="['WRITE_USER']">
+                                                <md-menu-item has-any-permission="['MODIFY_USERS']">
                                                     <md-button data-ng-click="showChangePasswordDialog($event, user, false)">
                                                         <md-icon class="material-icons">lock_outline</md-icon>
                                                         Change password

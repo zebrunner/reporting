@@ -11,18 +11,18 @@
                 </button>
             </h2>
         </div>
-        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['WRITE_TEST_RUN', 'CI_TEST_RUN']">
+        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_TEST_RUNS', 'TEST_RUNS_CI']">
             <md-fab-trigger>
                 <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars" aria-hidden="true"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['CI_TEST_RUN']">
+                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" has-any-permission="['WRITE_TEST_RUN']">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" has-any-permission="['MODIFY_TEST_RUNS']">
                     <md-tooltip md-direction="top">Delete</md-tooltip>
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
@@ -30,7 +30,7 @@
                     <md-tooltip md-direction="top">Follow</md-tooltip>
                     <span class="fa fa-eye" aria-hidden="true"></span>
                 </md-button>-->
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 0" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['CI_TEST_RUN']">
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 0" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
                     <span class="fa fa-ban" aria-hidden="true"></span>
                 </md-button>
@@ -173,7 +173,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="markAsReviewed(testRun)" has-any-permission="['WRITE_TEST_RUN']">
+                                                        <md-button data-ng-click="markAsReviewed(testRun)" has-any-permission="['MODIFY_TEST_RUNS']">
                                                             Mark as reviewed
                                                         </md-button>
                                                     </md-menu-item>
@@ -187,23 +187,23 @@
                                                             Export
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['WRITE_TEST_RUN']">
+                                                    <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
                                                         <md-button data-ng-click="notifyInSlack(testRun)">
                                                             Notify in slack
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider></md-divider>
-                                                    <md-menu-item ng-if="showBuildNowOption" has-any-permission="['CI_TEST_RUN']">
+                                                    <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
                                                         <md-button data-ng-click="buildNow(testRun, $event)">
                                                             Build now
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['CI_TEST_RUN']">
+                                                    <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
                                                         <md-button data-ng-click="abort(testRun, $event)">
                                                             Abort
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item has-any-permission="['CI_TEST_RUN']">
+                                                    <md-menu-item has-any-permission="['TEST_RUNS_CI']">
                                                         <md-button data-ng-click="rerun(testRun, $event)">
                                                             Rebuild
                                                         </md-button>
@@ -213,8 +213,8 @@
                                                             Live logs
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-divider has-any-permission="['WRITE_TEST_RUN']"></md-divider>
-                                                    <md-menu-item ng-if="showDeleteTestRunOption" has-any-permission="['WRITE_TEST_RUN']">
+                                                    <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
+                                                    <md-menu-item ng-if="showDeleteTestRunOption" has-any-permission="['MODIFY_TEST_RUNS']">
                                                         <md-button data-ng-click="deleteTestRunAction(testRun)">
                                                             Delete
                                                         </md-button>
@@ -261,7 +261,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
-                                                        	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-really-message="Do you really want to mark test run as passed?" data-ng-really-click="markTestAsPassed(test.id)" has-any-permission="['WRITE_TEST']">Mark as passed</a>
+                                                        	<a href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-really-message="Do you really want to mark test run as passed?" data-ng-really-click="markTestAsPassed(test.id)" has-any-permission="['MODIFY_TESTS']">Mark as passed</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
                                                             <a href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
                                                             <a href="" class="float_right label-primary-empty clearfix" data-ng-if="test.workItems.length==0 || (test.workItems.length==1 && test.workItems[0].type=='BUG')" data-ng-click="showAssignJiraTaskDialog(test, true, $event)">Assign task</a>

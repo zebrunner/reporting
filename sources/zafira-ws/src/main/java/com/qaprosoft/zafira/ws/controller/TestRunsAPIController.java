@@ -137,7 +137,7 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType abortTestRun(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
@@ -255,7 +255,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete test run", nickname = "deleteTestRun", code = 200, httpMethod = "DELETE")
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteTestRun(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -296,7 +296,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Mark test run as reviewed", nickname = "markTestRunAsReviewed", code = 200, httpMethod = "POST")
-	@PreAuthorize("hasPermission('WRITE_TEST_RUN')")
+	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
 			throws ServiceException, JAXBException
@@ -316,7 +316,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", code = 200, httpMethod = "GET")
-	@PreAuthorize("hasPermission('CI_TEST_RUN')")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/rerun", method = RequestMethod.GET)
 	public void rerunTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures)
@@ -339,7 +339,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
-	@PreAuthorize("hasPermission('CI_TEST_RUN')")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
 	public void abortCIJob(@PathVariable(value = "id") long id) throws ServiceException
 	{
@@ -360,7 +360,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Build test run", nickname = "buildTestRun", code = 200, httpMethod = "POST")
-	@PreAuthorize("hasPermission('CI_TEST_RUN')")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/build", method = RequestMethod.POST)
 	public void buildTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "buildWithParameters", required = false, defaultValue = "true") boolean buildWithParameters,
@@ -383,7 +383,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get job parameters", nickname = "getjobParameters", code = 200, httpMethod = "GET", response = Map.class)
-	@PreAuthorize("hasPermission('CI_TEST_RUN')")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/jobParameters", method = RequestMethod.GET)
 	public @ResponseBody List<BuildParameterType> getjobParameters(@PathVariable(value = "id") long id)
 			throws ServiceException

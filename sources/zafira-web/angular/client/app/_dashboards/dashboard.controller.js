@@ -15,7 +15,7 @@
         $scope.dashboard = {};
 
         $scope.rightsToWidgetUpdate = function(){
-            return AuthService.UserHasAnyPermission(["WRITE_WIDGET"]);
+            return AuthService.UserHasAnyPermission(["MODIFY_WIDGETS"]);
         };
 
         $scope.gridstackOptions = {
