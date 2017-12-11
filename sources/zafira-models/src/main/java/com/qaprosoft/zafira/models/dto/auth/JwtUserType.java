@@ -1,17 +1,15 @@
 package com.qaprosoft.zafira.models.dto.auth;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.qaprosoft.zafira.models.db.Group.Role;
-
-import static com.qaprosoft.zafira.models.db.Group.Role.ROLE_USER;
+import com.qaprosoft.zafira.models.db.Group;
 
 /**
  * All user information handled by the JWT token
