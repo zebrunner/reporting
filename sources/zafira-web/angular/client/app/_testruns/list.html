@@ -209,7 +209,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
-                                                        <md-button data-ng-click="showLogsDialog(testRun)">
+                                                        <md-button data-ng-click="showLogsDialog(testRun, $event)">
                                                             Live logs
                                                         </md-button>
                                                     </md-menu-item>
