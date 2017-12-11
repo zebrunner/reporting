@@ -210,7 +210,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
-                                                        <md-button data-ng-click="showLogsDialog(testRun, $event)">
+                                                        <md-button data-ng-click="showLogsDialog(testRun, null, $event)">
                                                             Live logs
                                                         </md-button>
                                                     </md-menu-item>
@@ -276,8 +276,8 @@
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
                                                                         <md-button href="{{::artifact.link}}" style="display: flex;" target="blank">{{::artifact.name}}</md-button>
                                                                    </md-menu-item>
-                                                                    <md-menu-item data-ng-if="rabbitmq.enabled && testRun.status == 'IN_PROGRESS''">
-				                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">Live logs</md-button>
+                                                                    <md-menu-item data-ng-if="rabbitmq.enabled && testRun.status == 'IN_PROGRESS'">
+				                                                        <md-button data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
 				                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>

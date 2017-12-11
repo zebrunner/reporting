@@ -167,24 +167,20 @@ public class TestRunsAPIController extends AbstractController
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId)
 			throws ServiceException, InterruptedException
 	{
-		if (id == null && ciRunId == null)
-		{
-			throw new ServiceException("Id or CI run ID should be set!");
-		}
-
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		testRunService.abortTestRun(testRun);
-		testRunService.updateStatistics(testRun.getId(), Status.ABORTED);
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
+		
+		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH,
-					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			throw new ServiceException("Invalid test run status!");
 		}
-
+		
+		testRunService.abortTestRun(testRun);
+		
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 		{
-			if (Status.ABORTED.equals(test.getStatus()))
+			if(Status.ABORTED.equals(test.getStatus()))
 			{
 				websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 			}
