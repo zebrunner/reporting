@@ -22,137 +22,154 @@ import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
 /**
  * Created by irina on 21.7.17.
  */
+@ManagedResource(objectName = "bean:name=cryptoService", description = "Crypto init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
+public class CryptoService implements IJMXService
+{
+	private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
-@ManagedResource(objectName="bean:name=cryptoService", description="Crypto init Managed Bean",
-        currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
-        persistLocation="foo", persistName="bar")
-public class CryptoService implements IJMXService {
+	private String type;
+	private int size = 0;
+	private String key;
+	private String salt;
+	private BasicTextEncryptor basicTextEncryptor;
 
-    private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
+	@Autowired
+	private SettingsService settingsService;
 
-    private String type;
-    private int size = 0;
-    private String key;
-    private String salt;
-    private BasicTextEncryptor basicTextEncryptor;
+	@Override
+	@PostConstruct
+	public void init()
+	{
 
+		List<Setting> cryptoSettings = null;
+		this.basicTextEncryptor = new BasicTextEncryptor();
+		try
+		{
+			cryptoSettings = settingsService.getSettingsByTool(CRYPTO);
 
-    @Autowired
-    private SettingsService settingsService;
+			for (Setting setting : cryptoSettings)
+			{
 
-    @Override
-    @PostConstruct
-    public void init() {
+				switch (Setting.SettingType.valueOf(setting.getName()))
+				{
 
-        List<Setting> cryptoSettings = null;
-        this.basicTextEncryptor = new BasicTextEncryptor();
-        try {
-            cryptoSettings = settingsService.getSettingsByTool(CRYPTO);
+				case CRYPTO_KEY_TYPE:
+					type = setting.getValue();
+					break;
+				case CRYPTO_KEY_SIZE:
+					size = Integer.valueOf(setting.getValue());
+					break;
+				default:
+					break;
+				}
+			}
 
-            for (Setting setting : cryptoSettings){
+			initCryptoTool();
 
-                switch(Setting.SettingType.valueOf(setting.getName())){
+		}
+		catch (Exception e)
+		{
+			LOGGER.error(e);
+		}
+	}
 
-                    case CRYPTO_KEY_TYPE:
-                        type = setting.getValue();
-                        break;
-                    case CRYPTO_KEY_SIZE:
-                        size = Integer.valueOf(setting.getValue());
-                        break;
-                    default:
-                        break;
-                }
-            }
+	@ManagedOperation(description = "Change Crypto initialization")
+	public void initCryptoTool()
+	{
+		try
+		{
+			String dbKey = settingsService.getSettingByType(KEY).getValue();
+			if (StringUtils.isEmpty(dbKey))
+			{
+				generateKey();
+				key = settingsService.getSettingByType(KEY).getValue();
+			}
+			else
+			{
+				key = dbKey;
+			}
+			if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt))
+			{
+				basicTextEncryptor.setPassword(key + salt);
+			}
+			else
+			{
+				throw new EncryptorInitializationException();
+			}
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
+		}
+	}
 
-            initCryptoTool();
+	public String encrypt(String strToEncrypt) throws Exception
+	{
+		return basicTextEncryptor.encrypt(strToEncrypt);
+	}
 
-        } catch (Exception e) {
-            LOGGER.error(e);
-        }
-    }
+	public String decrypt(String strToDecrypt) throws Exception
+	{
+		return basicTextEncryptor.decrypt(strToDecrypt);
+	}
 
+	public void generateKey() throws Exception
+	{
+		String key = null;
+		try
+		{
+			key = new String(Base64.encodeBase64(generateKey(type, size).getEncoded()));
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Unable to generate key: " + e.getMessage());
+		}
+		Setting keySetting = settingsService.getSettingByType(KEY);
+		keySetting.setValue(key);
+		settingsService.updateSetting(keySetting);
+	}
 
-    @ManagedOperation(description="Change Crypto initialization")
-    public void initCryptoTool(){
-        try
-        {
-            String dbKey = settingsService.getSettingByType(KEY).getValue();
-            if (StringUtils.isEmpty(dbKey)){
-                generateKey();
-                key = settingsService.getSettingByType(KEY).getValue();
-            }
-            else {
-                key = dbKey;
-            }
-            if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt) )
-            {
-                basicTextEncryptor.setPassword(key + salt);
-            }
-            else {
-                throw new EncryptorInitializationException();
-            }
-        } catch (Exception e)
-        {
-            LOGGER.error("Unable to initialize Crypto Tool, salt or key might be null: " + e.getMessage(), e);
-        }
-    }
+	public String getSalt()
+	{
+		return salt;
+	}
 
-    public String encrypt(String strToEncrypt) throws Exception {
-        return basicTextEncryptor.encrypt(strToEncrypt);
-    }
+	public void setSalt(String salt)
+	{
+		this.salt = salt;
+	}
 
-    public String decrypt (String strToDecrypt) throws Exception {
-        return basicTextEncryptor.decrypt(strToDecrypt);
-    }
+	@ManagedAttribute(description = "Get cryptoKey")
+	public String getKey()
+	{
+		return key;
+	}
 
-    public void generateKey() throws Exception {
-        String key = null;
-        try {
-            key = new String(Base64.encodeBase64(generateKey(type, size).getEncoded()));
-        } catch (Exception e) {
-            LOGGER.error("Unable to generate key: " + e.getMessage());
-        }
-        Setting keySetting = settingsService.getSettingByType(KEY);
-        keySetting.setValue(key);
-        settingsService.updateSetting(keySetting);
-    }
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
 
-    public String getSalt() {
-        return salt;
-    }
+	@Override
+	public boolean isConnected()
+	{
+		boolean connected = false;
+		try
+		{
+			connected = getKey() != null && salt != null;
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Unable to connect to JIRA", e);
+		}
+		return connected;
+	}
 
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    @ManagedAttribute(description="Get cryptoKey")
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    @Override
-    public boolean isConnected() {
-        boolean connected = false;
-        try
-        {
-            connected = getKey() != null && salt != null;
-        }
-        catch(Exception e)
-        {
-            LOGGER.error("Unable to connect to JIRA", e);
-        }
-        return connected;
-    }
-
-    public static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException
-    {
-        LOGGER.debug("generating key use algorithm: '" + keyType + "'; size: " + size);
-        KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType);
-        keyGenerator.init(size);
-        return keyGenerator.generateKey();
-    }
+	public static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException
+	{
+		LOGGER.debug("generating key use algorithm: '" + keyType + "'; size: " + size);
+		KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType);
+		keyGenerator.init(size);
+		return keyGenerator.generateKey();
+	}
 }
