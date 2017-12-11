@@ -127,6 +127,7 @@
                                                   {{::testRun.testSuite.name}}
                                                   <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
                                                   <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
+                                                  <md-tooltip md-direction="right">{{testRun.testSuite.fileName}}</md-tooltip>
                                              </b>
                                              <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
                                            	<br/>
