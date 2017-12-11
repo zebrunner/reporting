@@ -267,7 +267,7 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div data-ng-if="test.artifacts.length !=0 && test.status != 'IN_PROGRESS'" class="pull-right">
+                                                            <div data-ng-if="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')" class="pull-right">
                                                             <md-menu>
                                                                 <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                                     <md-icon class="material-icons">attachment</md-icon>
@@ -276,7 +276,7 @@
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
                                                                         <md-button href="{{::artifact.link}}" style="display: flex;" target="blank">{{::artifact.name}}</md-button>
                                                                    </md-menu-item>
-                                                                    <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
+                                                                    <md-menu-item data-ng-if="rabbitmq.enabled && testRun.status == 'IN_PROGRESS''">
 				                                                        <md-button data-ng-click="showLogsDialog(testRun, test)">Live logs</md-button>
 				                                                    </md-menu-item>
                                                                 </md-menu-content>
