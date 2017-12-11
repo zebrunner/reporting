@@ -1,14 +1,13 @@
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.UserPreference;
-import com.qaprosoft.zafira.services.services.UserPreferenceService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,10 +22,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.UserPreferenceService;
 import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -34,9 +34,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.List;
-import java.util.Objects;
 
 @Controller
 @Api(value = "Users API")

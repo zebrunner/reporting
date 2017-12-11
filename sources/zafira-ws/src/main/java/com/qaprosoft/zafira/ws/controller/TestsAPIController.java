@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
+import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.StatisticsService;
@@ -122,6 +124,9 @@ public class TestsAPIController extends AbstractController
 		Test test = testService.markTestAsPassed(id);
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 
 		return mapper.map(test, TestType.class);
 	}
@@ -203,6 +208,9 @@ public class TestsAPIController extends AbstractController
 
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 
 		return workItem;
 	}
@@ -236,8 +244,12 @@ public class TestsAPIController extends AbstractController
 		if(test.isBlocker())
 			testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
 		testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
+		
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+		
+		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 	}
 
 	@ApiIgnore

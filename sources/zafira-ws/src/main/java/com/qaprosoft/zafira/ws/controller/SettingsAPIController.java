@@ -1,26 +1,35 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.dto.ConnectedToolType;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.jmx.CryptoService;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-import java.util.Map;
-import static com.qaprosoft.zafira.models.db.Setting.*;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "Settings API")

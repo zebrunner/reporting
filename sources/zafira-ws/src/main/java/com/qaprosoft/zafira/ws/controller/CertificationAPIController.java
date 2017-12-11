@@ -15,9 +15,9 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.TestConfigService;
 import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 
 import springfox.documentation.annotations.ApiIgnore;
 
