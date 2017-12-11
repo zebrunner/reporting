@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.jmx.*;
-import com.qaprosoft.zafira.services.services.stf.STFService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +13,15 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.jmx.HipchatService;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.RabbitMQService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
 
 @Service
 public class SettingsService
@@ -40,9 +46,6 @@ public class SettingsService
 
 	@Autowired
 	private HipchatService hipchatService;
-
-	@Autowired
-	private STFService stfService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -179,9 +182,6 @@ public class SettingsService
 			break;
 		case HIPCHAT:
 			service = hipchatService;
-			break;
-		case STF:
-			service = stfService;
 			break;
 		case RABBITMQ:
 			service = rabbitMQService;

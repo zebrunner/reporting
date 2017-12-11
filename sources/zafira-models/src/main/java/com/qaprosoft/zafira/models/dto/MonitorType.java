@@ -12,7 +12,8 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity
 {
-
+	private static final long serialVersionUID = -4720099488195144150L;
+	
 	@NotNull(message = "Name required")
 	private String name;
 	@NotNull(message = "URL required")
