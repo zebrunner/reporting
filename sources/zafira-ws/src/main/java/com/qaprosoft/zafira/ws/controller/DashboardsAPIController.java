@@ -6,14 +6,12 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.db.*;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
@@ -27,6 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Permission;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.DashboardService;

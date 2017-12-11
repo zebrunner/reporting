@@ -7,14 +7,11 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +27,7 @@ import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.WidgetService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
