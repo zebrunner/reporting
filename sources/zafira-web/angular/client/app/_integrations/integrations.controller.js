@@ -76,7 +76,9 @@
         $scope.switchEnabled = function (tool) {
             var setting = getSettingByName(tool.name + ENABLED_POSTFIX);
             setting.value = tool.isEnabled;
-            SettingsService.editSetting(setting).then(function (rs) {
+            var settings = [];
+            settings.push(setting);
+            SettingsService.editSettings(settings).then(function (rs) {
                 if (rs.success) {
                     if(setting.value)
                         alertify.success('Tool ' + tool.name + ' is enabled');
