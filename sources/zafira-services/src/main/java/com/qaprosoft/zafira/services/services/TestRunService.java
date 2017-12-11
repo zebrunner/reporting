@@ -473,7 +473,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Evict all entries in cache in several hours after start crone expression
+	 * Evict all entries from cache in several hours after start crone expression
 	 */
 	@CacheEvict(value = "testRunStatistics", allEntries = true)
 	@Scheduled(cron = "0 0 0/4 ? * * *")
@@ -481,7 +481,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics Status}
+	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics.Action}
 	 * @param testRunId - test run id
 	 * @param status - new status
 	 * @return new statistics
@@ -544,9 +544,10 @@ public class TestRunService
 	 * @return new statistics
 	 */
 	@CachePut(value = "testRunStatistics", key = "#testRunId")
-	public TestRunStatistics updateStatistics(Long testRunId, Status status)
+	public TestRunStatistics updateStatistics(Long testRunId, Status status, boolean isRerun)
 	{
 		TestRunStatistics testRunStatistics = null;
+		int increment = isRerun ? -1 : 1;
 		try
 		{
 			updateLocks.get(testRunId).lock();
@@ -559,18 +560,19 @@ public class TestRunService
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
 					break;
 				case PASSED:
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case FAILED:
-					testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					testRunStatistics.setFailed(testRunStatistics.getFailed() + increment);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case SKIPPED:
-					testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - 1);
+					testRunStatistics.setSkipped(testRunStatistics.getSkipped() + increment);
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case ABORTED:
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				default:
 					break;
@@ -591,4 +593,8 @@ public class TestRunService
 		return testRunStatistics;
 	}
 
+	public TestRunStatistics updateStatistics(Long testRunId, Status status)
+	{
+		return updateStatistics(testRunId, status, false);
+	}
 }

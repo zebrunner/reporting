@@ -80,10 +80,13 @@ public class TestService
 					}
 				}
 			}
+			testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
 		}
 		// Existing test
 		else
 		{
+			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
+
 			test.setMessage(null);
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
@@ -93,7 +96,6 @@ public class TestService
 			workItemService.deleteKnownIssuesByTestId(test.getId());
 			testArtifactService.deleteTestArtifactsByTestId(test.getId());
 		}
-		testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
 		return test;
 	}
 	
