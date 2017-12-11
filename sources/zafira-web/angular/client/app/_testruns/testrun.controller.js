@@ -598,7 +598,7 @@
             });
         };
 
-        $scope.showLogsDialog = function(testRun, test) {
+        $scope.showLogsDialog = function(testRun, test, event) {
             $mdDialog.show({
                 controller: LogsController,
                 templateUrl: 'app/_testruns/logs_modal.html',
