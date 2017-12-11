@@ -89,7 +89,7 @@
 
         $scope.subscribeTestsTopic = function (testRunId) {
             if($scope.zafiraWebsocket.connected) {
-                return $scope.subscribtions[testRunId] = $scope.zafiraWebsocket.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
+                return $scope.zafiraWebsocket.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
                     $scope.addTest(event.test);
                     $scope.$apply();
@@ -738,10 +738,10 @@
                 $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
             } else {
                 testRun.expand = false;
-                delete $scope.subscribtions[testRun.id];
                 testRun.tests = [];
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 $scope.subscribtions[testRun.id].unsubscribe();
+                delete $scope.subscribtions[testRun.id];
             }
         };
         

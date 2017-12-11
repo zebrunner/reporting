@@ -555,8 +555,7 @@ public class TestRunService
 			switch (status)
 			{
 				case IN_PROGRESS:
-					testRunStatistics.setInProgress(
-							testRunStatistics.getInProgress() == null ? 0 : testRunStatistics.getInProgress());
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress() == null ? 0 : testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
 					break;
 				case PASSED:
