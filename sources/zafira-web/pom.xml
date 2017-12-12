@@ -134,36 +134,6 @@
                 <ignorePackaging>true</ignorePackaging>
             </configuration>
         </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>attach-sources</id>
-                    <phase/>
-                </execution>
-            </executions>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>attach-javadocs</id>
-                    <phase/>
-                </execution>
-            </executions>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>sign-artifacts</id>
-                    <phase/>
-                </execution>
-            </executions>
-        </plugin>
     </plugins>
 </build>
 </project>
