@@ -1,24 +1,13 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.models.push.TestPush;
-import com.qaprosoft.zafira.models.push.TestRunPush;
-import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.*;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.jmx.SlackService;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-import io.swagger.annotations.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -28,14 +17,48 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.Valid;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
+import com.qaprosoft.zafira.models.dto.CommentType;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.push.TestPush;
+import com.qaprosoft.zafira.models.push.TestRunPush;
+import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.services.ProjectService;
+import com.qaprosoft.zafira.services.services.StatisticsService;
+import com.qaprosoft.zafira.services.services.TestConfigService;
+import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Controller
 @Api(value = "Test runs API")
@@ -144,24 +167,20 @@ public class TestRunsAPIController extends AbstractController
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId)
 			throws ServiceException, InterruptedException
 	{
-		if (id == null && ciRunId == null)
-		{
-			throw new ServiceException("Id or CI run ID should be set!");
-		}
-
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		testRunService.abortTestRun(testRun);
-		testRunService.updateStatistics(testRun.getId(), Status.ABORTED);
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
+		
+		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH,
-					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			throw new ServiceException("Invalid test run status!");
 		}
-
+		
+		testRunService.abortTestRun(testRun);
+		
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 		{
-			if (Status.ABORTED.equals(test.getStatus()))
+			if(Status.ABORTED.equals(test.getStatus()))
 			{
 				websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 			}

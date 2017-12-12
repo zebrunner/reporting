@@ -22,7 +22,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.HIPCHAT;
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class HipchatService implements IJMXService
 {
-
 	private static final Logger LOGGER = Logger.getLogger(HipchatService.class);
 
 	@Autowired
