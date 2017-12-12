@@ -1,31 +1,32 @@
 package com.qaprosoft.zafira.services.services.auth;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Group.Role;
-import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.User;
 
+import com.qaprosoft.zafira.services.services.GroupService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JWTService
 {
+
 	private String secret;
 	private Integer authTokenExp;
 	private Integer refreshTokenExp;
 
-	private ObjectMapper objectMapper;
+	@Autowired
+	private GroupService groupService;
 
 	public JWTService(String secret, Integer authTokenExp, Integer refreshTokenExp)
 	{
 		this.secret = secret;
 		this.authTokenExp = authTokenExp;
 		this.refreshTokenExp = refreshTokenExp;
-		this.objectMapper = new ObjectMapper();
 	}
 
 	/**
@@ -37,7 +38,7 @@ public class JWTService
 	{
 		Claims claims = Jwts.claims().setSubject(user.getId().toString());
 		claims.put("username", user.getUsername());
-		claims.put("groups", user.getGrantedGroups());
+		claims.put("groupIds", user.getGroups().stream().map(Group::getId).collect(Collectors.toList()));
 		return buildToken(claims, authTokenExp);
 	}
 
@@ -53,8 +54,8 @@ public class JWTService
 		User user = new User();
 		user.setId(Long.valueOf(body.getSubject()));
 		user.setUsername((String)body.get("username"));
-		((List<HashMap>)body.get("groups")).forEach(groupMap ->
-				user.getGroups().add(objectMapper.convertValue(groupMap, Group.class)));
+		((List) body.get("groupIds")).forEach(groupId ->
+				user.getGroups().add(groupService.getGroupById(((Number) groupId).longValue())));
 		return user;
 	}
 

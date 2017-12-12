@@ -124,6 +124,7 @@
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="testCases"/>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="environments"/>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="testRunStatistics"/>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="groups"/>
             </set>
         </property>
     </bean>
