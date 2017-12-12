@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular
@@ -7,44 +7,43 @@
 
     function AuthController($scope, $rootScope, $state, $cookies, $templateCache, AuthService, UserService, UtilService) {
 
-    	$scope.UtilService = UtilService;
+        $scope.UtilService = UtilService;
 
-        $scope.credentials = { valid: true };
-
-        (function initController() {
-        	AuthService.ClearCredentials();
-        })();
-
-        $scope.signin = function (credentials) {
-        	AuthService.Login(credentials.username, credentials.password)
-            .then(function (rs) {
-            	if(rs.success)
-            	{
-            		$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
-            		$state.go('dashboards');
-            	}
-            	else
-            	{
-            		$scope.credentials = { valid: false };
-            	}
-            });
+        $scope.credentials = {
+            valid: true
         };
 
-        $scope.register = function () {
+        (function initController() {
+            AuthService.ClearCredentials();
+        })();
+
+        $scope.signin = function(credentials) {
+            AuthService.Login(credentials.username, credentials.password)
+                .then(function(rs) {
+                    if (rs.success) {
+                        $rootScope.$broadcast('event:auth-loginSuccess', rs.data);
+                        $state.go('dashboards');
+                    } else {
+                        $scope.credentials = {
+                            valid: false
+                        };
+                    }
+                });
+        };
+
+        $scope.register = function() {
             AuthService.Register($scope.user)
-                .then(function (rs) {
-                    if(rs.success)
-                    {
+                .then(function(rs) {
+                    if (rs.success) {
                         //$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
                         $state.go('signin');
                         alertify.success('Success! Sign in now.');
-                    }
-                    else
-                    {
-                        $scope.credentials = { valid: false };
+                    } else {
+                        $scope.credentials = {
+                            valid: false
+                        };
                     }
                 });
         };
     }
-
 })();
