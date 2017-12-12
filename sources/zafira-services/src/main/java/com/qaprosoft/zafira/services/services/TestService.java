@@ -200,10 +200,11 @@ public class TestService
 		{
 			throw new TestNotFoundException();
 		}
-		
+
+		testRunService.updateStatistics(test.getTestRunId(), MARK_AS_PASSED, test.getStatus());
+
 		test.setStatus(Status.PASSED);
 
-		testRunService.updateStatistics(test.getTestRunId(), MARK_AS_PASSED);
 		updateTest(test);
 		
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());

@@ -487,14 +487,14 @@ public class TestRunService
 	 * @return new statistics
 	 */
 	@CachePut(value = "testRunStatistics", key = "#testRunId")
-	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
+	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action action, Status status)
 	{
 		TestRunStatistics testRunStatistics = null;
 		try
 		{
 			updateLocks.get(testRunId).lock();
 			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
-			switch (status)
+			switch (action)
 			{
 				case MARK_AS_KNOWN_ISSUE:
 					testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() + 1);
@@ -509,7 +509,13 @@ public class TestRunService
 					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
 					break;
 				case MARK_AS_PASSED:
-					testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+					if(status != null && status.equals(SKIPPED))
+					{
+						testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
+					} else
+					{
+						testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+					}
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
 					break;
 				case MARK_AS_REVIEWED:
@@ -595,5 +601,10 @@ public class TestRunService
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)
 	{
 		return updateStatistics(testRunId, status, false);
+	}
+
+	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
+	{
+		return updateStatistics(testRunId, status, null);
 	}
 }
