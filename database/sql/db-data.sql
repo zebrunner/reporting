@@ -224,3 +224,6 @@ ORDER BY TEST_CASES.CREATED_AT::date ASC;',
 		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (general_dashboard_id, top_widget_id, 1, 4, '{"x": 0, "y": 11, "height": 11, "width": 4}');
 		INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, POSITION, SIZE, LOCATION) VALUES (general_dashboard_id, progress_widget_id, 3, 8, '{"x": 4, "y": 11, "height": 11, "width": 8}');
 END$$;
+
+REFRESH MATERIALIZED VIEW ZAFIRA.TOTAL_VIEW;
+REFRESH MATERIALIZED VIEW ZAFIRA.BIMONTHLY_VIEW;
