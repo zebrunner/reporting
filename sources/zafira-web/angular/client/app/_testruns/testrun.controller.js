@@ -20,6 +20,7 @@
         $scope.testRuns = {};
         $scope.totalResults = 0;
         $scope.selectedTestRuns = {};
+        $scope.expandedTestRuns = [];
 
         $scope.showRealTimeEvents = true;
 
@@ -88,7 +89,7 @@
 
         $scope.subscribeTestsTopic = function (testRunId) {
             if($scope.zafiraWebsocket.connected) {
-                return $scope.subscribtions[testRunId] = $scope.zafiraWebsocket.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
+                return $scope.zafiraWebsocket.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
                     $scope.addTest(event.test);
                     $scope.$apply();
@@ -102,7 +103,6 @@
             logsWebsocket.connect($scope.user, $scope.pass, function () {
                 logsWebsocket.subscribe("/queue/" + ciRunId, function (data) {
                     var event = $scope.getEventFromMessage(data.body);
-                    console.log(event);
                     $scope.$apply();
                 });
             });
@@ -730,35 +730,28 @@
 
 
 
-        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
-            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
-                if (!testRun.expand) {
-                    $scope.loadTests(testRun.id);
-                    $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                    testRun.expand = true;
-                } else {
-                    testRun.expand = false;
-                    $scope.subscribtions[testRun.id].unsubscribe();
-                    delete $scope.subscribtions[testRun.id];
-                }
-            }
-        };
-
-        var hasRightsToExpand = function (forceTrue, fromTestRun) {
-            if(!fromTestRun) {
-                var selectedText = window.getSelection().toString();
-                var unexpectedTokens = ['\n', '\t', ''];
-                if (forceTrue) return true;
-                for (var i = 0; i < unexpectedTokens.length; i++) {
-                    if (unexpectedTokens[i] === selectedText.trim()) {
-                        return true;
-                    }
-                }
-                return false;
+        $scope.switchTestRunExpand = function (testRun) {
+            if (!testRun.expand) {
+                $scope.loadTests(testRun.id);
+                testRun.expand = true;
+                $scope.expandedTestRuns.push(testRun.id);
+                $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
             } else {
-                return true;
+                testRun.expand = false;
+                testRun.tests = [];
+                $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
+                $scope.subscribtions[testRun.id].unsubscribe();
+                delete $scope.subscribtions[testRun.id];
             }
         };
+        
+        // Control that only 1 test run expanded at a time
+        $scope.$watch('expandedTestRuns.length', function() {
+            if($scope.expandedTestRuns.length > 1)
+            {
+            		$scope.switchTestRunExpand($scope.testRuns[$scope.expandedTestRuns[0]]);
+            }
+        });
 
         var getJSONLength = function(jsonObj) {
             var count = 0;
@@ -818,7 +811,6 @@
         };
 
         $scope.onSelect = function(scope) {
-            console.log($scope.selectedRange.selectedTemplateName);
             return $scope.selectedRange.selectedTemplateName;
         };
 

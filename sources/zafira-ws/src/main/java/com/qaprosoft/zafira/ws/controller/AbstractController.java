@@ -2,15 +2,11 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.annotation.Resource;
 
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,7 +14,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
+import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
@@ -29,9 +27,6 @@ import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class AbstractController
 {

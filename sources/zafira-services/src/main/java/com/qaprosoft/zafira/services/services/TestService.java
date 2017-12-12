@@ -186,11 +186,8 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public Test abortTest(Test test) throws ServiceException
 	{
-		if(test == null)
-		{
-			throw new TestNotFoundException();
-		}
 		test.setStatus(Status.ABORTED);
+		testRunService.updateStatistics(test.getTestRunId(), Status.ABORTED);
 		updateTest(test);
 		return test;
 	}
