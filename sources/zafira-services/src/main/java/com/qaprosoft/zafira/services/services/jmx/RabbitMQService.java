@@ -1,14 +1,14 @@
 package com.qaprosoft.zafira.services.services.jmx;
 
+import com.offbytwo.jenkins.JenkinsServer;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -28,19 +28,19 @@ public class RabbitMQService implements IJMXService
 	@Autowired
 	private CryptoService cryptoService;
 
-	private Boolean isConnected;
+	private CachingConnectionFactory cachingConnectionFactory;
+
+	private Connection connection;
 
 	@Override
 	@PostConstruct
 	public void init()
 	{
-		// TODO Auto-generated method stub
 		String host = null;
 		String port = null;
 		String ws = null;
 		String username = null;
 		String password = null;
-		boolean isConnected = false;
 
 		try {
 			List<Setting> rabbitmqSettings = settingsService.getSettingsByTool(RABBITMQ);
@@ -67,13 +67,11 @@ public class RabbitMQService implements IJMXService
 				case RABBITMQ_PASSWORD:
 					password = setting.getValue();
 					break;
-				case RABBITMQ_ENABLED:
-					isConnected = Boolean.parseBoolean(setting.getValue());
 				default:
 					break;
 				}
 			}
-			init(host, port, ws, username, password, isConnected);
+			init(host, port, ws, username, password);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
@@ -85,25 +83,32 @@ public class RabbitMQService implements IJMXService
 			@ManagedOperationParameter(name = "port", description = "RabbitMQ port"),
 			@ManagedOperationParameter(name = "ws", description = "RabbitMQ ws"),
 			@ManagedOperationParameter(name = "username", description = "RabbitMQ username"),
-			@ManagedOperationParameter(name = "password", description = "RabbitMQ password"),
-			@ManagedOperationParameter(name = "isConnected", description = "RabbitMQ is connected")})
-	public void init(String host, String port, String ws, String username, String password, boolean isConnected){
+			@ManagedOperationParameter(name = "password", description = "RabbitMQ password")})
+	public void init(String host, String port, String ws, String username, String password){
 		try
 		{
 			if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
-				this.isConnected = isConnected;
+				this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
+				this.cachingConnectionFactory.setUsername(username);
+				this.cachingConnectionFactory.setPassword(password);
+				this.connection = this.cachingConnectionFactory.createConnection();
 			}
 		} catch (Exception e)
 		{
-			LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
+			LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
 		}
 	}
 
 	@Override
 	public boolean isConnected()
 	{
-		// TODO: add integration check
-		return this.isConnected;
+		return getConnection() != null && getConnection().isOpen();
+	}
+
+	@ManagedAttribute(description = "Get rabbitMQ connection")
+	public Connection getConnection()
+	{
+		return this.connection;
 	}
 }
