@@ -98,7 +98,6 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_USERS', 'MODIFY_USERS', 'MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
 			throws ServiceException
