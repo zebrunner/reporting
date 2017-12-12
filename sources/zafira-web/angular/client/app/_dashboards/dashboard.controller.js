@@ -14,18 +14,19 @@
 
         $scope.dashboard = {};
 
-        $scope.rightsToWidgetUpdate = function(){
-            return AuthService.UserHasAnyPermission(["MODIFY_WIDGETS"]);
-        };
-
         $scope.gridstackOptions = {
-            disableDrag: !$scope.rightsToWidgetUpdate(),
-            disableResize: !$scope.rightsToWidgetUpdate(),
+            disableDrag: true,
+            disableResize: true,
             verticalMargin: 20,
             resizable: {
                 handles: 'se, sw'
             },
             cellHeight: 20
+        };
+
+        $scope.startEditWidgets = function () {
+            angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack').enable();
+            $scope.showGridActionToast();
         };
 
         var defaultWidgetLocation = '{ "x":0, "y":0, "width":4, "height":11 }';
@@ -132,11 +133,6 @@
             return $scope.unexistWidgets;
         };
 
-        $scope.onGridChange = function () {
-            if(!$scope.gridActionToastIsVisible)
-                $scope.showGridActionToast();
-        };
-
         $scope.resetGrid = function () {
             var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
             //gridstack.batchUpdate();
@@ -155,6 +151,7 @@
                         widget.location.width, widget.location.height);
                 }
             });
+            gridstack.disable();
             //gridstack.commit();
         };
 
@@ -165,7 +162,6 @@
                 scope: $scope,
                 preserveScope: true,
                 controller  : function ($scope, $mdToast) {
-                    $scope.gridActionToastIsVisible = true;
                     $scope.updateWidgetsPosition = function(){
                         var widgets = [];
                         for(var i = 0; i < $scope.dashboard.widgets.length; i++) {
@@ -192,7 +188,6 @@
                         $mdToast
                             .hide()
                             .then(function() {
-                                $scope.gridActionToastIsVisible = false;
                             });
                     };
                 },

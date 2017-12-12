@@ -13,6 +13,10 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="startEditWidgets()" has-any-permission="['MODIFY_WIDGETS']">
+                    <md-tooltip md-direction="top">Update widgets</md-tooltip>
+                    <span class="fa fa-arrows-alt"></span>
+                </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
                     <md-tooltip md-direction="top">Send by email</md-tooltip>
                     <span class="fa fa-envelope-o"></span>
@@ -41,7 +45,7 @@
 		<div class="row">
 			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
             <div gridstack class="grid-stack" options="gridstackOptions"
-                 on-change="" on-drag-start="" on-drag-stop="onGridChange()" on-resize-start="" on-resize-stop="onGridChange()" style="margin-bottom: 20px">
+                 on-change="" on-drag-start="" on-drag-stop="" on-resize-start="" on-resize-stop="" style="margin-bottom: 20px">
                 <div class="grid-stack-item" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets" gridstack-item gs-item-x="widget.location.x" gs-item-y="widget.location.y"
                      gs-item-width="widget.location.width" gs-item-height="widget.location.height" on-item-added="" on-item-removed="">
                     <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
