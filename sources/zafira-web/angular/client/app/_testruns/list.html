@@ -124,23 +124,23 @@
                                         </td>
                                         <td md-cell>
 	                                         <b>
-                                                  {{::testRun.testSuite.name}}
+                                                  {{testRun.testSuite.name}}
                                                   <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" style="color: #00BCD4">comments</md-icon>
                                                   <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
                                                   <md-tooltip md-direction="right">{{testRun.testSuite.fileName}}</md-tooltip>
                                              </b>
                                              <span data-ng-if="testRun.blocker" class="badge ng-binding" style="background-color: #d9534f;" alt="BLOCKERS">BLOCKERS</span>
                                            	<br/>
-                                           	<a href="{{::testRun.jenkinsURL}}" target="_blank">{{::testRun.job.name}}</a>
-                                           	<small><md-icon class="material-icons" style="font-size:12px;display: inline;" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{::testRun.appVersion}}</small>
+                                           	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
+                                           	<small><md-icon class="material-icons" style="font-size:12px;display: inline;" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
-                                        	<div class="label label-default pull-left">{{::testRun.env}}</div>
+                                        	<div class="label label-default pull-left">{{testRun.env}}</div>
                                          </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span data-ng-if="::testRun.platform != ''"class="platform-icon {{::testRun.platform}}"/>
-                                             <span data-ng-if="::testRun.platform == ''" class="platform-icon unknown"></span>
-                                             <span data-ng-if="::testRun.browserVersion">{{::testRun.browserVersion}}</span>
+                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                             <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+                                             <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
                                         <td md-cell  style="min-width: 260px;">
                                         	   <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="testRun.passed ? 'label-success' : 'label-success-empty'">{{testRun.passed}}</span>
