@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.services.services;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,20 +96,17 @@ public class SettingsService
 		return settingsMapper.getSettingsByIntegration(isIntegrationTool);
 	}
 
-	@Transactional(readOnly = true)
-	public Map<Tool, Boolean> getTools() throws ServiceException
+	public boolean isConnected(Tool tool)
 	{
-		Map<Tool, Boolean> tools = new HashMap<>();
-		Boolean value;
-		for (Tool tool : settingsMapper.getTools())
-		{
-			if (tool != null && !tool.equals(Tool.CRYPTO))
-			{
-				value = getServiceByTool(tool).isConnected();
-				tools.put(tool, value);
-			}
-		}
-		return tools;
+		return tool != null && !tool.equals(Tool.CRYPTO) && getServiceByTool(tool).isConnected();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Tool> getTools()
+	{
+		return settingsMapper.getTools().stream()
+				.filter(tool -> tool != null && !tool.equals(Tool.CRYPTO))
+				.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

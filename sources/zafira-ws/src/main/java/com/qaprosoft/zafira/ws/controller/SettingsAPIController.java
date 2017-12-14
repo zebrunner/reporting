@@ -65,16 +65,7 @@ public class SettingsAPIController extends AbstractController
     @RequestMapping(value = "integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Setting> getAllSettings(@RequestParam(value="isIntegrationTool", required = false) boolean isIntegrationTool) throws ServiceException
     {
-        List<Setting> settings;
-        if(isIntegrationTool)
-        {
-            settings = settingsService.getSettingsByIntegration(true);
-        }
-        else
-        {
-            settings = settingsService.getSettingsByIntegration(false);
-        }
-        return settings;
+        return settingsService.getSettingsByIntegration(isIntegrationTool);
     }
 
 
@@ -91,12 +82,23 @@ public class SettingsAPIController extends AbstractController
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = List.class)
     @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<Tool, Boolean> getTools() throws ServiceException
+    public @ResponseBody List<Tool> getTools() throws ServiceException
     {
         return settingsService.getTools();
     }
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Is tool connected", nickname = "isToolConnected", code = 200, httpMethod = "GET", response = Boolean.class)
+	@RequestMapping(value = "tools/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException
+	{
+		return settingsService.isConnected(tool);
+	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = String.class)
