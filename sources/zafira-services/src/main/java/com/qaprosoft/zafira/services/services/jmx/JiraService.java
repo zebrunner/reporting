@@ -7,6 +7,10 @@ import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
@@ -83,7 +87,10 @@ public class JiraService implements IJMXService
 			{
 				this.credentials = new BasicCredentials(username, password);
 				this.jiraClient = new JiraClient(url, credentials);
-             }
+				final HttpParams httpParams = new BasicHttpParams();
+				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+				((DefaultHttpClient)getJiraClient().getRestClient().getHttpClient()).setParams(httpParams);
+		}
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());

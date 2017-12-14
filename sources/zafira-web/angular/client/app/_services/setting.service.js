@@ -18,6 +18,7 @@
         service.editSetting = editSetting;
         service.editSettings = editSettings;
         service.getSettingTools = getSettingTools;
+        service.isToolConnected = isToolConnected;
         service.regenerateKey = regenerateKey;
 
         return service;
@@ -63,6 +64,10 @@
 
         function getSettingTools() {
             return $http.get(API_URL + '/api/settings/tools').then(UtilService.handleSuccess, UtilService.handleError('Unable to get tools'));
+        }
+
+        function isToolConnected(name) {
+            return $http.get(API_URL + '/api/settings/tools/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get tool connection'));
         }
 
         function regenerateKey() {

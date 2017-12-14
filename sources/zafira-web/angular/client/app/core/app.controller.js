@@ -76,8 +76,17 @@
                 SettingsService.getSettingTools().then(function(rs) {
                     if(rs.success)
                     {
-                        $rootScope.tools = rs.data;
-                        $rootScope.$broadcast("event:settings-toolsInitialized", rs.data);
+                        $rootScope.tools = {};
+                        rs.data.forEach(function(tool) {
+                            $rootScope.tools[tool] = false;
+                            SettingsService.isToolConnected(tool).then(function(rs) {
+                                if(rs.success)
+                                {
+                                    $rootScope.tools[tool] = rs.data;
+                                    $rootScope.$broadcast("event:settings-toolsInitialized", tool);
+                                }
+                            });
+                        });
                     }
                 });
 
