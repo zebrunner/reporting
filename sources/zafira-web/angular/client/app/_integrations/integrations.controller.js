@@ -171,43 +171,39 @@
             return max;
         };
 
-        var initTools = function(tools) {
-            SettingsService.getSettingsByIntegration(true).then(function (settings) {
+        var initTool = function (tool) {
+            SettingsService.getSettingByTool(tool).then(function (settings) {
                 if (settings.success) {
-                    $scope.settings = settings.data;
-                    for(var tool in tools) {
-                        var currentTool = {};
-                        currentTool.name = tool;
-                        currentTool.isConnected = tools[tool];
-                        currentTool.settings = settings.data.filter(function (setting) {
-                            if(isEnabledSetting(tool, setting)) {
-                                return false;
-                            }
-                            return setting.tool === tool;
-                        });
-                        currentTool.isEnabled = getEnabledSetting(tool, settings.data).value === 'true';
-                        currentTool.settings.sort(compareBySettingSortOrder);
-                        currentTool.newSetting = {};
-                        $scope.settingTools.push(currentTool);
-                    }
+                    var rsTool = settings.data[0].tool;
+                    var currentTool = {
+                        name: rsTool,
+                        isConnected: $rootScope.tools[rsTool],
+                        settings: settings.data.filter(function (setting) {
+                            return isEnabledSetting(rsTool, setting) ? false : setting.tool === rsTool;
+                        }),
+                        isEnabled: getEnabledSetting(rsTool, settings.data).value === 'true',
+                        newSetting: {}
+                    };
+                    currentTool.settings.sort(compareBySettingSortOrder);
+                    $scope.settingTools.push(currentTool);
                     $scope.settingTools.sort(compareByName);
                     $scope.settingTools.sort(compareByIsEnabled)
-                }
-                else {
+                } else {
                     console.error('Failed to load settings');
                 }
             });
         };
 
         (function init(){
-            if($rootScope.tools)
-            {
-                initTools($rootScope.tools);
+            if($rootScope.tools) {
+                for(var key in $scope.tools) {
+                    initTool(key);
+                }
             }
             else
             {
-                $rootScope.$on("event:settings-toolsInitialized", function(ev, tools){
-                    initTools(tools);
+                $rootScope.$on("event:settings-toolsInitialized", function(ev, tool){
+                    initTool(tool);
                 });
             }
         })();

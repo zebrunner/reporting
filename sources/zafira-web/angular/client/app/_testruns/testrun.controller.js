@@ -696,7 +696,8 @@
                 fullscreen: true,
                 locals: {
                     test: test,
-                    isNew: isNew
+                    isNew: isNew,
+                    isConnectedToJira: $rootScope.tools['JIRA']
                 }
             })
                 .then(function(answer) {
@@ -717,7 +718,8 @@
                 fullscreen: true,
                 locals: {
                     testTask: testTask,
-                    isNewTask: isNewTask
+                    isNewTask: isNewTask,
+                    isConnectedToJira: $rootScope.tools['JIRA']
                 }
             })
                 .then(function(answer) {
@@ -744,7 +746,7 @@
                 delete $scope.subscribtions[testRun.id];
             }
         };
-        
+
         // Control that only 1 test run expanded at a time
         $scope.$watch('expandedTestRuns.length', function() {
             if($scope.expandedTestRuns.length > 1)
@@ -1092,7 +1094,7 @@
     }
 
 
-    function KnownIssueController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, test, isNew) {
+    function KnownIssueController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, test, isNew, isConnectedToJira) {
         $scope.jiraId;
         $scope.isConnectedToJira = false;
         $scope.isIssueFound = true;
@@ -1297,11 +1299,9 @@
             $mdDialog.cancel();
         };
         (function initController() {
-            ConfigService.getConfig("jira").then(function(rs) {
-                $scope.isConnectedToJira = rs.data.connected;
-                $scope.isDataLoaded = true;
-                $scope.isFieldsDisabled = false;
-            });
+            $scope.isConnectedToJira = isConnectedToJira;
+            $scope.isDataLoaded = true;
+            $scope.isFieldsDisabled = false;
             checkTestHasIssues();
             getTestBugIssue();
             $scope.initNewKnownIssue();
@@ -1311,7 +1311,7 @@
     }
 
 
- function TaskController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, testTask, isNewTask) {
+ function TaskController($scope, $mdDialog, $interval, SettingsService, TestService, ConfigService, testTask, isNewTask, isConnectedToJira) {
         $scope.jiraId;
         $scope.isConnectedToJira = false;
         $scope.isIssueFound = true;
@@ -1493,11 +1493,9 @@
             $mdDialog.cancel();
         };
         (function initController() {
-            ConfigService.getConfig("jira").then(function(rs) {
-                $scope.isConnectedToJira = rs.data.connected;
-                $scope.isDataLoaded = true;
-                $scope.isFieldsDisabled = false;
-            });
+            $scope.isConnectedToJira = isConnectedToJira;
+            $scope.isDataLoaded = true;
+            $scope.isFieldsDisabled = false;
             checkTestHasIssues();
             getTestTaskIssue();
             $scope.initNewTaskIssue();
