@@ -305,7 +305,7 @@ public class TestRunService
 		{
 			throw new TestRunNotFoundException();
 		}
-		
+
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 		
 		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
@@ -561,7 +561,7 @@ public class TestRunService
 			switch (status)
 			{
 				case IN_PROGRESS:
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() == null ? 0 : testRunStatistics.getInProgress());
+					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
 					break;
 				case PASSED:
