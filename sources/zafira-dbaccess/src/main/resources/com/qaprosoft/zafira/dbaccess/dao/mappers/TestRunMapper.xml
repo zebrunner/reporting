@@ -224,7 +224,7 @@
 			</if>
 			<if test="null != executionURL">
 	            <![CDATA[
-	               AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
+	               AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%'))
 	            ]]>
 			</if>
 			<if test="null != environment">
