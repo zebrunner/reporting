@@ -390,7 +390,7 @@
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
             var path = $location.path();
-            var url = $location.$$absUrl.split(path)[0] + path);
+            var url = $location.$$absUrl.split(path)[0] + path;
             node.textContent = path + "/" + testRun.id;
             document.body.appendChild(node);
 
