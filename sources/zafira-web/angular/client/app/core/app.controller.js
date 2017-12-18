@@ -94,7 +94,7 @@
 
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
-	        		if(data["RABBITMQ"])
+	        		if("RABBITMQ")
 	        		{
 	        			SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
@@ -105,24 +105,24 @@
 	        	        });
 	        		}
 
-	        		if(data["JIRA"])
+	        		if("JIRA")
 	        		{
 	        			SettingsService.getSettingByTool("JIRA").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
 	        	            $rootScope.jira.enabled = settings["JIRA_ENABLED"];
-	        	            $rootScope.jira.user = settings["JIRA_URL"];
+	        	            $rootScope.jira.url = settings["JIRA_URL"];
 	        	        });
 	        		}
 
-	        		if(data["JENKINS"])
+	        		if("JENKINS")
 	        		{
 	        			SettingsService.getSettingByTool("JENKINS").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
 	        	            $rootScope.jenkins.enabled = settings["JENKINS_ENABLED"];
-	        	            $rootScope.jenkins.user = settings["JENKINS_URL"];
+	        	            $rootScope.jenkins.url = settings["JENKINS_URL"];
 	        	        });
 	        		}
-	        	});
+            });
 
             $scope.initUserProfile = function (){
                 UserService.getUserProfile().then(function (rs) {
