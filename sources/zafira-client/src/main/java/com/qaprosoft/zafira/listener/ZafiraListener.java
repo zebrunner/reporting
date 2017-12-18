@@ -496,7 +496,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
 			if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
 			{
-				// do nothing
+				// Skip already passed tests if rerun failures enabled
+				throw new SkipException("ALREADY_PASSED: " + testName);
 			} else
 			{
 				hookCallBack.runTestMethod(testResult);
