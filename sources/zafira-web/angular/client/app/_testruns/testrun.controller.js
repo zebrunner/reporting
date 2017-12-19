@@ -389,7 +389,9 @@
 
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
-            node.textContent = $location.$$absUrl + "/" + testRun.id;
+            var path = $location.path();
+            var url = $location.$$absUrl.split(path)[0] + path;
+            node.textContent = path + "/" + testRun.id;
             document.body.appendChild(node);
 
             var selection = getSelection();

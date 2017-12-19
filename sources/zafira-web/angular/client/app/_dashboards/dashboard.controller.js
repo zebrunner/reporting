@@ -255,19 +255,22 @@
             }
         };
 
-        $scope.changeSorting = function(column) {
+        $scope.changeSorting = function(widget, column) {
             var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
 
             if (column.search(specCharRegexp) != -1) {
                 // handle by quotes from both sides
                  column = "\"" + column + "\"";
              }
-            var sort = $scope.sort;
-            if (sort.column == column) {
-                sort.descending = !sort.descending;
+             if(! widget.sort) {
+                 widget.sort = {};
+                 angular.copy($scope.sort, widget.sort);
+             }
+            if (widget.sort.column == column) {
+                widget.sort.descending = !widget.sort.descending;
             } else {
-                sort.column = column;
-                sort.descending = false;
+                widget.sort.column = column;
+                widget.sort.descending = false;
             }
         };
 

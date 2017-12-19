@@ -146,7 +146,7 @@
                                         	   <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="testRun.passed ? 'label-success' : 'label-success-empty'">{{testRun.passed}}</span>
                                             <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="testRun.failed ? 'label-danger' : 'label-danger-empty'">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{testRun.skipped}}</span>
-                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.inProgress ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
+                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border label-info" ng-show="testRun.status == 'IN_PROGRESS'">{{testRun.inProgress}}</span>
                                         </td>
                                         <td md-cell style="padding-right: 0px; min-width: 90px;">
                                             <div class="time">
@@ -154,7 +154,7 @@
                                                 <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                             </div>
                                             <div data-ng-if="testRun.elapsed && testRun.elapsed > 0" class="light_text">
-                                                <i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i> <timer max-time-unit="'minute'" autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
                                             </div>
                                         </td>
                                         <td md-cell>
@@ -262,8 +262,8 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">
-                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
-                                                                <a href="{{jiraURL + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
+                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix" style="background-color: #337ab7;">{{issue.jiraId}}</a>
+                                                                <a href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix" style="background-color: #d9534f;" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
                                                         <td>
