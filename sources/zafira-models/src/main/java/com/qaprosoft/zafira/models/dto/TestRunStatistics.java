@@ -7,81 +7,81 @@ public class TestRunStatistics
 		MARK_AS_KNOWN_ISSUE, REMOVE_KNOWN_ISSUE,  MARK_AS_BLOCKER, REMOVE_BLOCKER, MARK_AS_PASSED, MARK_AS_REVIEWED, MARK_AS_NOT_REVIEWED;
 	}
 
-	private Long testRunId;
-	private Integer passed;
-	private Integer failed;
-	private Integer failedAsKnown;
-	private Integer failedAsBlocker;
-	private Integer skipped;
-	private Integer inProgress;
+	private long testRunId;
+	private int passed;
+	private int failed;
+	private int failedAsKnown;
+	private int failedAsBlocker;
+	private int skipped;
+	private int inProgress;
 	private boolean reviewed;
 
-	public Long getTestRunId()
+	public long getTestRunId()
 	{
 		return testRunId;
 	}
 
-	public void setTestRunId(Long testRunId)
+	public void setTestRunId(long testRunId)
 	{
 		this.testRunId = testRunId;
 	}
 
-	public Integer getPassed()
+	public int getPassed()
 	{
 		return passed;
 	}
 
-	public void setPassed(Integer passed)
+	public void setPassed(int passed)
 	{
 		this.passed = passed;
 	}
 
-	public Integer getFailed()
+	public int getFailed()
 	{
 		return failed;
 	}
 
-	public void setFailed(Integer failed)
+	public void setFailed(int failed)
 	{
 		this.failed = failed;
 	}
 
-	public Integer getFailedAsKnown()
+	public int getFailedAsKnown()
 	{
 		return failedAsKnown;
 	}
 
-	public void setFailedAsKnown(Integer failedAsKnown)
+	public void setFailedAsKnown(int failedAsKnown)
 	{
 		this.failedAsKnown = failedAsKnown;
 	}
 
-	public Integer getFailedAsBlocker()
+	public int getFailedAsBlocker()
 	{
 		return failedAsBlocker;
 	}
 
-	public void setFailedAsBlocker(Integer failedAsBlocker)
+	public void setFailedAsBlocker(int failedAsBlocker)
 	{
 		this.failedAsBlocker = failedAsBlocker;
 	}
 
-	public Integer getSkipped()
+	public int getSkipped()
 	{
 		return skipped;
 	}
 
-	public void setSkipped(Integer skipped)
+	public void setSkipped(int skipped)
 	{
 		this.skipped = skipped;
 	}
 
-	public Integer getInProgress()
+	public int getInProgress()
 	{
 		return inProgress;
 	}
 
-	public void setInProgress(Integer inProgress)
+	public void setInProgress(int inProgress)
 	{
 		this.inProgress = inProgress;
 	}

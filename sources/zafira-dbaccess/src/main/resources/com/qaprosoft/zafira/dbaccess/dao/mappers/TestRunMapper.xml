@@ -324,17 +324,17 @@
 			</if>
 			<if test="null != environment">
 	            <![CDATA[
-	               AND LOWER(TR.ENV) = LOWER(#{environment})
+	               AND TR.ENV = #{environment}
 	            ]]>
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND LOWER(TR.PLATFORM) = LOWER(#{platform})
+	               AND TR.PLATFORM = #{platform}
 	            ]]>
 			</if>
 			<if test="null != appVersion">
 	            <![CDATA[
-	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
+	               AND TR.APP_VERSION LIKE CONCAT('%', #{appVersion}, '%')
 	            ]]>
 			</if>
 			<if test="null != date">
