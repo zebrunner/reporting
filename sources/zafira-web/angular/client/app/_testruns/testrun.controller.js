@@ -257,9 +257,6 @@
                 $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
                 $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
             }
-            ConfigService.getConfig("slack/" + testRun.id).then(function successCallback(rs){
-                $scope.testRuns[testRun.id].isSlackAvailable = rs.available;
-            });
         };
 
         $scope.getArgValue = function (xml, key) {
@@ -516,7 +513,7 @@
         };
 
         $scope.initMenuRights = function (testRun) {
-            $scope.showNotifyInSlackOption = testRun.isSlackAvailable && testRun.reviewed != null && testRun.reviewed;
+            $scope.showNotifyInSlackOption = ($scope.isSlackAvailable && $scope.slackChannels.indexOf(testRun.job.name) !== -1) && testRun.reviewed != null && testRun.reviewed;
             $scope.showBuildNowOption = $scope.jenkins.enabled;
             $scope.showDeleteTestRunOption = true;
         };
@@ -563,6 +560,35 @@
                 }
             });
         };
+
+        $scope.loadSlackMappings = function() {
+            $scope.slackChannels = [];
+            SettingsService.getSettingByTool('SLACK').then(function(rs) {
+                if (rs.success) {
+                    var settings = UtilService.settingsAsMap(rs.data);
+                    angular.forEach(settings, function(value, key) {
+                        if (key.indexOf('SLACK_NOTIF_CHANNEL_') == 0) {
+                            angular.forEach(value.split(';'), function(v) {
+                                $scope.slackChannels.push(v);
+                            });
+                        }
+                    });
+                    console.log('Slack mappings list: ' + $scope.slackChannels);
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.storeSlackAvailability = function() {
+            $scope.isSlackAvailable = false;
+            ConfigService.getConfig("slack").then(function successCallback(rs) {
+                $scope.isSlackAvailable = rs.data.available;
+            });
+        };
+
 
          $scope.populateSearchQuery = function () {
             if ($location.search().testSuite) {
@@ -680,7 +706,9 @@
                 clickOutsideToClose:true,
                 fullscreen: true,
                 locals: {
-                    testRun: testRun
+                    testRun: testRun,
+                    isSlackAvailable: $scope.isSlackAvailable,
+                    slackChannels: $scope.slackChannels
                 }
             })
                 .then(function(answer) {
@@ -847,6 +875,8 @@
             $scope.populateSearchQuery();
             $scope.loadEnvironments();
             $scope.loadPlatforms();
+            $scope.loadSlackMappings();
+            $scope.storeSlackAvailability();
         })();
     }
 
@@ -1015,7 +1045,7 @@
         })();
     }
 
-    function CommentsController($scope, $mdDialog, TestRunService, testRun) {
+    function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable, slackChannels) {
         $scope.title = testRun.testSuite.name;
         $scope.testRun = testRun;
 
@@ -1033,8 +1063,7 @@
                     {
                         $scope.hide();
                         alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
-                        if ($scope.testRun.isSlackAvailable)
-                        {
+                        if(isSlackAvailable && slackChannels.indexOf(testRun.job.name) !== -1) {
                             if(confirm("Would you like to post latest test run status to slack?"))
                             {
                                 SlackService.triggerReviewNotif($scope.testRun.id);
