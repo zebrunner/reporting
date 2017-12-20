@@ -189,7 +189,7 @@
                 },
                 templateUrl: 'app/_monitors/monitors_modal.html',
                 parent: angular.element(document.body),
-                targetEvent: event,
+                targetEvent: $event,
                 clickOutsideToClose:true,
                 fullscreen: true,
                 scope: $scope.$new(),
