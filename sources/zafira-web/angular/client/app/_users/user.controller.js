@@ -298,7 +298,7 @@
                 },
                 templateUrl: 'app/_users/password_modal.html',
                 parent: angular.element(document.body),
-                targetEvent: event,
+                targetEvent: $event,
                 clickOutsideToClose:true,
                 fullscreen: true
             })
