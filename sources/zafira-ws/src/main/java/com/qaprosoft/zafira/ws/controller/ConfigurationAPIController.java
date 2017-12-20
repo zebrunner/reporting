@@ -105,7 +105,7 @@ public class ConfigurationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "slack/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,6 +116,27 @@ public class ConfigurationAPIController extends AbstractController {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
         if (slackService.getWebhook() != null && slackService.getChannelMapping(tr) != null && slackService.isConnected())
+        {
+            config.put("available", true);
+        }
+        else
+        {
+            config.put("available", false);
+        }
+        return config;
+    }
+    
+    @ResponseStatusDetails
+    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", code = 200, httpMethod = "GET", response = Map.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "slack", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Map<String, Object> isSlackAvailable()
+            throws ServiceException,
+            IOException, InterruptedException
+    {
+        Map<String, Object> config = new HashMap<>();
+        if (slackService.getWebhook() != null && slackService.isConnected())
         {
             config.put("available", true);
         }
