@@ -253,6 +253,13 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			if(registeredTests.containsKey(testName))
 			{
 				startedTest = registeredTests.get(testName);
+
+				// Skip already passed tests if rerun failures enabled
+				if (ZAFIRA_RERUN_FAILURES && !startedTest.isNeedRerun())
+				{
+					throw new SkipException("ALREADY_PASSED: " + testName);
+				}
+
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest = zc.registerTestRestart(startedTest);
@@ -276,7 +283,11 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			testByThread.put(Thread.currentThread().getId(), startedTest);
 			
 			registeredTests.put(testName, startedTest);
-		} 
+		}
+		catch (SkipException e)
+		{
+			throw e;
+		}
 		catch (Throwable e) 
 		{
 			LOGGER.error("Undefined error during test case/method start!", e);
@@ -496,8 +507,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
 			if (ZAFIRA_RERUN_FAILURES && startedTest != null && !startedTest.isNeedRerun())
 			{
-				// Skip already passed tests if rerun failures enabled
-				throw new SkipException("ALREADY_PASSED: " + testName);
+				// do nothing
 			} else
 			{
 				hookCallBack.runTestMethod(testResult);
