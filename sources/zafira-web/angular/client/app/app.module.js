@@ -32,6 +32,19 @@
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+        Array.prototype.indexOfId = function(id) {
+            for (var i = 0; i < this.length; i++)
+                if (this[i].id === id)
+                    return i;
+            return -1;
+        };
+        Array.prototype.indexOfName = function(name) {
+            for (var i = 0; i < this.length; i++)
+                if (this[i].name === name)
+                    return i;
+            return -1;
+        };
     }
     ]).directive('ngReallyClick', [function() {
         return {
@@ -218,6 +231,39 @@
                     iElement.children('md-icon')[0].classList.remove(classToDelete);
                     iElement.children('md-icon').addClass(classToAdd);
                 });
+            }
+        };
+    }).directive('formErrorValidation', function($q, $timeout, $compile) {
+        "use strict";
+        return {
+            require: 'ngModel',
+            transclusion: true,
+            restrict: 'A',
+            scope: {
+                ngModel: '=',
+                formErrorValidation: '='
+            },
+            link: function(scope, elm, attrs, ctrl) {
+
+                var dataArray = angular.copy(eval(scope.formErrorValidation));
+                dataArray.splice(dataArray.indexOfName(scope.ngModel), 1);
+
+                ctrl.$asyncValidators[elm[0].name] = function(modelValue, viewValue) {
+
+                    if (ctrl.$isEmpty(modelValue)) {
+                        return $q.resolve();
+                    }
+
+                    var def = $q.defer();
+                    $timeout(function() {
+                        if (dataArray.indexOfName(modelValue) === -1) {
+                            def.resolve();
+                        } else {
+                            def.reject();
+                        }
+                    }, 200);
+                    return def.promise;
+                };
             }
         };
     }).filter('subString', function() {

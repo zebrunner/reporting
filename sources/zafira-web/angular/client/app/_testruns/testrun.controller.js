@@ -785,6 +785,36 @@
             }
         });
 
+        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
+            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
+                if (!testRun.expand) {
+                    $scope.loadTests(testRun.id);
+                    $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
+                    testRun.expand = true;
+                } else {
+                    testRun.expand = false;
+                    $scope.subscribtions[testRun.id].unsubscribe();
+                    delete $scope.subscribtions[testRun.id];
+                }
+            }
+        };
+
+        var hasRightsToExpand = function (forceTrue, fromTestRun) {
+            if(!fromTestRun) {
+                var selectedText = window.getSelection().toString();
+                var unexpectedTokens = ['\n', '\t', ''];
+                if (forceTrue) return true;
+                for (var i = 0; i < unexpectedTokens.length; i++) {
+                    if (unexpectedTokens[i] === selectedText.trim()) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return true;
+            }
+        };
+
         var getJSONLength = function(jsonObj) {
             var count = 0;
             for(var id in jsonObj) {
