@@ -49,8 +49,8 @@ public class SlackService implements IJMXService
 
 	private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
-	@Value("${zafira.web.url}")
-	private String webURL;
+	@Value("${zafira.webservice.url}")
+	private String wsURL;
 	
 	@Value("${zafira.slack.image}")
 	private String image;
@@ -123,7 +123,7 @@ public class SlackService implements IJMXService
 			slack = slack.sendToChannel(channel);
 
 			String elapsed = countElapsedInSMH(tr.getElapsed());
-			String zafiraUrl = webURL + "/#!/tests/runs/" + tr.getId();
+			String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
 			String status = TestRunResultsEmail.buildStatusText(tr);
 
@@ -155,7 +155,7 @@ public class SlackService implements IJMXService
 		{
 			slack = slack.sendToChannel(channel);
 
-			String zafiraUrl = webURL + "/#!/tests/runs/" + tr.getId();
+			String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
 			String status = TestRunResultsEmail.buildStatusText(tr);
 
@@ -202,7 +202,7 @@ public class SlackService implements IJMXService
 
 	public String getChannelMapping(TestRun tr) throws ServiceException
 	{
-		List<Setting> sList = settingsService.getAllSettings();
+		List<Setting> sList = settingsService.getSettingsByTool(Setting.Tool.SLACK);
 		String pattern = StringUtils.substringBeforeLast(SLACK_NOTIF_CHANNEL_EXAMPLE.toString(), "_");
 		for (Setting s : sList)
 		{
@@ -273,6 +273,11 @@ public class SlackService implements IJMXService
 			return "danger";
 		}
 		return "warning";
+	}
+
+	private String getWsURL()
+	{
+		return StringUtils.removeEnd(wsURL, "-ws");
 	}
 
 	@ManagedAttribute(description="Get Slack current instance")
