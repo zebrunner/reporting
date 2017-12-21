@@ -238,15 +238,11 @@
         $scope.deleteWidget = function($event, widget){
             var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" ?');
             if (confirmedDelete) {
-                var array = $scope.widgets;
-                var index = array.indexOf(widget);
-                if (index > -1) {
-                    array.splice(index, 1);
-                }
+                $scope.widgets.splice($scope.widgets.indexOfId(widget), 1);
+                $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOfId(widget), 1);
                 DashboardService.DeleteWidget(widget.id).then(function (rs) {
                     if (rs.success) {
                         alertify.success("Widget deleted");
-                        $scope.hide(true);
                     }
                     else {
                         alertify.error(rs.message);
