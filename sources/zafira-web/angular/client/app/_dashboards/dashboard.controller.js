@@ -642,11 +642,10 @@
 
     function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
         $scope.currentUserId = null;
-        $scope.isNew = false;
         $scope.widget = {};
         $scope.dashboard = {};
         angular.copy(currentUserId, $scope.currentUserId);
-        angular.copy(isNew, $scope.isNew);
+        $scope.isNew = angular.copy(isNew);
         angular.copy(widget, $scope.widget);
         angular.copy(dashboard, $scope.dashboard);
         $scope.showWidget = false;
