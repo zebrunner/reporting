@@ -11,7 +11,7 @@ target
 *.iml
 .springBeans
 */bin
-*/test-output
+**/test-output
 *.bak
 hs_err_pid*
 node
@@ -21,12 +21,4 @@ etc
 dist
 bower_components
 /pgdata
-/sources/rapid-dbaccess/test-output
-/sources/rapid-services/test-output
-/sources/zafira-conf/.project
-/sources/zafira-conf/.classpath
-/sources/zafira-dbaccess/.project
-/sources/zafira-dbaccess/test-output
-/sources/zafira-dbaccess/.classpath
-/sources/zafira-client/com
 /sources/zafira-ws/phantomjs*
