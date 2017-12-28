@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 public abstract class AbstractPage
 {
 	protected String url;
+	
 	protected WebDriver driver;
 
 	public AbstractPage(WebDriver driver, String path)
