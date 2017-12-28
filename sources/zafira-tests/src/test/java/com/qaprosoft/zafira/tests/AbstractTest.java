@@ -19,9 +19,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
@@ -29,30 +31,38 @@ import com.qaprosoft.zafira.tests.util.Config;
 
 public class AbstractTest
 {
+	private Logger LOGGER = Logger.getLogger(AbstractTest.class);
+	
 	protected String ADMIN1_USER = Config.get("admin1.user");
 	protected String ADMIN1_PASS = Config.get("admin1.pass");
 	
 	protected WebDriver driver;
 	
 	@BeforeTest
-	public void start() throws MalformedURLException
+	public void start(ITestContext context) throws MalformedURLException
 	{
+		LOGGER.info(context.getCurrentXmlTest().getName() + " started");
 		DesiredCapabilities dc = null;
 		if("firefox".equalsIgnoreCase(Config.get("browser")))
 		{
 			dc = DesiredCapabilities.firefox();
 		}
-		if("chrome".equalsIgnoreCase(Config.get("browser")))
+		else if("chrome".equalsIgnoreCase(Config.get("browser")))
 		{
 			dc = DesiredCapabilities.chrome();
+		}
+		else if("safari".equalsIgnoreCase(Config.get("browser")))
+		{
+			dc = DesiredCapabilities.safari();
 		}
 		driver = new RemoteWebDriver(new URL(Config.get("selenium_host")), dc);
 		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 	}
 	
 	@AfterTest
-	public void shutdown()
+	public void shutdown(ITestContext context)
 	{
+		LOGGER.info(context.getCurrentXmlTest().getName() + " finished");
 		driver.quit();
 	}
 }
