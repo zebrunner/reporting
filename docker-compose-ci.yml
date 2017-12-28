@@ -4,7 +4,6 @@ services:
   db:
     image: qaprosoft/postgres:9.6
     volumes:
-     - ./pgdata:/var/lib/postgresql/data
      - ./database/:/docker-entrypoint-initdb.d
     ports:
      - "5433:5432"
