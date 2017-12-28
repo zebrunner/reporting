@@ -19,8 +19,8 @@ import org.openqa.selenium.WebDriver;
 
 public class DashboardPage extends AbstractPage
 {
-	public DashboardPage(WebDriver driver)
+	public DashboardPage(WebDriver driver, int dashboardId)
 	{
-		super(driver, "/dashboards");
+		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
 }
