@@ -17,6 +17,8 @@
 
 	<util:properties id="environmentProperties" location="classpath:environment.properties" />
 
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="classpath:i18n/messages" />
 		<property name="defaultEncoding" value="UTF-8" />

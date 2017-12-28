@@ -12,6 +12,7 @@
         service.getSettingsByIntegration = getSettingsByIntegration;
         service.getSetting = getSetting;
         service.getSettingByName = getSettingByName;
+        service.getSettingValueByName = getSettingValueByName;
         service.getSettingByTool = getSettingByTool;
         service.deleteSetting = deleteSetting;
         service.createSetting = createSetting;
@@ -40,6 +41,10 @@
 
         function getSettingByName(name) {
             return $http.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+        }
+
+        function getSettingValueByName(name) {
+            return $http.get(API_URL + '/api/settings/' + name + '/value').then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
         }
 
         function getSetting(name) {

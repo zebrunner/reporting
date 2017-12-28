@@ -97,12 +97,9 @@
         .directive('hasAnyRole', ['AuthService', function(AuthService) {
             return {
                 restrict: 'A',
-                scope: {
-                    hasAnyRole: '='
-                },
                 link: function(scope, elem, attrs) {
                     scope.$watch(AuthService.IsLoggedIn, function() {
-                        if (AuthService.UserHasAnyRole(scope.hasAnyRole)) {
+                        if (AuthService.UserHasAnyRole(eval(attrs.hasAnyRole))) {
                             elem.show();
                         } else {
                             elem.hide();

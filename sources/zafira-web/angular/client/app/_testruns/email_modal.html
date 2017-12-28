@@ -27,12 +27,14 @@
                         <label>Recepients ({{email.recipients.length}})</label>
                         <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
                             <md-chips ng-model="users"
+                                      class="photo-chip"
                                       filter-selected=true
                                       md-autocomplete-snap
                                       md-transform-chip="checkAndTransformRecipient($chip)"
                                       md-on-remove="removeRecipient($chip)"
                                       md-separator-keys="keys">
                                 <md-chip-template>
+                                    <profile-photo ng-model="$chip.photoURL" size="40" auto-resize="false"></profile-photo>
                                     {{$chip.email}}
                                 </md-chip-template>
                                 <md-autocomplete
@@ -44,7 +46,10 @@
                                         md-no-cache="true"
                                         placeholder="add email">
                                 <md-item-template>
-                                    <span>{{user.email}}</span>
+                                    <span>
+                                        <profile-photo ng-model="user.photoURL" size="40"></profile-photo>
+                                        {{user.email}}
+                                    </span>
                                 </md-item-template>
                                 <md-not-found>
                                     No users matching "{{searchText}}" were found.

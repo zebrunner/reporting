@@ -12,6 +12,7 @@
         service.searchUsers = searchUsers;
         service.searchUsersWithQuery = searchUsersWithQuery;
         service.updateUserProfile = updateUserProfile;
+        service.deleteUserProfilePhoto = deleteUserProfilePhoto;
         service.updateUserPassword = updateUserPassword;
         service.createOrUpdateUser = createOrUpdateUser;
         service.deleteUser = deleteUser;
@@ -37,6 +38,10 @@
 
         function updateUserProfile(profile) {
         	return $http.put(API_URL + '/api/users/profile', profile).then(UtilService.handleSuccess, UtilService.handleError('Unable to update user profile'));
+        }
+
+        function deleteUserProfilePhoto() {
+            return $http.delete(API_URL + '/api/users/profile/photo').then(UtilService.handleSuccess, UtilService.handleError('Unable to delete profile photo'));
         }
 
         function updateUserPassword(password) {

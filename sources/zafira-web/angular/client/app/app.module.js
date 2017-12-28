@@ -27,6 +27,7 @@
         ,'chieffancypants.loadingBar'
         ,'textAngular'
         ,'gridstack-angular'
+        ,'ngImgCrop'
         ,'ngMaterialDateRangePicker'
     ])
     .config(['$httpProvider', function($httpProvider) {
@@ -211,7 +212,6 @@
                         $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
                         $scope.main.default = $rootScope.main.isDark ? 'default' : 'default';
                     }
-                    var a = iElement[0].classList;
                     iElement[0].classList.remove(getTheme(oldValue));
                     addTheme(newValue);
                 });
@@ -266,7 +266,111 @@
                 };
             }
         };
-    }).filter('subString', function() {
+    }).directive('photoUpload', ['$timeout', '$rootScope', function ($timeout, $rootScope) {
+        "use strict";
+        return {
+            restrict: 'E',
+            template: '<div class="page-profile">\n' +
+            '                    <div class="container">\n' +
+            '                        <div class="bottom-block" md-ink-ripple="grey">\n' +
+            '                            <input type="file" id="fileInput" class="content-input" ng-class="{\'not-empty\': myImage}"/>\n' +
+            '                            <div class="upload-zone-label">Click or drop here</div>\n' +
+            '                            <img-crop image="myImage" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
+            '                        </div>\n' +
+            '                    </div>\n' +
+            '                </div>',
+            require: 'ngModel',
+            replace: true,
+            transclude: true,
+            scope: {
+                ngModel: '=',
+                areaType: '@'
+            },
+            link: function ($scope, iElement, iAttrs, ngModel) {
+                $scope.myImage='';
+                $scope.myCroppedImage='';
+                var canRecognize = false;
+
+                var handleFileSelect=function(evt) {
+                    var file=evt.currentTarget.files[0];
+                    $scope.fileName = file.name;
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        $scope.imageLoading = true;
+                        $scope.$apply(function($scope){
+                            $scope.myImage=evt.target.result;
+                        });
+                        $scope.imageLoading = false;
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                $timeout(function () {
+                    angular.element('#fileInput').on('change',handleFileSelect);
+                }, 100);
+
+                function dataURItoBlob(dataURI) {
+                    var binary = atob(dataURI.split(',')[1]);
+                    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    var array = [];
+                    for(var i = 0; i < binary.length; i++) {
+                        array.push(binary.charCodeAt(i));
+                    }
+                    return new Blob([new Uint8Array(array)], {type: mimeString});
+                }
+
+                function blobToFormData() {
+                    var formData = new FormData();
+                    var croppedImage = dataURItoBlob($scope.myCroppedImage);
+                    formData.set("file", croppedImage, $scope.fileName);
+                    return formData;
+                }
+
+                $scope.onChange = function () {
+                    if(canRecognize)
+                        ngModel.$setViewValue(blobToFormData());
+                };
+
+                $scope.onDone = function () {
+                    canRecognize = true;
+                    $scope.onChange();
+                };
+            }
+        };
+    }]).directive('profilePhoto', ['$rootScope', function ($rootScope) {
+        "use strict";
+        return {
+            restrict: 'E',
+            template: '<span>' +
+            '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-show="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
+            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-show="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '          </span>',
+            require: 'ngModel',
+            replace: true,
+            transclude: true,
+            scope: {
+                ngModel: '=',
+                size: '@',
+                autoResize: '=',
+                icon: '@',
+                iconVisible: '@'
+            },
+            compile: function(element, attrs){
+                return {
+                    pre: function preLink(scope, iElement, iAttrs, controller) {
+                        if (!attrs.size) { attrs.size = 120; }
+                        if (!attrs.icon) { attrs.icon = 'account_circle'; }
+                        if (!attrs.iconVisible) { attrs.iconVisible = true; }
+                        if (!attrs.autoResize) { attrs.autoResize = true; } else { attrs.autoResize = attrs.autoResize == 'true' }
+
+                        scope.imageSize = attrs.autoResize ? attrs.size - 4 : attrs.size;
+                    },
+                    post: function postLink(scope, iElement, iAttrs, controller) {
+                    }
+                }
+            }
+        };
+    }]).filter('subString', function() {
         return function(str, start, end) {
             if (str != undefined) {
                 return str.substr(start, end);
