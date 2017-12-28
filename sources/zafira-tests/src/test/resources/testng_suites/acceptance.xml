@@ -1,0 +1,25 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
+	
+	<test name="Login with valid credentials">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.AuthTest">
+				<methods>
+					<include name="testValidLogin" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="Login with invalid credentials">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.AuthTest">
+				<methods>
+					<include name="testInvalidLogin" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
