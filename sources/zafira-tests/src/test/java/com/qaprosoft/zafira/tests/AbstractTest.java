@@ -15,10 +15,13 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
@@ -32,9 +35,18 @@ public class AbstractTest
 	protected WebDriver driver;
 	
 	@BeforeTest
-	public void start()
+	public void start() throws MalformedURLException
 	{
-		driver = new FirefoxDriver();
+		DesiredCapabilities dc = null;
+		if("firefox".equalsIgnoreCase(Config.get("browser")))
+		{
+			dc = DesiredCapabilities.firefox();
+		}
+		if("chrome".equalsIgnoreCase(Config.get("browser")))
+		{
+			dc = DesiredCapabilities.chrome();
+		}
+		driver = new RemoteWebDriver(new URL(Config.get("selenium_host")), dc);
 		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 	}
 	
