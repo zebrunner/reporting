@@ -3,10 +3,10 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService) {
+    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
 
     	$scope.DashboardService = DashboardService;
 
@@ -17,6 +17,7 @@
         $scope.views = [];
         $scope.tools = {};
 
+        var FILE_LOGO_TYPE = "COMPANY_LOGO";
 
         $scope.hasHiddenDashboardPermission = function(){
         	return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
@@ -97,6 +98,22 @@
                 locals: {
                     view: view
                 }
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+
+        $scope.showUploadImageDialog = function($event) {
+            $mdDialog.show({
+                controller: FileUploadController,
+                templateUrl: 'app/_users/upload_image_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                scope: $scope,
+                preserveScope: true
             })
                 .then(function(answer) {
                 }, function() {
@@ -197,6 +214,36 @@
             };
             (function initController() {
             })();
+        }
+
+        function FileUploadController($scope, $mdDialog) {
+            $scope.uploadImage = function (multipartFile) {
+                UploadService.upload(multipartFile, FILE_LOGO_TYPE).then(function (rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.companyLogo.value = rs.data.url;
+                        SettingsService.editSetting($rootScope.companyLogo)
+                            .then(function (prs) {
+                                if(prs.success)
+                                {
+                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
+                                    $scope.hide();
+                                }
+                            });
+                        alertify.success("Photo was uploaded");
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            };
+            $scope.hide = function() {
+                $mdDialog.hide(true);
+            };
+            $scope.cancel = function() {
+                $mdDialog.cancel(false);
+            };
         }
 
         (function initController() {

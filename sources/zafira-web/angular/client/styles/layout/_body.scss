@@ -483,3 +483,111 @@ div.md-open-menu-container {
 md-checkbox.main-checkbox div.md-icon {
     border-color: #009688 !important;
 }
+
+/* Drop zone */
+input[type="file"].content-input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+input[type="file"].content-input.not-empty{
+    z-index: -1;
+}
+
+.page-profile .container {
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+    display: block;
+    position: relative;
+    width: 800px;
+    border: 2px dashed #80CBC4 !important;
+    transition: opacity  0.1s linear;
+    border-top: 0; }
+
+.page-profile .bottom-block {
+    display: block;
+    position: relative;
+    height: 500px;
+    width: 100%; }
+
+.upload-zone-label {
+    position: absolute;
+    top: 50%;
+    left: 35%;
+    text-transform: uppercase;
+    font-size: 24px;
+    color: grey !important;
+}
+
+/* Profile info block */
+.page-profile .profile-header {
+    max-height: 180px !important;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    //background-image: url(../assets/images/signin_bg.jpg);
+}
+
+ul.profile-image-actions {
+    position: absolute !important;
+    top: 0;
+    left: 20px;
+}
+
+.profile-personal-info {
+    display: inline-block !important;
+    color: white !important;
+    font-size: 36px !important;
+}
+
+/* Profile photo mask logic */
+.profile-img-content {
+    display: none;
+    position: absolute;
+    top: 40%;
+    font-size: 26px;
+    left: 40%;
+    color: white;
+}
+
+.profile-img-content span {
+    cursor: pointer;
+}
+
+.profile-img {
+    position: relative;
+}
+
+.profile-img:hover .profile-hovered {
+    -webkit-transition: opacity 200ms linear;
+    -moz-transition: opacity 200ms ease-in-out;
+    -ms-transition: opacity 200ms ease-in-out;
+    -o-transition: opacity 200ms ease-in-out;
+    opacity: 0.5;
+}
+
+.profile-img:hover .profile-img-content {
+    display: block;
+    opacity: 1;
+}
+
+/*Chips*/
+.photo-chip md-chip {
+    padding-left: 0;
+    height: 40px;
+    border-radius: 20px;
+}
+
+.photo-chip md-chip md-icon {
+    margin-top: 10%;
+}
+
+.grey-icon i {
+    color: lightgrey !important;
+}

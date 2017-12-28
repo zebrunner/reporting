@@ -1,10 +1,9 @@
 package com.qaprosoft.zafira.services.services;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,6 +117,7 @@ public class SettingsService
 	@Transactional(rollbackFor = Exception.class)
 	public void updateSetting(Setting setting) throws Exception
 	{
+		setting.setValue(StringUtils.isBlank(setting.getValue().trim()) ? null : setting.getValue());
 		settingsMapper.updateSetting(setting);
 	}
 
