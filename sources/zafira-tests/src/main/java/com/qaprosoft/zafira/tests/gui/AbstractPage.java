@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.tests.gui;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.qaprosoft.zafira.tests.util.Config;
 
@@ -39,6 +41,6 @@ public abstract class AbstractPage
 	
 	public boolean isOpened()
 	{
-		return driver.getCurrentUrl().contains(url);
+		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
 	}
 }
