@@ -44,7 +44,7 @@ public class LoginPage extends AbstractPage
 		usernameTextField.sendKeys(username);
 		passwordTextField.sendKeys(password);
 		loginButton.click();
-		return new DashboardPage(driver);
+		return new DashboardPage(driver, 2);
 	}
 	
 	public boolean isInvalidCredentials()
