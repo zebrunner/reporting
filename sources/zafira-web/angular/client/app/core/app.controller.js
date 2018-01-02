@@ -96,7 +96,7 @@
 
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
-	        		if("RABBITMQ")
+	        		if(data == "RABBITMQ")
 	        		{
 	        			SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
@@ -107,7 +107,7 @@
 	        	        });
 	        		}
 
-	        		if("JIRA")
+	        		if(data == "JIRA")
 	        		{
 	        			SettingsService.getSettingByTool("JIRA").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
@@ -116,7 +116,7 @@
 	        	        });
 	        		}
 
-	        		if("JENKINS")
+	        		if(data == "JENKINS")
 	        		{
 	        			SettingsService.getSettingByTool("JENKINS").then(function(rs) {
 	        	            var settings = UtilService.settingsAsMap(rs.data);
