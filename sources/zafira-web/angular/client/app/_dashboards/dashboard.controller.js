@@ -270,6 +270,23 @@
             }
         };
 
+        $scope.deleteDashboard = function(dashboard){
+            var confirmedDelete = confirm('Would you like to delete dashboard "' + dashboard.title + '"?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Dashboard deleted");
+                        var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
+                        window.open(mainDashboard, '_self');
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            $scope.hide();
+        };
+
         $scope.showDashboardWidgetDialog = function (event, widget, isNew) {
             $mdDialog.show({
                 controller: DashboardWidgetController,
@@ -577,22 +594,7 @@
             });
         };
 
-        $scope.deleteDashboard = function(dashboard){
-            DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
-                if (rs.success)
-                {
-                	alertify.success("Dashboard deleted");
-                    var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
-                    window.open(mainDashboard, '_self');
-                }
-                else {
-                    alertify.error(rs.message);
-                }
-            });
-            $scope.hide();
-        };
-
-        // Dashboard attributes
+         // Dashboard attributes
         $scope.createAttribute = function(attribute){
             DashboardService.CreateDashboardAttribute(dashboard.id, attribute).then(function (rs) {
                 if (rs.success) {
