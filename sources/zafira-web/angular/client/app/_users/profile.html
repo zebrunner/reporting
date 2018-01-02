@@ -1,4 +1,15 @@
 <div class="page page-profile" ng-controller="UserProfileController">
+    <header class="profile-header">
+        <div class="profile-img">
+            <profile-photo ng-model="currentUser.photoURL"></profile-photo>
+            <div class="profile-img-content">
+                <span><i class="material-icons" ng-click="showUploadImageDialog($event)">settings</i></span>
+            </div>
+        </div>
+        <div class="profile-personal-info">
+            {{user.firstName}} {{user.lastName}}
+        </div>
+    </header>
 
     <div class="row">
         <div class="col-lg-12 clearfix">

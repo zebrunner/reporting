@@ -2,7 +2,7 @@
     <div ui-preloader></div>
 
     <!-- Logo -->
-    <div class="logo"
+    <div class="logo" style="min-width: 180px"
          ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
                      'bg-white': main.skin === '21',
                      'bg-primary': ['12','22','32'].indexOf(main.skin) >= 0,
@@ -13,6 +13,14 @@
         <a href="#!/">
             <span class="logo-text">{{main.brand}}</span>
         </a>
+        <div class="profile-img" style="display: inline-block; vertical-align: top" ng-controller="SidebarController">
+            <profile-photo ng-model="companyLogo.value" size="50" icon="info" icon-visible="isAdmin"></profile-photo>
+            <div has-any-role="['ROLE_ADMIN']">
+                <div class="profile-img-content" style="top: 0;left:17px">
+                    <span><i class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="top-nav" ng-controller="SidebarController">
@@ -51,8 +59,7 @@
             <li>
                 <md-menu md-position-mode="left bottom">
                     <md-button class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
-                        <i class="material-icons" style="font-size: 24px;">account_circle</i>
-                        <small style="margin-right: 15px;">{{currentUser.username}}</small>
+                        <profile-photo ng-model="currentUser.photoURL" size="40"></profile-photo>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>

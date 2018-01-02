@@ -131,6 +131,7 @@
 				U.EMAIL AS TEST_RUN_USER_EMAIL,
 				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
 				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
+				U.COVER_PHOTO_URL AS TEST_RUN_USER_COVER_PHOTO_URL,
 				
 				TS.ID AS TEST_RUN_TEST_SUITE_ID,
 				TS.NAME AS TEST_RUN_TEST_SUITE_NAME,
@@ -570,6 +571,7 @@
 		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
 		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
 		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
+		<result column="TEST_RUN_USER_COVER_PHOTO_URL" property="user.photoURL" />
 
 		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
 		<result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />

@@ -128,6 +128,17 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
+	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = Setting.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{name}/value", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Setting getSetting(@PathVariable(value = "name") String name) throws ServiceException
+	{
+		return settingsService.getSettingByName(name);
+	}
+
+	@ResponseStatusDetails
 	@ApiOperation(value = "Delete setting", nickname = "deleteSetting", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(

@@ -105,10 +105,28 @@
 			UPDATE
 			    zafira.SETTINGS
 			SET
-			    NAME = #{name},
-			    VALUE = #{value},
-                IS_ENCRYPTED = #{isEncrypted},
-                TOOL = #{tool}
+		]]>
+			<if test = "value != null">
+				<![CDATA[
+						VALUE = #{value},
+					]]>
+			</if>
+			<if test = "isEncrypted != null">
+				<![CDATA[
+						IS_ENCRYPTED = #{isEncrypted},
+					]]>
+			</if>
+			<if test = "tool != null">
+				<![CDATA[
+						TOOL = #{tool},
+					]]>
+			</if>
+			<if test = "name != null">
+				<![CDATA[
+							NAME = #{name}
+					]]>
+			</if>
+		<![CDATA[
 			WHERE
 			    ID = #{id}
 		]]>

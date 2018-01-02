@@ -19,6 +19,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +65,9 @@ public class UsersAPIController extends AbstractController
 	private UserPreferenceService userPreferenceService;
 
 	@Autowired
+	private AmazonService amazonService;
+
+	@Autowired
 	private Mapper mapper;
 
 	@ResponseStatusDetails
@@ -93,7 +98,22 @@ public class UsersAPIController extends AbstractController
 		UserType userType =  mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
 		userType.setRoles(user.getRoles());
 		userType.setPreferences(user.getPreferences());
+		userType.setPhotoURL(user.getPhotoURL());
 		return userType;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", code = 200, httpMethod = "DELETE")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "profile/photo", method = RequestMethod.DELETE)
+	public void deleteUserProfilePhoto() throws ServiceException
+	{
+		User user = userService.getUserById(getPrincipalId());
+		amazonService.removeFile(user.getPhotoURL());
+		user.setPhotoURL(StringUtils.EMPTY);
+		userService.updateUser(user);
 	}
 
 	@ResponseStatusDetails
