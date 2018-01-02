@@ -59,7 +59,7 @@
 									</th>
                                     <th md-column>Status</th>
                                     <th md-column class="no-padding">
-                                        <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
+                                        <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Registration date</span>
                                         <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
                                         <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
                                     </th>
