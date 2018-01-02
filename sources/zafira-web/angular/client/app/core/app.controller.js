@@ -50,6 +50,8 @@
 
 	        $scope.initSession = function()
 	        {
+	            $scope.loadCompanyLogo();
+
                 $scope.initUserProfile();
 
 		   		DashboardService.GetDashboardByTitle("User Performance").then(function(rs) {
@@ -124,11 +126,24 @@
 	        		}
             });
 
+            $scope.loadCompanyLogo = function () {
+                SettingsService.getSettingValueByName('COMPANY_LOGO_URL').then(function(rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.companyLogo = rs.data;
+                    }
+                    else
+                    {
+                    }
+                });
+            };
+
             $scope.initUserProfile = function (){
                 UserService.getUserProfile().then(function (rs) {
                     if(rs.success)
                     {
                         $rootScope.currentUser = rs.data;
+                        $rootScope.isAdmin = rs.data.roles.indexOf('ROLE_ADMIN') >= 0;
                         var userPreferences = $rootScope.currentUser.preferences;
                         if (userPreferences && userPreferences.length !=0) {
                             $scope.setDefaultPreferences(userPreferences);

@@ -36,6 +36,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private String email;
 	private String firstName;
 	private String lastName;
+	private String photoURL;
 	private List<Group> groups = new ArrayList<>();
 	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
@@ -102,6 +103,16 @@ public class User extends AbstractEntity implements Comparable<User>
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+
+	public String getPhotoURL()
+	{
+		return photoURL;
+	}
+
+	public void setPhotoURL(String photoURL)
+	{
+		this.photoURL = photoURL;
 	}
 
 	public List<Group> getGroups()

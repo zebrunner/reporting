@@ -3,53 +3,61 @@
 
     angular
         .module('app.user')
-        .controller('UserProfileController', ['$scope', '$rootScope', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', UserProfileController])
+        .controller('UserProfileController', ['$scope', '$rootScope', '$mdDialog', '$timeout', '$location', '$state', 'UserService', 'DashboardService', 'UtilService', 'AuthService', 'UploadService', UserProfileController])
         .controller('UserListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', '$state', '$mdDialog', 'UserService', 'GroupService', 'PermissionService', 'UtilService', 'DashboardService', UserListController])
 
     // **************************************************************************
-    function UserProfileController($scope, $rootScope, $location, $state, UserService, DashboardService, UtilService, AuthService) {
+    function UserProfileController($scope, $rootScope, $mdDialog, $timeout, $location, $state, UserService, DashboardService, UtilService, AuthService, UploadService) {
 
-    	$scope.UtilService = UtilService;
+        $scope.UtilService = UtilService;
 
-    	$scope.user = {};
-    	$scope.changePassword = {};
+        $scope.user = {};
+        $scope.changePassword = {};
         $scope.preferences = [];
         $scope.preferenceForm = {};
         $scope.dashboards = [];
-    	$scope.pefrDashboardId = null;
-    	$scope.accessToken = null;
+        $scope.pefrDashboardId = null;
+        $scope.accessToken = null;
 
+        var FILE_PROFILE_PHOTO_TYPE = 'PROFILE_PHOTO';
 
-        $scope.hasHiddenDashboardsPermission = function(){
-             return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
+        $scope.deleteUserProfilePhoto = function () {
+            UserService.deleteUserProfilePhoto().then(function (rs) {
+                if (rs.success) {
+                    alertify.success("Photo was deleted");
+                    $rootScope.currentUser.photoURL = '?' + (new Date()).getTime();
+                    $state.reload();
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
         };
 
-        $scope.updateUserProfile = function(profile)
-        {
+        $scope.hasHiddenDashboardsPermission = function () {
+            return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
+        };
+
+        $scope.updateUserProfile = function (profile) {
             delete profile.preferences;
-        	UserService.updateUserProfile(profile)
-        	.then(function (rs) {
-        		if(rs.success)
-        		{
-        			$scope.user = rs.data;
-        			alertify.success("Profile updated");
-        		}
-        		else
-        		{
-        			alertify.error(rs.message);
-        		}
-            });
+            UserService.updateUserProfile(profile)
+                .then(function (rs) {
+                    if (rs.success) {
+                        $scope.user = rs.data;
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
         };
 
-        $scope.generateAccessToken = function()
-        {
-        	AuthService.GenerateAccessToken()
-        	.then(function (rs) {
-        		if(rs.success)
-        		{
-        			$scope.accessToken = rs.data.token;
-        		}
-            });
+        $scope.generateAccessToken = function () {
+            AuthService.GenerateAccessToken()
+                .then(function (rs) {
+                    if (rs.success) {
+                        $scope.accessToken = rs.data.token;
+                    }
+                });
         };
 
         $scope.copyAccessToken = function (accessToken) {
@@ -90,71 +98,65 @@
             }
         };
 
-        $scope.updateUserPassword = function(changePassword) {
-        	UserService.updateUserPassword(changePassword)
-        	.then(function (rs) {
-        		if(rs.success)
-        		{
-        			$scope.changePassword = {};
-        			alertify.success("Password changed");
-        		}
-        		else
-        		{
-        			alertify.error(rs.message);
-        		}
-            });
+        $scope.updateUserPassword = function (changePassword) {
+            UserService.updateUserPassword(changePassword)
+                .then(function (rs) {
+                    if (rs.success) {
+                        $scope.changePassword = {};
+                        alertify.success("Password changed");
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
         };
 
-        $scope.getUserProfile = function(){
+        $scope.getUserProfile = function () {
             UserService.getUserProfile()
                 .then(function (rs) {
-                    if(rs.success)
-                    {
+                    if (rs.success) {
                         $scope.user = rs.data;
                         $scope.changePassword.userId = $scope.user.id;
-                        if($scope.user.preferences.length !== 0){
+                        if ($scope.user.preferences.length !== 0) {
                             $scope.preferences = $scope.user.preferences;
                         }
                         else {
                             $scope.getDefaultPreferences();
                         }
                     }
-                    else
-                    {
+                    else {
                         alertify.error(rs.message);
                     }
                 });
         };
 
-        $scope.getDefaultPreferences = function(){
+        $scope.getDefaultPreferences = function () {
             UserService.getDefaultPreferences()
                 .then(function (rs) {
-                    if(rs.success)
-                    {
+                    if (rs.success) {
                         $scope.preferences = rs.data;
                     }
-                    else
-                    {
+                    else {
                         alertify.error(rs.message);
                     }
                 });
         };
 
-        $scope.updateUserPreferences = function (preferenceForm){
+        $scope.updateUserPreferences = function (preferenceForm) {
             var preferences = $scope.preferences;
-            for (var i = 0; i < preferences.length; i++){
+            for (var i = 0; i < preferences.length; i++) {
                 preferences[i].userId = $scope.user.id;
-                if (preferences[i].name === 'DEFAULT_DASHBOARD'){
+                if (preferences[i].name === 'DEFAULT_DASHBOARD') {
                     preferences[i].value = preferenceForm.defaultDashboard;
                 }
-                else if (preferences[i].name === 'REFRESH_INTERVAL'){
+                else if (preferences[i].name === 'REFRESH_INTERVAL') {
                     preferences[i].value = preferenceForm.refreshInterval;
-                } else if (preferences[i].name === 'THEME'){
+                } else if (preferences[i].name === 'THEME') {
                     preferences[i].value = $scope.main.skin;
                 }
             }
             UserService.updateUserPreferences($scope.user.id, preferences).then(function (rs) {
-                if(rs.success){
+                if (rs.success) {
                     $scope.preferences = rs.data;
                     $rootScope.$broadcast('event:preferencesReset');
                     alertify.success('User preferences are successfully updated');
@@ -165,13 +167,13 @@
             });
         };
 
-        $scope.resetPreferences = function(){
+        $scope.resetPreferences = function () {
             UserService.deleteUserPreferences($scope.user.id).then(function (rs) {
-                if(rs.success){
+                if (rs.success) {
                     $rootScope.$broadcast('event:preferencesReset');
                     alertify.success('Preferences are set to default');
                 }
-            else {
+                else {
                     alertify.error(rs.message);
                 }
             });
@@ -179,30 +181,81 @@
 
         $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
 
-        $scope.selectDashboard = function(dashboard){
-            if ($rootScope.defaultDashboard === dashboard.title){
+        $scope.selectDashboard = function (dashboard) {
+            if ($rootScope.defaultDashboard === dashboard.title) {
                 return true;
             }
         };
 
-        $scope.selectInterval = function(interval){
-                if ($rootScope.refreshInterval == interval){
-                    return true;
+        $scope.selectInterval = function (interval) {
+            if ($rootScope.refreshInterval == interval) {
+                return true;
             }
-         };
+        };
 
-        $scope.convertMillis = function(millis){
-            var sec = millis/1000;
+        $scope.convertMillis = function (millis) {
+            var sec = millis / 1000;
             if (millis == 0) {
                 return 'Disabled'
             }
-            else if(sec < 60){
+            else if (sec < 60) {
                 return sec + ' sec';
             }
             else {
-                return sec/60 + ' min';
+                return sec / 60 + ' min';
             }
         };
+
+        $scope.showUploadImageDialog = function ($event) {
+            $mdDialog.show({
+                controller: FileUploadController,
+                templateUrl: 'app/_users/upload_image_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                clickOutsideToClose: true,
+                fullscreen: true,
+                scope: $scope,
+                preserveScope: true
+            })
+                .then(function (answer) {
+                    if (answer) {
+                        $state.reload();
+                    }
+                }, function () {
+                });
+        };
+
+        function FileUploadController($scope, $mdDialog) {
+            $scope.uploadImage = function (multipartFile) {
+                UploadService.upload(multipartFile, FILE_PROFILE_PHOTO_TYPE).then(function (rs) {
+                    if(rs.success)
+                    {
+                        $scope.user.photoURL = rs.data.url;
+                        $rootScope.currentUser.photoURL = rs.data.url + '?' + (new Date()).getTime();
+                        delete $scope.user.preferences;
+                        UserService.updateUserProfile($scope.user)
+                            .then(function (prs) {
+                                if(prs.success)
+                                {
+                                    $scope.user = prs.data;
+                                    $scope.hide();
+                                }
+                            });
+                        alertify.success("Photo was uploaded");
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            };
+            $scope.hide = function() {
+                $mdDialog.hide(true);
+            };
+            $scope.cancel = function() {
+                $mdDialog.cancel(false);
+            };
+        }
 
         (function initController() {
             $scope.loadDashboards();

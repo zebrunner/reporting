@@ -38,5 +38,9 @@
 			<a>lastLogin</a>
 			<b>lastLogin</b>
 		</field>
+		<field>
+			<a>photoURL</a>
+			<b>photoURL</b>
+		</field>
 	</mapping>
 </mappings>
