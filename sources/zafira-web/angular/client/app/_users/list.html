@@ -70,8 +70,7 @@
                             <tbody md-body>
                                 <tr md-row ng-repeat="user in sr.results">
                                     <td md-cell>
-                                        #{{user.id}}
-                                        <profile-photo ng-model="user.photoURL" size="40" class="grey-icon" style="float:right;"></profile-photo>
+                                        <profile-photo ng-model="user.photoURL" size="40" class="grey-icon" label="#{{user.id}}"></profile-photo>
                                     </td>
                                     <td md-cell>
                                         <b>{{user.username}}</b>
