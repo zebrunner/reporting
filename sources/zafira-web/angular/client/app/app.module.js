@@ -344,26 +344,28 @@
             template: '<span>' +
             '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-show="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
             '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-show="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
             require: 'ngModel',
             replace: true,
             transclude: true,
             scope: {
                 ngModel: '=',
-                size: '@',
-                autoResize: '=',
+                size: '=?',
+                autoResize: '=?',
                 icon: '@',
-                iconVisible: '@'
+                iconVisible: '=?',
+                label: '@'
             },
             compile: function(element, attrs){
                 return {
                     pre: function preLink(scope, iElement, iAttrs, controller) {
-                        if (!attrs.size) { attrs.size = 120; }
-                        if (!attrs.icon) { attrs.icon = 'account_circle'; }
-                        if (!attrs.iconVisible) { attrs.iconVisible = true; }
-                        if (!attrs.autoResize) { attrs.autoResize = true; } else { attrs.autoResize = attrs.autoResize == 'true' }
+                        if (!attrs.size) { scope.size = 120; }
+                        if (!attrs.icon) { scope.icon = 'account_circle'; }
+                        if (!attrs.iconVisible) { scope.iconVisible = true; }
+                        if (!attrs.autoResize) { scope.autoResize = true; } else { scope.autoResize = scope.autoResize == 'true' }
 
-                        scope.imageSize = attrs.autoResize ? attrs.size - 4 : attrs.size;
+                        scope.imageSize = scope.autoResize ? scope.size - 4 : scope.size;
                     },
                     post: function postLink(scope, iElement, iAttrs, controller) {
                     }
