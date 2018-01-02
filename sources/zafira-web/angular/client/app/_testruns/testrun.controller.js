@@ -772,7 +772,11 @@
                 testRun.expand = false;
                 testRun.tests = [];
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
-                $scope.subscribtions[testRun.id].unsubscribe();
+                var subscription = $scope.subscribtions[testRun.id];
+                if(subscription != null)
+                {
+                		subscription.unsubscribe();
+                }
                 delete $scope.subscribtions[testRun.id];
             }
         };
@@ -784,36 +788,6 @@
             		$scope.switchTestRunExpand($scope.testRuns[$scope.expandedTestRuns[0]]);
             }
         });
-
-        $scope.switchTestRunExpand = function (testRun, fromTestRun) {
-            if(hasRightsToExpand(!testRun.expand, fromTestRun)) {
-                if (!testRun.expand) {
-                    $scope.loadTests(testRun.id);
-                    $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                    testRun.expand = true;
-                } else {
-                    testRun.expand = false;
-                    $scope.subscribtions[testRun.id].unsubscribe();
-                    delete $scope.subscribtions[testRun.id];
-                }
-            }
-        };
-
-        var hasRightsToExpand = function (forceTrue, fromTestRun) {
-            if(!fromTestRun) {
-                var selectedText = window.getSelection().toString();
-                var unexpectedTokens = ['\n', '\t', ''];
-                if (forceTrue) return true;
-                for (var i = 0; i < unexpectedTokens.length; i++) {
-                    if (unexpectedTokens[i] === selectedText.trim()) {
-                        return true;
-                    }
-                }
-                return false;
-            } else {
-                return true;
-            }
-        };
 
         var getJSONLength = function(jsonObj) {
             var count = 0;
