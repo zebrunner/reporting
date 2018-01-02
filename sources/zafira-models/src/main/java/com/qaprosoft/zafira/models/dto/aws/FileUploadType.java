@@ -10,7 +10,7 @@ public class FileUploadType
 
 	public enum Type
 	{
-		PROFILE_PHOTO, COMPANY_LOGO
+		USERS, COMMON
 	}
 
 	public FileUploadType()
