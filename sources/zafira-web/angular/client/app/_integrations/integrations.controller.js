@@ -107,7 +107,7 @@
         };
 
         var getSettingByName = function (name) {
-            return $scope.settings.filter(function (setting) {
+            return settings.filter(function (setting) {
                 return setting.name === name;
             })[0];
         };
