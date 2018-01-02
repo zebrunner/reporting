@@ -780,7 +780,7 @@
                     '<md-icon md-svg-icon="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik05IDExSDd2Mmgydi0yem00IDBoLTJ2Mmgydi0yem00IDBoLTJ2Mmgydi0yem0yLTdoLTFWMmgtMnYySDhWMkg2djJINWMtMS4xMSAwLTEuOTkuOS0xLjk5IDJMMyAyMGMwIDEuMS44OSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yem0wIDE2SDVWOWgxNHYxMXoiLz4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KPC9zdmc+"></md-icon>',
                     '</md-button>',
                     '<span class="md-toolbar-tools">{{model.selectedTemplateName}}</span>',
-                    '<md-button ng-click="cancel()"><md-icon class="ng-scope material-icons md-default-theme">close</md-icon></md-button>',
+                    '<md-button class="md-icon-button" ng-click="cancel()"><md-icon >close</md-icon></md-button>',
                     '</md-toolbar>',
                     '<md-dialog-content>',
                     '<md-date-range-picker ',
