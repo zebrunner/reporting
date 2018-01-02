@@ -255,8 +255,7 @@
             var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
 
             if (column.search(specCharRegexp) != -1) {
-                // handle by quotes from both sides
-                 column = "\"" + column + "\"";
+                column.replace("\"\"", "\"");
              }
              if(! widget.sort) {
                  widget.sort = {};
@@ -771,9 +770,8 @@
             var specCharRegexp = /[-[\]{}()*+?.,\\^$|#\s%]/g;
 
             if (column.search(specCharRegexp) != -1) {
-                // handle by quotes from both sides
-                column = "\"" + column + "\"";
-            }
+                column.replace("\"\"", "\"");
+             }
             var sort = $scope.sort;
             if (sort.column == column) {
                 sort.descending = !sort.descending;
