@@ -13,6 +13,10 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="deleteDashboard(dashboard)" has-any-permission="['MODIFY_DASHBOARDS']">
+                    <md-tooltip md-direction="top">Delete dashboard</md-tooltip>
+                    <span class="fa fa-trash"></span>
+                </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="startEditWidgets()" has-any-permission="['MODIFY_WIDGETS']">
                     <md-tooltip md-direction="top">Update widgets</md-tooltip>
                     <span class="fa fa-arrows-alt"></span>
