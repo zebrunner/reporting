@@ -29,6 +29,7 @@ import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
@@ -60,8 +62,6 @@ public class AmazonService implements IJMXService
 
 	private String s3Bucket;
 
-	private String imageFolder;
-
 	@Autowired
 	private SettingsService settingsService;
 
@@ -78,7 +78,6 @@ public class AmazonService implements IJMXService
 		String accessKey = null;
 		String privateKey = null;
 		String bucket = null;
-		String imageFolder = null;
 
 		try
 		{
@@ -100,14 +99,11 @@ public class AmazonService implements IJMXService
 				case AMAZON_BUCKET:
 					bucket = setting.getValue();
 					break;
-				case AMAZON_IMAGE_FOLDER:
-					imageFolder = setting.getValue();
-					break;
 				default:
 					break;
 				}
 			}
-			init(accessKey, privateKey, bucket, imageFolder);
+			init(accessKey, privateKey, bucket);
 		} catch (Exception e)
 		{
 			LOGGER.error("Setting does not exist", e);
@@ -118,15 +114,13 @@ public class AmazonService implements IJMXService
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
 			@ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
-			@ManagedOperationParameter(name = "bucket", description = "Amazon bucket"),
-			@ManagedOperationParameter(name = "imageFolder", description = "Amazon image folder")})
-	public void init(String accessKey, String privateKey, String bucket, String imageFolder)
+			@ManagedOperationParameter(name = "bucket", description = "Amazon bucket")})
+	public void init(String accessKey, String privateKey, String bucket)
 	{
 		try
 		{
 			if (!StringUtils.isEmpty(accessKey) && !StringUtils.isEmpty(privateKey) && !StringUtils.isEmpty(bucket))
 			{
-				this.imageFolder = imageFolder;
 				this.s3Bucket = bucket;
 				this.awsCredentials = new BasicAWSCredentials(accessKey, privateKey);
 				this.s3Client = new AmazonS3Client(this.awsCredentials, this.clientConfiguration);
@@ -169,14 +163,14 @@ public class AmazonService implements IJMXService
 		return getS3Client().generatePresignedUrl(generatePresignedUrlRequest).toString();
 	}
 
-	public String saveFile(final FileUploadType file, Long userId) throws ServiceException
+	public String saveFile(final FileUploadType file) throws ServiceException
 	{
 		SdkBufferedInputStream stream = null;
 		GeneratePresignedUrlRequest request;
 		try {
 			stream = new SdkBufferedInputStream(file.getFile().getInputStream(), (int) (file.getFile().getSize() + 100));
 			String type = Mimetypes.getInstance().getMimetype(file.getFile().getOriginalFilename());
-			String key = this.imageFolder + FILE_PATH_SEPARATOR + getFileKey(file, userId);
+			String key = getFileKey(file);
 
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType(type);
@@ -207,10 +201,9 @@ public class AmazonService implements IJMXService
 		}
 	}
 
-	private String getFileKey(final FileUploadType file, Long userId)
+	private String getFileKey(final FileUploadType file)
 	{
-		return userId + FILE_PATH_SEPARATOR + file.getType().name() + FILE_PATH_SEPARATOR + System.currentTimeMillis() +
-				file.getFile().getOriginalFilename();
+		return file.getType().name() + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20);
 	}
 
 	@ManagedAttribute(description = "Get amazon client")

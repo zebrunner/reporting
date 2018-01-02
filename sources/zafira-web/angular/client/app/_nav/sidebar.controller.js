@@ -17,7 +17,7 @@
         $scope.views = [];
         $scope.tools = {};
 
-        var FILE_LOGO_TYPE = "COMPANY_LOGO";
+        var FILE_LOGO_TYPE = "COMMON";
 
         $scope.hasHiddenDashboardPermission = function(){
         	return AuthService.UserHasAnyPermission(["VIEW_HIDDEN_DASHBOARDS"]);
