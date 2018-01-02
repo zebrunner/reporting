@@ -8,6 +8,7 @@
     function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
 
         $scope.settingTools = [];
+        $scope.enabledSettings = {};
 
         var ENABLED_POSTFIX = '_ENABLED';
         var PASSWORD_POSTFIX = '_PASSWORD';
@@ -74,7 +75,10 @@
         };
 
         $scope.switchEnabled = function (tool) {
-            var setting = getSettingByName(tool.name + ENABLED_POSTFIX);
+            var setting = {};
+            setting.name = tool.name + ENABLED_POSTFIX;
+            setting.tool = tool.name;
+            setting.id = $scope.enabledSettings[tool.name];
             setting.value = tool.isEnabled;
             var settings = [];
             settings.push(setting);
@@ -103,12 +107,6 @@
                 if(isEnabledSetting(tool, setting)) {
                     return true;
                 }
-            })[0];
-        };
-
-        var getSettingByName = function (name) {
-            return settings.filter(function (setting) {
-                return setting.name === name;
             })[0];
         };
 
@@ -175,15 +173,17 @@
             SettingsService.getSettingByTool(tool).then(function (settings) {
                 if (settings.success) {
                     var rsTool = settings.data[0].tool;
+                    var enabledSetting = getEnabledSetting(rsTool, settings.data);
                     var currentTool = {
                         name: rsTool,
                         isConnected: $rootScope.tools[rsTool],
                         settings: settings.data.filter(function (setting) {
                             return isEnabledSetting(rsTool, setting) ? false : setting.tool === rsTool;
                         }),
-                        isEnabled: getEnabledSetting(rsTool, settings.data).value === 'true',
+                        isEnabled: enabledSetting.value === 'true',
                         newSetting: {}
                     };
+                    $scope.enabledSettings[enabledSetting.tool] = enabledSetting.id;
                     currentTool.settings.sort(compareBySettingSortOrder);
                     $scope.settingTools.push(currentTool);
                     $scope.settingTools.sort(compareByName);
