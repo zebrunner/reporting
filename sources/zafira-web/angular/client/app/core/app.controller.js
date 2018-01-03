@@ -96,44 +96,39 @@
 
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
-	        		if(data == "RABBITMQ")
-	        		{
-	        			SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
-	        	            var settings = UtilService.settingsAsMap(rs.data);
-	        	            $rootScope.rabbitmq.enabled = settings["RABBITMQ_ENABLED"];
-	        	            $rootScope.rabbitmq.user = settings["RABBITMQ_USER"];
-	        	            $rootScope.rabbitmq.pass = settings["RABBITMQ_PASSWORD"];
-	        	            $rootScope.rabbitmq.ws = settings["RABBITMQ_WS"];
-	        	        });
-	        		}
-
-	        		if(data == "JIRA")
-	        		{
-	        			SettingsService.getSettingByTool("JIRA").then(function(rs) {
-	        	            var settings = UtilService.settingsAsMap(rs.data);
-	        	            $rootScope.jira.enabled = settings["JIRA_ENABLED"];
-	        	            $rootScope.jira.url = settings["JIRA_URL"];
-	        	        });
-	        		}
-
-	        		if(data == "JENKINS")
-	        		{
-	        			SettingsService.getSettingByTool("JENKINS").then(function(rs) {
-	        	            var settings = UtilService.settingsAsMap(rs.data);
-	        	            $rootScope.jenkins.enabled = settings["JENKINS_ENABLED"];
-	        	            $rootScope.jenkins.url = settings["JENKINS_URL"];
-	        	        });
-	        		}
+	            switch(data) {
+                    case "RABBITMQ":
+                        SettingsService.getSettingByTool("RABBITMQ").then(function(rs) {
+                            var settings = UtilService.settingsAsMap(rs.data);
+                            $rootScope.rabbitmq.enabled = settings["RABBITMQ_ENABLED"];
+                            $rootScope.rabbitmq.user = settings["RABBITMQ_USER"];
+                            $rootScope.rabbitmq.pass = settings["RABBITMQ_PASSWORD"];
+                            $rootScope.rabbitmq.ws = settings["RABBITMQ_WS"];
+                        });
+                        break;
+                    case "JIRA":
+                        SettingsService.getSettingByTool("JIRA").then(function(rs) {
+                            var settings = UtilService.settingsAsMap(rs.data);
+                            $rootScope.jira.enabled = settings["JIRA_ENABLED"];
+                            $rootScope.jira.url = settings["JIRA_URL"];
+                        });
+                        break;
+                    case "JENKINS":
+                        SettingsService.getSettingByTool("JENKINS").then(function(rs) {
+                            var settings = UtilService.settingsAsMap(rs.data);
+                            $rootScope.jenkins.enabled = settings["JENKINS_ENABLED"];
+                            $rootScope.jenkins.url = settings["JENKINS_URL"];
+                        });
+                        break;
+                    default:
+                        break;
+                }
             });
 
             $scope.loadCompanyLogo = function () {
                 SettingsService.getSettingValueByName('COMPANY_LOGO_URL').then(function(rs) {
-                    if(rs.success)
-                    {
+                    if(rs.success) {
                         $rootScope.companyLogo = rs.data;
-                    }
-                    else
-                    {
                     }
                 });
             };

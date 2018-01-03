@@ -19,7 +19,7 @@
         $scope.pefrDashboardId = null;
         $scope.accessToken = null;
 
-        var FILE_PROFILE_PHOTO_TYPE = 'PROFILE_PHOTO';
+        var FILE_USERS_TYPE = 'USERS';
 
         $scope.deleteUserProfilePhoto = function () {
             UserService.deleteUserProfilePhoto().then(function (rs) {
@@ -227,7 +227,7 @@
 
         function FileUploadController($scope, $mdDialog) {
             $scope.uploadImage = function (multipartFile) {
-                UploadService.upload(multipartFile, FILE_PROFILE_PHOTO_TYPE).then(function (rs) {
+                UploadService.upload(multipartFile, FILE_USERS_TYPE).then(function (rs) {
                     if(rs.success)
                     {
                         $scope.user.photoURL = rs.data.url;
