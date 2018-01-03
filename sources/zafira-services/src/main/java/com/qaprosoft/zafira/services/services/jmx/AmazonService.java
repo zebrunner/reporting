@@ -28,6 +28,7 @@ import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -163,14 +164,14 @@ public class AmazonService implements IJMXService
 		return getS3Client().generatePresignedUrl(generatePresignedUrlRequest).toString();
 	}
 
-	public String saveFile(final FileUploadType file) throws ServiceException
+	public String saveFile(final FileUploadType file, long principalId) throws ServiceException
 	{
 		SdkBufferedInputStream stream = null;
 		GeneratePresignedUrlRequest request;
 		try {
 			stream = new SdkBufferedInputStream(file.getFile().getInputStream(), (int) (file.getFile().getSize() + 100));
 			String type = Mimetypes.getInstance().getMimetype(file.getFile().getOriginalFilename());
-			String key = getFileKey(file);
+			String key = getFileKey(file, principalId);
 
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setContentType(type);
@@ -201,9 +202,10 @@ public class AmazonService implements IJMXService
 		}
 	}
 
-	private String getFileKey(final FileUploadType file)
+	private String getFileKey(final FileUploadType file, long principalId)
 	{
-		return file.getType().name() + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20);
+		return file.getType().name() + FILE_PATH_SEPARATOR + principalId + FILE_PATH_SEPARATOR +
+				RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getFile().getOriginalFilename());
 	}
 
 	@ManagedAttribute(description = "Get amazon client")
