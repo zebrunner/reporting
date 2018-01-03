@@ -15,6 +15,27 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.jmx;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -22,29 +43,18 @@ import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.UUID;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
 @ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
@@ -137,9 +147,9 @@ public class AmazonService implements IJMXService
 	{
 		try
 		{
-			this.s3Client.getS3AccountOwner();
 			return this.s3Client.doesBucketExist(this.s3Bucket);
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			return false;
 		}
