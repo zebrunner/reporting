@@ -30,12 +30,14 @@
 			                    </div>
 			                    <div flex>
 			                        <md-chips ng-model="group.users"
+                                             class="photo-chip"
 			                                 md-require-match=true
 			                                 filter-selected=true
 			                                 md-autocomplete-snap
 			                                 md-on-add="addUserToGroup($chip, group)"
 			                                 md-on-remove="deleteUserFromGroup($chip, group)">
 			                           <md-chip-template>
+                                           <profile-photo ng-model="$chip.photoURL" size="40" auto-resize="false"></profile-photo>
 			                               {{$chip.username}}
 			                           </md-chip-template>
 			                           <md-autocomplete
@@ -47,7 +49,10 @@
 			                               md-no-cache="true"
 			                               placeholder="add user">
 			                               <md-item-template style="z-index: 10000;">
-			                                   <span>{{user.username}}</span>
+			                                   <span>
+                                                   <profile-photo ng-model="user.photoURL" size="40"></profile-photo>
+                                                   {{user.username}}
+                                               </span>
 			                               </md-item-template>
 			                               <md-not-found>
 			                                   No users matching "{{searchText}}" were found.
