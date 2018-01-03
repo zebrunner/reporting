@@ -30,7 +30,7 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('RABBITMQ_PASSWORD', 'qpsdemo', 'RABBITMQ'),
 	('RABBITMQ_WS', 'http://localhost:15674/stomp', 'RABBITMQ'),
 	('RABBITMQ_ENABLED', false, 'RABBITMQ'),
-	('COMMON_URL', null, null);
+	('COMPANY_LOGO_URL', null, null);
 
 INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION) VALUES ('UNKNOWN', '');
 

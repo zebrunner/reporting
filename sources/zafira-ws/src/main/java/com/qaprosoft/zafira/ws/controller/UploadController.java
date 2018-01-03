@@ -33,6 +33,6 @@ public class UploadController extends AbstractController
 	public @ResponseBody String uploadFile(@RequestHeader(value = "FileType", required = true) Type type, 
 			@RequestParam(value = "file", required = true) MultipartFile file) throws ServiceException
 	{
-		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
+		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type), getPrincipalId()));
 	}
 }

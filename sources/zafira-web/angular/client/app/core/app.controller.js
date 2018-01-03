@@ -127,7 +127,7 @@
             });
 
             $scope.loadCompanyLogo = function () {
-                SettingsService.getSettingValueByName('COMMON_URL').then(function(rs) {
+                SettingsService.getSettingValueByName('COMPANY_LOGO_URL').then(function(rs) {
                     if(rs.success)
                     {
                         $rootScope.companyLogo = rs.data;
