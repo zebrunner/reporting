@@ -105,7 +105,7 @@
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}"
-                                        ng-dblclick="switchTestRunExpand(testRun)" ng-mouseover="showExpandButton(testRun)">
+                                        ng-dblclick="switchTestRunExpand(testRun)" ng-mouseover="showExpandButton(testRun)" ng-mouseleave="hideExpandButton()">
                                         <td md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
@@ -232,7 +232,7 @@
                                     <tr ng-if="testRun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testRun)">
                                         <td md-cell colspan="7">
                                             <table md-table class="table">
-                                                <thead md-head>
+                                                <thead md-head data-ng-if="testsAreLoading.id != testRun.id">
                                                     <tr md-row>
                                                         <th md-column class="row sort-new" colspan="4">
                                                             <div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
@@ -245,7 +245,15 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
+                                                <tr md-row >
+                                                    <td md-cell colspan="7" class="text-center" data-ng-if="testsAreLoading.id == testRun.id">
+                                                        <span>
+                                                            <md-progress-circular md-mode="indeterminate" md-diameter="20px" style="margin: 3px auto" ></md-progress-circular>
+                                                            Tests are loading...
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
                                                         <td>
                                                         	<b>{{::test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
                                                         	<div>
@@ -289,7 +297,7 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <tr data-ng-if="testsAreLoading.id != testRun.id">
                                                         <td md-cell colspan="7" class="text-center">
                                                             <md-button ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false"
                                                                        class="md-icon-button no-padding expand-button" style="margin-top: 0 !important;">
