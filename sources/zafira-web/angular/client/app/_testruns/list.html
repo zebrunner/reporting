@@ -105,7 +105,7 @@
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}"
-                                        ng-dblclick="switchTestRunExpand(testRun)" ng-mouseover="showExpandButton(testRun)" ng-mouseleave="hideExpandButton()">
+                                        ng-mouseover="showExpandButton(testRun)" ng-mouseleave="hideExpandButton()">
                                         <td md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
@@ -229,7 +229,7 @@
                                             </md-menu>
                                         </td>
                                     </tr>
-                                    <tr ng-if="testRun.expand" ng-repeat-end="" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr ng-if="testRun.expand" ng-repeat-end="">
                                         <td md-cell colspan="7">
                                             <table md-table class="table">
                                                 <thead md-head data-ng-if="testsAreLoading.id != testRun.id">
@@ -249,7 +249,7 @@
                                                     <td md-cell colspan="7" class="text-center" data-ng-if="testsAreLoading.id == testRun.id">
                                                         <span>
                                                             <md-progress-circular md-mode="indeterminate" md-diameter="20px" style="margin: 3px auto" ></md-progress-circular>
-                                                            Tests are loading...
+                                                            Tests are loaded...
                                                         </span>
                                                     </td>
                                                 </tr>
