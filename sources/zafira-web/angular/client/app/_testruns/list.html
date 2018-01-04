@@ -104,7 +104,8 @@
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}" ng-dblclick="switchTestRunExpand(testRun)">
+                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}"
+                                        ng-dblclick="switchTestRunExpand(testRun)" ng-mouseover="showExpandButton(testRun)">
                                         <td md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
@@ -136,7 +137,11 @@
                                         </td>
                                         <td md-cell class="no-padding">
                                         	<div class="label label-default pull-left">{{testRun.env}}</div>
-                                         </td>
+                                            <md-button aria-label="{{testRun.id}}" data-ng-if="expandButton.id == testRun.id" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                                <i data-ng-if="testRun.expand == false" class="fa fa-angle-double-down" aria-hidden="true" style="color: rgba(0,0,0,0.4);"></i>
+                                                <i data-ng-if="testRun.expand == true" class="fa fa-angle-double-up" aria-hidden="true" style="color: rgba(0,0,0,0.4);"></i>
+                                            </md-button>
+                                        </td>
                                         <td md-cell class="no-padding browser-version_column">
                                         	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
                                              <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
@@ -282,6 +287,14 @@
                                                                 </md-menu-content>
                                                             </md-menu>
                                                             </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td md-cell colspan="7" class="text-center">
+                                                            <md-button ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false"
+                                                                       class="md-icon-button no-padding expand-button" style="margin-top: 0 !important;">
+                                                                <i class="fa fa-angle-double-up" aria-hidden="true" style="color: rgba(0,0,0,0.4);"></i>
+                                                            </md-button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
