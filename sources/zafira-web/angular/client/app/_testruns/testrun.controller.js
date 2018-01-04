@@ -22,6 +22,7 @@
         $scope.selectedTestRuns = {};
         $scope.expandedTestRuns = [];
         $scope.expandButton = {};
+        $scope.testsAreLoading = {};
 
         $scope.showRealTimeEvents = true;
 
@@ -346,12 +347,13 @@
         };
 
         $scope.loadTests = function (testRunId) {
+            $scope.testsAreLoading.id = testRunId;
             $scope.lastTestRunOpened = testRunId;
             var testSearchCriteria = {
                     'page': 1,
                     'pageSize': 100000,
                     'testRunId': testRunId
-            }
+            };
             TestService.searchTests(testSearchCriteria).then(function(rs) {
                 if(rs.success)
                 {
@@ -366,6 +368,7 @@
                         $scope.addTest(test);
                     }
                     testRun.inProgress = inProgressTests;
+                    $scope.testsAreLoading.id = null;
                 }
                 else
                 {
@@ -521,6 +524,10 @@
 
         $scope.showExpandButton = function (testRun){
             $scope.expandButton.id = testRun.id;
+        };
+
+        $scope.hideExpandButton = function (){
+            $scope.expandButton.id = null;
         };
 
         // -----------------------------------------------------------
