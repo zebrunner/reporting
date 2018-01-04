@@ -83,6 +83,17 @@ body {
     max-width: fit-content;
 }
 
+.expand-button {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    min-height: 16px !important;
+    height: 16px !important;
+    width: 16px !important;
+    margin-top: 16px !important;
+    font-size: 16px;
+}
+
 .body-auth,
 .body-err {
     &.app > .main-container:before {
