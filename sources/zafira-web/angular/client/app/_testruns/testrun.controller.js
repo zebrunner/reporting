@@ -22,7 +22,6 @@
         $scope.selectedTestRuns = {};
         $scope.expandedTestRuns = [];
         $scope.expandButton = {};
-        $scope.testsAreLoading = {};
 
         $scope.showRealTimeEvents = true;
 
@@ -347,7 +346,6 @@
         };
 
         $scope.loadTests = function (testRunId) {
-            $scope.testsAreLoading.id = testRunId;
             $scope.lastTestRunOpened = testRunId;
             var testSearchCriteria = {
                     'page': 1,
@@ -367,8 +365,10 @@
                         }
                         $scope.addTest(test);
                     }
+                    if (angular.equals({}, testRun.tests) || testRun.tests.length === 0){
+                        testRun.tests = null
+                    }
                     testRun.inProgress = inProgressTests;
-                    $scope.testsAreLoading.id = null;
                 }
                 else
                 {
@@ -782,7 +782,7 @@
                 $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
             } else {
                 testRun.expand = false;
-                testRun.tests = [];
+                testRun.tests = {};
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
                 if(subscription != null)

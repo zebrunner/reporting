@@ -94,6 +94,59 @@ body {
     font-size: 16px;
 }
 
+.tests-loading-spinner {
+    margin: 3px auto;
+}
+
+.task-label-bg {
+    background-color: #337ab7;
+}
+
+.bug-label-bg {
+    background-color: #d9534f;
+}
+
+.fixed-search-column {
+    min-width: 360px;
+}
+
+.fixed-testrun-name-header {
+    min-width: 385px;
+}
+
+.testrun-appversion-icon {
+    font-size:12px;
+    display: inline;
+}
+
+.expand-icon {
+    color: rgba(0,0,0,0.4);
+}
+
+.comments-area {
+    color: #00BCD4
+}
+
+.startedat-column {
+    padding-right: 0px !important;
+    min-width: 90px;
+}
+
+.fixed-testcount-column {
+    min-width: 260px;
+}
+
+.fixed-md-menu-content {
+    max-height: 600px;
+}
+
+.artifact-button {
+    display: flex;
+}
+
+.close-expand-icon {
+    margin-top: 0 !important;
+}
 .body-auth,
 .body-err {
     &.app > .main-container:before {
