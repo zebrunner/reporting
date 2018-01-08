@@ -240,16 +240,16 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
+                                                    <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{main.theme}}' : test.status == 'IN_PROGRESS', 'success {{main.theme}}' : test.status == 'PASSED', 'danger {{main.theme}}' : test.status == 'FAILED', 'warning {{main.theme}}' : test.status == 'SKIPPED'}">
                                                         <td>
-                                                        	<b>{{::test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
+                                                        	<b>{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding" style="background-color: #d9534f;">BLOCKER</span></b>
                                                         	<div>
                                                                 <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
-                                                                <span data-ng-if="::test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{::test.owner}}</span>
-                                                                <span data-ng-if="::test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{::test.secondaryOwner}}</span>
+                                                                <span data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                <span data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                 <span data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                             </div>
-                                                        	<div class="result_error {{test.status}} {{::main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
+                                                        	<div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                                                                 <div class="white-space-pre-line"><show-more element-id="test.id" text="test.message" limit="100" ></show-more></div>
                                                             </div>
                                                         </td>
@@ -274,7 +274,7 @@
                                                                 </md-button>
                                                                 <md-menu-content>
                                                                     <md-menu-item data-ng-repeat="artifact in test.artifacts">
-                                                                        <md-button href="{{::artifact.link}}" style="display: flex;" target="blank">{{::artifact.name}}</md-button>
+                                                                        <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
                                                                    </md-menu-item>
                                                                     <md-menu-item data-ng-if="rabbitmq.enabled && testRun.status == 'IN_PROGRESS'">
 				                                                        <md-button data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
