@@ -365,7 +365,7 @@
                         }
                         $scope.addTest(test);
                     }
-                    if (angular.equals({}, testRun.tests) || testRun.tests.length === 0){
+                    if (angular.equals({}, testRun.tests)){
                         testRun.tests = null
                     }
                     testRun.inProgress = inProgressTests;
