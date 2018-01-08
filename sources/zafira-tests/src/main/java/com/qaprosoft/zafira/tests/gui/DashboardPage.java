@@ -16,11 +16,32 @@
 package com.qaprosoft.zafira.tests.gui;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class DashboardPage extends AbstractPage
 {
+
+	@FindBy(xpath="//md-menu/button[descendant::img]")
+	private WebElement userMenuButton;
+
+	@FindBy(css="a[href$='profile']")
+	private WebElement userProfileButton;
+
 	public DashboardPage(WebDriver driver, int dashboardId)
 	{
 		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
+
+	public UserProfilePage goToUserProfilePage()
+	{
+		userMenuButton.click();
+		userProfileButton.click();
+		UserProfilePage userProfilePage = new UserProfilePage(driver);
+		userProfilePage.open();
+		return userProfilePage;
+	}
+
+
+
 }
