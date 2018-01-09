@@ -26,7 +26,17 @@
                     </div>
                     <label>&nbsp{{newKnownIssue.assigneeMessage}}</label>
                     <p>
-                    <div layout layout-sm="column">
+                        <md-radio-group layout="row" ng-model="issueType" ng-init="issueType='Jira'">
+                            <md-radio-button value="Jira" ng-checked="true" >Jira ID</md-radio-button >
+                            <md-radio-button value="Github">Github ID</md-radio-button>
+                        </md-radio-group>
+                    <div layout layout-sm="column" data-ng-if="issueType == 'Github'">
+                        <md-input-container flex>
+                            <label>Github ID</label>
+                            <input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" required/>
+                        </md-input-container>
+                    </div>
+                    <div layout layout-sm="column" data-ng-if="issueType == 'Jira'" >
                         <md-input-container flex>
                             <label>Jira ID</label>
                             <input type="text" ng-pattern="/^[A-z]+-[0-9]+$/" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
@@ -51,13 +61,13 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="! isNew" class="btn btn-warning"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="known_issue_form.$invalid">
+            <md-button data-ng-if="! isNew" class="md-raised btn-w-md md-active"  data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteKnownIssue(newKnownIssue.id)" data-ng-disabled="known_issue_form.$invalid">
                 Clear
             </md-button>
-            <md-button data-ng-if="isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
+            <md-button data-ng-if="isNew" class="md-raised btn-w-md md-primary" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
                 Create
             </md-button>
-            <md-button data-ng-if="! isNew" class="btn btn-success" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
+            <md-button data-ng-if="! isNew" class="md-raised btn-w-md md-primary" data-ng-click="createKnownIssue()" data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isJiraIdClosed) && isConnectedToJira">
                 Update
             </md-button>
         </md-dialog-actions>
