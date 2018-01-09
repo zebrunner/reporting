@@ -21,6 +21,7 @@
         $scope.totalResults = 0;
         $scope.selectedTestRuns = {};
         $scope.expandedTestRuns = [];
+        $scope.expandButton = {};
 
         $scope.showRealTimeEvents = true;
 
@@ -350,7 +351,7 @@
                     'page': 1,
                     'pageSize': 100000,
                     'testRunId': testRunId
-            }
+            };
             TestService.searchTests(testSearchCriteria).then(function(rs) {
                 if(rs.success)
                 {
@@ -363,6 +364,9 @@
                             inProgressTests++;
                         }
                         $scope.addTest(test);
+                    }
+                    if (angular.equals({}, testRun.tests)){
+                        testRun.tests = null
                     }
                     testRun.inProgress = inProgressTests;
                 }
@@ -516,6 +520,14 @@
             $scope.showNotifyInSlackOption = ($scope.isSlackAvailable && $scope.slackChannels.indexOf(testRun.job.name) !== -1) && testRun.reviewed != null && testRun.reviewed;
             $scope.showBuildNowOption = $scope.jenkins.enabled;
             $scope.showDeleteTestRunOption = true;
+        };
+
+        $scope.showExpandButton = function (testRun){
+            $scope.expandButton.id = testRun.id;
+        };
+
+        $scope.hideExpandButton = function (){
+            $scope.expandButton.id = null;
         };
 
         // -----------------------------------------------------------
@@ -770,7 +782,7 @@
                 $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
             } else {
                 testRun.expand = false;
-                testRun.tests = [];
+                testRun.tests = {};
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
                 if(subscription != null)
