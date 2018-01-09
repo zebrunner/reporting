@@ -55,11 +55,17 @@
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}" ng-dblclick="loadTests(testcase)">
+                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}">
                                     <td md-cell>#{{testcase.id}}</td>
                                     <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
-                                    <td md-cell><span class="label label-default">{{testcase.testSuite.fileName}}</span></td>
+                                    <td md-cell>
+                                    		<span class="label label-default">{{testcase.testSuite.fileName}}</span>
+                                    		<md-button aria-label="Show or hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                              <i data-ng-if="!testcase.expand" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
+                                              <i data-ng-if="testcase.expand" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+                                         </md-button>
+                                    	</td>
                                     <td md-cell>{{testcase.primaryOwner.username}}</td>
                                     <td md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
@@ -78,7 +84,7 @@
                                         </md-menu>
 									</td>
                                 </tr>
-                                <tr ng-if="testcase.expand" ng-repeat-end="" ng-dblclick="loadTests(testcase)">
+                                <tr ng-if="testcase.expand" ng-repeat-end="">
 						            <td md-cell colspan="7">
 						            	<table class="table">
 	                                        <thead>
@@ -90,37 +96,44 @@
 	                                            </tr>
 	                                        </thead>
 	                                        <tbody>
-	                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id" ng-class="{'info {{main.theme}}' : test.status == 'IN_PROGRESS', 'success {{main.theme}}' : test.status == 'PASSED', 'danger {{main.theme}}' : test.status == 'FAILED', 'warning {{main.theme}}' : test.status == 'SKIPPED'}">
-	                                        		<td>
-	                                        			<b>{{test.name}}</b>
-	                                        		</td>
-	                                        		<td>
-	                                        			{{test.testConfig.env}}
-	                                        		</td>
-	                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
-														<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+		                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id" ng-class="{'info {{main.theme}}' : test.status == 'IN_PROGRESS', 'success {{main.theme}}' : test.status == 'PASSED', 'danger {{main.theme}}' : test.status == 'FAILED', 'warning {{main.theme}}' : test.status == 'SKIPPED'}">
+		                                        		<td>
+		                                        			<b>{{test.name}}</b>
+		                                        		</td>
+		                                        		<td>
+		                                        			{{test.testConfig.env}}
+		                                        		</td>
+		                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
+															<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+		                                                </td>
+		                                                <td class="text-center">
+	                                                        <div data-ng-if="test.artifacts.length !=0" class="pull-right">
+	                                                            <md-menu>
+	                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+	                                                                    <md-icon class="material-icons">attachment</md-icon>
+	                                                                </md-button>
+	                                                                <md-menu-content>
+	                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
+	                                                                        <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
+	                                                                    </md-menu-item>
+	                                                                </md-menu-content>
+	                                                            </md-menu>
+	                                                        </div>
+		                                                </td>
+		                                        	</tr>
+		                                        	<tr data-ng-hide="(testcase.tests | isEmpty)">
+	                                                <td md-cell colspan="4" class="text-center">
+	                                                    <md-button aria-label="Hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
+	                                                        <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+	                                                    </md-button>
 	                                                </td>
-	                                                <td class="text-center">
-                                                        <div data-ng-if="test.artifacts.length !=0" class="pull-right">
-                                                            <md-menu>
-                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-                                                                    <md-icon class="material-icons">attachment</md-icon>
-                                                                </md-button>
-                                                                <md-menu-content>
-                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
-                                                                        <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
-                                                                    </md-menu-item>
-                                                                </md-menu-content>
-                                                            </md-menu>
-                                                        </div>
-	                                                </td>
-	                                        	</tr>
+	                                            </tr>
 	                                        </tbody>
 	                                    </table>
 						            </td>
 						        </tr>
-                                <tr md-row data-ng-if="sr.results.length == 0">
-                                    <td md-cell colspan="6" class="text-center">No data</td>
+                                <tr md-row data-ng-if="(sr.results | isEmpty)">
+                                    <td md-cell colspan="6" class="text-center">No test cases</td>
                                 </tr>
                             </tbody>
                         </table>
