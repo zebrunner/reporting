@@ -227,7 +227,7 @@
                                     <tr ng-if="testRun.expand" ng-repeat-end="">
                                         <td md-cell colspan="7">
                                             <table md-table class="table">
-                                                <thead md-head data-ng-hide="(testRun.tests | isEmpty)">
+                                                <thead md-head data-ng-hide="testRun.tests == null">
                                                     <tr md-row>
                                                         <th md-column class="row sort-new" colspan="4">
                                                             <div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
@@ -241,7 +241,7 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr md-row >
-                                                    <td md-cell colspan="7" class="text-center"  data-ng-hide="testRun.tests == null || !(testRun.tests | isEmpty)" >
+                                                    <td md-cell colspan="7" class="text-center" data-ng-show="testRun.tests == null" >
                                                         <span>
                                                             <md-progress-circular md-mode="indeterminate" md-diameter="20px" class="tests-loading-spinner"></md-progress-circular>
                                                             Tests are loading...
@@ -292,7 +292,7 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <tr data-ng-hide="(testRun.tests | isEmpty)">
+                                                    <tr data-ng-hide="testRun.tests == null">
                                                         <td md-cell colspan="7" class="text-center">
                                                             <md-button aria-label="Hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
                                                                 <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
