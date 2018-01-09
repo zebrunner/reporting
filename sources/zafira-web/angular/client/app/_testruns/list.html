@@ -230,8 +230,8 @@
                                                 <thead md-head data-ng-hide="testRun.tests == null">
                                                     <tr md-row>
                                                         <th md-column class="row sort-new" colspan="4">
-                                                            <div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
-                                                        	<div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
+                                                             <div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
+                                                        	    <div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
                                                        		<div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div >
                                                        		<div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div >
                                                        		<div sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
@@ -240,15 +240,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr md-row >
-                                                    <td md-cell colspan="7" class="text-center" data-ng-show="testRun.tests == null" >
-                                                        <span>
-                                                            <md-progress-circular md-mode="indeterminate" md-diameter="20px" class="tests-loading-spinner"></md-progress-circular>
-                                                            Tests are loading...
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                                <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
+                                                		<tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
                                                         <td>
                                                         	<b>{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                         	<div>
@@ -292,8 +284,16 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <tr data-ng-hide="testRun.tests == null">
-                                                        <td md-cell colspan="7" class="text-center">
+                                                    <tr md-row >
+	                                                    <td md-cell colspan="4" class="text-center" data-ng-show="!testRun.tests" >
+	                                                        <span>
+	                                                            <md-progress-circular md-mode="indeterminate" md-diameter="20px" class="tests-loading-spinner"></md-progress-circular>
+	                                                            Tests are loading...
+	                                                        </span>
+	                                                    </td>
+	                                                </tr>
+                                                    <tr data-ng-hide="!testRun.tests">
+                                                        <td md-cell colspan="4" class="text-center">
                                                             <md-button aria-label="Hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
                                                                 <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
                                                             </md-button>
@@ -304,7 +304,7 @@
                                         </td>
                                     </tr>
                                     <tr md-row data-ng-if="(testRuns | isEmpty)">
-                                        <td md-cell colspan="7" class="text-center">No data</td>
+                                        <td md-cell colspan="7" class="text-center">No test runs</td>
                                     </tr>
                                 </tbody>
                             </table>
