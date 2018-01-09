@@ -22,7 +22,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LoginPage extends AbstractPage
+public class LoginPage extends BasePage
 {
 	@FindBy(name="username")
 	private WebElement usernameTextField;
