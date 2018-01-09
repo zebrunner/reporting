@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.tests.gui;
 
 import org.openqa.selenium.WebDriver;
 
-public class DashboardPage extends AbstractPage
+public class DashboardPage extends BasePage
 {
 	public DashboardPage(WebDriver driver, int dashboardId)
 	{
