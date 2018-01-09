@@ -55,11 +55,17 @@
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}" ng-dblclick="loadTests(testcase)">
+                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}">
                                     <td md-cell>#{{testcase.id}}</td>
                                     <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
-                                    <td md-cell><span class="label label-default">{{testcase.testSuite.fileName}}</span></td>
+                                    <td md-cell>
+                                    		<span class="label label-default">{{testcase.testSuite.fileName}}</span>
+                                    		<md-button aria-label="Show or hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                              <i data-ng-if="!testcase.expand" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
+                                              <i data-ng-if="testcase.expand" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+                                         </md-button>
+                                    	</td>
                                     <td md-cell>{{testcase.primaryOwner.username}}</td>
                                     <td md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
@@ -78,7 +84,7 @@
                                         </md-menu>
 									</td>
                                 </tr>
-                                <tr ng-if="testcase.expand" ng-repeat-end="" ng-dblclick="loadTests(testcase)">
+                                <tr ng-if="testcase.expand" ng-repeat-end="">
 						            <td md-cell colspan="7">
 						            	<table class="table">
 	                                        <thead>
@@ -115,6 +121,13 @@
                                                         </div>
 	                                                </td>
 	                                        	</tr>
+	                                        	<tr data-ng-hide="(testcase.tests | isEmpty)">
+                                                <td md-cell colspan="7" class="text-center">
+                                                    <md-button aria-label="Hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
+                                                        <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+                                                    </md-button>
+                                                </td>
+                                            </tr>
 	                                        </tbody>
 	                                    </table>
 						            </td>
