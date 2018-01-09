@@ -15,9 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DashboardPage extends AbstractPage
 {
@@ -35,6 +38,7 @@ public class DashboardPage extends AbstractPage
 
 	public UserProfilePage goToUserProfilePage()
 	{
+		new WebDriverWait(driver, 5).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
 		userMenuButton.click();
 		userProfileButton.click();
 		UserProfilePage userProfilePage = new UserProfilePage(driver);

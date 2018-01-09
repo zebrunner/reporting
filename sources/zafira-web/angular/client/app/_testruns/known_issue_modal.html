@@ -26,17 +26,7 @@
                     </div>
                     <label>&nbsp{{newKnownIssue.assigneeMessage}}</label>
                     <p>
-                        <md-radio-group layout="row" ng-model="issueType" ng-init="issueType='Jira'">
-                            <md-radio-button value="Jira" ng-checked="true" >Jira ID</md-radio-button >
-                            <md-radio-button value="Github">Github ID</md-radio-button>
-                        </md-radio-group>
-                    <div layout layout-sm="column" data-ng-if="issueType == 'Github'">
-                        <md-input-container flex>
-                            <label>Github ID</label>
-                            <input type="text" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" required/>
-                        </md-input-container>
-                    </div>
-                    <div layout layout-sm="column" data-ng-if="issueType == 'Jira'" >
+                    <div layout layout-sm="column">
                         <md-input-container flex>
                             <label>Jira ID</label>
                             <input type="text" ng-pattern="/^[A-z]+-[0-9]+$/" class="form-control validation" data-ng-model="newKnownIssue.jiraId" data-ng-disabled="isFieldsDisabled" data-ng-change="onChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
