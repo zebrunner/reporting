@@ -26,10 +26,6 @@
                     <md-tooltip md-direction="top">Delete</md-tooltip>
                     <span class="fa fa-trash" aria-hidden="true"></span>
                 </md-button>
-                <!--<md-button aria-label="menu" ng-click="followSelectedTestRuns()" class="md-fab md-raised md-fab-sm">
-                    <md-tooltip md-direction="top">Follow</md-tooltip>
-                    <span class="fa fa-eye" aria-hidden="true"></span>
-                </md-button>-->
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 0" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
                     <span class="fa fa-ban" aria-hidden="true"></span>
@@ -104,8 +100,7 @@
                                     <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
-                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}"
-                                        ng-mouseover="showExpandButton(testRun)" ng-mouseleave="hideExpandButton()">
+                                    <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}">
                                         <td md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox class="md-secondary"
@@ -136,14 +131,14 @@
                                            	<small><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
                                         </td>
                                         <td md-cell class="no-padding">
-                                        	<div class="label label-default pull-left">{{testRun.env}}</div>
-                                            <md-button aria-label="{{testRun.id}}" data-ng-if="expandButton.id == testRun.id" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
-                                                <i data-ng-if="testRun.expand == false" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
-                                                <i data-ng-if="testRun.expand == true" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
-                                            </md-button>
+                                        	     <span class="label label-default">{{testRun.env}}</span>
+	                                          <md-button aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+	                                              <i data-ng-if="!testRun.expand" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
+	                                              <i data-ng-if="testRun.expand" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+	                                          </md-button>
                                         </td>
                                         <td md-cell class="no-padding browser-version_column">
-                                        	 <span data-ng-if="testRun.platform != ''"class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform}}"/>
                                              <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>
@@ -299,8 +294,7 @@
                                                     </tr>
                                                     <tr data-ng-hide="(testRun.tests | isEmpty)">
                                                         <td md-cell colspan="7" class="text-center">
-                                                            <md-button ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false"
-                                                                       class="md-icon-button no-padding expand-button close-expand-icon">
+                                                            <md-button aria-label="Hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
                                                                 <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
                                                             </md-button>
                                                         </td>
