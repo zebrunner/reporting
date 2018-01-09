@@ -21,7 +21,6 @@
         $scope.totalResults = 0;
         $scope.selectedTestRuns = {};
         $scope.expandedTestRuns = [];
-        $scope.expandButton = {};
 
         $scope.showRealTimeEvents = true;
 
@@ -520,14 +519,6 @@
             $scope.showNotifyInSlackOption = ($scope.isSlackAvailable && $scope.slackChannels.indexOf(testRun.job.name) !== -1) && testRun.reviewed != null && testRun.reviewed;
             $scope.showBuildNowOption = $scope.jenkins.enabled;
             $scope.showDeleteTestRunOption = true;
-        };
-
-        $scope.showExpandButton = function (testRun){
-            $scope.expandButton.id = testRun.id;
-        };
-
-        $scope.hideExpandButton = function (){
-            $scope.expandButton.id = null;
         };
 
         // -----------------------------------------------------------
