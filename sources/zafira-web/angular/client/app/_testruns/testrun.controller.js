@@ -144,7 +144,9 @@
             if (testRun == null) {
                 return;
             }
-
+            if(testRun.tests == null){
+                testRun.tests = {};
+            }
             testRun.tests[test.id] = test;
         };
 
@@ -249,7 +251,7 @@
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
                 testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL;
-                testRun.tests = {};
+                testRun.tests = null;
                 $scope.testRuns[testRun.id] = testRun;
             }
             else {
@@ -322,10 +324,8 @@
                         var testRun = data.results[i];
                         var browserVersion = $scope.splitPlatform(data.results[i].platform);
                         testRun.browserVersion = browserVersion;
+                        testRun.tests = null;
                         $scope.addTestRun(testRun);
-                        if (testRun.status == 'IN_PROGRESS') {
-                            $scope.loadTests(testRun.id);
-                        }
                     }
                     if ($scope.testRunId) {
                         $scope.loadTests($scope.testRunId);
@@ -359,15 +359,8 @@
                     var testRun = $scope.testRuns[testRunId];
                     for (var i = 0; i < data.results.length; i++) {
                         var test = data.results[i];
-                        if (test.status == 'IN_PROGRESS') {
-                            inProgressTests++;
-                        }
-                        $scope.addTest(test);
+                         $scope.addTest(test);
                     }
-                    if (angular.equals({}, testRun.tests)){
-                        testRun.tests = null
-                    }
-                    testRun.inProgress = inProgressTests;
                 }
                 else
                 {
@@ -773,7 +766,7 @@
                 $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
             } else {
                 testRun.expand = false;
-                testRun.tests = {};
+                testRun.tests = null;
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
                 if(subscription != null)
