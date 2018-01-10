@@ -331,7 +331,7 @@
 			</if>
 			<if test="null != platform">
 	            <![CDATA[
-	               AND TR.PLATFORM = #{platform}
+	               AND LOWER(TR.PLATFORM) = #{platform}
 	            ]]>
 			</if>
 			<if test="null != appVersion">
