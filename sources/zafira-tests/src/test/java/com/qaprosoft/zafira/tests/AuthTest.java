@@ -18,8 +18,8 @@ package com.qaprosoft.zafira.tests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.tests.gui.DashboardPage;
-import com.qaprosoft.zafira.tests.gui.LoginPage;
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 
 
 public class AuthTest extends AbstractTest

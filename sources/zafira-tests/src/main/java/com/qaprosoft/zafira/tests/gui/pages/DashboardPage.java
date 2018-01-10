@@ -13,35 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui;
+package com.qaprosoft.zafira.tests.gui.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.qaprosoft.zafira.tests.util.Config;
-
-public abstract class AbstractPage
+public class DashboardPage extends BasePage
 {
-	protected String url;
-	
-	protected WebDriver driver;
 
-	public AbstractPage(WebDriver driver, String path)
+	@FindBy(xpath="//md-menu/button[descendant::img]")
+	private WebElement userMenuButton;
+
+	@FindBy(css="a[href$='profile']")
+	private WebElement userProfileButton;
+
+	public DashboardPage(WebDriver driver, int dashboardId)
 	{
-		this.driver = driver;
-		this.url = Config.get("base_url") + path;
-		PageFactory.initElements(driver, this);
+		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
-	
-	public void open()
+
+	public UserProfilePage goToUserProfilePage()
 	{
-		driver.get(url);
+		new WebDriverWait(driver, 5).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
+		userMenuButton.click();
+		userProfileButton.click();
+		UserProfilePage userProfilePage = new UserProfilePage(driver);
+		userProfilePage.open();
+		return userProfilePage;
 	}
-	
-	public boolean isOpened()
-	{
-		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
-	}
+
+
+
 }
