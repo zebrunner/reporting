@@ -13,42 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui;
+package com.qaprosoft.zafira.tests.gui.pages;
 
-import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.qaprosoft.zafira.tests.util.Config;
-
-public abstract class AbstractPage
+public class LoginPage extends BasePage
 {
-	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
-
-	protected String url;
+	@FindBy(name="username")
+	private WebElement usernameTextField;
 	
-	protected WebDriver driver;
-
-	public AbstractPage(WebDriver driver, String path)
+	@FindBy(name="password")
+	private WebElement passwordTextField;
+	
+	@FindBy(xpath="//button[@type='submit']")
+	private WebElement loginButton;
+	
+	public LoginPage(WebDriver driver)
 	{
-		this.driver = driver;
-		this.url = Config.get("base_url") + path;
-		PageFactory.initElements(driver, this);
+		super(driver, "/signin");
 	}
 	
-	public void open()
+	public DashboardPage login(String username, String password)
 	{
-		driver.get(url);
-		driver.manage().window().maximize();
+		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
+		usernameTextField.sendKeys(username);
+		passwordTextField.sendKeys(password);
+		loginButton.click();
+		return new DashboardPage(driver, 2);
 	}
 	
-	public boolean isOpened()
+	public boolean isInvalidCredentials()
 	{
-		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
+		return driver.findElement(By.xpath("//p[text()='Invalid credentials']")).isDisplayed();
 	}
 }

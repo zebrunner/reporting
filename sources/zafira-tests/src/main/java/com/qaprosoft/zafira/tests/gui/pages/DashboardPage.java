@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui;
+package com.qaprosoft.zafira.tests.gui.pages;
 
 import org.openqa.selenium.WebDriver;
 
