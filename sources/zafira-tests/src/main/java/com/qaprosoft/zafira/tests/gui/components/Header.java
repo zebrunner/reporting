@@ -12,16 +12,16 @@ public class Header extends AbstractPage
 	private By loadingBarSpinnerLocator = By.id("loading-bar-spinner");
 
 	@FindBy(xpath = "//header//*[contains(@class, 'logo-text')]")
-	private WebElement logo;
+	private WebElement zafiraLogo;
 
 	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
-	private WebElement companyImage;
+	private WebElement companyLogo;
 
 	@FindBy(xpath = "//header//button[.//*[text() = 'Project']]")
-	private WebElement projectSelect;
+	private WebElement projectFilterButton;
 
 	@FindBy(xpath = "//header//button[.//img]")
-	private WebElement profileNavSelect;
+	private WebElement userMenuButton;
 
 	@FindBy(xpath = "//header//*[@class='menu-button']")
 	private WebElement mobileMenuButton;
@@ -36,31 +36,31 @@ public class Header extends AbstractPage
 		return loadingBarSpinnerLocator;
 	}
 
-	public WebElement getLogo()
+	public WebElement getZafiraLogo()
 	{
-		return logo;
+		return zafiraLogo;
 	}
 
-	public WebElement getCompanyImage()
+	public WebElement getCompanyLogo()
 	{
-		return companyImage;
+		return companyLogo;
 	}
 
-	public ProjectListContainer clickProjectSelect()
+	public ProjectFilter clickProjectFilterButton()
 	{
-		this.projectSelect.click();
-		return new ProjectListContainer(driver, null);
+		this.projectFilterButton.click();
+		return new ProjectFilter(driver, null);
 	}
 
-	public ProfileNavListContainer clickProfileNavSelect()
+	public UserMenu clickUserMenuButton()
 	{
-		this.profileNavSelect.click();
-		return new ProfileNavListContainer(driver, null);
+		this.userMenuButton.click();
+		return new UserMenu(driver, null);
 	}
 
-	public WebElement getProfileNavSelect()
+	public WebElement getUserMenuButton()
 	{
-		return profileNavSelect;
+		return userMenuButton;
 	}
 
 	public WebElement getMobileMenuButton()

@@ -1,8 +1,8 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.tests.gui.DashboardPage;
-import com.qaprosoft.zafira.tests.gui.LoginPage;
-import com.qaprosoft.zafira.tests.gui.UserProfilePage;
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
+import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
