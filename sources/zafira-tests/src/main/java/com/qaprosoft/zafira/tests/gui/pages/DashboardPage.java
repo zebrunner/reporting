@@ -15,21 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DashboardPage extends BasePage
 {
-
-	@FindBy(xpath="//md-menu/button[descendant::img]")
-	private WebElement userMenuButton;
-
-	@FindBy(css="a[href$='profile']")
-	private WebElement userProfileButton;
 
 	public DashboardPage(WebDriver driver, int dashboardId)
 	{
@@ -38,12 +27,9 @@ public class DashboardPage extends BasePage
 
 	public UserProfilePage goToUserProfilePage()
 	{
-		new WebDriverWait(driver, 5).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
-		userMenuButton.click();
-		userProfileButton.click();
-		UserProfilePage userProfilePage = new UserProfilePage(driver);
-		userProfilePage.open();
-		return userProfilePage;
+        this.waitUntilElementIsPresent(this.getHeader().getUserMenuButton(),2);
+        this.getHeader().clickUserMenuButton().getUserProfileButton().click();
+        return new UserProfilePage(driver);
 	}
 
 
