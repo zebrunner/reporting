@@ -424,14 +424,17 @@ app.factory('progressBarService', function() {
    * @return {float} 0 --> 100
    */
   ProgressBarService.prototype.calculateProgressBar = function calculateProgressBar(startValue, remainingTime, endTimeAttr, coutdown, eta) {
-	  
 
     displayProgressBar = Math.round((eta - remainingTime / 1000) / eta * 100);
-
-    if(displayProgressBar > 100){ //security
-      displayProgressBar = 100;
+    // Security
+    if(displayProgressBar < 0)
+    {
+    		displayProgressBar = 0;
     }
-
+    else if(displayProgressBar > 100)
+    { 
+      displayProgressBar = 100;
+    } 
     return displayProgressBar;
   };
 
