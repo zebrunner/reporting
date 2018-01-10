@@ -75,7 +75,7 @@ public abstract class AbstractPage
 		return result;
 	}
 
-	public boolean waitUntilElementPresent(By by, long seconds)
+	public boolean waitUntilElementIsPresent(By by, long seconds)
 	{
 		boolean result;
 		try
@@ -83,6 +83,25 @@ public abstract class AbstractPage
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			result = true;
+		} catch (Exception e)
+		{
+			result = false;
+		} finally
+		{
+			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
+		}
+		return result;
+	}
+
+	public boolean waitUntilElementIsPresent(WebElement webElement, long seconds)
+	{
+		boolean result;
+		try
+		{
+			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
 			result = true;
 		} catch (Exception e)
 		{
