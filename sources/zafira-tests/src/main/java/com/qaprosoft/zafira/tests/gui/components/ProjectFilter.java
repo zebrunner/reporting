@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
-import com.qaprosoft.zafira.tests.gui.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,8 +8,13 @@ import org.openqa.selenium.support.FindBy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProjectFilter extends AbstractPage
+public class ProjectFilter extends AbstractUIObject
 {
+
+	private static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]";
+
+	@FindBy(xpath = CONTAINER_LOCATOR)
+	private WebElement container;
 
 	@FindBy(xpath = "//button[following-sibling::div[.//*[text() = 'Clear']]]")
 	private WebElement clearButton;
@@ -34,5 +38,17 @@ public class ProjectFilter extends AbstractPage
 	public List<String> getProjectNames()
 	{
 		return projectNames.stream().map(WebElement::getText).collect(Collectors.toList());
+	}
+
+	@Override
+	public By getLocator()
+	{
+		return By.xpath(CONTAINER_LOCATOR);
+	}
+
+	@Override
+	public WebElement getElement()
+	{
+		return this.container;
 	}
 }

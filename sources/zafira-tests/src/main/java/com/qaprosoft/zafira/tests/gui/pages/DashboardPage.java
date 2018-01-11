@@ -20,6 +20,11 @@ import org.openqa.selenium.WebDriver;
 public class DashboardPage extends BasePage
 {
 
+	public DashboardPage(WebDriver driver, String path)
+	{
+		super(driver, path);
+	}
+
 	public DashboardPage(WebDriver driver, int dashboardId)
 	{
 		super(driver, String.format("/dashboards/%d", dashboardId));
@@ -31,7 +36,4 @@ public class DashboardPage extends BasePage
         this.getHeader().clickUserMenuButton().getUserProfileButton().click();
         return new UserProfilePage(driver);
 	}
-
-
-
 }
