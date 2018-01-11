@@ -24,12 +24,12 @@ public class DashboardTabMenu extends AbstractUIObject
 
 	public List<String> getDashboardNames()
 	{
-		return this.container.findElements(By.tagName("a")).stream().map(WebElement::getText).collect(Collectors.toList());
+		return findElements(By.tagName("a")).stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
 	public WebElement getDashboardByName(String name)
 	{
-		return this.container.findElement(By.xpath(".//a[text() = '" + name + "']"));
+		return findElement(By.xpath(".//a[text() = '" + name + "']"));
 	}
 
 	public DashboardPage clickDashboardByName(String name)
