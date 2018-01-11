@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui.pages;
+package com.qaprosoft.zafira.tests.gui;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -27,6 +27,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.qaprosoft.zafira.tests.util.Config;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractPage
@@ -75,6 +76,25 @@ public abstract class AbstractPage
 		return result;
 	}
 
+	public boolean isElementPresent(WebElement webElement, By by, long seconds)
+	{
+		boolean result;
+		try
+		{
+			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+			((Wait)(new WebDriverWait(driver, seconds, 1000)))
+					.until(dr -> webElement.findElement(by).isDisplayed());
+			result = true;
+		} catch (Exception e)
+		{
+			result = false;
+		} finally
+		{
+			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
+		}
+		return result;
+	}
+
 	public boolean waitUntilElementIsPresent(By by, long seconds)
 	{
 		boolean result;
@@ -102,6 +122,25 @@ public abstract class AbstractPage
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
+			result = true;
+		} catch (Exception e)
+		{
+			result = false;
+		} finally
+		{
+			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
+		}
+		return result;
+	}
+
+	public boolean waitUntilElementIsNotPresent(WebElement webElement, long seconds)
+	{
+		boolean result;
+		try
+		{
+			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
 			result = true;
 		} catch (Exception e)
 		{
