@@ -19,8 +19,19 @@ import org.openqa.selenium.WebDriver;
 
 public class DashboardPage extends BasePage
 {
+
 	public DashboardPage(WebDriver driver, int dashboardId)
 	{
 		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
+
+	public UserProfilePage goToUserProfilePage()
+	{
+        this.waitUntilElementIsPresent(this.getHeader().getUserMenuButton(),2);
+        this.getHeader().clickUserMenuButton().getUserProfileButton().click();
+        return new UserProfilePage(driver);
+	}
+
+
+
 }
