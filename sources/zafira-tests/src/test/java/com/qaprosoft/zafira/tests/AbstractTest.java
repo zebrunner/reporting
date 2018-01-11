@@ -65,4 +65,15 @@ public class AbstractTest
 		LOGGER.info(context.getCurrentXmlTest().getName() + " finished");
 		driver.quit();
 	}
+
+	public void pause(long timout)
+	{
+		try
+		{
+			Thread.sleep(timout * 1000);
+		} catch (InterruptedException e)
+		{
+			LOGGER.error(e.getMessage());
+		}
+	}
 }
