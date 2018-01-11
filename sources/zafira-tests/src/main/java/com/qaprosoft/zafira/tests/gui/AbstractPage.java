@@ -29,6 +29,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public abstract class AbstractPage
 {
@@ -59,88 +60,56 @@ public abstract class AbstractPage
 
 	public boolean isElementPresent(By by, long seconds)
 	{
-		boolean result;
-		try
-		{
-			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
-			((Wait)(new WebDriverWait(driver, seconds, 1000)))
-					.until(dr -> driver.findElement(by).isDisplayed());
-			result = true;
-		} catch (Exception e)
-		{
-			result = false;
-		} finally
-		{
-			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
-		}
-		return result;
+		return innerTimeoutOperation(() -> {
+			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(dr -> driver.findElement(by).isDisplayed());
+			return webDriverWait;
+		});
 	}
 
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
 	{
-		boolean result;
-		try
-		{
-			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
-			((Wait)(new WebDriverWait(driver, seconds, 1000)))
-					.until(dr -> webElement.findElement(by).isDisplayed());
-			result = true;
-		} catch (Exception e)
-		{
-			result = false;
-		} finally
-		{
-			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
-		}
-		return result;
+		return innerTimeoutOperation(() -> {
+			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
+			return webDriverWait;
+		});
 	}
 
 	public boolean waitUntilElementIsPresent(By by, long seconds)
 	{
-		boolean result;
-		try
-		{
-			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(by));
-			result = true;
-		} catch (Exception e)
-		{
-			result = false;
-		} finally
-		{
-			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
-		}
-		return result;
+			return webDriverWait;
+		});
 	}
 
 	public boolean waitUntilElementIsPresent(WebElement webElement, long seconds)
 	{
-		boolean result;
-		try
-		{
-			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
-			result = true;
-		} catch (Exception e)
-		{
-			result = false;
-		} finally
-		{
-			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
-		}
-		return result;
+			return webDriverWait;
+		});
 	}
 
 	public boolean waitUntilElementIsNotPresent(WebElement webElement, long seconds)
+	{
+		return innerTimeoutOperation(() -> {
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
+			return webDriverWait;
+		});
+	}
+
+	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
 	{
 		boolean result;
 		try
 		{
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
-			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
-			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
+			operationSupplier.get();
 			result = true;
 		} catch (Exception e)
 		{
