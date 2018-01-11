@@ -35,7 +35,7 @@ public class DashboardTabMenu extends AbstractUIObject
 	public DashboardPage clickDashboardByName(String name)
 	{
 		getDashboardByName(name).click();
-		return new DashboardPage(driver, null);
+		return new DashboardPage(driver);
 	}
 
 	public boolean isProjectIsHidden(String name)
