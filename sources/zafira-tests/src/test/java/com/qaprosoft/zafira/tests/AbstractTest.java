@@ -66,11 +66,11 @@ public class AbstractTest
 		driver.quit();
 	}
 
-	public void pause(long timout)
+	public void pause(long timeout)
 	{
 		try
 		{
-			Thread.sleep(timout * 1000);
+			Thread.sleep(timeout * 1000);
 		} catch (InterruptedException e)
 		{
 			LOGGER.error(e.getMessage());

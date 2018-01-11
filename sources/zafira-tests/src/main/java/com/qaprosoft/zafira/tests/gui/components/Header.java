@@ -24,10 +24,16 @@ public class Header extends AbstractPage implements IElement
 	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
 	private WebElement companyLogo;
 
+	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//i[text() = 'image']")
+	private WebElement companyLogoBackgroundIcon;
+
+	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//i[text() = 'settings']")
+	private WebElement companyProfilePhotoHoverIcon;
+
 	@FindBy(xpath = "//header//button[.//*[text() = 'Project']]")
 	private WebElement projectFilterButton;
 
-	@FindBy(xpath = "//header//button[.//img]")
+	@FindBy(xpath = "//header//md-menu[.//img]")
 	private WebElement userMenuButton;
 
 	@FindBy(xpath = "//header//*[@class='menu-button']")
@@ -54,14 +60,30 @@ public class Header extends AbstractPage implements IElement
 		return companyLogo;
 	}
 
+	public WebElement getCompanyLogoBackgroundIcon()
+	{
+		return companyLogoBackgroundIcon;
+	}
+
+	public WebElement getCompanyProfilePhotoHoverIcon()
+	{
+		return companyProfilePhotoHoverIcon;
+	}
+
 	public ProjectFilter clickProjectFilterButton()
 	{
+		if(! isElementClickable(projectFilterButton, 10))
+			clickOutside();
+		waitUntilElementToBeClickable(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
 		return new ProjectFilter(driver, null);
 	}
 
 	public UserMenu clickUserMenuButton()
 	{
+		if(! isElementClickable(userMenuButton, 2))
+			clickOutside();
+		waitUntilElementToBeClickable(this.userMenuButton, 1);
 		this.userMenuButton.click();
 		return new UserMenu(driver, null);
 	}
