@@ -27,9 +27,9 @@ public abstract class BasePage extends AbstractPage
 		return navbar;
 	}
 
-	public boolean waitUtilPageLoading(long seconds)
+	public boolean waitUntilPageIsLoaded(long seconds)
 	{
 		return isElementPresent(header.getLoadingBarSpinnerLocator(), seconds) &&
-				waitUntilElementPresent(header.getLoadingBarSpinnerLocator(), 20);
+				waitUntilElementIsPresent(header.getLoadingBarSpinnerLocator(), 20);
 	}
 }

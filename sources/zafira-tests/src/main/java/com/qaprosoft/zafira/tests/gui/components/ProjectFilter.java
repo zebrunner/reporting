@@ -9,7 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProjectListContainer extends AbstractPage
+public class ProjectFilter extends AbstractPage
 {
 
 	@FindBy(xpath = "//button[following-sibling::div[.//*[text() = 'Clear']]]")
@@ -21,7 +21,7 @@ public class ProjectListContainer extends AbstractPage
 	@FindBy(xpath = "//div[preceding-sibling::*[text() = 'chevron_right']]/*[text()]")
 	private List<WebElement> projectNames;
 
-	public ProjectListContainer(WebDriver driver, String path)
+	public ProjectFilter(WebDriver driver, String path)
 	{
 		super(driver, path);
 	}
