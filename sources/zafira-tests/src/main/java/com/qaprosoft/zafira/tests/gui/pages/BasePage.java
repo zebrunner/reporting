@@ -31,6 +31,6 @@ public abstract class BasePage extends AbstractPage
 	public boolean waitUntilPageIsLoaded(long seconds)
 	{
 		return isElementPresent(header.getLoadingBarSpinnerLocator(), seconds) &&
-				waitUntilElementIsPresent(header.getLoadingBarSpinnerLocator(), 20);
+				waitUntilElementIsNotPresent(driver.findElement(header.getLoadingBarSpinnerLocator()), 20);
 	}
 }

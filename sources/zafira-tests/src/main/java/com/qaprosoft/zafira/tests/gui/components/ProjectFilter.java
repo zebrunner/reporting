@@ -40,6 +40,16 @@ public class ProjectFilter extends AbstractUIObject
 		return projectNames.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
+	public WebElement getClearButton()
+	{
+		return clearButton;
+	}
+
+	public WebElement getCreateButton()
+	{
+		return createButton;
+	}
+
 	@Override
 	public By getLocator()
 	{

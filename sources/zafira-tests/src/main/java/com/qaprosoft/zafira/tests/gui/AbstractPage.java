@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.tests.gui;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -61,28 +62,39 @@ public abstract class AbstractPage
 	public boolean isElementPresent(By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
-			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			Wait webDriverWait = new WebDriverWait(driver, seconds, 100L);
 			webDriverWait.until(dr -> driver.findElement(by).isDisplayed());
 			return webDriverWait;
-		});
+		}, "Start to find element "  + by.toString(), "Finish to find element " + by.toString());
 	}
 
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
 	{
+		String element = by == null ? "" : by.toString();
 		return innerTimeoutOperation(() -> {
-			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			Wait webDriverWait = new WebDriverWait(driver, seconds, 100L);
 			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
 			return webDriverWait;
-		});
+		}, "Start to find element "  + element, "Finish to find element " + element);
+	}
+
+	public boolean isElementPresent(WebElement webElement, long seconds)
+	{
+		return waitUntilElementIsPresent(webElement, seconds);
+	}
+
+	public boolean isElementClickable(WebElement webElement, long seconds)
+	{
+		return !isElementPresent(By.cssSelector("md-menu.md-open.md-menu"), 1) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	public boolean waitUntilElementIsPresent(By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
 			return webDriverWait;
-		});
+		}, "Start to wait until element is present "  + by.toString(), "Finish to wait element " + by.toString());
 	}
 
 	public boolean waitUntilElementIsPresent(WebElement webElement, long seconds)
@@ -91,7 +103,7 @@ public abstract class AbstractPage
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
 			return webDriverWait;
-		});
+		}, "Start to wait until element is present", "Finish to wait element");
 	}
 
 	public boolean waitUntilElementIsNotPresent(WebElement webElement, long seconds)
@@ -100,15 +112,25 @@ public abstract class AbstractPage
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
 			return webDriverWait;
-		});
+		}, "Start to wait until element is not present", "Finish to wait element");
 	}
 
-	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
+	public boolean waitUntilElementToBeClickable(WebElement webElement, long seconds)
 	{
-		boolean result;
+		return innerTimeoutOperation(() -> {
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.elementToBeClickable(webElement));
+			return webDriverWait;
+		}, "Start to wait until element is clickable", "Finish to wait element");
+	}
+
+	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier, String startMessage, String finishMessage)
+	{
+		boolean result = false;
 		try
 		{
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
+			LOGGER.info(startMessage);
 			operationSupplier.get();
 			result = true;
 		} catch (Exception e)
@@ -116,6 +138,7 @@ public abstract class AbstractPage
 			result = false;
 		} finally
 		{
+			LOGGER.info("Status " + Boolean.toString(result) + ": " + finishMessage);
 			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
 		}
 		return result;
@@ -124,6 +147,30 @@ public abstract class AbstractPage
 	public void hoverOnElement(WebElement webElement)
 	{
 		Actions actions = new Actions(driver);
-		actions.moveToElement(webElement).build().perform();
+		actions.moveToElement(webElement).perform();
+	}
+
+	public void clickOutside()
+	{
+		clickByCoordinates("1", "1");
+	}
+
+	public void clickByCoordinates(String x, String y)
+	{
+		pause(1);
+		JavascriptExecutor executor = (JavascriptExecutor)driver;
+		executor.executeScript(String.format("$(document.elementFromPoint(%s, %s)).click();", x, y));
+		pause(1);
+	}
+
+	public void pause(long timeout)
+	{
+		try
+		{
+			Thread.sleep(timeout * 1000);
+		} catch (InterruptedException e)
+		{
+			LOGGER.error(e.getMessage());
+		}
 	}
 }
