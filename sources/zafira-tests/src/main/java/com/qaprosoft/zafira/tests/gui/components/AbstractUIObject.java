@@ -9,4 +9,9 @@ public abstract class AbstractUIObject extends AbstractPage implements IElement
 	{
 		super(driver, path);
 	}
+
+	public boolean isElementPresent(long timeout)
+	{
+		return isElementPresent(getLocator(), timeout);
+	}
 }

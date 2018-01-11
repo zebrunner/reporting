@@ -20,9 +20,9 @@ import org.openqa.selenium.WebDriver;
 public class DashboardPage extends BasePage
 {
 
-	public DashboardPage(WebDriver driver, String path)
+	public DashboardPage(WebDriver driver)
 	{
-		super(driver, path);
+		super(driver, "/dashboards");
 	}
 
 	public DashboardPage(WebDriver driver, int dashboardId)
