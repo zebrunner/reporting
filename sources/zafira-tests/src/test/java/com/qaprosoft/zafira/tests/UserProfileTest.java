@@ -25,9 +25,7 @@ public class UserProfileTest extends AbstractTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.open();
         DashboardPage dashboardPage = loginPage.login(ADMIN1_USER, ADMIN1_PASS);
-
         userProfilePage = dashboardPage.goToUserProfilePage();
-        //userProfilePage.waitUntilPageIsLoaded(2);
     }
 
     @Test
