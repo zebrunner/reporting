@@ -37,7 +37,7 @@ public class ProjectFilter extends AbstractUIObject
 
 	public List<String> getProjectNames()
 	{
-		return projectNames.stream().map(WebElement::getText).collect(Collectors.toList());
+		return projectNames.stream().map(webElement -> webElement.getText().toUpperCase()).collect(Collectors.toList());
 	}
 
 	public WebElement getClearButton()
