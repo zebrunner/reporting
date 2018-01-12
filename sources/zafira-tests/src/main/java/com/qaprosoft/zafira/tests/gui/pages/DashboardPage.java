@@ -16,6 +16,8 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class DashboardPage extends BasePage
 {
@@ -30,10 +32,38 @@ public class DashboardPage extends BasePage
 		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
 
+	@FindBy(xpath="//body[contains(@class, 'zaf-light')]")
+	WebElement lightZafiraSchemaStyle;
+
+	@FindBy(xpath="//body[contains(@class, 'zaf-dark')]")
+	WebElement darkZafiraSchemaStyle;
+
+	@FindBy(xpath="//md-radio-button[@value=32]")
+	WebElement lightZafiraSchemaRadioButton;
+
+	@FindBy(xpath="//md-radio-button[@value=22]")
+	WebElement darkZafiraSchemaRadioButton;
+
 	public UserProfilePage goToUserProfilePage()
 	{
         this.waitUntilElementIsPresent(this.getHeader().getUserMenuButton(),2);
         this.getHeader().clickUserMenuButton().getUserProfileButton().click();
         return new UserProfilePage(driver);
+	}
+
+	public WebElement getLightZafiraSchemaStyle() {
+		return lightZafiraSchemaStyle;
+	}
+
+	public WebElement getDarkZafiraSchemaStyle() {
+		return darkZafiraSchemaStyle;
+	}
+
+	public WebElement getLightZafiraSchemaRadioButton() {
+		return lightZafiraSchemaRadioButton;
+	}
+
+	public WebElement getDarkZafiraSchemaRadioButton() {
+		return darkZafiraSchemaRadioButton;
 	}
 }
