@@ -59,6 +59,10 @@ public abstract class AbstractPage
 		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
 	}
 
+	public void reload(){
+		driver.navigate().refresh();
+	}
+
 	public boolean isElementPresent(By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
