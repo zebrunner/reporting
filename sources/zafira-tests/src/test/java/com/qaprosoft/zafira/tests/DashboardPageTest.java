@@ -21,7 +21,7 @@ public class DashboardPageTest extends AbstractTest {
         dashboardPageService = new DashboardPageService(driver);
         LoginPage loginPage = new LoginPage(driver);
         loginPage.open();
-        dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+        dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
     }
 
     @Test

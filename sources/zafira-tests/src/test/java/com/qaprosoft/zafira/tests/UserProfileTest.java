@@ -25,13 +25,10 @@ public class UserProfileTest extends AbstractTest {
     public void loginUser()
     {
         LoginPageService loginPageService = new LoginPageService(driver);
-        DashboardPageService dashboardPageService = new DashboardPageService(driver);
         this.userProfilePageService = new UserProfilePageService(driver);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.open();
-        loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-        loginPage.waitUntilPageIsLoaded(10);
-        //userProfilePage = dashboardPageService.goToUserProfilePage();
+        DashboardPage dashboardPage = loginPageService
+                .login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
+        userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
     }
 
     @Test
