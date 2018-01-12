@@ -14,11 +14,4 @@ public class DashboardPageService extends AbstractPageService
 		super(driver);
 		this.dashboardPage = new DashboardPage(driver);
 	}
-
-	public UserProfilePage goToUserProfilePage()
-	{
-		dashboardPage.waitUntilElementIsPresent(dashboardPage.getHeader().getUserMenuButton(),2);
-		dashboardPage.getHeader().clickUserMenuButton().getUserProfileButton().click();
-		return new UserProfilePage(driver);
-	}
 }
