@@ -1,12 +1,8 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import com.qaprosoft.zafira.tests.exceptions.NoColorSchemaIsChosenException;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UserProfilePage extends BasePage
 {
@@ -48,52 +44,14 @@ public class UserProfilePage extends BasePage
 		super(driver, "/users/profile");
 	}
 
-
-	public ColorSchema checkCurrentColorSchemeByRadioButton(){
-		this.waitUntilPageIsLoaded(4);
-		if(lightZafiraSchemaRadioButtonChecked != null){
-			return ColorSchema.LIGHT;
-		}
-		else if (darkZafiraSchemaRadioButtonChecked != null){
-			return ColorSchema.DARK;
-		}
-		else {
-			throw new NoColorSchemaIsChosenException("No radioButton corresponding to the schema choice was found");
-		}
-	}
-
-	public void pickDarkSchemaRadioButton(){
-		darkZafiraSchemaRadioButton.click();
-	}
-
-	public void pickLightSchemaRadioButton(){
-		lightZafiraSchemaRadioButton.click();
-	}
-
-	public boolean darkSchemaStyleIsDisplayed(){
-		return darkZafiraSchemaStyle != null;
-	}
-
-	public boolean lightSchemaStyleIsDisplayed(){
-		return lightZafiraSchemaStyle != null;
-	}
-
-	public void generateToken()
+	public WebElement getGenerateTokenButton()
 	{
-		this.waitUntilElementIsPresent(generateTokenButton, 3);
-		generateTokenButton.click();
-		this.waitUntilElementIsPresent(copyTokenButton, 1);
+		return generateTokenButton;
 	}
 
-	public boolean copyToken()
+	public WebElement getCopyTokenButton()
 	{
-		new WebDriverWait(driver, 5).until(ExpectedConditions
-				.visibilityOfElementLocated(By.xpath("//header/div[contains(@class, 'profile-img')]")));
-		generateTokenButton.click();
-		new WebDriverWait(driver, 1).until(ExpectedConditions.visibilityOfElementLocated(
-				By.xpath("//button[ancestor::form[@name='access_token_form'] and @type='button']")));
-		copyTokenButton.click();
-		return copyActionAlert != null;
+		return copyTokenButton;
 	}
 
 	public WebElement getTokenInput()
@@ -101,39 +59,38 @@ public class UserProfilePage extends BasePage
 		return tokenInput;
 	}
 
-	public WebElement getGenerateTokenButton() {
-		return generateTokenButton;
-	}
-
-	public WebElement getCopyTokenButton() {
-		return copyTokenButton;
-	}
-
-	public WebElement getCopyActionAlert() {
+	public WebElement getCopyActionAlert()
+	{
 		return copyActionAlert;
 	}
 
-	public WebElement getLightZafiraSchemaStyle() {
+	public WebElement getLightZafiraSchemaStyle()
+	{
 		return lightZafiraSchemaStyle;
 	}
 
-	public WebElement getDarkZafiraSchemaStyle() {
+	public WebElement getDarkZafiraSchemaStyle()
+	{
 		return darkZafiraSchemaStyle;
 	}
 
-	public WebElement getLightZafiraSchemaRadioButton() {
+	public WebElement getLightZafiraSchemaRadioButton()
+	{
 		return lightZafiraSchemaRadioButton;
 	}
 
-	public WebElement getDarkZafiraSchemaRadioButton() {
+	public WebElement getDarkZafiraSchemaRadioButton()
+	{
 		return darkZafiraSchemaRadioButton;
 	}
 
-	public WebElement getLightZafiraSchemaRadioButtonChecked() {
+	public WebElement getLightZafiraSchemaRadioButtonChecked()
+	{
 		return lightZafiraSchemaRadioButtonChecked;
 	}
 
-	public WebElement getDarkZafiraSchemaRadioButtonChecked() {
+	public WebElement getDarkZafiraSchemaRadioButtonChecked()
+	{
 		return darkZafiraSchemaRadioButtonChecked;
 	}
 }
