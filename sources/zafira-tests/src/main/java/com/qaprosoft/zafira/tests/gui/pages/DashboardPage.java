@@ -29,11 +29,4 @@ public class DashboardPage extends BasePage
 	{
 		super(driver, String.format("/dashboards/%d", dashboardId));
 	}
-
-	public UserProfilePage goToUserProfilePage()
-	{
-        this.waitUntilElementIsPresent(this.getHeader().getUserMenuButton(),2);
-        this.getHeader().clickUserMenuButton().getUserProfileButton().click();
-        return new UserProfilePage(driver);
-	}
 }

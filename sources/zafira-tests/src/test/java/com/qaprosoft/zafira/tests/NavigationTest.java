@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.tests;
 import com.qaprosoft.zafira.tests.gui.components.*;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.*;
+import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -17,9 +18,10 @@ public class NavigationTest extends AbstractTest
 	@BeforeMethod
 	public void setup()
 	{
+		LoginPageService loginPageService = new LoginPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		this.dashboardPage = loginPage.login(ADMIN1_USER, ADMIN1_PASS);
+		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		this.dashboardPage.waitUntilPageIsLoaded(20);
 	}
 
@@ -61,7 +63,8 @@ public class NavigationTest extends AbstractTest
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(),  2), "Logout button is not present");
 
 		Assert.assertEquals(dashboardPage.getHeader().getZafiraLogo().getText(), "ZAFIRA", "Invalid zafira logo text in header");
-		Assert.assertTrue(dashboardPage.getHeader().getCompanyLogoBackgroundIcon().isDisplayed(), "Invalid company icon in header");
+		Assert.assertTrue(dashboardPage.getHeader().getCompanyLogoBackgroundIcon().isDisplayed() ||
+				dashboardPage.getHeader().getCompanyLogo().isDisplayed(), "Invalid company icon in header");
 
 		dashboardPage.clickOutside();
 
