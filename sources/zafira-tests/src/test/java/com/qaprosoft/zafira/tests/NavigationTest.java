@@ -10,24 +10,21 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class NavigationTest extends AbstractTest
-{
+public class NavigationTest extends AbstractTest {
 
 	private DashboardPage dashboardPage;
 
 	@BeforeMethod
-	public void setup()
-	{
+	public void setup() {
 		LoginPageService loginPageService = new LoginPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
 		this.dashboardPage.waitUntilPageIsLoaded(20);
 	}
 
 	@Test
-	public void verifyNavbarFunctionalityTest()
-	{
+	public void verifyNavbarFunctionalityTest() {
 		TestRunTabMenu testRunTabMenu = dashboardPage.getNavbar().hoverOnTestRunTab();
 		Assert.assertTrue(testRunTabMenu.isElementPresent(10), "Test run menu not visible!");
 		TestRunPage testRunPage = testRunTabMenu.clickShowRunsButton();
@@ -49,18 +46,17 @@ public class NavigationTest extends AbstractTest
 	}
 
 	@Test
-	public void verifyHeaderFunctionalityTest()
-	{
+	public void verifyHeaderFunctionalityTest() {
 		ProjectFilter projectFilter = dashboardPage.getHeader().clickProjectFilterButton();
 		Assert.assertTrue(projectFilter.isElementPresent(projectFilter.getClearButton(), 2), "Clear button is not present");
-		Assert.assertTrue(projectFilter.isElementPresent(projectFilter.getCreateButton(),  2), "Create button is not present");
+		Assert.assertTrue(projectFilter.isElementPresent(projectFilter.getCreateButton(), 2), "Create button is not present");
 		Assert.assertTrue(projectFilter.getProjectNames().contains("UNKNOWN"), "UNKNOWN project is not present");
 
 		UserMenu userMenu = dashboardPage.getHeader().clickUserMenuButton();
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserProfileButton(),  2), "User profile button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(),  2), "User performance button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(),  2), "Integrations button is not present");
-		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(),  2), "Logout button is not present");
+		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserProfileButton(), 2), "User profile button is not present");
+		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserPerformanceButton(), 2), "User performance button is not present");
+		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
+		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(), 2), "Logout button is not present");
 
 		Assert.assertEquals(dashboardPage.getHeader().getZafiraLogo().getText(), "ZAFIRA", "Invalid zafira logo text in header");
 		Assert.assertTrue(dashboardPage.getHeader().getCompanyLogoBackgroundIcon().isDisplayed() ||
@@ -91,5 +87,22 @@ public class NavigationTest extends AbstractTest
 
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getHeader().getMobileMenuButton(), 2), "Mobile nav bar button is not present");
 		dashboardPage.getHeader().getMobileMenuButton().click();
+	}
+
+	@Test
+	public void verifyUserMenuFunctionalityTest(){
+
+		UserProfilePage userProfilePage = this.dashboardPage.getHeader().goToUserProfilePage();
+		Assert.assertTrue(userProfilePage.isOpened());
+
+		UserPerformancePage userPerformancePage = userProfilePage.getHeader()
+				.goToUserPerformancePage(Integer.valueOf(ADMIN1_ID), Integer.valueOf(PERFORMANCE_DASHBOARD_ID));
+		//Assert.assertTrue(userPerformancePage.isOpened());
+
+		IntegrationsPage integrationsPage = userPerformancePage.getHeader().goIntegrationsPage();
+		Assert.assertTrue(integrationsPage.isOpened());
+
+		LoginPage loginPage = integrationsPage.getHeader().logOut();
+		Assert.assertTrue(loginPage.isOpened());
 	}
 }
