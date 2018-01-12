@@ -18,13 +18,13 @@ public class LoginPageService extends AbstractPageService
 		this.loginPage = new LoginPage(driver);
 	}
 
-	public DashboardPage login(String username, String password)
+	public DashboardPage login(String username, String password, int generalDashboardId)
 	{
 		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
 		loginPage.getUsernameTextField().sendKeys(username);
 		loginPage.getPasswordTextField().sendKeys(password);
 		loginPage.getLoginButton().click();
-		return new DashboardPage(driver, 2);
+		return new DashboardPage(driver, generalDashboardId);
 	}
 
 	public boolean isInvalidCredentials()
