@@ -1,9 +1,7 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.tests.gui.components.DashboardTabMenu;
-import com.qaprosoft.zafira.tests.gui.components.ProjectFilter;
-import com.qaprosoft.zafira.tests.gui.components.TestRunTabMenu;
-import com.qaprosoft.zafira.tests.gui.components.UserMenu;
+import com.qaprosoft.zafira.tests.gui.components.*;
+import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -72,5 +70,12 @@ public class NavigationTest extends AbstractTest
 		this.dashboardPage.hoverOnElement(this.dashboardPage.getHeader().getCompanyLogoBackgroundIcon());
 		Assert.assertTrue(this.dashboardPage.isElementPresent(this.dashboardPage.getHeader().getCompanyProfilePhotoHoverIcon(), 1),
 				"Settings icon not present on company icon hover");
+
+		UploadImageModalWindow uploadImageModalWindow = this.dashboardPage.getHeader().clickCompanyPhotoHoverIcon();
+		this.dashboardPage.waitUntilPageIsLoaded(10);
+
+		Assert.assertTrue(uploadImageModalWindow.isElementPresent(10), "Company photo modal window not opened");
+		Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");
+		uploadImageModalWindow.closeModalWindow();
 	}
 }

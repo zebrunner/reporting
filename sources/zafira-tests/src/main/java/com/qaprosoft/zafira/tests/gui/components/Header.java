@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
 import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -68,6 +69,11 @@ public class Header extends AbstractPage implements IElement
 	public WebElement getCompanyProfilePhotoHoverIcon()
 	{
 		return companyProfilePhotoHoverIcon;
+	}
+
+	public UploadImageModalWindow clickCompanyPhotoHoverIcon() {
+		companyProfilePhotoHoverIcon.click();
+		return new UploadImageModalWindow(driver, null);
 	}
 
 	public ProjectFilter clickProjectFilterButton()

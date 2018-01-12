@@ -1,10 +1,10 @@
-package com.qaprosoft.zafira.tests.services;
+package com.qaprosoft.zafira.tests.services.api;
 
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
-import com.qaprosoft.zafira.tests.services.builders.TestRunTypeBuilder;
+import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

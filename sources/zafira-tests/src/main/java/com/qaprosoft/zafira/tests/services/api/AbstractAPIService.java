@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.tests.services;
+package com.qaprosoft.zafira.tests.services.api;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.models.dto.user.UserType;
