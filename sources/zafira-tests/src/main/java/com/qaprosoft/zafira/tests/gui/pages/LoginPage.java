@@ -15,12 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends BasePage
 {
@@ -37,18 +34,19 @@ public class LoginPage extends BasePage
 	{
 		super(driver, "/signin");
 	}
-	
-	public DashboardPage login(String username, String password)
+
+	public WebElement getUsernameTextField()
 	{
-		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
-		usernameTextField.sendKeys(username);
-		passwordTextField.sendKeys(password);
-		loginButton.click();
-		return new DashboardPage(driver, 2);
+		return usernameTextField;
 	}
-	
-	public boolean isInvalidCredentials()
+
+	public WebElement getPasswordTextField()
 	{
-		return driver.findElement(By.xpath("//p[text()='Invalid credentials']")).isDisplayed();
+		return passwordTextField;
+	}
+
+	public WebElement getLoginButton()
+	{
+		return loginButton;
 	}
 }

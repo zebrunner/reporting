@@ -3,6 +3,9 @@ package com.qaprosoft.zafira.tests;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
+import com.qaprosoft.zafira.tests.services.gui.DashboardPageService;
+import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
+import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.testng.Assert;
@@ -12,7 +15,8 @@ import static com.qaprosoft.zafira.tests.gui.pages.UserProfilePage.ColorSchema;
 
 public class UserProfileTest extends AbstractTest {
 
-    private static UserProfilePage userProfilePage;
+    private UserProfilePage userProfilePage;
+    private UserProfilePageService userProfilePageService;
 
     @FindBy(xpath="//button[@type='submit']")
     private WebElement loginButton;
@@ -20,39 +24,42 @@ public class UserProfileTest extends AbstractTest {
     @BeforeMethod
     public void loginUser()
     {
+        LoginPageService loginPageService = new LoginPageService(driver);
+        DashboardPageService dashboardPageService = new DashboardPageService(driver);
+        this.userProfilePageService = new UserProfilePageService(driver);
         LoginPage loginPage = new LoginPage(driver);
         loginPage.open();
-        DashboardPage dashboardPage = loginPage.login(ADMIN1_USER, ADMIN1_PASS);
-        userProfilePage = dashboardPage.goToUserProfilePage();
+        loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+        userProfilePage = dashboardPageService.goToUserProfilePage();
     }
 
     @Test
     public void testGenerateToken() {
-        userProfilePage.generateToken();
+        userProfilePageService.generateToken();
         Assert.assertFalse(userProfilePage.getTokenInput().getAttribute("value").isEmpty());
     }
 
     @Test
     public void testCopyToken() {
-        Assert.assertTrue(userProfilePage.copyToken());
+        Assert.assertTrue(userProfilePageService.copyToken());
     }
 
     @Test
     public void testColorSchemaChange() {
-        ColorSchema colorSchema = userProfilePage.checkCurrentColorSchemeByRadioButton();
+        ColorSchema colorSchema = userProfilePageService.checkCurrentColorSchemeByRadioButton();
         if (colorSchema == ColorSchema.LIGHT){
-            Assert.assertTrue(userProfilePage.lightSchemaStyleIsDisplayed());
-            Assert.assertTrue(userProfilePage.lightSchemaStyleIsDisplayed());
-            userProfilePage.pickDarkSchemaRadioButton();
-            Assert.assertTrue(userProfilePage.darkSchemaStyleIsDisplayed());
+            Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
+            Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
+            userProfilePageService.pickDarkSchemaRadioButton();
+            Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
             userProfilePage.reload();
-            Assert.assertTrue(userProfilePage.lightSchemaStyleIsDisplayed());
+            Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
         } else if (colorSchema == ColorSchema.DARK){
-            Assert.assertTrue(userProfilePage.darkSchemaStyleIsDisplayed());
-            userProfilePage.pickLightSchemaRadioButton();
-            Assert.assertTrue(userProfilePage.lightSchemaStyleIsDisplayed());
+            Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
+            userProfilePageService.pickLightSchemaRadioButton();
+            Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
             userProfilePage.reload();
-            Assert.assertTrue(userProfilePage.darkSchemaStyleIsDisplayed());
+            Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
         }
     }
 

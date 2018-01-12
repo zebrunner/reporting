@@ -46,23 +46,23 @@ public class UserMenu extends AbstractUIObject
 		return userProfileName;
 	}
 
-	public WebElement getUserProfileButton() {
-		super.waitUntilElementIsPresent(userProfileButton,2);
+	public WebElement getUserProfileButton()
+	{
 		return userProfileButton;
 	}
 
-	public WebElement getUserPerformanceButton() {
-		super.waitUntilElementIsPresent(userPerformanceButton,2);
+	public WebElement getUserPerformanceButton()
+	{
 		return userPerformanceButton;
 	}
 
-	public WebElement getIntegrationsButton() {
-		super.waitUntilElementIsPresent(integrationsButton,2);
+	public WebElement getIntegrationsButton()
+	{
 		return integrationsButton;
 	}
 
-	public WebElement getLogoutButton() {
-		super.waitUntilElementIsPresent(logoutButton,2);
+	public WebElement getLogoutButton()
+	{
 		return logoutButton;
 	}
 

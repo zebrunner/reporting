@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.tests;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
+import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,9 +15,10 @@ public class UserPageTest extends AbstractTest
 	@BeforeMethod
 	public void setup()
 	{
+		LoginPageService loginPageService = new LoginPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		DashboardPage dashboardPage = loginPage.login(ADMIN1_USER, ADMIN1_PASS);
+		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		dashboardPage.waitUntilPageIsLoaded(10);
 		this.userPage = dashboardPage.getNavbar().clickUsersTab();
 		this.userPage.waitUntilPageIsLoaded(10);
@@ -25,6 +27,5 @@ public class UserPageTest extends AbstractTest
 	@Test
 	public void verifyUserPageTest()
 	{
-
 	}
 }
