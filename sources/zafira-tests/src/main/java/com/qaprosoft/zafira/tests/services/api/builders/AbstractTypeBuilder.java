@@ -1,12 +1,11 @@
-package com.qaprosoft.zafira.tests.services.builders;
+package com.qaprosoft.zafira.tests.services.api.builders;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.tests.services.AuthAPIService;
+import com.qaprosoft.zafira.tests.services.api.AuthAPIService;
 import com.qaprosoft.zafira.tests.util.Config;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.util.Random;
 
 public abstract class AbstractTypeBuilder<T extends AbstractType> implements IModelBuilder<T>

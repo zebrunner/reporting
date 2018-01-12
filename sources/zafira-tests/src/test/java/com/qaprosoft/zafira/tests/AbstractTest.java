@@ -32,7 +32,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 public class AbstractTest
 {
 	private Logger LOGGER = Logger.getLogger(AbstractTest.class);
-	
+
 	protected String ADMIN1_USER = Config.get("admin1.user");
 	protected String ADMIN1_PASS = Config.get("admin1.pass");
 	

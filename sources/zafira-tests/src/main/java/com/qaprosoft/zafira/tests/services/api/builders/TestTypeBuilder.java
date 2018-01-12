@@ -1,4 +1,4 @@
-package com.qaprosoft.zafira.tests.services.builders;
+package com.qaprosoft.zafira.tests.services.api.builders;
 
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class TestTypeBuilder extends AbstractTypeBuilder<TestType>
 {
