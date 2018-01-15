@@ -24,10 +24,11 @@ public class UserProfileTest extends AbstractTest {
     @BeforeMethod
     public void loginUser()
     {
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.open();
         LoginPageService loginPageService = new LoginPageService(driver);
-        this.userProfilePageService = new UserProfilePageService(driver);
-        DashboardPage dashboardPage = loginPageService
-                .login(ADMIN1_USER, ADMIN1_PASS);
+        DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+        userProfilePageService = new UserProfilePageService(driver);
         userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
     }
 

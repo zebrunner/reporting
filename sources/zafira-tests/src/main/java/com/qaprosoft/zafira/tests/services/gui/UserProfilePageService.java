@@ -49,15 +49,16 @@ public class UserProfilePageService extends AbstractPageService
 
 	public void generateToken()
 	{
-		userProfilePage.waitUntilElementIsPresent(userProfilePage.getGenerateTokenButton(), 3);
+		userProfilePage.waitUntilElementToBeClickable(userProfilePage.getGenerateTokenButton(), 3);
 		userProfilePage.getGenerateTokenButton().click();
-		userProfilePage.waitUntilElementIsPresent(userProfilePage.getCopyTokenButton(), 1);
+		userProfilePage.waitUntilElementIsPresent(userProfilePage.getCopyTokenButton(), 2);
 	}
 
 	public boolean copyToken()
 	{
 		new WebDriverWait(driver, 5).until(ExpectedConditions
 				.visibilityOfElementLocated(By.xpath("//header/div[contains(@class, 'profile-img')]")));
+		userProfilePage.waitUntilElementToBeClickable(userProfilePage.getGenerateTokenButton(), 3);
 		userProfilePage.getGenerateTokenButton().click();
 		new WebDriverWait(driver, 1).until(ExpectedConditions.visibilityOfElementLocated(
 				By.xpath("//button[ancestor::form[@name='access_token_form'] and @type='button']")));
