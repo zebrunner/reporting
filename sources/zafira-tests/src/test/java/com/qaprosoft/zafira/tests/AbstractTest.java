@@ -19,17 +19,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
 import com.qaprosoft.zafira.tests.util.Config;
 
-public class AbstractTest
+@ContextConfiguration("classpath:dbaccess-test.xml")
+public class AbstractTest extends AbstractTestNGSpringContextTests
 {
 	private Logger LOGGER = Logger.getLogger(AbstractTest.class);
 
