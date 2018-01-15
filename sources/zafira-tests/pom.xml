@@ -23,6 +23,10 @@
             <artifactId>zafira-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.qaprosoft</groupId>
+            <artifactId>zafira-dbaccess</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
         </dependency>
@@ -51,6 +55,11 @@
                     <groupId>commons-io</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
