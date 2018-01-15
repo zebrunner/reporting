@@ -35,9 +35,6 @@ public class AbstractTest
 
 	protected String ADMIN1_USER = Config.get("admin1.user");
 	protected String ADMIN1_PASS = Config.get("admin1.pass");
-	protected String ADMIN1_ID = Config.get("admin1.id");
-	protected String GENERAL_DASHBOARD_ID = Config.get("dashboard.general.id");
-	protected String PERFORMANCE_DASHBOARD_ID = Config.get("dashboard.performance.id");
 
 	protected WebDriver driver;
 	

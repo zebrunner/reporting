@@ -36,6 +36,8 @@ public abstract class AbstractPage
 {
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
 	protected static final Long IMPLICITLY_TIMEOUT = 15L;
+	protected int ADMIN_ID = Integer.valueOf(Config.get("admin.id"));
+	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
 	protected String url;
 	

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import com.qaprosoft.zafira.tests.gui.AbstractPage;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import org.openqa.selenium.By;
@@ -18,13 +19,13 @@ public class LoginPageService extends AbstractPageService
 		this.loginPage = new LoginPage(driver);
 	}
 
-	public DashboardPage login(String username, String password, int generalDashboardId)
+	public DashboardPage login(String username, String password)
 	{
 		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
 		loginPage.getUsernameTextField().sendKeys(username);
 		loginPage.getPasswordTextField().sendKeys(password);
 		loginPage.getLoginButton().click();
-		return new DashboardPage(driver, generalDashboardId);
+		return new DashboardPage(driver, GENERAL_DASHBOARD_ID);
 	}
 
 	public boolean isInvalidCredentials()
