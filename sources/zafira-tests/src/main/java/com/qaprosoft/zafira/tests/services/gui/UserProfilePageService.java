@@ -63,6 +63,6 @@ public class UserProfilePageService extends AbstractPageService
 		new WebDriverWait(driver, 1).until(ExpectedConditions.visibilityOfElementLocated(
 				By.xpath("//button[ancestor::form[@name='access_token_form'] and @type='button']")));
 		userProfilePage.getCopyTokenButton().click();
-		return userProfilePage.getCopyActionAlert() != null;
+		return userProfilePage.getSuccessAlert() != null;
 	}
 }
