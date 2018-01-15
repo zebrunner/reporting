@@ -4,6 +4,8 @@ import com.qaprosoft.zafira.tests.gui.AbstractPage;
 import org.openqa.selenium.WebDriver;
 import com.qaprosoft.zafira.tests.gui.components.Header;
 import com.qaprosoft.zafira.tests.gui.components.Navbar;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public abstract class BasePage extends AbstractPage
 {
