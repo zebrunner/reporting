@@ -49,10 +49,10 @@ public class NavigationTest extends AbstractTest {
 		UserPerformancePage userPerformancePage1 = new UserPerformancePage(driver, 1, 1);
 		userPerformancePage1.open();
 
-		ProjectFilter projectFilter = dashboardPage.getHeader().clickProjectFilterButton();
-		Assert.assertTrue(projectFilter.isElementPresent(projectFilter.getClearButton(), 2), "Clear button is not present");
-		Assert.assertTrue(projectFilter.isElementPresent(projectFilter.getCreateButton(), 2), "Create button is not present");
-		Assert.assertTrue(projectFilter.getProjectNames().contains("UNKNOWN"), "UNKNOWN project is not present");
+		ProjectFilterMenu projectFilterMenu = dashboardPage.getHeader().clickProjectFilterButton();
+		Assert.assertTrue(projectFilterMenu.isElementPresent(projectFilterMenu.getClearButton(), 2), "Clear button is not present");
+		Assert.assertTrue(projectFilterMenu.isElementPresent(projectFilterMenu.getCreateButton(), 2), "Create button is not present");
+		Assert.assertTrue(projectFilterMenu.getProjectNames().contains("UNKNOWN"), "UNKNOWN project is not present");
 
 		UserMenu userMenu = dashboardPage.getHeader().clickUserMenuButton();
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getUserProfileButton(), 2), "User profile button is not present");
