@@ -19,7 +19,7 @@ public class UserPageTest extends AbstractTest
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
 		DashboardPage dashboardPage = loginPageService
-				.login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
+				.login(ADMIN1_USER, ADMIN1_PASS);
 		dashboardPage.waitUntilPageIsLoaded(10);
 		this.userPage = dashboardPage.getNavbar().clickUsersTab();
 		this.userPage.waitUntilPageIsLoaded(10);

@@ -107,13 +107,13 @@ public class Header extends AbstractPage implements IElement
 		return new UserProfilePage(driver);
 	}
 
-	public UserPerformancePage goToUserPerformancePage(int dashboardId, int userId)
+	public UserPerformancePage goToUserPerformancePage()
 	{
 		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
 		if(!isElementClickable(userPerformanceButton,2))
 			waitUntilElementToBeClickable(userPerformanceButton, 1);
 		userPerformanceButton.click();
-		return new UserPerformancePage(driver, dashboardId, userId);
+		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
 	}
 
 	public IntegrationsPage goIntegrationsPage()
