@@ -22,6 +22,6 @@ public class UserPerformancePage extends BasePage
 
 	public UserPerformancePage(WebDriver driver, int dashboardId, int userId)
 	{
-		super(driver, String.format("/dashboards/%d?userId=%d", dashboardId, userId));
+		super(driver, String.format("/dashboards/%d\\?userId=%d", dashboardId, userId));
 	}
 }
