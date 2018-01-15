@@ -18,8 +18,8 @@ public class DashboardPageTest extends AbstractTest {
     public void loginUser()
     {
         LoginPageService loginPageService = new LoginPageService(driver);
-        dashboardPageService = new DashboardPageService(driver);
         LoginPage loginPage = new LoginPage(driver);
+        dashboardPageService = new DashboardPageService(driver);
         loginPage.open();
         dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
     }
