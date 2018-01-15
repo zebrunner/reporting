@@ -19,7 +19,7 @@ public class NavigationTest extends AbstractTest {
 		LoginPageService loginPageService = new LoginPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
+		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		this.dashboardPage.waitUntilPageIsLoaded(20);
 	}
 
@@ -96,7 +96,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertTrue(userProfilePage.isOpened());
 
 		UserPerformancePage userPerformancePage = userProfilePage.getHeader()
-				.goToUserPerformancePage(Integer.valueOf(ADMIN1_ID), Integer.valueOf(PERFORMANCE_DASHBOARD_ID));
+				.goToUserPerformancePage();
 		//Assert.assertTrue(userPerformancePage.isOpened());
 
 		IntegrationsPage integrationsPage = userPerformancePage.getHeader().goIntegrationsPage();
