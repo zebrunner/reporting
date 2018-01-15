@@ -40,7 +40,10 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 	}
 
 	public void closeModalWindow() {
+		waitUntilElementToBeClickableByBackdropMask(closeButton, 4);
 		closeButton.click();
+		waitUntilElementIsPresent(getBackdrop(), 1);
+		waitUntilElementIsNotPresent(getBackdrop(), 4);
 	}
 
 	@Override

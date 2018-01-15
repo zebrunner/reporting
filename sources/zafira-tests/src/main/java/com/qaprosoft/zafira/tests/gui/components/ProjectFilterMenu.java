@@ -8,7 +8,7 @@ import org.openqa.selenium.support.FindBy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ProjectFilter extends AbstractUIObject
+public class ProjectFilterMenu extends AbstractUIObject
 {
 
 	private static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]";
@@ -25,7 +25,7 @@ public class ProjectFilter extends AbstractUIObject
 	@FindBy(xpath = "//div[preceding-sibling::*[text() = 'chevron_right']]/*[text()]")
 	private List<WebElement> projectNames;
 
-	public ProjectFilter(WebDriver driver, String path)
+	public ProjectFilterMenu(WebDriver driver, String path)
 	{
 		super(driver, path);
 	}
