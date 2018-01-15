@@ -10,6 +10,9 @@ import org.openqa.selenium.support.FindBy;
 public abstract class BasePage extends AbstractPage
 {
 
+	@FindBy(css = "h2.section-header")
+	private WebElement pageTitle;
+
 	private Header header;
 	private Navbar navbar;
 
@@ -34,5 +37,10 @@ public abstract class BasePage extends AbstractPage
 	{
 		return isElementPresent(header.getLoadingBarSpinnerLocator(), 1) &&
 				waitUntilElementIsNotPresent(driver.findElement(header.getLoadingBarSpinnerLocator()), seconds);
+	}
+
+	public String getPageTitleText()
+	{
+		return pageTitle.getText();
 	}
 }
