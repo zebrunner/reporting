@@ -93,7 +93,7 @@ public class Header extends AbstractPage implements IElement
 	{
 		if(! isElementClickable(userMenuButton, 2))
 			clickOutside();
-		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 1);
+		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();
 		return new UserMenu(driver, null);
 	}
