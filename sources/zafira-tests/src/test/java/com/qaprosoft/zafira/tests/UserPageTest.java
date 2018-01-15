@@ -1,9 +1,13 @@
 package com.qaprosoft.zafira.tests;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -12,6 +16,9 @@ public class UserPageTest extends AbstractTest
 {
 
 	private UserPage userPage;
+
+	@Autowired
+	private UserMapper userMapper;
 
 	@BeforeMethod
 	public void setup()
