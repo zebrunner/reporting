@@ -40,7 +40,7 @@ public class AuthTest extends AbstractTest
 	{
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS, Integer.parseInt(GENERAL_DASHBOARD_ID));
+		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard not opened!");
 	}
 	
@@ -49,7 +49,7 @@ public class AuthTest extends AbstractTest
 	{
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		loginPageService.login("invalid", "credentials", Integer.parseInt(GENERAL_DASHBOARD_ID));
+		loginPageService.login("invalid", "credentials");
 		Assert.assertTrue(loginPageService.isInvalidCredentials(), "Invalid credentials alert not showed!");
 	}
 }
