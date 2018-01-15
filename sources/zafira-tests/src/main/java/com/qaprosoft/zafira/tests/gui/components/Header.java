@@ -21,7 +21,7 @@ public class Header extends AbstractPage implements IElement
 
 	private By loadingBarSpinnerLocator = By.id("loading-bar-spinner");
 
-	private ProjectFilter projectFilter;
+	private ProjectFilterMenu projectFilterMenu;
 
 	@FindBy(xpath = "//header//*[contains(@class, 'logo-text')]")
 	private WebElement zafiraLogo;
@@ -47,7 +47,7 @@ public class Header extends AbstractPage implements IElement
 	public Header(WebDriver driver, String path)
 	{
 		super(driver, path);
-		this.projectFilter = new ProjectFilter(driver, path);
+		this.projectFilterMenu = new ProjectFilterMenu(driver, path);
 	}
 
 	public By getLoadingBarSpinnerLocator()
@@ -80,13 +80,13 @@ public class Header extends AbstractPage implements IElement
 		return new UploadImageModalWindow(driver, null);
 	}
 
-	public ProjectFilter clickProjectFilterButton()
+	public ProjectFilterMenu clickProjectFilterButton()
 	{
 		if(! isElementClickable(projectFilterButton, 10))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
-		return new ProjectFilter(driver, null);
+		return new ProjectFilterMenu(driver, null);
 	}
 
 	public UserMenu clickUserMenuButton()
