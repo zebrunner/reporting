@@ -17,7 +17,13 @@ public class UserProfilePage extends BasePage
 	private WebElement tokenInput;
 
 	@FindBy(xpath = "//div[contains(@class, 'ajs-success')]")
-	private WebElement copyActionAlert;
+	private WebElement successAlert;
+
+	@FindBy(xpath = "//div[contains(@class, 'ajs-error')]")
+	private WebElement errorAlert;
+
+	@FindBy(xpath = "//div[contains(@class, 'ajs-warning')]")
+	private WebElement warningAlert;
 
 	@FindBy(xpath="//body[contains(@class, 'zaf-light')]")
 	private WebElement lightZafiraSchemaStyle;
@@ -36,6 +42,30 @@ public class UserProfilePage extends BasePage
 
 	@FindBy(xpath="//md-radio-button[@value=22 and contains(@class, 'md-checked')]")
 	private WebElement darkZafiraSchemaRadioButtonChecked;
+
+	@FindBy(xpath="//button[ancestor::form[@name='preference_form'] and contains(@class,'md-primary')]")
+	private WebElement savePreferencesButton;
+
+	@FindBy(xpath="//button[ancestor::form[@name='preference_form'] and contains(@class,'md-warn')]")
+	private WebElement resetPreferencesButton;
+
+	@FindBy(xpath="//md-select[ancestor::form[@name='preference_form'] and @name='defaultDashboard']")
+	private WebElement defaultDashboardSelect;
+
+	@FindBy(xpath="//md-select[ancestor::form[@name='preference_form'] and @name='refreshInterval']")
+	private WebElement defaultRefreshIntervalSelect;
+
+	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='password']")
+	private WebElement passwordInput;
+
+	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='confirmPassword']")
+	private WebElement confirmPasswordInput;
+
+	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and @disabled='disabled']")
+	private WebElement changePasswordButtonDisabled;
+
+	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and not(@disabled)]")
+	private WebElement changePasswordButtonEnabled;
 
 	public enum ColorSchema {LIGHT, DARK};
 
@@ -59,9 +89,9 @@ public class UserProfilePage extends BasePage
 		return tokenInput;
 	}
 
-	public WebElement getCopyActionAlert()
+	public WebElement getSuccessAlert()
 	{
-		return copyActionAlert;
+		return successAlert;
 	}
 
 	public WebElement getLightZafiraSchemaStyle()
@@ -92,5 +122,45 @@ public class UserProfilePage extends BasePage
 	public WebElement getDarkZafiraSchemaRadioButtonChecked()
 	{
 		return darkZafiraSchemaRadioButtonChecked;
+	}
+
+	public WebElement getErrorAlert() {
+		return errorAlert;
+	}
+
+	public WebElement getWarningAlert() {
+		return warningAlert;
+	}
+
+	public WebElement getSavePreferencesButton() {
+		return savePreferencesButton;
+	}
+
+	public WebElement getResetPreferencesButton() {
+		return resetPreferencesButton;
+	}
+
+	public WebElement getDefaultDashboardSelect() {
+		return defaultDashboardSelect;
+	}
+
+	public WebElement getDefaultRefreshIntervalSelect() {
+		return defaultRefreshIntervalSelect;
+	}
+
+	public WebElement getPasswordInput() {
+		return passwordInput;
+	}
+
+	public WebElement getConfirmPasswordInput() {
+		return confirmPasswordInput;
+	}
+
+	public WebElement getChangePasswordButtonDisabled() {
+		return changePasswordButtonDisabled;
+	}
+
+	public WebElement getChangePasswordButtonEnabled() {
+		return changePasswordButtonEnabled;
 	}
 }
