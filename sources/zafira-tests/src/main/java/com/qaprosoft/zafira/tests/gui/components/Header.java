@@ -84,7 +84,7 @@ public class Header extends AbstractPage implements IElement
 	{
 		if(! isElementClickable(projectFilterButton, 10))
 			clickOutside();
-		waitUntilElementToBeClickable(this.projectFilterButton, 1);
+		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
 		return new ProjectFilter(driver, null);
 	}
@@ -93,7 +93,7 @@ public class Header extends AbstractPage implements IElement
 	{
 		if(! isElementClickable(userMenuButton, 2))
 			clickOutside();
-		waitUntilElementToBeClickable(this.userMenuButton, 1);
+		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 1);
 		this.userMenuButton.click();
 		return new UserMenu(driver, null);
 	}
@@ -102,7 +102,7 @@ public class Header extends AbstractPage implements IElement
 	{
 		WebElement userProfileButton = this.clickUserMenuButton().getUserProfileButton();
 		if(!isElementClickable(userProfileButton,2))
-		    waitUntilElementToBeClickable(userProfileButton, 1);
+		    waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
 		userProfileButton.click();
 		return new UserProfilePage(driver);
 	}
@@ -111,16 +111,16 @@ public class Header extends AbstractPage implements IElement
 	{
 		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
 		if(!isElementClickable(userPerformanceButton,2))
-			waitUntilElementToBeClickable(userPerformanceButton, 1);
+			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
 		userPerformanceButton.click();
 		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
 	}
 
-	public IntegrationsPage goIntegrationsPage()
+	public IntegrationsPage goToIntegrationsPage()
 	{
 		WebElement integrationsButton = this.clickUserMenuButton().getIntegrationsButton();
 		if(!isElementClickable(integrationsButton,2))
-			waitUntilElementToBeClickable(integrationsButton, 1);
+			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
 		integrationsButton.click();
 		return new IntegrationsPage(driver);
 	}
@@ -129,7 +129,7 @@ public class Header extends AbstractPage implements IElement
 	{
 		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
 		if(!isElementClickable(logoutButton,2))
-			waitUntilElementToBeClickable(logoutButton, 1);
+			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
 		logoutButton.click();
 		return new LoginPage(driver);
 	}

@@ -21,6 +21,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
@@ -36,12 +37,15 @@ public abstract class AbstractPage
 {
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
 	protected static final Long IMPLICITLY_TIMEOUT = 15L;
-	protected int ADMIN_ID = Integer.valueOf(Config.get("admin.id"));
+	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
 	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
 	protected String url;
 	
 	protected WebDriver driver;
+
+	@FindBy(tagName = "md-backdrop")
+	private WebElement backdrop;
 
 	public AbstractPage(WebDriver driver, String path)
 	{
@@ -52,7 +56,7 @@ public abstract class AbstractPage
 	
 	public void open()
 	{
-		driver.get(url);
+		driver.get(url.replace("\\?", "?"));
 		driver.manage().window().maximize();
 	}
 	
@@ -91,7 +95,7 @@ public abstract class AbstractPage
 
 	public boolean isElementClickable(WebElement webElement, long seconds)
 	{
-		return !isElementPresent(By.cssSelector("md-menu.md-open.md-menu"), 1) && waitUntilElementToBeClickable(webElement, seconds);
+		return !isElementPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	public boolean waitUntilElementIsPresent(By by, long seconds)
@@ -128,6 +132,11 @@ public abstract class AbstractPage
 			webDriverWait.until(ExpectedConditions.elementToBeClickable(webElement));
 			return webDriverWait;
 		}, "Start to wait until element is clickable", "Finish to wait element");
+	}
+
+	public boolean waitUntilElementToBeClickableByBackdropMask(WebElement webElement, long seconds)
+	{
+		return waitUntilElementIsNotPresent(backdrop, seconds) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier, String startMessage, String finishMessage)
@@ -178,5 +187,10 @@ public abstract class AbstractPage
 		{
 			LOGGER.error(e.getMessage());
 		}
+	}
+
+	public WebElement getBackdrop()
+	{
+		return backdrop;
 	}
 }
