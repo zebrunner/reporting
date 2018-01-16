@@ -404,6 +404,14 @@
          }());
         };
 
+        $scope.getDashboardById = function (dashboardId){
+            DashboardService.GetDashboardById(dashboardId).then(function (rs) {
+                if (rs.success) {
+                    $scope.dashboard = rs.data;
+                    $scope.getDataWithAttributes($scope.dashboard, false);
+                }
+            });
+        };
 
         $scope.$watch(
             function() {
@@ -415,28 +423,11 @@
                 if ($scope.currentUserId && $location.$$search.userId) {
                     if ($scope.currentUserId !== $location.$$search.userId) {
                         $scope.currentUserId = $location.search().userId;
-                        DashboardService.GetDashboardById($scope.dashboardId).then(function (rs) {
-                            if (rs.success) {
-                                $scope.dashboard = rs.data;
-                                $scope.getDataWithAttributes($scope.dashboard, false);
-                            }
-                        });
-                    }
+                        $scope.getDashboardById($scope.dashboardId);
+                     }
                 }
             }
         );
-
-        var getDashboardByTitle = function (){
-            DashboardService.GetDashboardByTitle($rootScope.defaultDashboard).then(function(rs) {
-                if(rs.success)
-                {   $location.path('/dashboards/' + rs.data.id);
-                    $scope.dashboardId = rs.data.id;
-                    $scope.dashboard = rs.data;
-                    $scope.getDataWithAttributes($scope.dashboard, false);
-                }
-            });
-
-        };
 
         $scope.$on('$destroy', function () {
             $scope.resetGrid();
@@ -444,52 +435,36 @@
 
         (function init() {
 
-        	var token = $cookies.get("Access-Token") ? $cookies.get("Access-Token") : $rootScope.globals.auth ? $rootScope.globals.auth.refreshToken : undefined;
-          // TODO: HOTFIX for PhantomJS, need additional refactoring
-            if(token)
-        	AuthService.RefreshToken(token)
-    		  .then(
-            function (rs) {
-            	if(rs.success)
-            	{
-            		AuthService.SetCredentials(rs.data);
+          // TODO: PhantomJS screenshots don't work
 
-            		DashboardService.GetDashboards().then(function (rs)
+            DashboardService.GetDashboards().then(function (rs)
                 {
-                        if (rs.success) {
-                            if ($stateParams.id) {
-                                $scope.dashboardId = $stateParams.id;
-                                DashboardService.GetDashboardById($stateParams.id).then(function (rs) {
-                                    if (rs.success) {
-                                        $scope.dashboard = rs.data;
-                                        $scope.getDataWithAttributes($scope.dashboard, false);
-                                    }
-                                });
-                            }
-                            else {
-                                if ($rootScope.defaultDashboard) {
-                                    getDashboardByTitle();
-                                }
-                                else {
-                                    $rootScope.$on("event:defaultPreferencesInitialized", function () {
-                                        getDashboardByTitle();
-                                    })
-                                }
-                            }
+                    if (rs.success) {
+                        if ($stateParams.id) {
+                            $scope.dashboardId = $stateParams.id;
+                            $scope.getDashboardById($scope.dashboardId);
                         }
+                        else {
+                            UserService.getUserPreferenceIdByName("DEFAULT_DASHBOARD").then(function(rs){
+                                if (rs.success) {
+                                    $scope.dashboardId = rs.data;
+                                    $scope.getDashboardById($scope.dashboardId);
+                                }
+                            });
+                        }
+                    }
                 });
 
-            		DashboardService.GetWidgets().then(function (rs)
+            DashboardService.GetWidgets().then(function (rs)
                 {
-                      if (rs.success) {
-                          $scope.widgets = rs.data;
-                      } else {
-                          alertify.error(rs.message);
-                      }
+                    if (rs.success) {
+                        $scope.widgets = rs.data;
+                    } else {
+                        alertify.error(rs.message);
+                    }
                 });
                 $scope.startRefreshing();
-            	}
-            });
+
         })();
     }
 
