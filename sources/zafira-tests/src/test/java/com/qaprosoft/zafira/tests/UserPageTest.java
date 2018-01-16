@@ -127,6 +127,9 @@ public class UserPageTest extends AbstractTest
 		userPage.getHeader().logOut();
 		DashboardPage dashboardPage = loginPageService.login(userType.getUsername(), "Welcome1!");
 		Assert.assertTrue(dashboardPage.isOpened(), "Current page is not dashboard page");
+		LoginPage loginPage = userPage.getHeader().logOut();
+		dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+		dashboardPage.waitUntilPageIsLoaded(10);
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded(10);
 		verifyUsersTableByRowIndex(userType, 1);
@@ -137,17 +140,22 @@ public class UserPageTest extends AbstractTest
 		Assert.assertTrue(changePasswordModalWindow.hasDisabledAttribute(changePasswordModalWindow.getChangeButton()), "Change button is not disabled");
 
 		userPage = changePasswordModalWindow.changePassword("Welcome2!");
+		userPage.waitUntilPageIsLoaded(10);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "Password changed", "Password changed alert is not present");
-		LoginPage loginPage = userPage.getHeader().logOut();
+		loginPage = userPage.getHeader().logOut();
 		dashboardPage = loginPageService.login(userType.getUsername(), "Welcome2!");
 		dashboardPage.waitUntilPageIsLoaded(10);
 		Assert.assertTrue(dashboardPage.isOpened(), "Current page is not dashboards page");
+		loginPage = userPage.getHeader().logOut();
+		dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+		dashboardPage.waitUntilPageIsLoaded(10);
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded(10);
 
 		createUserModalWindow = userPageService.goToEditUserModalWindow(1, false);
 		createUserModalWindow.clickDeleteButton();
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User deleted", "User deleted alert is not present");
+		userPage.waitUntilPageIsLoaded(10);
 		Assert.assertNotEquals(userPageService.getUsernameByIdOrIndex(1, false), userType.getUsername(), "User presents after deleting");
 	}
 
