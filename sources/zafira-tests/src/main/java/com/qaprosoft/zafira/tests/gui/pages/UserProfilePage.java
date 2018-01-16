@@ -16,15 +16,6 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath = "//input[@name='accessToken']")
 	private WebElement tokenInput;
 
-	@FindBy(xpath = "//div[contains(@class, 'ajs-success')]")
-	private WebElement successAlert;
-
-	@FindBy(xpath = "//div[contains(@class, 'ajs-error')]")
-	private WebElement errorAlert;
-
-	@FindBy(xpath = "//div[contains(@class, 'ajs-warning')]")
-	private WebElement warningAlert;
-
 	@FindBy(xpath="//body[contains(@class, 'zaf-light')]")
 	private WebElement lightZafiraSchemaStyle;
 
@@ -89,11 +80,6 @@ public class UserProfilePage extends BasePage
 		return tokenInput;
 	}
 
-	public WebElement getSuccessAlert()
-	{
-		return successAlert;
-	}
-
 	public WebElement getLightZafiraSchemaStyle()
 	{
 		return lightZafiraSchemaStyle;
@@ -122,14 +108,6 @@ public class UserProfilePage extends BasePage
 	public WebElement getDarkZafiraSchemaRadioButtonChecked()
 	{
 		return darkZafiraSchemaRadioButtonChecked;
-	}
-
-	public WebElement getErrorAlert() {
-		return errorAlert;
-	}
-
-	public WebElement getWarningAlert() {
-		return warningAlert;
 	}
 
 	public WebElement getSavePreferencesButton() {

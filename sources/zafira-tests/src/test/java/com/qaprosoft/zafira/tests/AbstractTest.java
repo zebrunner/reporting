@@ -71,11 +71,11 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 		driver.quit();
 	}
 
-	public void pause(long timeout)
+	public void pause(double timeout)
 	{
 		try
 		{
-			Thread.sleep(timeout * 1000);
+			Thread.sleep(new Double(timeout * 1000).intValue());
 		} catch (InterruptedException e)
 		{
 			LOGGER.error(e.getMessage());

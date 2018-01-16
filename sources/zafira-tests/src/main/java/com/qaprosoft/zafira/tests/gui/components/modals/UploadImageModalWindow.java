@@ -13,9 +13,9 @@ public class UploadImageModalWindow extends AbstractModalWindow
 	@FindBy(xpath = CONTAINER_LOCATOR + "//button")
 	public WebElement uploadImageButton;
 
-	public UploadImageModalWindow(WebDriver driver, String path)
+	public UploadImageModalWindow(WebDriver driver)
 	{
-		super(driver, path);
+		super(driver);
 	}
 
 	public WebElement getImageUploadInput()
