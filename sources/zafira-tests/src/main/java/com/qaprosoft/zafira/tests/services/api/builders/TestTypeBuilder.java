@@ -33,7 +33,7 @@ public class TestTypeBuilder extends AbstractTypeBuilder<TestType>
 			setTestGroup("com.qaprosoft.com.testgroup");
 			setStartTime(System.currentTimeMillis());
 			setDependsOnMethods("");
-			setWorkItems(Arrays.asList("TEST#" + random.nextInt(10000)));
+			setWorkItems(Arrays.asList("TEST#" + getNextRandomInt()));
 		}
 	};
 

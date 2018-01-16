@@ -13,7 +13,7 @@ public class TestCaseTypeBuilder extends AbstractTypeBuilder<TestCaseType>
 		private static final long serialVersionUID = -2942249203637741424L;
 		{
 			setTestClass("com.qaprosoft.com.testClass");
-			setTestMethod("test" + random.nextInt(10000));
+			setTestMethod("test" + getNextRandomInt());
 			setInfo("");
 			setPrimaryOwnerId(userId);
 		}

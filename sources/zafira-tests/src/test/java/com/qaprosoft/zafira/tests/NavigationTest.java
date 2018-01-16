@@ -95,11 +95,9 @@ public class NavigationTest extends AbstractTest {
 		UserProfilePage userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
 		Assert.assertTrue(userProfilePage.isOpened(), "User profile page not opened");
 
-		dashboardPage.getHeader().clickUserMenuButton();
 		IntegrationsPage integrationsPage = dashboardPage.getHeader().goToIntegrationsPage();
 		Assert.assertTrue(integrationsPage.isOpened(), "Integrations page not opened");
 
-		dashboardPage.getHeader().clickUserMenuButton();
 		UserPerformancePage userPerformancePage = dashboardPage.getHeader().goToUserPerformancePage();
 		Assert.assertTrue(userPerformancePage.isOpened(), "User performance page not opened");
 

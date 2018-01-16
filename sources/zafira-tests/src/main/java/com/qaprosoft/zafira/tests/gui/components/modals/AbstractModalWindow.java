@@ -20,9 +20,10 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 	@FindBy(xpath = CONTAINER_LOCATOR + "//md-toolbar//md-icon[text() = 'close']")
 	protected WebElement closeButton;
 
-	protected AbstractModalWindow(WebDriver driver, String path)
+	protected AbstractModalWindow(WebDriver driver)
 	{
-		super(driver, path);
+		super(driver, null);
+		waitUntilElementIsPresent(getCloseButton(), 4);
 	}
 
 	public WebElement getHeaderTextBlock()
@@ -39,11 +40,20 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 		return closeButton;
 	}
 
-	public void closeModalWindow() {
-		waitUntilElementToBeClickableByBackdropMask(closeButton, 4);
+	public boolean closeModalWindow() {
+		waitUntilElementToBeClickable(closeButton, 4);
 		closeButton.click();
-		waitUntilElementIsPresent(getBackdrop(), 1);
-		waitUntilElementIsNotPresent(getBackdrop(), 4);
+		return waitUntilModalIsNotPresent();
+	}
+
+	public boolean waitUntilModalIsNotPresent()
+	{
+		return waitUntilElementIsNotPresent(getBackdrop(), 4);
+	}
+
+	public void clearAllInputs()
+	{
+		container.findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)]")).forEach(WebElement::clear);
 	}
 
 	@Override

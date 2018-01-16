@@ -24,4 +24,9 @@ public abstract class AbstractTypeBuilder<T extends AbstractType> implements IMo
 		zafiraClient = new ZafiraClient(ZAFIRA_URL);
 		zafiraClient.setAuthToken("Bearer " + authAPIService.getAuthToken());
 	}
+
+	protected int getNextRandomInt()
+	{
+		return random.nextInt(10000);
+	}
 }
