@@ -141,13 +141,13 @@ public class UserService
 	@Transactional(rollbackFor = Exception.class)
 	public User createOrUpdateUser(User newUser) throws ServiceException
 	{
-		if (!StringUtils.isEmpty(newUser.getPassword()))
-		{
-			newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
-		}
 		User user = getUserByUsername(newUser.getUsername());
 		if (user == null)
 		{
+			if (!StringUtils.isEmpty(newUser.getPassword()))
+			{
+				newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
+			}
 			createUser(newUser);
 			Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
 			if(group != null)
