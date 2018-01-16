@@ -9,8 +9,8 @@ public class TestSuiteTypeBuilder extends AbstractTypeBuilder<TestSuiteType>
 	{
 		private static final long serialVersionUID = -2942249203637741424L;
 		{
-			setName("Test suite " + random.nextInt(10000));
-			setFileName("suite" + random.nextInt(10000) + ".xml");
+			setName("Test suite " + getNextRandomInt());
+			setFileName("suite" + getNextRandomInt() + ".xml");
 			setUserId(userId);
 		}
 	};

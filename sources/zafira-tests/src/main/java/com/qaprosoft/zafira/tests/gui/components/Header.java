@@ -77,12 +77,12 @@ public class Header extends AbstractPage implements IElement
 
 	public UploadImageModalWindow clickCompanyPhotoHoverIcon() {
 		companyProfilePhotoHoverIcon.click();
-		return new UploadImageModalWindow(driver, null);
+		return new UploadImageModalWindow(driver);
 	}
 
 	public ProjectFilterMenu clickProjectFilterButton()
 	{
-		if(! isElementClickable(projectFilterButton, 10))
+		if(! isElementClickable(projectFilterButton, 10) || isElementPresent(getBackdrop(), 1))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
@@ -91,7 +91,7 @@ public class Header extends AbstractPage implements IElement
 
 	public UserMenu clickUserMenuButton()
 	{
-		if(! isElementClickable(userMenuButton, 2))
+		if(! isElementClickable(userMenuButton, 2) || isElementPresent(getBackdrop(), 1))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();
@@ -101,7 +101,7 @@ public class Header extends AbstractPage implements IElement
 	public UserProfilePage goToUserProfilePage()
 	{
 		WebElement userProfileButton = this.clickUserMenuButton().getUserProfileButton();
-		if(!isElementClickable(userProfileButton,2))
+		if(!isElementClickable(userProfileButton,2) || isElementPresent(getBackdrop(), 1))
 		    waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
 		userProfileButton.click();
 		return new UserProfilePage(driver);
@@ -110,7 +110,7 @@ public class Header extends AbstractPage implements IElement
 	public UserPerformancePage goToUserPerformancePage()
 	{
 		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
-		if(!isElementClickable(userPerformanceButton,2))
+		if(!isElementClickable(userPerformanceButton,2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
 		userPerformanceButton.click();
 		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
@@ -119,7 +119,7 @@ public class Header extends AbstractPage implements IElement
 	public IntegrationsPage goToIntegrationsPage()
 	{
 		WebElement integrationsButton = this.clickUserMenuButton().getIntegrationsButton();
-		if(!isElementClickable(integrationsButton,2))
+		if(!isElementClickable(integrationsButton,2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
 		integrationsButton.click();
 		return new IntegrationsPage(driver);
@@ -128,7 +128,7 @@ public class Header extends AbstractPage implements IElement
 	public LoginPage logOut()
 	{
 		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
-		if(!isElementClickable(logoutButton,2))
+		if(!isElementClickable(logoutButton,2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
 		logoutButton.click();
 		return new LoginPage(driver);

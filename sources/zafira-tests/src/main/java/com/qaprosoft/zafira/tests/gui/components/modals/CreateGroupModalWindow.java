@@ -6,6 +6,6 @@ public class CreateGroupModalWindow extends AbstractModalWindow
 {
 	public CreateGroupModalWindow(WebDriver driver)
 	{
-		super(driver, null);
+		super(driver);
 	}
 }

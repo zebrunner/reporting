@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -46,6 +47,18 @@ public abstract class AbstractPage
 
 	@FindBy(tagName = "md-backdrop")
 	private WebElement backdrop;
+
+	@FindBy(tagName = "md-tooltip")
+	private WebElement tooltip;
+
+	@FindBy(xpath = "//div[contains(@class, 'ajs-success')]")
+	private WebElement successAlert;
+
+	@FindBy(xpath = "//div[contains(@class, 'ajs-error')]")
+	private WebElement errorAlert;
+
+	@FindBy(xpath = "//div[contains(@class, 'ajs-warning')]")
+	private WebElement warningAlert;
 
 	public AbstractPage(WebDriver driver, String path)
 	{
@@ -95,7 +108,7 @@ public abstract class AbstractPage
 
 	public boolean isElementClickable(WebElement webElement, long seconds)
 	{
-		return !isElementPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
+		return waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	public boolean waitUntilElementIsPresent(By by, long seconds)
@@ -165,32 +178,72 @@ public abstract class AbstractPage
 		actions.moveToElement(webElement).perform();
 	}
 
+	public String getTooltipText()
+	{
+		return tooltip.getText();
+	}
+
+	public String hoverAndGetTooltipText(WebElement webElement)
+	{
+		hoverOnElement(webElement);
+		return getTooltipText();
+	}
+
 	public void clickOutside()
 	{
 		clickByCoordinates("1", "1");
+		waitUntilElementIsNotPresent(getBackdrop(), 4);
 	}
 
 	public void clickByCoordinates(String x, String y)
 	{
-		pause(1);
 		JavascriptExecutor executor = (JavascriptExecutor)driver;
 		executor.executeScript(String.format("$(document.elementFromPoint(%s, %s)).click();", x, y));
-		pause(1);
 	}
 
-	public void pause(long timeout)
+	public void pause(double timeout)
 	{
 		try
 		{
-			Thread.sleep(timeout * 1000);
+			Thread.sleep(new Double(timeout * 1000).intValue());
 		} catch (InterruptedException e)
 		{
 			LOGGER.error(e.getMessage());
 		}
 	}
 
+	public String getWebElementValue(WebElement webElement)
+	{
+		return webElement.getAttribute("value");
+	}
+
+	public boolean hasDisabledAttribute(WebElement webElement)
+	{
+		return ! StringUtils.isBlank(webElement.getAttribute("disabled"));
+	}
+
 	public WebElement getBackdrop()
 	{
 		return backdrop;
+	}
+
+	public WebElement getTooltip()
+	{
+		return tooltip;
+	}
+
+	public WebElement getSuccessAlert()
+	{
+		return successAlert;
+	}
+
+	public WebElement getErrorAlert()
+	{
+		return errorAlert;
+	}
+
+	public WebElement getWarningAlert()
+	{
+		return warningAlert;
 	}
 }
