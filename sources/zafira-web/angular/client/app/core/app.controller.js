@@ -151,7 +151,6 @@
                                 }
                              });
                         }
-                        $rootScope.$broadcast("event:preferencesInitialized");
                     }
                 });
              };

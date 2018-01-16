@@ -19,7 +19,6 @@ public class UserProfilePageService extends AbstractPageService
 	}
 
 	public UserProfilePage.ColorSchema checkCurrentColorSchemeByRadioButton(){
-		userProfilePage.waitUntilPageIsLoaded(4);
 		if(userProfilePage.getLightZafiraSchemaRadioButtonChecked() != null){
 			return UserProfilePage.ColorSchema.LIGHT;
 		}
