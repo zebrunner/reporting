@@ -44,6 +44,7 @@
                 .then(function (rs) {
                     if (rs.success) {
                         $scope.user = rs.data;
+                        alertify.success("User profile updated");
                     }
                     else {
                         alertify.error(rs.message);
