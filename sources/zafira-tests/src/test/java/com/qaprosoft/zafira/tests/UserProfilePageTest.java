@@ -13,7 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import static com.qaprosoft.zafira.tests.gui.pages.UserProfilePage.ColorSchema;
 
-public class UserProfileTest extends AbstractTest {
+public class UserProfilePageTest extends AbstractTest {
 
     private UserProfilePage userProfilePage;
     private UserProfilePageService userProfilePageService;
@@ -59,6 +59,26 @@ public class UserProfileTest extends AbstractTest {
             Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
             userProfilePage.reload();
             Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
+        }
+    }
+
+    @Test
+    public void testNewColorSchemaSave() {
+        ColorSchema colorSchema = userProfilePageService.checkCurrentColorSchemeByRadioButton();
+        if (colorSchema == ColorSchema.LIGHT){
+            userProfilePageService.pickDarkSchemaRadioButton();
+            userProfilePage.getSavePreferencesButton().click();
+            userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
+            Assert.assertNotNull(userProfilePage.getSuccessAlert());
+            userProfilePage.reload();
+            Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
+        } else if (colorSchema == ColorSchema.DARK){
+            userProfilePageService.pickLightSchemaRadioButton();
+            userProfilePage.getSavePreferencesButton().click();
+            userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
+            Assert.assertNotNull(userProfilePage.getSuccessAlert());
+            userProfilePage.reload();
+            Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
         }
     }
 
