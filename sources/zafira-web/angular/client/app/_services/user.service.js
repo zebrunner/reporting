@@ -19,6 +19,7 @@
         service.addUserToGroup = addUserToGroup;
         service.deleteUserFromGroup = deleteUserFromGroup;
         service.getDefaultPreferences = getDefaultPreferences;
+        service.getUserPreferenceIdByName = getUserPreferenceIdByName;
         service.updateUserPreferences = updateUserPreferences;
         service.deleteUserPreferences = deleteUserPreferences;
 
@@ -66,6 +67,10 @@
 
         function getDefaultPreferences() {
             return $http.get(API_URL + '/api/users/preferences').then(UtilService.handleSuccess, UtilService.handleError('Unable to get default preferences'));
+        }
+
+        function getUserPreferenceIdByName(preferenceName) {
+            return $http.get(API_URL + '/api/users/preferences/id',{ params : {preferenceName : preferenceName}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get default preferences'));
         }
 
         function updateUserPreferences(userId, preferences) {

@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -27,14 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
@@ -63,6 +57,9 @@ public class UsersAPIController extends AbstractController
 
 	@Autowired
 	private UserPreferenceService userPreferenceService;
+
+	@Autowired
+	private DashboardService dashboardService;
 
 	@Autowired
 	private AmazonService amazonService;
@@ -189,6 +186,21 @@ public class UsersAPIController extends AbstractController
 			@PathVariable(value = "userId") long userId) throws ServiceException
 	{
 		userService.deleteUserFromGroup(groupId, userId);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get user preference dashboard id", nickname = "getUserPreferenceDashboardId", code = 200, httpMethod = "GET", response = Long.class)
+	@RequestMapping(value = "preferences/id", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Long getUserPreferenceDashboardId(@RequestParam(value="preferenceName") String preferenceName) throws ServiceException
+	{
+		UserPreference userPreference = userPreferenceService.getUserPreferenceByNameAndUserId(preferenceName, getPrincipalId());
+		if(userPreference == null){
+			userPreference = userPreferenceService.getUserPreferenceByNameAndUserId(preferenceName, userService.getUserByUsername("anonymous").getId());
+		}
+		return dashboardService.getDashboardByTitle(userPreference.getValue()).getId();
 	}
 
 	@ResponseStatusDetails
