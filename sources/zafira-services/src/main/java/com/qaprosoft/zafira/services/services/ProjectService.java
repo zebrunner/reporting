@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,7 @@ public class ProjectService
 	@Autowired
 	private ProjectMapper projectMapper;
 
+	@CachePut(value = "projects", key = "#project.name")
 	@Transactional(rollbackFor = Exception.class)
 	public Project createProject(Project project) throws ServiceException
 	{
@@ -46,13 +49,14 @@ public class ProjectService
 		return projectMapper.getAllProjects();
 	}
 	
+	@Cacheable(value = "projects", key = "#name")
 	@Transactional(readOnly = true)
-	@Cacheable("projects")
 	public Project getProjectByName(String name) throws ServiceException
 	{
 		return !StringUtils.isEmpty(name) ? projectMapper.getProjectByName(name) : null;
 	}
 
+	@CacheEvict(value = "projects", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public Project updateProject(Project project) throws ServiceException
 	{
@@ -60,6 +64,7 @@ public class ProjectService
 		return project;
 	}
 
+	@CacheEvict(value = "projects", allEntries=true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteProjectById(Long id) throws ServiceException
 	{
