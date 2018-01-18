@@ -212,6 +212,10 @@ public abstract class AbstractPage
 		}
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
 	public String getWebElementValue(WebElement webElement)
 	{
 		return webElement.getAttribute("value");
