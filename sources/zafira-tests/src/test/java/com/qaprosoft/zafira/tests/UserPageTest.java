@@ -66,24 +66,25 @@ public class UserPageTest extends AbstractTest
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
 		Assert.assertEquals(userPage.getUserRows().size() , users.size() >= 20 ? 20 : users.size(), "Count of user menu buttons is not 20");
 
-		UserSettingMenu userSettingMenu = userPageService.clickUserMenuButtonByIdOrIndex(0, false);
+		UserSettingMenu userSettingMenu = userPageService.clickUserMenuButtonByIdOrIndex(1, false);
 
 		Assert.assertTrue(userSettingMenu.isElementPresent(1), "User settings menu is not present");
 		Assert.assertTrue(userPage.isElementPresent(userSettingMenu.getEditProfileButton(), 1), "Edit profile button is not present");
 		Assert.assertTrue(userPage.isElementPresent(userSettingMenu.getChangePasswordButton(), 1), "Change password button is not present");
 		Assert.assertTrue(userPage.isElementPresent(userSettingMenu.getPerformanceButton(), 1), "Performance button is not present");
 
-		createUserModalWindow = userPageService.goToEditUserModalWindow(0, false);
+		userPage.clickOutside();
+		createUserModalWindow = userPageService.goToEditUserModalWindow(1, false);
 		Assert.assertTrue(createUserModalWindow.isElementPresent(4), "Edit user modal window not opened");
 		Assert.assertEquals(createUserModalWindow.getHeaderText(), "Edit Profile", "Invalid header text on edit profile modal window");
 		createUserModalWindow.closeModalWindow();
 
-		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(0, false);
+		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(1, false);
 		Assert.assertTrue(changePasswordModalWindow.isElementPresent(4), "Change password modal window not opened");
 		Assert.assertEquals(changePasswordModalWindow.getHeaderText(), "Change password", "Invalid header text on edit profile modal window");
 		createUserModalWindow.closeModalWindow();
 
-		DashboardPage dashboardPage = userPageService.goToPerformance(0, false);
+		DashboardPage dashboardPage = userPageService.goToPerformance(1, false);
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page not opened");
 		Assert.assertEquals(dashboardPage.getPageTitleText(), "User Performance", "Dashboard page not opened");
 	}

@@ -62,8 +62,10 @@ public abstract class BasePage extends AbstractPage
 
 	public WebElement getFabMenuButtonByClassName(String classPartialText)
 	{
-		return fabButton.findElement(By.xpath(".//following-sibling::md-fab-actions//button[.//span[contains(@class, '"
-				+ classPartialText + "')]]"));
+		By fabMenuButtonLocator = By.xpath(".//following-sibling::md-fab-actions//button[.//span[contains(@class, '"
+				+ classPartialText + "')]]");
+		waitUntilElementIsPresent(fabButton, fabMenuButtonLocator, 1);
+		return fabButton.findElement(fabMenuButtonLocator);
 	}
 
 	public void clickFabMenu()
