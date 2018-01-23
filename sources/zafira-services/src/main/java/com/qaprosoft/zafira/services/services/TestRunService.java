@@ -116,6 +116,17 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly = true)
+	public TestRun getNotNullTestRunById(long id) throws ServiceException
+	{
+		TestRun testRun = getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new TestRunNotFoundException();
+		}
+		return testRun;
+	}
+	
+	@Transactional(readOnly = true)
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
 		actualizeSearchCriteriaDate(sc);
@@ -315,27 +326,18 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException
 	{
-		TestRun testRun = getTestRunById(id);
-		if(testRun == null)
-		{
-			throw new TestRunNotFoundException();
-		}
+		TestRun testRun = getNotNullTestRunById(id);
 
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 		
 		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
 		if(finishTestRun || !IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			// Make sure that all tests managed to register results before we calculate test run status
 			for(Test test : tests)
 			{
-				// If any test IN_PROGRESS search tests once again after timeout
 				if(IN_PROGRESS.equals(test.getStatus()))
 				{
-					final long TIMEOUT = 10 * 1000;
-					Thread.sleep(TIMEOUT);
-					tests = testService.getTestsByTestRunId(testRun.getId());
-					break;
+					testService.skipTest(test);
 				}
 			}
 			

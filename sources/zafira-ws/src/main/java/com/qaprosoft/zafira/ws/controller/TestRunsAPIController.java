@@ -165,6 +165,7 @@ public class TestRunsAPIController extends AbstractController
 	{
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
 		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
@@ -184,20 +185,23 @@ public class TestRunsAPIController extends AbstractController
 	{
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		
-		if(testRun == null || !Status.IN_PROGRESS.equals(testRun.getStatus()))
+		if(testRun == null)
 		{
-			throw new ServiceException("Invalid test run status!");
+			throw new ServiceException("Test run not found for abort!");
 		}
 		
-		testRunService.abortTestRun(testRun);
-		
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
-		for (Test test : testService.getTestsByTestRunId(testRun.getId()))
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
 		{
-			if(Status.ABORTED.equals(test.getStatus()))
+			testRunService.abortTestRun(testRun);
+			
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+			for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
-				websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
+				if(Status.ABORTED.equals(test.getStatus()))
+				{
+					websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
+				}
 			}
 		}
 
