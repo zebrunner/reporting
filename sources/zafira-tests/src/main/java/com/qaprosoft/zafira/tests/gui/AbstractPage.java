@@ -120,6 +120,15 @@ public abstract class AbstractPage
 		}, "Start to wait until element is present "  + by.toString(), "Finish to wait element " + by.toString());
 	}
 
+	public boolean waitUntilElementIsPresent(WebElement webElement, By by, long seconds)
+	{
+		return innerTimeoutOperation(() -> {
+			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
+			return webDriverWait;
+		}, "Start to wait until element is present "  + by.toString(), "Finish to wait element " + by.toString());
+	}
+
 	public boolean waitUntilElementIsPresent(WebElement webElement, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
