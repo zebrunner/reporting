@@ -15,11 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.services.services.DashboardService;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +67,12 @@ public class UsersAPIController extends AbstractController
 	private UserService userService;
 
 	@Autowired
+	private SettingsService settingsService;
+
+	@Autowired
+	DashboardService dashboardService;
+
+	@Autowired
 	private UserPreferenceService userPreferenceService;
 
 	@Autowired
@@ -84,6 +95,28 @@ public class UsersAPIController extends AbstractController
 		userType.setPreferences(user.getPreferences());
 		userType.setPermissions(user.getPermissions());
 		return userType;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get extended user profile", nickname = "getExtendedUserProfile", code = 200, httpMethod = "GET", response = Map.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "profile/extended", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getExtendedUserProfile() throws ServiceException
+	{
+		Map<String, Object> extendedUserProfile = new HashMap<>();
+		User user = userService.getUserById(getPrincipalId());
+		UserType userType = mapper.map(user, UserType.class);
+		userType.setRoles(user.getRoles());
+		userType.setPreferences(user.getPreferences() == null || CollectionUtils.isEmpty(user.getPreferences())
+				? userPreferenceService.getDefaultUserPreferences() : user.getPreferences());
+		userType.setPermissions(user.getPermissions());
+		extendedUserProfile.put("user", userType);
+		extendedUserProfile.put("companyLogo", settingsService.getSettingByName("COMPANY_LOGO_URL"));
+		extendedUserProfile.put("performanceDashboardId", dashboardService.getDashboardByTitle("User Performance").getId());
+		extendedUserProfile.put("defaultDashboardId", dashboardService.getDefaultDashboardByUserId(user.getId()).getId());
+		return extendedUserProfile;
 	}
 
 	@ResponseStatusDetails

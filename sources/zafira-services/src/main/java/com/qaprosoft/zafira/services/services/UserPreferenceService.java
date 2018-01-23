@@ -47,6 +47,12 @@ public class UserPreferenceService
 	{
 		return userPreferenceMapper.getUserPreferenceById(id);
 	}
+
+	@Transactional(readOnly = true)
+	public List<UserPreference> getDefaultUserPreferences() throws ServiceException
+	{
+		return userPreferenceMapper.getDefaultUserPreferences();
+	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public UserPreference updateUserPreference(UserPreference userPreference) throws ServiceException
