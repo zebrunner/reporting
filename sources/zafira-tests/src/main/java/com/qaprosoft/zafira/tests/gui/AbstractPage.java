@@ -226,6 +226,11 @@ public abstract class AbstractPage
 		return ! StringUtils.isBlank(webElement.getAttribute("disabled"));
 	}
 
+	public boolean hasSelectedAttribute(WebElement webElement)
+	{
+		return ! StringUtils.isBlank(webElement.getAttribute("selected"));
+	}
+
 	public WebElement getBackdrop()
 	{
 		return backdrop;
