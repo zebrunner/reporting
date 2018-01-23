@@ -46,31 +46,31 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.*;
 public class TestService
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestService.class);
-	
+
 	private static final String INV_COUNT = "InvCount";
-	
+
 	private static final String SPACE = " ";
-	
+
 	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
 
 	@Autowired
 	private TestMapper testMapper;
-	
+
 	@Autowired
 	private WorkItemService workItemService;
-	
+
 	@Autowired
 	private TestConfigService testConfigService;
-	
+
 	@Autowired
 	private TestCaseService testCaseService;
-	
+
 	@Autowired
 	private TestRunService testRunService;
 
 	@Autowired
 	private JiraService jiraService;
-	
+
 	@Autowired
 	private TestArtifactService testArtifactService;
 
@@ -78,17 +78,17 @@ public class TestService
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
 		// New test
-		if(test.getId() == null || test.getId() == 0)
+		if (test.getId() == null || test.getId() == 0)
 		{
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
 			test.setTestConfig(config);
 			test.setStatus(Status.IN_PROGRESS);
 			testMapper.createTest(test);
-			if(jiraIds != null)
+			if (jiraIds != null)
 			{
-				for(String jiraId : jiraIds)
+				for (String jiraId : jiraIds)
 				{
-					if(!StringUtils.isEmpty(jiraId))
+					if (!StringUtils.isEmpty(jiraId))
 					{
 						WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
 						testMapper.createTestWorkItem(test, workItem);
@@ -113,91 +113,112 @@ public class TestService
 		}
 		return test;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test finishTest(Test test, String configXML) throws ServiceException
 	{
-		Test existingTest = testMapper.getTestById(test.getId());
-		if(existingTest == null)
-		{
-			throw new TestNotFoundException();
-		}
-		
+		Test existingTest = getNotNullTestById(test.getId());
+
 		existingTest.setFinishTime(test.getFinishTime());
 		existingTest.setStatus(test.getStatus());
 		existingTest.setRetry(test.getRetry());
 		existingTest.setTestConfig(testConfigService.createTestConfigForTest(test, configXML));
 
-		testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
-		
-		String message = test.getMessage();
-		if(message != null)
+		// Wrap all additional test finalization logic to make sure status saved
+		try
 		{
-			existingTest.setMessage(message);
-			// Handling of known Selenium errors
-			for(String error : SELENIUM_ERRORS)
+			String message = test.getMessage();
+			if (message != null)
 			{
-				if(message.startsWith(error))
+				existingTest.setMessage(message);
+				// Handling of known Selenium errors
+				for (String error : SELENIUM_ERRORS)
 				{
-					message = error;
-					break;
-				}
-			}
-			existingTest.setMessageHashCode(getTestMessageHashCode(message));
-		}
-		
-		if(Status.FAILED.equals(test.getStatus()))
-		{
-			WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
-			if(knownIssue != null)
-			{
-				Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
-				boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
-						&& jiraService.isIssueClosed(issueFromJira);
-				if(! isJiraIdClosed) {
-					existingTest.setKnownIssue(true);
-					existingTest.setBlocker(knownIssue.isBlocker());
-					testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
-					if(existingTest.isBlocker())
-						testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
-					testMapper.createTestWorkItem(existingTest, knownIssue);
-					if (existingTest.getWorkItems() == null) {
-						existingTest.setWorkItems(new ArrayList<WorkItem>());
+					if (message.startsWith(error))
+					{
+						message = error;
+						break;
 					}
-					existingTest.getWorkItems().add(knownIssue);
 				}
+				existingTest.setMessageHashCode(getTestMessageHashCode(message));
 			}
-		}
-		
-		// Save artifacts
-		if(!CollectionUtils.isEmpty(test.getArtifacts()))
-		{
-			for(TestArtifact artifact : test.getArtifacts())
+			
+			// Resolve known issues
+			if (Status.FAILED.equals(test.getStatus()))
 			{
-				if(artifact.isValid())
+				WorkItem knownIssue = workItemService.getWorkItemByTestCaseIdAndHashCode(existingTest.getTestCaseId(), getTestMessageHashCode(test.getMessage()));
+				if (knownIssue != null)
 				{
-					artifact.setTestId(test.getId());
-					existingTest.setArtifacts(test.getArtifacts());
-					testArtifactService.createOrUpdateTestArtifact(artifact);
-				}
-				else
-				{
-					LOGGER.error("Unable to save invalid artifact");
+					Issue issueFromJira = jiraService.getIssue(knownIssue.getJiraId());
+					boolean isJiraIdClosed = jiraService.isConnected() && issueFromJira != null
+							&& jiraService.isIssueClosed(issueFromJira);
+					if (!isJiraIdClosed)
+					{
+						existingTest.setKnownIssue(true);
+						existingTest.setBlocker(knownIssue.isBlocker());
+						testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+						if (existingTest.isBlocker())
+						{
+							testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.MARK_AS_BLOCKER);
+						}
+						testMapper.createTestWorkItem(existingTest, knownIssue);
+						if (existingTest.getWorkItems() == null)
+						{
+							existingTest.setWorkItems(new ArrayList<WorkItem>());
+						}
+						existingTest.getWorkItems().add(knownIssue);
+					}
 				}
 			}
-		}
-		
-		testMapper.updateTest(existingTest);
-		
-		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
-		if(testCase != null)
+
+			// Save artifacts
+			if (!CollectionUtils.isEmpty(test.getArtifacts()))
+			{
+				for (TestArtifact artifact : test.getArtifacts())
+				{
+					if (artifact.isValid())
+					{
+						artifact.setTestId(test.getId());
+						existingTest.setArtifacts(test.getArtifacts());
+						testArtifactService.createOrUpdateTestArtifact(artifact);
+					}
+					else
+					{
+						LOGGER.error("Unable to save invalid artifact");
+					}
+				}
+			}
+			
+			TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
+			if (testCase != null)
+			{
+				testCase.setStatus(test.getStatus());
+				testCaseService.updateTestCase(testCase);
+			}
+			
+		} 
+		catch (Exception e) 
 		{
-			testCase.setStatus(test.getStatus());
-			testCaseService.updateTestCase(testCase);
+			LOGGER.error("Test finalization error: " + e.getMessage());
 		}
+		finally 
+		{
+			testMapper.updateTest(existingTest);
+			testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
+		}
+		
 		return existingTest;
 	}
 	
+	@Transactional(rollbackFor = Exception.class)
+	public Test skipTest(Test test) throws ServiceException
+	{
+		test.setStatus(Status.SKIPPED);
+		testRunService.updateStatistics(test.getTestRunId(), Status.SKIPPED);
+		updateTest(test);
+		return test;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test abortTest(Test test) throws ServiceException
 	{
@@ -206,12 +227,12 @@ public class TestService
 		updateTest(test);
 		return test;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
-		if(test == null)
+		if (test == null)
 		{
 			throw new TestNotFoundException();
 		}
@@ -221,56 +242,56 @@ public class TestService
 		test.setStatus(Status.PASSED);
 
 		updateTest(test);
-		
+
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
-		if(testCase != null)
+		if (testCase != null)
 		{
 			testCase.setStatus(test.getStatus());
 			testCaseService.updateTestCase(testCase);
 		}
-		
+
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-		
+
 		return test;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test createTestWorkItems(long id, List<String> jiraIds) throws ServiceException
 	{
 		Test test = getTestById(id);
-		if(test == null)
+		if (test == null)
 		{
 			throw new ServiceException("Test not found by id: " + id);
 		}
-		for(String jiraId : jiraIds)
+		for (String jiraId : jiraIds)
 		{
-			if(!StringUtils.isEmpty(jiraId))
+			if (!StringUtils.isEmpty(jiraId))
 			{
 				WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
 				testMapper.createTestWorkItem(test, workItem);
 			}
-			
+
 		}
 		return test;
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Test getTestById(long id) throws ServiceException
 	{
 		return testMapper.getTestById(id);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Test getNotNullTestById(long id) throws ServiceException
 	{
 		Test test = getTestById(id);
-		if(test == null)
+		if (test == null)
 		{
 			throw new TestNotFoundException("Test ID: " + id);
 		}
 		return test;
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
@@ -282,26 +303,26 @@ public class TestService
 	{
 		return testMapper.getTestsByWorkItemId(workItemId);
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test updateTest(Test test) throws ServiceException
 	{
 		testMapper.updateTest(test);
 		return test;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteTest(Test test) throws ServiceException
 	{
 		testMapper.deleteTest(test);
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteTestById(long id) throws ServiceException
 	{
 		testMapper.deleteTestById(id);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException
 	{
@@ -309,28 +330,29 @@ public class TestService
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
-		List <Test> tests = testMapper.searchTests(sc);
-		for (Test test: tests){
+		List<Test> tests = testMapper.searchTests(sc);
+		for (Test test : tests)
+		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
 		}
- 		results.setResults(tests);
+		results.setResults(tests);
 		results.setTotalResults(testMapper.getTestsSearchCount(sc));
 		return results;
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getNotNullTestById(testId);
 		WorkItem existingBug = test.getWorkItem(Type.BUG);
-		
+
 		workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
 
-		if(!test.isKnownIssue())
+		if (!test.isKnownIssue())
 			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
-		if(!test.isBlocker() && workItem.isBlocker())
+		if (!test.isBlocker() && workItem.isBlocker())
 			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
-		else if(test.isBlocker() && !workItem.isBlocker())
+		else if (test.isBlocker() && !workItem.isBlocker())
 			testRunService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
 
 		test.setKnownIssue(true);
@@ -341,7 +363,7 @@ public class TestService
 		{
 			workItemService.updateWorkItem(workItem);
 			testMapper.createTestWorkItem(test, workItem);
-		} 
+		}
 		else if (workItem.getId() != null && existingBug != null)
 		{
 			existingBug.setHashCode(-1);
@@ -349,7 +371,7 @@ public class TestService
 			workItemService.updateWorkItem(workItem);
 			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
 			testMapper.createTestWorkItem(test, workItem);
-		} 
+		}
 		else
 		{
 			workItemService.createWorkItem(workItem);
@@ -357,12 +379,13 @@ public class TestService
 			testMapper.createTestWorkItem(test, workItem);
 		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-		
+
 		return workItem;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException, InterruptedException {
+	public TestRun deleteTestWorkItemByWorkItemIdAndTest(long workItemId, Test test) throws ServiceException, InterruptedException
+	{
 		test.setKnownIssue(false);
 		test.setBlocker(false);
 		updateTest(test);
@@ -379,27 +402,29 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException, InterruptedException {
+	public void deleteTestWorkItemByWorkItemIdAndTestId(long workItemId, long testId) throws ServiceException, InterruptedException
+	{
 		testMapper.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException, InterruptedException {
+	public void deleteTestWorkItemByTestIdAndWorkItemType(long testId, Type type) throws ServiceException, InterruptedException
+	{
 		testMapper.deleteTestWorkItemByTestIdAndWorkItemType(testId, type);
 	}
-	
+
 	@Transactional
 	public void updateTestRerunFlags(TestRun testRun, List<Test> tests)
 	{
 		List<Long> testIds = getTestIds(tests);
 		testMapper.updateTestsNeedRerun(testIds, false);
-		
+
 		try
 		{
-			// In case of SUITE_MODE we are rerunning all tests if test run status not PASSED 
-			if(DriverMode.SUITE_MODE.equals(testRun.getDriverMode()))
+			// In case of SUITE_MODE we are rerunning all tests if test run status not PASSED
+			if (DriverMode.SUITE_MODE.equals(testRun.getDriverMode()))
 			{
-				if(!Status.PASSED.equals(testRun.getStatus()))
+				if (!Status.PASSED.equals(testRun.getStatus()))
 				{
 					testMapper.updateTestsNeedRerun(testIds, true);
 				}
@@ -408,40 +433,40 @@ public class TestService
 			{
 				// Look #Test implements comparable so that all SKIPPED and FAILED tests go first
 				Collections.sort(tests);
-				
+
 				TestCaseSearchCriteria sc = new TestCaseSearchCriteria();
 				sc.setPageSize(Integer.MAX_VALUE);
-				for(Test test : tests)
+				for (Test test : tests)
 				{
 					sc.addId(test.getTestCaseId());
 				}
-				
+
 				Map<Long, TestCase> testCasesById = new HashMap<>();
 				Map<String, List<Long>> testCasesByClass = new HashMap<>();
 				Map<String, List<Long>> testCasesByMethod = new HashMap<>();
 				Set<Long> testCasesToRerun = new HashSet<>();
-				
-				for(TestCase tc : testCaseService.searchTestCases(sc).getResults())
+
+				for (TestCase tc : testCaseService.searchTestCases(sc).getResults())
 				{
 					testCasesById.put(tc.getId(), tc);
-					
-					if(!testCasesByClass.containsKey(tc.getTestClass()))
+
+					if (!testCasesByClass.containsKey(tc.getTestClass()))
 					{
 						testCasesByClass.put(tc.getTestClass(), new ArrayList<Long>());
 					}
 					testCasesByClass.get(tc.getTestClass()).add(tc.getId());
-					
-					if(!testCasesByMethod.containsKey(tc.getTestMethod()))
+
+					if (!testCasesByMethod.containsKey(tc.getTestMethod()))
 					{
 						testCasesByMethod.put(tc.getTestMethod(), new ArrayList<Long>());
 					}
 					testCasesByMethod.get(tc.getTestMethod()).add(tc.getId());
 				}
-				
-				for(Test test : tests)
+
+				for (Test test : tests)
 				{
-					
-					if((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
+
+					if ((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
 					{
 						switch (testRun.getDriverMode())
 						{
@@ -455,8 +480,8 @@ public class TestService
 
 						case METHOD_MODE:
 							String methodName = testCasesById.get(test.getTestCaseId()).getTestMethod();
-							
-							if(test.getName().contains(INV_COUNT))
+
+							if (test.getName().contains(INV_COUNT))
 							{
 								testCasesToRerun.addAll(testCasesByMethod.get(methodName));
 							}
@@ -464,10 +489,10 @@ public class TestService
 							{
 								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
 							}
-							
-							if(!StringUtils.isEmpty(test.getDependsOnMethods()))
+
+							if (!StringUtils.isEmpty(test.getDependsOnMethods()))
 							{
-								for(String method : test.getDependsOnMethods().split(SPACE))
+								for (String method : test.getDependsOnMethods().split(SPACE))
 								{
 									testCasesToRerun.addAll(testCasesByMethod.get(method));
 								}
@@ -476,11 +501,11 @@ public class TestService
 						}
 					}
 				}
-				
+
 				testIds = new ArrayList<>();
-				for(Test test : tests)
+				for (Test test : tests)
 				{
-					if(testCasesToRerun.contains(test.getTestCaseId()))
+					if (testCasesToRerun.contains(test.getTestCaseId()))
 					{
 						testIds.add(test.getId());
 					}
@@ -488,7 +513,7 @@ public class TestService
 				testMapper.updateTestsNeedRerun(testIds, true);
 			}
 		}
-		catch(Exception e) 
+		catch (Exception e)
 		{
 			LOGGER.error("Unable to calculate rurun flags", e);
 			testMapper.updateTestsNeedRerun(testIds, true);
@@ -496,28 +521,38 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public WorkItem assignOrUpdateTaskWorkItemToTest(long id, WorkItem workItem, long principalId) throws ServiceException, InterruptedException {
+	public WorkItem assignOrUpdateTaskWorkItemToTest(long id, WorkItem workItem, long principalId) throws ServiceException, InterruptedException
+	{
 		Test test = getTestById(id);
 		List<WorkItem> itemList = test.getWorkItems();
 		WorkItem existWorkItem = null;
 
-		for (WorkItem item : itemList) {
-			if (item.getType() == Type.TASK) {
+		for (WorkItem item : itemList)
+		{
+			if (item.getType() == Type.TASK)
+			{
 				existWorkItem = item;
 				break;
 			}
 		}
 
-		if (existWorkItem == null) {
-			if (principalId > 0) {
+		if (existWorkItem == null)
+		{
+			if (principalId > 0)
+			{
 				workItem.setUser(new User(principalId));
 			}
 			workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
-		} else {
+		}
+		else
+		{
 
-			if (workItem.getJiraId().equals(existWorkItem.getJiraId())) {
+			if (workItem.getJiraId().equals(existWorkItem.getJiraId()))
+			{
 				workItem = workItemService.updateWorkItem(workItem);
-			} else {
+			}
+			else
+			{
 				deleteTestWorkItemByWorkItemIdAndTestId(existWorkItem.getId(), id);
 				workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
 			}
@@ -526,21 +561,27 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public WorkItem createOrGetExistTestWorkItemWithTypeTask(long id, WorkItem workItem) throws ServiceException {
+	public WorkItem createOrGetExistTestWorkItemWithTypeTask(long id, WorkItem workItem) throws ServiceException
+	{
 		Test test = getTestById(id);
 		WorkItem item = null;
 
-		if (test == null) {
+		if (test == null)
+		{
 			throw new ServiceException("Test not found by id: " + id);
 		}
 
-		if (!StringUtils.isEmpty(workItem.getJiraId())) {
+		if (!StringUtils.isEmpty(workItem.getJiraId()))
+		{
 			item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
-			if (item == null) {
+			if (item == null)
+			{
 				workItem.setType(Type.TASK);
 				workItemService.createWorkItem(workItem);
 				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
-			} else if (!item.getDescription().equals(workItem.getDescription())) {
+			}
+			else if (!item.getDescription().equals(workItem.getDescription()))
+			{
 				workItem.setType(Type.TASK);
 				workItemService.createWorkItem(workItem);
 				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
@@ -550,16 +591,16 @@ public class TestService
 
 		return item;
 	}
-	
+
 	public int getTestMessageHashCode(String message)
 	{
 		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
 	}
-	
+
 	public List<Long> getTestIds(List<Test> tests)
 	{
 		List<Long> testIds = new ArrayList<>();
-		for(Test test : tests)
+		for (Test test : tests)
 		{
 			testIds.add(test.getId());
 		}
