@@ -7,14 +7,42 @@ import org.openqa.selenium.support.FindBy;
 public class UserProfilePage extends BasePage
 {
 
-	@FindBy(xpath = "//button[ancestor::form[@name='access_token_form'] and @type='submit']")
-	private WebElement generateTokenButton;
+	@FindBy(xpath="//input[@name='username']")
+	private WebElement userNameInput;
 
-	@FindBy(xpath = "//button[ancestor::form[@name='access_token_form'] and @type='button']")
-	private WebElement copyTokenButton;
+	@FindBy(xpath="//input[@name='firstName']")
+	private WebElement firstNameInput;
 
-	@FindBy(xpath = "//input[@name='accessToken']")
-	private WebElement tokenInput;
+	@FindBy(xpath="//input[@name='lastName']")
+	private WebElement lastNameInput;
+
+	@FindBy(xpath="//input[@name='email']")
+	private WebElement emailInput;
+
+	@FindBy(xpath="//div[contains(text(),'ROLE_USER')]")
+	private WebElement roleUserLabel;
+
+	@FindBy(xpath="//div[contains(text(),'ROLE_ADMIN')]")
+	private WebElement roleAdminLabel;
+
+
+
+
+	@FindBy(xpath="//md-option[@value='General']")
+	private WebElement generalBoardButton;
+
+	@FindBy(xpath="//md-option[contains(@value,'Nightly')]")
+	private WebElement nightlyBoardButton;
+
+
+
+
+
+
+
+
+	@FindBy(xpath="//button[ancestor::form[@name='profile_form']]")
+	private WebElement saveUserProfileButton;
 
 	@FindBy(xpath="//body[contains(@class, 'zaf-light')]")
 	private WebElement lightZafiraSchemaStyle;
@@ -52,11 +80,18 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='confirmPassword']")
 	private WebElement confirmPasswordInput;
 
-	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and @disabled='disabled']")
-	private WebElement changePasswordButtonDisabled;
+	@FindBy(xpath="//button[ancestor::form[@name='password_form']]")
+	private WebElement changePasswordButton;
 
-	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and not(@disabled)]")
-	private WebElement changePasswordButtonEnabled;
+	@FindBy(xpath = "//button[ancestor::form[@name='access_token_form'] and @type='submit']")
+	private WebElement generateTokenButton;
+
+	@FindBy(xpath = "//button[ancestor::form[@name='access_token_form'] and @type='button']")
+	private WebElement copyTokenButton;
+
+	@FindBy(xpath = "//input[@name='accessToken']")
+	private WebElement tokenInput;
+
 
 	public enum ColorSchema {LIGHT, DARK};
 
@@ -134,11 +169,44 @@ public class UserProfilePage extends BasePage
 		return confirmPasswordInput;
 	}
 
-	public WebElement getChangePasswordButtonDisabled() {
-		return changePasswordButtonDisabled;
+	public WebElement getChangePasswordButton() {
+		return changePasswordButton;
 	}
 
-	public WebElement getChangePasswordButtonEnabled() {
-		return changePasswordButtonEnabled;
+	public WebElement getUserNameInput() {
+		return userNameInput;
 	}
+
+	public WebElement getFirstNameInput() {
+		return firstNameInput;
+	}
+
+	public WebElement getLastNameInput() {
+		return lastNameInput;
+	}
+
+	public WebElement getEmailInput() {
+		return emailInput;
+	}
+
+	public WebElement getRoleUserLabel() {
+		return roleUserLabel;
+	}
+
+	public WebElement getRoleAdminLabel() {
+		return roleAdminLabel;
+	}
+
+	public WebElement getSaveUserProfileButton() {
+		return saveUserProfileButton;
+	}
+
+	public WebElement getGeneralBoardButton() {
+		return generalBoardButton;
+	}
+
+	public WebElement getNightlyBoardButton() {
+		return nightlyBoardButton;
+	}
+
 }

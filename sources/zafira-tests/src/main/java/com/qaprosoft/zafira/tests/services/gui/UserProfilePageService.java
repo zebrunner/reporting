@@ -19,11 +19,10 @@ public class UserProfilePageService extends AbstractPageService
 	}
 
 	public UserProfilePage.ColorSchema checkCurrentColorSchemeByRadioButton(){
-		userProfilePage.waitUntilPageIsLoaded(4);
-		if(userProfilePage.getLightZafiraSchemaRadioButtonChecked() != null){
+		if(userProfilePage.isElementPresent(userProfilePage.getLightZafiraSchemaRadioButtonChecked(), 0)){
 			return UserProfilePage.ColorSchema.LIGHT;
 		}
-		else if (userProfilePage.getDarkZafiraSchemaRadioButtonChecked() != null){
+		else if (userProfilePage.isElementPresent(userProfilePage.getDarkZafiraSchemaRadioButtonChecked(), 0)){
 			return UserProfilePage.ColorSchema.DARK;
 		}
 		else {

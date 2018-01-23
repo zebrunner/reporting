@@ -22,9 +22,7 @@
                 .then(function(rs) {
                     if (rs.success) {
                         $rootScope.$broadcast('event:auth-loginSuccess', rs.data);
-                        $rootScope.$on("event:preferencesInitialized", function () {
                             $state.go('dashboards');
-                        });
                     } else {
                         $scope.credentials = {
                             valid: false
