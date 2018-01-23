@@ -14,7 +14,7 @@
             <span class="logo-text">{{main.brand}}</span>
         </a>
         <div class="profile-img" style="display: inline-block; vertical-align: top" ng-controller="SidebarController">
-            <profile-photo ng-model="companyLogo.value" size="40" icon="image" icon-visible="isAdmin"></profile-photo>
+            <profile-photo ng-model="currentUser.companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
             <div has-any-role="['ROLE_ADMIN']">
                 <div class="profile-img-content" style="top: 0; left:12px">
                     <span><i class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
@@ -64,7 +64,7 @@
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{pefrDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
+                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
                         <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']"><md-button aria-label="menu" ng-href="#!/integrations"><md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button></md-menu-item>
                         <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
                     </md-menu-content>

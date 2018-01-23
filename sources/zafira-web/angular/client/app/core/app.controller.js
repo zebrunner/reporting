@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$window', '$cookies', '$document', '$http', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $window, $cookies, $document, $http, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -17,29 +17,6 @@
 	        $rootScope.jira     = { enabled : false };
 	        $rootScope.rabbitmq = { enabled : false };
 
-	        $scope.$watch('main', function(newVal, oldVal) {
-
-	            if (newVal.menu === 'horizontal' && oldVal.menu === 'vertical') {
-	                $rootScope.$broadcast('nav:reset');
-	            }
-	            if (newVal.fixedHeader === false && newVal.fixedSidebar === true) {
-	                if (oldVal.fixedHeader === false && oldVal.fixedSidebar === false) {
-	                    $scope.main.fixedHeader = true;
-	                    $scope.main.fixedSidebar = true;
-	                }
-	                if (oldVal.fixedHeader === true && oldVal.fixedSidebar === true) {
-	                    $scope.main.fixedHeader = false;
-	                    $scope.main.fixedSidebar = false;
-	                }
-	            }
-	            if (newVal.fixedSidebar === true) {
-	                $scope.main.fixedHeader = true;
-	            }
-	            if (newVal.fixedHeader === false) {
-	                $scope.main.fixedSidebar = false;
-	            }
-	        }, true);
-
             $scope.setOffset = function (event) {
 	              $rootScope.currentOffset = 0;
 	              var bottomHeight = $window.innerHeight - event.target.clientHeight - event.clientY;
@@ -50,30 +27,6 @@
 
 	        $scope.initSession = function()
 	        {
-	            $scope.loadCompanyLogo();
-
-                $scope.initUserProfile();
-
-		   		DashboardService.GetDashboardByTitle("User Performance").then(function(rs) {
-	               if(rs.success)
-	               {
-	               		$rootScope.pefrDashboardId = rs.data.id;
-	               }
-		        });
-
-		   		AuthService.GenerateAccessToken().then(function (rs) {
-		            	if(rs.success)
-		            	{
-		            		$rootScope.accessToken = rs.data.token;
-		            	}
-	            });
-
-		   		ConfigService.getConfig("version").then(function(rs) {
-	                if(rs.success)
-	                {
-	                    $rootScope.version = rs.data;
-	                }
-	            });
 
                 SettingsService.getSettingTools().then(function(rs) {
                     if(rs.success)
@@ -93,6 +46,24 @@
                 });
 
 	        };
+
+	        $scope.initExtendedUserProfile = function () {
+                return $q(function(resolve, reject) {
+                    UserService.getExtendedUserProfile().then(function(rs) {
+                        if(rs.success)
+                        {
+                            $rootScope.currentUser = rs.data["user"];
+                            $rootScope.currentUser.companyLogo = rs.data["companyLogo"];
+                            $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
+                            $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
+                            $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
+                            resolve(rs.data['defaultDashboardId']);
+                        } else {
+                            reject(rs);
+                        }
+                    });
+                })
+            };
 
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
@@ -125,48 +96,23 @@
                 }
             });
 
-            $scope.loadCompanyLogo = function () {
-                SettingsService.getSettingValueByName('COMPANY_LOGO_URL').then(function(rs) {
-                    if(rs.success) {
-                        $rootScope.companyLogo = rs.data;
+            $rootScope.setDefaultPreferences = function(userPreferences){
+                userPreferences.forEach(function(userPreference) {
+                    switch(userPreference.name) {
+                        case 'DEFAULT_DASHBOARD':
+                            $rootScope.currentUser.defaultDashboard = userPreference.value;
+                            break;
+                        case 'REFRESH_INTERVAL':
+                            $rootScope.currentUser.refreshInterval = userPreference.value;
+                            break;
+                        case 'THEME':
+                            $rootScope.currentUser.theme = userPreference.value;
+                            $scope.main.skin = userPreference.value;
+                            break;
+                        default:
+                            break;
                     }
                 });
-            };
-
-            $scope.initUserProfile = function (){
-                UserService.getUserProfile().then(function (rs) {
-                    if(rs.success)
-                    {
-                        $rootScope.currentUser = rs.data;
-                        $rootScope.isAdmin = rs.data.roles.indexOf('ROLE_ADMIN') >= 0;
-                        var userPreferences = $rootScope.currentUser.preferences;
-                        if (userPreferences && userPreferences.length !=0) {
-                            $scope.setDefaultPreferences(userPreferences);
-                        }
-                        else {
-                            UserService.getDefaultPreferences().then(function(rs){
-                                if(rs.success)
-                                {
-                                    $scope.setDefaultPreferences(rs.data);
-                                }
-                             });
-                        }
-                    }
-                });
-             };
-
-            $scope.setDefaultPreferences = function(userPreferences){
-                for (var i = 0; i < userPreferences.length; i++){
-                    if (userPreferences[i].name === 'DEFAULT_DASHBOARD'){
-                        $rootScope.defaultDashboard = userPreferences[i].value;
-                    }
-                    else if (userPreferences[i].name === 'REFRESH_INTERVAL'){
-                        $rootScope.refreshInterval = userPreferences[i].value;
-                    }
-                    else if (userPreferences[i].name === 'THEME'){
-                        $scope.main.skin = userPreferences[i].value;
-                    }
-                }
                 $rootScope.$broadcast("event:defaultPreferencesInitialized");
             };
 
@@ -176,12 +122,12 @@
 
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
 	        	AuthService.SetCredentials(auth);
-	        	$scope.initSession();
+                $scope.initSession();
+                $scope.initExtendedUserProfile().then(function(rs) {
+                    $location.path('/dashboards/' + rs);
+                }, function (rs) {
+                })
 	        });
-
-            $rootScope.$on("event:preferencesReset", function () {
-                $scope.initUserProfile();
-            });
 
             $rootScope.$on('event:auth-loginRequired', function()
 	        {
@@ -197,7 +143,7 @@
 		            function (rs) {
 		            	if(rs.success)
 		            	{
-		            		$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
+                            AuthService.SetCredentials(rs.data);
 		            		AuthIntercepter.loginConfirmed();
 		            	}
 		            	else
@@ -216,14 +162,25 @@
 	        (function initController() {
 
 	        	// keep user logged in after page refresh
-	            $rootScope.globals = $cookies.getObject('globals') || {};
+	            var authorization = $cookies.get('Access-Token');
+                if(authorization) {
+                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
+                }
 
+                $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
 	            if ($rootScope.globals.auth)
 	            {
 	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
+                    $scope.initSession();
+                    $scope.initExtendedUserProfile();
 	            }
 
-	        	$scope.initSession();
+                ConfigService.getConfig("version").then(function(rs) {
+                    if(rs.success)
+                    {
+                        $rootScope.version = rs.data;
+                    }
+                });
 	        })();
 	    }
 })();

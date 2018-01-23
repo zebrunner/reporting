@@ -64,6 +64,12 @@ public class DashboardService
         Dashboard dashboard = dashboardMapper.getDashboardByTitle(title);
 		return dashboard;
 	}
+
+	@Transactional(readOnly = true)
+	public Dashboard getDefaultDashboardByUserId(long userId) throws ServiceException
+	{
+		return dashboardMapper.getDefaultDashboardByUserId(userId);
+	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public Dashboard updateDashboard(Dashboard dashboard) throws ServiceException
