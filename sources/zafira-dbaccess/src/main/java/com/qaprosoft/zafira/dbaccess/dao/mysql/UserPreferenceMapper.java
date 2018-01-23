@@ -30,6 +30,8 @@ public interface UserPreferenceMapper
 
 	List<UserPreference> getUserPreferencesByUserId(long userId);
 
+	List<UserPreference> getDefaultUserPreferences();
+
 	UserPreference getUserPreferenceByNameAndUserId(@Param("name") String name, @Param("userId") long userId);
 
 	void updateUserPreference(UserPreference userPreference);
