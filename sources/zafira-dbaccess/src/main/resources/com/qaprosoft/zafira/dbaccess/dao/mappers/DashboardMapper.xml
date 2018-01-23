@@ -82,6 +82,24 @@
 			ORDER BY D.POSITION ASC;
 		]]>
     </select>
+
+    <select id="getDefaultDashboardByUserId" resultMap="DashboardResultMap">
+        <include refid="getDashboard" />
+        <![CDATA[
+            WHERE
+                D.TITLE = CASE
+                WHEN
+                    (SELECT UP.VALUE FROM zafira.USER_PREFERENCES UP WHERE UP.NAME = 'DEFAULT_DASHBOARD'
+                      AND UP.USER_ID = #{userId}) IS NOT NULL
+                THEN
+                    (SELECT UP.VALUE FROM zafira.USER_PREFERENCES UP WHERE UP.NAME = 'DEFAULT_DASHBOARD'
+                      AND UP.USER_ID = #{userId})
+                ELSE
+                    (SELECT UP.VALUE FROM zafira.USER_PREFERENCES UP LEFT JOIN zafira.USERS U ON UP.USER_ID = U.ID
+                WHERE UP.NAME = 'DEFAULT_DASHBOARD' AND U.USERNAME = 'anonymous')
+                END;
+		]]>
+    </select>
 	
 	<update id="updateDashboard">
 		<![CDATA[
