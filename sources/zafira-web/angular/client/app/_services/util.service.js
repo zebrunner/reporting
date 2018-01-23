@@ -1,27 +1,27 @@
 (function () {
     'use strict';
- 
+
     angular
         .module('app.services')
         .factory('UtilService', [UtilService])
- 
+
     function UtilService() {
         var service = {};
- 
+
         service.untouchForm = untouchForm;
         service.truncate = truncate;
         service.handleSuccess = handleSuccess;
         service.handleError = handleError;
         service.isEmpty = isEmpty;
         service.settingsAsMap = settingsAsMap;
- 
+
         return service;
- 
+
         function untouchForm(form) {
-        	form.$setPristine(); 
+        	form.$setPristine();
         	form.$setUntouched();
         }
-        
+
         function truncate(fullStr, strLen) {
             if (fullStr == null || fullStr.length <= strLen) return fullStr;
             var separator = '...';
@@ -33,28 +33,28 @@
                 separator +
                 fullStr.substr(fullStr.length - backChars);
         };
-        
+
         function handleSuccess(res) {
             return { success: true, data: res.data };
         }
- 
+
         function handleError(error) {
             return function () {
                 return { success: false, message: error };
             };
         }
-        
+
         function isEmpty(obj) {
         		return jQuery.isEmptyObject(obj);
         };
-        
+
         function settingsAsMap(settings) {
-        		var map = {};
-        		for(var i = 0; i < settings.length; i++)
-        		{
-        			map[settings[i].name] = settings[i].value;
-        		}
-	    		return map;
+            var map = {};
+            if(settings)
+                settings.forEach(function(setting) {
+                    map[setting.name] = setting.value;
+                });
+            return map;
 	    };
     }
 })();

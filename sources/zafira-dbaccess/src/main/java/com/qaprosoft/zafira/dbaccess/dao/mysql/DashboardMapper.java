@@ -30,6 +30,8 @@ public interface DashboardMapper
 
 	Dashboard getDashboardByTitle (String title);
 
+	Dashboard getDefaultDashboardByUserId(Long userId);
+
 	List<Dashboard> getAllDashboards();
 
 	void updateDashboard(Dashboard dashboard);
