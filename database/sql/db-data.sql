@@ -125,7 +125,7 @@ BEGIN
 		('DEFAULT_DASHBOARD', 'General', USER_ID),
 		('THEME', '32', USER_ID);
 
-  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Performance dashboard', TRUE) RETURNING id INTO dashboard_id;
+  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('User Performance', TRUE) RETURNING id INTO dashboard_id;
 
   INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES ('Performance widget', 'linechart',
 	'set schema zafira;
