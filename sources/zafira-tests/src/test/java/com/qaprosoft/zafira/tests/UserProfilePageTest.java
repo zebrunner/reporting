@@ -5,8 +5,7 @@ import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -17,9 +16,7 @@ public class UserProfilePageTest extends AbstractTest {
     private UserProfilePage userProfilePage;
     private UserProfilePageService userProfilePageService;
     private LoginPageService loginPageService;
-
-    @FindBy(xpath="//button[@type='submit']")
-    private WebElement loginButton;
+    private JavascriptExecutor jse;
 
     @BeforeMethod
     public void loginUser()
@@ -27,9 +24,9 @@ public class UserProfilePageTest extends AbstractTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.open();
         loginPageService = new LoginPageService(driver);
-        DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-        dashboardPage.waitUntilPageIsLoaded(2);
         userProfilePageService = new UserProfilePageService(driver);
+        jse = (JavascriptExecutor) driver;
+        DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
         userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
     }
 
@@ -38,7 +35,7 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePageService.generateToken();
         userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
         Assert.assertNotNull(userProfilePage.getSuccessAlert());
-        Assert.assertFalse(userProfilePage.getTokenInput().getAttribute("value").isEmpty());
+        Assert.assertFalse(userProfilePage.getWebElementValue(userProfilePage.getTokenInput()).isEmpty());
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
     }
 
@@ -102,23 +99,24 @@ public class UserProfilePageTest extends AbstractTest {
     @Test
     public void changePreferencesTest(){
 
-        String chosenDashboard = userProfilePage.getDefaultDashboardSelect().getAttribute("value");
+        String chosenDashboard = userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect());
         String testChosenDashboard;
 
         userProfilePage.getDefaultDashboardSelect().click();
         userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getGeneralBoardButton(), 1);
-        if(userProfilePage.isElementPresent(userProfilePage.getGeneralBoardButtonSelected(),0)){
-            userProfilePage.getNightlyBoardButton().click();
+        if(userProfilePage.hasSelectedAttribute(userProfilePage.getGeneralBoardButton())){
+            jse.executeScript("arguments[0].scrollIntoView();", userProfilePage.getNightlyBoardButton());
+            userProfilePage.getGeneralBoardButton().click();
         } else {
             userProfilePage.getGeneralBoardButton().click();
         }
-        testChosenDashboard = userProfilePage.getDefaultDashboardSelect().getAttribute("value");
+        testChosenDashboard = userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect());
         userProfilePage.getSavePreferencesButton().click();
         userProfilePage.reload();
-        Assert.assertTrue(userProfilePage.getDefaultDashboardSelect().getAttribute("value").equals(testChosenDashboard));
+        Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect()).equals(testChosenDashboard));
         userProfilePage.getDefaultDashboardSelect().click();
       //  userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.)
-    //    xpath="//md-option[@value='General']"
+      //  xpath="//md-option[@value='General']"
 
     }
 
@@ -129,41 +127,41 @@ public class UserProfilePageTest extends AbstractTest {
         String shortPwd = "qqq";
 
         //Check 2 empty inputs
-        Assert.assertTrue(userProfilePage.getPasswordInput().getAttribute("value").isEmpty(), "Password input is not empty");
-        Assert.assertTrue(userProfilePage.getConfirmPasswordInput().getAttribute("value").isEmpty(), "Confirm Password input is not empty");
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getChangePasswordButtonDisabled(), 0), "Change Password button is not disabled");
+        Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()).isEmpty(), "Password input is not empty");
+        Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getConfirmPasswordInput()).isEmpty(), "Confirm Password input is not empty");
+        Assert.assertTrue(userProfilePage.hasDisabledAttribute(userProfilePage.getChangePasswordButton()), "Change Password button is not disabled");
 
         //Check 1 epmty input
         userProfilePage.getPasswordInput().sendKeys(tempPwd);
-        Assert.assertFalse(userProfilePage.getPasswordInput().getAttribute("value").isEmpty(), "Password input is empty");
-        Assert.assertTrue(userProfilePage.getConfirmPasswordInput().getAttribute("value").isEmpty(), "Confirm Password input is not empty");
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getChangePasswordButtonDisabled(), 0), "Change Password button is not disabled");
+        Assert.assertFalse(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()).isEmpty(), "Password input is empty");
+        Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getConfirmPasswordInput()).isEmpty(), "Confirm Password input is not empty");
+        Assert.assertTrue(userProfilePage.hasDisabledAttribute(userProfilePage.getChangePasswordButton()), "Change Password button is not disabled");
 
         //Check different values in 2 inputs
         userProfilePage.getConfirmPasswordInput().sendKeys("wwwwwwwwww");
-        Assert.assertFalse(userProfilePage.getPasswordInput().getAttribute("value").isEmpty(), "Password input is empty");
-        Assert.assertFalse(userProfilePage.getConfirmPasswordInput().getAttribute("value").isEmpty(), "Confirm Password input is empty");
-        Assert.assertFalse(userProfilePage.isElementPresent(userProfilePage.getChangePasswordButtonDisabled(), 1), "Change Password button is not disabled");
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getChangePasswordButtonEnabled(), 1), "Change Password button is disabled");
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        Assert.assertFalse(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()).isEmpty(), "Password input is empty");
+        Assert.assertFalse(userProfilePage.getWebElementValue(userProfilePage.getConfirmPasswordInput()).isEmpty(), "Confirm Password input is empty");
+        Assert.assertFalse(userProfilePage.hasDisabledAttribute(userProfilePage.getChangePasswordButton()), "Change Password button is not disabled");
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getChangePasswordButton(), 1), "Change Password button is disabled");
+        userProfilePage.getChangePasswordButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getErrorAlert(), 1), "Error Alert is not present");
 
         //Check 1st input with value < 5 characters
         userProfilePage.getPasswordInput().clear();
         userProfilePage.getPasswordInput().sendKeys(shortPwd);
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        userProfilePage.getChangePasswordButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getWarningAlert(), 1));
 
         //Check 2 inputs with value < 5 characters
         userProfilePage.getConfirmPasswordInput().clear();
         userProfilePage.getConfirmPasswordInput().sendKeys(shortPwd);
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        userProfilePage.getChangePasswordButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getWarningAlert(), 1));
 
         //Check 2nd input with value < 5 characters
         userProfilePage.getPasswordInput().clear();
         userProfilePage.getPasswordInput().sendKeys(tempPwd);
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        userProfilePage.getChangePasswordButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getWarningAlert(), 1));
 
         //Check successful password change
@@ -171,8 +169,8 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePage.getPasswordInput().sendKeys(tempPwd);
         userProfilePage.getConfirmPasswordInput().clear();
         userProfilePage.getConfirmPasswordInput().sendKeys(tempPwd);
-        Assert.assertEquals(userProfilePage.getPasswordInput().getAttribute("value"), userProfilePage.getConfirmPasswordInput().getAttribute("value"), "Password Inputs contain different values");
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        Assert.assertEquals(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()), userProfilePage.getWebElementValue(userProfilePage.getConfirmPasswordInput()), "Password Inputs contain different values");
+        userProfilePage.getChangePasswordButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Success Alert is not present");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
         userProfilePage.getHeader().logOut();
@@ -184,7 +182,7 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePage.waitUntilPageIsLoaded(2);
         userProfilePage.getPasswordInput().sendKeys(ADMIN1_PASS);
         userProfilePage.getConfirmPasswordInput().sendKeys(ADMIN1_PASS);
-        userProfilePage.getChangePasswordButtonEnabled().click();
+        userProfilePage.getChangePasswordButton().click();
         userProfilePage.getHeader().logOut();
         DashboardPage dashboardPage2 = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
         Assert.assertTrue(dashboardPage2.getUrl().contains("dashboards"), "Dashboard page hasn't been opened");
@@ -193,13 +191,13 @@ public class UserProfilePageTest extends AbstractTest {
     @Test
     public void changeUserProfileInfoTest (){
 
-        String firstName = userProfilePage.getFirstNameInput().getAttribute("value");
-        String lastName = userProfilePage.getLastNameInput().getAttribute("value");
-        String email = userProfilePage.getEmailInput().getAttribute("value");
+        String firstName = userProfilePage.getWebElementValue(userProfilePage.getFirstNameInput());
+        String lastName = userProfilePage.getWebElementValue(userProfilePage.getLastNameInput());
+        String email = userProfilePage.getWebElementValue(userProfilePage.getEmailInput());
 
         //Check if username is disabled
         Assert.assertTrue(userProfilePage.isElementPresent
-                (userProfilePage.getUserNameInputDisabled(),1), "Username input is enabled or is not visible!");
+                (userProfilePage.getUserNameInput(),1), "Username input is enabled or is not visible!");
 
         //Check permissions
         if(userProfilePage.isElementPresent(userProfilePage.getRoleAdminLabel(),0)){
@@ -212,29 +210,29 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePage.getFirstNameInput().clear();
         userProfilePage.getLastNameInput().clear();
         userProfilePage.getEmailInput().clear();
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButtonDisabled(),0),"User profile button is enabled with empty fields");
+        Assert.assertTrue(userProfilePage.hasDisabledAttribute(userProfilePage.getSaveUserProfileButton()),"User profile button is enabled with empty fields");
 
         //Check disabled empty first&last name incorrect email
         userProfilePage.getEmailInput().sendKeys("email");
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButtonDisabled(),0), "User profile button is enabled with incorrect email");
+        Assert.assertTrue(userProfilePage.hasDisabledAttribute(userProfilePage.getSaveUserProfileButton()), "User profile button is enabled with incorrect email");
 
         //Check enabled empty first&last name correct email
         userProfilePage.getEmailInput().clear();
         userProfilePage.getEmailInput().sendKeys(email);
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButtonEnabled(),0), "User profile button is disabled");
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButton(),0), "User profile button is disabled");
 
         //Check save empty first&last name
-        userProfilePage.getSaveUserProfileButtonEnabled().click();
+        userProfilePage.getSaveUserProfileButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
 
         //Check enabled for all filled out data
         userProfilePage.getFirstNameInput().sendKeys(firstName);
         userProfilePage.getLastNameInput().sendKeys(lastName);
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButtonEnabled(),0), "User profile button is disabled");
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButton(),0), "User profile button is disabled");
 
         //Check save for all filled out data
-        userProfilePage.getSaveUserProfileButtonEnabled().click();
+        userProfilePage.getSaveUserProfileButton().click();
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
     }

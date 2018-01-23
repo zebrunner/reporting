@@ -7,8 +7,8 @@ import org.openqa.selenium.support.FindBy;
 public class UserProfilePage extends BasePage
 {
 
-	@FindBy(xpath="//input[@name='username' and @disabled]")
-	private WebElement userNameInputDisabled;
+	@FindBy(xpath="//input[@name='username']")
+	private WebElement userNameInput;
 
 	@FindBy(xpath="//input[@name='firstName']")
 	private WebElement firstNameInput;
@@ -31,9 +31,6 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath="//md-option[@value='General']")
 	private WebElement generalBoardButton;
 
-	@FindBy(xpath="//md-option[@value='General' and @selected]")
-	private WebElement generalBoardButtonSelected;
-
 	@FindBy(xpath="//md-option[contains(@value,'Nightly')]")
 	private WebElement nightlyBoardButton;
 
@@ -44,11 +41,8 @@ public class UserProfilePage extends BasePage
 
 
 
-	@FindBy(xpath="//button[ancestor::form[@name='profile_form'] and not(@disabled)]")
-	private WebElement saveUserProfileButtonEnabled;
-
-	@FindBy(xpath="//button[ancestor::form[@name='profile_form'] and @disabled]")
-	private WebElement saveUserProfileButtonDisabled;
+	@FindBy(xpath="//button[ancestor::form[@name='profile_form']]")
+	private WebElement saveUserProfileButton;
 
 	@FindBy(xpath="//body[contains(@class, 'zaf-light')]")
 	private WebElement lightZafiraSchemaStyle;
@@ -86,11 +80,8 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='confirmPassword']")
 	private WebElement confirmPasswordInput;
 
-	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and @disabled='disabled']")
-	private WebElement changePasswordButtonDisabled;
-
-	@FindBy(xpath="//button[ancestor::form[@name='password_form'] and not(@disabled)]")
-	private WebElement changePasswordButtonEnabled;
+	@FindBy(xpath="//button[ancestor::form[@name='password_form']]")
+	private WebElement changePasswordButton;
 
 	@FindBy(xpath = "//button[ancestor::form[@name='access_token_form'] and @type='submit']")
 	private WebElement generateTokenButton;
@@ -178,16 +169,12 @@ public class UserProfilePage extends BasePage
 		return confirmPasswordInput;
 	}
 
-	public WebElement getChangePasswordButtonDisabled() {
-		return changePasswordButtonDisabled;
+	public WebElement getChangePasswordButton() {
+		return changePasswordButton;
 	}
 
-	public WebElement getChangePasswordButtonEnabled() {
-		return changePasswordButtonEnabled;
-	}
-
-	public WebElement getUserNameInputDisabled() {
-		return userNameInputDisabled;
+	public WebElement getUserNameInput() {
+		return userNameInput;
 	}
 
 	public WebElement getFirstNameInput() {
@@ -210,12 +197,8 @@ public class UserProfilePage extends BasePage
 		return roleAdminLabel;
 	}
 
-	public WebElement getSaveUserProfileButtonEnabled() {
-		return saveUserProfileButtonEnabled;
-	}
-
-	public WebElement getSaveUserProfileButtonDisabled() {
-		return saveUserProfileButtonDisabled;
+	public WebElement getSaveUserProfileButton() {
+		return saveUserProfileButton;
 	}
 
 	public WebElement getGeneralBoardButton() {
@@ -226,7 +209,4 @@ public class UserProfilePage extends BasePage
 		return nightlyBoardButton;
 	}
 
-	public WebElement getGeneralBoardButtonSelected() {
-		return generalBoardButtonSelected;
-	}
 }
