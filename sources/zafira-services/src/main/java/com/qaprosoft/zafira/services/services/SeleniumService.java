@@ -138,8 +138,14 @@ public class SeleniumService
 			for(String url : urls)
 			{
 				wd.get(url);
-				WebDriverUtil.pause(10, TimeUnit.SECONDS);
-				WebDriverUtil.waitForJSandJQueryToLoad(wd);
+				if(WebDriverUtil.isPageLoading(wd))
+				{
+					WebDriverUtil.waitUntilPageIsLoaded(wd);
+				} else
+				{
+					WebDriverUtil.pause(10, TimeUnit.SECONDS);
+					WebDriverUtil.waitForJSandJQueryToLoad(wd);
+				}
 
 				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
 				String name = screenshot.getName();

@@ -22,7 +22,6 @@
                 .then(function(rs) {
                     if (rs.success) {
                         $rootScope.$broadcast('event:auth-loginSuccess', rs.data);
-                        $state.go('dashboards');
                     } else {
                         $scope.credentials = {
                             valid: false
@@ -35,7 +34,6 @@
             AuthService.Register($scope.user)
                 .then(function(rs) {
                     if (rs.success) {
-                        //$rootScope.$broadcast('event:auth-loginSuccess', rs.data);
                         $state.go('signin');
                         alertify.success('Success! Sign in now.');
                     } else {

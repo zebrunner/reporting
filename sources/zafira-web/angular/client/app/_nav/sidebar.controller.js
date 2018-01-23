@@ -221,12 +221,12 @@
                 UploadService.upload(multipartFile, FILE_LOGO_TYPE).then(function (rs) {
                     if(rs.success)
                     {
-                        $rootScope.companyLogo.value = rs.data.url;
+                        $rootScope.currentUser.companyLogo.value = rs.data.url;
                         SettingsService.editSetting($rootScope.companyLogo)
                             .then(function (prs) {
                                 if(prs.success)
                                 {
-                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
+                                    $rootScope.currentUser.companyLogo.value += '?' + (new Date()).getTime();
                                     $scope.hide();
                                 }
                             });
