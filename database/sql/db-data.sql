@@ -690,10 +690,9 @@ BEGIN
       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''ISSUE'', ''ABORTED'']) AS "label",
       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
-   FROM BIMONTHLY_VIEW
+   FROM WEEKLY_VIEW
    WHERE
        PROJECT LIKE ''%#{project}''
-       AND STARTED >= date_trunc(''day'', date_trunc(''week'', current_date)  - interval ''2 day'')
    ORDER BY "value" DESC';
 
 	weekly_total_model := '
@@ -711,9 +710,8 @@ BEGIN
      sum(IN_PROGRESS) AS "IN_PROGRESS",
      sum(ABORTED) AS "ABORTED",
      STARTED AS "CREATED_AT"
-   FROM BIMONTHLY_VIEW
+   FROM WEEKLY_VIEW
    WHERE PROJECT LIKE ''#{project}%''
-   AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
    GROUP BY STARTED
    ORDER BY STARTED;';
 
@@ -849,9 +847,8 @@ BEGIN
     round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
     round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
     round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
-   FROM BIMONTHLY_VIEW
+   FROM WEEKLY_VIEW
    WHERE PROJECT LIKE ''%#{project}''
-   AND STARTED >= date_trunc(''day'', date_trunc(''week'', current_date)  - interval ''2 day'')
    GROUP BY "PLATFORM", "BUILD"
    ORDER BY "PLATFORM"';
 
@@ -888,10 +885,9 @@ BEGIN
      round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
      round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
      round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
-   FROM BIMONTHLY_VIEW
+   FROM WEEKLY_VIEW
    WHERE
      PROJECT LIKE ''#{project}%''
-      AND STARTED >= date_trunc(''day'', date_trunc(''week'', current_date)  - interval ''2 day'')
    GROUP BY OWNER_ID, OWNER
    ORDER BY OWNER';
 
