@@ -120,6 +120,52 @@ public class UserPageService extends AbstractPageService
 		return new CreateGroupModalWindow(driver);
 	}
 
+	public UserPage search(String id, String username, String email, String firstLastName)
+	{
+		userPage.getUserSearchBlock().typeId(id);
+		userPage.getUserSearchBlock().typeUsername(username);
+		userPage.getUserSearchBlock().typeEmail(email);
+		userPage.getUserSearchBlock().typeFirstLastName(firstLastName);
+		userPage.getUserSearchBlock().clickSearchButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
+	public UserPage clearSearchForm()
+	{
+		userPage.getUserSearchBlock().clickClearButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
+	public UserPage goToFirstPage()
+	{
+		userPage.getPaginationBlock().clickFirstPageButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
+	public UserPage goToPreviousPage()
+	{
+		userPage.getPaginationBlock().clickPreviousPageButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
+	public UserPage goToNextPage()
+	{
+		userPage.getPaginationBlock().clickNextPageButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
+	public UserPage goToLastPage()
+	{
+		userPage.getPaginationBlock().clickLastPageButton();
+		userPage.waitUntilPageIsLoaded();
+		return userPage;
+	}
+
 	public WebElement getTableColumnByIdOrIndex(long id, int columnNumber, boolean byId)
 	{
 		WebElement userRow = byId ? getUserRowByUserId(id) : getTableRowByIndex(id);
