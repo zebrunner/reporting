@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,6 +57,10 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/widgets")
 public class WidgetsAPIController extends AbstractController
 {
+
+	@Value("${zafira.webservice.url}")
+	private String wsURL;
+
 	@Autowired
 	private WidgetService widgetService;
 
@@ -124,6 +129,8 @@ public class WidgetsAPIController extends AbstractController
 	{
 		String query = sql.getSql();
 		List<Map<String, Object>> resultList;
+		String zafiraURL = StringUtils.removeEnd(wsURL, "-ws");
+
 		try {
 		if (sql.getAttributes() != null)
 		{
@@ -137,7 +144,8 @@ public class WidgetsAPIController extends AbstractController
 				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
-				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()));
+				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
+				.replaceAll("#\\{zafiraURL\\}", zafiraURL);
 
 			String param = StringUtils.substringBetween(query,"#{","}%" );
 			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
