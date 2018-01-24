@@ -710,8 +710,9 @@ BEGIN
      sum(IN_PROGRESS) AS "IN_PROGRESS",
      sum(ABORTED) AS "ABORTED",
      STARTED AS "CREATED_AT"
-   FROM WEEKLY_VIEW
+   FROM BIMONTHLY_VIEW
    WHERE PROJECT LIKE ''#{project}%''
+   AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
    GROUP BY STARTED
    ORDER BY STARTED;';
 
