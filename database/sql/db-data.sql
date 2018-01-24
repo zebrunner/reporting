@@ -498,8 +498,6 @@ DO $$
 
 DECLARE nightly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
 	DECLARE nightly_total_id zafira.WIDGETS.id%TYPE;
 	DECLARE nightly_total_sql zafira.WIDGETS.sql%TYPE;
 	DECLARE nightly_total_model zafira.WIDGETS.model%TYPE;
@@ -517,7 +515,6 @@ DECLARE nightly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 	DECLARE nightly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
 
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Nightly Regression Test', TRUE) RETURNING id INTO nightly_dashboard_id;
 
@@ -602,7 +599,7 @@ BEGIN
 	nightly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
@@ -664,8 +661,6 @@ DO $$
 
 DECLARE weekly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
 	DECLARE weekly_total_id zafira.WIDGETS.id%TYPE;
 	DECLARE weekly_total_sql zafira.WIDGETS.sql%TYPE;
 	DECLARE weekly_total_model zafira.WIDGETS.model%TYPE;
@@ -687,8 +682,6 @@ DECLARE weekly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 	DECLARE weekly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
-
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Weekly Regression Test', TRUE) RETURNING id INTO weekly_dashboard_id;
 
 	weekly_total_sql :=
@@ -884,7 +877,7 @@ BEGIN
 	weekly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
@@ -951,8 +944,6 @@ DO $$
 
 DECLARE monthly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
 	DECLARE monthly_total_id zafira.WIDGETS.id%TYPE;
 	DECLARE monthly_total_sql zafira.WIDGETS.sql%TYPE;
 	DECLARE monthly_total_model zafira.WIDGETS.model%TYPE;
@@ -974,8 +965,6 @@ DECLARE monthly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 	DECLARE monthly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
-
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Monthly Regression Test', TRUE) RETURNING id INTO monthly_dashboard_id;
 
 	monthly_total_sql :=
@@ -1171,7 +1160,7 @@ BEGIN
 	monthly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
