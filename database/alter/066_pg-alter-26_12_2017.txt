@@ -207,11 +207,9 @@ DO $$
 
 DECLARE nightly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
-	DECLARE nightly_total_id zafira.WIDGETS.id%TYPE;
-	DECLARE nightly_total_sql zafira.WIDGETS.sql%TYPE;
-	DECLARE nightly_total_model zafira.WIDGETS.model%TYPE;
+DECLARE nightly_total_id zafira.WIDGETS.id%TYPE;
+DECLARE nightly_total_sql zafira.WIDGETS.sql%TYPE;
+DECLARE nightly_total_model zafira.WIDGETS.model%TYPE;
 
 DECLARE nightly_jira_tickets_id zafira.WIDGETS.id%TYPE;
 DECLARE nightly_jira_tickets_sql zafira.WIDGETS.sql%TYPE;
@@ -226,8 +224,6 @@ DECLARE nightly_details_sql zafira.WIDGETS.sql%TYPE;
 DECLARE nightly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
-
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Nightly Regression Test', TRUE) RETURNING id INTO nightly_dashboard_id;
 
     nightly_total_sql :=
@@ -308,26 +304,26 @@ BEGIN
        ]
      }';
 
-    nightly_details_sql :=
-    'set schema ''zafira'';
-     SELECT  OWNER AS "OWNER",
-     ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
-     	SUM(PASSED) AS "PASSED",
-     	SUM(FAILED) AS "FAILED",
-     	SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
-     	SUM(SKIPPED) AS "SKIPPED",
-     	SUM(TOTAL) AS "TOTAL",
-     	round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
-     	round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
-     	round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
-     	round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
-     	round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
-     FROM NIGHTLY_VIEW
-     WHERE
-     	PROJECT LIKE ''#{project}%''
-        AND STARTED >= date_trunc(''day'', current_date)
-     GROUP BY OWNER_ID, OWNER
-     ORDER BY OWNER';
+	nightly_details_sql :=
+	'set schema ''zafira'';
+   SELECT  OWNER AS "OWNER",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
+     SUM(PASSED) AS "PASSED",
+     SUM(FAILED) AS "FAILED",
+     SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
+     SUM(SKIPPED) AS "SKIPPED",
+     SUM(TOTAL) AS "TOTAL",
+     round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
+     round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
+     round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
+     round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+     round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
+   FROM NIGHTLY_VIEW
+   WHERE
+     PROJECT LIKE ''#{project}%''
+      AND STARTED >= date_trunc(''day'', current_date)
+   GROUP BY OWNER_ID, OWNER
+   ORDER BY OWNER';
 
     nightly_details_model :=
     '{
@@ -373,11 +369,9 @@ DO $$
 
 DECLARE weekly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
-	DECLARE weekly_total_id zafira.WIDGETS.id%TYPE;
-	DECLARE weekly_total_sql zafira.WIDGETS.sql%TYPE;
-	DECLARE weekly_total_model zafira.WIDGETS.model%TYPE;
+DECLARE weekly_total_id zafira.WIDGETS.id%TYPE;
+DECLARE weekly_total_sql zafira.WIDGETS.sql%TYPE;
+DECLARE weekly_total_model zafira.WIDGETS.model%TYPE;
 
 DECLARE test_results_7_id zafira.WIDGETS.id%TYPE;
 DECLARE test_results_7_sql zafira.WIDGETS.sql%TYPE;
@@ -396,8 +390,6 @@ DECLARE weekly_details_sql zafira.WIDGETS.sql%TYPE;
 DECLARE weekly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
-
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Weekly Regression Test', TRUE) RETURNING id INTO weekly_dashboard_id;
 
     weekly_total_sql :=
@@ -590,26 +582,26 @@ BEGIN
        ]
      }';
 
-    weekly_details_sql :=
-    'set schema ''zafira'';
-     SELECT  OWNER AS "OWNER",
-         ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
-     	SUM(PASSED) AS "PASSED",
-     	SUM(FAILED) AS "FAILED",
-     	SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
-     	SUM(SKIPPED) AS "SKIPPED",
-     	SUM(TOTAL) AS "TOTAL",
-     	round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
-     	round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
-     	round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
-     	round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
-     	round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
-     FROM BIMONTHLY_VIEW
-     WHERE
-     	PROJECT LIKE ''#{project}%''
-        AND STARTED >= date_trunc(''day'', date_trunc(''week'', current_date)  - interval ''2 day'')
-     GROUP BY OWNER_ID, OWNER
-     ORDER BY OWNER';
+	weekly_details_sql :=
+	'set schema ''zafira'';
+   SELECT  OWNER AS "OWNER",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
+     SUM(PASSED) AS "PASSED",
+     SUM(FAILED) AS "FAILED",
+     SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
+     SUM(SKIPPED) AS "SKIPPED",
+     SUM(TOTAL) AS "TOTAL",
+     round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
+     round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
+     round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
+     round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+     round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
+   FROM BIMONTHLY_VIEW
+   WHERE
+     PROJECT LIKE ''#{project}%''
+      AND STARTED >= date_trunc(''day'', date_trunc(''week'', current_date)  - interval ''2 day'')
+   GROUP BY OWNER_ID, OWNER
+   ORDER BY OWNER';
 
     weekly_details_model :=
     '{
@@ -660,11 +652,9 @@ DO $$
 
 DECLARE monthly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 
-	DECLARE host_name TEXT;
-
-	DECLARE monthly_total_id zafira.WIDGETS.id%TYPE;
-	DECLARE monthly_total_sql zafira.WIDGETS.sql%TYPE;
-	DECLARE monthly_total_model zafira.WIDGETS.model%TYPE;
+DECLARE monthly_total_id zafira.WIDGETS.id%TYPE;
+DECLARE monthly_total_sql zafira.WIDGETS.sql%TYPE;
+DECLARE monthly_total_model zafira.WIDGETS.model%TYPE;
 
 DECLARE test_results_30_id zafira.WIDGETS.id%TYPE;
 DECLARE test_results_30_sql zafira.WIDGETS.sql%TYPE;
@@ -683,8 +673,6 @@ DECLARE monthly_details_sql zafira.WIDGETS.sql%TYPE;
 DECLARE monthly_details_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-	SELECT VALUE FROM zafira.settings WHERE name = 'RABBITMQ_HOST' into host_name;
-
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Monthly Regression Test', TRUE) RETURNING id INTO monthly_dashboard_id;
 
     monthly_total_sql :=
@@ -877,26 +865,26 @@ BEGIN
        ]
      }';
 
-    monthly_details_sql :=
-    'set schema ''zafira'';
-     SELECT  OWNER AS "OWNER",
-        ''<a href="http://'||host_name||'/zafira/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
-     	SUM(PASSED) AS "PASSED",
-     	SUM(FAILED) AS "FAILED",
-     	SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
-     	SUM(SKIPPED) AS "SKIPPED",
-     	SUM(TOTAL) AS "TOTAL",
-     	round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
-     	round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
-     	round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
-     	round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
-     	round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
-     FROM BIMONTHLY_VIEW
-     WHERE
-     	PROJECT LIKE ''#{project}%''
-        AND STARTED > date_trunc(''month'', current_date  - interval ''1 month'')
-     GROUP BY OWNER_ID, OWNER
-     ORDER BY OWNER';
+	monthly_details_sql :=
+	'set schema ''zafira'';
+   SELECT  OWNER AS "OWNER",
+     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
+     SUM(PASSED) AS "PASSED",
+     SUM(FAILED) AS "FAILED",
+     SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
+     SUM(SKIPPED) AS "SKIPPED",
+     SUM(TOTAL) AS "TOTAL",
+     round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
+     round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
+     round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
+     round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+     round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
+   FROM BIMONTHLY_VIEW
+   WHERE
+     PROJECT LIKE ''#{project}%''
+      AND STARTED > date_trunc(''month'', current_date  - interval ''1 month'')
+   GROUP BY OWNER_ID, OWNER
+   ORDER BY OWNER';
 
     monthly_details_model :=
     '{
