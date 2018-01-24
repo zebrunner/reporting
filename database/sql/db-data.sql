@@ -431,39 +431,70 @@ BEGIN
 
 	total_tests_man_hours_sql :=
 	'set schema ''zafira'';
-   SELECT SUM(TOTAL_HOURS) AS "MAN-HOURS",
-       TESTED_AT AS "CREATED_AT"
-   FROM TOTAL_VIEW WHERE PROJECT LIKE ''#{project}%''
-   GROUP BY "CREATED_AT"
-   ORDER BY "CREATED_AT"';
+        SELECT
+             SUM(TOTAL_HOURS) AS "ACTUAL",
+             SUM(TOTAL_HOURS) AS "ETA",
+             TESTED_AT AS "CREATED_AT"
+        FROM TOTAL_VIEW
+        WHERE PROJECT LIKE ''#{project}%''
+        GROUP BY "CREATED_AT"
+        UNION
+        SELECT
+        SUM(TOTAL_HOURS) AS "ACTUAL",
+        ROUND(SUM(TOTAL_HOURS)/extract(day from current_date)
+        * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day''))
+        AS "ETA",
+            date_trunc(''month'', current_date) AS "CREATED_AT"
+        FROM BIMONTHLY_VIEW
+        WHERE PROJECT LIKE ''#{project}%''
+        GROUP BY "CREATED_AT"
+        ORDER BY "CREATED_AT";';
 
 	total_tests_man_hours_model :=
 	'{
-     "series": [
-       {
-         "axis": "y",
-         "dataset": "dataset",
-         "key": "MAN-HOURS",
-         "label": "MAN-HOURS",
-         "color": "#5cb85c",
-         "thickness": "10px",
-         "type": [
-           "column"
-            ],
-         "id": "MAN-HOURS"
-       }
-     ],
-     "axes": {
-       "x": {
-         "key": "CREATED_AT",
-         "type": "date",
-         "ticks": "functions(value) {return ''wow!''}"
-       },
-       "y": {
-         "min": "0"
-       }
-     }
-   }';
+         "series": [
+             {
+                 "axis": "y",
+                 "dataset": "dataset",
+                 "key": "ACTUAL",
+                 "label": "ACTUAL",
+                 "color": "#5cb85c",
+                 "thickness": "10px",
+                 "type": [
+                     "column"
+                 ],
+                 "id": "ACTUAL",
+                 "visible": true
+             },
+             {
+                 "axis": "y",
+                 "dataset": "dataset",
+                 "key": "ETA",
+                 "label": "ETA",
+                 "color": "#C4C9CE",
+                 "thickness": "10px",
+                 "interpolation": {
+                     "mode": "bundle",
+                     "tension": 1
+                 },
+                 "type": [
+                     "dashed-line"
+                 ],
+                 "id": "ETA",
+                 "visible": true
+             }
+         ],
+         "axes": {
+             "x": {
+                 "key": "CREATED_AT",
+                 "type": "date",
+                 "ticks": "functions(value) {return ''wow!''}"
+             },
+             "y": {
+                 "min": "0"
+             }
+         }
+     }';
 
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES (
