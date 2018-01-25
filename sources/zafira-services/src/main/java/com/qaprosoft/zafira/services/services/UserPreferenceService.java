@@ -29,7 +29,7 @@ public class UserPreferenceService
 {
 	@Autowired
 	private UserPreferenceMapper userPreferenceMapper;
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public void createUserPreference(UserPreference userPreference) throws ServiceException
 	{
@@ -41,7 +41,7 @@ public class UserPreferenceService
 	{
 		return userPreferenceMapper.getUserPreferencesByUserId(userId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public UserPreference getUserPreferenceById(long id) throws ServiceException
 	{
@@ -53,7 +53,7 @@ public class UserPreferenceService
 	{
 		return userPreferenceMapper.getDefaultUserPreferences();
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public UserPreference updateUserPreference(UserPreference userPreference) throws ServiceException
 	{

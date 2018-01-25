@@ -155,7 +155,7 @@ public class UserService
 				addUserToGroup(newUser, group.getId());
 				newUser.getGroups().add(group);
 			}
-			
+
 		} else
 		{
 			newUser.setId(user.getId());
