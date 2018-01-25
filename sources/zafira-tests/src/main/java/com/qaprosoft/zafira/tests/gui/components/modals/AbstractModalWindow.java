@@ -51,11 +51,6 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 		return waitUntilElementIsNotPresent(getBackdrop(), 4);
 	}
 
-	public void clearAllInputs()
-	{
-		container.findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)]")).forEach(WebElement::clear);
-	}
-
 	@Override
 	public By getLocator()
 	{
