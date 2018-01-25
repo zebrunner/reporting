@@ -24,8 +24,6 @@ public interface UserPreferenceMapper
 {
 	void createUserPreference(UserPreference userPreference);
 
-	void createUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreferences);
-
 	String getDefaultPreferenceValue (String name);
 	
 	UserPreference getUserPreferenceById(long id);
@@ -37,8 +35,6 @@ public interface UserPreferenceMapper
 	UserPreference getUserPreferenceByNameAndUserId(@Param("name") String name, @Param("userId") long userId);
 
 	void updateUserPreference(UserPreference userPreference);
-
-	void updateUserPreferences(@Param(value = "userId") long userId, @Param(value = "userPreferences") List<UserPreference> userPreference);
 
 	void deleteUserPreferenceById(long id);
 	
