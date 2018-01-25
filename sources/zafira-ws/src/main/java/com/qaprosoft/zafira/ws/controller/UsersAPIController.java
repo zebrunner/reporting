@@ -15,12 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.services.services.DashboardService;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +32,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
@@ -56,10 +67,13 @@ public class UsersAPIController extends AbstractController
 	private UserService userService;
 
 	@Autowired
-	private UserPreferenceService userPreferenceService;
+	private SettingsService settingsService;
 
 	@Autowired
-	private DashboardService dashboardService;
+	DashboardService dashboardService;
+
+	@Autowired
+	private UserPreferenceService userPreferenceService;
 
 	@Autowired
 	private AmazonService amazonService;
@@ -81,6 +95,28 @@ public class UsersAPIController extends AbstractController
 		userType.setPreferences(user.getPreferences());
 		userType.setPermissions(user.getPermissions());
 		return userType;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get extended user profile", nickname = "getExtendedUserProfile", code = 200, httpMethod = "GET", response = Map.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "profile/extended", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getExtendedUserProfile() throws ServiceException
+	{
+		Map<String, Object> extendedUserProfile = new HashMap<>();
+		User user = userService.getUserById(getPrincipalId());
+		UserType userType = mapper.map(user, UserType.class);
+		userType.setRoles(user.getRoles());
+		userType.setPreferences(user.getPreferences() == null || CollectionUtils.isEmpty(user.getPreferences())
+				? userPreferenceService.getDefaultUserPreferences() : user.getPreferences());
+		userType.setPermissions(user.getPermissions());
+		extendedUserProfile.put("user", userType);
+		extendedUserProfile.put("companyLogo", settingsService.getSettingByName("COMPANY_LOGO_URL"));
+		extendedUserProfile.put("performanceDashboardId", dashboardService.getDashboardByTitle("User Performance").getId());
+		extendedUserProfile.put("defaultDashboardId", dashboardService.getDefaultDashboardByUserId(user.getId()).getId());
+		return extendedUserProfile;
 	}
 
 	@ResponseStatusDetails
@@ -186,21 +222,6 @@ public class UsersAPIController extends AbstractController
 			@PathVariable(value = "userId") long userId) throws ServiceException
 	{
 		userService.deleteUserFromGroup(groupId, userId);
-	}
-
-	@ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get user preference dashboard id", nickname = "getUserPreferenceDashboardId", code = 200, httpMethod = "GET", response = Long.class)
-	@RequestMapping(value = "preferences/id", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Long getUserPreferenceDashboardId(@RequestParam(value="preferenceName") String preferenceName) throws ServiceException
-	{
-		UserPreference userPreference = userPreferenceService.getUserPreferenceByNameAndUserId(preferenceName, getPrincipalId());
-		if(userPreference == null){
-			userPreference = userPreferenceService.getUserPreferenceByNameAndUserId(preferenceName, userService.getUserByUsername("anonymous").getId());
-		}
-		return dashboardService.getDashboardByTitle(userPreference.getValue()).getId();
 	}
 
 	@ResponseStatusDetails

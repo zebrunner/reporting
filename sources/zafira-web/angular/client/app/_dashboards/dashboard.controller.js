@@ -7,7 +7,6 @@
 
     function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
-        $scope.dashboardId = null;
         $scope.currentUserId = $location.search().userId;
 
         $scope.pristineWidgets = [];
@@ -40,7 +39,6 @@
                 }
             }
             angular.copy(dashboard.widgets, $scope.pristineWidgets);
-            $scope.updateWidgetsToAdd();
         };
 
         $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
@@ -75,7 +73,7 @@
         $scope.addDashboardWidget = function (widget) {
             widget.location = defaultWidgetLocation;
             var data = {"id": widget.id, "location": widget.location};
-            DashboardService.AddDashboardWidget($scope.dashboardId, data).then(function (rs) {
+            DashboardService.AddDashboardWidget($stateParams.id, data).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard.widgets.push(widget);
                     $scope.dashboard.widgets.forEach(function (widget) {
@@ -94,7 +92,7 @@
         $scope.deleteDashboardWidget = function (widget) {
             var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" from dashboard?');
             if (confirmedDelete) {
-                DashboardService.DeleteDashboardWidget($scope.dashboardId, widget.id).then(function (rs) {
+                DashboardService.DeleteDashboardWidget($stateParams.id, widget.id).then(function (rs) {
                     if (rs.success) {
                         $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
                         $scope.dashboard.widgets.forEach(function (widget) {
@@ -171,7 +169,7 @@
                             widgetData.location = JSON.stringify(widgetData.location);
                             widgets.push({'id': currentWidget.id, 'location': widgetData.location});
                         }
-                        DashboardService.UpdateDashboardWidgets($scope.dashboardId, widgets).then(function (rs) {
+                        DashboardService.UpdateDashboardWidgets($stateParams.id, widgets).then(function (rs) {
                             if (rs.success) {
                                 angular.copy(rs.data, $scope.pristineWidgets);
                                 $scope.resetGrid();
@@ -297,7 +295,7 @@
                 locals: {
                     widget: widget,
                     isNew: isNew,
-                    dashboardId: $scope.dashboardId
+                    dashboardId: $stateParams.id
                 }
             })
                 .then(function (answer) {
@@ -396,15 +394,15 @@
             isRefreshing = true;
             (function refreshEvery(){
                 if ($location.$$url.indexOf("dashboards") > -1){
-                    if ($scope.dashboard.title && $rootScope.refreshInterval && $rootScope.refreshInterval != 0){
+                    if ($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0){
                         $scope.loadDashboardData($scope.dashboard, true);
                     }
-                    refreshPromise = $timeout(refreshEvery, $rootScope.refreshInterval)
+                    refreshPromise = $timeout(refreshEvery, $rootScope.currentUser.refreshInterval)
                 }
          }());
         };
 
-        $scope.getDashboardById = function (dashboardId){
+        $scope.getDashboardById = function (dashboardId) {
             DashboardService.GetDashboardById(dashboardId).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard = rs.data;
@@ -423,8 +421,8 @@
                 if ($scope.currentUserId && $location.$$search.userId) {
                     if ($scope.currentUserId !== $location.$$search.userId) {
                         $scope.currentUserId = $location.search().userId;
-                        $scope.getDashboardById($scope.dashboardId);
-                     }
+                        $scope.getDashboardById($stateParams.id);
+                    }
                 }
             }
         );
@@ -435,36 +433,20 @@
 
         (function init() {
 
-          // TODO: PhantomJS screenshots don't work
-
-            DashboardService.GetDashboards().then(function (rs)
-                {
-                    if (rs.success) {
-                        if ($stateParams.id) {
-                            $scope.dashboardId = $stateParams.id;
-                            $scope.getDashboardById($scope.dashboardId);
-                        }
-                        else {
-                            UserService.getUserPreferenceIdByName("DEFAULT_DASHBOARD").then(function(rs){
-                                if (rs.success) {
-                                    $scope.dashboardId = rs.data;
-                                    $scope.getDashboardById($scope.dashboardId);
-                                }
-                            });
-                        }
-                    }
-                });
-
-            DashboardService.GetWidgets().then(function (rs)
-                {
-                    if (rs.success) {
-                        $scope.widgets = rs.data;
-                    } else {
-                        alertify.error(rs.message);
-                    }
-                });
+            $scope.getDashboardById($stateParams.id);
+            $rootScope.$on('event:defaultPreferencesInitialized', function () {
                 $scope.startRefreshing();
-
+                if($rootScope.currentUser.isAdmin)
+                    DashboardService.GetWidgets().then(function (rs) {
+                        if (rs.success) {
+                            $scope.widgets = rs.data;
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    }).then(function () {
+                        $scope.updateWidgetsToAdd();
+                    });
+            });
         })();
     }
 
