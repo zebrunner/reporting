@@ -80,6 +80,7 @@ public class UserService
 						addUserToGroup(user, group.getId());
 						user.getGroups().add(group);
 					}
+					userPreferenceService.createDefaultUserPreferences(user.getId());
 				}
 			}
 		}
