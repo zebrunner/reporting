@@ -98,7 +98,7 @@
                                         <div layout layout-sm="column">
                                             <md-input-container class="flex">
                                                 <label>Widget Refresh Interval</label>
-                                                <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" type="number" placeholder="Widget Refresh Interval">
+                                                <md-select ng-model="preferenceForm.refreshInterval" name="refreshInterval" id="refreshInterval" ng-selected="selectInterval()" type="number" placeholder="Widget Refresh Interval">
                                                     <md-option ng-repeat="interval in widgetRefreshIntervals" ng-value="interval" ng-selected="selectInterval(interval)">{{convertMillis(interval)}}</md-option>
                                                 </md-select>
                                             </md-input-container>

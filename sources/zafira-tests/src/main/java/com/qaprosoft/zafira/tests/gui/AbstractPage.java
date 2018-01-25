@@ -221,6 +221,10 @@ public abstract class AbstractPage
 		}
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
 	public String getWebElementValue(WebElement webElement)
 	{
 		return webElement.getAttribute("value");
@@ -229,6 +233,11 @@ public abstract class AbstractPage
 	public boolean hasDisabledAttribute(WebElement webElement)
 	{
 		return ! StringUtils.isBlank(webElement.getAttribute("disabled"));
+	}
+
+	public boolean hasSelectedAttribute(WebElement webElement)
+	{
+		return ! StringUtils.isBlank(webElement.getAttribute("selected"));
 	}
 
 	public WebElement getBackdrop()
