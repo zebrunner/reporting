@@ -1,10 +1,12 @@
 package com.qaprosoft.zafira.tests;
 
+import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -31,7 +33,7 @@ public class UserProfilePageTest extends AbstractTest {
     }
 
     @Test
-    public void testGenerateToken() {
+    public void generateTokenTest() {
         userProfilePageService.generateToken();
         userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
         Assert.assertNotNull(userProfilePage.getSuccessAlert());
@@ -40,10 +42,24 @@ public class UserProfilePageTest extends AbstractTest {
     }
 
     @Test
-    public void testCopyToken() {
+    public void copyTokenTest() {
 
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
         Assert.assertTrue(userProfilePageService.copyToken());
+    }
+
+    @Test
+    public void changeUserProfilePhotoTest(){
+        userProfilePage.hoverOnElement(userProfilePage.getLoadProfilePhotoIcon());
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getLoadProfilePhotoHoverIcon(), 1),
+                "Settings icon not present on user profile icon hover");
+
+        UploadImageModalWindow uploadImageModalWindow = userProfilePageService.clickLoadProfilePhotoHoverIcon();
+        userProfilePage.waitUntilPageIsLoaded(10);
+
+        Assert.assertTrue(uploadImageModalWindow.isElementPresent(10), "Company photo modal window not opened");
+        Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");
+        uploadImageModalWindow.closeModalWindow();
     }
 
     @Test
@@ -96,17 +112,17 @@ public class UserProfilePageTest extends AbstractTest {
         }
     }
 
-    @Test
+   /* @Test
     public void changePreferencesTest(){
 
         String chosenDashboard = userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect());
         String testChosenDashboard;
 
-        userProfilePage.getDefaultDashboardSelect().click();
+        jse.executeScript("arguments[0].scrollIntoView(true);", userProfilePage.getDefaultDashboardSelect());
+        userProfilePage.getDefaultDashboardSelect().click()
         userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getGeneralBoardButton(), 1);
         if(userProfilePage.hasSelectedAttribute(userProfilePage.getGeneralBoardButton())){
-            jse.executeScript("arguments[0].scrollIntoView();", userProfilePage.getNightlyBoardButton());
-            userProfilePage.getGeneralBoardButton().click();
+            userProfilePage.getNightlyBoardButton().click();
         } else {
             userProfilePage.getGeneralBoardButton().click();
         }
@@ -115,10 +131,8 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePage.reload();
         Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect()).equals(testChosenDashboard));
         userProfilePage.getDefaultDashboardSelect().click();
-      //  userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.)
-      //  xpath="//md-option[@value='General']"
-
-    }
+        userProfilePage.waitUntilElementToBeClickableByBackdropMask();
+    } */
 
     @Test
     public void changePasswordTest() {
