@@ -50,9 +50,6 @@ public class UserService
 	
 	@Autowired
 	private UserMapper userMapper;
-
-	@Autowired
-	private UserPreferenceService userPreferenceService;
 	
 	@Autowired
 	private GroupService groupService;
@@ -158,7 +155,7 @@ public class UserService
 				addUserToGroup(newUser, group.getId());
 				newUser.getGroups().add(group);
 			}
-			userPreferenceService.createDefaultUserPreferences(newUser.getId());
+
 		} else
 		{
 			newUser.setId(user.getId());
