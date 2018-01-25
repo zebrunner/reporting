@@ -42,6 +42,13 @@
 		]]>
 	</select>
 
+	<select id="getDefaultUserPreferences" resultMap="UserPreferenceResultMap">
+		<include refid="getUserPreference" />
+		<![CDATA[
+			WHERE UP.USER_ID = (SELECT ID FROM zafira.USERS WHERE USERNAME = 'anonymous');
+		]]>
+	</select>
+
 	<select id="getUserPreferenceByNameAndUserId" resultMap="UserPreferenceResultMap">
 		<include refid="getUserPreference" />
 		<![CDATA[

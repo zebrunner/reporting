@@ -9,6 +9,7 @@
         var service = {};
 
         service.getUserProfile = getUserProfile;
+        service.getExtendedUserProfile = getExtendedUserProfile;
         service.searchUsers = searchUsers;
         service.searchUsersWithQuery = searchUsersWithQuery;
         service.updateUserProfile = updateUserProfile;
@@ -27,6 +28,10 @@
 
         function getUserProfile() {
         	return $http.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess, UtilService.handleError('Unable to get user profile'));
+        }
+
+        function getExtendedUserProfile() {
+            return $http.get(API_URL + '/api/users/profile/extended').then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
         }
 
         function searchUsers(criteria) {

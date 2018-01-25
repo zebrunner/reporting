@@ -52,7 +52,7 @@
                     </goals>
                     <phase>generate-resources</phase>
                     <configuration>
-                        <nodeVersion>v7.1.0</nodeVersion>
+                        <nodeVersion>v8.1.0</nodeVersion>
                         <npmVersion>3.10.9</npmVersion>
                     </configuration>
                 </execution>
@@ -82,7 +82,7 @@
                         <goal>gulp</goal>
                     </goals>
                     <configuration>
-                        <arguments>serve-dist</arguments>
+                        <arguments>serve</arguments>
                     </configuration>
                     <phase>generate-resources</phase>
                 </execution>
