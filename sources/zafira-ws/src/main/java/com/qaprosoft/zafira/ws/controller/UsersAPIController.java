@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import com.qaprosoft.zafira.services.services.DashboardService;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Get user profile", nickname = "getUserProfile", code = 200, httpMethod = "GET", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "profile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType getUserProfile() throws ServiceException
 	{
@@ -108,7 +109,8 @@ public class UsersAPIController extends AbstractController
 		User user = userService.getUserById(getPrincipalId());
 		UserType userType = mapper.map(user, UserType.class);
 		userType.setRoles(user.getRoles());
-		userType.setPreferences(user.getPreferences());
+		userType.setPreferences(user.getPreferences() == null || CollectionUtils.isEmpty(user.getPreferences())
+				? userPreferenceService.getDefaultUserPreferences() : user.getPreferences());
 		userType.setPermissions(user.getPermissions());
 		extendedUserProfile.put("user", userType);
 		extendedUserProfile.put("companyLogo", settingsService.getSettingByName("COMPANY_LOGO_URL"));
@@ -121,12 +123,12 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Update user profile", nickname = "updateUserProfile", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "profile", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType updateUserProfile(@Valid @RequestBody UserType user) throws ServiceException
 	{
 		checkCurrentUserAccess(user.getId());
-		UserType userType = mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
+		UserType userType =  mapper.map(userService.updateUser(mapper.map(user, User.class)), UserType.class);
 		userType.setRoles(user.getRoles());
 		userType.setPreferences(user.getPreferences());
 		userType.setPhotoURL(user.getPhotoURL());
@@ -151,7 +153,7 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Update user password", nickname = "updateUserPassword", code = 200, httpMethod = "PUT")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
 	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
 	{
@@ -163,7 +165,7 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Search users", nickname = "searchUsers", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<User> searchUsers(@Valid @RequestBody UserSearchCriteria sc)
 			throws ServiceException
@@ -175,7 +177,7 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user,
@@ -188,7 +190,7 @@ public class UsersAPIController extends AbstractController
 	@ApiOperation(value = "Delete user", nickname = "deleteUser", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException
@@ -199,7 +201,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
 	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -212,7 +214,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
 	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
@@ -233,31 +235,17 @@ public class UsersAPIController extends AbstractController
 		return userPreferenceService.getAllUserPreferences(userService.getUserByUsername("anonymous").getId());
 	}
 
-	@ResponseStatusDetails
-	@ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{userId}/preferences", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<UserPreference> createUserPreference(@PathVariable(value = "userId") long userId,
-			@RequestBody List<UserPreference> preferences) throws ServiceException
-	{
+    @ResponseStatusDetails
+    @ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value="{userId}/preferences", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<UserPreference> createUserPreference(@PathVariable(value="userId") long userId, @RequestBody List<UserPreference> preferences) throws ServiceException {
 
-		for (UserPreference preference : preferences)
-		{
-			userPreferenceService.createOrUpdateUserPreference(preference);
-		}
-		return userPreferenceService.getAllUserPreferences(userId);
-	}
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Reset user preferences to default", nickname = "resetUserPreferencesToDefault", code = 200, httpMethod = "PUT", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({
-			@ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "preferences/default", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<UserPreference> resetUserPreferencesToDefault() throws ServiceException
-	{
-		return userPreferenceService.resetUserPreferencesToDefault(getPrincipalId());
-	}
+	    for (UserPreference preference: preferences){
+            userPreferenceService.createOrUpdateUserPreference(preference);
+        }
+        return userPreferenceService.getAllUserPreferences(userId);
+    }
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", code = 200, httpMethod = "DELETE")
@@ -267,6 +255,6 @@ public class UsersAPIController extends AbstractController
 	@RequestMapping(value = "{userId}/preferences", method = RequestMethod.DELETE)
 	public void deleteUserPreferences(@PathVariable(value = "userId") long userId) throws ServiceException
 	{
-		userPreferenceService.deleteUserPreferencesByUserId(userId);
+        userPreferenceService.deleteUserPreferencesByUserId(userId);
 	}
 }

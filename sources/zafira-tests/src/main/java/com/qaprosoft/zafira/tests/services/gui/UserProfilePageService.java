@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
 import com.qaprosoft.zafira.tests.exceptions.NoColorSchemaIsChosenException;
+import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -28,6 +29,12 @@ public class UserProfilePageService extends AbstractPageService
 		else {
 			throw new NoColorSchemaIsChosenException("No radioButton corresponding to the schema choice was found");
 		}
+	}
+
+
+	public UploadImageModalWindow clickLoadProfilePhotoHoverIcon() {
+		userProfilePage.getLoadProfilePhotoHoverIcon().click();
+		return new UploadImageModalWindow(driver);
 	}
 
 	public void pickDarkSchemaRadioButton(){
