@@ -7,6 +7,15 @@ body {
     margin-bottom: 8px;
 }
 
+#main-fab md-fab-trigger button {
+    animation: slide 400ms ease;
+}
+
+@keyframes slide {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
 #main-fab {
     position: fixed;
     right: 90px;
