@@ -56,7 +56,7 @@ public class UserPageTest extends AbstractTest
 	}
 
 	@Test
-	public void verifyUserPageNavigationTest()
+	public void verifyNavigationTest()
 	{
 		Assert.assertTrue(userPage.isOpened(), "Users page not opened");
 		Assert.assertTrue(userPage.getPageTitleText().contains("Users"), "Users page title is uncorrect");
@@ -105,7 +105,7 @@ public class UserPageTest extends AbstractTest
 	}
 
 	@Test
-	public void verifyUsersInfoTest()
+	public void verifyInfoTest()
 	{
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
 		Assert.assertEquals(userPage.getUserRows().size(), users.size() >= 20 ? 20 : users.size(),
@@ -185,7 +185,7 @@ public class UserPageTest extends AbstractTest
 	}
 
 	@Test
-	public void verifyUserSearchTest() throws ExecutionException, InterruptedException
+	public void verifySearchTest() throws ExecutionException, InterruptedException
 	{
 		CompletableFuture<List<UserType>> usersCompletableFuture = generateUsersIfExists(25);
 		verifySearchBlockInputsAreEmpty();
