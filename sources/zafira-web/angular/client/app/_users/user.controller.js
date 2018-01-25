@@ -163,15 +163,21 @@
         };
 
         $scope.resetPreferences = function () {
-            UserService.resetUserPreferencesToDefault().then(function (rs) {
+            UserService.deleteUserPreferences($scope.user.id).then(function (rs) {
                 if (rs.success) {
-                    $rootScope.setDefaultPreferences(rs.data);
-                    alertify.success('Preferences are set to default');
+                    //$rootScope.$broadcast('event:preferencesReset');
+                    //alertify.success('Preferences are set to default');
                 }
                 else {
                     alertify.error(rs.message);
                 }
-            });
+            }).then(UserService.getDefaultPreferences().then(function(rs){
+                if(rs.success)
+                {
+                    $rootScope.setDefaultPreferences(rs.data);
+                    alertify.success('Preferences are set to default');
+                }
+            }));
         };
 
         $scope.selectDashboard = function (dashboard) {

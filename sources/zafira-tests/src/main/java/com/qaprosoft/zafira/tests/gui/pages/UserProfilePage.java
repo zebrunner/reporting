@@ -7,6 +7,12 @@ import org.openqa.selenium.support.FindBy;
 public class UserProfilePage extends BasePage
 {
 
+	@FindBy(xpath="//i[ancestor::header[@class='profile-header'] and contains(text(),'settings')]")
+	private WebElement loadProfilePhotoHoverIcon;
+
+	@FindBy(xpath="//div[@class='profile-img']")
+	private WebElement loadProfilePhotoIcon;
+
 	@FindBy(xpath="//input[@name='username']")
 	private WebElement userNameInput;
 
@@ -25,21 +31,11 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath="//div[contains(text(),'ROLE_ADMIN')]")
 	private WebElement roleAdminLabel;
 
-
-
-
 	@FindBy(xpath="//md-option[@value='General']")
 	private WebElement generalBoardButton;
 
 	@FindBy(xpath="//md-option[contains(@value,'Nightly')]")
 	private WebElement nightlyBoardButton;
-
-
-
-
-
-
-
 
 	@FindBy(xpath="//button[ancestor::form[@name='profile_form']]")
 	private WebElement saveUserProfileButton;
@@ -209,4 +205,13 @@ public class UserProfilePage extends BasePage
 		return nightlyBoardButton;
 	}
 
+	public WebElement getLoadProfilePhotoHoverIcon()
+	{
+		return loadProfilePhotoHoverIcon;
+	}
+
+	public WebElement getLoadProfilePhotoIcon()
+	{
+		return loadProfilePhotoIcon;
+	}
 }
