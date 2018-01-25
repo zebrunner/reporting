@@ -14,21 +14,6 @@
 		]]>
 	</insert>
 
-	<insert id="createUserPreferences">
-        <![CDATA[
-			INSERT INTO zafira.USER_PREFERENCES (NAME, VALUE, USER_ID) VALUES
-		]]>
-		<foreach item="userPreference" index="index" collection="userPreferences" open="" separator="," close=";">
-            <![CDATA[
-		      (
-				#{userPreference.name},
-			    #{userPreference.value},
-				#{userId}
-              )
-		    ]]>
-		</foreach>
-	</insert>
-
 	<sql id="getUserPreference">
 		<![CDATA[
 			SELECT
@@ -57,17 +42,17 @@
 		]]>
 	</select>
 
+	<select id="getDefaultUserPreferences" resultMap="UserPreferenceResultMap">
+		<include refid="getUserPreference" />
+		<![CDATA[
+			WHERE UP.USER_ID = (SELECT ID FROM zafira.USERS WHERE USERNAME = 'anonymous');
+		]]>
+	</select>
+
 	<select id="getUserPreferenceByNameAndUserId" resultMap="UserPreferenceResultMap">
 		<include refid="getUserPreference" />
 		<![CDATA[
 			WHERE UP.NAME = #{name} AND UP.USER_ID = #{userId};
-		]]>
-	</select>
-
-	<select id="getDefaultUserPreferences" resultMap="UserPreferenceResultMap">
-		<include refid="getUserPreference" />
-		<![CDATA[
-			WHERE UP.USER_ID = (SELECT U.ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous');
 		]]>
 	</select>
 
@@ -78,7 +63,7 @@
 		    FROM
 			zafira.USER_PREFERENCES UP
 			WHERE
-				UP.USER_ID = (SELECT U.ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous') AND UP.NAME = #{name}
+				UP.USER_ID = (SELECT ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous') AND UP.NAME = #{name}
 		]]>
 	</select>
 
@@ -108,28 +93,6 @@
 			WHERE
 			    ID = #{id}
 		]]>
-	</update>
-
-	<update id="updateUserPreferences">
-		<foreach item="userPreference" index="index" collection="userPreferences" separator=";">
-			<![CDATA[
-				UPDATE
-					zafira.USER_PREFERENCES
-			]]>
-				<set>
-					<if test="null != userPreference.value">
-						<![CDATA[
-						   VALUE = #{userPreference.value},
-						]]>
-					</if>
-				</set>
-			<![CDATA[
-				WHERE
-					USER_ID = #{userId}
-				AND
-					NAME = #{userPreference.name}
-			]]>
-		</foreach>
 	</update>
 
 	<sql id="deleteUserPreference">
