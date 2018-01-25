@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
-import com.qaprosoft.zafira.tests.gui.components.UserSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
@@ -10,16 +9,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class UserPageService extends AbstractPageService
+public class UserPageService extends AbstractPageWithTableService
 {
 
-	public static final Integer USER_PHOTO_COLUMN_NUMBER = 1;
-	public static final Integer USERNAME_COLUMN_NUMBER = 2;
-	public static final Integer EMAIL_COLUMN_NUMBER = 3;
-	public static final Integer FIRST_LAST_NAME_COLUMN_NUMBER = 4;
-	public static final Integer STATUS_COLUMN_NUMBER = 5;
-	public static final Integer REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER = 6;
-	public static final Integer USER_MENU_COLUMN_NUMBER = 7;
+	private static final Integer USER_PHOTO_COLUMN_NUMBER = 1;
+	private static final Integer USERNAME_COLUMN_NUMBER = 2;
+	private static final Integer EMAIL_COLUMN_NUMBER = 3;
+	private static final Integer FIRST_LAST_NAME_COLUMN_NUMBER = 4;
+	private static final Integer STATUS_COLUMN_NUMBER = 5;
+	private static final Integer REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER = 6;
 
 	private static final String CREATE_USER_BUTTON_CLASS = "fa-plus";
 	private static final String CREATE_GROUP_BUTTON_CLASS = "fa-users";
@@ -32,78 +30,55 @@ public class UserPageService extends AbstractPageService
 		this.userPage = new UserPage(driver);
 	}
 
-	public WebElement getUserRowByUserId(long id)
+	public WebElement getUserPhotoByIndex(int index)
 	{
-		return driver.findElement(By.xpath(".//tbody//tr[.//*[@aria-label = '#" + id + "']]"));
-	}
-
-	public WebElement getTableRowByIndex(long index)
-	{
-		return driver.findElement(By.xpath("(.//tbody//tr)[" + index + "]"));
-	}
-
-	public WebElement getUserPhotoByIdOrIndex(long id, boolean byId)
-	{
-		return getTableColumnByIdOrIndex(id, USER_PHOTO_COLUMN_NUMBER, byId).findElement(By.
+		return getTableColumnByIndex(index, USER_PHOTO_COLUMN_NUMBER).findElement(By.
 				xpath("(//tbody//tr)[1]//td[1]//img[not(contains(@class, 'ng-hide'))] | (//tbody//tr)[1]//td[1]//i[not(contains(@class, 'ng-hide'))]"));
 	}
 
-	public String getUsernameByIdOrIndex(long id, boolean byId)
+	public String getUsernameByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, USERNAME_COLUMN_NUMBER, byId).getText();
+		return getTableColumnByIndex(index, USERNAME_COLUMN_NUMBER).getText();
 	}
 
-	public String getEmailByIdOrIndex(long id, boolean byId)
+	public String getEmailByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, EMAIL_COLUMN_NUMBER, byId).getText();
+		return getTableColumnByIndex(index, EMAIL_COLUMN_NUMBER).getText();
 	}
 
-	public String getFirstLastNameByIdOrIndex(long id, boolean byId)
+	public String getFirstLastNameByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, FIRST_LAST_NAME_COLUMN_NUMBER, byId).getText();
+		return getTableColumnByIndex(index, FIRST_LAST_NAME_COLUMN_NUMBER).getText();
 	}
 
-	public String getStatusByIdOrIndex(long id, boolean byId)
+	public String getStatusByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, STATUS_COLUMN_NUMBER, byId).getText();
+		return getTableColumnByIndex(index, STATUS_COLUMN_NUMBER).getText();
 	}
 
-	public String getRegistrationDateByIdOrIndex(long id, boolean byId)
+	public String getRegistrationDateByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER, byId).findElement(By.tagName("span")).getText();
+		return getTableColumnByIndex(index, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER).findElement(By.tagName("span")).getText();
 	}
 
-	public String getLastLoginTextByIdOrIndex(long id, boolean byId)
+	public String getLastLoginTextByIndex(int index)
 	{
-		return getTableColumnByIdOrIndex(id, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER, byId).findElement(By.tagName("b")).getText();
+		return getTableColumnByIndex(index, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER).findElement(By.tagName("b")).getText();
 	}
 
-	public WebElement getUserMenuButtonByIdOrIndex(long id, boolean byId)
+	public CreateUserModalWindow goToEditUserModalWindow(int index)
 	{
-		return getTableColumnByIdOrIndex(id, USER_MENU_COLUMN_NUMBER, byId).findElement(By.tagName("button"));
+		return clickUserMenuButtonByIndex(index).clickEditProfileButton();
 	}
 
-	public UserSettingMenu clickUserMenuButtonByIdOrIndex(long id, boolean byId)
+	public ChangePasswordModalWindow goToChangePasswordModalWindow(int index)
 	{
-		getUserMenuButtonByIdOrIndex(id, byId).click();
-		UserSettingMenu userSettingMenu = new UserSettingMenu(driver);
-		userSettingMenu.waitUntilElementToBeClickableByBackdropMask(userSettingMenu.getElement(), 1);
-		return userSettingMenu;
+		return clickUserMenuButtonByIndex(index).clickChangePasswordButton();
 	}
 
-	public CreateUserModalWindow goToEditUserModalWindow(long userId, boolean byId)
+	public DashboardPage goToPerformance(int index)
 	{
-		return clickUserMenuButtonByIdOrIndex(userId, byId).clickEditProfileButton();
-	}
-
-	public ChangePasswordModalWindow goToChangePasswordModalWindow(long userId, boolean byId)
-	{
-		return clickUserMenuButtonByIdOrIndex(userId, byId).clickChangePasswordButton();
-	}
-
-	public DashboardPage goToPerformance(long userId, boolean byId)
-	{
-		return clickUserMenuButtonByIdOrIndex(userId, byId).clickPerformanceButton();
+		return clickUserMenuButtonByIndex(index).clickPerformanceButton();
 	}
 
 	public CreateUserModalWindow goToCreateUserModalWindow()
@@ -164,11 +139,5 @@ public class UserPageService extends AbstractPageService
 		userPage.getPaginationBlock().clickLastPageButton();
 		userPage.waitUntilPageIsLoaded();
 		return userPage;
-	}
-
-	public WebElement getTableColumnByIdOrIndex(long id, int columnNumber, boolean byId)
-	{
-		WebElement userRow = byId ? getUserRowByUserId(id) : getTableRowByIndex(id);
-		return userRow.findElement(By.xpath(".//td[" + columnNumber + "]"));
 	}
 }
