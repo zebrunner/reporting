@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
+import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
+import com.qaprosoft.zafira.tests.gui.components.blocks.search.UserSearchBlock;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,9 +17,15 @@ public class UserPage extends BasePage
 	@FindBy(xpath = "//tbody//tr")
 	private List<WebElement> userRows;
 
+	private UserSearchBlock userSearchBlock;
+
+	private PaginationBlock paginationBlock;
+
 	public UserPage(WebDriver driver)
 	{
 		super(driver, "/users");
+		this.userSearchBlock = new UserSearchBlock(driver);
+		this.paginationBlock = new PaginationBlock(driver);
 	}
 
 	public List<WebElement> getUserMenuButtons()
@@ -28,5 +36,15 @@ public class UserPage extends BasePage
 	public List<WebElement> getUserRows()
 	{
 		return userRows;
+	}
+
+	public UserSearchBlock getUserSearchBlock()
+	{
+		return userSearchBlock;
+	}
+
+	public PaginationBlock getPaginationBlock()
+	{
+		return paginationBlock;
 	}
 }
