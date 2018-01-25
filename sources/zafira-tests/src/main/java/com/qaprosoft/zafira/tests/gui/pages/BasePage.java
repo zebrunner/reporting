@@ -16,6 +16,9 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(css = "h2.section-header")
 	private WebElement pageTitle;
 
+	@FindBy(xpath = "//*[@class = 'section-header']//small")
+	private WebElement pageItemsCount;
+
 	@FindBy(tagName = "md-fab-trigger")
 	private WebElement fabButton;
 
@@ -42,7 +45,12 @@ public abstract class BasePage extends AbstractPage
 	public boolean waitUntilPageIsLoaded(long seconds)
 	{
 		return isElementPresent(header.getLoadingBarSpinnerLocator(), 1) &&
-				waitUntilElementIsNotPresent(driver.findElement(header.getLoadingBarSpinnerLocator()), seconds);
+				! waitUntilElementIsPresent(header.getLoadingBarSpinnerLocator(), seconds);
+	}
+
+	public boolean waitUntilPageIsLoaded()
+	{
+		return waitUntilPageIsLoaded(IMPLICITLY_TIMEOUT);
 	}
 
 	public String getPageTitleText()
@@ -60,10 +68,26 @@ public abstract class BasePage extends AbstractPage
 		return fabButton.findElements(By.xpath(".//following-sibling::md-fab-actions//button"));
 	}
 
+	public Integer getPageItemsCount()
+	{
+		String text;
+		waitUntilPageIsLoaded();
+		if(isElementPresent(pageItemsCount, 1))
+		{
+			text = pageItemsCount.getText();
+		} else
+		{
+			text = "(0)";
+		}
+		return Integer.valueOf(text.substring(text.indexOf("(") + 1, text.indexOf(")")));
+	}
+
 	public WebElement getFabMenuButtonByClassName(String classPartialText)
 	{
-		return fabButton.findElement(By.xpath(".//following-sibling::md-fab-actions//button[.//span[contains(@class, '"
-				+ classPartialText + "')]]"));
+		By fabMenuButtonLocator = By.xpath(".//following-sibling::md-fab-actions//button[.//span[contains(@class, '"
+				+ classPartialText + "')]]");
+		waitUntilElementIsPresent(fabButton, fabMenuButtonLocator, 1);
+		return fabButton.findElement(fabMenuButtonLocator);
 	}
 
 	public void clickFabMenu()
