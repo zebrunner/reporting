@@ -1,17 +1,14 @@
-package com.qaprosoft.zafira.tests.gui.components;
+package com.qaprosoft.zafira.tests.gui.components.menus;
 
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UserSettingMenu extends AbstractUIObject
+public class UserSettingMenu extends AbstractMenu
 {
-
-	private static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content";
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//button[./*[text() = 'build']]")
 	private WebElement editProfileButton;
@@ -21,9 +18,6 @@ public class UserSettingMenu extends AbstractUIObject
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//a[./*[text() = 'timeline']]")
 	private WebElement performanceButton;
-
-	@FindBy(xpath = CONTAINER_LOCATOR)
-	private WebElement container;
 
 	public UserSettingMenu(WebDriver driver)
 	{
@@ -63,17 +57,5 @@ public class UserSettingMenu extends AbstractUIObject
 		DashboardPage dashboardPage = new DashboardPage(driver);
 		dashboardPage.waitUntilPageIsLoaded(10);
 		return dashboardPage;
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.xpath(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return this.container;
 	}
 }

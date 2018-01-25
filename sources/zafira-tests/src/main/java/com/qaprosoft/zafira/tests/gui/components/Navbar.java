@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.tests.gui.components;
 import com.qaprosoft.zafira.tests.gui.AbstractPage;
 import com.qaprosoft.zafira.tests.gui.pages.MonitorPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestCasePage;
+import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -55,6 +56,12 @@ public class Navbar extends AbstractPage implements IElement
 		super.hoverOnElement(this.testRunsTab);
 		super.waitUntilElementIsPresent(this.testRunTabMenu.getElement(), 10);
 		return this.testRunTabMenu;
+	}
+
+	public TestRunPage goToTestRunPage()
+	{
+		TestRunTabMenu testRunTabMenu = hoverOnTestRunTab();
+		return testRunTabMenu.clickShowRunsButton();
 	}
 
 	public TestCasePage clickTestCasesTab()
