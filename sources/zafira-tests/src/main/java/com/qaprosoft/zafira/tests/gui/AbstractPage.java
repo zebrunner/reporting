@@ -42,7 +42,6 @@ public abstract class AbstractPage extends AbstractUIObject
 	public AbstractPage(WebDriver driver, String path)
 	{
 		super(driver);
-		this.driver = driver;
 		this.url = Config.get("base_url") + path;
 		PageFactory.initElements(driver, this);
 	}
