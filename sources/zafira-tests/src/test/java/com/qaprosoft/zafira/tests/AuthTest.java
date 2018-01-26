@@ -24,7 +24,8 @@ import com.qaprosoft.zafira.tests.gui.LoginPage;
 
 public class AuthTest extends AbstractTest
 {
-	@Test(groups= {"acceptance", "auth"})
+
+	@Test(enabled=false, groups= {"acceptance", "auth"})
 	public void testValidLogin()
 	{
 		LoginPage loginPage = new LoginPage(driver);
@@ -33,7 +34,7 @@ public class AuthTest extends AbstractTest
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard not opened!");
 	}
 	
-	@Test(groups= {"acceptance", "auth"})
+	@Test(enabled=false, groups= {"acceptance", "auth"})
 	public void testInvalidLogin()
 	{
 		LoginPage loginPage = new LoginPage(driver);
