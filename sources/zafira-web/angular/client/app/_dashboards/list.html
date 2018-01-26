@@ -17,21 +17,21 @@
                     <md-tooltip md-direction="top">Delete dashboard</md-tooltip>
                     <span class="fa fa-trash"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="startEditWidgets()" has-any-permission="['MODIFY_WIDGETS']">
-                    <md-tooltip md-direction="top">Update widgets</md-tooltip>
-                    <span class="fa fa-arrows-alt"></span>
-                </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
-                    <md-tooltip md-direction="top">Send by email</md-tooltip>
-                    <span class="fa fa-envelope-o"></span>
-                </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, dashboard, false)" has-any-permission="['MODIFY_DASHBOARDS']">
                     <md-tooltip md-direction="top">Update dashboard</md-tooltip>
                     <span class="fa fa-cog"></span>
                 </md-button>
                 <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, {}, true)" has-any-permission="['MODIFY_DASHBOARDS']">
-                    <md-tooltip md-direction="top">New dashboard</md-tooltip>
+                    <md-tooltip md-direction="top">Create new dashboard</md-tooltip>
                     <span class="fa fa-plus"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
+                    <md-tooltip md-direction="top">Send dashboard by email</md-tooltip>
+                    <span class="fa fa-envelope-o"></span>
+                </md-button>
+                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="startEditWidgets()" has-any-permission="['MODIFY_WIDGETS']">
+                    <md-tooltip md-direction="top">Change widgets placement</md-tooltip>
+                    <span class="fa fa-arrows-alt"></span>
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
