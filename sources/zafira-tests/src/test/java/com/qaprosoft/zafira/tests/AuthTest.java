@@ -24,7 +24,7 @@ import com.qaprosoft.zafira.tests.gui.LoginPage;
 
 public class AuthTest extends AbstractTest
 {
-
+/*
 	@Test(enabled=false, groups= {"acceptance", "auth"})
 	public void testValidLogin()
 	{
@@ -41,5 +41,5 @@ public class AuthTest extends AbstractTest
 		loginPage.open();
 		loginPage.login("invalid", "credentials");
 		Assert.assertTrue(loginPage.isInvalidCredentials(), "Invalid credentials alert not showed!");
-	}
+	}*/
 }
