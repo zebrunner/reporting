@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.menus;
 
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,9 +32,9 @@ public class TestRunSettingMenu extends AbstractMenu
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//button[contains(text(), 'Delete')]")
 	private WebElement deleteButton;
 
-	protected TestRunSettingMenu(WebDriver driver, String path)
+	protected TestRunSettingMenu(WebDriver driver, SearchContext context)
 	{
-		super(driver, path);
+		super(driver, context);
 	}
 
 	public WebElement getOpenButton()

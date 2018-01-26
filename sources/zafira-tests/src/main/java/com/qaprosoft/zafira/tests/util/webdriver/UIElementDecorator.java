@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.tests.util.webdriver;
 
-import com.qaprosoft.zafira.tests.gui.components.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -46,23 +46,22 @@ public class UIElementDecorator implements FieldDecorator
     private <T extends AbstractUIObject> T getObject(ClassLoader loader, Field field, ElementLocator locator) {
         Class<? extends AbstractUIObject> clazz = (Class<? extends AbstractUIObject>) field.getType();
         T uiObject;
+        WebElement proxy = null;
         try
         {
-            WebElement proxy = (WebElement) Proxy.newProxyInstance(loader, new Class[]
+            proxy = (WebElement) Proxy.newProxyInstance(loader, new Class[]
                     { WebElement.class, WrapsElement.class, Locatable.class }, new LocatingElementHandler(locator));
             uiObject = (T) clazz.getConstructor(WebDriver.class, SearchContext.class).newInstance(driver, proxy);
         } catch (NoSuchMethodException e)
         {
-            System.out.println("Implement appropriate AbstractUIObject constructor for auto-initialization: "
-                    + e.getMessage());
             throw new RuntimeException(
                     "Implement appropriate AbstractUIObject constructor for auto-initialization: "
                             + e.getMessage(), e);
         } catch (Exception e)
         {
-            System.out.println("Error creating UIObject: " + e.getMessage());
             throw new RuntimeException("Error creating UIObject: " + e.getMessage(), e);
         }
+        uiObject.setRootElement(proxy);
         return uiObject;
     }
 

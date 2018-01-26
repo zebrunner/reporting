@@ -1,6 +1,8 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,9 +33,9 @@ public class UserMenu extends AbstractUIObject
 	@FindBy(xpath = "//a[./*[text() = 'Logout']]")
 	private WebElement logoutButton;
 
-	public UserMenu(WebDriver driver, String path)
+	public UserMenu(WebDriver driver, SearchContext context)
 	{
-		super(driver, path);
+		super(driver, context);
 	}
 
 	public WebElement getUserProfilePhoto()
@@ -64,17 +66,5 @@ public class UserMenu extends AbstractUIObject
 	public WebElement getLogoutButton()
 	{
 		return logoutButton;
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.xpath(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return this.container;
 	}
 }

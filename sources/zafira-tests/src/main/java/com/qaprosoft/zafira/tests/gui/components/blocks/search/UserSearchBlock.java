@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.blocks.search;
 
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,24 +8,24 @@ import org.openqa.selenium.support.FindBy;
 public class UserSearchBlock extends AbstractSearchBlock
 {
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@name = 'id']")
+	@FindBy(xpath = ".//*[@name = 'id']")
 	private WebElement idInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@name = 'username']")
+	@FindBy(xpath = ".//*[@name = 'username']")
 	private WebElement usernameInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@name = 'email']")
+	@FindBy(xpath = ".//*[@name = 'email']")
 	private WebElement emailInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@name = 'firstLastName']")
+	@FindBy(xpath = ".//*[@name = 'firstLastName']")
 	private WebElement firstLastNameInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//button[.//i[text() = 'today']]")
+	@FindBy(xpath = ".//button[.//i[text() = 'today']]")
 	private WebElement calendarButton;
 
-	public UserSearchBlock(WebDriver driver)
+	public UserSearchBlock(WebDriver driver, SearchContext context)
 	{
-		super(driver);
+		super(driver, context);
 	}
 
 	public void typeId(String value)
