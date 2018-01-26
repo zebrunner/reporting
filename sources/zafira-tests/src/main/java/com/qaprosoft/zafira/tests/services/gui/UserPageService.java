@@ -85,14 +85,14 @@ public class UserPageService extends AbstractPageWithTableService
 	{
 		userPage.clickFabMenu();
 		userPage.clickFabMenuButtonByClassName(CREATE_USER_BUTTON_CLASS);
-		return new CreateUserModalWindow(driver);
+		return new CreateUserModalWindow(driver, null);
 	}
 
 	public CreateGroupModalWindow goToCreateGroupModalWindow()
 	{
 		userPage.clickFabMenu();
 		userPage.clickFabMenuButtonByClassName(CREATE_GROUP_BUTTON_CLASS);
-		return new CreateGroupModalWindow(driver);
+		return new CreateGroupModalWindow(driver, null);
 	}
 
 	public UserPage search(String id, String username, String email, String firstLastName)

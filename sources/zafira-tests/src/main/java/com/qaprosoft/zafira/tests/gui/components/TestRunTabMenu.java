@@ -1,8 +1,10 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,28 +14,24 @@ import java.util.stream.Collectors;
 
 public class TestRunTabMenu extends AbstractUIObject
 {
-	private static final String CONTAINER_LOCATOR = "//*[@id  ='nav']//ul[preceding-sibling::a[.//*[text()='Test runs']]]";
 
 	private static final String SHOW_RUNS_BUTTON_TEXT = "Show latest runs";
 
-	@FindBy(xpath = CONTAINER_LOCATOR)
-	private WebElement container;
-
-	protected TestRunTabMenu(WebDriver driver, String path)
+	protected TestRunTabMenu(WebDriver driver, SearchContext context)
 	{
-		super(driver, path);
+		super(driver, context);
 	}
 
 	public List<String> getTestRunsViews()
 	{
-		return findElements(By.tagName("a")).stream()
+		return context.findElements(By.tagName("a")).stream()
 				.filter(webElement -> ! webElement.getText().equals(SHOW_RUNS_BUTTON_TEXT))
 				.map(WebElement::getText).collect(Collectors.toList());
 	}
 
 	public WebElement getTestRunsViewByName(String name)
 	{
-		return findElement(By.xpath(".//a[.//*[text() = '" + name + "']]"));
+		return context.findElement(By.xpath(".//a[.//*[text() = '" + name + "']]"));
 	}
 
 	public DashboardPage clickTestRunsViewByName(String name)
@@ -46,17 +44,5 @@ public class TestRunTabMenu extends AbstractUIObject
 	{
 		getTestRunsViewByName(SHOW_RUNS_BUTTON_TEXT).click();
 		return new TestRunPage(driver);
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.xpath(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return this.container;
 	}
 }

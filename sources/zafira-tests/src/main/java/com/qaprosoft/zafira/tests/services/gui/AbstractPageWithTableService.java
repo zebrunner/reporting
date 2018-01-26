@@ -21,8 +21,8 @@ public abstract class AbstractPageWithTableService extends AbstractPageService
 	public UserSettingMenu clickUserMenuButtonByIndex(int index)
 	{
 		getUserMenuButtonByIndex(index).click();
-		UserSettingMenu userSettingMenu = new UserSettingMenu(driver);
-		userSettingMenu.waitUntilElementToBeClickableByBackdropMask(userSettingMenu.getElement(), 1);
+		UserSettingMenu userSettingMenu = new UserSettingMenu(driver, null);
+		userSettingMenu.waitUntilElementToBeClickableByBackdropMask(userSettingMenu.getRootElement(), 1);
 		return userSettingMenu;
 	}
 

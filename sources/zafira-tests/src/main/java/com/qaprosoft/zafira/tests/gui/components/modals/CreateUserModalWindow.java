@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.tests.gui.components.modals;
 
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -15,27 +16,27 @@ public class CreateUserModalWindow extends AbstractModalWindow
 	@FindBy(name = "lastName")
 	private WebElement lastNameInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//input[@name = 'username']")
+	@FindBy(xpath = ".//input[@name = 'username']")
 	private WebElement usernameInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//input[@name = 'email']")
+	@FindBy(xpath = ".//input[@name = 'email']")
 	private WebElement emailInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//input[@name = 'password' and not(@class = 'hide')]")
+	@FindBy(xpath = ".//input[@name = 'password' and not(@class = 'hide')]")
 	private WebElement passwordInput;
 
-	@FindBy(xpath = CONTAINER_LOCATOR  + "//button[contains(text(), 'Create')]")
+	@FindBy(xpath = ".//button[contains(text(), 'Create')]")
 	private WebElement createButton;
 
-	@FindBy(xpath = CONTAINER_LOCATOR  + "//button[contains(text(), 'Save')]")
+	@FindBy(xpath = ".//button[contains(text(), 'Save')]")
 	public WebElement updateButton;
 
-	@FindBy(xpath = CONTAINER_LOCATOR  + "//button[contains(text(), 'Delete')]")
+	@FindBy(xpath = ".//button[contains(text(), 'Delete')]")
 	public WebElement deleteButton;
 
-	public CreateUserModalWindow(WebDriver driver)
+	public CreateUserModalWindow(WebDriver driver, SearchContext context)
 	{
-		super(driver);
+		super(driver, context);
 	}
 
 	public UserPage registerUser(UserType userType)

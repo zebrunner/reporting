@@ -1,53 +1,53 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
 import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.IntegrationsPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPerformancePage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class Header extends AbstractPage implements IElement
+public class Header extends AbstractUIObject
 {
-
-	private static final String CONTAINER_LOCATOR = "header";
-
-	@FindBy(id = CONTAINER_LOCATOR)
-	private WebElement container;
 
 	private By loadingBarSpinnerLocator = By.id("loading-bar-spinner");
 
+	@FindBy(xpath = ".//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]")
 	private ProjectFilterMenu projectFilterMenu;
 
-	@FindBy(xpath = "//header//*[contains(@class, 'logo-text')]")
+	@FindBy(xpath = ".//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]")
+	private UserMenu userMenu;
+
+	@FindBy(xpath = ".//*[contains(@class, 'logo-text')]")
 	private WebElement zafiraLogo;
 
-	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
+	@FindBy(xpath = ".//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
 	private WebElement companyLogo;
 
-	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//i[text() = 'image']")
+	@FindBy(xpath = ".//*[contains(@class, 'logo')]//i[text() = 'image']")
 	private WebElement companyLogoBackgroundIcon;
 
-	@FindBy(xpath = "//header//*[contains(@class, 'logo')]//i[text() = 'settings']")
+	@FindBy(xpath = ".//*[contains(@class, 'logo')]//i[text() = 'settings']")
 	private WebElement companyProfilePhotoHoverIcon;
 
-	@FindBy(xpath = "//header//button[.//*[text() = 'Project']]")
+	@FindBy(xpath = ".//button[.//*[text() = 'Project']]")
 	private WebElement projectFilterButton;
 
-	@FindBy(xpath = "//header//md-menu[.//img]")
+	@FindBy(xpath = ".//md-menu[.//img]")
 	private WebElement userMenuButton;
 
-	@FindBy(xpath = "//header//*[@class='menu-button']")
+	@FindBy(xpath = ".//*[@class='menu-button']")
 	private WebElement mobileMenuButton;
 
-	public Header(WebDriver driver, String path)
+	public Header(WebDriver driver, SearchContext context)
 	{
-		super(driver, path);
-		this.projectFilterMenu = new ProjectFilterMenu(driver, path);
+		super(driver, context);
 	}
 
 	public By getLoadingBarSpinnerLocator()
@@ -77,7 +77,7 @@ public class Header extends AbstractPage implements IElement
 
 	public UploadImageModalWindow clickCompanyPhotoHoverIcon() {
 		companyProfilePhotoHoverIcon.click();
-		return new UploadImageModalWindow(driver);
+		return new UploadImageModalWindow(driver, null);
 	}
 
 	public ProjectFilterMenu clickProjectFilterButton()
@@ -95,7 +95,7 @@ public class Header extends AbstractPage implements IElement
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();
-		return new UserMenu(driver, null);
+		return userMenu;
 	}
 
 	public UserProfilePage goToUserProfilePage()
@@ -142,17 +142,5 @@ public class Header extends AbstractPage implements IElement
 	public WebElement getMobileMenuButton()
 	{
 		return mobileMenuButton;
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.id(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return this.container;
 	}
 }

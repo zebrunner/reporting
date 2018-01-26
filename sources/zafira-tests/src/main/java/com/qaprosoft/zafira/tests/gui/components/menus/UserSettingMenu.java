@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.tests.gui.components.menus;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -19,9 +20,9 @@ public class UserSettingMenu extends AbstractMenu
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//a[./*[text() = 'timeline']]")
 	private WebElement performanceButton;
 
-	public UserSettingMenu(WebDriver driver)
+	public UserSettingMenu(WebDriver driver, SearchContext context)
 	{
-		super(driver, null);
+		super(driver, context);
 	}
 
 	public WebElement getEditProfileButton()
@@ -42,13 +43,13 @@ public class UserSettingMenu extends AbstractMenu
 	public CreateUserModalWindow clickEditProfileButton()
 	{
 		editProfileButton.click();
-		return new CreateUserModalWindow(driver);
+		return null;//new CreateUserModalWindow(driver);
 	}
 
 	public ChangePasswordModalWindow clickChangePasswordButton()
 	{
 		changePasswordButton.click();
-		return new ChangePasswordModalWindow(driver);
+		return null;//new ChangePasswordModalWindow(driver);
 	}
 
 	public DashboardPage clickPerformanceButton()

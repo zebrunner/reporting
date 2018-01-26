@@ -34,7 +34,7 @@ public class UserProfilePageService extends AbstractPageService
 
 	public UploadImageModalWindow clickLoadProfilePhotoHoverIcon() {
 		userProfilePage.getLoadProfilePhotoHoverIcon().click();
-		return new UploadImageModalWindow(driver);
+		return new UploadImageModalWindow(driver, null);
 	}
 
 	public void pickDarkSchemaRadioButton(){
