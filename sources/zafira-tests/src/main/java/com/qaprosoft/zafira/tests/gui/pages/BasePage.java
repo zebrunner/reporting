@@ -28,7 +28,7 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(id = "nav-container")
 	private Navbar navbar;
 
-	protected BasePage(WebDriver driver, String path)
+	public BasePage(WebDriver driver, String path)
 	{
 		super(driver, path);
 	}

@@ -59,7 +59,7 @@ public class UIElementDecorator implements FieldDecorator
                             + e.getMessage(), e);
         } catch (Exception e)
         {
-            throw new RuntimeException("Error creating UIObject: " + e.getMessage(), e);
+            throw new RuntimeException("Error creating UIObject: " + field.getName() + " " + e.getMessage(), e);
         }
         uiObject.setRootElement(proxy);
         return uiObject;
