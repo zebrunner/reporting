@@ -17,7 +17,7 @@ public class TestRunTabMenu extends AbstractUIObject
 
 	private static final String SHOW_RUNS_BUTTON_TEXT = "Show latest runs";
 
-	protected TestRunTabMenu(WebDriver driver, SearchContext context)
+	public TestRunTabMenu(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}
