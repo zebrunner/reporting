@@ -34,16 +34,14 @@ public class UserProfilePageTest extends AbstractTest {
 
     @Test
     public void generateTokenTest() {
+        // Generate token
         userProfilePageService.generateToken();
         userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
         Assert.assertNotNull(userProfilePage.getSuccessAlert());
         Assert.assertFalse(userProfilePage.getWebElementValue(userProfilePage.getTokenInput()).isEmpty());
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
-    }
 
-    @Test
-    public void copyTokenTest() {
-
+        //Copy token
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
         Assert.assertTrue(userProfilePageService.copyToken());
     }
