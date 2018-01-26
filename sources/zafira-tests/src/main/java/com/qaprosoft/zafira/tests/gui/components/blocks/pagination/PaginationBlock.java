@@ -1,7 +1,8 @@
 package com.qaprosoft.zafira.tests.gui.components.blocks.pagination;
 
-import com.qaprosoft.zafira.tests.gui.components.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -9,41 +10,24 @@ import org.openqa.selenium.support.FindBy;
 public class PaginationBlock extends AbstractUIObject
 {
 
-	protected static final String CONTAINER_LOCATOR = "//md-table-pagination";
-
-	@FindBy(xpath = CONTAINER_LOCATOR)
-	private WebElement container;
-
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[contains(@class, 'label')]")
+	@FindBy(xpath = "//*[contains(@class, 'label')]")
 	private WebElement countOfPageElements;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@aria-label = 'First']")
+	@FindBy(xpath = "//*[@aria-label = 'First']")
 	private WebElement firstPageButton;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@aria-label = 'Previous']")
+	@FindBy(xpath = "//*[@aria-label = 'Previous']")
 	private WebElement previousPageButton;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@aria-label = 'Next']")
+	@FindBy(xpath = "//*[@aria-label = 'Next']")
 	private WebElement nextPageButton;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//*[@aria-label = 'Last']")
+	@FindBy(xpath = "//*[@aria-label = 'Last']")
 	private WebElement lastPageButton;
 
-	public PaginationBlock(WebDriver driver)
+	public PaginationBlock(WebDriver driver, SearchContext context)
 	{
-		super(driver, null);
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.xpath(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return container;
+		super(driver, context);
 	}
 
 	public String getCountOfPageElementsText()

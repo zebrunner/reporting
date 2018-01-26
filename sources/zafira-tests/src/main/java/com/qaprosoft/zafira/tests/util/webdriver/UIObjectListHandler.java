@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.tests.util.webdriver;
 
-import com.qaprosoft.zafira.tests.gui.components.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -46,11 +46,7 @@ public class UIObjectListHandler<T extends AbstractUIObject> implements Invocati
                                     webDriver, element);
                 } catch (NoSuchMethodException e)
                 {
-                    System.out.println("Implement appropriate AbstractUIObject constructor for auto-initialization: "
-                            + e.getMessage());
-                    throw new RuntimeException(
-                            "Implement appropriate AbstractUIObject constructor for auto-initialization: "
-                                    + e.getMessage(), e);
+                    throw new RuntimeException("Implement appropriate AbstractUIObject constructor for auto-initialization: " + e.getMessage(), e);
                 }
                 uIObjects.add(uiObject);
             }

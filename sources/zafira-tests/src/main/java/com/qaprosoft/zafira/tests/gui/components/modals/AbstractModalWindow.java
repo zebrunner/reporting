@@ -1,7 +1,8 @@
 package com.qaprosoft.zafira.tests.gui.components.modals;
 
-import com.qaprosoft.zafira.tests.gui.components.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -9,20 +10,15 @@ import org.openqa.selenium.support.FindBy;
 public abstract class AbstractModalWindow extends AbstractUIObject
 {
 
-	protected static final String CONTAINER_LOCATOR = "//md-dialog";
-
-	@FindBy(xpath = CONTAINER_LOCATOR)
-	protected WebElement container;
-
-	@FindBy(xpath = CONTAINER_LOCATOR + "//md-toolbar//h2")
+	@FindBy(xpath = ".//md-toolbar//h2")
 	protected WebElement headerTextBlock;
 
-	@FindBy(xpath = CONTAINER_LOCATOR + "//md-toolbar//md-icon[text() = 'close']")
+	@FindBy(xpath = ".//md-toolbar//md-icon[text() = 'close']")
 	protected WebElement closeButton;
 
-	protected AbstractModalWindow(WebDriver driver)
+	protected AbstractModalWindow(WebDriver driver, SearchContext context)
 	{
-		super(driver, null);
+		super(driver, context);
 		waitUntilElementIsPresent(getCloseButton(), 4);
 	}
 
@@ -49,17 +45,5 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 	public boolean waitUntilModalIsNotPresent()
 	{
 		return waitUntilElementIsNotPresent(getBackdrop(), 4);
-	}
-
-	@Override
-	public By getLocator()
-	{
-		return By.xpath(CONTAINER_LOCATOR);
-	}
-
-	@Override
-	public WebElement getElement()
-	{
-		return this.container;
 	}
 }

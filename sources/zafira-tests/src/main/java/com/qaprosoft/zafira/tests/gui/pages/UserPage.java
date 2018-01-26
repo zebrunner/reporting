@@ -24,8 +24,8 @@ public class UserPage extends BasePage
 	public UserPage(WebDriver driver)
 	{
 		super(driver, "/users");
-		this.userSearchBlock = new UserSearchBlock(driver);
-		this.paginationBlock = new PaginationBlock(driver);
+		this.userSearchBlock = new UserSearchBlock(driver, null);
+		this.paginationBlock = new PaginationBlock(driver, null);
 	}
 
 	public List<WebElement> getUserMenuButtons()

@@ -22,14 +22,15 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(tagName = "md-fab-trigger")
 	private WebElement fabButton;
 
+	@FindBy(id = "header")
 	private Header header;
+
+	@FindBy(id = "nav-container")
 	private Navbar navbar;
 
 	protected BasePage(WebDriver driver, String path)
 	{
 		super(driver, path);
-		this.header = new Header(driver, path);
-		this.navbar = new Navbar(driver, path);
 	}
 
 	public Header getHeader()
