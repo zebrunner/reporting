@@ -92,6 +92,7 @@
             if (changePassword.password.length < 5 || changePassword.confirmPassword.length < 5){
                 alertify.warning("Password length must be more than 5 characters");
             } else {
+                changePassword.userId = $rootScope.currentUser.id;
                 UserService.updateUserPassword(changePassword)
                     .then(function (rs) {
                         if (rs.success) {
