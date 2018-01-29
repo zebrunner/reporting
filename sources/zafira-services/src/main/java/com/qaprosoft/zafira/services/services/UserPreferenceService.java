@@ -31,15 +31,27 @@ public class UserPreferenceService
 	private UserPreferenceMapper userPreferenceMapper;
 
 	@Transactional(rollbackFor = Exception.class)
+ 	public void createDefaultUserPreferences(long userId) throws ServiceException
+	{
+		userPreferenceMapper.createUserPreferences(userId, getDefaultUserPreferences());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public void createUserPreference(UserPreference userPreference) throws ServiceException
 	{
 		userPreferenceMapper.createUserPreference(userPreference);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<UserPreference> getAllUserPreferences(Long userId) throws ServiceException
 	{
 		return userPreferenceMapper.getUserPreferencesByUserId(userId);
+	}
+
+	@Transactional(readOnly = true)
+ 	public List<UserPreference> getDefaultUserPreferences() throws ServiceException
+	{
+		return userPreferenceMapper.getDefaultUserPreferences();
 	}
 
 	@Transactional(readOnly = true)
@@ -48,19 +60,26 @@ public class UserPreferenceService
 		return userPreferenceMapper.getUserPreferenceById(id);
 	}
 
-	@Transactional(readOnly = true)
-	public List<UserPreference> getDefaultUserPreferences() throws ServiceException
-	{
-		return userPreferenceMapper.getDefaultUserPreferences();
-	}
-
 	@Transactional(rollbackFor = Exception.class)
 	public UserPreference updateUserPreference(UserPreference userPreference) throws ServiceException
 	{
 		userPreferenceMapper.updateUserPreference(userPreference);
 		return userPreference;
 	}
-	
+
+	@Transactional(rollbackFor = Exception.class)
+	public List<UserPreference> updateUserPreferences(long userId, List<UserPreference> userPreferences) throws ServiceException
+	{
+		userPreferenceMapper.updateUserPreferences(userId, userPreferences);
+		return userPreferences;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public List<UserPreference> resetUserPreferencesToDefault1(long userId) throws ServiceException
+	{
+		return updateUserPreferences(userId, getDefaultUserPreferences());
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteUserPreferenceById(Long id) throws ServiceException
 	{
@@ -84,6 +103,12 @@ public class UserPreferenceService
 	{
         UserPreference userPreference = userPreferenceMapper.getUserPreferenceByNameAndUserId(name, userId);
 		return userPreference;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+ 	public List<UserPreference> resetUserPreferencesToDefault(long userId) throws ServiceException
+	{
+		return updateUserPreferences(userId, getDefaultUserPreferences());
 	}
 
 	@Transactional(rollbackFor = Exception.class)
