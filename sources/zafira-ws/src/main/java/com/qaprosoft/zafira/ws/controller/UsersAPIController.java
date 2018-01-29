@@ -109,8 +109,7 @@ public class UsersAPIController extends AbstractController
 		User user = userService.getUserById(getPrincipalId());
 		UserType userType = mapper.map(user, UserType.class);
 		userType.setRoles(user.getRoles());
-		userType.setPreferences(user.getPreferences() == null || CollectionUtils.isEmpty(user.getPreferences())
-				? userPreferenceService.getDefaultUserPreferences() : user.getPreferences());
+		userType.setPreferences(user.getPreferences());
 		userType.setPermissions(user.getPermissions());
 		extendedUserProfile.put("user", userType);
 		extendedUserProfile.put("companyLogo", settingsService.getSettingByName("COMPANY_LOGO_URL"));
@@ -246,6 +245,16 @@ public class UsersAPIController extends AbstractController
         }
         return userPreferenceService.getAllUserPreferences(userId);
     }
+
+	@ResponseStatusDetails
+    @ApiOperation(value = "Reset user preferences to default", nickname = "resetUserPreferencesToDefault", code = 200, httpMethod = "PUT", response = List.class)
+    @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({
+   				@ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "preferences/default", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<UserPreference> resetUserPreferencesToDefault() throws ServiceException
+    {
+   		return userPreferenceService.resetUserPreferencesToDefault(getPrincipalId());
+   	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", code = 200, httpMethod = "DELETE")
