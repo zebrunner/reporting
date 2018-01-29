@@ -30,10 +30,10 @@ public abstract class AbstractUIObject
 	protected SearchContext context;
 	protected WebElement rootElement;
 
-	@FindBy(tagName = "md-backdrop")
+	@FindBy(xpath = "//md-backdrop")
 	private WebElement backdrop;
 
-	@FindBy(tagName = "md-tooltip")
+	@FindBy(xpath = "//md-tooltip")
 	private WebElement tooltip;
 
 	@FindBy(xpath = "//div[contains(@class, 'ajs-success')]")

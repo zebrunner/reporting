@@ -18,10 +18,10 @@ public class Header extends AbstractUIObject
 
 	private By loadingBarSpinnerLocator = By.id("loading-bar-spinner");
 
-	@FindBy(xpath = ".//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]")
+	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]")
 	private ProjectFilterMenu projectFilterMenu;
 
-	@FindBy(xpath = ".//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]")
+	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]")
 	private UserMenu userMenu;
 
 	@FindBy(xpath = ".//*[contains(@class, 'logo-text')]")
@@ -86,12 +86,12 @@ public class Header extends AbstractUIObject
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
-		return new ProjectFilterMenu(driver, null);
+		return projectFilterMenu;
 	}
 
 	public UserMenu clickUserMenuButton()
 	{
-		if(! isElementClickable(userMenuButton, 2) || isElementPresent(getBackdrop(), 1))
+		if(isElementPresent(getBackdrop(), 2) || ! isElementClickable(userMenuButton, 2))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();

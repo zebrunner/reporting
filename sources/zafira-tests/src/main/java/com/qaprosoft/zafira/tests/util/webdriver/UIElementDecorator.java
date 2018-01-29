@@ -29,7 +29,8 @@ public class UIElementDecorator implements FieldDecorator
 
     @Override
     public Object decorate(ClassLoader loader, Field field) {
-        if(! field.isAnnotationPresent(FindBy.class) || (! AbstractUIObject.class.isAssignableFrom(field.getType()) && !isList(field)
+        boolean isList = isList(field);
+        if(! field.isAnnotationPresent(FindBy.class) || (! AbstractUIObject.class.isAssignableFrom(field.getType()) && ! isList
                 && ! WebElement.class.isAssignableFrom(field.getType()))) {
             return null;
         }
@@ -37,10 +38,10 @@ public class UIElementDecorator implements FieldDecorator
         if(locator == null) {
             return null;
         }
-        if(WebElement.class.isAssignableFrom(field.getType()) || (isList(field) && WebElement.class.isAssignableFrom(getListType(field).getClass()))) {
+        if(WebElement.class.isAssignableFrom(field.getType()) || (isList && WebElement.class.isAssignableFrom((Class<?>) getListType(field)))) {
             return (new DefaultFieldDecorator(this.factory).decorate(loader, field));
         }
-        return isList(field) ? getObjects(loader, field, locator) : getObject(loader, field, locator);
+        return isList ? getObjects(loader, field, locator) : getObject(loader, field, locator);
     }
 
     private <T extends AbstractUIObject> T getObject(ClassLoader loader, Field field, ElementLocator locator) {

@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
 import com.qaprosoft.zafira.tests.gui.components.blocks.search.UserSearchBlock;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,6 +17,9 @@ public class UserPage extends BasePage
 
 	@FindBy(xpath = "//tbody//tr")
 	private List<WebElement> userRows;
+
+	@FindBy()
+	private CreateUserModalWindow createUserModalWindow;
 
 	private UserSearchBlock userSearchBlock;
 
