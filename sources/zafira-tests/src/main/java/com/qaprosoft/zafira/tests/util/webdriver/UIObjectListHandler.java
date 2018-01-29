@@ -33,7 +33,6 @@ public class UIObjectListHandler<T extends AbstractUIObject> implements Invocati
 
         List<WebElement> elements = locator.findElements();
         List<T> uIObjects = new ArrayList<T>();
-        int index = 0;
         if (elements != null)
         {
             for (WebElement element : elements)
