@@ -124,7 +124,7 @@
 	        	AuthService.SetCredentials(auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
-                    $location.path('/dashboards/' + rs);
+                    $state.go('dashboard', {id: rs});
                 }, function (rs) {
                 })
 	        });
