@@ -56,7 +56,10 @@ public class UserService
 
 	@Autowired
 	private PasswordEncryptor passwordEncryptor;
-	
+
+	@Autowired
+ 	private UserPreferenceService userPreferenceService;
+
 	@PostConstruct
 	public void init()
 	{
