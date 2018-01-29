@@ -121,13 +121,14 @@
         $scope.unexistWidgets = [];
         $scope.updateWidgetsToAdd = function () {
             $timeout(function () {
+                if($scope.widgets && $scope.dashboard.widgets)
                 $scope.unexistWidgets =  $scope.widgets.filter(function(widget) {
                     var existingWidget = $scope.dashboard.widgets.filter(function(w) {
                         return w.id == widget.id;
                     });
                     return !existingWidget.length || widget.id != existingWidget[0].id;
                 });
-            }, 400);
+            }, 800);
             return $scope.unexistWidgets;
         };
 
