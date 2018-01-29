@@ -46,8 +46,6 @@ public class NavigationTest extends AbstractTest {
 
 	@Test
 	public void verifyHeaderFunctionalityTest() {
-		UserPerformancePage userPerformancePage1 = new UserPerformancePage(driver, 1, 1);
-		userPerformancePage1.open();
 
 		ProjectFilterMenu projectFilterMenu = dashboardPage.getHeader().clickProjectFilterButton();
 		Assert.assertTrue(projectFilterMenu.isElementPresent(projectFilterMenu.getClearButton(), 2), "Clear button is not present");
