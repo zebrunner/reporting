@@ -434,6 +434,9 @@
 
         (function init() {
 
+            if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
+                $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
+            }
             $scope.getDashboardById($stateParams.id);
             $rootScope.$on('event:defaultPreferencesInitialized', function () {
                 $scope.startRefreshing();
