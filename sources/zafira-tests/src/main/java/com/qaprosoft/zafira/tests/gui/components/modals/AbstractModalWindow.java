@@ -19,7 +19,6 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 	protected AbstractModalWindow(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
-		waitUntilElementIsPresent(getCloseButton(), 4);
 	}
 
 	public WebElement getHeaderTextBlock()
