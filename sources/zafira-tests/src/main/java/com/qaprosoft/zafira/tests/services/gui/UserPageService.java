@@ -1,23 +1,18 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.table.row.UserTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class UserPageService extends AbstractPageWithTableService
+public class UserPageService extends AbstractPageService
 {
-
-	private static final Integer USER_PHOTO_COLUMN_NUMBER = 1;
-	private static final Integer USERNAME_COLUMN_NUMBER = 2;
-	private static final Integer EMAIL_COLUMN_NUMBER = 3;
-	private static final Integer FIRST_LAST_NAME_COLUMN_NUMBER = 4;
-	private static final Integer STATUS_COLUMN_NUMBER = 5;
-	private static final Integer REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER = 6;
 
 	private static final String CREATE_USER_BUTTON_CLASS = "fa-plus";
 	private static final String CREATE_GROUP_BUTTON_CLASS = "fa-users";
@@ -30,40 +25,9 @@ public class UserPageService extends AbstractPageWithTableService
 		this.userPage = new UserPage(driver);
 	}
 
-	public WebElement getUserPhotoByIndex(int index)
+	public UserTableRow getUserTableRowByIndex(int index)
 	{
-		return getTableColumnByIndex(index, USER_PHOTO_COLUMN_NUMBER).findElement(By.
-				xpath("(//tbody//tr)[1]//td[1]//img[not(contains(@class, 'ng-hide'))] | (//tbody//tr)[1]//td[1]//i[not(contains(@class, 'ng-hide'))]"));
-	}
-
-	public String getUsernameByIndex(int index)
-	{
-		return getTableColumnByIndex(index, USERNAME_COLUMN_NUMBER).getText();
-	}
-
-	public String getEmailByIndex(int index)
-	{
-		return getTableColumnByIndex(index, EMAIL_COLUMN_NUMBER).getText();
-	}
-
-	public String getFirstLastNameByIndex(int index)
-	{
-		return getTableColumnByIndex(index, FIRST_LAST_NAME_COLUMN_NUMBER).getText();
-	}
-
-	public String getStatusByIndex(int index)
-	{
-		return getTableColumnByIndex(index, STATUS_COLUMN_NUMBER).getText();
-	}
-
-	public String getRegistrationDateByIndex(int index)
-	{
-		return getTableColumnByIndex(index, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER).findElement(By.tagName("span")).getText();
-	}
-
-	public String getLastLoginTextByIndex(int index)
-	{
-		return getTableColumnByIndex(index, REGISTRATION_AND_LAST_LOGIN_COLUMN_NUMBER).findElement(By.tagName("b")).getText();
+		return userPage.getUserTable().getUserTableRows().get(index);
 	}
 
 	public CreateUserModalWindow goToEditUserModalWindow(int index)
@@ -81,18 +45,31 @@ public class UserPageService extends AbstractPageWithTableService
 		return clickUserMenuButtonByIndex(index).clickPerformanceButton();
 	}
 
+	public UserSettingMenu clickUserMenuButtonByIndex(int index)
+	{
+		UserTableRow userTableRow = getUserTableRowByIndex(index);
+		if(userPage.isElementPresent(userPage.getBackdrop(), 1))
+		{
+			userPage.clickOutside();
+			userPage.waitUntilElementToBeClickableByBackdropMask(userTableRow.getUserSettingMenu().getRootElement(), 1);
+		}
+		UserSettingMenu userSettingMenu = userTableRow.clickUserSettingMenu();
+		userSettingMenu.waitUntilElementToBeClickableWithBackdropMask(userSettingMenu.getRootElement(), 1);
+		return userSettingMenu;
+	}
+
 	public CreateUserModalWindow goToCreateUserModalWindow()
 	{
 		userPage.clickFabMenu();
 		userPage.clickFabMenuButtonByClassName(CREATE_USER_BUTTON_CLASS);
-		return new CreateUserModalWindow(driver, null);
+		return userPage.getCreateUserModalWindow();
 	}
 
 	public CreateGroupModalWindow goToCreateGroupModalWindow()
 	{
 		userPage.clickFabMenu();
 		userPage.clickFabMenuButtonByClassName(CREATE_GROUP_BUTTON_CLASS);
-		return new CreateGroupModalWindow(driver, null);
+		return userPage.getCreateGroupModalWindow();
 	}
 
 	public UserPage search(String id, String username, String email, String firstLastName)
@@ -139,5 +116,15 @@ public class UserPageService extends AbstractPageWithTableService
 		userPage.getPaginationBlock().clickLastPageButton();
 		userPage.waitUntilPageIsLoaded();
 		return userPage;
+	}
+
+	public UserPage getUserPage()
+	{
+		return userPage;
+	}
+
+	public int getUserTableRowsCount()
+	{
+		return userPage.getUserTable().getUserTableRows().size();
 	}
 }

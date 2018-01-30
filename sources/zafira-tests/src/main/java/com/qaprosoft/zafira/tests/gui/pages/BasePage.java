@@ -19,7 +19,7 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(xpath = "//*[@class = 'section-header']//small")
 	private WebElement pageItemsCount;
 
-	@FindBy(tagName = "md-fab-trigger")
+	@FindBy(xpath = "//md-fab-trigger")
 	private WebElement fabButton;
 
 	@FindBy(id = "header")
@@ -45,8 +45,8 @@ public abstract class BasePage extends AbstractPage
 
 	public boolean waitUntilPageIsLoaded(long seconds)
 	{
-		return isElementPresent(header.getLoadingBarSpinnerLocator(), 1) &&
-				! waitUntilElementIsPresent(header.getLoadingBarSpinnerLocator(), seconds);
+		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
+				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
 	}
 
 	public boolean waitUntilPageIsLoaded()

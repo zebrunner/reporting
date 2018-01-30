@@ -16,7 +16,8 @@ import org.openqa.selenium.support.FindBy;
 public class Header extends AbstractUIObject
 {
 
-	private By loadingBarSpinnerLocator = By.id("loading-bar-spinner");
+	@FindBy(id = "loading-bar-spinner")
+	private WebElement loadingBarSpinner;
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'Clear']]")
 	private ProjectFilterMenu projectFilterMenu;
@@ -50,9 +51,19 @@ public class Header extends AbstractUIObject
 		super(driver, context);
 	}
 
-	public By getLoadingBarSpinnerLocator()
+	public WebElement getLoadingBarSpinner()
 	{
-		return loadingBarSpinnerLocator;
+		return loadingBarSpinner;
+	}
+
+	public ProjectFilterMenu getProjectFilterMenu()
+	{
+		return projectFilterMenu;
+	}
+
+	public UserMenu getUserMenu()
+	{
+		return userMenu;
 	}
 
 	public WebElement getZafiraLogo()
@@ -75,63 +86,9 @@ public class Header extends AbstractUIObject
 		return companyProfilePhotoHoverIcon;
 	}
 
-	public UploadImageModalWindow clickCompanyPhotoHoverIcon() {
-		companyProfilePhotoHoverIcon.click();
-		return new UploadImageModalWindow(driver, null);
-	}
-
-	public ProjectFilterMenu clickProjectFilterButton()
+	public WebElement getProjectFilterButton()
 	{
-		if(! isElementClickable(projectFilterButton, 10) || isElementPresent(getBackdrop(), 1))
-			clickOutside();
-		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
-		this.projectFilterButton.click();
-		return projectFilterMenu;
-	}
-
-	public UserMenu clickUserMenuButton()
-	{
-		if(isElementPresent(getBackdrop(), 2) || ! isElementClickable(userMenuButton, 2))
-			clickOutside();
-		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
-		this.userMenuButton.click();
-		return userMenu;
-	}
-
-	public UserProfilePage goToUserProfilePage()
-	{
-		WebElement userProfileButton = this.clickUserMenuButton().getUserProfileButton();
-		if(!isElementClickable(userProfileButton,2) || isElementPresent(getBackdrop(), 1))
-		    waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
-		userProfileButton.click();
-		return new UserProfilePage(driver);
-	}
-
-	public UserPerformancePage goToUserPerformancePage()
-	{
-		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
-		if(!isElementClickable(userPerformanceButton,2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
-		userPerformanceButton.click();
-		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
-	}
-
-	public IntegrationsPage goToIntegrationsPage()
-	{
-		WebElement integrationsButton = this.clickUserMenuButton().getIntegrationsButton();
-		if(!isElementClickable(integrationsButton,2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
-		integrationsButton.click();
-		return new IntegrationsPage(driver);
-	}
-
-	public LoginPage logOut()
-	{
-		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
-		if(!isElementClickable(logoutButton,2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
-		logoutButton.click();
-		return new LoginPage(driver);
+		return projectFilterButton;
 	}
 
 	public WebElement getUserMenuButton()
@@ -142,5 +99,65 @@ public class Header extends AbstractUIObject
 	public WebElement getMobileMenuButton()
 	{
 		return mobileMenuButton;
+	}
+
+	public UploadImageModalWindow clickCompanyPhotoHoverIcon()
+	{
+		companyProfilePhotoHoverIcon.click();
+		return new UploadImageModalWindow(driver, null);
+	}
+
+	public ProjectFilterMenu clickProjectFilterButton()
+	{
+		if (!isElementClickable(projectFilterButton, 10) || isElementPresent(getBackdrop(), 1))
+			clickOutside();
+		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
+		this.projectFilterButton.click();
+		return projectFilterMenu;
+	}
+
+	public UserMenu clickUserMenuButton()
+	{
+		if (isElementPresent(getBackdrop(), 2) || !isElementClickable(userMenuButton, 2))
+			clickOutside();
+		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
+		this.userMenuButton.click();
+		return userMenu;
+	}
+
+	public UserProfilePage goToUserProfilePage()
+	{
+		WebElement userProfileButton = this.clickUserMenuButton().getUserProfileButton();
+		if (!isElementClickable(userProfileButton, 2) || isElementPresent(getBackdrop(), 1))
+			waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
+		userProfileButton.click();
+		return new UserProfilePage(driver);
+	}
+
+	public UserPerformancePage goToUserPerformancePage()
+	{
+		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
+		if (!isElementClickable(userPerformanceButton, 2) || isElementPresent(getBackdrop(), 1))
+			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
+		userPerformanceButton.click();
+		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
+	}
+
+	public IntegrationsPage goToIntegrationsPage()
+	{
+		WebElement integrationsButton = this.clickUserMenuButton().getIntegrationsButton();
+		if (!isElementClickable(integrationsButton, 2) || isElementPresent(getBackdrop(), 1))
+			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
+		integrationsButton.click();
+		return new IntegrationsPage(driver);
+	}
+
+	public LoginPage logOut()
+	{
+		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
+		if (!isElementClickable(logoutButton, 2) || isElementPresent(getBackdrop(), 1))
+			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
+		logoutButton.click();
+		return new LoginPage(driver);
 	}
 }
