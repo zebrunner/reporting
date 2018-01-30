@@ -19,7 +19,7 @@
         <md-dialog-actions layout="row">
             <md-button type="submit"
                        class="md-raised btn-w-md md-primary"
-                       ng-disabled="upload_image_form.$invalid">
+                       ng-disabled="upload_image_form.$invalid || ! photo">
                 Upload
             </md-button>
         </md-dialog-actions>
