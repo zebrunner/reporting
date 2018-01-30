@@ -57,6 +57,7 @@
                             $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
                             $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
                             $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
+                            $rootScope.currentUser.defaultDashboardId= rs.data["defaultDashboardId"];
                             resolve(rs.data['defaultDashboardId']);
                         } else {
                             reject(rs);
@@ -124,7 +125,7 @@
 	        	AuthService.SetCredentials(auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
-                    $location.path('/dashboards/' + rs);
+                    $state.go('dashboard', {id: rs});
                 }, function (rs) {
                 })
 	        });
@@ -172,7 +173,11 @@
 	            {
 	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
                     $scope.initSession();
-                    $scope.initExtendedUserProfile();
+                    $scope.initExtendedUserProfile().then(function (rs) {
+                        if(['dashboards', ''].indexOf($state.current.name) >= 0) {
+                            $state.go('dashboard', {id: rs});
+                        }
+                    });
 	            }
 
                 ConfigService.getConfig("version").then(function(rs) {
