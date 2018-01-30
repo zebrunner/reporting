@@ -7,10 +7,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.UserTable;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-import java.util.List;
 
 public class UserPage extends BasePage
 {
@@ -24,13 +21,13 @@ public class UserPage extends BasePage
 	@FindBy(xpath = ".//md-table-pagination")
 	private PaginationBlock paginationBlock;
 
-	@FindBy(xpath = "//md-dialog")
+	@FindBy(tagName = "md-dialog")
 	private CreateUserModalWindow createUserModalWindow;
 
-	@FindBy(xpath = "//md-dialog")
+	@FindBy(tagName = "md-dialog")
 	private ChangePasswordModalWindow changePasswordModalWindow;
 
-	@FindBy(xpath = "//md-dialog")
+	@FindBy(tagName = "md-dialog")
 	private CreateGroupModalWindow createGroupModalWindow;
 
 	public UserPage(WebDriver driver)
