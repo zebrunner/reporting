@@ -246,11 +246,9 @@
         }
 
         (function initController() {
-            $rootScope.$on('event:defaultPreferencesInitialized', function () {
                 $scope.widgetRefreshIntervals = [0, 30000, 60000, 120000, 300000];
                 $scope.loadDashboards();
                 $scope.getUserProfile();
-            });
         })();
 
     }
