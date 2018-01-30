@@ -263,8 +263,8 @@ public abstract class AbstractUIObject
 
 	public void clearAllInputs()
 	{
-		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox')]")).forEach(input -> {
-			while(input.getAttribute("value").isEmpty())
+		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)]")).forEach(input -> {
+			while(! input.getAttribute("value").isEmpty())
 			{
 				input.click();
 				input.sendKeys(Keys.BACK_SPACE);

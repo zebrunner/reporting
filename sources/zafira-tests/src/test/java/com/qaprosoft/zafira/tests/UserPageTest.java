@@ -159,8 +159,7 @@ public class UserPageTest extends AbstractTest
 		Assert.assertTrue(changePasswordModalWindow.hasDisabledAttribute(changePasswordModalWindow.getChangeButton()),
 				"Change button is not disabled");
 
-		userPage = changePasswordModalWindow.changePassword("Welcome2!");
-		userPage.waitUntilPageIsLoaded(10);
+		changePasswordModalWindow.changePassword("Welcome2!");
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "Password changed",
 				"Password changed alert is not present");
 		userPage.getHeader().logOut();
@@ -239,7 +238,8 @@ public class UserPageTest extends AbstractTest
 		userPageService.goToPreviousPage();
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 		userPageService.goToLastPage();
-		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, totalCount - totalCount % 20 + 1, totalCount, totalCount), "Count of user menu buttons is not 20");
+		int decriment = totalCount % 20 == 0 ? 20 : totalCount % 20;
+		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, totalCount - decriment + 1, totalCount, totalCount), "Count of user menu buttons is not 20");
 		userPageService.goToFirstPage();
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 	}
@@ -294,7 +294,7 @@ public class UserPageTest extends AbstractTest
 		return CompletableFuture.supplyAsync(() -> {
 			UserAPIService userAPIService = new UserAPIService();
 			int currentCount = userPage.getPageItemsCount();
-			return userAPIService.createUsers(currentCount <= 20 ? count : 1);
+			return userAPIService.createUsers(currentCount <= count ? count - currentCount : 1);
 		});
 	}
 }

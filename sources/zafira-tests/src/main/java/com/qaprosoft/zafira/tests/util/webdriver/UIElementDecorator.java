@@ -47,7 +47,7 @@ public class UIElementDecorator implements FieldDecorator
     private <T extends AbstractUIObject> T getObject(ClassLoader loader, Field field, ElementLocator locator) {
         Class<? extends AbstractUIObject> clazz = (Class<? extends AbstractUIObject>) field.getType();
         T uiObject;
-        WebElement proxy = null;
+        WebElement proxy;
         try
         {
             proxy = (WebElement) Proxy.newProxyInstance(loader, new Class[]

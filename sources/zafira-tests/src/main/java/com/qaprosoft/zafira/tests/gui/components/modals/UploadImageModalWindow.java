@@ -9,10 +9,10 @@ public class UploadImageModalWindow extends AbstractModalWindow
 {
 
 	@FindBy(xpath = ".//input")
-	public WebElement imageUploadInput;
+	private WebElement imageUploadInput;
 
 	@FindBy(xpath = ".//button")
-	public WebElement uploadImageButton;
+	private WebElement uploadImageButton;
 
 	public UploadImageModalWindow(WebDriver driver, SearchContext context)
 	{
