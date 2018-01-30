@@ -23,13 +23,12 @@ public class ChangePasswordModalWindow extends AbstractModalWindow
 		super(driver, context);
 	}
 
-	public UserPage changePassword(String password)
+	public void changePassword(String password)
 	{
 		passwordInput.sendKeys(password);
 		confirmPasswordInput.sendKeys(password);
 		changeButton.click();
 		waitUntilModalIsNotPresent();
-		return new UserPage(driver);
 	}
 
 	public WebElement getPasswordInput()

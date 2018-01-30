@@ -29,10 +29,10 @@ public class CreateUserModalWindow extends AbstractModalWindow
 	private WebElement createButton;
 
 	@FindBy(xpath = ".//button[contains(text(), 'Save')]")
-	public WebElement updateButton;
+	private WebElement updateButton;
 
 	@FindBy(xpath = ".//button[contains(text(), 'Delete')]")
-	public WebElement deleteButton;
+	private WebElement deleteButton;
 
 	public CreateUserModalWindow(WebDriver driver, SearchContext context)
 	{
@@ -83,10 +83,9 @@ public class CreateUserModalWindow extends AbstractModalWindow
 		return new UserPage(driver);
 	}
 
-	public UserPage clickDeleteButton()
+	public void clickDeleteButton()
 	{
 		deleteButton.click();
-		return new UserPage(driver);
 	}
 
 	public WebElement getFirstNameInput()

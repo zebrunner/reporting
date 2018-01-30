@@ -10,19 +10,19 @@ import org.openqa.selenium.support.FindBy;
 public class PaginationBlock extends AbstractUIObject
 {
 
-	@FindBy(xpath = "//*[contains(@class, 'label')]")
+	@FindBy(xpath = ".//*[contains(@class, 'label')]")
 	private WebElement countOfPageElements;
 
-	@FindBy(xpath = "//*[@aria-label = 'First']")
+	@FindBy(xpath = ".//*[@aria-label = 'First']")
 	private WebElement firstPageButton;
 
-	@FindBy(xpath = "//*[@aria-label = 'Previous']")
+	@FindBy(xpath = ".//*[@aria-label = 'Previous']")
 	private WebElement previousPageButton;
 
-	@FindBy(xpath = "//*[@aria-label = 'Next']")
+	@FindBy(xpath = ".//*[@aria-label = 'Next']")
 	private WebElement nextPageButton;
 
-	@FindBy(xpath = "//*[@aria-label = 'Last']")
+	@FindBy(xpath = ".//*[@aria-label = 'Last']")
 	private WebElement lastPageButton;
 
 	public PaginationBlock(WebDriver driver, SearchContext context)
