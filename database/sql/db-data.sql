@@ -630,7 +630,7 @@ BEGIN
 	nightly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/'||nightly_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Nightly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
@@ -906,7 +906,7 @@ BEGIN
 	weekly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/'||weekly_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal weekly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
@@ -1188,7 +1188,7 @@ BEGIN
 	monthly_details_sql :=
 	'set schema ''zafira'';
    SELECT  OWNER AS "OWNER",
-     ''<a href="#{zafiraURL}/#!/dashboards/10?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
+     ''<a href="#{zafiraURL}/#!/dashboards/'||monthly_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal monthly Board</a>'' AS "REPORT",
      SUM(PASSED) AS "PASSED",
      SUM(FAILED) AS "FAILED",
      SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
