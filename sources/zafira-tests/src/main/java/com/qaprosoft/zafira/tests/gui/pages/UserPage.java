@@ -2,7 +2,10 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
 import com.qaprosoft.zafira.tests.gui.components.blocks.search.UserSearchBlock;
+import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.table.UserTable;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,34 +15,27 @@ import java.util.List;
 public class UserPage extends BasePage
 {
 
-	@FindBy(xpath = "//section//md-menu")
-	private List<WebElement> userMenuButtons;
-
-	@FindBy(xpath = "//tbody//tr")
-	private List<WebElement> userRows;
-
-	@FindBy()
-	private CreateUserModalWindow createUserModalWindow;
-
+	@FindBy(xpath = ".//thead")
 	private UserSearchBlock userSearchBlock;
 
+	@FindBy(xpath = ".//tbody")
+	private UserTable userTable;
+
+	@FindBy(xpath = ".//md-table-pagination")
 	private PaginationBlock paginationBlock;
+
+	@FindBy(xpath = "//md-dialog")
+	private CreateUserModalWindow createUserModalWindow;
+
+	@FindBy(xpath = "//md-dialog")
+	private ChangePasswordModalWindow changePasswordModalWindow;
+
+	@FindBy(xpath = "//md-dialog")
+	private CreateGroupModalWindow createGroupModalWindow;
 
 	public UserPage(WebDriver driver)
 	{
 		super(driver, "/users");
-		this.userSearchBlock = new UserSearchBlock(driver, null);
-		this.paginationBlock = new PaginationBlock(driver, null);
-	}
-
-	public List<WebElement> getUserMenuButtons()
-	{
-		return userMenuButtons;
-	}
-
-	public List<WebElement> getUserRows()
-	{
-		return userRows;
 	}
 
 	public UserSearchBlock getUserSearchBlock()
@@ -47,8 +43,28 @@ public class UserPage extends BasePage
 		return userSearchBlock;
 	}
 
+	public UserTable getUserTable()
+	{
+		return userTable;
+	}
+
 	public PaginationBlock getPaginationBlock()
 	{
 		return paginationBlock;
+	}
+
+	public CreateUserModalWindow getCreateUserModalWindow()
+	{
+		return createUserModalWindow;
+	}
+
+	public ChangePasswordModalWindow getChangePasswordModalWindow()
+	{
+		return changePasswordModalWindow;
+	}
+
+	public CreateGroupModalWindow getCreateGroupModalWindow()
+	{
+		return createGroupModalWindow;
 	}
 }

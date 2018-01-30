@@ -58,7 +58,7 @@ public class UserPageTest extends AbstractTest
 		Assert.assertTrue(userPage.isOpened(), "Users page not opened");
 		Assert.assertTrue(userPage.getPageTitleText().contains("Users"), "Users page title is uncorrect");
 
-		Assert.assertTrue(userPage.isFabMenuPresent(1));
+		Assert.assertTrue(userPage.isFabMenuPresent(1), "Fab menu is not present");
 
 		CreateUserModalWindow createUserModalWindow = userPageService.goToCreateUserModalWindow();
 		Assert.assertEquals(createUserModalWindow.getHeaderText(), "Create user",
@@ -70,10 +70,10 @@ public class UserPageTest extends AbstractTest
 		createGroupModalWindow.closeModalWindow();
 
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
-		Assert.assertEquals(userPage.getUserRows().size(), users.size() >= 20 ? 20 : users.size(),
+		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 
-		UserSettingMenu userSettingMenu = userPageService.clickUserMenuButtonByIndex(1);
+		UserSettingMenu userSettingMenu = userPageService.clickUserMenuButtonByIndex(0);
 
 		Assert.assertTrue(userSettingMenu.isElementPresent(1), "User settings menu is not present");
 		Assert.assertTrue(userPage.isElementPresent(userSettingMenu.getEditProfileButton(), 1),
@@ -84,19 +84,19 @@ public class UserPageTest extends AbstractTest
 				"Performance button is not present");
 
 		userPage.clickOutside();
-		createUserModalWindow = userPageService.goToEditUserModalWindow(1);
+		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		Assert.assertTrue(createUserModalWindow.isElementPresent(4), "Edit user modal window not opened");
 		Assert.assertEquals(createUserModalWindow.getHeaderText(), "Edit Profile",
 				"Invalid header text on edit profile modal window");
 		createUserModalWindow.closeModalWindow();
 
-		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(1);
+		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(0);
 		Assert.assertTrue(changePasswordModalWindow.isElementPresent(4), "Change password modal window not opened");
 		Assert.assertEquals(changePasswordModalWindow.getHeaderText(), "Change password",
 				"Invalid header text on edit profile modal window");
 		createUserModalWindow.closeModalWindow();
 
-		DashboardPage dashboardPage = userPageService.goToPerformance(1);
+		DashboardPage dashboardPage = userPageService.goToPerformance(0);
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page not opened");
 		Assert.assertEquals(dashboardPage.getPageTitleText(), "User Performance", "Dashboard page not opened");
 	}
@@ -105,19 +105,19 @@ public class UserPageTest extends AbstractTest
 	public void verifyInfoTest()
 	{
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
-		Assert.assertEquals(userPage.getUserRows().size(), users.size() >= 20 ? 20 : users.size(),
+		Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size() >= 20 ? 20 : users.size(),
 				"Count of user menu buttons is not 20");
 		if (users.size() < 20)
 		{
-			Assert.assertEquals(userPage.getUserRows().size(), users.size(), "Count of user menu buttons is invalid");
+			Assert.assertEquals(userPageService.getUserTableRowsCount(), users.size(), "Count of user menu buttons is invalid");
 			UserAPIService userAPIService = new UserAPIService();
 			userAPIService.createUsers(25);
 			userPage.reload();
 			userPage.waitUntilPageIsLoaded(10);
-			Assert.assertEquals(userPage.getUserRows().size(), 20, "Count of user menu buttons is not 20");
+			Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
 		} else
 		{
-			Assert.assertEquals(userPage.getUserRows().size(), 20, "Count of user menu buttons is not 20");
+			Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
 		}
 		CreateUserModalWindow createUserModalWindow = userPageService.goToCreateUserModalWindow();
 		UserType userType = (new UserTypeBuilder()).getUserType();
@@ -127,17 +127,17 @@ public class UserPageTest extends AbstractTest
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User created", "Invalid user created alert");
 		userPage.waitUntilPageIsLoaded(10);
 		userType.setId(userMapper.getUserByUserName(userType.getUsername()).getId());
-		Assert.assertEquals(userPage.getUserRows().size(), 20, "Count of user menu buttons is not 20");
-		verifyUsersTableByRowIndex(userType, 1);
+		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
+		verifyUsersTableByRowIndex(userType, 0);
 
-		createUserModalWindow = userPageService.goToEditUserModalWindow(1);
+		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		verifyUpdateUserModalInputs(createUserModalWindow, userType);
 		userType.setFirstName("newFirstName");
 		userType.setLastName("newLastName");
 		userType.setEmail("newEmail@test.com");
 		createUserModalWindow.clearAllInputs();
 		createUserModalWindow.updateUser(userType);
-		verifyUsersTableByRowIndex(userType, 1);
+		verifyUsersTableByRowIndex(userType, 0);
 
 		userPage.getHeader().logOut();
 		DashboardPage dashboardPage = loginPageService.login(userType.getUsername(), "Welcome1!");
@@ -147,9 +147,9 @@ public class UserPageTest extends AbstractTest
 		dashboardPage.waitUntilPageIsLoaded(10);
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded(10);
-		verifyUsersTableByRowIndex(userType, 1);
+		verifyUsersTableByRowIndex(userType, 0);
 
-		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(1);
+		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(0);
 		Assert.assertTrue(StringUtils
 						.isBlank(changePasswordModalWindow.getWebElementValue(changePasswordModalWindow.getPasswordInput())),
 				"Password input is not empty");
@@ -173,11 +173,11 @@ public class UserPageTest extends AbstractTest
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded(10);
 
-		createUserModalWindow = userPageService.goToEditUserModalWindow(1);
+		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		createUserModalWindow.clickDeleteButton();
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User deleted", "User deleted alert is not present");
 		userPage.waitUntilPageIsLoaded(10);
-		Assert.assertNotEquals(userPageService.getUsernameByIndex(1), userType.getUsername(),
+		Assert.assertNotEquals(userPageService.getUserTableRowByIndex(0).getUsername(), userType.getUsername(),
 				"User presents after deleting");
 	}
 
@@ -191,19 +191,19 @@ public class UserPageTest extends AbstractTest
 		List<UserType> users = usersCompletableFuture.get();
 		UserType testUser = users.get(0);
 		userPage = userPageService.search(Long.valueOf(testUser.getId()).toString(), "", "", "");
-		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 1);
+		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
 		userPage = userPageService.search("", testUser.getUsername(), "", "");
-		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 1);
+		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
 		userPage = userPageService.search("", "", testUser.getEmail(), "");
-		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 1);
+		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
 		userPage = userPageService.search("", "", "", testUser.getFirstName());
-		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 1);
+		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
 		userPage = userPageService.search("", "", "", testUser.getLastName());
-		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 1);
+		verifyUsersTableByRowIndex(testUser.getId(), testUser.getUsername(), testUser.getEmail(), testUser.getFirstName(), testUser.getLastName(), 0);
 		userPage.getUserSearchBlock().clearAllInputs();
 		userPageService.clearSearchForm();
 		verifySearchBlockInputsAreEmpty();
@@ -234,7 +234,7 @@ public class UserPageTest extends AbstractTest
 		int totalCount = userMapper.getUserSearchCount(new UserSearchCriteria());
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 		userPageService.goToNextPage();
-		Assert.assertEquals(userPage.getUserRows().size(), 20, "Count of user menu buttons is not 20");
+		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 21, 40, totalCount), "Count of user menu buttons is not 20");
 		userPageService.goToPreviousPage();
 		Assert.assertEquals(userPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
@@ -262,14 +262,13 @@ public class UserPageTest extends AbstractTest
 		email = email == null ? "" : email;
 		firstName = firstName == null ? "" : firstName + " ";
 		lastName = lastName == null ? "" : lastName;
-		Assert.assertEquals(userPage.hoverAndGetTooltipText(userPageService.getUserPhotoByIndex(index)),
+		Assert.assertEquals(userPageService.getUserTableRowByIndex(index).hoverOnUserPhoto(),
 				"#" + id);
-		Assert.assertEquals(userPageService.getUsernameByIndex(index), username,
+		Assert.assertEquals(userPageService.getUserTableRowByIndex(index).getUsernameText(), username,
 				"Invalid username");
-		Assert.assertEquals(userPageService.getFirstLastNameByIndex(index),
+		Assert.assertEquals(userPageService.getUserTableRowByIndex(index).getFirstLastNameText(),
 				firstName + lastName, "Invalid first name");
-		Assert.assertEquals(userPageService.getEmailByIndex(index), email, "Invalid email");
-		//Assert.assertEquals(userPageService.getStatusByIndex(index), fromUI ? "Active" : "Inactive", "Invalid email");
+		Assert.assertEquals(userPageService.getUserTableRowByIndex(index).getEmailText(), email, "Invalid email");
 	}
 
 	private void verifyUpdateUserModalInputs(CreateUserModalWindow createUserModalWindow, UserType userType)

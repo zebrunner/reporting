@@ -141,6 +141,11 @@ public abstract class AbstractUIObject
 		return waitUntilElementIsNotPresent(backdrop, seconds) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
+	public boolean waitUntilElementToBeClickableWithBackdropMask(WebElement webElement, long seconds)
+	{
+		return waitUntilElementIsPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
+	}
+
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier, String startMessage, String finishMessage)
 	{
 		boolean result = false;

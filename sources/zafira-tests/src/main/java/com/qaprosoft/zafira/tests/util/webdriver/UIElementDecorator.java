@@ -55,8 +55,7 @@ public class UIElementDecorator implements FieldDecorator
             uiObject = (T) clazz.getConstructor(WebDriver.class, SearchContext.class).newInstance(driver, proxy);
         } catch (NoSuchMethodException e)
         {
-            throw new RuntimeException(
-                    "Implement appropriate AbstractUIObject constructor for auto-initialization: "
+            throw new RuntimeException("Implement appropriate AbstractUIObject constructor for auto-initialization: "
                             + e.getMessage(), e);
         } catch (Exception e)
         {

@@ -11,52 +11,52 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class UIObjectListHandler<T extends AbstractUIObject> implements InvocationHandler {
+public class UIObjectListHandler<T extends AbstractUIObject> implements InvocationHandler
+{
 
-    private Class<?> clazz;
-    private WebDriver webDriver;
-    private final ElementLocator locator;
-    private String name;
+	private Class<?> clazz;
+	private WebDriver webDriver;
+	private final ElementLocator locator;
+	private String name;
 
-    public UIObjectListHandler(Class<?> clazz, WebDriver webDriver, ElementLocator locator, String name)
-    {
-        this.clazz = clazz;
-        this.webDriver = webDriver;
-        this.locator = locator;
-        this.name = name;
-    }
+	public UIObjectListHandler(Class<?> clazz, WebDriver webDriver, ElementLocator locator, String name)
+	{
+		this.clazz = clazz;
+		this.webDriver = webDriver;
+		this.locator = locator;
+		this.name = name;
+	}
 
-    @Override
-    public Object invoke(Object object, Method method, Object[] objects) throws Throwable
-    {
+	@Override
+	public Object invoke(Object object, Method method, Object[] objects) throws Throwable
+	{
 
-        List<WebElement> elements = locator.findElements();
-        List<T> uIObjects = new ArrayList<T>();
-        if (elements != null)
-        {
-            for (WebElement element : elements)
-            {
-                T uiObject;
-                try
-                {
-                    uiObject = (T) clazz.getConstructor(WebDriver.class, SearchContext.class)
-                            .newInstance(
-                                    webDriver, element);
-                } catch (NoSuchMethodException e)
-                {
-                    throw new RuntimeException("Implement appropriate AbstractUIObject constructor for auto-initialization: " + e.getMessage(), e);
-                }
-                uIObjects.add(uiObject);
-            }
-        }
+		List<WebElement> elements = locator.findElements();
+		List<T> uIObjects = null;
+		if (elements != null)
+		{
+			uIObjects = elements.stream().map(element -> {
+				T uiObject;
+				try
+				{
+					uiObject = (T) clazz.getConstructor(WebDriver.class, SearchContext.class).newInstance(webDriver, element);
+				} catch (Exception e)
+				{
+					throw new RuntimeException("Implement appropriate AbstractUIObject constructor for auto-initialization: "
+							+ e.getMessage(), e);
+				}
+				return uiObject;
+			}).collect(Collectors.toList());
+		}
 
-        try
-        {
-            return method.invoke(uIObjects, objects);
-        } catch (InvocationTargetException e)
-        {
-            throw e.getCause();
-        }
-    }
+		try
+		{
+			return method.invoke(uIObjects, objects);
+		} catch (InvocationTargetException e)
+		{
+			throw e.getCause();
+		}
+	}
 }
