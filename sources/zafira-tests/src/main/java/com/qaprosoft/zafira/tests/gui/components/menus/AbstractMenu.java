@@ -10,8 +10,6 @@ import org.openqa.selenium.support.FindBy;
 public abstract class AbstractMenu extends AbstractUIObject
 {
 
-	protected static final String CONTAINER_LOCATOR = "//div[preceding-sibling::header]/md-menu-content";
-
 	protected AbstractMenu(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
