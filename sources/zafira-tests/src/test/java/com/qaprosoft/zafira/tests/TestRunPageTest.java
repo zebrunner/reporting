@@ -42,10 +42,6 @@ public class TestRunPageTest extends AbstractTest
 	{
 		Assert.assertEquals(testRunPage.getPageTitleText(), "Test runs", "Incorrect title");
 		Assert.assertEquals(testRunPage.getPageItemsCount(), testRunMapper.getTestRunsSearchCount(new TestRunSearchCriteria()), "Incorrect title");
-		//Assert.assertTrue(testRunPage.isElementPresent(testRunPageService.getUserMenuButtonByIndex(1), 1));
 
-		//testRunPageService.getUserMenuButtonByIndex(1).click();
-
-		//Assert.assertTrue(testRunPageService);
 	}
 }

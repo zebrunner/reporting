@@ -18,5 +18,8 @@ public class TestRunPageService extends AbstractPageService
 		this.testRunPage = new TestRunPage(driver);
 	}
 
-
+	public TestRunPage getTestRunPage()
+	{
+		return testRunPage;
+	}
 }
