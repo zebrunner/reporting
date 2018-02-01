@@ -2,20 +2,20 @@
 
     <div class="row ui-section">
         <div class="col-lg-12">
-            <h2 class="section-header">{{view.name}}</h2>
+            <h2 id="pageTitle" class="section-header">{{view.name}}</h2>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
             <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars" aria-hidden="true"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
+                <md-button id="viewRerun" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="rebuildJobs()">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" has-any-role="['ROLE_ADMIN']">
+                <md-button id="viewNew" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showJobsViewDialog($event)" has-any-role="['ROLE_ADMIN']">
                     <md-tooltip md-direction="top">New view</md-tooltip>
                     <span class="fa fa-plus" aria-hidden="true"></span>
                 </md-button>
@@ -34,7 +34,7 @@
 	                    	   <thead md-head>
 	                    	   	<tr md-row>
                                         <th md-column colspan="4">
-                                        	<b style="font-size: 14px;">{{env}}</b>
+                                        	<b name="env" style="font-size: 14px;">{{env}}</b>
 					                    	<span data-ng-if="jenkinsEnabled">
 					                    		<a href="" data-ng-click="selectForRerun(env, 'All')">All</a> |
 					                    		<a href="" data-ng-click="selectForRerun(env, 'None')">None</a> |
@@ -42,7 +42,7 @@
 					                    	</span>
                                         </th>
                                         <th md-column>
-                                        	<i class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" has-any-role="['ROLE_ADMIN']">settings</i>
+                                        	<i name="jobViewSetting" class="pull-right material-icons" data-ng-click="showJobsViewDialog($event, envJobViews)" has-any-role="['ROLE_ADMIN']">settings</i>
                                         </th>
                                 </tr>
 	                    	   </thead>
@@ -79,23 +79,23 @@
 	                                   </td>
 	                                   <td md-cell class="no-padding">
 	                                   		<md-menu>
-                                                <md-button aria-label="Job view settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                <md-button name="viewMenu" aria-label="Job view settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                     <md-icon class="material-icons">more_vert</md-icon>
                                                 </md-button>
                                                 <md-menu-content width="3">
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="openTestRun(jobView.testRun)">
+                                                        <md-button name="open" data-ng-click="openTestRun(jobView.testRun)">
                                                             Open
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="copyLink(jobView.testRun)">
+                                                        <md-button name="copyLink" data-ng-click="copyLink(jobView.testRun)">
                                                             Copy link
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider></md-divider>
                                                     <md-menu-item>
-                                                        <md-button data-ng-click="rebuild(jobView.job, jobView.testRun)">
+                                                        <md-button name="rebuild" data-ng-click="rebuild(jobView.job, jobView.testRun)">
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
