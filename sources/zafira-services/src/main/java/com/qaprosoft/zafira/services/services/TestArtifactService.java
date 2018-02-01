@@ -32,51 +32,51 @@ public class TestArtifactService
 	private TestArtifactMapper testArtifactMapper;
 	
 	@Transactional(rollbackFor = Exception.class)
-	public void createTestArtifact(TestArtifact testArtifact) throws ServiceException
+	public void createTestArtifact(TestArtifact testArtifact)
 	{
 		testArtifactMapper.createTestArtifact(testArtifact);
 	}
 	
 	@Transactional(readOnly = true)
-	public List<TestArtifact> getAllTestArtifacts(Long testId) throws ServiceException
+	public List<TestArtifact> getAllTestArtifacts(Long testId)
 	{
 		return testArtifactMapper.getTestArtifactsByTestId(testId);
 	}
 	
 	@Transactional(readOnly = true)
-	public TestArtifact getTestArtifactById(long id) throws ServiceException
+	public TestArtifact getTestArtifactById(long id)
 	{
 		return testArtifactMapper.getTestArtifactById(id);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestArtifact updateTestArtifact(TestArtifact testArtifact) throws ServiceException
+	public TestArtifact updateTestArtifact(TestArtifact testArtifact)
 	{
 		testArtifactMapper.updateTestArtifact(testArtifact);
 		return testArtifact;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestArtifactById(Long id) throws ServiceException
+	public void deleteTestArtifactById(Long id)
 	{
 		testArtifactMapper.deleteTestArtifactById(id);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteTestArtifactsByTestId(Long testId) throws ServiceException
+	public void deleteTestArtifactsByTestId(Long testId)
 	{
 		testArtifactMapper.deleteTestArtifactsByTestId(testId);
 	}
 
 	@Transactional(readOnly = true)
-	public TestArtifact getTestArtifactByNameAndTestId(String name, long testId) throws ServiceException
+	public TestArtifact getTestArtifactByNameAndTestId(String name, long testId)
 	{
         TestArtifact testArtifact = testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
 		return testArtifact;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public TestArtifact createOrUpdateTestArtifact(TestArtifact newTestArtifact) throws ServiceException
+	public TestArtifact createOrUpdateTestArtifact(TestArtifact newTestArtifact)
 	{
 		TestArtifact testArtifact = getTestArtifactByNameAndTestId(newTestArtifact.getName(), newTestArtifact.getTestId());
 		if(testArtifact == null)

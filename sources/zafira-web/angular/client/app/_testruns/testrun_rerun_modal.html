@@ -3,9 +3,9 @@
     <form class="form-validation" name="build_now_form" ng-submit="buildNow(); UtilService.untouchForm(build_now_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Rebuild testrun</h2>
+                <h2 id="modalTitle">Rebuild testrun</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -21,8 +21,8 @@
                 <div layout layout-sm="row">
                     <md-input-container flex>
                         <md-radio-group ng-model="rerunFailures">
-                            <md-radio-button value="true">Only failures</md-radio-button>
-                            <md-radio-button value="false">All tests</md-radio-button>
+                            <md-radio-button id="onlyFailures" value="true">Only failures</md-radio-button>
+                            <md-radio-button id="allTests" value="false">All tests</md-radio-button>
                         </md-radio-group>
                     </md-input-container>
                 </div>
@@ -30,10 +30,10 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row" >
-             <md-button type="submit"  class="md-raised btn-w-md md-warn" data-ng-click="cancel()">
+             <md-button id="cancel" type="submit"  class="md-raised btn-w-md md-warn" data-ng-click="cancel()">
                 Cancel
             </md-button>
-            <md-button type="submit" class="md-raised btn-w-md md-primary" data-ng-click="rebuild(testRun, rerunFailures)" md-selected="true">
+            <md-button id="rerun" type="submit" class="md-raised btn-w-md md-primary" data-ng-click="rebuild(testRun, rerunFailures)" md-selected="true">
                 Rerun
             </md-button>
         </md-dialog-actions>
