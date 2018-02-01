@@ -23,4 +23,18 @@ public class TestRunPage extends BasePage
 		super(driver, "/tests/runs");
 	}
 
+	public TestRunSearchBlock getTestRunSearchBlock()
+	{
+		return testRunSearchBlock;
+	}
+
+	public TestRunTable getTestRunTable()
+	{
+		return testRunTable;
+	}
+
+	public PaginationBlock getPaginationBlock()
+	{
+		return paginationBlock;
+	}
 }
