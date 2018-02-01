@@ -3,8 +3,8 @@
     <div>
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-header">Monitors
-                    <small data-ng-if="monitors.length">({{monitors.length}})</small>
+                <h2 id="pageTitle" class="section-header">Monitors
+                    <small id="itemsCount" data-ng-if="monitors.length">({{monitors.length}})</small>
                     <!--<md-button data-ng-if="monitors.length" data-ng-click="switchViewType()" style="float: right" class="md-fab md-primary md-mini" aria-label="view type">
                         <i ng-class="{'fa fa-tasks': blockView, 'fa fa-th-large': !blockView}" aria-hidden="true"></i>
                     </md-button>-->
@@ -13,12 +13,12 @@
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_MONITORS']">
             <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="openMonitorDialog($event)">
+                <md-button id="newMonitor" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="openMonitorDialog($event)">
                     <md-tooltip md-direction="top">New monitor</md-tooltip>
                     <span class="fa fa-plus"></span>
                 </md-button>
@@ -54,26 +54,26 @@
                                 </tr>
                                 </thead>
                                 <tbody md-body>
-                                <tr md-row ng-repeat="monitor in monitors | orderBy:'name'">
+                                <tr md-row ng-repeat="monitor in monitors | orderBy:['success', 'name']">
                                     <td md-cell class="col-md-2">
-                                        <i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
-                                        <b>{{monitor.name}}</b>
+                                        <i name="monitorStatus" ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
+                                        <b name="monitorName">{{monitor.name}}</b>
                                     </td>
-                                    <td md-cell class="col-md-2">{{monitor.url}}</td>
-                                    <td md-cell class="col-md-2">{{monitor.type}}</td>
-                                    <td md-cell class="col-md-2">{{monitor.cronExpression}}</td>
-                                    <td md-cell class="col-md-2">{{monitor.expectedCode}}</td>
+                                    <td name="monitorUrl" md-cell class="col-md-2">{{monitor.url}}</td>
+                                    <td name="monitorType" md-cell class="col-md-2">{{monitor.type}}</td>
+                                    <td name="monitorCron" md-cell class="col-md-2">{{monitor.cronExpression}}</td>
+                                    <td name="monitorCode" md-cell class="col-md-2">{{monitor.expectedCode}}</td>
                                     <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
-                                        <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
+                                        <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
                                     <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
                                         <div class="pull-right">
-                                            <i data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">edit</i>
+                                            <i name="editMonitor" data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">edit</i>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr md-row data-ng-if="monitors.length == 0">
-                                    <td md-cell colspan="7" class="text-center">No data</td>
+                                    <td id="noData" md-cell colspan="7" class="text-center">No data</td>
                                 </tr>
                                 </tbody>
                             </table>

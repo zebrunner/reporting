@@ -2,9 +2,9 @@
     <form class="form-validation" name="monitor_form" ng-submit="sendEmail(); UtilService.untouchForm(monitor_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Monitor</h2>
+                <h2 id="modalTitle">Monitor</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -20,13 +20,13 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Name</label>
-                        <input name="value" type="text" data-ng-model="monitor.name" required/>
+                        <input name="name" type="text" data-ng-model="monitor.name" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>URL</label>
-                        <input name="value" type="text" data-ng-model="monitor.url" required/>
+                        <input name="url" type="text" data-ng-model="monitor.url" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
@@ -39,9 +39,9 @@
                     </md-input-container>
                 </div>
                 <md-radio-group id="httpMethods" ng-model="monitor.httpMethod" ng-if="isHttpBlockPresent(monitor)">
-                    <md-radio-button class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
-                    <md-radio-button class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
-                    <md-radio-button class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
+                    <md-radio-button id="post" class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
+                    <md-radio-button id="get" class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
+                    <md-radio-button id="put" class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
                 </md-radio-group>
                 <div layout layout-sm="column" ng-if="isHttpBodyBlockPresent(monitor)">
                     <span>Body</span>
@@ -52,18 +52,18 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Cron expression</label>
-                        <input name="value" type="text" data-ng-model="monitor.cronExpression" required/>
+                        <input name="cron" type="text" data-ng-model="monitor.cronExpression" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Expected code</label>
-                        <input name="value" type="number" data-ng-model="monitor.expectedCode" required/>
+                        <input name="code" type="number" data-ng-model="monitor.expectedCode" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container style="float: right; margin-top: 0px">
-                        <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
+                        <md-switch name="enableNotification" style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column" ng-if="monitor.notificationsEnabled">
@@ -75,7 +75,7 @@
                                   md-transform-chip="checkAndTransformRecipient($chip, monitor)"
                                   md-on-remove="removeRecipient($chip, monitor)"
                                   md-separator-keys="keys">
-                            <md-chip-template>
+                            <md-chip-template name="chip">
                                 {{$chip}}
                             </md-chip-template>
                             <md-autocomplete
@@ -85,10 +85,10 @@
                                 md-items="user in querySearch(searchText, monitor)"
                                 md-item-text="user.email"
                                 placeholder="add email">
-                                <md-item-template>
+                                <md-item-template name="suggestion">
                                     <span>{{user.email}}</span>
                                 </md-item-template>
-                                <md-not-found>
+                                <md-not-found id="notRecipients">
                                     No users matching "{{searchText}}" were found.
                                 </md-not-found>
                             </md-autocomplete>
@@ -99,13 +99,13 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button ng-if="!monitor.id" class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
+            <md-button id="create" ng-if="!monitor.id" class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
                 Create
             </md-button>
-            <md-button ng-if="monitor.id" class="md-raised btn-w-md md-primary" data-ng-click="updateMonitor(monitor, false); hide()" data-ng-disabled="monitor_form.$invalid">
+            <md-button id="save" ng-if="monitor.id" class="md-raised btn-w-md md-primary" data-ng-click="updateMonitor(monitor, false); hide()" data-ng-disabled="monitor_form.$invalid">
                 Save
             </md-button>
-            <md-button ng-if="monitor.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteMonitor(monitor.id); hide()" data-ng-disabled="monitor_form.$invalid">
+            <md-button id="delete" ng-if="monitor.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteMonitor(monitor.id); hide()" data-ng-disabled="monitor_form.$invalid">
                 Delete
             </md-button>
         </md-dialog-actions>
