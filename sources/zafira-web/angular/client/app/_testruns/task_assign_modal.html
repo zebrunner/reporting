@@ -2,9 +2,9 @@
     <form class="form-validation" name="task_form" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Assign Task</h2>
+                <h2 id="modalTitle">Assign Task</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -17,7 +17,7 @@
                     <div layout layout-sm="column">
                         <md-input-container flex>
                             <label>Jira ID</label>
-                            <input type="text" ng-pattern="/^[A-z]+-[0-9]+$/" class="form-control validation"
+                            <input id="jiraId" type="text" ng-pattern="/^[A-z]+-[0-9]+$/" class="form-control validation"
                                    data-ng-model="newTaskIssue.jiraId" data-ng-disabled="isFieldsDisabled"
                                    data-ng-change="onTaskChangeAction()" required
                                    placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
@@ -33,7 +33,7 @@
                     <div layout layout-sm="column">
                         <md-input-container flex>
                             <label>Description</label>
-                            <textarea class="form-control validation" rows="8" data-ng-model="newTaskIssue.description"
+                            <textarea id="description" class="form-control validation" rows="8" data-ng-model="newTaskIssue.description"
                                       data-ng-disabled="isFieldsDisabled" required></textarea>
                         </md-input-container>
                     </div>
@@ -42,15 +42,15 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="isNewTask" class="btn btn-success" data-ng-click="assignWorkItem()"
+            <md-button id="assign" data-ng-if="isNewTask" class="btn btn-success" data-ng-click="assignWorkItem()"
                        data-ng-disabled="task_form.$invalid">
                 Assign
             </md-button>
-            <md-button data-ng-if="!isNewTask" class="btn btn-success" data-ng-click="assignWorkItem()"
+            <md-button id="update" data-ng-if="!isNewTask" class="btn btn-success" data-ng-click="assignWorkItem()"
                        data-ng-disabled="task_form.$invalid">
                 Update
             </md-button>
-            <md-button data-ng-if="!isNewTask" class="btn btn-warning" data-ng-click="deleteWorkItem()"
+            <md-button id="delete" data-ng-if="!isNewTask" class="btn btn-warning" data-ng-click="deleteWorkItem()"
                        data-ng-disabled="task_form.$invalid">
                 Delete
             </md-button>
