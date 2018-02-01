@@ -20,6 +20,7 @@
                                     <input required
                                            type="text"
                                            name="username"
+                                           id="username"
                                            ng-model="user.username"/>
                                     <div ng-messages="register_form.username.$error" ng-if="register_form.username.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -30,6 +31,7 @@
                                     <input required
                                            type="email"
                                            name="email"
+                                           id="email"
                                            ng-model="user.email"/>
                                     <div ng-messages="register_form.email.$error" ng-if="register_form.email.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -40,6 +42,7 @@
                                     <input required
                                            type="text"
                                            name="firstName"
+                                           id="firstName"
                                            ng-model="user.firstName"/>
                                     <div ng-messages="register_form.firstName.$error" ng-if="register_form.firstName.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -50,6 +53,7 @@
                                     <input required
                                            type="text"
                                            name="lastName"
+                                           id="lastName"
                                            ng-model="user.lastName"/>
                                     <div ng-messages="register_form.lastName.$error" ng-if="register_form.lastName.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -60,6 +64,7 @@
                                     <input required
                                            type="password"
                                            name="password"
+                                           id="password"
                                            ng-model="user.password"/>
                                     <div ng-messages="register_form.password.$error" ng-if="register_form.password.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -70,6 +75,7 @@
                                     <input required
                                            type="password"
                                            name="confirmPwd"
+                                           id="confirmPassword"
                                            ng-model="confirmPwd"/>
                                     <div ng-messages="register_form.confirmPwd.$error" ng-if="register_form.confirmPwd.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -80,6 +86,7 @@
                                 </md-input-container>
                                 <div layout="row" layout-align="center">
                                     <md-button type="submit"
+                                               id="register"
                                                class="md-raised btn-w-md md-primary"
                                                ng-disabled="register_form.$invalid || confirmPwd != user.password">Register</md-button>
                                 </div>
@@ -91,7 +98,7 @@
                 <div class="additional-info">
                     <span>© 2017 Zafira all rights reserved</span>
                     <br/>
-                    <small>server v.{{version.service}} | client v.{{version.client}}</small>
+                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
                 </div>
 
             </div>
