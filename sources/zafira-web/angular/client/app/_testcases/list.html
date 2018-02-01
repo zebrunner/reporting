@@ -2,12 +2,12 @@
 
     <div class="row ui-section">
         <div class="col-lg-12" style="min-width: 360px;">
-        	<h2 class="section-header">Test cases
-        		<small data-ng-if="sr">({{sr.totalResults}})</small>
-        		<button class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
+        	<h2 id="pageTitle" class="section-header">Test cases
+        		<small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
+        		<button id="search" class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
 	                   <b>Search</b>
 	            </button>
-        		<button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+        		<button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
 	                   <b>Clear</b>
 	            </button>
         	</h2>
@@ -22,33 +22,33 @@
                                 <tr md-row>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="number" ng-model="sc.id" name="id" placeholder="ID"/>
+                                            <input id="searchId" type="number" ng-model="sc.id" name="id" placeholder="ID"/>
                                         </md-input-container>
 									</th>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.testClass" name="testClass" placeholder="Test class"/>
+                                            <input id="searchTestClass" type="text" ng-model="sc.testClass" name="testClass" placeholder="Test class"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.testMethod" name="testMethod" placeholder="Test method"/>
+                                            <input id="searchTestMethod" type="text" ng-model="sc.testMethod" name="testMethod" placeholder="Test method"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.testSuiteFile" name="testSuiteFile" placeholder="Test suite"/>
+                                            <input id="searchTestSuiteFile" type="text" ng-model="sc.testSuiteFile" name="testSuiteFile" placeholder="Test suite"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column>
 										<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.username" name="username" placeholder="Owner"/>
+                                            <input id="searchOwner" type="text" ng-model="sc.username" name="username" placeholder="Owner"/>
                                         </md-input-container>
 									</th>
                                     <th md-column class="no-padding">
                                         <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                         <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
-                                        <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
+                                        <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
                                     </th>
                                     <th md-column></th>
                                 </tr>
@@ -56,26 +56,26 @@
                             </thead>
                             <tbody md-body>
                                 <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}">
-                                    <td md-cell>#{{testcase.id}}</td>
-                                    <td md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
-                                    <td md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
+                                    <td name="testCaseId" md-cell>#{{testcase.id}}</td>
+                                    <td name="testClassName" md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
+                                    <td name="testMethod" md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
                                     <td md-cell>
-                                    		<span class="label label-default">{{testcase.testSuite.fileName}}</span>
-                                    		<md-button aria-label="Show or hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                    		<span name="testSuiteFile" class="label label-default">{{testcase.testSuite.fileName}}</span>
+                                    		<md-button name="expand" aria-label="Show or hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
                                               <i data-ng-if="!testcase.expand" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
                                               <i data-ng-if="testcase.expand" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
                                          </md-button>
                                     	</td>
-                                    <td md-cell>{{testcase.primaryOwner.username}}</td>
-                                    <td md-cell class="text-center">{{testcase.createdAt | date}}</td>
+                                    <td name="testCaseOwner" md-cell>{{testcase.primaryOwner.username}}</td>
+                                    <td name="testCaseCreatedAt" md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
                                         <md-menu class="pull-right">
-                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                            <md-button name="testCaseMenu" aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                 <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2">
                                                 <md-menu-item>
-                                                    <md-button data-ng-click="">
+                                                    <md-button name="performance" data-ng-click="">
                                                         <md-icon class="material-icons">timeline</md-icon>
                                                         Performance
                                                     </md-button>
@@ -97,24 +97,24 @@
 	                                        </thead>
 	                                        <tbody>
 		                                        	<tr ng-repeat="test in tests[testcase.id] | orderBy : id" ng-class="{'info {{main.theme}}' : test.status == 'IN_PROGRESS', 'success {{main.theme}}' : test.status == 'PASSED', 'danger {{main.theme}}' : test.status == 'FAILED', 'warning {{main.theme}}' : test.status == 'SKIPPED'}">
-		                                        		<td>
+		                                        		<td name="testName">
 		                                        			<b>{{test.name}}</b>
 		                                        		</td>
-		                                        		<td>
+		                                        		<td name="testEnv">
 		                                        			{{test.testConfig.env}}
 		                                        		</td>
-		                                                <td title="{{test.finishTime | date:'EEE HH:mm'}}">
+		                                                <td name="testFinishTime" title="{{test.finishTime | date:'EEE HH:mm'}}">
 															<time am-time-ago="test.finishTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
 		                                                </td>
 		                                                <td class="text-center">
 	                                                        <div data-ng-if="test.artifacts.length !=0" class="pull-right">
 	                                                            <md-menu>
-	                                                                <md-button aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+	                                                                <md-button name="artifactButton" aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
 	                                                                    <md-icon class="material-icons">attachment</md-icon>
 	                                                                </md-button>
 	                                                                <md-menu-content>
 	                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
-	                                                                        <md-button href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
+	                                                                        <md-button name="artifact" href="{{artifact.link}}" style="display: flex;" target="blank">{{artifact.name}}</md-button>
 	                                                                    </md-menu-item>
 	                                                                </md-menu-content>
 	                                                            </md-menu>
@@ -122,25 +122,25 @@
 		                                                </td>
 		                                        	</tr>
 		                                        	<tr data-ng-hide="(testcase.tests | isEmpty)">
-	                                                <td md-cell colspan="4" class="text-center">
-	                                                    <md-button aria-label="Hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
-	                                                        <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
-	                                                    </md-button>
-	                                                </td>
-	                                            </tr>
+                                                        <td md-cell colspan="4" class="text-center">
+                                                            <md-button aria-label="Hide tests" ng-click="loadTests(testcase)" md-ink-ripple="false" class="md-icon-button no-padding expand-button close-expand-icon">
+                                                                <i class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
+                                                            </md-button>
+                                                        </td>
+	                                                </tr>
 	                                        </tbody>
 	                                    </table>
 						            </td>
 						        </tr>
                                 <tr md-row data-ng-if="sr.results.length == 0">
-                                    <td md-cell colspan="7" class="text-center">No test cases</td>
+                                    <td id="noData" md-cell colspan="7" class="text-center">No test cases</td>
                                 </tr>
                             </tbody>
                         </table>
                          </form>
                     </md-table-container>
 
-                    <md-table-pagination zafira-background-theme="pagination" ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                    <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>

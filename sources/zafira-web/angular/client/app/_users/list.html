@@ -2,28 +2,28 @@
 
     <div class="row ui-section">
         <div class="col-lg-12">
-        	<h2 class="section-header">Users
-        		<small data-ng-if="sr">({{sr.totalResults}})</small>
-        		<button class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
+        	<h2 id="pageTitle" class="section-header">Users
+        		<small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
+        		<button id="search" class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
 	                   <b>Search</b>
 	            </button>
-        		<button class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+        		<button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
 	                   <b>Clear</b>
 	            </button>
         	</h2>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_USERS', 'MODIFY_USER_GROUPS']">
             <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showGroupDialog()" has-any-permission="['MODIFY_USER_GROUPS']">
+                <md-button id="userGroups" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showGroupDialog()" has-any-permission="['MODIFY_USER_GROUPS']">
                     <md-tooltip md-direction="top">Groups</md-tooltip>
                     <span class="fa fa-users"></span>
                 </md-button>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showCreateUserDialog()" has-any-permission="['MODIFY_USERS']">
+                <md-button id="userNew" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showCreateUserDialog()" has-any-permission="['MODIFY_USERS']">
                     <md-tooltip md-direction="top">New user</md-tooltip>
                     <span class="fa fa-plus"></span>
                 </md-button>
@@ -39,29 +39,29 @@
                                 <tr md-row>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="number" ng-model="sc.id" name="id" placeholder="ID"/>
+                                            <input id="searchId" type="number" ng-model="sc.id" name="id" placeholder="ID"/>
                                         </md-input-container>
 									</th>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.username" name="username" placeholder="Username"/>
+                                            <input id="searchUsername" type="text" ng-model="sc.username" name="username" placeholder="Username"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column>
                                     	<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.email" name="email" placeholder="Email"/>
+                                            <input id="searchEmail" type="text" ng-model="sc.email" name="email" placeholder="Email"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column>
 										<md-input-container class="searchable">
-                                            <input type="text" ng-model="sc.firstLastName" name="firstLastName" placeholder="First/Last name"/>
+                                            <input id="searchFirstLastName" type="text" ng-model="sc.firstLastName" name="firstLastName" placeholder="First/Last name"/>
                                         </md-input-container>
 									</th>
                                     <th md-column>Status</th>
                                     <th md-column class="no-padding">
                                         <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Registration date</span>
                                         <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
-                                        <md-button ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
+                                        <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
                                     </th>
                                     <th md-column></th>
                                 </tr>
@@ -70,26 +70,26 @@
                             <tbody md-body>
                                 <tr md-row ng-repeat="user in sr.results">
                                     <td md-cell>
-                                        <profile-photo ng-model="user.photoURL" size="35" class="grey-icon" label="#{{user.id}}"></profile-photo>
+                                        <profile-photo name="userPhoto" ng-model="user.photoURL" size="35" class="grey-icon" label="#{{user.id}}"></profile-photo>
                                     </td>
                                     <td md-cell>
-                                        <b>{{user.username}}</b>
+                                        <b name="userUsername">{{user.username}}</b>
                                     </td>
-                                    <td md-cell>{{user.email}}</td>
-                                    <td md-cell>{{user.firstName}} {{user.lastName}}</td>
+                                    <td name="userEmail" md-cell>{{user.email}}</td>
+                                    <td name="userFirstLastName" md-cell>{{user.firstName}} {{user.lastName}}</td>
                                     <td md-cell>
                                     	<span ng-switch on="user.password != null && user.password != ''">
-                                    		<span class="label label-success" ng-switch-when="true">Active</span>
-                                    		<span class="label label-danger" ng-switch-when="false">Inactive</span>
+                                    		<span name="active" class="label label-success" ng-switch-when="true">Active</span>
+                                    		<span name="inactive" class="label label-danger" ng-switch-when="false">Inactive</span>
                                     	</span>
                                     </td>
                                     <td md-cell style="padding-right: 0;">
-                                      <span>
+                                      <span name="userCreated">
                                         {{user.createdAt | date}}
                                       </span>
                                       <b>
                                         <span class="time" data-ng-if="user.lastLogin">
-                                            last login <time am-time-ago="user.lastLogin" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                            last login <time name="lastLogin" am-time-ago="user.lastLogin" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                                         </span>
                                         <span class="time" data-ng-if="!user.lastLogin">
                                           never logged in
@@ -98,24 +98,24 @@
                                     </td>
                                     <td md-cell>
                                         <md-menu class="pull-right">
-                                            <md-button aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                            <md-button name="userMenu" aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                 <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2">
                                                 <md-menu-item has-any-permission="['MODIFY_USERS']">
-                                                    <md-button data-ng-click="showEditProfileDialog($event, user, false)">
+                                                    <md-button name="userEdit" data-ng-click="showEditProfileDialog($event, user, false)">
                                                         <md-icon class="material-icons">build</md-icon>
                                                         Edit profile
                                                     </md-button>
                                                 </md-menu-item>
                                                 <md-menu-item has-any-permission="['MODIFY_USERS']">
-                                                    <md-button data-ng-click="showChangePasswordDialog($event, user, false)">
+                                                    <md-button name="userChangePassword" data-ng-click="showChangePasswordDialog($event, user, false)">
                                                         <md-icon class="material-icons">lock_outline</md-icon>
                                                         Change password
                                                     </md-button>
                                                 </md-menu-item>
                                                 <md-menu-item>
-                                                    <md-button ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{user.id}}" style="padding-top: 12px">
+                                                    <md-button name="userPerformance" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{user.id}}" style="padding-top: 12px">
                                                         <md-icon class="material-icons">timeline</md-icon>
                                                         Performance
                                                     </md-button>
@@ -125,14 +125,14 @@
 									</td>
                                 </tr>
                                 <tr md-row data-ng-if="sr.results.length == 0">
-                                    <td md-cell colspan="8" class="text-center">No users</td>
+                                    <td id="noData" md-cell colspan="8" class="text-center">No users</td>
                                 </tr>
                             </tbody>
                         </table>
                          </form>
                     </md-table-container>
 
-                    <md-table-pagination zafira-background-theme="pagination" ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+                    <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                 </md-card>
             </article>
         </div>

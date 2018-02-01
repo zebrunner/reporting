@@ -2,9 +2,9 @@
     <form class="form-validation" name="dashboard_widget_form" ng-submit="UtilService.untouchForm(dashboard_widget_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Widget settings</h2>
+                <h2 id="modalTitle">Widget settings</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -39,16 +39,16 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button data-ng-if="!isNew" type="submit"
+            <md-button id="delete" data-ng-if="!isNew" type="submit"
                        class="md-raised btn-w-md md-warn" data-ng-click="deleteDashboardWidget(widget)">
                 Delete
             </md-button>
-            <md-button data-ng-if="isNew" type="submit"
+            <md-button id="add" data-ng-if="isNew" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="dashboard_widget_form.$invalid" data-ng-click="addDashboardWidget(widget)">
                 Add
             </md-button>
-            <md-button data-ng-if="!isNew" type="submit"
+            <md-button id="save" data-ng-if="!isNew" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="dashboard_widget_form.$invalid" data-ng-click="updateDashboardWidget(widget)">
                 Save

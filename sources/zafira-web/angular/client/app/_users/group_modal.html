@@ -2,9 +2,9 @@
     <form class="form-validation" name="group_form" ng-submit="createGroup(group); switchMode(false); UtilService.untouchForm(group_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Groups</h2>
+                <h2 id="modalTitle">Groups</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -14,17 +14,17 @@
             <div class="md-dialog-content">
             	<div layout layout-sm="column" ng-if="!createGroupMode">
             		<div flex>
-						<label>Groups({{count}})</label>
+						<label id="groupsCount">Groups({{count}})</label>
 						<div data-ng-if="groups.length != 0" class="md-dialog-content ng-scope scrollable">
 			                <div class="ng-scope" layout="column" data-ng-repeat="group in groups | orderBy:'name'">
-			                    <div flex>
-			                        <b class="ng-binding">{{group.name}}</b>
+			                    <div flex name="groupRole">
+			                        <b name="groupName" class="ng-binding">{{group.name}}</b>
 			                        ({{group.role}})
-			                        <span>({{group.users.length}} users)</span>
-                                    <button type="button" class="md-fab btn-circle" data-ng-click="switchMode(true, group)" style="float: right;margin-left: 10px">
+			                        <span name="groupSize">({{group.users.length}} users)</span>
+                                    <button name="editGroup" type="button" class="md-fab btn-circle" data-ng-click="switchMode(true, group)" style="float: right;margin-left: 10px">
                                         <span class="fa fa-cog"></span>
                                     </button>
-			                        <button type="button" class="md-fab red btn-circle" data-ng-click="deleteGroup(group)" style="float: right">
+			                        <button name="deleteGroup" type="button" class="md-fab red btn-circle" data-ng-click="deleteGroup(group)" style="float: right">
 			                            <span class="fa fa-trash"></span>
 			                        </button>
 			                    </div>
@@ -36,7 +36,7 @@
 			                                 md-autocomplete-snap
 			                                 md-on-add="addUserToGroup($chip, group)"
 			                                 md-on-remove="deleteUserFromGroup($chip, group)">
-			                           <md-chip-template>
+			                           <md-chip-template name="chip">
                                            <profile-photo ng-model="$chip.photoURL" size="40" auto-resize="false"></profile-photo>
 			                               {{$chip.username}}
 			                           </md-chip-template>
@@ -49,12 +49,12 @@
 			                               md-no-cache="true"
 			                               placeholder="add user">
 			                               <md-item-template style="z-index: 10000;">
-			                                   <span>
+			                                   <span name="suggestion">
                                                    <profile-photo ng-model="user.photoURL" size="40"></profile-photo>
                                                    {{user.username}}
                                                </span>
 			                               </md-item-template>
-			                               <md-not-found>
+			                               <md-not-found id="notRecipients">
 			                                   No users matching "{{searchText}}" were found.
 			                               </md-not-found>
 			                           </md-autocomplete>
@@ -70,11 +70,11 @@
                     <div layout layout-sm="column">
                         <md-input-container flex>
                             <label>Name</label>
-                            <input type="text" name="name" data-ng-model="group.name" required/>
+                            <input id="groupName" type="text" name="name" data-ng-model="group.name" required/>
                         </md-input-container>
                         <md-input-container class="md-block" flex>
                             <label>Role</label>
-                            <md-select name="role" ng-model="group.role" required>
+                            <md-select id="groupRole" name="role" ng-model="group.role" required>
                                 <md-option ng-repeat="role in roles" value="{{role}}">
                                     {{role}}
                                 </md-option>
@@ -84,7 +84,7 @@
                     <div class="radioButtondemoMultiColumn">
                         <div ng-repeat="(key, value) in blocks" class="row checkbox-clear-inline" style="margin: 0">
                             <div flex layout='row' layout-padding layout-align="start center" >
-                                <md-checkbox class="md-primary main-checkbox" aria-label="Select All"
+                                <md-checkbox name="mainBlockCheckbox" class="md-primary main-checkbox" aria-label="Select All"
                                              ng-checked="isCheckedBlock(key)"
                                              md-indeterminate="isIndeterminateBlock(key)"
                                              ng-click="toggleAllPermissions(key)">
@@ -94,7 +94,7 @@
                                 </div>
                                 <div flex="20" style="margin-top: 16px;" ng-repeat="permission in value.permissions">
                                     <md-checkbox ng-true-value="true" ng-false-value="false" ng-model="permission.value" aria-label="Block" class="md-primary"></md-checkbox>
-                                    <span class="text-capitalize">{{ permission.name.split('_').join(' ') }}</span>
+                                    <span name="permissionName" class="text-capitalize">{{ permission.name.split('_').join(' ') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -121,18 +121,18 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button type="submit"
+            <md-button id="create" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="group_form.$invalid" ng-if="createGroupMode && !group.id">
                 Create
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary" ng-disabled="group_form.$invalid" ng-click="updateGroup(group)" ng-if="group.id">
+            <md-button id="update" class="md-raised btn-w-md md-primary" ng-disabled="group_form.$invalid" ng-click="updateGroup(group)" ng-if="group.id">
                 Update
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary" ng-click="switchMode(true)" ng-if="!createGroupMode">
+            <md-button id="createGroup" class="md-raised btn-w-md md-primary" ng-click="switchMode(true)" ng-if="!createGroupMode">
                 Create group
             </md-button>
-            <md-button class="md-raised btn-w-md md-primary" ng-click="switchMode(false)" ng-if="createGroupMode">
+            <md-button id="cancel" class="md-raised btn-w-md md-primary" ng-click="switchMode(false)" ng-if="createGroupMode">
                 Cancel
             </md-button>
         </md-dialog-actions>
