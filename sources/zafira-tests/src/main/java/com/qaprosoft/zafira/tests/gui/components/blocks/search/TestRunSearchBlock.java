@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 
 public class TestRunSearchBlock extends AbstractSearchBlock
 {
-	protected TestRunSearchBlock(WebDriver driver, SearchContext context)
+	public TestRunSearchBlock(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}
