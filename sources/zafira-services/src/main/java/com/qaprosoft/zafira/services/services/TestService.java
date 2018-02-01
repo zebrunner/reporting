@@ -174,19 +174,12 @@ public class TestService
 			// Save artifacts
 			if (!CollectionUtils.isEmpty(test.getArtifacts()))
 			{
-				for (TestArtifact artifact : test.getArtifacts())
-				{
-					if (artifact.isValid())
-					{
-						artifact.setTestId(test.getId());
-						existingTest.setArtifacts(test.getArtifacts());
-						testArtifactService.createOrUpdateTestArtifact(artifact);
-					}
-					else
-					{
-						LOGGER.error("Unable to save invalid artifact");
-					}
-				}
+				existingTest.setArtifacts(new HashSet<>());
+				test.getArtifacts().stream().filter(TestArtifact::isValid).forEach(artifact -> {
+					artifact.setTestId(test.getId());
+					existingTest.getArtifacts().add(artifact);
+					testArtifactService.createOrUpdateTestArtifact(artifact);
+				});
 			}
 			
 			TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
