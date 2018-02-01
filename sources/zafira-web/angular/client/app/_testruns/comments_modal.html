@@ -2,9 +2,9 @@
     <form class="form-validation" name="comments_form" ng-submit="createUser(); UtilService.untouchForm(comments_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Comments</h2>
+                <h2 id="modalTitle">Comments</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -15,14 +15,14 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Comments</label>
-                        <textarea name="comment" rows=10 class="textarea_border" data-ng-model="testRun.comments"></textarea>
+                        <textarea id="comment" name="comment" rows=10 class="textarea_border" data-ng-model="testRun.comments"></textarea>
                     </md-input-container>
                 </div>
             </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button  class="btn btn-success" data-ng-click="markReviewed()" data-ng-disabled="comments_form.$invalid">
+            <md-button id="markAsReviewed" class="btn btn-success" data-ng-click="markReviewed()" data-ng-disabled="comments_form.$invalid">
                 Mark as reviewed
             </md-button>
         </md-dialog-actions>
