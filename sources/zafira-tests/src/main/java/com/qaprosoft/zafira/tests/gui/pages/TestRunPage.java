@@ -1,33 +1,26 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
+import com.qaprosoft.zafira.tests.gui.components.blocks.search.TestRunSearchBlock;
+import com.qaprosoft.zafira.tests.gui.components.table.TestRunTable;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-import java.util.List;
 
 public class TestRunPage extends BasePage
 {
 
-	@FindBy(xpath = "//section//md-menu")
-	private List<WebElement> testRunsMenuButtons;
+	@FindBy(xpath = ".//thead")
+	private TestRunSearchBlock testRunSearchBlock;
 
-	@FindBy(xpath = "//tbody//tr")
-	private List<WebElement> testRunRows;
+	@FindBy(xpath = ".//tbody[@md-body]")
+	private TestRunTable testRunTable;
+
+	@FindBy(xpath = ".//md-table-pagination")
+	private PaginationBlock paginationBlock;
 
 	public TestRunPage(WebDriver driver)
 	{
 		super(driver, "/tests/runs");
 	}
 
-	public List<WebElement> getTestRunsMenuButtons()
-	{
-		return testRunsMenuButtons;
-	}
-
-	public List<WebElement> getTestRunRows()
-	{
-		return testRunRows;
-	}
 }
