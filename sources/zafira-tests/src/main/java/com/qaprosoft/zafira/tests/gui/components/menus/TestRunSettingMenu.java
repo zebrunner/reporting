@@ -74,9 +74,19 @@ public class TestRunSettingMenu extends AbstractMenu
 		markAsReviewedButton.click();
 	}
 
+	public void clickSendAsEmailButton()
+	{
+		sendAsEmailButton.click();
+	}
+
 	public WebElement getExportButton()
 	{
 		return exportButton;
+	}
+
+	public void clickExportButton()
+	{
+		exportButton.click();
 	}
 
 	public WebElement getBuildNowButton()
@@ -84,13 +94,28 @@ public class TestRunSettingMenu extends AbstractMenu
 		return buildNowButton;
 	}
 
+	public void clickBuildNowButton()
+	{
+		buildNowButton.click();
+	}
+
 	public WebElement getRebuildButton()
 	{
 		return rebuildButton;
 	}
 
+	public void clickRebuildButton()
+	{
+		rebuildButton.click();
+	}
+
 	public WebElement getDeleteButton()
 	{
 		return deleteButton;
+	}
+
+	public void clickDeleteButton()
+	{
+		deleteButton.click();
 	}
 }

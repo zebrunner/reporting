@@ -261,7 +261,7 @@ public abstract class AbstractUIObject
 
 	public void clearAllInputs()
 	{
-		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)]")).forEach(input -> {
+		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)] | .//textarea")).forEach(input -> {
 			while(! input.getAttribute("value").isEmpty())
 			{
 				input.click();
