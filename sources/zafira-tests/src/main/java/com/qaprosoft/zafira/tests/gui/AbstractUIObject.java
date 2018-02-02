@@ -11,10 +11,12 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -56,10 +58,6 @@ public abstract class AbstractUIObject
 		this.context = context;
 		ElementLocatorFactory elementLocatorFactory = new SearchElementLocatorFactory(context);
 		PageFactory.initElements(new UIElementDecorator(driver, elementLocatorFactory), this);
-	}
-
-	public void reload(){
-		driver.navigate().refresh();
 	}
 
 	public boolean isElementPresent(By by, long seconds)
@@ -270,5 +268,30 @@ public abstract class AbstractUIObject
 				input.sendKeys(Keys.BACK_SPACE);
 			}
 		});
+	}
+
+	public boolean isChecked(WebElement webElement)
+	{
+		return Arrays.asList(webElement.getAttribute("class").split(" ")).contains("md-checked");
+	}
+
+	public void check(WebElement webElement)
+	{
+		if(! isChecked(webElement))
+			webElement.click();
+	}
+
+	public void uncheck(WebElement webElement)
+	{
+		if(isChecked(webElement))
+			webElement.click();
+	}
+
+	public void switchToWindow()
+	{
+		Set<String> windowHandles = driver.getWindowHandles();
+		windowHandles.remove(driver.getWindowHandle());
+		if(windowHandles.size() != 0)
+			driver.switchTo().window((String) windowHandles.toArray()[0]);
 	}
 }

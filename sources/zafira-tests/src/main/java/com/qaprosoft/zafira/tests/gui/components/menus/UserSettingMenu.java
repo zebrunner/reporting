@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindo
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
