@@ -7,6 +7,9 @@ import com.qaprosoft.zafira.tests.gui.components.Header;
 import com.qaprosoft.zafira.tests.gui.components.Navbar;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -47,6 +50,10 @@ public abstract class BasePage extends AbstractPage
 	{
 		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
 				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
+	}
+
+    public boolean waitUntilLoadingContainerDisappears (long seconds){
+		return new WebDriverWait(driver, seconds).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
 	}
 
 	public boolean waitUntilPageIsLoaded()

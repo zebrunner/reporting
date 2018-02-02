@@ -19,6 +19,12 @@ public class UserProfilePageService extends AbstractPageService
 		this.userProfilePage = new UserProfilePage(driver);
 	}
 
+	public UploadImageModalWindow goToUploadImageModalWindow()
+	{
+		userProfilePage.getLoadProfilePhotoIcon().click();
+		return userProfilePage.getUploadImageModalWindow();
+	}
+
 	public UserProfilePage.ColorSchema checkCurrentColorSchemeByRadioButton(){
 		if(userProfilePage.isElementPresent(userProfilePage.getLightZafiraSchemaRadioButtonChecked(), 0)){
 			return UserProfilePage.ColorSchema.LIGHT;
@@ -29,12 +35,6 @@ public class UserProfilePageService extends AbstractPageService
 		else {
 			throw new NoColorSchemaIsChosenException("No radioButton corresponding to the schema choice was found");
 		}
-	}
-
-
-	public UploadImageModalWindow clickLoadProfilePhotoHoverIcon() {
-		userProfilePage.getLoadProfilePhotoHoverIcon().click();
-		return new UploadImageModalWindow(driver, null);
 	}
 
 	public void pickDarkSchemaRadioButton(){
