@@ -45,7 +45,7 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content")
 	private TestArtifactMenu testArtifactMenu;
 
-	protected TestRow(WebDriver driver, SearchContext context)
+	public TestRow(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}

@@ -37,13 +37,19 @@ public class TestRunAPIService extends AbstractAPIService
 		});
 	}
 
-	public List<TestRunViewType> createTestRuns(Integer count, Integer boundPassedCount, Integer boundFailedCount, Integer boundInProgressCount,
+	public List<TestRunViewType> createTestRunsWithBounds(Integer count, Integer boundPassedCount, Integer boundFailedCount, Integer boundInProgressCount,
 			Integer boundSkippedCount, Integer boundAbortedCount)
+	{
+		return createTestRuns(count, random.nextInt(boundPassedCount), random.nextInt(boundFailedCount),
+					random.nextInt(boundInProgressCount), random.nextInt(boundSkippedCount), random.nextInt(boundAbortedCount));
+	}
+
+	public List<TestRunViewType> createTestRuns(Integer count, Integer passedCount, Integer failedCount, Integer inProgressCount,
+			Integer skippedCount, Integer abortedCount)
 	{
 		List<TestRunViewType> result = new ArrayList<>();
 		IntStream.iterate(0, i -> i++).limit(count).parallel().forEach(index -> {
-			result.add(createTestRun(random.nextInt(boundPassedCount), random.nextInt(boundFailedCount),
-					random.nextInt(boundInProgressCount), random.nextInt(boundSkippedCount), random.nextInt(boundAbortedCount)));
+			result.add(createTestRun(passedCount, failedCount, inProgressCount, skippedCount, abortedCount));
 		});
 		return result;
 	}

@@ -27,7 +27,7 @@ public class TestSortBlock extends AbstractUIObject
 	@FindBy(xpath = ".//span[contains(text(), 'Started')]")
 	private WebElement startedButton;
 
-	protected TestSortBlock(WebDriver driver, SearchContext context)
+	public TestSortBlock(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}

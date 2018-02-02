@@ -3,19 +3,19 @@
     <div>
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-header">Integration tools
-                    <small>({{settingTools.length}})</small>
+                <h2 id="pageTitle" class="section-header">Integration tools
+                    <small id="itemsCount">({{settingTools.length}})</small>
                 </h2>
             </div>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_INTEGRATIONS']">
             <md-fab-trigger>
-                <md-button aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
                     <span class="fa fa-bars"></span>
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to regenerate encrypt key? All values will be reencrypted!" data-ng-really-click="regenerateKey()">
+                <md-button id="regenerateKey" aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to regenerate encrypt key? All values will be reencrypted!" data-ng-really-click="regenerateKey()">
                     <md-tooltip md-direction="top">Regenerate encrypt key</md-tooltip>
                     <span class="fa fa-key"></span>
                 </md-button>
@@ -27,25 +27,25 @@
                     <div class="card bg-white" zafira-background-theme>
                         <div ng-class="{'large-card-content': tool.isEnabled}" class="card-content">
                             <i ng-class="{'highlight_red': !tool.isConnected && tool.isEnabled, 'highlight_green': tool.isConnected && tool.isEnabled, 'highlight_gray': !tool.isEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
-                            <span class="card-title">
+                            <span name="toolName" class="card-title">
                                 {{ tool.name }}
                                 <!--<i ng-class="{'jira-icon': tool.name == 'JIRA', 'slack-icon': tool.name == 'SLACK'}"></i>-->
                             </span>
                             <md-input-container has-any-permission="['MODIFY_INTEGRATIONS']" style="float: right; margin-top: 0px">
-                                <md-switch style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled" ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
+                                <md-switch name="toolEnabled" style="margin-top: 0px" class="md-primary" ng-model="tool.isEnabled" ng-change="switchEnabled(tool)" aria-label="integr-switch"></md-switch>
                             </md-input-container>
                             <div data-ng-if="tool.isEnabled" class="row col-lg-12" ng-repeat="setting in tool.settings">
                                 <div class="col-lg-11" style="padding: 0">
                                     <md-input-container class="md-block" style="margin-bottom: 0">
-                                        <label>{{ setting.name }}</label>
-                                        <input type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
-                                        <input type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                        <label name="settingNameLabel">{{ setting.name }}</label>
+                                        <input name="settingName" type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                        <input name="settingName" type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
                                     </md-input-container>
                                 </div>
                                 <div class="col-lg-1" style="padding: 0; margin-bottom: 0" data-ng-if="setting.name != 'SLACK_WEB_HOOK_URL'">
                                     <md-input-container class="md-block">
                                         <label></label>
-                                        <md-button data-ng-if="tool.name == 'SLACK'" ng-click="deleteSetting(setting, tool)" class=" btn-w-md md-active" style="min-width: 50px">
+                                        <md-button name="deleteSetting" data-ng-if="tool.name == 'SLACK'" ng-click="deleteSetting(setting, tool)" class=" btn-w-md md-active" style="min-width: 50px">
                                             <span class="fa-stack fa-lg">
                                                 <i class="fa fa-circle fa-stack-2x"></i>
                                                 <i class="fa fa-trash fa-stack-1x fa-inverse"></i>
@@ -56,21 +56,21 @@
                             <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled && tool.name == 'SLACK'" class="row col-lg-12" style="position: relative">
                                 <div class="col-lg-6" style="padding: 0">
                                     <md-input-container class="md-block">
-                                        <label>NEW {{ tool.name }} SETTING</label>
-                                        <input placeholder="SLACK_NOTIF_CHANNEL" type="text" class="form-control" data-ng-model="tool.newSetting.name" ng-disabled="!tool.isEnabled">
+                                        <label name="newSettingLabel">NEW {{ tool.name }} SETTING</label>
+                                        <input name="slackChannelName" placeholder="SLACK_NOTIF_CHANNEL" type="text" class="form-control" data-ng-model="tool.newSetting.name" ng-disabled="!tool.isEnabled">
                                     </md-input-container>
                                 </div>
                                 <div class="col-lg-6" style="padding: 0">
                                     <md-input-container class="md-block">
                                         <label></label>
-                                        <input placeholder="Value" type="text" class="form-control" data-ng-model="tool.newSetting.value" ng-disabled="!tool.isEnabled">
+                                        <input name="slackChannelValue" placeholder="Value" type="text" class="form-control" data-ng-model="tool.newSetting.value" ng-disabled="!tool.isEnabled">
                                     </md-input-container>
                                 </div>
                             </div>
                        </div>
                         <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action text-right" style="border-top: none;">
-                            <md-button data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
-                            <md-button ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
+                            <md-button name="add" data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
+                            <md-button name="save" ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
                         </div>
                     </div>
                 </div>
