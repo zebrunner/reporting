@@ -1,11 +1,17 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
+import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.List;
+
 public class UserProfilePage extends BasePage
 {
+	@FindBy(tagName = "md-dialog")
+	private UploadImageModalWindow uploadImageModalWindow;
 
 	@FindBy(xpath="//i[ancestor::header[@class='profile-header'] and contains(text(),'settings')]")
 	private WebElement loadProfilePhotoHoverIcon;
@@ -32,10 +38,10 @@ public class UserProfilePage extends BasePage
 	private WebElement roleAdminLabel;
 
 	@FindBy(xpath="//md-option[@value='General']")
-	private WebElement generalBoardButton;
+	private WebElement generalBoardOption;
 
 	@FindBy(xpath="//md-option[contains(@value,'Nightly')]")
-	private WebElement nightlyBoardButton;
+	private WebElement nightlyBoardOption;
 
 	@FindBy(xpath="//button[ancestor::form[@name='profile_form']]")
 	private WebElement saveUserProfileButton;
@@ -197,12 +203,12 @@ public class UserProfilePage extends BasePage
 		return saveUserProfileButton;
 	}
 
-	public WebElement getGeneralBoardButton() {
-		return generalBoardButton;
+	public WebElement getGeneralBoardOption() {
+		return generalBoardOption;
 	}
 
-	public WebElement getNightlyBoardButton() {
-		return nightlyBoardButton;
+	public WebElement getNightlyBoardOption() {
+		return nightlyBoardOption;
 	}
 
 	public WebElement getLoadProfilePhotoHoverIcon()
@@ -214,4 +220,14 @@ public class UserProfilePage extends BasePage
 	{
 		return loadProfilePhotoIcon;
 	}
+
+	public UploadImageModalWindow getUploadImageModalWindow()
+	{
+		return uploadImageModalWindow;
+	}
+
+	public List<WebElement> getDashboardSelectValues(){
+		return driver.findElements(By.xpath("//md-option[contains(@ng-repeat,'dashboard')]"));
+	}
+
 }
