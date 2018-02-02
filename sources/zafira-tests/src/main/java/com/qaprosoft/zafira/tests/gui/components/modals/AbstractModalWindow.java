@@ -10,10 +10,10 @@ import org.openqa.selenium.support.FindBy;
 public abstract class AbstractModalWindow extends AbstractUIObject
 {
 
-	@FindBy(xpath = "//md-toolbar//h2")
+	@FindBy(id = "modalTitle")
 	protected WebElement headerTextBlock;
 
-	@FindBy(xpath = "//md-toolbar//md-icon[text() = 'close']")
+	@FindBy(id = "close")
 	protected WebElement closeButton;
 
 	protected AbstractModalWindow(WebDriver driver, SearchContext context)

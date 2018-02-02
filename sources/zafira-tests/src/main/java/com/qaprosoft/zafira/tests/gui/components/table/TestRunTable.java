@@ -10,7 +10,7 @@ import java.util.List;
 public class TestRunTable extends AbstractTable
 {
 
-	@FindBy(xpath = ".//tr")
+	@FindBy(xpath = "./tr[@md-row]")
 	private List<TestRunTableRow> testRunTableRows;
 
 	public TestRunTable(WebDriver driver, SearchContext context)
