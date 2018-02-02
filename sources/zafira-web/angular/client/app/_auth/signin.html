@@ -21,6 +21,7 @@
                                     <input required
                                            type="text"
                                            name="username"
+                                           id="username"
                                            ng-model="credentials.username"/>
                                     <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
                                         <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -32,6 +33,7 @@
                                     <input required
                                            type="password"
                                            name="password"
+                                           id="pussword"
                                            ng-model="credentials.password"/>
                                            <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
                                                 <div ng-message="required" data-translate="VLD_REQUIRED"></div>
@@ -39,6 +41,7 @@
                                 </md-input-container>
                                 <div layout="row" layout-align="center">
                                     <md-button type="submit"
+                                               id="signin"
                                                class="md-raised btn-w-md md-primary"
                                                ng-disabled="signin_form.$invalid">Signin</md-button>
                                 </div>
@@ -56,7 +59,7 @@
                 <div class="additional-info">
                     <span>© 2017 Zafira all rights reserved</span>
                     <br/>
-                    <small>server v.{{version.service}} | client v.{{version.client}}</small>
+                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
                 </div>
 
             </div>

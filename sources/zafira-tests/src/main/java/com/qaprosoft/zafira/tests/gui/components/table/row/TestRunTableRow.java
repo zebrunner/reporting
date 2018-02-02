@@ -16,8 +16,17 @@ public class TestRunTableRow extends AbstractRow
 	@FindBy(xpath = "./td[1]//md-progress-circular")
 	private WebElement progressCircularIcon;
 
+	@FindBy(xpath = "./td[1]//md-checkbox")
+	private WebElement checkbox;
+
 	@FindBy(xpath = "./td[2]//b")
 	private WebElement testRunName;
+
+	@FindBy(xpath = "./td[2]//md-icon")
+	private WebElement commentIcon;
+
+	@FindBy(xpath = "./td[2]//span[text() = 'R']")
+	private WebElement reviewedLabel;
 
 	@FindBy(xpath = "./td[2]//a")
 	private WebElement jobLink;
@@ -77,6 +86,21 @@ public class TestRunTableRow extends AbstractRow
 		return progressCircularIcon;
 	}
 
+	public WebElement getCheckbox()
+	{
+		return checkbox;
+	}
+
+	public void checkCheckbox()
+	{
+		check(checkbox);
+	}
+
+	public void uncheckCheckbox()
+	{
+		uncheck(checkbox);
+	}
+
 	public WebElement getTestRunName()
 	{
 		return testRunName;
@@ -85,6 +109,21 @@ public class TestRunTableRow extends AbstractRow
 	public String getTestRunNameText()
 	{
 		return testRunName.getText();
+	}
+
+	public WebElement getCommentIcon()
+	{
+		return commentIcon;
+	}
+
+	public void clickCommentIcon()
+	{
+		commentIcon.click();
+	}
+
+	public WebElement getReviewedLabel()
+	{
+		return reviewedLabel;
 	}
 
 	public WebElement getJobLink()
@@ -212,6 +251,7 @@ public class TestRunTableRow extends AbstractRow
 	public TestRunSettingMenu clickTestRunSettingMenu()
 	{
 		testRunSettingMenu.getRootElement().click();
+		waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 1);
 		return testRunSettingMenu;
 	}
 
