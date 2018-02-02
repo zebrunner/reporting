@@ -16,10 +16,39 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class DashboardPage extends BasePage
 {
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-bars')]]")
+	private WebElement menuButton;
 
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-plus')]]")
+	private WebElement newDashboardButton;
+
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-cog')]]")
+	private WebElement updateDashboardButton;
+
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-envelope-o')]]")
+	private WebElement sendDashboardByEmailButton;
+
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-arrows-alt')]]")
+	private WebElement updateWidgetsButton;
+
+	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-trash')]]")
+	private WebElement deleteDashboardButton;
+
+
+	/*public UserMenu clickUserMenuButton()
+	{
+		if(! isElementClickable(userMenuButton, 2) || isElementPresent(getBackdrop(), 1))
+			clickOutside();
+		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
+		this.userMenuButton.click();
+		return new UserMenu(driver, null);
+	}
+*/
 	public DashboardPage(WebDriver driver)
 	{
 		super(driver, "/dashboards");
