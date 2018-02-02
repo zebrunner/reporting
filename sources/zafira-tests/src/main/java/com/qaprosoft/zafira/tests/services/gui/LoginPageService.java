@@ -21,7 +21,7 @@ public class LoginPageService extends AbstractPageService
 
 	public DashboardPage login(String username, String password)
 	{
-		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
+		loginPage.waitUntilLoadingContainerDisappears(10);
 		loginPage.getUsernameTextField().sendKeys(username);
 		loginPage.getPasswordTextField().sendKeys(password);
 		loginPage.getLoginButton().click();

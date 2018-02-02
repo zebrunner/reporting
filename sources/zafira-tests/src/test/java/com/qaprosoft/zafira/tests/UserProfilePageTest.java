@@ -1,16 +1,21 @@
 package com.qaprosoft.zafira.tests;
 
+import com.qaprosoft.zafira.tests.exceptions.NoDashboardsWereLoadedException;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
-import org.openqa.selenium.Dimension;
+import org.apache.commons.collections.CollectionUtils;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.List;
+
 import static com.qaprosoft.zafira.tests.gui.pages.UserProfilePage.ColorSchema;
 
 public class UserProfilePageTest extends AbstractTest {
@@ -54,9 +59,7 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getLoadProfilePhotoHoverIcon(), 1),
                 "Settings icon not present on user profile icon hover");
 
-        UploadImageModalWindow uploadImageModalWindow = userProfilePageService.clickLoadProfilePhotoHoverIcon();
-        userProfilePage.waitUntilPageIsLoaded(10);
-
+        UploadImageModalWindow uploadImageModalWindow = userProfilePageService.goToUploadImageModalWindow();
         Assert.assertTrue(uploadImageModalWindow.isElementPresent(10), "Company photo modal window not opened");
         Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");
         uploadImageModalWindow.closeModalWindow();
@@ -76,14 +79,17 @@ public class UserProfilePageTest extends AbstractTest {
             Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
 
             //Check if schema is saved on backend
-            userProfilePage.waitUntilPageIsLoaded(3);
+
+            userProfilePage.waitUntilLoadingContainerDisappears(5);
+            userProfilePage.waitUntilPageIsLoaded(2);
             userProfilePageService.pickDarkSchemaRadioButton();
             userProfilePage.getSavePreferencesButton().click();
             userProfilePage.waitUntilElementIsPresent(userProfilePage.getSuccessAlert(),1);
             Assert.assertNotNull(userProfilePage.getSuccessAlert());
             userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
             userProfilePage.reload();
-            userProfilePage.waitUntilPageIsLoaded(3);
+            userProfilePage.waitUntilLoadingContainerDisappears(5);
+            userProfilePage.waitUntilPageIsLoaded(2);
             Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
             userProfilePageService.pickLightSchemaRadioButton();
             userProfilePage.getSavePreferencesButton().click();
@@ -98,6 +104,7 @@ public class UserProfilePageTest extends AbstractTest {
             Assert.assertTrue(userProfilePageService.darkSchemaStyleIsDisplayed());
 
             //Check if schema is saved on backend
+            userProfilePage.waitUntilLoadingContainerDisappears(5);
             userProfilePage.waitUntilPageIsLoaded(2);
             userProfilePageService.pickLightSchemaRadioButton();
             userProfilePage.getSavePreferencesButton().click();
@@ -105,6 +112,7 @@ public class UserProfilePageTest extends AbstractTest {
             Assert.assertNotNull(userProfilePage.getSuccessAlert());
             userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
             userProfilePage.reload();
+            userProfilePage.waitUntilLoadingContainerDisappears(5);
             userProfilePage.waitUntilPageIsLoaded(2);
             Assert.assertTrue(userProfilePageService.lightSchemaStyleIsDisplayed());
             userProfilePageService.pickDarkSchemaRadioButton();
@@ -112,27 +120,58 @@ public class UserProfilePageTest extends AbstractTest {
         }
     }
 
-   /* @Test
+    @Test
     public void changePreferencesTest(){
 
-        String chosenDashboard = userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect());
-        String testChosenDashboard;
-
+        WebElement chosenDashboard = null;
+        WebElement generalDashboard = null;
+        WebElement nightlyDashboard = null;
+        String chosenDashboardName = null;
+        String testChosenDashboardName = null;
         jse.executeScript("arguments[0].scrollIntoView(true);", userProfilePage.getDefaultDashboardSelect());
-        userProfilePage.getDefaultDashboardSelect().click()
-        userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getGeneralBoardButton(), 1);
-        if(userProfilePage.hasSelectedAttribute(userProfilePage.getGeneralBoardButton())){
-            userProfilePage.getNightlyBoardButton().click();
-        } else {
-            userProfilePage.getGeneralBoardButton().click();
-        }
-        testChosenDashboard = userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect());
-        userProfilePage.getSavePreferencesButton().click();
-        userProfilePage.reload();
-        Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getDefaultDashboardSelect()).equals(testChosenDashboard));
         userProfilePage.getDefaultDashboardSelect().click();
-        userProfilePage.waitUntilElementToBeClickableByBackdropMask();
-    } */
+        userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getDashboardSelectValues().get(0), 1);
+        List<WebElement> webElements = userProfilePage.getDashboardSelectValues();
+        if (CollectionUtils.isEmpty(webElements)){
+            throw new NoDashboardsWereLoadedException("No dashboards are present in dropdown");
+        }
+        for(WebElement we: webElements){
+            if (userProfilePage.hasSelectedAttribute(we)){
+                chosenDashboard = we;
+                chosenDashboardName = we.getText();
+                if(we.getText().contains("General")){
+                    generalDashboard = chosenDashboard;
+                }
+            } else if (we.getText().contains("General")){
+                generalDashboard = we;
+            } else if (we.getText().contains("Nightly")){
+                nightlyDashboard = we;
+            }
+        }
+        if (chosenDashboard != null && nightlyDashboard != null && generalDashboard != null){
+            if (chosenDashboard.equals(generalDashboard)){
+                nightlyDashboard.click();
+            } else {
+                generalDashboard.click();
+            }
+        }
+        testChosenDashboardName = userProfilePage.getDefaultDashboardSelect().getText();
+        userProfilePage.getSavePreferencesButton().click();
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 2), "Preferences saving is not successful");
+        userProfilePage.reload();
+        userProfilePage.waitUntilLoadingContainerDisappears(5);
+        Assert.assertTrue((userProfilePage.getDefaultDashboardSelect().getText()).equals(testChosenDashboardName), "Saved dashboard mismatch with previously chosen");
+        userProfilePage.getDefaultDashboardSelect().click();
+        userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getDashboardSelectValues().get(0), 1);
+        List<WebElement> webElements2 = userProfilePage.getDashboardSelectValues();
+        for(WebElement we: webElements2){
+            if(we.getText().equals(chosenDashboardName)){
+                we.click();
+            }
+        }
+        userProfilePage.getSavePreferencesButton().click();
+        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 2), "Preferences saving is not successful");
+    }
 
     @Test
     public void changePasswordTest() {
