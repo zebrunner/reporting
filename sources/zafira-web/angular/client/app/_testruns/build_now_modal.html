@@ -2,9 +2,9 @@
     <form class="form-validation" name="build_now_form" ng-submit="buildNow(); UtilService.untouchForm(build_now_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Build now</h2>
+                <h2 id="modalTitle">Build now</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -27,19 +27,19 @@
                             <label>{{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span></label>
                             <input ng-model="jobParameter.value" type="text" />
                         </md-input-container>
-                    <md-input-container flex data-ng-if="jobParameter.parameterClass == 'BOOLEAN'" layout="row" class="modal-narrow-row">
-                        <div flex style="text-transform: capitalize; max-width:200px;">
-                            {{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span>
-                        </div>
-                        <md-checkbox ng-model="jobParameter.value">
-                         </md-checkbox>
-                    </md-input-container>
+                        <md-input-container flex data-ng-if="jobParameter.parameterClass == 'BOOLEAN'" layout="row" class="modal-narrow-row">
+                            <div flex style="text-transform: capitalize; max-width:200px;">
+                                {{jobParameter.name}}<span data-ng-if="'ci_run_id' == jobParameter.name"> (new)</span>
+                            </div>
+                            <md-checkbox ng-model="jobParameter.value">
+                             </md-checkbox>
+                        </md-input-container>
                 </div>
             </div>
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button type="submit" data-ng-if="! noValidJob" class="md-raised btn-w-md md-primary" data-ng-disabled="build_now_form.$invalid">
+            <md-button id="build" type="submit" data-ng-if="! noValidJob" class="md-raised btn-w-md md-primary" data-ng-disabled="build_now_form.$invalid">
                 Build
             </md-button>
         </md-dialog-actions>

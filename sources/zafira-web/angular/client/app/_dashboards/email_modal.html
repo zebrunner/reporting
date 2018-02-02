@@ -2,9 +2,9 @@
     <form class="form-validation" name="email_form" ng-submit="sendEmail(); UtilService.untouchForm(email_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Email</h2>
+                <h2 id="modalTitle">Email</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" data-ng-click="cancel()">
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
                 </md-button>
             </div>
@@ -15,17 +15,17 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Subject</label>
-                        <input name="value" type="text" data-ng-model="email.subject" required/>
+                        <input name="subject" type="text" data-ng-model="email.subject" required/>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <text-angular data-ng-model="email.text" required></text-angular>
+                        <text-angular name="text" data-ng-model="email.text" required></text-angular>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
-                        <label>Recepients ({{email.recipients.length}})</label>
+                        <label name="recipientsLength">Recepients ({{email.recipients.length}})</label>
                         <md-chips ng-model="users"
                                   class="photo-chip"
                                   filter-selected=true
@@ -33,7 +33,7 @@
                                   md-transform-chip="checkAndTransformRecipient($chip)"
                                   md-on-remove="removeRecipient($chip)"
                                   md-separator-keys="keys">
-                            <md-chip-template>
+                            <md-chip-template name="chip">
                                 <profile-photo ng-model="$chip.photoURL" size="40" auto-resize="false"></profile-photo>
                                 {{$chip.email}}
                             </md-chip-template>
@@ -45,13 +45,13 @@
                                 md-item-text="user.email"
                                 md-selected-item="currentUser"
                                 placeholder="add email">
-                                <md-item-template>
+                                <md-item-template name="suggestion">
                                     <span>
                                         <profile-photo ng-model="user.photoURL" size="40"></profile-photo>
                                         {{user.email}}
                                     </span>
                                 </md-item-template>
-                                <md-not-found>
+                                <md-not-found id="notRecipients">
                                     No users matching "{{searchText}}" were found.
                                 </md-not-found>
                             </md-autocomplete>
@@ -62,7 +62,7 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button class="btn btn-primary" data-ng-click="sendEmail()" data-ng-disabled="email_form.$invalid">
+            <md-button id="send" class="btn btn-primary" data-ng-click="sendEmail()" data-ng-disabled="email_form.$invalid">
                 Send
             </md-button>
         </md-dialog-actions>
