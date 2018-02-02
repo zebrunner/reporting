@@ -17,7 +17,7 @@ public class TestTable extends AbstractTable
 	@FindBy(xpath = "./tbody/tr[@data-ng-repeat]")
 	private List<TestRow> testRows;
 
-	protected TestTable(WebDriver driver, SearchContext context)
+	public TestTable(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}

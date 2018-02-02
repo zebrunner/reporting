@@ -54,6 +54,12 @@ public abstract class BasePage extends AbstractPage
 		return waitUntilPageIsLoaded(IMPLICITLY_TIMEOUT);
 	}
 
+	public BasePage reload(){
+		driver.navigate().refresh();
+		waitUntilPageIsLoaded();
+		return this;
+	}
+
 	public String getPageTitleText()
 	{
 		return pageTitle.getText();
