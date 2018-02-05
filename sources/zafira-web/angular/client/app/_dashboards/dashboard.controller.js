@@ -11,6 +11,8 @@
 
         $scope.pristineWidgets = [];
 
+        $scope.unexistWidgets = [];
+
         $scope.dashboard = {};
 
         $scope.gridstackOptions = {
@@ -118,7 +120,6 @@
             }
         };
 
-        $scope.unexistWidgets = [];
         $scope.updateWidgetsToAdd = function () {
             $timeout(function () {
                 if($scope.widgets && $scope.dashboard.widgets)
@@ -129,7 +130,6 @@
                     return !existingWidget.length || widget.id != existingWidget[0].id;
                 });
             }, 800);
-            return $scope.unexistWidgets;
         };
 
         $scope.resetGrid = function () {
@@ -432,25 +432,27 @@
             $scope.resetGrid();
         });
 
+        $scope.$watch('currentUser.defaultDashboard', function (newVal) {
+            if(newVal) {
+                $scope.startRefreshing();
+                if ($rootScope.currentUser.isAdmin)
+                    DashboardService.GetWidgets().then(function (rs) {
+                        if (rs.success) {
+                            $scope.widgets = rs.data;
+                            $scope.updateWidgetsToAdd();
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+            }
+        });
+
         (function init() {
 
             if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
             $scope.getDashboardById($stateParams.id);
-            $rootScope.$on('event:defaultPreferencesInitialized', function () {
-                $scope.startRefreshing();
-                if($rootScope.currentUser.isAdmin)
-                    DashboardService.GetWidgets().then(function (rs) {
-                        if (rs.success) {
-                            $scope.widgets = rs.data;
-                        } else {
-                            alertify.error(rs.message);
-                        }
-                    }).then(function () {
-                        $scope.updateWidgetsToAdd();
-                    });
-            });
         })();
     }
 
