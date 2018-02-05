@@ -42,6 +42,7 @@ public class UIObjectListHandler<T extends AbstractUIObject> implements Invocati
 				try
 				{
 					uiObject = (T) clazz.getConstructor(WebDriver.class, SearchContext.class).newInstance(webDriver, element);
+					uiObject.setRootElement(element);
 				} catch (Exception e)
 				{
 					throw new RuntimeException("Implement appropriate AbstractUIObject constructor for auto-initialization: "
