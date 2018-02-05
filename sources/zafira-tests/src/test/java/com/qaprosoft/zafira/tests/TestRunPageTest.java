@@ -1,7 +1,10 @@
 package com.qaprosoft.zafira.tests;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
@@ -10,6 +13,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWin
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
@@ -38,6 +42,9 @@ public class TestRunPageTest extends AbstractTest
 
 	@Autowired
 	private TestRunMapper testRunMapper;
+
+	@Autowired
+	private TestMapper testMapper;
 
 	@BeforeMethod
 	public void setup() throws ExecutionException, InterruptedException
@@ -224,6 +231,47 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " removed");
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is not deleted");
+	}
+
+	@Test
+	public void verifyTestRunsTable()
+	{
+		List<TestRun> testRuns = testRunMapper.searchTestRuns(new TestRunSearchCriteria());
+		Assert.assertEquals(testRunPage.getPageItemsCount(), testRunMapper.getTestRunsSearchCount(new TestRunSearchCriteria()), "Invalid test runs count presents");
+		int count = testRunPage.getTestRunTable().getTestRunTableRows().size();
+		Assert.assertEquals(count, testRuns.size() <= 20 ? count : 20, "Invalid test run rows count on the page");
+		int generateCount = count <= 20 ? 25 - count : 1;
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(generateCount, 1);
+		testRunPage = (TestRunPage) testRunPage.reload();
+		TestRun testRunView = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
+		verifyTestRunInformation(testRunView, 0);
+	}
+
+	public void verifyTestRunInformation(TestRun testRun, int index)
+	{
+		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
+		Assert.assertTrue(testRunTableRow.getCheckbox().isDisplayed(), "Checkbox is not displayed");
+		Assert.assertEquals(testRunTableRow.getTestRunNameText(), testRun.getTestSuite().getName(), "Invalid test suite name");
+		Assert.assertEquals(testRunTableRow.getTestSuiteFileName(), testRun.getTestSuite().getFileName(), "Invalid test suite file name");
+		Assert.assertEquals(testRunTableRow.getAppVersionText(), testRun.getAppVersion(), "Invalid test run app version");
+		Assert.assertEquals(testRunTableRow.getEnvironmentText(), testRun.getEnv(), "Invalid test run environment");
+		Assert.assertEquals(testRunTableRow.getPlatform(), testRun.getPlatform().toLowerCase(), "Invalid platform");
+		Assert.assertEquals(testRunTableRow.getPassedCount(), testRun.getPassed(), "Invalid passed tests count");
+		Assert.assertEquals(testRunTableRow.getFailedCount(), testRun.getFailed(), "Invalid failed tests count");
+		Assert.assertEquals(testRunTableRow.getKnownIssuesCount(), testRun.getFailedAsKnown(), "Invalid known issues count");
+		Assert.assertEquals(testRunTableRow.getBlockersCount(), testRun.getFailedAsBlocker(), "Invalid tests blockers count");
+		Assert.assertEquals(testRunTableRow.getSkippedCount(), testRun.getSkipped(), "Invalid skipped tests count");
+		Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
+		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
+		Assert.assertTrue(testRunTableRow.getExpandTestsIcon().isDisplayed(), "Expand icon is not present on hover");
+		TestTable testTable = testRunTableRow.clickExpandTestsIcon();
+		Assert.assertEquals(testTable.getTestRows().size(), testMapper.searchTests(new TestSearchCriteria() {
+			{
+				setTestRunId(testRun.getId());
+			}
+		}).size());
+		testTable = testRunTableRow.clickExpandTestsIcon();
+		Assert.assertFalse(testTable.isElementPresent(1), "Test table is visible after closing");
 	}
 
 	private List<TestRunViewType> generateTestRunsIfNeed(Integer searchCount, int count)

@@ -44,7 +44,7 @@
     </arg>
     <arg unique="false">
         <key>app_version</key>
-        <value/>
+        <value>1.1</value>
     </arg>
     <arg unique="false">
         <key>proxy_host</key>

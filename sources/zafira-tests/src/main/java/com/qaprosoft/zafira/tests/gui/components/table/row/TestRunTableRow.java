@@ -31,6 +31,9 @@ public class TestRunTableRow extends AbstractRow
 	@FindBy(xpath = "./td[2]//a")
 	private WebElement jobLink;
 
+	@FindBy(xpath = "./td[2]//small")
+	private WebElement appVersion;
+
 	@FindBy(xpath = "./td[3]//span")
 	private WebElement environment;
 
@@ -111,6 +114,11 @@ public class TestRunTableRow extends AbstractRow
 		return testRunName.getText();
 	}
 
+	public String getTestSuiteFileName()
+	{
+		return hoverAndGetTooltipText(testRunName);
+	}
+
 	public WebElement getCommentIcon()
 	{
 		return commentIcon;
@@ -139,6 +147,16 @@ public class TestRunTableRow extends AbstractRow
 	public void clickJobLink()
 	{
 		jobLink.click();
+	}
+
+	public WebElement getAppVersion()
+	{
+		return appVersion;
+	}
+
+	public String getAppVersionText()
+	{
+		return appVersion.getText().split("insert_drive_file")[1];
 	}
 
 	public WebElement getEnvironment()
@@ -190,7 +208,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getFailedCount()
 	{
-		return Integer.valueOf(failed.getText());
+		return Integer.valueOf(failed.getText().split(" ")[0]);
 	}
 
 	public WebElement getKnownIssues()
@@ -200,7 +218,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getKnownIssuesCount()
 	{
-		return Integer.valueOf(knownIssues.getText());
+		return Integer.valueOf(knownIssues.getText().split("\\| ")[1]);
 	}
 
 	public WebElement getBlockers()
@@ -210,7 +228,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public Integer getBlockersCount()
 	{
-		return Integer.valueOf(blockers.getText());
+		return Integer.valueOf(blockers.getText().split("\\| ")[1]);
 	}
 
 	public WebElement getSkipped()
