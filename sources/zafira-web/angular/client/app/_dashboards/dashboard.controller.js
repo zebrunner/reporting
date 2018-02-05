@@ -72,8 +72,19 @@
             });
         };
 
+        function getNextEmptyGridArea(defaultLocation) {
+            var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+            var location = $scope.jsonSafeParse(defaultLocation);
+            while(! gridstack.isAreaEmpty(location.x, location.y, location.width, location.height)) {
+                location.y = location.y + 11;
+                if(location.y > 1100)
+                    break;
+            }
+            return $scope.jsonSafeStringify(location);
+        }
+
         $scope.addDashboardWidget = function (widget) {
-            widget.location = defaultWidgetLocation;
+            widget.location = getNextEmptyGridArea(defaultWidgetLocation);
             var data = {"id": widget.id, "location": widget.location};
             DashboardService.AddDashboardWidget($stateParams.id, data).then(function (rs) {
                 if (rs.success) {
