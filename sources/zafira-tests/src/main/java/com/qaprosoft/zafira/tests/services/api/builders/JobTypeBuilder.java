@@ -9,8 +9,9 @@ public class JobTypeBuilder extends AbstractTypeBuilder<JobType>
 	{
 		private static final long serialVersionUID = -5143637654708857466L;
 		{
-			setName("unavailable");
-			setJobURL(ZAFIRA_URL.split("/")[0] + "/job/unavailable");
+			int randomNumber = getNextRandomInt();
+			setName("job" + randomNumber);
+			setJobURL(ZAFIRA_URL.split("/")[0] + "/job/" + randomNumber);
 			setJenkinsHost(ZAFIRA_URL.split("/")[0]);
 			setUserId(userId);
 		}
