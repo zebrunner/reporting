@@ -23,33 +23,33 @@ public class TestRunAPIService extends AbstractAPIService
 	}
 
 	public TestRunViewType createTestRun(Integer passedCount, Integer failedCount, Integer inProgressCount, Integer skippedCount,
-			Integer abortedCount)
+			Integer abortedCount, int failedMessageLength)
 	{
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		List<TestType> testTypes = new ArrayList<>();
 		return createTestRun(testRunTypeBuilder, () -> {
-			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, passedCount, Status.PASSED));
-			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, failedCount, Status.FAILED));
-			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, skippedCount, Status.SKIPPED));
-			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, abortedCount, Status.ABORTED));
-			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, inProgressCount, Status.IN_PROGRESS));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, passedCount, Status.PASSED, 0));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, failedCount, Status.FAILED, failedMessageLength));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, skippedCount, Status.SKIPPED, failedMessageLength));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, abortedCount, Status.ABORTED, 0));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, inProgressCount, Status.IN_PROGRESS, 0));
 			return testTypes;
 		});
 	}
 
 	public List<TestRunViewType> createTestRunsWithBounds(Integer count, Integer boundPassedCount, Integer boundFailedCount, Integer boundInProgressCount,
-			Integer boundSkippedCount, Integer boundAbortedCount)
+			Integer boundSkippedCount, Integer boundAbortedCount, int failedMessageLength)
 	{
 		return createTestRuns(count, random.nextInt(boundPassedCount), random.nextInt(boundFailedCount),
-					random.nextInt(boundInProgressCount), random.nextInt(boundSkippedCount), random.nextInt(boundAbortedCount));
+					random.nextInt(boundInProgressCount), random.nextInt(boundSkippedCount), random.nextInt(boundAbortedCount), failedMessageLength);
 	}
 
 	public List<TestRunViewType> createTestRuns(Integer count, Integer passedCount, Integer failedCount, Integer inProgressCount,
-			Integer skippedCount, Integer abortedCount)
+			Integer skippedCount, Integer abortedCount, int failedMessageLength)
 	{
 		List<TestRunViewType> result = new ArrayList<>();
 		IntStream.iterate(0, i -> i++).limit(count).parallel().forEach(index -> {
-			result.add(createTestRun(passedCount, failedCount, inProgressCount, skippedCount, abortedCount));
+			result.add(createTestRun(passedCount, failedCount, inProgressCount, skippedCount, abortedCount, failedMessageLength));
 		});
 		return result;
 	}
