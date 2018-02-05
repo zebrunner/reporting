@@ -13,7 +13,7 @@ public class TestArtifactMenu extends AbstractMenu
 	@FindBy(xpath = ".//a")
 	private List<WebElement> artifacts;
 
-	protected TestArtifactMenu(WebDriver driver, SearchContext context)
+	public TestArtifactMenu(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}
