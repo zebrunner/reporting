@@ -4,8 +4,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
@@ -14,6 +15,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedMo
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
+import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
@@ -33,6 +35,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.IntStream;
 
 public class TestRunPageTest extends AbstractTest
 {
@@ -247,6 +250,17 @@ public class TestRunPageTest extends AbstractTest
 		verifyTestRunInformation(testRunView, 0);
 	}
 
+	@Test
+	public void verifyTestInfoTest()
+	{
+		int count = testRunPage.getTestRunTable().getTestRunTableRows().size();
+		int generateCount = count <= 20 ? 25 - count : 1;
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(generateCount, 1);
+		testRunPage = (TestRunPage) testRunPage.reload();
+		TestRun testRunView = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
+		verifyTestRunTestInformation(testRunView, 0);
+	}
+
 	public void verifyTestRunInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
@@ -272,6 +286,53 @@ public class TestRunPageTest extends AbstractTest
 		}).size());
 		testTable = testRunTableRow.clickExpandTestsIcon();
 		Assert.assertFalse(testTable.isElementPresent(1), "Test table is visible after closing");
+	}
+
+	private void verifyTestRunTestInformation(TestRun testRun, int index)
+	{
+		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
+		List<com.qaprosoft.zafira.models.db.Test> tests = testMapper.searchTests(new TestSearchCriteria() {
+			{
+				setTestRunId(testRun.getId());
+			}
+		});
+		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
+		TestTable testTable = testRunTableRow.clickExpandTestsIcon();
+		Assert.assertEquals(tests.size(), testRunTableRow.getTestTable().getTestRows().size(), "Invalid tests count visible");
+		IntStream.iterate(0, i -> i++).limit(testTable.getTestRows().size()).forEach(i -> {
+			com.qaprosoft.zafira.models.db.Test currentTest = tests.get(i);
+			TestRow currentTestRow = testTable.getTestRows().get(i);
+			Status status = currentTestRow.getStatus();
+			Assert.assertEquals(currentTest.getStatus(), status, "Incorrect test status visible");
+			Assert.assertEquals(currentTest.getName(), currentTestRow.getTestNameText(), "Invalid test name text");
+			Assert.assertEquals(currentTest.getOwner(), currentTestRow.getOwnerName(), "Invalid owner");
+			//Assert.assertEquals(currentTest.getTestConfig().getDevice(), currentTestRow.getDeviceName(), "Incorrect device");
+			Assert.assertEquals(currentTest.getWorkItem(WorkItem.Type.TASK).getJiraId(), currentTestRow.getTaskTicket(), "Incorrect work item id");
+			switch(status)
+			{
+				case PASSED:
+				case ABORTED:
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is visible");
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+					break;
+				case FAILED:
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is not visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+					break;
+				case SKIPPED:
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+					break;
+				case IN_PROGRESS:
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is visible");
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
+					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is visible");
+					break;
+			}
+		});
 	}
 
 	private List<TestRunViewType> generateTestRunsIfNeed(Integer searchCount, int count)

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.table.row;
 
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestArtifactMenu;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -33,6 +34,9 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = "./td[2]//a[text() = 'Assign task']")
 	private WebElement assignTask;
 
+	@FindBy(xpath = "./td[2]//a[text() = 'Edit task']")
+	private WebElement editTask;
+
 	@FindBy(xpath = "./td[3]//a[contains(@class, 'bug-label-bg')]")
 	private WebElement knownIssueLabel;
 
@@ -48,6 +52,32 @@ public class TestRow extends AbstractRow
 	public TestRow(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
+	}
+
+	public Status getStatus()
+	{
+		String[] classes = getRootElement().getAttribute("class").split(" ");
+		String statusClass = classes[classes.length - 1].toLowerCase();
+		Status result = null;
+		switch (statusClass)
+		{
+			case "success":
+				result = Status.PASSED;
+				break;
+			case "danger":
+				result = Status.FAILED;
+				break;
+			case "warning":
+				result = Status.SKIPPED;
+				break;
+			case "info":
+				result = Status.IN_PROGRESS;
+				break;
+			default:
+				result = Status.ABORTED;
+				break;
+		}
+		return result;
 	}
 
 	public WebElement getTestName()
@@ -128,6 +158,16 @@ public class TestRow extends AbstractRow
 	public void clickAssignTask()
 	{
 		assignTask.click();
+	}
+
+	public WebElement getEditTask()
+	{
+		return editTask;
+	}
+
+	public void clickEditTask()
+	{
+		editTask.click();
 	}
 
 	public WebElement getKnownIssueLabel()
