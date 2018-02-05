@@ -279,6 +279,6 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
 		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
-				2, 2, 2, 2, 2);
+				2, 2, 2, 2, 2, 99);
 	}
 }
