@@ -614,6 +614,9 @@
 
         if (typeof $scope.widget.model ==='object'){
             $scope.widget.model = JSON.stringify($scope.widget.model, null, 4);
+        }
+
+        if (typeof $scope.widget.location ==='object') {
             $scope.widget.location = JSON.stringify($scope.widget.location, null, 4);
         }
 
