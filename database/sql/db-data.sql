@@ -740,12 +740,12 @@ BEGIN
      sum(SKIPPED) AS "SKIPPED",
      sum(IN_PROGRESS) AS "IN_PROGRESS",
      sum(ABORTED) AS "ABORTED",
-     STARTED AS "CREATED_AT"
+     STARTED::date AS "CREATED_AT"
    FROM BIMONTHLY_VIEW
    WHERE PROJECT LIKE ''#{project}%''
    AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
-   GROUP BY STARTED
-   ORDER BY STARTED;';
+   GROUP BY "CREATED_AT"
+   ORDER BY "CREATED_AT";';
 
 	test_results_7_model :=
 	'{
@@ -1021,12 +1021,12 @@ BEGIN
      sum(SKIPPED) AS "SKIPPED",
      sum(IN_PROGRESS) AS "IN_PROGRESS",
      sum(ABORTED) AS "ABORTED",
-     STARTED AS "CREATED_AT"
+     STARTED::date AS "CREATED_AT"
    FROM BIMONTHLY_VIEW
    WHERE PROJECT LIKE ''#{project}%''
    AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
-   GROUP BY STARTED
-   ORDER BY STARTED;';
+   GROUP BY "CREATED_AT"
+   ORDER BY "CREATED_AT";';
 
 	test_results_30_model :=
 	'{
