@@ -294,4 +294,22 @@ public abstract class AbstractUIObject
 		if(windowHandles.size() != 0)
 			driver.switchTo().window((String) windowHandles.toArray()[0]);
 	}
+
+	public void select(WebElement webElement, String value)
+	{
+		String id = webElement.getAttribute("aria-owns");
+		webElement.click();
+		driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
+				+ "or contains(text(), '" + value + "')]]")).click();
+	}
+
+	public String getCurrentNodeText(WebElement webElement)
+	{
+		String text = webElement.getText();
+		for(WebElement child : webElement.findElements(By.xpath("./*")))
+		{
+			text = text.replaceFirst(child.getText(), "");
+		}
+		return text.trim();
+	}
 }

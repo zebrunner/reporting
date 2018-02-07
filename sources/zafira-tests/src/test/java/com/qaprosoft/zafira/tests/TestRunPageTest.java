@@ -23,6 +23,7 @@ import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
 import com.qaprosoft.zafira.tests.services.api.TestRunAPIService;
 import com.qaprosoft.zafira.tests.services.api.UserAPIService;
+import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
 import org.openqa.selenium.Alert;
@@ -261,7 +262,44 @@ public class TestRunPageTest extends AbstractTest
 		verifyTestRunTestInformation(testRunView, 0);
 	}
 
-	public void verifyTestRunInformation(TestRun testRun, int index)
+	@Test
+	public void verifyTestRunSearchTest()
+	{
+		TestRunAPIService testRunAPIService = new TestRunAPIService();
+		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
+		TestRunViewType testRunViewType = testRunAPIService.createTestRun(testRunTypeBuilder, 2, 0, 0, 0, 0, 0);
+		testRunPageService.clickMarkAsReviewedButton(0).clickMarkAsReviewedButton();
+		generateTestRunsIfNeed(0, 2);
+		testRunPage = (TestRunPage) testRunPage.reload();
+		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria() {
+			{
+				setId(testRunViewType.getTestRunType().getId());
+			}
+		}).get(0);
+		testRunPageService.search("PASSED", null, null, null, false, null, null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search(null, testRun.getTestSuite().getName().split(" ")[testRun.getTestSuite().getName().split(" ").length - 1], null, null, false, null, null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search(null, null, testRun.getJob().getJobURL(), null, false, null, null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search("PASSED", null, null, "DEMO", false, null, null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search(null, null, null, null, true, null, null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search("PASSED", null, null, null, false, "chrome", null);
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+		testRunPageService.search("PASSED", null, null, null, false, null, testRun.getAppVersion());
+		verifyTestRunInformation(testRun, 0);
+		testRunPageService.clearSearchForm();
+	}
+
+	private void verifyTestRunInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
 		Assert.assertTrue(testRunTableRow.getCheckbox().isDisplayed(), "Checkbox is not displayed");
@@ -284,6 +322,7 @@ public class TestRunPageTest extends AbstractTest
 				setTestRunId(testRun.getId());
 			}
 		}).size());
+		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
 		testTable = testRunTableRow.clickExpandTestsIcon();
 		Assert.assertFalse(testTable.isElementPresent(1), "Test table is visible after closing");
 	}
@@ -308,10 +347,14 @@ public class TestRunPageTest extends AbstractTest
 			Assert.assertEquals(currentTest.getOwner(), currentTestRow.getOwnerName(), "Invalid owner");
 			//Assert.assertEquals(currentTest.getTestConfig().getDevice(), currentTestRow.getDeviceName(), "Incorrect device");
 			Assert.assertEquals(currentTest.getWorkItem(WorkItem.Type.TASK).getJiraId(), currentTestRow.getTaskTicket(), "Incorrect work item id");
+			boolean isShowMoreLinkPresent = currentTestRow.isElementPresent(currentTestRow.getShowMoreLink(), 1);
 			switch(status)
 			{
-				case PASSED:
 				case ABORTED:
+					Assert.assertTrue(currentTest.getMessage().length() > 100 == isShowMoreLinkPresent, "Show more link is not present");
+					Assert.assertTrue(currentTest.getMessage().length() > 100 == (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
+					Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
+				case PASSED:
 					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is visible");
 					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
@@ -320,6 +363,10 @@ public class TestRunPageTest extends AbstractTest
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is not visible");
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+
+					Assert.assertTrue(currentTest.getMessage().length() > 100 == isShowMoreLinkPresent, "Show more link is not present");
+					Assert.assertTrue(currentTest.getMessage().length() > 100 == (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
+					Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
 					break;
 				case SKIPPED:
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
@@ -340,6 +387,6 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
 		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
-				2, 2, 2, 2, 2, 99);
+				2, 2, 2, 2, 2, 101);
 	}
 }

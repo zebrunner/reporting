@@ -22,10 +22,9 @@ public class TestRunAPIService extends AbstractAPIService
 		return new TestRunViewType(finishTestRun(testRunTypeBuilder), testTypes);
 	}
 
-	public TestRunViewType createTestRun(Integer passedCount, Integer failedCount, Integer inProgressCount, Integer skippedCount,
+	public TestRunViewType createTestRun(TestRunTypeBuilder testRunTypeBuilder, Integer passedCount, Integer failedCount, Integer inProgressCount, Integer skippedCount,
 			Integer abortedCount, int failedMessageLength)
 	{
-		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		List<TestType> testTypes = new ArrayList<>();
 		return createTestRun(testRunTypeBuilder, () -> {
 			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, passedCount, Status.PASSED, 0));
@@ -49,7 +48,7 @@ public class TestRunAPIService extends AbstractAPIService
 	{
 		List<TestRunViewType> result = new ArrayList<>();
 		IntStream.iterate(0, i -> i++).limit(count).parallel().forEach(index -> {
-			result.add(createTestRun(passedCount, failedCount, inProgressCount, skippedCount, abortedCount, failedMessageLength));
+			result.add(createTestRun(new TestRunTypeBuilder(), passedCount, failedCount, inProgressCount, skippedCount, abortedCount, failedMessageLength));
 		});
 		return result;
 	}
@@ -62,4 +61,6 @@ public class TestRunAPIService extends AbstractAPIService
 		ZAFIRA_CLIENT.sendTestRunReport(testRunType.getId(), USER.getEmail(), false, false);
 		return testRunType;
 	}
+
+
 }
