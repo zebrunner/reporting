@@ -192,13 +192,15 @@ public class TestRunService
 		testRunMapper.updateTestRun(testRun);
 		return testRun;
 	}
-	
+
+	@CacheEvict(value = "environments", allEntries = true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteTestRun(TestRun testRun) throws ServiceException
 	{
 		testRunMapper.deleteTestRun(testRun);
 	}
-	
+
+	@CacheEvict(value = "environments", allEntries = true)
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteTestRunById(Long id) throws ServiceException
 	{
@@ -477,7 +479,7 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly = true)
-	@Cacheable("environments")
+	@Cacheable(value = "environments", condition = "#result != null && #result.size() != 0")
 	public List<String> getEnvironments() throws ServiceException
 	{
 		return testRunMapper.getEnvironments();
