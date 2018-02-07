@@ -1,4 +1,4 @@
-﻿DO $$
+﻿﻿DO $$
 
 -- Declare dashboards
 DECLARE personal_dashboard_id zafira.DASHBOARDS.id%TYPE;
@@ -116,7 +116,7 @@ DECLARE nightly_details_model zafira.WIDGETS.model%TYPE;
 BEGIN
 
 -- Insert Personal dashboard data
-INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Personal', TRUE) RETURNING id INTO personal_dashboard_id;
+INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Personal Test', TRUE) RETURNING id INTO personal_dashboard_id;
 
 nightly_details_personal_sql :=
     'set schema ''zafira'';
@@ -383,28 +383,28 @@ nightly_details_personal_sql :=
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY DETAILS PERSONAL', 'table', nightly_details_personal_sql, nightly_details_personal_model)
+    ('NIGHTLY DETAILS PERSONAL TEST', 'table', nightly_details_personal_sql, nightly_details_personal_model)
 	RETURNING id INTO nightly_details_personal_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY TOTAL PERSONAL', 'piechart', monthly_total_personal_pie_sql, monthly_total_personal_pie_model)
+    ('MONTHLY TOTAL PERSONAL TEST', 'piechart', monthly_total_personal_pie_sql, monthly_total_personal_pie_model)
 	RETURNING id INTO monthly_total_personal_pie_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY TOTAL PERSONAL', 'table', monthly_total_personal_table_sql, monthly_total_personal_table_model)
+    ('MONTHLY TOTAL PERSONAL TEST', 'table', monthly_total_personal_table_sql, monthly_total_personal_table_model)
 	RETURNING id INTO monthly_total_personal_table_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TOTAL PERSONAL', 'table', weekly_total_personal_table_sql, weekly_total_personal_table_model)
+    ('WEEKLY TOTAL PERSONAL TEST', 'table', weekly_total_personal_table_sql, weekly_total_personal_table_model)
 	RETURNING id INTO weekly_total_personal_table_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TOTAL PERSONAL', 'piechart', weekly_total_personal_pie_sql, weekly_total_personal_pie_model)
+    ('WEEKLY TOTAL PERSONAL TEST', 'piechart', weekly_total_personal_pie_sql, weekly_total_personal_pie_model)
 	RETURNING id INTO weekly_total_personal_pie_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY TOTAL PERSONAL', 'piechart', nightly_total_personal_pie_sql, nightly_total_personal_pie_model)
+    ('NIGHTLY TOTAL PERSONAL TEST', 'piechart', nightly_total_personal_pie_sql, nightly_total_personal_pie_model)
 	RETURNING id INTO nightly_total_personal_pie_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY TOTAL PERSONAL', 'table', nightly_total_personal_table_sql, nightly_total_personal_table_model)
+    ('NIGHTLY TOTAL PERSONAL TEST', 'table', nightly_total_personal_table_sql, nightly_total_personal_table_model)
 	RETURNING id INTO nightly_total_personal_table_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TEST RESULTS (LAST 30 DAYS) PERSONAL', 'table', total_last_30_days_personal_sql, total_last_30_days_personal_model)
+    ('TEST RESULTS (LAST 30 DAYS) PERSONAL TEST', 'table', total_last_30_days_personal_sql, total_last_30_days_personal_model)
 	RETURNING id INTO total_last_30_days_personal_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -425,7 +425,7 @@ nightly_details_personal_sql :=
     (personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":17,"width":12,"height":11}');
 
 	-- Insert User Performance dashboard data
-    INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('User Performance', TRUE) RETURNING id INTO user_performance_dashboard_id;
+    INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('User Performance Test', TRUE) RETURNING id INTO user_performance_dashboard_id;
 
 	personal_total_rate_sql :=
 	'set schema ''zafira'';
@@ -646,17 +646,18 @@ nightly_details_personal_sql :=
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('PERSONAL TOTAL RATE', 'table', personal_total_rate_sql, personal_total_rate_model)
+    ('PERSONAL TOTAL RATE TEST', 'table', personal_total_rate_sql, personal_total_rate_model)
 	RETURNING id INTO personal_total_rate_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('PERSONAL TOTAL TESTS (MAN-HOURS)', 'linechart', personal_total_tests_man_hours_sql, personal_total_tests_man_hours_model)
+    ('PERSONAL TOTAL TESTS (MAN-HOURS) TEST', 'linechart', personal_total_tests_man_hours_sql, personal_total_tests_man_hours_model)
 	RETURNING id INTO personal_total_tests_man_hours_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TEST IMPLEMENTATION PROGRESS (NUMBER OF TEST METHODS IMPLEMENTED BY PERSON)', 'linechart', weekly_test_impl_progress_user_perf_sql, weekly_test_impl_progress_user_perf_model)
+    ('WEEKLY TEST IMPLEMENTATION PROGRESS (NUMBER OF TEST METHODS IMPLEMENTED BY PERSON) TEST', 'linechart', weekly_test_impl_progress_user_perf_sql, weekly_test_impl_progress_user_perf_model)
 	RETURNING id INTO weekly_test_impl_progress_user_perf_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TOTAL TESTS TREND', 'table', total_tests_trend_sql, total_tests_trend_model)
+    ('TOTAL TESTS TREND TEST', 'table', total_tests_trend_sql, total_tests_trend_model)
 	RETURNING id INTO total_tests_trend_id;
+
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
     (user_performance_dashboard_id, personal_total_rate_id, '{"x": 0, "y": 0, "height": 11, "width": 4}');
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -667,7 +668,7 @@ nightly_details_personal_sql :=
     (user_performance_dashboard_id, total_tests_trend_id, '{"x": 0, "y": 22, "height": 11, "width": 12}');
 
 	-- Insert General dashboard data
-	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('General', TRUE) RETURNING id INTO general_dashboard_id;
+	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('General Test', TRUE) RETURNING id INTO general_dashboard_id;
 
 	total_tests_count_sql :=
 	'set schema ''zafira'';
@@ -855,19 +856,19 @@ nightly_details_personal_sql :=
 
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TOTAL TESTS (COUNT)', 'table', total_tests_count_sql, total_tests_count_model)
+    ('TOTAL TESTS (COUNT) TEST', 'table', total_tests_count_sql, total_tests_count_model)
 	RETURNING id INTO total_tests_count_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TOTAL TESTS', 'piechart', total_tests_pie_sql, total_tests_pie_model)
+    ('TOTAL TESTS TEST', 'piechart', total_tests_pie_sql, total_tests_pie_model)
 	RETURNING id INTO total_tests_pie_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TEST IMPLEMENTATION PROGRESS', 'linechart', weekly_test_impl_progress_sql, weekly_test_impl_progress_model)
+    ('WEEKLY TEST IMPLEMENTATION PROGRESS TEST', 'linechart', weekly_test_impl_progress_sql, weekly_test_impl_progress_model)
 	RETURNING id INTO weekly_test_impl_progress_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TOTAL JIRA TICKETS', 'table', total_jira_tickets_sql, total_jira_tickets_model)
+    ('TOTAL JIRA TICKETS TEST', 'table', total_jira_tickets_sql, total_jira_tickets_model)
 	RETURNING id INTO total_jira_tickets_id;
     INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TOTAL TESTS (MAN-HOURS)', 'linechart', total_tests_man_hours_sql, total_tests_man_hours_model)
+    ('TOTAL TESTS (MAN-HOURS) TEST', 'linechart', total_tests_man_hours_sql, total_tests_man_hours_model)
 	RETURNING id INTO total_tests_man_hours_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -882,7 +883,7 @@ nightly_details_personal_sql :=
     (general_dashboard_id, total_jira_tickets_id, '{"x":8,"y":0,"width":4,"height":11}');
 
 	-- Insert Monthly dashboard data
-	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Monthly Regression', TRUE) RETURNING id INTO monthly_dashboard_id;
+	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Monthly Regression Test', TRUE) RETURNING id INTO monthly_dashboard_id;
 
     monthly_total_sql :=
     'set schema ''zafira'';
@@ -1121,19 +1122,19 @@ nightly_details_personal_sql :=
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY TOTAL', 'piechart', monthly_total_sql, monthly_total_model)
+    ('MONTHLY TOTAL TEST', 'piechart', monthly_total_sql, monthly_total_model)
 	RETURNING id INTO monthly_total_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TEST RESULTS (LAST 30 DAYS)', 'linechart', test_results_30_sql, test_results_30_model)
+    ('TEST RESULTS (LAST 30 DAYS) TEST', 'linechart', test_results_30_sql, test_results_30_model)
 	RETURNING id INTO test_results_30_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY JIRA TICKETS', 'table', monthly_jira_tickets_sql, monthly_jira_tickets_model)
+    ('MONTHLY JIRA TICKETS TEST', 'table', monthly_jira_tickets_sql, monthly_jira_tickets_model)
 	RETURNING id INTO monthly_jira_tickets_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY PLATFORM DETAILS', 'table', monthly_platform_details_sql, monthly_platform_details_model)
+    ('MONTHLY PLATFORM DETAILS TEST', 'table', monthly_platform_details_sql, monthly_platform_details_model)
 	RETURNING id INTO monthly_platform_details_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY DETAILS', 'table', monthly_details_sql, monthly_details_model)
+    ('MONTHLY DETAILS TEST', 'table', monthly_details_sql, monthly_details_model)
 	RETURNING id INTO monthly_details_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -1148,7 +1149,7 @@ nightly_details_personal_sql :=
     (monthly_dashboard_id, monthly_details_id, '{"x": 0, "y": 22, "height": 11, "width": 12}');
 
 	-- Insert Weekly dashboard data
-	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Weekly Regression', TRUE) RETURNING id INTO weekly_dashboard_id;
+	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Weekly Regression Test', TRUE) RETURNING id INTO weekly_dashboard_id;
 
 	weekly_total_sql :=
 	'set schema ''zafira'';
@@ -1384,19 +1385,19 @@ nightly_details_personal_sql :=
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TOTAL', 'piechart', weekly_total_sql, weekly_total_model)
+    ('WEEKLY TOTAL TEST', 'piechart', weekly_total_sql, weekly_total_model)
 	RETURNING id INTO weekly_total_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('TEST RESULTS (LAST 7 DAYS)', 'linechart', test_results_7_sql, test_results_7_model)
+    ('TEST RESULTS (LAST 7 DAYS) TEST', 'linechart', test_results_7_sql, test_results_7_model)
 	RETURNING id INTO test_results_7_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY JIRA TICKETS', 'table', weekly_jira_tickets_sql, weekly_jira_tickets_model)
+    ('WEEKLY JIRA TICKETS TEST', 'table', weekly_jira_tickets_sql, weekly_jira_tickets_model)
 	RETURNING id INTO weekly_jira_tickets_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY PLATFORM DETAILS', 'table', weekly_platform_details_sql, weekly_platform_details_model)
+    ('WEEKLY PLATFORM DETAILS TEST', 'table', weekly_platform_details_sql, weekly_platform_details_model)
 	RETURNING id INTO weekly_platform_details_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY DETAILS', 'table', weekly_details_sql, weekly_details_model)
+    ('WEEKLY DETAILS TEST', 'table', weekly_details_sql, weekly_details_model)
 	RETURNING id INTO weekly_details_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -1411,7 +1412,7 @@ nightly_details_personal_sql :=
     (weekly_dashboard_id, weekly_details_id, '{"x": 0, "y": 22, "height": 11, "width": 12}');
 
 	-- Insert Nightly dashboard data
-	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Nightly Regression', TRUE) RETURNING id INTO nightly_dashboard_id;
+	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('Nightly Regression Test', TRUE) RETURNING id INTO nightly_dashboard_id;
 
 	nightly_total_sql :=
 	'set schema ''zafira'';
@@ -1538,16 +1539,16 @@ nightly_details_personal_sql :=
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY TOTAL', 'piechart', nightly_total_sql, nightly_total_model)
+    ('NIGHTLY TOTAL TEST', 'piechart', nightly_total_sql, nightly_total_model)
 	RETURNING id INTO nightly_total_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY JIRA TICKETS', 'table', nightly_jira_tickets_sql, nightly_jira_tickets_model)
+    ('NIGHTLY JIRA TICKETS TEST', 'table', nightly_jira_tickets_sql, nightly_jira_tickets_model)
 	RETURNING id INTO nightly_jira_tickets_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY PLATFORM DETAILS', 'table', nightly_platform_details_sql, nightly_platform_details_model)
+    ('NIGHTLY PLATFORM DETAILS TEST', 'table', nightly_platform_details_sql, nightly_platform_details_model)
 	RETURNING id INTO nightly_platform_details_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY DETAILS', 'table', nightly_details_sql, nightly_details_model)
+    ('NIGHTLY DETAILS TEST', 'table', nightly_details_sql, nightly_details_model)
 	RETURNING id INTO nightly_details_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
