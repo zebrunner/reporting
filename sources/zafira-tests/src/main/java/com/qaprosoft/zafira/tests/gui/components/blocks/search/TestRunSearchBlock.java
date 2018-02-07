@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.blocks.search;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -60,6 +61,12 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 		return statusSelect;
 	}
 
+	public void selectStatus(String status)
+	{
+		if(! isBlank(status))
+			select(statusSelect, status);
+	}
+
 	public WebElement getTestSuiteInput()
 	{
 		return testSuiteInput;
@@ -67,7 +74,8 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void typeTestSuiteName(String name)
 	{
-		testSuiteInput.sendKeys(name);
+		if(! isBlank(name))
+			testSuiteInput.sendKeys(name);
 	}
 
 	public WebElement getJobURLInput()
@@ -77,12 +85,19 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void typeJobURL(String url)
 	{
-		jobURLInput.sendKeys(url);
+		if(! isBlank(url))
+			jobURLInput.sendKeys(url);
 	}
 
 	public WebElement getEnvironmentSelect()
 	{
 		return environmentSelect;
+	}
+
+	public void selectEnvironment(String environment)
+	{
+		if(! isBlank(environment))
+			select(environmentSelect, environment);
 	}
 
 	public WebElement getReviewedCheckbox()
@@ -100,6 +115,12 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 		return platformSelect;
 	}
 
+	public void selectPlatform(String platform)
+	{
+		if(! isBlank(platform))
+			select(platformSelect, platform);
+	}
+
 	public WebElement getAppVersionInput()
 	{
 		return appVersionInput;
@@ -107,7 +128,8 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void typeAppVersion(String appVersion)
 	{
-		appVersionInput.sendKeys(appVersion);
+		if(! isBlank(appVersion))
+			appVersionInput.sendKeys(appVersion);
 	}
 
 	public WebElement getDateButton()

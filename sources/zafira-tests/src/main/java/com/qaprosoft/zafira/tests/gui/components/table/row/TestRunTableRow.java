@@ -111,7 +111,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public String getTestRunNameText()
 	{
-		return testRunName.getText();
+		return getCurrentNodeText(testRunName);
 	}
 
 	public String getTestSuiteFileName()

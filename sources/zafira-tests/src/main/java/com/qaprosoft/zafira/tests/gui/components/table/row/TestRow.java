@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.List;
+
 public class TestRow extends AbstractRow
 {
 
@@ -21,6 +23,15 @@ public class TestRow extends AbstractRow
 
 	@FindBy(xpath = "./td[1]//span[3]")
 	private WebElement device;
+
+	@FindBy(xpath = ".//*[contains(text(), 'more')]")
+	private WebElement showMoreLink;
+
+	@FindBy(xpath = ".//*[contains(text(), 'less')]")
+	private WebElement showLess;
+
+	@FindBy(xpath = ".//*[@name = 'errorMsg']/*")
+	private List<WebElement> logs;
 
 	@FindBy(xpath = "./td[2]//a[text() = 'Mark as passed']")
 	private WebElement markAsPassed;
@@ -118,6 +129,41 @@ public class TestRow extends AbstractRow
 	public String getDeviceName()
 	{
 		return device.getText();
+	}
+
+	public WebElement getShowMoreLink()
+	{
+		return showMoreLink;
+	}
+
+	public void clickShowMoreLink()
+	{
+		showMoreLink.click();
+	}
+
+	public void clickShowLessLink()
+	{
+		showLess.click();
+	}
+
+	public WebElement getShowLess()
+	{
+		return showLess;
+	}
+
+	public List<WebElement> getLogs()
+	{
+		return logs;
+	}
+
+	public String getShowMoreLogText()
+	{
+		return logs.get(0).getText();
+	}
+
+	public String getShowLessLogText()
+	{
+		return logs.get(1).getText();
 	}
 
 	public WebElement getMarkAsPassed()

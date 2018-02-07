@@ -1,11 +1,13 @@
 package com.qaprosoft.zafira.tests.gui.components.blocks.search;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
 
 public abstract class AbstractSearchBlock extends AbstractUIObject
 {
@@ -41,5 +43,10 @@ public abstract class AbstractSearchBlock extends AbstractUIObject
 	public WebElement getClearButton()
 	{
 		return clearButton;
+	}
+
+	protected boolean isBlank(String value)
+	{
+		return StringUtils.isBlank(value);
 	}
 }

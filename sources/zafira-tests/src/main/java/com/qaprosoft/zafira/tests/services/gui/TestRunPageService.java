@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import com.qaprosoft.zafira.tests.gui.components.blocks.search.TestRunSearchBlock;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedModalWindow;
@@ -35,6 +36,7 @@ public class TestRunPageService extends AbstractPageService
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
 		testRunSettingMenu.clickMarkAsReviewedButton();
+		testRunPage.getMarkAsReviewedModalWindow().waitUntilElementToBeClickableWithBackdropMask(testRunPage.getMarkAsReviewedModalWindow().getMarkAsReviewedButton(), 1);
 		return testRunPage.getMarkAsReviewedModalWindow();
 	}
 
@@ -74,5 +76,29 @@ public class TestRunPageService extends AbstractPageService
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
 		testRunSettingMenu.clickRebuildButton();
 		return testRunPage.getRebuildModalWindow();
+	}
+
+	public TestRunPage search(String status, String testSuite, String jobUrl, String environment, boolean reviewed, String platform,
+			String appVersion)
+	{
+		TestRunSearchBlock testRunSearchBlock = testRunPage.getTestRunSearchBlock();
+		testRunSearchBlock.selectStatus(status);
+		testRunSearchBlock.typeTestSuiteName(testSuite);
+		testRunSearchBlock.typeJobURL(jobUrl);
+		testRunSearchBlock.selectEnvironment(environment);
+		if(reviewed)
+			testRunSearchBlock.clickReviewedCheckbox();
+		testRunSearchBlock.selectPlatform(platform);
+		testRunSearchBlock.typeAppVersion(appVersion);
+		testRunSearchBlock.clickSearchButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
+	}
+
+	public TestRunPage clearSearchForm()
+	{
+		testRunPage.getTestRunSearchBlock().clickClearButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
 	}
 }
