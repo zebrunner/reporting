@@ -42,6 +42,7 @@
                                 }
                             });
                         });
+                        settingInitializedWatcher();
                     }
                 });
 
@@ -66,7 +67,7 @@
                 })
             };
 
-	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
+	        var settingInitializedWatcher = $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
 	            switch(data) {
                     case "RABBITMQ":
@@ -120,11 +121,12 @@
 	            $document.scrollTo(0, 0);
 	        });
 
-	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
+	        var loginSuccessWatcher = $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
 	        	AuthService.SetCredentials(auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
                     $state.go('dashboard', {id: rs});
+                    loginSuccessWatcher();
                 }, function (rs) {
                 })
 	        });
