@@ -222,15 +222,15 @@
                     if(rs.success)
                     {
                         $rootScope.currentUser.companyLogo.value = rs.data.url;
-                        SettingsService.editSetting($rootScope.companyLogo)
+                        SettingsService.editSetting($rootScope.currentUser.companyLogo)
                             .then(function (prs) {
                                 if(prs.success)
                                 {
                                     $rootScope.currentUser.companyLogo.value += '?' + (new Date()).getTime();
+                                    alertify.success("Photo was uploaded");
                                     $scope.hide();
                                 }
                             });
-                        alertify.success("Photo was uploaded");
                     }
                     else
                     {
