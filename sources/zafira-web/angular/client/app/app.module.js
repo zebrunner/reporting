@@ -342,8 +342,8 @@
         return {
             restrict: 'E',
             template: '<span>' +
-            '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-show="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
-            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-show="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
+            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
             '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
             require: 'ngModel',
@@ -387,15 +387,19 @@
             'ABORTED': 4
         };
         return function(items, field, reverse) {
-            var filtered = [];
-            angular.forEach(items, function(item) {
-                filtered.push(item);
-            });
-            filtered.sort(function (a, b) {
-                return field == 'status' ? (STATUSES_ORDER[a[field]] > STATUSES_ORDER[b[field]] ? 1 : -1) : (a[field] > b[field] ? 1 : -1);
-            });
-            if(reverse) filtered.reverse();
-            return filtered;
+            if(field) {
+                var filtered = [];
+                angular.forEach(items, function (item) {
+                    filtered.push(item);
+                });
+                filtered.sort(function (a, b) {
+                    return field == 'status' ? (STATUSES_ORDER[a[field]] > STATUSES_ORDER[b[field]] ? 1 : -1) :
+                        typeof a[field] == 'string' ? (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1) : (a[field] > b[field] ? 1 : -1);
+                });
+                if (reverse) filtered.reverse();
+                return filtered;
+            }
+            return items
         };
     }).filter('isEmpty', [function() {
 	  return function(object) {
