@@ -708,6 +708,8 @@
                 }
             })
                 .then(function(answer) {
+                    testRun.reviewed = answer.reviewed;
+                    testRun.comments = answer.comments;
                 }, function() {
                 });
         };
@@ -1047,7 +1049,7 @@
 
     function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable, slackChannels) {
         $scope.title = testRun.testSuite.name;
-        $scope.testRun = testRun;
+        $scope.testRun = angular.copy(testRun);
 
         $scope.markReviewed = function(){
             var rq = {};
@@ -1061,7 +1063,8 @@
                 TestRunService.markTestRunAsReviewed($scope.testRun.id, rq).then(function(rs) {
                     if(rs.success)
                     {
-                        $scope.hide();
+                        $scope.testRun.reviewed = true;
+                        $scope.hide($scope.testRun);
                         alertify.success('Test run #' + $scope.testRun.id + ' marked as reviewed');
                         if(isSlackAvailable && slackChannels.indexOf(testRun.job.name) !== -1) {
                             if(confirm("Would you like to post latest test run status to slack?"))
@@ -1077,8 +1080,8 @@
                 });
             }
         };
-        $scope.hide = function() {
-            $mdDialog.hide();
+        $scope.hide = function(testRun) {
+            $mdDialog.hide(testRun);
         };
         $scope.cancel = function() {
             $mdDialog.cancel();
