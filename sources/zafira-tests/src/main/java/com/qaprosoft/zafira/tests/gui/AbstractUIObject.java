@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -306,10 +307,16 @@ public abstract class AbstractUIObject
 	public String getCurrentNodeText(WebElement webElement)
 	{
 		String text = webElement.getText();
-		for(WebElement child : webElement.findElements(By.xpath("./*")))
+		List<WebElement> childs = webElement.findElements(By.xpath("./*"));
+		for(WebElement child : childs)
 		{
 			text = text.replaceFirst(child.getText(), "");
 		}
 		return text.trim();
+	}
+
+	public Alert getAlert()
+	{
+		return driver.switchTo().alert();
 	}
 }

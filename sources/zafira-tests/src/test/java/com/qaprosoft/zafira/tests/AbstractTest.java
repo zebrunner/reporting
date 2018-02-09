@@ -42,6 +42,8 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 	protected String ADMIN1_PASS = Config.get("admin1.pass");
 
 	protected WebDriver driver;
+
+	public static final String COUNT_OF_PAGE_ELEMENTS = "%s - %s of %s";
 	
 	@BeforeTest
 	public void start(ITestContext context) throws MalformedURLException

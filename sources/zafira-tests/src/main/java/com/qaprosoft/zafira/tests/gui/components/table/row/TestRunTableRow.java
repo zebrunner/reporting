@@ -96,7 +96,13 @@ public class TestRunTableRow extends AbstractRow
 
 	public void checkCheckbox()
 	{
-		check(checkbox);
+		if(isElementPresent(checkbox, 1))
+		{
+			check(checkbox);
+		} else
+		{
+			progressCircularIcon.click();
+		}
 	}
 
 	public void uncheckCheckbox()
