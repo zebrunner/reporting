@@ -11,6 +11,8 @@
 
         $scope.pristineWidgets = [];
 
+        $scope.unexistWidgets = [];
+
         $scope.dashboard = {};
 
         $scope.gridstackOptions = {
@@ -25,23 +27,23 @@
 
         $scope.startEditWidgets = function () {
             angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack').enable();
-            $scope.showGridActionToast();
+            showGridActionToast();
         };
 
         var defaultWidgetLocation = '{ "x":0, "y":0, "width":4, "height":11 }';
 
-        $scope.loadDashboardData = function (dashboard, refresh) {
+        function loadDashboardData (dashboard, refresh) {
             for (var i = 0; i < dashboard.widgets.length; i++) {
                 var currentWidget = dashboard.widgets[i];
-                currentWidget.location = $scope.jsonSafeParse(currentWidget.location);
+                currentWidget.location = jsonSafeParse(currentWidget.location);
                 if (!refresh || refresh && currentWidget.refreshable) {
-                    $scope.loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
+                    loadWidget(dashboard.title, currentWidget, dashboard.attributes, refresh);
                 }
             }
             angular.copy(dashboard.widgets, $scope.pristineWidgets);
         };
 
-        $scope.loadWidget = function (dashboardName, widget, attributes, refresh) {
+        function loadWidget (dashboardName, widget, attributes, refresh) {
             var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             if(!refresh){
                 $scope.isLoading = true;
@@ -56,7 +58,7 @@
                         }
                     }
                     if(!refresh){
-                        widget.model = $scope.jsonSafeParse(widget.model);
+                        widget.model = jsonSafeParse(widget.model);
                     }
                     widget.data = {};
                     widget.data.dataset = data;
@@ -70,18 +72,29 @@
             });
         };
 
+        function getNextEmptyGridArea(defaultLocation) {
+            var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+            var location = jsonSafeParse(defaultLocation);
+            while(! gridstack.isAreaEmpty(location.x, location.y, location.width, location.height)) {
+                location.y = location.y + 11;
+                if(location.y > 1100)
+                    break;
+            }
+            return jsonSafeStringify(location);
+        }
+
         $scope.addDashboardWidget = function (widget) {
-            widget.location = defaultWidgetLocation;
+            widget.location = getNextEmptyGridArea(defaultWidgetLocation);
             var data = {"id": widget.id, "location": widget.location};
             DashboardService.AddDashboardWidget($stateParams.id, data).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard.widgets.push(widget);
                     $scope.dashboard.widgets.forEach(function (widget) {
-                        widget.location = $scope.jsonSafeStringify(widget.location);
+                        widget.location = jsonSafeStringify(widget.location);
                     });
-                    $scope.loadDashboardData($scope.dashboard, false);
+                    loadDashboardData($scope.dashboard, false);
                     alertify.success("Widget added");
-                    $scope.updateWidgetsToAdd();
+                    updateWidgetsToAdd();
                 }
                 else {
                     alertify.error(rs.message);
@@ -96,11 +109,11 @@
                     if (rs.success) {
                         $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOf(widget), 1);
                         $scope.dashboard.widgets.forEach(function (widget) {
-                            widget.location = $scope.jsonSafeStringify(widget.location);
+                            widget.location = jsonSafeStringify(widget.location);
                         });
-                        $scope.loadDashboardData($scope.dashboard, false);
+                        loadDashboardData($scope.dashboard, false);
                         alertify.success("Widget deleted");
-                        $scope.updateWidgetsToAdd();
+                        updateWidgetsToAdd();
                     }
                     else {
                         alertify.error(rs.message);
@@ -118,8 +131,7 @@
             }
         };
 
-        $scope.unexistWidgets = [];
-        $scope.updateWidgetsToAdd = function () {
+        function updateWidgetsToAdd () {
             $timeout(function () {
                 if($scope.widgets && $scope.dashboard.widgets)
                 $scope.unexistWidgets =  $scope.widgets.filter(function(widget) {
@@ -129,7 +141,6 @@
                     return !existingWidget.length || widget.id != existingWidget[0].id;
                 });
             }, 800);
-            return $scope.unexistWidgets;
         };
 
         $scope.resetGrid = function () {
@@ -140,7 +151,7 @@
                     return widget.id === w.id;
                 })[0];
                 if(currentWidget) {
-                    widget.location = $scope.jsonSafeParse(widget.location);
+                    widget.location = jsonSafeParse(widget.location);
                     currentWidget.location.x = widget.location.x;
                     currentWidget.location.y = widget.location.y;
                     currentWidget.location.height = widget.location.height;
@@ -154,7 +165,7 @@
             //gridstack.commit();
         };
 
-        $scope.showGridActionToast = function() {
+        function showGridActionToast() {
             $mdToast.show({
                 hideDelay: 0,
                 position: 'bottom right',
@@ -215,14 +226,14 @@
             return value;
         };
 
-        $scope.jsonSafeParse = function (preparedJson) {
+        function jsonSafeParse (preparedJson) {
             if(!isJSON(preparedJson)) {
                 return JSON.parse(preparedJson);
             }
             return preparedJson;
         };
 
-        $scope.jsonSafeStringify = function (preparedJson) {
+        function jsonSafeStringify (preparedJson) {
             if(isJSON(preparedJson)) {
                 return JSON.stringify(preparedJson);
             }
@@ -385,25 +396,25 @@
                     dashboard.attributes.push(queryAttributes[i]);
                 }
             }
-            $scope.loadDashboardData(dashboard, refresh);
+            loadDashboardData(dashboard, refresh);
         };
 
         var refreshPromise;
         var isRefreshing = false;
-        $scope.startRefreshing = function(){
+        function startRefreshing(){
             if(isRefreshing) return;
             isRefreshing = true;
             (function refreshEvery(){
                 if ($location.$$url.indexOf("dashboards") > -1){
                     if ($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0){
-                        $scope.loadDashboardData($scope.dashboard, true);
+                        loadDashboardData($scope.dashboard, true);
+                        refreshPromise = $timeout(refreshEvery, $rootScope.currentUser.refreshInterval)
                     }
-                    refreshPromise = $timeout(refreshEvery, $rootScope.currentUser.refreshInterval)
                 }
          }());
         };
 
-        $scope.getDashboardById = function (dashboardId) {
+        function getDashboardById (dashboardId) {
             DashboardService.GetDashboardById(dashboardId).then(function (rs) {
                 if (rs.success) {
                     $scope.dashboard = rs.data;
@@ -422,7 +433,7 @@
                 if ($scope.currentUserId && $location.$$search.userId) {
                     if ($scope.currentUserId !== $location.$$search.userId) {
                         $scope.currentUserId = $location.search().userId;
-                        $scope.getDashboardById($stateParams.id);
+                        getDashboardById($stateParams.id);
                     }
                 }
             }
@@ -432,25 +443,28 @@
             $scope.resetGrid();
         });
 
+        var defaultDashboardWatcher = $scope.$watch('currentUser.defaultDashboard', function (newVal) {
+            if(newVal) {
+                startRefreshing();
+                if ($rootScope.currentUser.isAdmin)
+                    DashboardService.GetWidgets().then(function (rs) {
+                        if (rs.success) {
+                            $scope.widgets = rs.data;
+                            updateWidgetsToAdd();
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    });
+                defaultDashboardWatcher();
+            }
+        });
+
         (function init() {
 
             if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
-            $scope.getDashboardById($stateParams.id);
-            $rootScope.$on('event:defaultPreferencesInitialized', function () {
-                $scope.startRefreshing();
-                if($rootScope.currentUser.isAdmin)
-                    DashboardService.GetWidgets().then(function (rs) {
-                        if (rs.success) {
-                            $scope.widgets = rs.data;
-                        } else {
-                            alertify.error(rs.message);
-                        }
-                    }).then(function () {
-                        $scope.updateWidgetsToAdd();
-                    });
-            });
+            getDashboardById($stateParams.id);
         })();
     }
 
@@ -615,6 +629,9 @@
 
         if (typeof $scope.widget.model ==='object'){
             $scope.widget.model = JSON.stringify($scope.widget.model, null, 4);
+        }
+
+        if (typeof $scope.widget.location ==='object') {
             $scope.widget.location = JSON.stringify($scope.widget.location, null, 4);
         }
 
