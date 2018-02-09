@@ -29,8 +29,6 @@ import java.util.concurrent.ExecutionException;
 public class UserPageTest extends AbstractTest
 {
 
-	private static final String COUNT_OF_PAGE_ELEMENTS = "%s - %s of %s";
-
 	private UserPage userPage;
 	private UserPageService userPageService;
 	private LoginPageService loginPageService;

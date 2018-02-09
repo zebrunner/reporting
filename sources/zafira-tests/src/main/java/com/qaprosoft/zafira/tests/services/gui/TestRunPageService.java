@@ -8,6 +8,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWind
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
+import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import org.openqa.selenium.WebDriver;
 
 public class TestRunPageService extends AbstractPageService
@@ -100,5 +101,38 @@ public class TestRunPageService extends AbstractPageService
 		testRunPage.getTestRunSearchBlock().clickClearButton();
 		testRunPage.waitUntilPageIsLoaded();
 		return testRunPage;
+	}
+
+	public TestRunPage goToFirstPage()
+	{
+		testRunPage.getPaginationBlock().clickFirstPageButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
+	}
+
+	public TestRunPage goToPreviousPage()
+	{
+		testRunPage.getPaginationBlock().clickPreviousPageButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
+	}
+
+	public TestRunPage goToNextPage()
+	{
+		testRunPage.getPaginationBlock().clickNextPageButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
+	}
+
+	public TestRunPage goToLastPage()
+	{
+		testRunPage.getPaginationBlock().clickLastPageButton();
+		testRunPage.waitUntilPageIsLoaded();
+		return testRunPage;
+	}
+
+	public int getTestRunTableRowsCount()
+	{
+		return testRunPage.getTestRunTable().getTestRunTableRows().size();
 	}
 }

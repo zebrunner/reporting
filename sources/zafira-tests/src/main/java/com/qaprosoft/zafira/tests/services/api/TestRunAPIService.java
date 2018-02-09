@@ -19,7 +19,16 @@ public class TestRunAPIService extends AbstractAPIService
 	public TestRunViewType createTestRun(TestRunTypeBuilder testRunTypeBuilder, Supplier<List<TestType>> testTypeSupplier)
 	{
 		List<TestType> testTypes = testTypeSupplier.get();
-		return new TestRunViewType(finishTestRun(testRunTypeBuilder), testTypes);
+		boolean inProgress = false;
+		for(TestType testType : testTypes)
+		{
+			if(testType.getStatus().equals(Status.IN_PROGRESS))
+			{
+				inProgress = true;
+				break;
+			}
+		}
+		return new TestRunViewType(finishTestRun(testRunTypeBuilder, inProgress), testTypes);
 	}
 
 	public TestRunViewType createTestRun(TestRunTypeBuilder testRunTypeBuilder, Integer passedCount, Integer failedCount, Integer inProgressCount, Integer skippedCount,
@@ -53,14 +62,15 @@ public class TestRunAPIService extends AbstractAPIService
 		return result;
 	}
 
-	private TestRunType finishTestRun(TestRunTypeBuilder testRunTypeBuilder)
+	private TestRunType finishTestRun(TestRunTypeBuilder testRunTypeBuilder, boolean inProgress)
 	{
 		TestRunType testRunType = testRunTypeBuilder.getTestRunType();
-		testRunType = ZAFIRA_CLIENT.updateTestRun(testRunType).getObject();
-		testRunType = ZAFIRA_CLIENT.finishTestRun(testRunType.getId()).getObject();
-		ZAFIRA_CLIENT.sendTestRunReport(testRunType.getId(), USER.getEmail(), false, false);
+		if(! inProgress)
+		{
+			testRunType = ZAFIRA_CLIENT.updateTestRun(testRunType).getObject();
+			testRunType = ZAFIRA_CLIENT.finishTestRun(testRunType.getId()).getObject();
+			ZAFIRA_CLIENT.sendTestRunReport(testRunType.getId(), USER.getEmail(), false, false);
+		}
 		return testRunType;
 	}
-
-
 }
