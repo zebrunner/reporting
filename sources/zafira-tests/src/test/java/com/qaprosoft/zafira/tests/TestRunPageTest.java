@@ -28,6 +28,7 @@ import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -43,6 +44,8 @@ public class TestRunPageTest extends AbstractTest
 
 	private TestRunPageService testRunPageService;
 	private TestRunPage testRunPage;
+
+	private static final String DELETE_RUNS_ALERT_TEXT = "Do you really want to delete multiple test runs?";
 
 	@Autowired
 	private TestRunMapper testRunMapper;
@@ -299,6 +302,72 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.clearSearchForm();
 	}
 
+	@Test
+	public void verifyPaginationTest()
+	{
+		Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getFirstPageButton()), "First page button is not disabled");
+		Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getPreviousPageButton()), "Previous page button is not disabled");
+		if(testRunPage.getPageItemsCount() > 20)
+		{
+			Assert.assertFalse(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getNextPageButton()),
+					"Next page button is not disabled");
+			Assert.assertFalse(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getLastPageButton()),
+					"Last page button is not disabled");
+		} else
+		{
+			Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getNextPageButton()),
+					"Next page button is not disabled");
+			Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getLastPageButton()),
+					"Last page button is not disabled");
+		}
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 60);
+		testRunPage.reload();
+		testRunPage.waitUntilPageIsLoaded();
+		int totalCount = testRunMapper.getTestRunsSearchCount(new TestRunSearchCriteria());
+		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
+		testRunPageService.goToNextPage();
+		Assert.assertEquals(testRunPageService.getTestRunTableRowsCount(), 20, "Count of user menu buttons is not 20");
+		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 21, 40, totalCount), "Count of user menu buttons is not 20");
+		testRunPageService.goToPreviousPage();
+		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
+		testRunPageService.goToLastPage();
+		int decriment = totalCount % 20 == 0 ? 20 : totalCount % 20;
+		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, totalCount - decriment + 1, totalCount, totalCount), "Count of user menu buttons is not 20");
+		testRunPageService.goToFirstPage();
+		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
+	}
+
+	@Test
+	public void verifyFabButtonActionsTest()
+	{
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getFabButton().getRootElement(), 1), "Main fab button is present");
+		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
+		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
+		Assert.assertFalse(testRunPage.isChecked(testRunPage.getTestRunSearchBlock().getMainCheckbox()), "Main checkbox is checked");
+		testRunPage.getTestRunSearchBlock().checkMainCheckbox();
+		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(testRunPage.isChecked(row.getCheckbox()), "Test run row checkbox is not checked"));
+		testRunPage.getTestRunSearchBlock().uncheckMainCheckbox();
+		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
+		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
+		testRunPage.getFabButton().clickButtonTrigger();
+		testRunPage.getFabButton().clickButtonMiniByClassName("trash");
+		Assert.assertEquals(testRunPage.getAlert().getText(), DELETE_RUNS_ALERT_TEXT, "Incorrect title of delete runs alert");
+		testRunPage.getAlert().dismiss();
+		List<TestRun> testRuns = testRunMapper.searchTestRuns(new TestRunSearchCriteria());
+		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");
+		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is not deleted");
+		testRunPage = (TestRunPage) testRunPage.reload();
+		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
+		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
+		testRunPage.getFabButton().clickButtonTrigger();
+		testRunPage.getFabButton().clickButtonMiniByClassName("trash");
+		testRunPage.getAlert().accept();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");
+		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is not deleted");
+	}
+
 	private void verifyTestRunInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
@@ -387,6 +456,6 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
 		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
-				2, 2, 2, 2, 2, 101);
+				2, 2, 0, 2, 2, 101);
 	}
 }
