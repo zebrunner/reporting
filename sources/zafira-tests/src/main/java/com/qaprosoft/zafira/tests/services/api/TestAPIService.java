@@ -12,12 +12,24 @@ import java.util.stream.IntStream;
 public class TestAPIService extends AbstractAPIService
 {
 
-	public List<TestType> createTests(TestTypeBuilder testTypeBuilder, int testCount, Status finishStatus, int failedMessageLenght)
+	private TestType testType;
+
+	public TestAPIService()
+	{
+	}
+
+	public TestAPIService(TestType testType)
+	{
+		this.testType = testType;
+	}
+
+	public List<TestType> createTests(TestRunTypeBuilder testRunTypeBuilder, int testCount, Status finishStatus, int failedMessageLenght)
 	{
 		List<TestType> testTypes = new ArrayList<>();
 		if (testCount > 0)
 		{
 			IntStream.iterate(0, i -> i++).limit(testCount).forEach(index -> {
+				TestTypeBuilder testTypeBuilder = new TestTypeBuilder(testRunTypeBuilder, this.testType);
 				testTypes.add(createTest(testTypeBuilder, finishStatus, failedMessageLenght));
 			});
 		}
@@ -29,7 +41,7 @@ public class TestAPIService extends AbstractAPIService
 		TestType testType = testTypeBuilder.getCurrentInstance();
 		if(finishStatus.equals(Status.FAILED) || finishStatus.equals(Status.SKIPPED))
 			testType.setMessage(testTypeBuilder.getNextRandomString(failedMessageLength));
-		if (!finishStatus.equals(Status.IN_PROGRESS))
+		if (! finishStatus.equals(Status.IN_PROGRESS))
 		{
 			testType.setStatus(finishStatus);
 			testType.setFinishTime(System.currentTimeMillis() + random.nextInt(1000000));
@@ -37,4 +49,6 @@ public class TestAPIService extends AbstractAPIService
 		}
 		return testType;
 	}
+
+
 }

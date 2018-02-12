@@ -5,7 +5,6 @@ import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
 import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
-import com.qaprosoft.zafira.tests.services.api.builders.TestTypeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,14 @@ public class TestRunAPIService extends AbstractAPIService
 
 	private TestAPIService testAPIService = new TestAPIService();
 
-	private TestTypeBuilder testTypeBuilder;
+	public TestRunAPIService()
+	{
+	}
+
+	public TestRunAPIService(TestAPIService testAPIService)
+	{
+		this.testAPIService = testAPIService;
+	}
 
 	public TestRunViewType createTestRun(TestRunTypeBuilder testRunTypeBuilder, Supplier<List<TestType>> testTypeSupplier)
 	{
@@ -39,12 +45,11 @@ public class TestRunAPIService extends AbstractAPIService
 	{
 		List<TestType> testTypes = new ArrayList<>();
 		return createTestRun(testRunTypeBuilder, () -> {
-			testTypeBuilder = testTypeBuilder == null ? new TestTypeBuilder(testRunTypeBuilder) : testTypeBuilder;
-			testTypes.addAll(testAPIService.createTests(this.testTypeBuilder, passedCount, Status.PASSED, 0));
-			testTypes.addAll(testAPIService.createTests(this.testTypeBuilder, failedCount, Status.FAILED, failedMessageLength));
-			testTypes.addAll(testAPIService.createTests(this.testTypeBuilder, skippedCount, Status.SKIPPED, failedMessageLength));
-			testTypes.addAll(testAPIService.createTests(this.testTypeBuilder, abortedCount, Status.ABORTED, 0));
-			testTypes.addAll(testAPIService.createTests(this.testTypeBuilder, inProgressCount, Status.IN_PROGRESS, 0));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, passedCount, Status.PASSED, 0));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, failedCount, Status.FAILED, failedMessageLength));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, skippedCount, Status.SKIPPED, failedMessageLength));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, abortedCount, Status.ABORTED, 0));
+			testTypes.addAll(testAPIService.createTests(testRunTypeBuilder, inProgressCount, Status.IN_PROGRESS, 0));
 			return testTypes;
 		});
 	}
@@ -78,8 +83,8 @@ public class TestRunAPIService extends AbstractAPIService
 		return testRunType;
 	}
 
-	public void setTestTypeBuilder(TestTypeBuilder testTypeBuilder)
+	public TestAPIService getTestAPIService()
 	{
-		this.testTypeBuilder = testTypeBuilder;
+		return testAPIService;
 	}
 }
