@@ -17,6 +17,9 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = "./td[1]/b")
 	private WebElement testName;
 
+	@FindBy(xpath = "./td[1]/b/span[text() = 'BLOCKER']")
+	private WebElement blockerLabel;
+
 	@FindBy(xpath = "./td[1]//timer")
 	private WebElement elapsedTime;
 
@@ -109,6 +112,11 @@ public class TestRow extends AbstractRow
 		return testName.getText();
 	}
 
+	public WebElement getBlockerLabel()
+	{
+		return blockerLabel;
+	}
+
 	public WebElement getElapsedTime()
 	{
 		return elapsedTime;
@@ -189,9 +197,10 @@ public class TestRow extends AbstractRow
 		return markAsKnownIssue;
 	}
 
-	public void clickMarkAsKnownIssue()
+	public KnownIssueModalWindow clickMarkAsKnownIssue()
 	{
 		markAsKnownIssue.click();
+		return knownIssueModalWindow;
 	}
 
 	public WebElement getEditKnownIssue()
@@ -199,9 +208,10 @@ public class TestRow extends AbstractRow
 		return editKnownIssue;
 	}
 
-	public void clickEditKnownIssue()
+	public KnownIssueModalWindow clickEditKnownIssue()
 	{
 		editKnownIssue.click();
+		return knownIssueModalWindow;
 	}
 
 	public WebElement getAssignTask()
