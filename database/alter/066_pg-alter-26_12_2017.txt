@@ -1261,7 +1261,7 @@ nightly_details_personal_sql :=
     ('MONTHLY TOTAL TEST', 'piechart', monthly_total_sql, monthly_total_model)
 	RETURNING id INTO monthly_total_id;
     INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('MONTHLY TOTAL (%)', 'piechart', monthly_total_percent_sql, monthly_total_percent_model)
+    ('MONTHLY TOTAL (%) TEST', 'piechart', monthly_total_percent_sql, monthly_total_percent_model)
 	RETURNING id INTO monthly_total_percent_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
     ('TEST RESULTS (LAST 30 DAYS) TEST', 'linechart', test_results_30_sql, test_results_30_model)
@@ -1521,7 +1521,7 @@ nightly_details_personal_sql :=
     ('WEEKLY TOTAL TEST', 'piechart', weekly_total_sql, weekly_total_model)
 	RETURNING id INTO weekly_total_id;
     INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('WEEKLY TOTAL (%)', 'piechart', weekly_total_percent_sql, weekly_total_percent_model)
+    ('WEEKLY TOTAL (%) TEST', 'piechart', weekly_total_percent_sql, weekly_total_percent_model)
 	RETURNING id INTO weekly_total_percent_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
     ('TEST RESULTS (LAST 7 DAYS) TEST', 'linechart', test_results_7_sql, test_results_7_model)
