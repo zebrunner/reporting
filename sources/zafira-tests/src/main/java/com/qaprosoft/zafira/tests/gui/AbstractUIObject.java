@@ -212,7 +212,7 @@ public abstract class AbstractUIObject
 
 	public boolean hasDisabledAttribute(WebElement webElement)
 	{
-		return ! StringUtils.isBlank(webElement.getAttribute("disabled"));
+		return ! StringUtils.isBlank(webElement.getAttribute("disabled")) && ! webElement.getAttribute("disabled").equals("disabled");
 	}
 
 	public boolean hasSelectedAttribute(WebElement webElement)

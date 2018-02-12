@@ -10,10 +10,7 @@ import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWindow;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedModalWindow;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.*;
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
@@ -24,6 +21,7 @@ import com.qaprosoft.zafira.tests.models.TestRunViewType;
 import com.qaprosoft.zafira.tests.services.api.TestRunAPIService;
 import com.qaprosoft.zafira.tests.services.api.UserAPIService;
 import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
+import com.qaprosoft.zafira.tests.services.api.builders.TestTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
 import org.openqa.selenium.Alert;
@@ -34,6 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -366,6 +365,61 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is not deleted");
+	}
+
+	@Test
+	public void verifyTestAssignTicketTest()
+	{
+		TestRunAPIService testRunAPIService = new TestRunAPIService();
+		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
+		TestTypeBuilder testTypeBuilder = new TestTypeBuilder(testRunTypeBuilder);
+		testTypeBuilder.getTestType().setWorkItems(new ArrayList<>());
+		testRunAPIService.setTestTypeBuilder(testTypeBuilder);
+		testRunAPIService.createTestRun(testRunTypeBuilder,  1, 0, 0, 0, 0, 0);
+		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
+		TestRow testRow = testTable.getTestRows().get(0);
+		Assert.assertFalse(testTable.isElementPresent(testRow.getTaskLabel(), 1), "Jira task is present");
+		Assert.assertTrue(testTable.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is not present");
+		TaskModalWindow taskModalWindow = testRow.clickAssignTask();
+		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
+		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
+		Assert.assertEquals(taskModalWindow.getJiraIdInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect jira id input placeholder");
+		taskModalWindow.typeJiraId("JIRA-2222");
+		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
+		taskModalWindow.clearAllInputs();
+		taskModalWindow.typeDescription("description");
+		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
+		taskModalWindow.typeJiraId("JIRA-2222");
+		taskModalWindow.typeDescription("description");
+		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is disabled");
+		taskModalWindow.clickAssignButton();
+		Assert.assertEquals(taskModalWindow.getSuccessAlert().getText(), "A new work item \"JIRA-2222\" was assigned");
+		Assert.assertTrue(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
+		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
+		taskModalWindow = testRow.clickEditTask();
+		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
+		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
+		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getDescriptionTextarea()), "description", "Incorrect jira description in input");
+		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getDeleteButton()), "Delete button is disabled");
+		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getUpdateButton()), "Update button is disabled");
+		taskModalWindow.clearAllInputs();
+		taskModalWindow.typeJiraId("JIRA-6666");
+		taskModalWindow.typeDescription("new description");
+		taskModalWindow.clickUpdateButton();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A new work item \"JIRA-6666\" was updated");
+		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
+		taskModalWindow = testRow.clickEditTask();
+		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
+		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getJiraIdInput()), "JIRA-6666", "Incorrect jira id in input");
+		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getDescriptionTextarea()), "new description", "Incorrect jira description in input");
+		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getDeleteButton()), "Delete button is disabled");
+		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getUpdateButton()), "Update button is disabled");
+		taskModalWindow.clickDeleteButton();
+		testRunPage.waitUntilElementIsPresent(testRow.getSuccessAlert(), 8);
+		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A work item \"JIRA-6666\" was deleted");
+		Assert.assertFalse(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
+		Assert.assertTrue(testRow.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is present");
 	}
 
 	private void verifyTestRunInformation(TestRun testRun, int index)
