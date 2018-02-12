@@ -453,6 +453,76 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.PASSED, "Test run status is incorrect");
 	}
 
+	@Test
+	public void verifyMarkAsKnownIssueTest()
+	{
+		TestRunAPIService testRunAPIService = new TestRunAPIService();
+		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
+		testRunAPIService.createTestRun(testRunTypeBuilder,  0, 1, 0, 0, 0, 200);
+		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
+		TestRow testRow = testTable.getTestRows().get(0);
+		Assert.assertTrue(testTable.isElementPresent(testRow.getMarkAsKnownIssue(), 1), "Mark as known issue link is not present");
+		KnownIssueModalWindow knownIssueModalWindow = testRow.clickMarkAsKnownIssue();
+		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect title");
+		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
+		Assert.assertEquals(knownIssueModalWindow.getJiraIdInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect placeholder");
+		knownIssueModalWindow.typeJiraId("JIRA-2222");
+		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
+		knownIssueModalWindow.clearAllInputs();
+		knownIssueModalWindow.typeDescription("description");
+		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
+		knownIssueModalWindow.typeJiraId("JIRA-2222");
+		knownIssueModalWindow.typeDescription("description");
+		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is disabled");
+		knownIssueModalWindow.clickCreateButton();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "A new known issue \"JIRA-2222\" was created", "Success alert is not present");
+		Assert.assertTrue(testRow.isElementPresent(testRow.getEditKnownIssue(), 1), "Edit known issue link is not present");
+		Assert.assertEquals(testRow.getKnownIssueTicket(), "JIRA-2222", "Invalid known issue label text");
+		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
+		knownIssueModalWindow = testRow.clickEditKnownIssue();
+		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect modal window title");
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
+		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getClearButton()), "Clear button is disabled");
+		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getUpdateButton()), "Update button is disabled");
+		knownIssueModalWindow.clearAllInputs();
+		knownIssueModalWindow.typeJiraId("JIRA-6666");
+		knownIssueModalWindow.typeDescription("new description");
+		knownIssueModalWindow.clickCreateButton();
+		testRunPage.waitUntilElementIsPresent(testRunPage.getSuccessAlert(), 8);
+		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A known issue \"JIRA-6666\" was updated");
+		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
+		knownIssueModalWindow = testRow.clickEditKnownIssue();
+		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect modal window title");
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-6666", "Incorrect jira id in input");
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "new description", "Incorrect jira description in input");
+		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getClearButton()), "Clear button is disabled");
+		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getUpdateButton()), "Update button is disabled");
+		knownIssueModalWindow.clickClearButton();
+		testRunPage.getAlert().accept();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()).isEmpty(), "Jira id input is not empty");
+		Assert.assertTrue(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()).isEmpty(), "Description input is not empty");
+		knownIssueModalWindow.closeModalWindow();
+		testRunPage.reload();
+		testRow = testRunPageService.getTestTableByRowIndex(0).getTestRows().get(0);
+		Assert.assertFalse(testRow.isElementPresent(testRow.getKnownIssueLabel(), 2), "Known issue label is present");
+		knownIssueModalWindow = testRow.clickMarkAsKnownIssue();
+		Assert.assertEquals(knownIssueModalWindow.getKnownIssuesHistoryItems().get(0).getText(), "JIRA-2222 description", "Incorrect history item text");
+		knownIssueModalWindow.getKnownIssuesHistoryItems().get(0).click();
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
+		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
+		knownIssueModalWindow.checkBlockerCheckbox();
+		knownIssueModalWindow.clickCreateButton();
+		Assert.assertTrue(testRow.isElementPresent(testRow.getBlockerLabel(), 1), "Blocker label is not present");
+		knownIssueModalWindow = testRow.clickEditKnownIssue();
+		knownIssueModalWindow.clickClearButton();
+		knownIssueModalWindow.getAlert().accept();
+		knownIssueModalWindow.closeModalWindow();
+		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 1), "Blocker label is present");
+	}
+
 	private void verifyTestRunInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
