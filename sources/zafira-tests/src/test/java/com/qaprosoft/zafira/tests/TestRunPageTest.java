@@ -7,6 +7,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
@@ -18,6 +19,7 @@ import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
+import com.qaprosoft.zafira.tests.services.api.TestAPIService;
 import com.qaprosoft.zafira.tests.services.api.TestRunAPIService;
 import com.qaprosoft.zafira.tests.services.api.UserAPIService;
 import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
@@ -370,11 +372,11 @@ public class TestRunPageTest extends AbstractTest
 	@Test
 	public void verifyTestAssignTicketTest()
 	{
-		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
-		TestTypeBuilder testTypeBuilder = new TestTypeBuilder(testRunTypeBuilder);
-		testTypeBuilder.getTestType().setWorkItems(new ArrayList<>());
-		testRunAPIService.setTestTypeBuilder(testTypeBuilder);
+		TestType testType = new TestTypeBuilder(testRunTypeBuilder).getTestType();
+		testType.setWorkItems(new ArrayList<>());
+		TestAPIService testAPIService = new TestAPIService(testType);
+		TestRunAPIService testRunAPIService = new TestRunAPIService(testAPIService);
 		testRunAPIService.createTestRun(testRunTypeBuilder,  1, 0, 0, 0, 0, 0);
 		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
 		TestRow testRow = testTable.getTestRows().get(0);
@@ -417,9 +419,38 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getUpdateButton()), "Update button is disabled");
 		taskModalWindow.clickDeleteButton();
 		testRunPage.waitUntilElementIsPresent(testRow.getSuccessAlert(), 8);
-		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A work item \"JIRA-6666\" was deleted");
+		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A work item \"JIRA-6666\" was unassigned");
 		Assert.assertFalse(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
 		Assert.assertTrue(testRow.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is present");
+	}
+
+	@Test
+	public void verifyTestMarkAsPassedTest()
+	{
+		TestRunAPIService testRunAPIService = new TestRunAPIService();
+		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
+		testRunAPIService.createTestRun(testRunTypeBuilder,  0, 2, 0, 0, 0, 200);
+		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
+		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.FAILED, "Test run status is not failed");
+		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
+		verifyTestRunTestInformation(testRun, 0);
+		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
+		testTable.getTestRows().get(0).clickMarkAsPassed();
+		Assert.assertEquals(testRunPage.getAlert().getText(), "Do you really want to mark test run as passed?");
+		testRunPage.getAlert().dismiss();
+		verifyTestRunTestInformation(testRun, 0);
+		testRunPageService.getTestTableByRowIndex(0).getTestRows().get(0).clickMarkAsPassed();
+		testRunPage.getAlert().accept();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertEquals(testTable.getTestRows().get(0).getStatus(), Status.PASSED, "Test status is not correct");
+		Assert.assertEquals(testTable.getTestRows().get(1).getStatus(), Status.FAILED, "Test status is not correct");
+		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.FAILED, "Test run status is incorrect");
+		testRunPageService.getTestTableByRowIndex(0).getTestRows().get(1).clickMarkAsPassed();
+		testRunPage.getAlert().accept();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertEquals(testTable.getTestRows().get(0).getStatus(), Status.PASSED, "Test status is not correct");
+		Assert.assertEquals(testTable.getTestRows().get(1).getStatus(), Status.PASSED, "Test status is not correct");
+		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.PASSED, "Test run status is incorrect");
 	}
 
 	private void verifyTestRunInformation(TestRun testRun, int index)
@@ -459,7 +490,9 @@ public class TestRunPageTest extends AbstractTest
 			}
 		});
 		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
-		TestTable testTable = testRunTableRow.clickExpandTestsIcon();
+		TestTable testTable = testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1)
+				? testRunTableRow.getTestTable() : testRunTableRow.clickExpandTestsIcon();
+		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(tests.size(), testRunTableRow.getTestTable().getTestRows().size(), "Invalid tests count visible");
 		IntStream.iterate(0, i -> i++).limit(testTable.getTestRows().size()).forEach(i -> {
 			com.qaprosoft.zafira.models.db.Test currentTest = tests.get(i);
@@ -487,9 +520,12 @@ public class TestRunPageTest extends AbstractTest
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is not visible");
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
 
-					Assert.assertTrue(currentTest.getMessage().length() > 100 == isShowMoreLinkPresent, "Show more link is not present");
-					Assert.assertTrue(currentTest.getMessage().length() > 100 == (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
-					Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
+					if(currentTest.getMessage().length() > 100)
+					{
+						Assert.assertTrue(isShowMoreLinkPresent, "Show more link is not present");
+						Assert.assertEquals(currentTestRow.getShowMoreLogText().length(), 104, "Show more link is not present");
+						Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
+					}
 					break;
 				case SKIPPED:
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");

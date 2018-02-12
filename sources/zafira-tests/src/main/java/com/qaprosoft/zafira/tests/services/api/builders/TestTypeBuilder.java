@@ -49,6 +49,22 @@ public class TestTypeBuilder extends AbstractTypeBuilder<TestType>
 		this.testCaseTypeBuilder = new TestCaseTypeBuilder();
 	}
 
+	public TestTypeBuilder(IModelBuilder<TestRunType> testRunTypeBuilder, TestType testType)
+	{
+		this.testRunTypeBuilder = testRunTypeBuilder;
+		this.testCaseTypeBuilder = new TestCaseTypeBuilder();
+		if(testType != null)
+		{
+			this.testType.setConfigXML(testType.getConfigXML());
+			this.testType.setName(testType.getName());
+			this.testType.setStatus(testType.getStatus());
+			this.testType.setTestArgs(testType.getTestArgs());
+			this.testType.setTestGroup(testType.getTestGroup());
+			this.testType.setDependsOnMethods(testType.getDependsOnMethods());
+			this.testType.setWorkItems(testType.getWorkItems());
+		}
+	}
+
 	@Override
 	public TestType getInstance()
 	{
