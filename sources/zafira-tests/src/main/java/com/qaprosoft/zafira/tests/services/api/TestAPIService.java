@@ -12,13 +12,12 @@ import java.util.stream.IntStream;
 public class TestAPIService extends AbstractAPIService
 {
 
-	public List<TestType> createTests(TestRunTypeBuilder testRunTypeBuilder, int testCount, Status finishStatus, int failedMessageLenght)
+	public List<TestType> createTests(TestTypeBuilder testTypeBuilder, int testCount, Status finishStatus, int failedMessageLenght)
 	{
 		List<TestType> testTypes = new ArrayList<>();
 		if (testCount > 0)
 		{
 			IntStream.iterate(0, i -> i++).limit(testCount).forEach(index -> {
-				TestTypeBuilder testTypeBuilder = new TestTypeBuilder(testRunTypeBuilder);
 				testTypes.add(createTest(testTypeBuilder, finishStatus, failedMessageLenght));
 			});
 		}
