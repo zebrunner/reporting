@@ -100,8 +100,16 @@ public class TestRunPageService extends AbstractPageService
 	public TestTable getTestTableByRowIndex(int index)
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
-		testRunPage.hoverOnElement(testRunTableRow.getRootElement());
-		return testRunTableRow.clickExpandTestsIcon();
+		TestTable result = null;
+		if(! testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1))
+		{
+			testRunPage.hoverOnElement(testRunTableRow.getRootElement());
+			result = testRunTableRow.clickExpandTestsIcon();
+		} else
+		{
+			result = testRunTableRow.getTestTable();
+		}
+		return result;
 	}
 
 	public TestRunPage clearSearchForm()

@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.gui.components.table.row;
 
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import org.openqa.selenium.SearchContext;
@@ -73,6 +74,12 @@ public class TestRunTableRow extends AbstractRow
 	public TestRunTableRow(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
+	}
+
+	public Status getTestRunStatus()
+	{
+		String[] classes = this.getRootElement().getAttribute("class").split(" ");
+		return Status.valueOf(classes[classes.length - 1].toUpperCase());
 	}
 
 	public WebElement getPercentage()
