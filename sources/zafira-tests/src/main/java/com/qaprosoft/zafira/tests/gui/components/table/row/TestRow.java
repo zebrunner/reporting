@@ -2,6 +2,8 @@ package com.qaprosoft.zafira.tests.gui.components.table.row;
 
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestArtifactMenu;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.KnownIssueModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TaskModalWindow;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -59,6 +61,12 @@ public class TestRow extends AbstractRow
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content")
 	private TestArtifactMenu testArtifactMenu;
+
+	@FindBy(xpath = "//md-dialog")
+	private TaskModalWindow taskModalWindow;
+
+	@FindBy(xpath = "//md-dialog")
+	private KnownIssueModalWindow knownIssueModalWindow;
 
 	public TestRow(WebDriver driver, SearchContext context)
 	{
@@ -201,9 +209,10 @@ public class TestRow extends AbstractRow
 		return assignTask;
 	}
 
-	public void clickAssignTask()
+	public TaskModalWindow clickAssignTask()
 	{
 		assignTask.click();
+		return taskModalWindow;
 	}
 
 	public WebElement getEditTask()
@@ -211,9 +220,10 @@ public class TestRow extends AbstractRow
 		return editTask;
 	}
 
-	public void clickEditTask()
+	public TaskModalWindow clickEditTask()
 	{
 		editTask.click();
+		return taskModalWindow;
 	}
 
 	public WebElement getKnownIssueLabel()
@@ -250,5 +260,15 @@ public class TestRow extends AbstractRow
 	public TestArtifactMenu getTestArtifactMenu()
 	{
 		return testArtifactMenu;
+	}
+
+	public TaskModalWindow getTaskModalWindow()
+	{
+		return taskModalWindow;
+	}
+
+	public KnownIssueModalWindow getKnownIssueModalWindow()
+	{
+		return knownIssueModalWindow;
 	}
 }

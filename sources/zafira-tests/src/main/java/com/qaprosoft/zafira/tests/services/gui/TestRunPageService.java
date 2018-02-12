@@ -6,6 +6,7 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWin
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
@@ -94,6 +95,13 @@ public class TestRunPageService extends AbstractPageService
 		testRunSearchBlock.clickSearchButton();
 		testRunPage.waitUntilPageIsLoaded();
 		return testRunPage;
+	}
+
+	public TestTable getTestTableByRowIndex(int index)
+	{
+		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
+		testRunPage.hoverOnElement(testRunTableRow.getRootElement());
+		return testRunTableRow.clickExpandTestsIcon();
 	}
 
 	public TestRunPage clearSearchForm()
