@@ -12,12 +12,12 @@ Web application that collects test results from QA automation.
   ```Shell
   $ curl https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml -o docker-compose.yml
   ```
-3. Deploy ReportPortal using `docker-compose` within the same folder
+3. Deploy Zafira using `docker-compose` within the same folder
 
   ```Shell
   $ docker-compose up
   ```
-To start ReportPortal in daemon mode, add '-d' argument:
+To start Zafira in daemon mode, add '-d' argument:
   ```Shell
   $ docker-compose up -d
   ```  
@@ -26,4 +26,4 @@ To start ReportPortal in daemon mode, add '-d' argument:
   ```
   $ http://localgost:8080/zafira
   ```
-5. Use next login\pass for access: `qpsdemo\qpsdemo`.
+5. Use next login/pass for access: `qpsdemo/qpsdemo`.
