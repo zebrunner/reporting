@@ -33,6 +33,9 @@ DECLARE nightly_total_personal_table_model zafira.WIDGETS.model%TYPE;
 DECLARE total_last_30_days_personal_id zafira.WIDGETS.id%TYPE;
 DECLARE total_last_30_days_personal_sql zafira.WIDGETS.sql%TYPE;
 DECLARE total_last_30_days_personal_model zafira.WIDGETS.model%TYPE;
+DECLARE nightly_personal_failures_id zafira.WIDGETS.id%TYPE;
+DECLARE nightly_personal_failures_sql zafira.WIDGETS.sql%TYPE;
+DECLARE nightly_personal_failures_model zafira.WIDGETS.model%TYPE;
 
 -- Declare User Performance dashboard widgets
 DECLARE personal_total_rate_id zafira.WIDGETS.id%TYPE;
@@ -158,7 +161,7 @@ nightly_details_personal_sql :=
 	monthly_total_personal_pie_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''ISSUE'', ''ABORTED'']) AS "label",
+        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
         unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM MONTHLY_VIEW
@@ -221,7 +224,7 @@ nightly_details_personal_sql :=
 	weekly_total_personal_pie_sql :=
 	'set schema ''zafira'';
     SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''ISSUE'', ''ABORTED'']) AS "label",
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM WEEKLY_VIEW
@@ -388,6 +391,31 @@ nightly_details_personal_sql :=
          }
     }';
 
+	nightly_personal_failures_sql :=
+	'set schema ''zafira'';
+    SELECT count(*) AS "COUNT",
+        ENV AS "ENV",
+        ''<a href="#{zafiraURL}/#!/dashboards/7?userId='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>''
+            AS "REPORT",
+        substring(MESSAGE from 1 for 210) as "MESSAGE",
+        REBUILD as "REBUILD"
+    FROM NIGHTLY_FAILURES_VIEW
+    WHERE
+        OWNER_ID = #{currentUserId}
+    GROUP BY "ENV", substring(MESSAGE from 1 for 210), "REBUILD"
+    ORDER BY "COUNT" DESC';
+
+  	nightly_personal_failures_model :=
+  	'{
+        "columns": [
+            "COUNT",
+            "ENV",
+            "REPORT",
+            "MESSAGE",
+            "REBUILD"
+        ]
+    }';
+
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
     ('NIGHTLY DETAILS PERSONAL TEST', 'table', nightly_details_personal_sql, nightly_details_personal_model)
 	RETURNING id INTO nightly_details_personal_id;
@@ -412,6 +440,9 @@ nightly_details_personal_sql :=
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
     ('TEST RESULTS (LAST 30 DAYS) PERSONAL TEST', 'linechart', total_last_30_days_personal_sql, total_last_30_days_personal_model)
 	RETURNING id INTO total_last_30_days_personal_id;
+    INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+	('NIGHTLY - PERSONAL FAILURES', 'table', nightly_personal_failures_sql, nightly_personal_failures_model)
+	RETURNING id INTO nightly_personal_failures_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
     (personal_dashboard_id, nightly_details_personal_id, '{"x":0,"y":28,"width":12,"height":21}');
@@ -429,6 +460,8 @@ nightly_details_personal_sql :=
     (personal_dashboard_id, nightly_total_personal_table_id, '{"x":0,"y":11,"width":4,"height":6}');
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
     (personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":17,"width":12,"height":11}');
+    INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+    (personal_dashboard_id, nightly_personal_failures_id, '{"x":0,"y":49,"width":12,"height":15}');
 
 	-- Insert User Performance dashboard data
     INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN) VALUES ('User Performance Test', TRUE) RETURNING id INTO user_performance_dashboard_id;
@@ -714,7 +747,7 @@ nightly_details_personal_sql :=
 	total_tests_pie_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''ISSUE'', ''ABORTED'']) AS "label",
+        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
         unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM TOTAL_VIEW
@@ -1007,7 +1040,7 @@ nightly_details_personal_sql :=
     monthly_total_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''ISSUE'', ''ABORTED'']) AS "label",
+        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
         unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM MONTHLY_VIEW
