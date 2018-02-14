@@ -27,3 +27,8 @@ To start Zafira in daemon mode, add '-d' argument:
   $ http://localgost:8080/zafira
   ```
 5. Use next login/pass for access: `qpsdemo/qpsdemo`.
+
+
+## Integration
+
+[Java sample](https://github.com/qaprosoft/carina-demo)
