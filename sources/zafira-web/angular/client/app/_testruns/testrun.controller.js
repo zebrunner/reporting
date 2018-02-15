@@ -50,6 +50,10 @@
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
                 $scope.subscribtions['testRuns'] = $scope.subscribeTestRunsTopic();
+            }, function () {
+                $timeout(function () {
+                    $scope.initWebsocket();
+                }, 5000)
             });
         };
 
@@ -105,6 +109,10 @@
                     var event = $scope.getEventFromMessage(data.body);
                     $scope.$apply();
                 });
+            }, function () {
+                $timeout(function () {
+                    $scope.initTestLogsWebsocket(ciRunId, testId);
+                }, 5000)
             });
         };
 
