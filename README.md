@@ -2,6 +2,15 @@
 
 Web application that collects test results from QA automation.
 
+Configurable dashboards based on [D3JS](https://d3js.org/)
+![Alt text](./public/demo-dashboards.png "Dashboards")
+
+Real-time test results
+![Alt text](./public/demo-testruns.png "Test runs")
+
+Integrations with multiple services
+![Alt text](./public/demo-integrations.png "Integrations")
+
 ## Installation steps
 
 #### Simple set with Docker
@@ -28,7 +37,11 @@ To start Zafira in daemon mode, add '-d' argument:
   ```
 5. Use next login/pass for access: `qpsdemo/qpsdemo`.
 
-
 ## Integration
 
 [Java sample](https://github.com/qaprosoft/carina-demo)
+
+## License
+Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Documentation and Site - [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/deed.en_US)
