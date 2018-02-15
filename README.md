@@ -9,7 +9,7 @@ Real-time test results
 ![Alt text](./public/demo-testruns.png "Test runs")
 
 Integrations with multiple services
-![Alt text](./public/demo-testruns.png "Integrations")
+![Alt text](./public/demo-integrations.png "Integrations")
 
 ## Installation steps
 
