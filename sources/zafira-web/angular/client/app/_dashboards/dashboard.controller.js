@@ -696,7 +696,7 @@
                     var data = rs.data;
                     var columns = {};
                     for (var j = 0; j < data.length; j++) {
-                        if(j === 0){
+                        if(j === 0 && data[j] !== null){
                             columns = Object.keys(data[j]);
                         }
                         if (data[j].CREATED_AT) {
