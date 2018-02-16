@@ -336,9 +336,9 @@ BEGIN
 	nightly_total_personal_pie_sql :=
 	'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''IN PROGRESS'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#4385F5'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(IN_PROGRESS), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
+        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
+        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
         PROJECT LIKE ''#{project}%''
