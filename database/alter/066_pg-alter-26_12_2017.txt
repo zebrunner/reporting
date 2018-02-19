@@ -1,4 +1,4 @@
-﻿DO $$
+DO $$
 
 -- Declare dashboards
 DECLARE personal_dashboard_id zafira.DASHBOARDS.id%TYPE;
