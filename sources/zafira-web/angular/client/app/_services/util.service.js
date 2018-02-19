@@ -39,8 +39,13 @@
         }
 
         function handleError(error) {
-            return function () {
-                return { success: false, message: error };
+            return function (res) {
+                if(res.status == 400 && res.data.validationErrors && res.data.validationErrors.length) {
+                    error = res.data.validationErrors.map(function(validation) {
+                        return validation.message;
+                    }).join('\n');
+                }
+                return { success: false, message: error, error: res };
             };
         }
 
