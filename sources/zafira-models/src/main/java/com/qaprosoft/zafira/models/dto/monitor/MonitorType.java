@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.dto.monitor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 import com.qaprosoft.zafira.models.db.Monitor;
+import org.hibernate.validator.constraints.URL;
 import org.quartz.CronExpression;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity
@@ -30,12 +33,17 @@ public class MonitorType extends AbstractEntity
 	private static final long serialVersionUID = -4720099488195144150L;
 	
 	@NotNull(message = "Name required")
+	@Size(max = 500, message = "Should be less than 500")
 	private String name;
 	@NotNull(message = "URL required")
+	@Size(max = 500, message = "Should be less than 500")
 	private String url;
 	@NotNull(message = "HTTP method required")
 	private Monitor.HttpMethod httpMethod;
 	private String requestBody;
+	@Size(max = 50, message = "Should be less than 50")
+	private String environment;
+	private String comment;
 	@NotNull(message = "Cron expression required")
 	private String cronExpression;
 	@NotNull(message = "Type required")
@@ -44,8 +52,10 @@ public class MonitorType extends AbstractEntity
 	private boolean notificationsEnabled;
 	@NotNull(message = "Checkbox should be enabled or disabled")
 	private boolean monitorEnabled;
+	@Size(max = 500, message = "Should be less than 500")
 	private String recipients;
 	@NotNull(message = "Expected code required")
+	@Min(value = 0, message = "Should be greater than 0")
 	private int expectedCode;
 	private boolean success;
 
@@ -87,6 +97,26 @@ public class MonitorType extends AbstractEntity
 	public void setRequestBody(String requestBody)
 	{
 		this.requestBody = requestBody;
+	}
+
+	public String getEnvironment()
+	{
+		return environment;
+	}
+
+	public void setEnvironment(String environment)
+	{
+		this.environment = environment;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
 	}
 
 	public String getCronExpression()

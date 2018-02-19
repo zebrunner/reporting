@@ -33,6 +33,8 @@ public class Monitor extends AbstractEntity
 	private String url;
 	private HttpMethod httpMethod;
 	private String requestBody;
+	private String environment;
+	private String comment;
 	private String cronExpression;
 	private boolean notificationsEnabled;
 	private boolean monitorEnabled;
@@ -79,6 +81,26 @@ public class Monitor extends AbstractEntity
 	public void setRequestBody(String requestBody)
 	{
 		this.requestBody = requestBody;
+	}
+
+	public String getEnvironment()
+	{
+		return environment;
+	}
+
+	public void setEnvironment(String environment)
+	{
+		this.environment = environment;
+	}
+
+	public String getComment()
+	{
+		return comment;
+	}
+
+	public void setComment(String comment)
+	{
+		this.comment = comment;
 	}
 
 	public String getCronExpression()

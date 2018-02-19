@@ -20,13 +20,21 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Name</label>
-                        <input name="name" type="text" data-ng-model="monitor.name" required/>
+                        <input md-maxlength="500" name="name" type="text" data-ng-model="monitor.name" required/>
+                        <div ng-messages="monitor_form.name.$error">
+                            <div ng-message="required">Name is required.</div>
+                            <div ng-message="md-maxlength">The name has to be less than 500 characters long.</div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>URL</label>
-                        <input name="url" type="text" data-ng-model="monitor.url" required/>
+                        <input md-maxlength="500" name="url" type="text" data-ng-model="monitor.url" required/>
+                        <div ng-messages="monitor_form.url.$error">
+                            <div ng-message="required">URL is required.</div>
+                            <div ng-message="md-maxlength">The URL has to be less than 500 characters long.</div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
@@ -51,14 +59,36 @@
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
+                        <label>Environment</label>
+                        <input md-maxlength="50" name="environment" type="text" data-ng-model="monitor.environment"/>
+                        <div ng-messages="monitor_form.environment.$error">
+                            <div ng-message="md-maxlength">The environment has to be less than 50 characters long.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Comment</label>
+                        <textarea id="comment" name="comment" rows=10 class="textarea_border" data-ng-model="monitor.comment"></textarea>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
                         <label>Cron expression</label>
-                        <input name="cron" type="text" data-ng-model="monitor.cronExpression" required/>
+                        <input name="cron" type="text" data-ng-model="monitor.cronExpression" field-error="errorResponse" response-field="cronExpressionValid" required/>
+                        <div ng-messages="monitor_form.cron.$error">
+                            <div ng-message="required">Crone expression is required.</div>
+                            <div ng-message="cronExpressionValid">Cron expression is invalid.</div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Expected code</label>
-                        <input name="code" type="number" data-ng-model="monitor.expectedCode" required/>
+                        <input name="code" min="0" type="number" data-ng-model="monitor.expectedCode" required/>
+                        <div ng-messages="monitor_form.code.$error">
+                            <div ng-message="min">The code has to be greater than 0.</div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
@@ -98,14 +128,31 @@
             </div>
         </md-dialog-content>
 
+        <md-dialog-actions layout="row" layout-align="center center" ng-if="checkSuccess != undefined" layout="row" ng-class="checkSuccess ? 'dialog-success-alert' : 'dialog-error-alert'" class="dialog-bottom-alert">
+            <span layout="row" layout-align="center center" ng-if="checkSuccess">
+                <span class="highlight_green">Success</span>
+                <i style="margin-left: 10px" class="material-icons highlight_green">check</i>
+            </span>
+            <span layout="row" layout-align="center center" ng-if="!checkSuccess">
+                <span class="highlight_red">Actual status: <span class="label label-default">{{ actualCode }}</span></span>
+                <i style="margin-left: 20px" class="material-icons highlight_red">error_outline</i>
+            </span>
+        </md-dialog-actions>
         <md-dialog-actions layout="row">
+            <md-button id="refresh" ng-if="monitor.id" class="btn" data-ng-click="checkMonitor(false)" data-ng-disabled="monitor_form.$invalid">
+                Refresh monitor
+            </md-button>
+            <md-button id="test" ng-if="!monitor.id || ! monitor_form.$pristine" class="btn" data-ng-click="checkMonitor(true)" data-ng-disabled="monitor_form.$invalid">
+                Test monitor
+            </md-button>
+            <span flex></span>
             <md-button id="create" ng-if="!monitor.id" class="btn btn-primary" data-ng-click="createMonitor()" data-ng-disabled="monitor_form.$invalid">
                 Create
             </md-button>
-            <md-button id="save" ng-if="monitor.id" class="md-raised btn-w-md md-primary" data-ng-click="updateMonitor(monitor, false); hide()" data-ng-disabled="monitor_form.$invalid">
+            <md-button id="save" ng-if="monitor.id" class="md-raised btn-w-md md-primary" data-ng-click="updateMonitor(monitor, false);" data-ng-disabled="monitor_form.$invalid">
                 Save
             </md-button>
-            <md-button id="delete" ng-if="monitor.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteMonitor(monitor.id); hide()" data-ng-disabled="monitor_form.$invalid">
+            <md-button id="delete" ng-if="monitor.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteMonitor(monitor.id);" data-ng-disabled="monitor_form.$invalid">
                 Delete
             </md-button>
         </md-dialog-actions>

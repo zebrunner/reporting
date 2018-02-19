@@ -21,6 +21,10 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
 @JsonSerialize(using = ErrorCodeSerializer.class)
 public enum ErrorCode
 {
+
+	VALIDATION_ERROR(0),
+	INVALID_VALUE(1),
+
 	UNAUTHORIZED(401),
 	FORBIDDENT(403),
 	

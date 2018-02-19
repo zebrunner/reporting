@@ -151,7 +151,10 @@ public class MonitorJobService
 			newTrigger.setName(monitor.getId().toString());
 			newTrigger.setGroup(TRIGGER_GROUP_NAME);
 			newTrigger.setCronExpression(monitor.getCronExpression());
-			schedulerFactoryBean.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
+			if(oldTrigger != null)
+			{
+				schedulerFactoryBean.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
+			}
 		} catch (SchedulerException e)
 		{
 			LOGGER.error("Can't get old trigger!");
