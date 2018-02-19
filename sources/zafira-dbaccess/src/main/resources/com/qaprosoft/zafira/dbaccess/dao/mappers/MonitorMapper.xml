@@ -6,13 +6,15 @@
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 
-			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
+			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENV, COMMENT, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
 			EXPECTED_CODE, RECIPIENTS, TYPE)
 			VALUES (
 				#{name},
 				#{url},
 			    #{httpMethod},
 				#{requestBody},
+				#{environment},
+				#{comment},
 				#{notificationsEnabled},
 				#{monitorEnabled},
 				#{cronExpression},
@@ -51,6 +53,8 @@
                 URL = #{url},
                 HTTP_METHOD = #{httpMethod},
                 REQUEST_BODY = #{requestBody},
+                ENV = #{environment},
+                COMMENT = #{comment},
                 NOTIFICATIONS_ENABLED = #{notificationsEnabled},
                 MONITOR_ENABLED = #{monitorEnabled},
                 CRON_EXPRESSION = #{cronExpression},
@@ -73,6 +77,8 @@
 				M.URL AS MONITOR_URL,
 				M.HTTP_METHOD AS MONITOR_HTTP_METHOD,
 				M.REQUEST_BODY AS MONITOR_REQUEST_BODY,
+				M.ENV AS MONITOR_ENVIRONMENT,
+				M.COMMENT AS MONITOR_COMMENT,
 				M.NOTIFICATIONS_ENABLED AS MONITOR_NOTIFICATIONS_ENABLED,
 				M.MONITOR_ENABLED AS MONITOR_MONITOR_ENABLED,
 				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
@@ -88,6 +94,85 @@
         ]]>
     </sql>
 
+    <select id="searchMonitors" resultMap="MonitorResultMap">
+        <include refid="getMonitors"/>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="null != name">
+                <![CDATA[
+	               AND LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{name}, '%'))
+	            ]]>
+            </if>
+            <if test="null != url">
+                <![CDATA[
+	               AND LOWER(M.URL) LIKE LOWER(CONCAT('%', #{url}, '%'))
+	            ]]>
+            </if>
+            <if test="null != environment">
+                <![CDATA[
+	               AND LOWER(M.ENV) = LOWER(#{environment})
+	            ]]>
+            </if>
+            <if test="null != comment">
+                <![CDATA[
+	               AND LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{comment}, '%'))
+	            ]]>
+            </if>
+            <if test="null != enabled">
+                <![CDATA[
+	               AND M.ENABLED = #{enabled}
+	            ]]>
+            </if>
+        </trim>
+        <if test="sortOrder.toString() == 'ASC'">
+            <![CDATA[
+				ORDER BY M.SUCCESS, M.NAME ASC
+			]]>
+        </if>
+        <if test="sortOrder.toString() == 'DESC'">
+            <![CDATA[
+				ORDER BY M.SUCCSESS, M.NAME DESC
+			]]>
+        </if>
+        <![CDATA[
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+    </select>
+
+    <select id="getMonitorsSearchCount" resultType="java.lang.Integer">
+        <![CDATA[
+		SELECT
+			COUNT(*)
+		FROM
+			zafira.MONITORS M
+		]]>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="null != name">
+                <![CDATA[
+	               AND LOWER(M.NAME) LIKE LOWER(CONCAT('%', #{name}, '%'))
+	            ]]>
+            </if>
+            <if test="null != url">
+                <![CDATA[
+	               AND LOWER(M.URL) LIKE LOWER(CONCAT('%', #{url}, '%'))
+	            ]]>
+            </if>
+            <if test="null != environment">
+                <![CDATA[
+	               AND LOWER(M.ENV) = LOWER(#{environment})
+	            ]]>
+            </if>
+            <if test="null != comment">
+                <![CDATA[
+	               AND LOWER(M.COMMENT) LIKE LOWER(CONCAT('%', #{comment}, '%'))
+	            ]]>
+            </if>
+            <if test="null != enabled">
+                <![CDATA[
+	               AND M.ENABLED = #{enabled}
+	            ]]>
+            </if>
+        </trim>
+    </select>
 
     <select id="getMonitorById" resultMap="MonitorResultMap">
         <include refid="getMonitors"/>
@@ -129,6 +214,8 @@
         <result column="MONITOR_URL" property="url"/>
         <result column="MONITOR_HTTP_METHOD" property="httpMethod"/>
         <result column="MONITOR_REQUEST_BODY" property="requestBody"/>
+        <result column="MONITOR_ENVIRONMENT" property="environment"/>
+        <result column="MONITOR_COMMENT" property="comment"/>
         <result column="MONITOR_NOTIFICATIONS_ENABLED" property="notificationsEnabled"/>
         <result column="MONITOR_MONITOR_ENABLED" property="monitorEnabled"/>
         <result column="MONITOR_CRON_EXPRESSION" property="cronExpression"/>

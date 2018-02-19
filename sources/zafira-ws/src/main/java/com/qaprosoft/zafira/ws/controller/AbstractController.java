@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.ws.controller;
 
 import javax.annotation.Resource;
 
+import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -24,6 +25,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,6 +46,8 @@ import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+
+import java.util.List;
 
 public abstract class AbstractController
 {
@@ -136,9 +142,44 @@ public abstract class AbstractController
 	@ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public void handleMethodArgumentNotValidException(MethodArgumentNotValidException e) 
+    public ErrorResponse handleMethodArgumentNotValidException(Exception e)
 	{
-		LOGGER.error(e.getMessage());
+		ErrorResponse result = new ErrorResponse();
+		BindingResult bindingResult = null;
+
+		result.setError(new Error(ErrorCode.VALIDATION_ERROR));
+
+		if (e instanceof MethodArgumentNotValidException)
+		{
+			bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
+		} else if (e instanceof BindException)
+		{
+			bindingResult = ((BindException) e).getBindingResult();
+		}
+
+		if (null != bindingResult)
+		{
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+			for (FieldError fieldError : fieldErrors)
+			{
+				Error error = new Error(ErrorCode.INVALID_VALUE, fieldError.getField(), fieldError.getDefaultMessage());
+
+				Object rejectedValue = fieldError.getRejectedValue();
+
+				if ((rejectedValue instanceof String) || (rejectedValue instanceof Number))
+				{
+					AdditionalErrorData additionalErrorData = new AdditionalErrorData();
+
+					additionalErrorData.setValue(rejectedValue);
+					error.setAdditional(additionalErrorData);
+				}
+
+				result.getValidationErrors().add(error);
+			}
+		}
+
+		return result;
     }
 	
 	@ExceptionHandler(UnableToRebuildCIJobException.class)

@@ -9,6 +9,9 @@
 
         $scope.monitors = [];
 
+        var DEFAULT_SC = {page : 1, pageSize : 20};
+        $scope.sc = angular.copy(DEFAULT_SC);
+
         $scope.TYPES = {
             HTTP : 'HTTP',
             PING : 'PING'
@@ -26,43 +29,37 @@
             $scope.blockView = !$scope.blockView;
         };
 
+        $scope.search = function (page) {
+
+            if(page)
+            {
+                $scope.sc.page = page;
+            }
+
+            MonitorsService.searchMonitors($scope.sc).then(function(rs) {
+                if(rs.success)
+                {
+                    $scope.sr = rs.data;
+                    $scope.monitors = rs.data.results;
+                }
+                else
+                {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.reset = function () {
+            $scope.sc = angular.copy(DEFAULT_SC);
+            $scope.search();
+        };
+
         $scope.getAllMonitors = function () {
             MonitorsService.getAllMonitors().then(function (rs) {
                 if(rs.success)
                 {
                     $scope.monitors = rs.data;
                     $scope.initChips();
-                }
-            })
-        };
-
-        $scope.updateMonitor = function (monitor, switchJob) {
-            monitor.recipients = monitor.emailList.toString();
-            MonitorsService.updateMonitor(monitor, switchJob).then(function (rs) {
-                if(rs.success)
-                {
-                    if(switchJob)
-                    {
-                        var status = rs.data.monitorEnabled ? 'ran': 'stopped';
-                        alertify.success("Monitor was " + status);
-                    } else {
-                        alertify.success('Monitor was updated');
-                    }
-                }
-            })
-        };
-
-        $scope.deleteMonitor = function (id) {
-            MonitorsService.deleteMonitor(id).then(function (rs) {
-                if(rs.success)
-                {
-                    $scope.monitors = $scope.monitors.filter(function (monitor) {
-                        if(monitor.id === id) {
-                            return false;
-                        }
-                        return true;
-                    });
-                    alertify.success('Monitor was deleted');
                 }
             })
         };
@@ -176,6 +173,72 @@
                                 $scope.monitors.push(rs.data);
                                 alertify.success('Monitor was created successfully');
                                 $scope.hide();
+                            } else {
+                                if(rs.error.status == 400) {
+                                    $scope.errorResponse = rs;
+                                } else {
+                                    alertify.error(rs.message);
+                                }
+                            }
+                        })
+                    };
+
+                    $scope.checkMonitor = function (check) {
+                        MonitorsService.checkMonitor($scope.monitor, check).then(function (rs) {
+                            if(rs.success)
+                            {
+                                $scope.checkSuccess = rs.data.success;
+                                if(! rs.data.success) {
+                                    $scope.actualCode = rs.data.actualCode;
+                                }
+                                if($scope.monitor.id) {
+                                    $scope.monitor.success = rs.data.success;
+                                }
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        })
+                    };
+
+                    $scope.updateMonitor = function (monitor, switchJob) {
+                        if(monitor.emailList) {
+                            monitor.recipients = monitor.emailList.toString();
+                        }
+                        MonitorsService.updateMonitor(monitor, switchJob).then(function (rs) {
+                            if(rs.success)
+                            {
+                                if(switchJob)
+                                {
+                                    var status = rs.data.monitorEnabled ? 'ran': 'stopped';
+                                    alertify.success("Monitor was " + status);
+                                } else {
+                                    alertify.success('Monitor was updated');
+                                }
+                                $scope.hide();
+                            } else {
+                                if(rs.error.status == 400) {
+                                    $scope.errorResponse = rs;
+                                } else {
+                                    alertify.error(rs.message);
+                                }
+                            }
+                        })
+                    };
+
+                    $scope.deleteMonitor = function (id) {
+                        MonitorsService.deleteMonitor(id).then(function (rs) {
+                            if(rs.success)
+                            {
+                                $scope.monitors = $scope.monitors.filter(function (monitor) {
+                                    if(monitor.id === id) {
+                                        return false;
+                                    }
+                                    return true;
+                                });
+                                alertify.success('Monitor was deleted');
+                                $scope.hide();
+                            } else {
+                                alertify.error(rs.message);
                             }
                         })
                     };
@@ -207,7 +270,7 @@
         };
 
         (function init(){
-            $scope.getAllMonitors();
+            $scope.search(1);
         })();
     }
 })();
