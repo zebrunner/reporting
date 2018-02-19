@@ -337,7 +337,39 @@
                 };
             }
         };
-    }]).directive('profilePhoto', ['$rootScope', function ($rootScope) {
+    }]).directive('fieldError', function($q, $timeout, $compile) {
+        "use strict";
+        return {
+            require: 'ngModel',
+            transclusion: true,
+            restrict: 'A',
+            scope: {
+                ngModel: '=',
+                fieldError: '=',
+                responseField: '@'
+            },
+            link: function(scope, elm, attrs, ctrl) {
+
+
+                scope.$watch('fieldError', function (newValue, oldValue) {
+                    if(newValue) {
+                        var result;
+                        newValue.error.data.validationErrors.forEach(function(error) {
+                            if(error.field == scope.responseField)
+                                result = error;
+                        });
+                        if(result) {
+                            ctrl.$setValidity(scope.responseField, false);
+                        }
+                    }
+                })
+
+                scope.$watch('ngModel', function (newVal) {
+                    ctrl.$setValidity(scope.responseField, true);
+                })
+            }
+        };
+    }).directive('profilePhoto', ['$rootScope', function ($rootScope) {
         "use strict";
         return {
             restrict: 'E',
@@ -372,13 +404,7 @@
                 }
             }
         };
-    }]).filter('subString', function() {
-        return function(str, start, end) {
-            if (str != undefined) {
-                return str.substr(start, end);
-            }
-        }
-    }).filter('orderObjectBy', function() {
+    }]).filter('orderObjectBy', function() {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,
