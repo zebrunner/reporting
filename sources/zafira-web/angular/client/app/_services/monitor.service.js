@@ -9,8 +9,10 @@
         var service = {};
 
         service.createMonitor = createMonitor;
+        service.checkMonitor = checkMonitor;
         service.getMonitorById = getMonitorById;
         service.getAllMonitors = getAllMonitors;
+        service.searchMonitors = searchMonitors;
         service.updateMonitor = updateMonitor;
         service.deleteMonitor = deleteMonitor;
         service.getMonitorsCount = getMonitorsCount;
@@ -22,8 +24,16 @@
             return $http.post(API_URL + '/api/monitors', monitor).then(UtilService.handleSuccess, UtilService.handleError('Unable to create monitor'));
         }
 
+        function checkMonitor(monitor, check) {
+            return $http.post(API_URL + '/api/monitors/check?check=' + check, monitor).then(UtilService.handleSuccess, UtilService.handleError('Unable to check monitor'));
+        }
+
         function getMonitorById(id) {
             return $http.get(API_URL + '/api/monitors/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get monitor by id'));
+        }
+
+        function searchMonitors(sc) {
+            return $http.post(API_URL + '/api/monitors/search', sc).then(UtilService.handleSuccess, UtilService.handleError('Unable to search monitors'));
         }
 
         function getAllMonitors() {

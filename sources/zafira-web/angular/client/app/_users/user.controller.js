@@ -313,7 +313,7 @@
             $scope.selectedRange.dateStart = null;
             $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
-        	$scope.search();
+            $scope.search();
         };
 
         $scope.showChangePasswordDialog = function($event, user) {

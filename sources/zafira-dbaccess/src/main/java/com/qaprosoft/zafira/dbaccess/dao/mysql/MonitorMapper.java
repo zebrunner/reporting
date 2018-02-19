@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
 import com.qaprosoft.zafira.models.db.Monitor;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public interface MonitorMapper
 	Monitor getMonitorById(long id);
 
 	Monitor getMonitorByMonitorName(String monitorName);
+
+	List<Monitor> searchMonitors(MonitorSearchCriteria sc);
+
+	Integer getMonitorsSearchCount(MonitorSearchCriteria sc);
 
 	void updateMonitor(Monitor monitor);
 
