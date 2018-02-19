@@ -817,7 +817,7 @@ BEGIN
         sum(FAILED) AS "FAIL",
         sum(KNOWN_ISSUE) AS "ISSUE",
         sum(SKIPPED) AS "SKIP",
-        round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
+        round (100.0 * sum( passed ) / (sum( total )), 2) as "PASS RATE"
     FROM TOTAL_VIEW
     WHERE PROJECT LIKE ''#{project}%''
     GROUP BY PROJECT
@@ -827,7 +827,7 @@ BEGIN
         sum(FAILED) AS "FAIL",
         sum(KNOWN_ISSUE) AS "ISSUE",
         sum(SKIPPED) AS "SKIP",
-        round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
+        round (100.0 * sum( passed ) / (sum( total )), 2) as "PASS RATE"
     FROM TOTAL_VIEW
     WHERE PROJECT LIKE ''#{project}%''
     ORDER BY "PASS" DESC';
@@ -955,7 +955,7 @@ BEGIN
                 "dataset": "dataset",
                 "key": "ACTUAL",
                 "label": "ACTUAL",
-                "color": "#5C9AE1",
+                "color": "#3a87ad",
                 "thickness": "10px",
                 "type": [
                     "column"
