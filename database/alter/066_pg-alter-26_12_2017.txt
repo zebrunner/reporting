@@ -1,5 +1,9 @@
 DO $$
 
+-- make sure that valid widget title index is created
+-- DROP INDEX zafira.widgets_title_uindex;
+-- CREATE UNIQUE INDEX widgets_title_uindex ON zafira.widgets (TITLE, TYPE);
+
 -- Declare dashboards
 DECLARE personal_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE user_performance_dashboard_id zafira.DASHBOARDS.id%TYPE;
@@ -537,7 +541,7 @@ BEGIN
 		('TEST RESULTS (LAST 30 DAYS) PERSONAL TEST', 'linechart', total_last_30_days_personal_sql, total_last_30_days_personal_model)
 	RETURNING id INTO total_last_30_days_personal_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-		('NIGHTLY - PERSONAL FAILURES', 'table', nightly_personal_failures_sql, nightly_personal_failures_model)
+		('NIGHTLY - PERSONAL FAILURES TEST', 'table', nightly_personal_failures_sql, nightly_personal_failures_model)
 	RETURNING id INTO nightly_personal_failures_id;
 
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -1838,7 +1842,7 @@ BEGIN
     ('NIGHTLY PLATFORM DETAILS TEST', 'table', nightly_platform_details_sql, nightly_platform_details_model)
 	RETURNING id INTO nightly_platform_details_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    ('NIGHTLY DETAILS TEST', 'table', nightly_details_sql, nightly_details_model)
+    ('NIGHTLY DETAILS TEST2', 'table', nightly_details_sql, nightly_details_model)
 	RETURNING id INTO nightly_details_id;
   INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
     ('NIGHTLY (DATE) TEST', 'table', nightly_regression_date_sql, nightly_regression_date_model)
