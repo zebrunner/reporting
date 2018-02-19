@@ -87,62 +87,62 @@ public class MonitorEmailNotificationTask implements Job
 		}
 	}
 
-	private Integer getResponseCode(Monitor monitor)
+	public Integer getResponseCode(Monitor monitor)
 	{
 		int responseCode = 0;
 		
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		switch (monitor.getHttpMethod())
 		{
-		case GET:
-		{
-			try
+			case GET:
 			{
-				HttpGet request = new HttpGet(monitor.getUrl());
-				request.addHeader("Accept", "*/*");
-				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+				try
+				{
+					HttpGet request = new HttpGet(monitor.getUrl());
+					request.addHeader("Accept", "*/*");
+					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+				}
+				catch (Exception e)
+				{
+					LOGGER.error(e.getMessage());
+				}
+				break;
 			}
-			catch (Exception e) 
+			case PUT:
 			{
-				LOGGER.error(e.getMessage());
+				try
+				{
+					HttpPut request = new HttpPut(monitor.getUrl());
+					request.addHeader("Content-Type", "application/json");
+					request.addHeader("Accept", "*/*");
+					request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+				}
+				catch (Exception e)
+				{
+					LOGGER.error(e.getMessage());
+				}
+				break;
 			}
-			break;
-		}
-		case PUT:
-		{
-			try
+			case POST:
 			{
-				HttpPut request = new HttpPut(monitor.getUrl());
-				request.addHeader("Content-Type", "application/json");
-				request.addHeader("Accept", "*/*");
-				request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+				try
+				{
+					HttpPost request = new HttpPost(monitor.getUrl());
+					request.addHeader("Content-Type", "application/json");
+					request.addHeader("Accept", "*/*");
+					request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
+					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
+				}
+				catch (Exception e)
+				{
+					LOGGER.error(e.getMessage());
+				}
+				break;
 			}
-			catch (Exception e) 
-			{
-				LOGGER.error(e.getMessage());
+			default:
+				break;
 			}
-			break;
-		}
-		case POST:
-		{
-			try
-			{
-				HttpPost request = new HttpPost(monitor.getUrl());
-				request.addHeader("Content-Type", "application/json");
-				request.addHeader("Accept", "*/*");
-				request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-				responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-			}
-			catch (Exception e) 
-			{
-				LOGGER.error(e.getMessage());
-			}
-			break;
-		}
-		default:
-			break;
-		}
 		return responseCode;
 	}
 
