@@ -389,6 +389,14 @@ span.light_text, div.light_text {
   color: red !important;
 }
 
+#dashboard_content {
+    padding-bottom: 0;
+}
+
+.widget-block {
+    padding-top: 0;
+}
+
 .dialog-bottom-alert {
     min-height: 40px;
     animation-name: bottomAlertAnimation;
