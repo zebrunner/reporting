@@ -33,7 +33,7 @@ To start Zafira in daemon mode, add '-d' argument:
 4. Open in your browser IP address of deployed enviroment at port `8080`
 
   ```
-  $ http://localgost:8080/zafira
+  $ http://localhost:8080/zafira
   ```
 5. Use next login/pass for access: `qpsdemo/qpsdemo`.
 
