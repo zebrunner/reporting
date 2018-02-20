@@ -66,7 +66,7 @@
                                     <th md-column class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
                                         Monitor enabled
                                     </th>
-                                    <th md-column class="col-md-1" has-any-permission="['MODIFY_MONITORS']"></th>
+                                    <th md-column class="col-md-1" has-any-permission="['MODIFY_MONITORS']"  ng-if="monitors.length != 0"></th>
                                 </tr>
                                 <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
@@ -84,7 +84,7 @@
                                     <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
                                         <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
-                                    <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
+                                    <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']" ng-if="monitors.length != 0">
                                         <div class="pull-right">
                                             <i name="editMonitor" data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">edit</i>
                                         </div>
