@@ -360,8 +360,7 @@ public class TestService
 		}
 		else if (workItem.getId() != null && existingBug != null)
 		{
-			int randomHashCode = RandomUtils.nextInt();
-			existingBug.setHashCode(randomHashCode == existingBug.getHashCode() ? RandomUtils.nextInt() : randomHashCode);
+			existingBug.setHashCode(nextInt(existingBug.getHashCode()));
 			workItemService.updateWorkItem(existingBug);
 			workItemService.updateWorkItem(workItem);
 			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
@@ -386,8 +385,7 @@ public class TestService
 		updateTest(test);
 
 		WorkItem workItem = workItemService.getWorkItemById(workItemId);
-		int randomHashCode = RandomUtils.nextInt();
-		workItem.setHashCode(randomHashCode == workItem.getHashCode() ? RandomUtils.nextInt() : randomHashCode);
+		workItem.setHashCode(nextInt(workItem.getHashCode()));
 		workItemService.updateWorkItem(workItem);
 		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
 
@@ -601,5 +599,15 @@ public class TestService
 			testIds.add(test.getId());
 		}
 		return testIds;
+	}
+
+	private static Integer nextInt(Integer... excluding)
+	{
+		int result = excluding == null || excluding[0] == null ? RandomUtils.nextInt() : excluding[0];
+		while(excluding != null && Arrays.asList(excluding).contains(result))
+		{
+			result = RandomUtils.nextInt();
+		}
+		return result;
 	}
 }
