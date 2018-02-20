@@ -158,7 +158,7 @@ tr.result:hover .expand-button {
 }
 
 .artifact-button {
-    display: flex;
+    display: flex !important;
 }
 
 .close-expand-icon {
@@ -387,6 +387,14 @@ span.light_text, div.light_text {
 
 .highlight_red {
   color: red !important;
+}
+
+#dashboard_content {
+    padding-bottom: 0;
+}
+
+.widget-block {
+    padding-top: 0;
 }
 
 .dialog-bottom-alert {

@@ -404,7 +404,7 @@
                 }
             }
         };
-    }]).filter('orderObjectBy', function() {
+    }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,
@@ -419,15 +419,30 @@
                     filtered.push(item);
                 });
                 filtered.sort(function (a, b) {
-                    return field == 'status' ? (STATUSES_ORDER[a[field]] > STATUSES_ORDER[b[field]] ? 1 : -1) :
-                        typeof a[field] == 'string' ? (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1) : (a[field] > b[field] ? 1 : -1);
+                    var aValue = a;
+                    var bValue = b;
+                    // cause field has an complex structure (with '.')
+                    field.split('.').forEach(function(item) {
+                        aValue = aValue[item];
+                        bValue = bValue[item];
+                    });
+                    // cause field is html - we should to compare by inner text
+                    try {
+                        $sce.parseAsHtml(aValue);
+                        $sce.parseAsHtml(bValue);
+                    } catch(e) {
+                        aValue = aValue ? String(aValue).replace(/<[^>]+>/gm, '') : '';
+                        bValue = bValue ? String(bValue).replace(/<[^>]+>/gm, '') : '';
+                    }
+                    return field == 'status' ? (STATUSES_ORDER[aValue] > STATUSES_ORDER[bValue] ? 1 : -1) :
+                        typeof aValue == 'string' ? (aValue.toLowerCase() > bValue.toLowerCase() ? 1 : -1) : (aValue > bValue ? 1 : -1);
                 });
                 if (reverse) filtered.reverse();
                 return filtered;
             }
             return items
         };
-    }).filter('isEmpty', [function() {
+    }]).filter('isEmpty', [function() {
 	  return function(object) {
 	    return angular.equals({}, object);
 	  }
