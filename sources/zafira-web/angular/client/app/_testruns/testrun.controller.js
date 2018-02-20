@@ -266,7 +266,7 @@
 	    		}
 	        	$scope.showEmailDialog(testRuns, event);
         };
-        
+
         $scope.addTestRun = function (testRun) {
 
             testRun.expand = $scope.testRunId ? true : false;
@@ -981,7 +981,7 @@
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            
+
             testRuns.forEach(function(testRun) {
             		TestRunService.sendTestRunResultsEmail(testRun.id, $scope.email).then(function(rs) {
                     if(rs.success)
@@ -1265,7 +1265,7 @@
             $scope.newKnownIssue.id = issue.id;
             $scope.newKnownIssue.jiraId = issue.jiraId;
             $scope.newKnownIssue.description = issue.description;
-            $scope.newKnownIssue.status = issue.status.name;
+            //$scope.newKnownIssue.status = issue.status.name;
         };
 
         var issueCheckInterval = $interval(function () {
