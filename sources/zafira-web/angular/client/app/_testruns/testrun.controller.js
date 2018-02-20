@@ -253,6 +253,20 @@
             }
         };
 
+        $scope.batchEmail = function(event)
+        {
+        		$scope.selectAll = false;
+        		var testRuns = [];
+	        	for(var id in $scope.testRuns)
+	    		{
+	        		if($scope.testRuns[id].selected)
+	        		{
+	        			testRuns.push($scope.testRuns[id]);
+	        		}
+	    		}
+	        	$scope.showEmailDialog(testRuns, event);
+        };
+        
         $scope.addTestRun = function (testRun) {
 
             testRun.expand = $scope.testRunId ? true : false;
@@ -412,7 +426,7 @@
         };
 
         $scope.sendAsEmail = function (testRun, event) {
-            $scope.showEmailDialog(testRun, event);
+            $scope.showEmailDialog([testRun], event);
         };
 
         $scope.export = function (testRun) {
@@ -684,7 +698,7 @@
                 });
         };
 
-        $scope.showEmailDialog = function(testRun, event) {
+        $scope.showEmailDialog = function(testRuns, event) {
             $mdDialog.show({
                 controller: EmailController,
                 templateUrl: 'app/_testruns/email_modal.html',
@@ -693,12 +707,12 @@
                 clickOutsideToClose:true,
                 fullscreen: true,
                 locals: {
-                    testRun: testRun
+                    testRuns: testRuns
                 }
             })
-                .then(function(answer) {
-                }, function() {
-                });
+            .then(function(answer) {
+            }, function() {
+            });
         };
 
         $scope.showCommentsDialog = function(testRun, event) {
@@ -953,34 +967,33 @@
         })();
     }
 
-    function EmailController($scope, $mdDialog, $mdConstant, UserService, TestRunService, testRun) {
-        $scope.title = testRun.testSuite.name;
-        $scope.subjectRequired = false;
-        $scope.textRequired = false;
+    function EmailController($scope, $mdDialog, $mdConstant, UserService, TestRunService, testRuns) {
 
-        $scope.testRun = testRun;
         $scope.email = {};
         $scope.email.recipients = [];
         $scope.users = [];
         $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
 
-        $scope.sendEmail = function (id) {
+        $scope.sendEmail = function () {
             if($scope.users.length == 0) {
             	alertify.error('Add a recipient!')
                 return;
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            TestRunService.sendTestRunResultsEmail($scope.testRun.id, $scope.email).then(function(rs) {
-                if(rs.success)
-                {
-                    alertify.success('Email was successfully sent!');
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
-            });
+            
+            testRuns.forEach(function(testRun) {
+            		TestRunService.sendTestRunResultsEmail(testRun.id, $scope.email).then(function(rs) {
+                    if(rs.success)
+                    {
+                        alertify.success('Email was successfully sent!');
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            	});
         };
         $scope.users_all = [];
         var currentText;
