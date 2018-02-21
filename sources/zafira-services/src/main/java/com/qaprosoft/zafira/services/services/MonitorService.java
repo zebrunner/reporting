@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.jobs.MonitorEmailNotificationTask;
@@ -50,6 +51,13 @@ public class MonitorService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
+	public MonitorStatus createMonitorStatus(MonitorStatus monitorStatus, Long monitorId)
+	{
+		monitorMapper.createMonitorStatus(monitorStatus, monitorId);
+		return monitorStatus;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public MonitorCheckType checkMonitor(Monitor monitor, boolean check) throws ServiceException
 	{
 		if(monitor.getId() != null && ! check)
@@ -74,8 +82,14 @@ public class MonitorService
 		searchResult.setPageSize(sc.getPageSize());
 		searchResult.setSortOrder(sc.getSortOrder());
 		searchResult.setResults(monitorMapper.searchMonitors(sc));
-		searchResult.setTotalResults(monitorMapper.getMonitorsCount());
+		searchResult.setTotalResults(monitorMapper.getMonitorsSearchCount(sc));
 		return searchResult;
+	}
+
+	@Transactional(readOnly = true)
+	public MonitorStatus getLastMonitorStatus(Long monitorId)
+	{
+		return monitorMapper.getLastMonitorStatus(monitorId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

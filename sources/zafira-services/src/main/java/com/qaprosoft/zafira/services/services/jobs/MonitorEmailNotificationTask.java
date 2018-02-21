@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.jobs;
 
 import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.EmailService;
 import com.qaprosoft.zafira.services.services.MonitorService;
@@ -31,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
 
 @Service
 public class MonitorEmailNotificationTask implements Job
@@ -65,6 +68,22 @@ public class MonitorEmailNotificationTask implements Job
 
 			monitor.setSuccess(codeMatch);
 			monitorService.updateMonitor(monitor, false, false);
+
+			Calendar dateOfPermission = Calendar.getInstance();
+			Calendar lastMonitorStatusDate = Calendar.getInstance();
+			MonitorStatus lastMonitorStatus = monitorService.getLastMonitorStatus(monitor.getId());
+			if(lastMonitorStatus != null)
+			{
+				lastMonitorStatusDate.setTime(lastMonitorStatus.getCreatedAt());
+				dateOfPermission.add(Calendar.HOUR_OF_DAY, -1);
+			} else
+			{
+				dateOfPermission.add(Calendar.MILLISECOND, 1);
+			}
+			if(dateOfPermission.after(lastMonitorStatusDate))
+			{
+				monitorService.createMonitorStatus(new MonitorStatus(codeMatch), monitor.getId());
+			}
 
 			if (! codeMatch && monitor.isNotificationsEnabled())
 			{
