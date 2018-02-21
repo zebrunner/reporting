@@ -35,6 +35,7 @@ public class Monitor extends AbstractEntity
 	private String requestBody;
 	private String environment;
 	private String comment;
+	private String tag;
 	private String cronExpression;
 	private boolean notificationsEnabled;
 	private boolean monitorEnabled;
@@ -101,6 +102,16 @@ public class Monitor extends AbstractEntity
 	public void setComment(String comment)
 	{
 		this.comment = comment;
+	}
+
+	public String getTag()
+	{
+		return tag;
+	}
+
+	public void setTag(String tag)
+	{
+		this.tag = tag;
 	}
 
 	public String getCronExpression()

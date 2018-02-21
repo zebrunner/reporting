@@ -6,7 +6,7 @@
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 
-			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENV, COMMENT, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
+			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENV, COMMENT, TAG, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
 			EXPECTED_CODE, RECIPIENTS, TYPE)
 			VALUES (
 				#{name},
@@ -15,6 +15,7 @@
 				#{requestBody},
 				#{environment},
 				#{comment},
+				#{tag},
 				#{notificationsEnabled},
 				#{monitorEnabled},
 				#{cronExpression},
@@ -67,6 +68,7 @@
                 REQUEST_BODY = #{requestBody},
                 ENV = #{environment},
                 COMMENT = #{comment},
+                TAG = #{tag},
                 NOTIFICATIONS_ENABLED = #{notificationsEnabled},
                 MONITOR_ENABLED = #{monitorEnabled},
                 CRON_EXPRESSION = #{cronExpression},
@@ -91,6 +93,7 @@
 				M.REQUEST_BODY AS MONITOR_REQUEST_BODY,
 				M.ENV AS MONITOR_ENVIRONMENT,
 				M.COMMENT AS MONITOR_COMMENT,
+				M.TAG AS MONITOR_TAG,
 				M.NOTIFICATIONS_ENABLED AS MONITOR_NOTIFICATIONS_ENABLED,
 				M.MONITOR_ENABLED AS MONITOR_MONITOR_ENABLED,
 				M.CRON_EXPRESSION AS MONITOR_CRON_EXPRESSION,
@@ -250,6 +253,7 @@
         <result column="MONITOR_REQUEST_BODY" property="requestBody"/>
         <result column="MONITOR_ENVIRONMENT" property="environment"/>
         <result column="MONITOR_COMMENT" property="comment"/>
+        <result column="MONITOR_TAG" property="tag"/>
         <result column="MONITOR_NOTIFICATIONS_ENABLED" property="notificationsEnabled"/>
         <result column="MONITOR_MONITOR_ENABLED" property="monitorEnabled"/>
         <result column="MONITOR_CRON_EXPRESSION" property="cronExpression"/>

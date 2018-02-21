@@ -35,6 +35,10 @@
             <b>comment</b>
         </field>
         <field>
+            <a>tag</a>
+            <b>tag</b>
+        </field>
+        <field>
             <a>cronExpression</a>
             <b>cronExpression</b>
         </field>

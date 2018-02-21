@@ -123,6 +123,7 @@ public class MonitorService
 			currentMonitor.setRequestBody(monitor.getRequestBody());
 			currentMonitor.setEnvironment(monitor.getEnvironment());
 			currentMonitor.setComment(monitor.getComment());
+			currentMonitor.setTag(monitor.getTag());
 			currentMonitor.setCronExpression(monitor.getCronExpression());
 			currentMonitor.setNotificationsEnabled(monitor.isNotificationsEnabled());
 			currentMonitor.setRecipients(monitor.getRecipients());

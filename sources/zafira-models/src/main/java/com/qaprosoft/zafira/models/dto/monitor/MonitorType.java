@@ -44,6 +44,8 @@ public class MonitorType extends AbstractEntity
 	@Size(max = 50, message = "Should be less than 50")
 	private String environment;
 	private String comment;
+	@Size(max = 50, message = "Should be less than 50")
+	private String tag;
 	@NotNull(message = "Cron expression required")
 	private String cronExpression;
 	@NotNull(message = "Type required")
@@ -117,6 +119,16 @@ public class MonitorType extends AbstractEntity
 	public void setComment(String comment)
 	{
 		this.comment = comment;
+	}
+
+	public String getTag()
+	{
+		return tag;
+	}
+
+	public void setTag(String tag)
+	{
+		this.tag = tag;
 	}
 
 	public String getCronExpression()
