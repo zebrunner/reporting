@@ -39,16 +39,6 @@ public class DashboardPage extends BasePage
 	@FindBy(xpath="//button[descendant::span[contains(@class, 'fa-trash')]]")
 	private WebElement deleteDashboardButton;
 
-
-	/*public UserMenu clickUserMenuButton()
-	{
-		if(! isElementClickable(userMenuButton, 2) || isElementPresent(getBackdrop(), 1))
-			clickOutside();
-		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
-		this.userMenuButton.click();
-		return new UserMenu(driver, null);
-	}
-*/
 	public DashboardPage(WebDriver driver)
 	{
 		super(driver, "/dashboards");

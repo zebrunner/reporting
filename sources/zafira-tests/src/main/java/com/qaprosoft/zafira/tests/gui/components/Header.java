@@ -40,11 +40,14 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = ".//button[.//*[text() = 'Project']]")
 	private WebElement projectFilterButton;
 
-	@FindBy(xpath = ".//md-menu[.//img]")
+	@FindBy(xpath = ".//md-menu[.//img | .//i[text() = 'account_circle']]")
 	private WebElement userMenuButton;
 
 	@FindBy(xpath = ".//*[@class='menu-button']")
 	private WebElement mobileMenuButton;
+
+	@FindBy(xpath = "//md-dialog")
+	private UploadImageModalWindow uploadImageModalWindow;
 
 	public Header(WebDriver driver, SearchContext context)
 	{
@@ -104,7 +107,7 @@ public class Header extends AbstractUIObject
 	public UploadImageModalWindow clickCompanyPhotoHoverIcon()
 	{
 		companyProfilePhotoHoverIcon.click();
-		return new UploadImageModalWindow(driver, null);
+		return uploadImageModalWindow;
 	}
 
 	public ProjectFilterMenu clickProjectFilterButton()

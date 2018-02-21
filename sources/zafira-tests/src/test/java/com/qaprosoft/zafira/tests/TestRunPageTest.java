@@ -141,7 +141,7 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.typeComment("Test");
 		markAsReviewedModalWindow.clickMarkAsReviewedButton();
 		markAsReviewedModalWindow.waitUntilElementToBeClickableWithBackdropMask(markAsReviewedModalWindow.getCommentInput(), 2);
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " marked as reviewed");
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed");
 		Assert.assertFalse(markAsReviewedModalWindow.isElementPresent(1));
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		Assert.assertTrue(testRunTableRow.isElementPresent(testRunTableRow.getCommentIcon(), 1), "Comment icon is not displayed");
@@ -154,7 +154,7 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.clearAllInputs();
 		markAsReviewedModalWindow.typeComment("new test");
 		markAsReviewedModalWindow.clickMarkAsReviewedButton();
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " marked as reviewed");
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed");
 		Assert.assertTrue(testRunTableRow.isElementPresent(testRunTableRow.getCommentIcon(), 1), "Comment icon is not displayed");
 		markAsReviewedModalWindow = testRunPageService.clickCommentIcon(0);
 		Assert.assertEquals(markAsReviewedModalWindow.getWebElementValue(markAsReviewedModalWindow.getCommentInput()), "new test", "Incorrect text in comment input");
@@ -171,10 +171,11 @@ public class TestRunPageTest extends AbstractTest
 		SendAsEmailModalWindow sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
 		Assert.assertEquals(sendAsEmailModalWindow.getHeaderText(), "Email", "Modal is not opened");
 		sendAsEmailModalWindow.typeRecipients(userType.getEmail().substring(0, 4));
+		sendAsEmailModalWindow.waitUntilElementIsNotPresent(sendAsEmailModalWindow.getProgressLinear(), 2);
 		sendAsEmailModalWindow.clickSuggestion(0);
 		Chip chip = sendAsEmailModalWindow.getChips().get(0);
 		Assert.assertTrue(chip.isElementPresent(chip.getCloseButton(), 1), "Chip is not present");
-		Assert.assertEquals(chip.getContentText(), userType.getEmail(), "Invalid email in the chip");
+		Assert.assertEquals(chip.getContentText(), userType.getEmail(), "Invalid email in the chip. Current email text is: " + chip.getContentText());
 		chip.clickCloseButton();
 		Assert.assertTrue(! sendAsEmailModalWindow.isElementPresent(chip.getRootElement(), 1), "Chip is present");
 		sendAsEmailModalWindow.typeRecipients(userType.getEmail().substring(0, 4));
