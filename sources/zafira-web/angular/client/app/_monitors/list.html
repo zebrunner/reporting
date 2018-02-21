@@ -45,19 +45,19 @@
                                         <md-input-container class="searchable" flex>
                                             <input id="searchURL" type="text" ng-model="sc.url" name="url" placeholder="URL"/>
                                         </md-input-container>
+                                    </th>
+                                    <th md-column class="col-md-1">
+                                        Type
+                                    </th>
+                                    <th md-column class="col-md-3">
+                                        <md-input-container class="searchable" flex>
+                                            <input id="searchEnv" type="text" ng-model="sc.environment" name="env" placeholder="Environment"/>
+                                        </md-input-container>
                                         <md-input-container class="searchable" flex>
                                             <input id="searchComment" type="text" ng-model="sc.comment" name="comment" placeholder="Comment"/>
                                         </md-input-container>
                                     </th>
                                     <th md-column class="col-md-1">
-                                        Type
-                                    </th>
-                                    <th md-column class="col-md-2">
-                                        <md-input-container class="searchable" flex>
-                                            <input id="searchEnv" type="text" ng-model="sc.environment" name="env" placeholder="Environment"/>
-                                        </md-input-container>
-                                    </th>
-                                    <th md-column class="col-md-2">
                                         Crone expression
                                     </th>
                                     <th md-column class="col-md-1">
@@ -78,8 +78,13 @@
                                     </td>
                                     <td name="monitorUrl" md-cell class="col-md-2">{{monitor.url}}</td>
                                     <td name="monitorType" md-cell class="col-md-1">{{monitor.type}}</td>
-                                    <td name="monitorEnv" md-cell class="col-md-2"><span class="label label-default">{{monitor.environment}}</span></td>
-                                    <td name="monitorCron" md-cell class="col-md-2">{{monitor.cronExpression}}</td>
+                                    <td name="monitorEnv" md-cell class="col-md-3">
+                                        <span class="label label-default">{{monitor.environment}}</span>
+                                        <span style="margin-left: 10px">
+                                            {{ monitor.comment | limitTo : 25 : 0 }}<span ng-if="monitor.comment.length > 25">....</span>
+                                        </span>
+                                    </td>
+                                    <td name="monitorCron" md-cell class="col-md-1">{{monitor.cronExpression}}</td>
                                     <td name="monitorCode" md-cell class="col-md-1">{{monitor.expectedCode}}</td>
                                     <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
                                         <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
