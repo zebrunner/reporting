@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
 import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.MonitorStatus;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,6 +27,8 @@ public interface MonitorMapper
 
 	void createMonitor(Monitor monitor);
 
+	void createMonitorStatus(@Param(value = "monitorStatus") MonitorStatus monitorStatus, @Param(value = "monitorId") Long monitorId);
+
 	Monitor getMonitorById(long id);
 
 	Monitor getMonitorByMonitorName(String monitorName);
@@ -32,6 +36,8 @@ public interface MonitorMapper
 	List<Monitor> searchMonitors(MonitorSearchCriteria sc);
 
 	Integer getMonitorsSearchCount(MonitorSearchCriteria sc);
+
+	MonitorStatus getLastMonitorStatus(@Param(value = "monitorId") Long monitorId);
 
 	void updateMonitor(Monitor monitor);
 
