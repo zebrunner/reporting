@@ -1338,7 +1338,7 @@ BEGIN
 	'{
       "columns": [
         "PLATFORM",
-	      "SUITE NAME",
+	    "SUITE NAME",
         "BUILD",
         "PASSED",
         "FAILED",
@@ -1601,7 +1601,7 @@ BEGIN
       "columns": [
         "PLATFORM",
         "SUITE NAME",
-	     "BUILD",
+	    "BUILD",
         "PASSED",
         "FAILED",
         "KNOWN ISSUE",
@@ -1753,7 +1753,7 @@ BEGIN
       "columns": [
         "PLATFORM",
         "SUITE NAME",
-	     "BUILD",
+	    "BUILD",
         "PASSED",
         "FAILED",
         "KNOWN ISSUE",
