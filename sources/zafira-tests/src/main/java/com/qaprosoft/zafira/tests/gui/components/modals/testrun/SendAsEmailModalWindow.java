@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.tests.gui.components.modals.testrun;
 
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.modals.AbstractModalWindow;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,13 +15,16 @@ public class SendAsEmailModalWindow extends AbstractModalWindow
 	@FindBy(xpath = ".//input[@type = 'search']")
 	private WebElement recipientsInput;
 
+	@FindBy(xpath = ".//md-progress-linear")
+	private WebElement progressLinear;
+
 	@FindBy(id = "send")
 	private WebElement sendButton;
 
 	@FindBy(xpath = "//md-virtual-repeat-container//li")
 	private List<WebElement> suggestions;
 
-	@FindBy(xpath = "//md-chip")
+	@FindBy(xpath = ".//md-chip")
 	private List<Chip> chips;
 
 	public SendAsEmailModalWindow(WebDriver driver, SearchContext context)
@@ -37,7 +39,13 @@ public class SendAsEmailModalWindow extends AbstractModalWindow
 
 	public void typeRecipients(String recipient)
 	{
+		recipientsInput.click();
 		recipientsInput.sendKeys(recipient);
+	}
+
+	public WebElement getProgressLinear()
+	{
+		return progressLinear;
 	}
 
 	public WebElement getSendButton()

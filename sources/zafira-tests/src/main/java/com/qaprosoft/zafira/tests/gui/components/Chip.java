@@ -18,7 +18,7 @@ public class Chip extends AbstractUIObject
 	@FindBy(xpath = ".//md-chip-template")
 	private WebElement content;
 
-	@FindBy(xpath = ".//*[contains(@class, '')]")
+	@FindBy(xpath = ".//button[contains(@class, 'md-chip-remove')]")
 	private WebElement closeButton;
 
 	public Chip(WebDriver driver, SearchContext context)
