@@ -421,7 +421,7 @@
                 filtered.sort(function (a, b) {
                     var aValue = a;
                     var bValue = b;
-                    // cause field has an complex structure (with '.')
+                    // cause field has a complex structure (with '.')
                     field.split('.').forEach(function(item) {
                         aValue = aValue[item];
                         bValue = bValue[item];
