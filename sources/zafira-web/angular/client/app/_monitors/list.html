@@ -4,10 +4,13 @@
         <div class="row">
             <div class="col-lg-12">
                 <h2 id="pageTitle" class="section-header">Monitors
-                    <small id="itemsCount" data-ng-if="monitors.length">({{monitors.length}})</small>
-                    <!--<md-button data-ng-if="monitors.length" data-ng-click="switchViewType()" style="float: right" class="md-fab md-primary md-mini" aria-label="view type">
-                        <i ng-class="{'fa fa-tasks': blockView, 'fa fa-th-large': !blockView}" aria-hidden="true"></i>
-                    </md-button>-->
+                    <small id="itemsCount" data-ng-if="sr.totalResults">({{sr.totalResults}})</small>
+                    <button id="search" class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
+                        <b>Search</b>
+                    </button>
+                    <button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+                        <b>Clear</b>
+                    </button>
                 </h2>
             </div>
         </div>
@@ -29,29 +32,43 @@
                 <article class="article">
                     <md-card class="no-margin-h">
                         <md-table-container>
+                            <form ng-submit="search()" name="search_form">
                             <table class="table-hover" md-table zafira-background-theme="table">
                                 <thead md-head style="position: parent;">
                                 <tr md-row>
                                     <th md-column class="col-md-2">
-                                        Monitor status
+                                        <md-input-container class="searchable" flex>
+                                            <input id="searchName" type="text" ng-model="sc.name" name="name" placeholder="Name"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column class="col-md-2">
-                                        Url
+                                        <md-input-container class="searchable" flex>
+                                            <input id="searchURL" type="text" ng-model="sc.url" name="url" placeholder="URL"/>
+                                        </md-input-container>
                                     </th>
-                                    <th md-column class="col-md-2">
+                                    <th md-column class="col-md-1">
                                         Type
                                     </th>
-                                    <th md-column class="col-md-2">
-                                        Crone expression
+                                    <th md-column class="col-md-3">
+                                        <md-input-container class="searchable" flex>
+                                            <input id="searchEnv" type="text" ng-model="sc.environment" name="env" placeholder="Environment"/>
+                                        </md-input-container>
+                                        <md-input-container class="searchable" flex>
+                                            <input id="searchComment" type="text" ng-model="sc.comment" name="comment" placeholder="Comment"/>
+                                        </md-input-container>
                                     </th>
-                                    <th md-column class="col-md-2">
+                                    <th md-column class="col-md-1">
+                                        Cron expression
+                                    </th>
+                                    <th md-column class="col-md-1">
                                         Expected code
                                     </th>
-                                    <th md-column class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
+                                    <th md-column class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
                                         Monitor enabled
                                     </th>
-                                    <th md-column class="col-md-2" has-any-permission="['MODIFY_MONITORS']"></th>
+                                    <th md-column class="col-md-1" has-any-permission="['MODIFY_MONITORS']"  ng-if="monitors.length != 0"></th>
                                 </tr>
+                                <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
                                 <tbody md-body>
                                 <tr md-row ng-repeat="monitor in monitors | orderBy:['success', 'name']">
@@ -60,13 +77,19 @@
                                         <b name="monitorName">{{monitor.name}}</b>
                                     </td>
                                     <td name="monitorUrl" md-cell class="col-md-2">{{monitor.url}}</td>
-                                    <td name="monitorType" md-cell class="col-md-2">{{monitor.type}}</td>
-                                    <td name="monitorCron" md-cell class="col-md-2">{{monitor.cronExpression}}</td>
-                                    <td name="monitorCode" md-cell class="col-md-2">{{monitor.expectedCode}}</td>
-                                    <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
+                                    <td name="monitorType" md-cell class="col-md-1">{{monitor.type}}</td>
+                                    <td name="monitorEnv" md-cell class="col-md-3">
+                                        <span class="label label-default">{{monitor.environment}}</span>
+                                        <span style="margin-left: 10px">
+                                            {{ monitor.comment | limitTo : 25 : 0 }}<span ng-if="monitor.comment.length > 25">....</span>
+                                        </span>
+                                    </td>
+                                    <td name="monitorCron" md-cell class="col-md-1">{{monitor.cronExpression}}</td>
+                                    <td name="monitorCode" md-cell class="col-md-1">{{monitor.expectedCode}}</td>
+                                    <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
                                         <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
-                                    <td md-cell class="col-md-2" has-any-permission="['MODIFY_MONITORS']">
+                                    <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']" ng-if="monitors.length != 0">
                                         <div class="pull-right">
                                             <i name="editMonitor" data-ng-click="openMonitorDialog($event, monitor)" class="material-icons">edit</i>
                                         </div>
@@ -77,109 +100,12 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            </form>
                         </md-table-container>
+                        <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                     </md-card>
                 </article>
             </div>
         </div>
-        <!--<div class="row switch-view" ng-if="!blockView">
-            <div class="col-md-12">
-                <div class="col-md-4" data-ng-repeat="monitor in monitors | orderBy:'name'">
-                    <div class="card bg-white">
-                        <div style="min-height: 800px" class="card-content">
-                            <i ng-class="{'highlight_green': monitor.success, 'highlight_red': !monitor.success, 'highlight_gray': !monitor.monitorEnabled}" class="material-icons material-icon-16px">fiber_manual_record</i>
-                            <span class="card-title">
-                                {{ monitor.name }}
-                            </span>
-                            <md-input-container style="float: right; margin: 0; padding: 0">
-                                <md-switch style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, true)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
-                            </md-input-container>
-                            <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container flex>
-                                    <label>Name</label>
-                                    <input type="text" ng-model="monitor.name" required/>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container flex>
-                                    <label>URL</label>
-                                    <input type="text" data-ng-model="monitor.url" required/>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container flex>
-                                    <md-select ng-model="monitor.type" name="type" placeholder="Type" ng-required>
-                                        <md-option value="" disabled>Type</md-option>
-                                        <md-option value="HTTP">HTTP</md-option>
-                                        <md-option value="PING" disabled>Ping (Next feature)</md-option>
-                                    </md-select>
-                                </md-input-container>
-                            </div>
-                            <md-radio-group id="httpMethods" ng-model="monitor.httpMethod" ng-if="isHttpBlockPresent(monitor)">
-                                <md-radio-button class="checkbox-inline md-primary" value="POST">POST</md-radio-button>
-                                <md-radio-button class="checkbox-inline md-primary" value="GET">GET</md-radio-button>
-                                <md-radio-button class="checkbox-inline md-primary" value="PUT">PUT</md-radio-button>
-                            </md-radio-group>
-                            <div layout layout-sm="column" ng-if="isHttpBodyBlockPresent(monitor)" style="padding: 0">
-                                <span>Body</span>
-                                <md-input-container flex>
-                                    <code-textarea id="requestBody" ng-model="monitor.requestBody" code-data="{{monitor.requestBody}}"></code-textarea>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container flex>
-                                    <label>Cron expression</label>
-                                    <input name="value" type="text" data-ng-model="monitor.cronExpression" required/>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column" style="padding: 0">
-                                <md-input-container flex>
-                                    <label>Expected code</label>
-                                    <input name="value" type="number" data-ng-model="monitor.expectedCode" required/>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column">
-                                <md-input-container style="float: right; margin-top: 0px">
-                                    <md-switch style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
-                                </md-input-container>
-                            </div>
-                            <div layout layout-sm="column" style="padding: 0" ng-if="monitor.notificationsEnabled">
-                                <md-input-container flex>
-                                    <label ng-if="monitor.emailList">Recepients ({{monitor.emailList.length}})</label>
-                                    <md-chips ng-model="monitor.emailList"
-                                              filter-selected=true
-                                              md-autocomplete-snap
-                                              md-transform-chip="checkAndTransformRecipient($chip, monitor)"
-                                              md-on-remove="removeRecipient($chip, monitor)"
-                                              md-separator-keys="keys">
-                                        <md-chip-template>
-                                            {{$chip}}
-                                        </md-chip-template>
-                                        <md-autocomplete
-                                            md-autoselect
-                                            md-no-cache=true
-                                            md-search-text="searchText"
-                                            md-items="user in querySearch(searchText, monitor)"
-                                            md-item-text="user.email"
-                                            placeholder="add email">
-                                            <md-item-template>
-                                                <span>{{user.email}}</span>
-                                            </md-item-template>
-                                            <md-not-found>
-                                                No users matching "{{searchText}}" were found.
-                                            </md-not-found>
-                                        </md-autocomplete>
-                                    </md-chips>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <div class="card-action text-right" style="border-top: none;">
-                            <md-button ng-click="deleteMonitor(monitor.id)" class="md-raised btn-w-md md-warn">Delete</md-button>
-                            <md-button ng-click="updateMonitor(monitor, false)" class="md-raised btn-w-md md-primary">Save</md-button><div class="divider"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>-->
     </div>
 </div>

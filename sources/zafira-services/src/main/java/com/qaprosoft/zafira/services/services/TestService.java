@@ -25,6 +25,7 @@ import net.rcarz.jiraclient.Issue;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -359,7 +360,8 @@ public class TestService
 		}
 		else if (workItem.getId() != null && existingBug != null)
 		{
-			existingBug.setHashCode(-1);
+			// Generate random hashcode to unlink known issue
+			existingBug.setHashCode(RandomUtils.nextInt());
 			workItemService.updateWorkItem(existingBug);
 			workItemService.updateWorkItem(workItem);
 			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
@@ -384,7 +386,8 @@ public class TestService
 		updateTest(test);
 
 		WorkItem workItem = workItemService.getWorkItemById(workItemId);
-		workItem.setHashCode(-1);
+		// Generate random hashcode to unlink known issue
+		workItem.setHashCode(RandomUtils.nextInt());
 		workItemService.updateWorkItem(workItem);
 		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
 

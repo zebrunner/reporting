@@ -22,6 +22,8 @@ public class Error
 {
 	@JsonInclude(Include.NON_EMPTY)
 	private String field;
+	@JsonInclude(Include.NON_EMPTY)
+	private String message;
 	@JsonInclude(Include.NON_NULL)
 	private ErrorCode code;
 	@JsonInclude(Include.NON_NULL)
@@ -36,10 +38,11 @@ public class Error
 		this.code = code;
 	}
 
-	public Error(ErrorCode code, String field)
+	public Error(ErrorCode code, String field, String message)
 	{
 		this.code = code;
 		this.field = field;
+		this.message = message;
 	}
 
 	public String getField()
@@ -56,10 +59,15 @@ public class Error
 	{
 		return code.getCode();
 	}
-	
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
 	public String getMessage()
 	{
-		return code.name();
+		return this.message;
 	}
 
 	public void setCode(ErrorCode code)
