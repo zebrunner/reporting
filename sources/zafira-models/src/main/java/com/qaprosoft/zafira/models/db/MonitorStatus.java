@@ -6,6 +6,10 @@ public class MonitorStatus extends AbstractEntity
 
 	private Boolean success;
 
+	public MonitorStatus()
+	{
+	}
+
 	public MonitorStatus(boolean success)
 	{
 		this.success = success;
