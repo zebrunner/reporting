@@ -21,10 +21,14 @@ ENV ZAFIRA_LDAP_SEARCH_FILTER=uid
 ENV ZAFIRA_LDAP_USER=
 ENV ZAFIRA_LDAP_PASSWORD=
 
+ENV ZAFIRA_NEWRELIC_KEY=
+ENV ZAFIRA_NEWRELIC_APP=
+
 RUN apt-get update && apt-get install zip
 
-COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/zafira-ws.war
-COPY sources/zafira-web/target/zafira.war ${CATALINA_HOME}/temp/zafira.war
+COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/
+COPY sources/zafira-web/target/zafira.war ${CATALINA_HOME}/temp/
+COPY tools/newrelic.zip ${CATALINA_HOME}/temp/
 COPY entrypoint.sh /
 
 EXPOSE 8080

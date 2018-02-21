@@ -158,7 +158,7 @@ tr.result:hover .expand-button {
 }
 
 .artifact-button {
-    display: flex;
+    display: flex !important;
 }
 
 .close-expand-icon {
@@ -389,6 +389,39 @@ span.light_text, div.light_text {
   color: red !important;
 }
 
+#dashboard_content {
+    padding-bottom: 0;
+}
+
+.widget-block {
+    padding-top: 0;
+}
+
+.dialog-bottom-alert {
+    min-height: 40px;
+    animation-name: bottomAlertAnimation;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes bottomAlertAnimation {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+@-webkit-keyframes bottomAlertAnimation {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+.dialog-bottom-alert.dialog-success-alert {
+    background-color: #d9ffcf;
+}
+
+.dialog-bottom-alert.dialog-error-alert {
+    background-color: #dbc9c2;
+}
+
 .highlight_gray {
     color: lightgrey !important;
 }
@@ -439,7 +472,7 @@ section.zaf-light .article-title {
 }
 
 .info.dark {
-    background-color: #7a97a7;
+    background-color: #4e7388;
 }
 
 tr.dark > td {
@@ -447,15 +480,15 @@ tr.dark > td {
 }
 
 .success.dark {
-    background-color: #517160;
+    background-color: #4d735f;
 }
 
 .danger.dark {
-    background-color: #7d2838;
+    background-color: #904944;
 }
 
 .warning.dark {
-    background-color: #af895b;
+    background-color: #a77942;
 }
 
 .progress-circular_align {

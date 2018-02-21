@@ -78,7 +78,7 @@
                 elementId: '='
             },
 
-            template: '<div class="wrap"><div ng-show="largeText"> {{ text | subString :0 :end }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
+            template: '<div class="wrap"><div ng-show="largeText"> {{ text | limitTo :end :0 }}.... <a href="javascript:;" ng-click="showMore()" id="more{{ elementId }}" ng-show="isShowMore">Show&nbsp;more</a><a href="javascript:;" id="less{{ elementId }}" ng-click="showLess()" ng-hide="isShowMore">Show&nbsp;less </a></div><div ng-hide="largeText">{{ text }}</div></div> ',
 
             link: function(scope, iElement, iAttrs) {
 
@@ -337,7 +337,39 @@
                 };
             }
         };
-    }]).directive('profilePhoto', ['$rootScope', function ($rootScope) {
+    }]).directive('fieldError', function($q, $timeout, $compile) {
+        "use strict";
+        return {
+            require: 'ngModel',
+            transclusion: true,
+            restrict: 'A',
+            scope: {
+                ngModel: '=',
+                fieldError: '=',
+                responseField: '@'
+            },
+            link: function(scope, elm, attrs, ctrl) {
+
+
+                scope.$watch('fieldError', function (newValue, oldValue) {
+                    if(newValue) {
+                        var result;
+                        newValue.error.data.validationErrors.forEach(function(error) {
+                            if(error.field == scope.responseField)
+                                result = error;
+                        });
+                        if(result) {
+                            ctrl.$setValidity(scope.responseField, false);
+                        }
+                    }
+                })
+
+                scope.$watch('ngModel', function (newVal) {
+                    ctrl.$setValidity(scope.responseField, true);
+                })
+            }
+        };
+    }).directive('profilePhoto', ['$rootScope', function ($rootScope) {
         "use strict";
         return {
             restrict: 'E',
@@ -372,13 +404,7 @@
                 }
             }
         };
-    }]).filter('subString', function() {
-        return function(str, start, end) {
-            if (str != undefined) {
-                return str.substr(start, end);
-            }
-        }
-    }).filter('orderObjectBy', function() {
+    }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,
@@ -393,15 +419,30 @@
                     filtered.push(item);
                 });
                 filtered.sort(function (a, b) {
-                    return field == 'status' ? (STATUSES_ORDER[a[field]] > STATUSES_ORDER[b[field]] ? 1 : -1) :
-                        typeof a[field] == 'string' ? (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : -1) : (a[field] > b[field] ? 1 : -1);
+                    var aValue = a;
+                    var bValue = b;
+                    // cause field has a complex structure (with '.')
+                    field.split('.').forEach(function(item) {
+                        aValue = aValue[item];
+                        bValue = bValue[item];
+                    });
+                    // cause field is html - we should to compare by inner text
+                    try {
+                        $sce.parseAsHtml(aValue);
+                        $sce.parseAsHtml(bValue);
+                    } catch(e) {
+                        aValue = aValue ? String(aValue).replace(/<[^>]+>/gm, '') : '';
+                        bValue = bValue ? String(bValue).replace(/<[^>]+>/gm, '') : '';
+                    }
+                    return field == 'status' ? (STATUSES_ORDER[aValue] > STATUSES_ORDER[bValue] ? 1 : -1) :
+                        typeof aValue == 'string' ? (aValue.toLowerCase() > bValue.toLowerCase() ? 1 : -1) : (aValue > bValue ? 1 : -1);
                 });
                 if (reverse) filtered.reverse();
                 return filtered;
             }
             return items
         };
-    }).filter('isEmpty', [function() {
+    }]).filter('isEmpty', [function() {
 	  return function(object) {
 	    return angular.equals({}, object);
 	  }
