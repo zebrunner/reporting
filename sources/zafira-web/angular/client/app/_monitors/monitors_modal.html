@@ -74,6 +74,15 @@
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
+                        <label>Tag</label>
+                        <input md-maxlength="50" name="tag" type="text" data-ng-model="monitor.tag"/>
+                        <div ng-messages="monitor_form.tag.$error">
+                            <div ng-message="md-maxlength">The tag has to be less than 50 characters long.</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
                         <label>Cron expression</label>
                         <input name="cron" type="text" data-ng-model="monitor.cronExpression" field-error="errorResponse" response-field="cronExpressionValid" required/>
                         <div ng-messages="monitor_form.cron.$error">
