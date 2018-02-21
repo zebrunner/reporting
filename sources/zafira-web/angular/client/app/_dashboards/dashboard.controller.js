@@ -53,7 +53,7 @@
                 if (rs.success) {
                     var data = rs.data;
                     for (var j = 0; j < data.length; j++) {
-                        if (data[j].CREATED_AT) {
+                        if (data[j] !== null && data[j].CREATED_AT) {
                             data[j].CREATED_AT = new Date(data[j].CREATED_AT);
                         }
                     }
@@ -697,11 +697,13 @@
                     var data = rs.data;
                     var columns = {};
                     for (var j = 0; j < data.length; j++) {
-                        if(j === 0){
-                            columns = Object.keys(data[j]);
-                        }
-                        if (data[j].CREATED_AT) {
-                            data[j].CREATED_AT = new Date(data[j].CREATED_AT);
+                        if(data[j] !== null) {
+                            if (j === 0) {
+                                columns = Object.keys(data[j]);
+                            }
+                            if (data[j].CREATED_AT) {
+                                data[j].CREATED_AT = new Date(data[j].CREATED_AT);
+                            }
                         }
                     }
                     if (table){

@@ -17,9 +17,13 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +41,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Monitor;
-import com.qaprosoft.zafira.models.dto.MonitorType;
+import com.qaprosoft.zafira.models.dto.monitor.MonitorType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.MonitorService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -70,6 +74,36 @@ public class MonitorsApiController extends AbstractController
 	MonitorType createMonitor(@Valid @RequestBody MonitorType monitor) throws ServiceException
 	{
 		return mapper.map(monitorsService.createMonitor(mapper.map(monitor, Monitor.class)), MonitorType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Check monitor", nickname = "checkMonitor", code = 200, httpMethod = "POST", response = MonitorCheckType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('MODIFY_MONITORS')")
+	@RequestMapping(value = "check", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody MonitorCheckType checkMonitor(@RequestParam(value = "check", required = false) Boolean check, @Valid @RequestBody MonitorType monitor) throws ServiceException
+	{
+		return monitorsService.checkMonitor(mapper.map(monitor, Monitor.class), check);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Search monitors", nickname = "searchMonitors", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasPermission('VIEW_MONITORS')")
+	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody SearchResult<MonitorType> searchMonitors(@RequestBody MonitorSearchCriteria sc)
+	{
+		SearchResult<Monitor> sr = monitorsService.searchMonitors(sc);
+		SearchResult<MonitorType> result = new SearchResult<>();
+		result.setTotalResults(sr.getTotalResults());
+		result.setSortOrder(sr.getSortOrder());
+		result.setPageSize(sr.getPageSize());
+		result.setPage(sr.getPage());
+		result.setResults(sr.getResults().stream().map(monitor -> mapper.map(monitor, MonitorType.class)).collect(
+				Collectors.toList()));
+		return result;
 	}
 
 	@ResponseStatusDetails

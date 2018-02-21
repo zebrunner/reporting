@@ -23,6 +23,17 @@ cp zafira.war $CATALINA_HOME/webapps/zafira.war
 # Clear temp
 rm -rf zafira*
 
+# Install Newrelic if license key specified
+if [ ! -z "$ZAFIRA_NEWRELIC_KEY" ];
+then
+  unzip $CATALINA_HOME/temp/newrelic.zip -d $CATALINA_HOME/
+  cd $CATALINA_HOME/newrelic
+  sed -i -e 's#NEWRELIC_KEY#'"$ZAFIRA_NEWRELIC_KEY"'#g' newrelic.yml
+  sed -i -e 's#NEWRELIC_APP#'"$ZAFIRA_NEWRELIC_APP"'#g' newrelic.yml
+  java -jar newrelic.jar install
+  cd ..
+fi
+
 # Run Tomcat
 echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties

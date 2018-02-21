@@ -8,6 +8,8 @@ services:
      - ./database/:/docker-entrypoint-initdb.d
     ports:
      - "5433:5432"
+    env_file:
+     - integrations.env
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
@@ -33,6 +35,8 @@ services:
      - ZAFIRA_JDBC_URL=jdbc:postgresql://db:5432/postgres
      - ZAFIRA_JDBC_USER=postgres
      - ZAFIRA_JDBC_PASS=postgres
+     - ZAFIRA_NEWRELIC_KEY=
+     - ZAFIRA_NEWRELIC_APP=
     depends_on:
      - "db"
      - "rabbitmq"

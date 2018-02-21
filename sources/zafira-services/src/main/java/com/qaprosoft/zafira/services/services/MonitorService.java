@@ -16,8 +16,13 @@
 package com.qaprosoft.zafira.services.services;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.MonitorStatus;
+import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.jobs.MonitorEmailNotificationTask;
 import com.qaprosoft.zafira.services.services.jobs.MonitorJobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,12 +39,57 @@ public class MonitorService
 	@Autowired
 	private MonitorJobService monitorJobService;
 
+	@Autowired
+	private MonitorEmailNotificationTask monitorEmailNotificationTask;
+
 	@Transactional(rollbackFor = Exception.class)
 	public Monitor createMonitor(Monitor monitor)
 	{
 		monitorMapper.createMonitor(monitor);
 		monitorJobService.addJob(monitor);
 		return monitor;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public MonitorStatus createMonitorStatus(MonitorStatus monitorStatus, Long monitorId)
+	{
+		monitorMapper.createMonitorStatus(monitorStatus, monitorId);
+		return monitorStatus;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public MonitorCheckType checkMonitor(Monitor monitor, boolean check) throws ServiceException
+	{
+		if(monitor.getId() != null && ! check)
+		{
+			monitor = getMonitorById(monitor.getId());
+		}
+		Integer actualCode = monitorEmailNotificationTask.getResponseCode(monitor);
+		Boolean success = actualCode.equals(monitor.getExpectedCode());
+		if(monitor.getId() != null && ! check)
+		{
+			monitor.setSuccess(success);
+			updateMonitor(monitor, false, false);
+		}
+		return new MonitorCheckType(actualCode, success);
+	}
+
+	@Transactional(readOnly = true)
+	public SearchResult<Monitor> searchMonitors(MonitorSearchCriteria sc)
+	{
+		SearchResult<Monitor> searchResult = new SearchResult<>();
+		searchResult.setPage(sc.getPage());
+		searchResult.setPageSize(sc.getPageSize());
+		searchResult.setSortOrder(sc.getSortOrder());
+		searchResult.setResults(monitorMapper.searchMonitors(sc));
+		searchResult.setTotalResults(monitorMapper.getMonitorsSearchCount(sc));
+		return searchResult;
+	}
+
+	@Transactional(readOnly = true)
+	public MonitorStatus getLastMonitorStatus(Long monitorId)
+	{
+		return monitorMapper.getLastMonitorStatus(monitorId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -71,6 +121,9 @@ public class MonitorService
 			currentMonitor.setUrl(monitor.getUrl());
 			currentMonitor.setHttpMethod(monitor.getHttpMethod());
 			currentMonitor.setRequestBody(monitor.getRequestBody());
+			currentMonitor.setEnvironment(monitor.getEnvironment());
+			currentMonitor.setComment(monitor.getComment());
+			currentMonitor.setTag(monitor.getTag());
 			currentMonitor.setCronExpression(monitor.getCronExpression());
 			currentMonitor.setNotificationsEnabled(monitor.isNotificationsEnabled());
 			currentMonitor.setRecipients(monitor.getRecipients());
