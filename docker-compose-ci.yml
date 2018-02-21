@@ -7,6 +7,8 @@ services:
      - ./database/:/docker-entrypoint-initdb.d
     ports:
      - "5433:5432"
+    env_file:
+     - integrations.env
     environment:
      - POSTGRES_USER=postgres
      - POSTGRES_PASSWORD=postgres
