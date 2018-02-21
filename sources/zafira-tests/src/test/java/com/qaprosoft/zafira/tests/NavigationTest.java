@@ -31,7 +31,7 @@ public class NavigationTest extends AbstractTest {
 
 		DashboardTabMenu dashboardTabMenu = dashboardPage.getNavbar().hoverOnDashboardTab();
 		Assert.assertTrue(dashboardTabMenu.isElementPresent(10), "Dashboard menu not visible!");
-		DashboardPage dashboardPage = dashboardTabMenu.clickDashboardByName("General Test");
+		DashboardPage dashboardPage = dashboardTabMenu.clickDashboardByName("General");
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page is not opened");
 
 		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
@@ -64,8 +64,21 @@ public class NavigationTest extends AbstractTest {
 
 		dashboardPage.clickOutside();
 
-		dashboardPage.getNavbar().clickTestCasesTab();
+		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
 		dashboardPage.waitUntilPageIsLoaded(10);
+		Assert.assertTrue(testCasePage.isOpened(), "Test case page is not opened");
+
+		TestRunPage testRunPage = dashboardPage.getNavbar().goToTestRunPage();
+		dashboardPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(testRunPage.isOpened(), "Test run page is not opened");
+
+		UserPage userPage = dashboardPage.getNavbar().clickUsersTab();
+		dashboardPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(userPage.isOpened(), "User page is not opened");
+
+		MonitorPage monitorPage = dashboardPage.getNavbar().clickMonitorsTab();
+		dashboardPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(monitorPage.isOpened(), "Monitor page is not opened");
 
 		dashboardPage.getHeader().getZafiraLogo().click();
 		dashboardPage.waitUntilPageIsLoaded(10);
@@ -77,7 +90,7 @@ public class NavigationTest extends AbstractTest {
 				"Settings icon not present on company icon hover");
 
 		UploadImageModalWindow uploadImageModalWindow = dashboardPage.getHeader().clickCompanyPhotoHoverIcon();
-		dashboardPage.waitUntilPageIsLoaded(10);
+		//dashboardPage.waitUntilPageIsLoaded(10);
 
 		Assert.assertTrue(uploadImageModalWindow.isElementPresent(10), "Company photo modal window not opened");
 		Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");
@@ -99,7 +112,6 @@ public class NavigationTest extends AbstractTest {
 		UserPerformancePage userPerformancePage = dashboardPage.getHeader().goToUserPerformancePage();
 		Assert.assertTrue(userPerformancePage.isOpened(), "User performance page not opened");
 
-		dashboardPage.getHeader().clickUserMenuButton();
 		LoginPage loginPage = dashboardPage.getHeader().logOut();
 		Assert.assertTrue(loginPage.isOpened(), "Login page not opened");
 	}
