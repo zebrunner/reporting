@@ -9,6 +9,14 @@ fi
 psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-structure.sql
 psql -v ON_ERROR_STOP=1 --username $POSTGRES_USER -f /docker-entrypoint-initdb.d/sql/db-data.sql
 
+if [ "$ZAFIRA_AMAZON_ENABLED" == true ];
+then
+    psql --username $POSTGRES_USER -c "UPDATE zafira.SETTINGS SET VALUE='$ZAFIRA_AMAZON_ENABLED' WHERE NAME='AMAZON_ENABLED';"
+    psql --username $POSTGRES_USER -c "UPDATE zafira.SETTINGS SET VALUE='$ZAFIRA_AMAZON_BUCKET' WHERE NAME='AMAZON_BUCKET';"
+    psql --username $POSTGRES_USER -c "UPDATE zafira.SETTINGS SET VALUE='$ZAFIRA_AMAZON_ACCESS_KEY' WHERE NAME='AMAZON_ACCESS_KEY';"
+    psql --username $POSTGRES_USER -c "UPDATE zafira.SETTINGS SET VALUE='$ZAFIRA_AMAZON_SECRET_KEY' WHERE NAME='AMAZON_SECRET_KEY';"
+fi
+
 if [ "$ZAFIRA_JENKINS_ENABLED" == true ];
 then
     psql --username $POSTGRES_USER -c "UPDATE zafira.SETTINGS SET VALUE='$ZAFIRA_JENKINS_ENABLED' WHERE NAME='JENKINS_ENABLED';"
