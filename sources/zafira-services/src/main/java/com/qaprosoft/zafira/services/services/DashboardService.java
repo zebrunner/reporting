@@ -143,8 +143,7 @@ public class DashboardService
 		}
 		if (dashboard == null) {
 			extendedUserProfile.put(key, null);
-		} else
-		{
+		} else {
 			extendedUserProfile.put(key, dashboard.getId());
 		}
 	}
