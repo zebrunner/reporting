@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class CreateTestRunViewModal extends AbstractModalWindow
+public class CreateTestRunViewModalWindow extends AbstractModalWindow
 {
 
 	public static final String TITLE = "View";
@@ -25,7 +25,7 @@ public class CreateTestRunViewModal extends AbstractModalWindow
 	@FindBy(id = "delete")
 	private WebElement deleteButton;
 
-	public CreateTestRunViewModal(WebDriver driver, SearchContext context)
+	public CreateTestRunViewModalWindow(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
 	}
