@@ -6,6 +6,6 @@ public class TestRunViewPage extends BasePage
 {
 	public TestRunViewPage(WebDriver driver)
 	{
-		super(driver, "views");
+		super(driver, "/views");
 	}
 }

@@ -39,7 +39,18 @@ public class TestRunTabMenu extends AbstractUIObject
 
 	public WebElement getTestRunsViewByName(String name)
 	{
-		return context.findElement(By.xpath(".//a[.//*[text() = '" + name + "']]"));
+		return context.findElement(By.xpath(".//a[text() = '" + name + "']"));
+	}
+
+	public WebElement getTestRunViewEditIconByName(String name)
+	{
+		return getTestRunsViewByName(name).findElement(By.xpath("./following-sibling::i[contains(@class, 'edit')]"));
+	}
+
+	public CreateTestRunViewModal clickTestRunViewEditIconByName(String name)
+	{
+		getTestRunViewEditIconByName(name).click();
+		return createTestRunViewModal;
 	}
 
 	public WebElement getCreateViewButton()
