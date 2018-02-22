@@ -56,9 +56,18 @@
                             $rootScope.currentUser.companyLogo = rs.data["companyLogo"];
                             $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
                             $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
-                            $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
-                            $rootScope.currentUser.personalDashboardId = rs.data["personalDashboardId"];
                             $rootScope.currentUser.defaultDashboardId= rs.data["defaultDashboardId"];
+                            if($rootScope.currentUser.defaultDashboardId === null) {
+                                alertify.warning("Default Dashboard is unavailable!");
+                            }
+                            $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
+                            if($rootScope.currentUser.pefrDashboardId === null) {
+                                alertify.error("'User Performance' dashboard is unavailable!");
+                            }
+                            $rootScope.currentUser.personalDashboardId = rs.data["personalDashboardId"];
+                            if($rootScope.currentUser.personalDashboardId === null) {
+                                alertify.error("'Personal' dashboard is unavailable!");
+                            }
                             resolve(rs.data['defaultDashboardId']);
                         } else {
                             reject(rs);
