@@ -112,9 +112,9 @@ public class UsersAPIController extends AbstractController
 		userType.setPermissions(user.getPermissions());
 		extendedUserProfile.put("user", userType);
 		extendedUserProfile.put("companyLogo", settingsService.getSettingByName("COMPANY_LOGO_URL"));
-		extendedUserProfile.put("performanceDashboardId", dashboardService.getDashboardByTitle("User Performance").getId());
-		extendedUserProfile.put("personalDashboardId", dashboardService.getDashboardByTitle("Personal").getId());
-		extendedUserProfile.put("defaultDashboardId", dashboardService.getDefaultDashboardByUserId(user.getId()).getId());
+		dashboardService.setDefaultDashboard(extendedUserProfile, "", "defaultDashboardId");
+		dashboardService.setDefaultDashboard(extendedUserProfile, "User Performance", "performanceDashboardId");
+		dashboardService.setDefaultDashboard(extendedUserProfile, "Personal", "personalDashboardId");
 		return extendedUserProfile;
 	}
 
