@@ -8,7 +8,7 @@ import org.openqa.selenium.support.FindBy;
 public class CreateTestRunViewModal extends AbstractModalWindow
 {
 
-	private static final String TITLE = "View";
+	public static final String TITLE = "View";
 
 	@FindBy(id = "viewName")
 	private WebElement nameInput;
@@ -22,17 +22,12 @@ public class CreateTestRunViewModal extends AbstractModalWindow
 	@FindBy(id = "save")
 	private WebElement saveButton;
 
-	@FindBy(xpath = "delete")
+	@FindBy(id = "delete")
 	private WebElement deleteButton;
 
 	public CreateTestRunViewModal(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
-	}
-
-	public static String getTITLE()
-	{
-		return TITLE;
 	}
 
 	public WebElement getNameInput()

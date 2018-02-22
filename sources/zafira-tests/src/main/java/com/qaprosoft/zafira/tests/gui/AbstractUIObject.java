@@ -126,6 +126,15 @@ public abstract class AbstractUIObject
 		}, "Start to wait until element is not present", "Finish to wait element");
 	}
 
+	public boolean waitUntilElementWithTextIsPresent(WebElement webElement, String text, long seconds)
+	{
+		return innerTimeoutOperation(() -> {
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.textToBePresentInElement(webElement, text));
+			return webDriverWait;
+		}, "Start to wait until element is not present", "Finish to wait element");
+	}
+
 	public boolean waitUntilElementToBeClickable(WebElement webElement, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -302,6 +311,11 @@ public abstract class AbstractUIObject
 		webElement.click();
 		driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
 				+ "or contains(text(), '" + value + "')]]")).click();
+	}
+
+	public String getSelectedValue(WebElement webElement)
+	{
+		return webElement.findElement(By.xpath(".//md-select-value//div")).getText();
 	}
 
 	public String getCurrentNodeText(WebElement webElement)
