@@ -55,7 +55,7 @@ public class TestRunPageTest extends AbstractTest
 	private TestMapper testMapper;
 
 	@BeforeMethod
-	public void setup() throws ExecutionException, InterruptedException
+	public void setup()
 	{
 		testRunPageService = new TestRunPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
@@ -68,7 +68,7 @@ public class TestRunPageTest extends AbstractTest
 	}
 
 	@Test
-	public void verifyNavigationTest() throws Exception
+	public void verifyNavigationTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
 		testRunPage.reload();
