@@ -136,7 +136,6 @@ public class DashboardService
 	public void setDefaultDashboard(Map<String, Object> extendedUserProfile, String title, String key) throws ServiceException
 	{
 		Dashboard dashboard;
-
 		if("defaultDashboardId".equals(key)){
 			dashboard = getDefaultDashboardByUserId(((UserType)extendedUserProfile.get("user")).getId());
 		} else {
