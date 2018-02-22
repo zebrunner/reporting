@@ -60,12 +60,12 @@
             </md-button>
             <md-button id="create" data-ng-if="! edit" type="submit"
                        class="md-raised btn-w-md md-primary"
-                       data-ng-click="createJobView()" data-ng-disabled="jobsViewForm.$invalid || jobsSelected.length == 0">
+                       data-ng-click="createJobView()" data-ng-disabled="jobs_view_form.$invalid || jobsSelected.length == 0">
                 Create
             </md-button>
             <md-button id="save" data-ng-if="edit" type="submit"
                        class="md-raised btn-w-md md-primary"
-                       data-ng-click="updateJobView(jobView.env)" data-ng-disabled="jobsViewForm.$invalid || jobsSelected.length == 0">
+                       data-ng-click="updateJobView(jobView.env)" data-ng-disabled="jobs_view_form.$invalid || jobsSelected.length == 0">
                 Save
             </md-button>
         </md-dialog-actions>
