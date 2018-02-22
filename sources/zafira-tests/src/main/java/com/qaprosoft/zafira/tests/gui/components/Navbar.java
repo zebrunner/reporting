@@ -1,7 +1,7 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
-import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModal;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.*;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -63,7 +63,7 @@ public class Navbar extends AbstractUIObject
 		return testRunTabMenu.clickTestRunViewByName(name);
 	}
 
-	public CreateTestRunViewModal goToCreateTestRunViewModal()
+	public CreateTestRunViewModalWindow goToCreateTestRunViewModal()
 	{
 		return hoverOnTestRunTab().clickCreateTestRunViewButton();
 	}

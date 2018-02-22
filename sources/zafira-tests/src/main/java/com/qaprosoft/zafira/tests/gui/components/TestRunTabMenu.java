@@ -1,8 +1,7 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
-import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModal;
-import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunViewPage;
 import org.openqa.selenium.By;
@@ -23,7 +22,7 @@ public class TestRunTabMenu extends AbstractUIObject
 	private WebElement createViewButton;
 
 	@FindBy(xpath = "//md-dialog")
-	private CreateTestRunViewModal createTestRunViewModal;
+	private CreateTestRunViewModalWindow createTestRunViewModalWindow;
 
 	public TestRunTabMenu(WebDriver driver, SearchContext context)
 	{
@@ -47,10 +46,10 @@ public class TestRunTabMenu extends AbstractUIObject
 		return getTestRunsViewByName(name).findElement(By.xpath("./following-sibling::i[contains(@class, 'edit')]"));
 	}
 
-	public CreateTestRunViewModal clickTestRunViewEditIconByName(String name)
+	public CreateTestRunViewModalWindow clickTestRunViewEditIconByName(String name)
 	{
 		getTestRunViewEditIconByName(name).click();
-		return createTestRunViewModal;
+		return createTestRunViewModalWindow;
 	}
 
 	public WebElement getCreateViewButton()
@@ -58,9 +57,9 @@ public class TestRunTabMenu extends AbstractUIObject
 		return createViewButton;
 	}
 
-	public CreateTestRunViewModal getCreateTestRunViewModal()
+	public CreateTestRunViewModalWindow getCreateTestRunViewModalWindow()
 	{
-		return createTestRunViewModal;
+		return createTestRunViewModalWindow;
 	}
 
 	public TestRunViewPage clickTestRunViewByName(String name)
@@ -69,10 +68,10 @@ public class TestRunTabMenu extends AbstractUIObject
 		return new TestRunViewPage(driver);
 	}
 
-	public CreateTestRunViewModal clickCreateTestRunViewButton()
+	public CreateTestRunViewModalWindow clickCreateTestRunViewButton()
 	{
 		createViewButton.click();
-		return createTestRunViewModal;
+		return createTestRunViewModalWindow;
 	}
 
 	public TestRunPage clickShowRunsButton()
