@@ -544,7 +544,6 @@
         }
 
         $scope.createDashboard = function(dashboard){
-            dashboard.position = 0;
             DashboardService.CreateDashboard(dashboard).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Dashboard created");
