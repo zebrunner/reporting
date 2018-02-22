@@ -1,8 +1,10 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModal;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
+import com.qaprosoft.zafira.tests.gui.pages.TestRunViewPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -16,6 +18,12 @@ public class TestRunTabMenu extends AbstractUIObject
 {
 
 	private static final String SHOW_RUNS_BUTTON_TEXT = "Show latest runs";
+
+	@FindBy(xpath = ".//a[text() = 'Create view +']")
+	private WebElement createViewButton;
+
+	@FindBy(xpath = "//md-dialog")
+	private CreateTestRunViewModal createTestRunViewModal;
 
 	public TestRunTabMenu(WebDriver driver, SearchContext context)
 	{
@@ -34,10 +42,26 @@ public class TestRunTabMenu extends AbstractUIObject
 		return context.findElement(By.xpath(".//a[.//*[text() = '" + name + "']]"));
 	}
 
-	public DashboardPage clickTestRunsViewByName(String name)
+	public WebElement getCreateViewButton()
+	{
+		return createViewButton;
+	}
+
+	public CreateTestRunViewModal getCreateTestRunViewModal()
+	{
+		return createTestRunViewModal;
+	}
+
+	public TestRunViewPage clickTestRunViewByName(String name)
 	{
 		getTestRunsViewByName(name).click();
-		return new DashboardPage(driver);
+		return new TestRunViewPage(driver);
+	}
+
+	public CreateTestRunViewModal clickCreateTestRunViewButton()
+	{
+		createViewButton.click();
+		return createTestRunViewModal;
 	}
 
 	public TestRunPage clickShowRunsButton()
