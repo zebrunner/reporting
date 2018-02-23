@@ -40,13 +40,31 @@ public class LoginPage extends BasePage
 		return usernameTextField;
 	}
 
+	public void typeUsername(String username)
+	{
+		usernameTextField.sendKeys(username);
+		LOGGER.info("Type username: " + username);
+	}
+
 	public WebElement getPasswordTextField()
 	{
 		return passwordTextField;
 	}
 
+	public void typePassword(String password)
+	{
+		passwordTextField.sendKeys(password);
+		LOGGER.info("Type password: " + password);
+	}
+
 	public WebElement getLoginButton()
 	{
 		return loginButton;
+	}
+
+	public void clickLoginButton()
+	{
+		loginButton.click();
+		LOGGER.info("Login button was clicked");
 	}
 }

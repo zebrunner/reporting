@@ -41,6 +41,7 @@ public class Navbar extends AbstractUIObject
 	{
 		super.hoverOnElement(this.dashboardsTab);
 		super.waitUntilElementIsPresent(getRootElement(), 10);
+		LOGGER.info("Dashboard tab was hovered");
 		return this.dashboardTabMenu;
 	}
 
@@ -48,19 +49,24 @@ public class Navbar extends AbstractUIObject
 	{
 		super.hoverOnElement(this.testRunsTab);
 		super.waitUntilElementIsPresent(this.testRunTabMenu.getRootElement(), 10);
+		LOGGER.info("Test run tab menu was hovered");
 		return this.testRunTabMenu;
 	}
 
 	public TestRunPage goToTestRunPage()
 	{
 		TestRunTabMenu testRunTabMenu = hoverOnTestRunTab();
-		return testRunTabMenu.clickShowRunsButton();
+		TestRunPage testRunPage = testRunTabMenu.clickShowRunsButton();
+		LOGGER.info("Test runs button was clicked");
+		return testRunPage;
 	}
 
 	public TestRunViewPage goToTestRunView(String name)
 	{
 		TestRunTabMenu testRunTabMenu = hoverOnTestRunTab();
-		return testRunTabMenu.clickTestRunViewByName(name);
+		TestRunViewPage testRunViewPage = testRunTabMenu.clickTestRunViewByName(name);
+		LOGGER.info("Test run view page was clicked");
+		return testRunViewPage;
 	}
 
 	public CreateTestRunViewModalWindow goToCreateTestRunViewModal()

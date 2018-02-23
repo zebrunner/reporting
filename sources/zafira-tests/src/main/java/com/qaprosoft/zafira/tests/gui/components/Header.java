@@ -107,6 +107,7 @@ public class Header extends AbstractUIObject
 	public UploadImageModalWindow clickCompanyPhotoHoverIcon()
 	{
 		companyProfilePhotoHoverIcon.click();
+		LOGGER.info("Company logo icon was clicked");
 		return uploadImageModalWindow;
 	}
 
@@ -116,6 +117,7 @@ public class Header extends AbstractUIObject
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
 		this.projectFilterButton.click();
+		LOGGER.info("Project filter button was clicked");
 		return projectFilterMenu;
 	}
 
@@ -125,6 +127,7 @@ public class Header extends AbstractUIObject
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();
+		LOGGER.info("User menu button was clicked");
 		return userMenu;
 	}
 
@@ -134,6 +137,7 @@ public class Header extends AbstractUIObject
 		if (!isElementClickable(userProfileButton, 2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
 		userProfileButton.click();
+		LOGGER.info("Profile button was clicked");
 		return new UserProfilePage(driver);
 	}
 
@@ -143,6 +147,7 @@ public class Header extends AbstractUIObject
 		if (!isElementClickable(userPerformanceButton, 2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
 		userPerformanceButton.click();
+		LOGGER.info("User performance button was clicked");
 		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
 	}
 
@@ -152,6 +157,7 @@ public class Header extends AbstractUIObject
 		if (!isElementClickable(integrationsButton, 2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
 		integrationsButton.click();
+		LOGGER.info("Integration button was clicked");
 		return new IntegrationsPage(driver);
 	}
 
@@ -161,6 +167,7 @@ public class Header extends AbstractUIObject
 		if (!isElementClickable(logoutButton, 2) || isElementPresent(getBackdrop(), 1))
 			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
 		logoutButton.click();
+		LOGGER.info("Logout button was clicked");
 		return new LoginPage(driver);
 	}
 }

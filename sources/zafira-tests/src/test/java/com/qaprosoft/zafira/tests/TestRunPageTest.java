@@ -28,7 +28,6 @@ import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -36,8 +35,6 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
 public class TestRunPageTest extends AbstractTest
@@ -155,7 +152,10 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.clearAllInputs();
 		markAsReviewedModalWindow.typeComment("new test");
 		markAsReviewedModalWindow.clickMarkAsReviewedButton();
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed");
+		testRunPage.waitUntilElementWithTextIsPresent(testRunPage.getSuccessAlert(), "Test run #" +
+				testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed", 5);
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" +
+				testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed");
 		Assert.assertTrue(testRunTableRow.isElementPresent(testRunTableRow.getCommentIcon(), 1), "Comment icon is not displayed");
 		markAsReviewedModalWindow = testRunPageService.clickCommentIcon(0);
 		Assert.assertEquals(markAsReviewedModalWindow.getWebElementValue(markAsReviewedModalWindow.getCommentInput()), "new test", "Incorrect text in comment input");
