@@ -76,7 +76,7 @@ public class TestRunTabMenu extends AbstractUIObject
 
 	public TestRunPage clickShowRunsButton()
 	{
-		getTestRunsViewByName(SHOW_RUNS_BUTTON_TEXT).click();
+		context.findElement(By.xpath(".//*[text() = 'Show latest runs']")).click();
 		return new TestRunPage(driver);
 	}
 }

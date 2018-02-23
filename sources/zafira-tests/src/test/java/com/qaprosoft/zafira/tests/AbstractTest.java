@@ -19,7 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -46,6 +48,7 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 	@BeforeTest
 	public void start(ITestContext context) throws MalformedURLException
 	{
+		PropertyConfigurator.configure(ClassLoader.getSystemResource("log4j.properties"));
 		LOGGER.info(context.getCurrentXmlTest().getName() + " started");
 		DesiredCapabilities dc = null;
 		if("firefox".equalsIgnoreCase(Config.get("browser")))

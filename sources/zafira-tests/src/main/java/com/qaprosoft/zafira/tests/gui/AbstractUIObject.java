@@ -321,10 +321,17 @@ public abstract class AbstractUIObject
 	public String getCurrentNodeText(WebElement webElement)
 	{
 		String text = webElement.getText();
-		List<WebElement> childs = webElement.findElements(By.xpath("./*"));
-		for(WebElement child : childs)
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		try
 		{
-			text = text.replaceFirst(child.getText(), "");
+			List<WebElement> childs = webElement.findElements(By.xpath("./*"));
+			for (WebElement child : childs)
+			{
+				text = text.replaceFirst(child.getText(), "");
+			}
+		} finally
+		{
+			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
 		}
 		return text.trim();
 	}
