@@ -19,10 +19,10 @@ public class NavigationTest extends AbstractTest {
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
 		this.dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-		this.dashboardPage.waitUntilPageIsLoaded(20);
+		this.dashboardPage.waitUntilPageIsLoaded();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "navigation"})
 	public void verifyNavbarFunctionalityTest() {
 		TestRunTabMenu testRunTabMenu = dashboardPage.getNavbar().hoverOnTestRunTab();
 		Assert.assertTrue(testRunTabMenu.isElementPresent(10), "Test run menu not visible!");
@@ -44,7 +44,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertTrue(monitorPage.isOpened(), "Test cases page not opened!");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "navigation"})
 	public void verifyHeaderFunctionalityTest() {
 
 		ProjectFilterMenu projectFilterMenu = dashboardPage.getHeader().clickProjectFilterButton();
@@ -65,7 +65,7 @@ public class NavigationTest extends AbstractTest {
 		dashboardPage.clickOutside();
 
 		TestCasePage testCasePage = dashboardPage.getNavbar().clickTestCasesTab();
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		Assert.assertTrue(testCasePage.isOpened(), "Test case page is not opened");
 
 		TestRunPage testRunPage = dashboardPage.getNavbar().goToTestRunPage();
@@ -81,7 +81,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertTrue(monitorPage.isOpened(), "Monitor page is not opened");
 
 		dashboardPage.getHeader().getZafiraLogo().click();
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboards page not opened");
 
@@ -90,7 +90,6 @@ public class NavigationTest extends AbstractTest {
 				"Settings icon not present on company icon hover");
 
 		UploadImageModalWindow uploadImageModalWindow = dashboardPage.getHeader().clickCompanyPhotoHoverIcon();
-		//dashboardPage.waitUntilPageIsLoaded(10);
 
 		Assert.assertTrue(uploadImageModalWindow.isElementPresent(10), "Company photo modal window not opened");
 		Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");

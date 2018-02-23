@@ -28,6 +28,13 @@ public class LoginPageService extends AbstractPageService
 		return new DashboardPage(driver, GENERAL_DASHBOARD_ID);
 	}
 
+	public LoginPage logout()
+	{
+		DashboardPage dashboardPage = new DashboardPage(driver);
+		dashboardPage.getHeader().logOut();
+		return new LoginPage(driver);
+	}
+
 	public boolean isInvalidCredentials()
 	{
 		return driver.findElement(By.xpath("//p[text()='Invalid credentials']")).isDisplayed();

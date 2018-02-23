@@ -58,7 +58,7 @@ public class UserSettingMenu extends AbstractMenu
 	{
 		performanceButton.click();
 		DashboardPage dashboardPage = new DashboardPage(driver);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		return dashboardPage;
 	}
 }

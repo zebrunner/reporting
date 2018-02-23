@@ -43,11 +43,11 @@ public class TestRunViewPageTest extends AbstractTest
 		LoginPageService loginPageService = new LoginPageService(driver);
 		loginPage.open();
 		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		this.testRunViewName = "test" + RandomUtils.nextInt(0, 10000);
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRunView"})
 	public void verifyCreateTestRunViewTest()
 	{
 		DashboardPage dashboardPage = new DashboardPage(driver);
@@ -76,7 +76,7 @@ public class TestRunViewPageTest extends AbstractTest
 		Assert.assertTrue(testRunViewPage.isOpened(), "Test run view page can not open");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRunView"})
 	public void verifyUpdateTestRunViewTest()
 	{
 		testRunViewPageService.createTestRunView(this.testRunViewName, PROJECT_NAME);
@@ -112,7 +112,7 @@ public class TestRunViewPageTest extends AbstractTest
 		Assert.assertFalse(testRunTabMenu.isElementPresent(testRunView, 1), "View is present after deleting");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRunView"})
 	public void verifyViewTableCreationTest()
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();

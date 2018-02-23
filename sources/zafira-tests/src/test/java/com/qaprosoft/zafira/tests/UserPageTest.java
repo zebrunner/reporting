@@ -44,13 +44,13 @@ public class UserPageTest extends AbstractTest
 		loginPage.open();
 		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		pause(2);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		this.userPage = dashboardPage.getNavbar().clickUsersTab();
-		this.userPage.waitUntilPageIsLoaded(10);
+		this.userPage.waitUntilPageIsLoaded();
 		this.userPageService = new UserPageService(driver);
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "user", "navigation"})
 	public void verifyNavigationTest()
 	{
 		Assert.assertTrue(userPage.isOpened(), "Users page not opened");
@@ -99,7 +99,7 @@ public class UserPageTest extends AbstractTest
 		Assert.assertEquals(dashboardPage.getPageTitleText(), "User Performance", "Dashboard page not opened");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "user"})
 	public void verifyInfoTest()
 	{
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
@@ -119,7 +119,8 @@ public class UserPageTest extends AbstractTest
 		}
 		CreateUserModalWindow createUserModalWindow = userPageService.goToCreateUserModalWindow();
 		UserType userType = (new UserTypeBuilder()).getUserType();
-		userType.setUsername("1a" + (new Random()).nextInt(10000));
+		String username = "1a" + (new Random()).nextInt(10000);
+		userType.setUsername(username);
 		userType.setPassword("Welcome1!");
 		userPage = createUserModalWindow.registerUser(userType);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User created", "Invalid user created alert");
@@ -142,9 +143,9 @@ public class UserPageTest extends AbstractTest
 		Assert.assertTrue(dashboardPage.isOpened(), "Current page is not dashboard page");
 		userPage.getHeader().logOut();
 		dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		userPage = dashboardPage.getNavbar().clickUsersTab();
-		userPage.waitUntilPageIsLoaded(10);
+		userPage.waitUntilPageIsLoaded();
 		verifyUsersTableByRowIndex(userType, 0);
 
 		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(0);
@@ -162,13 +163,13 @@ public class UserPageTest extends AbstractTest
 				"Password changed alert is not present");
 		userPage.getHeader().logOut();
 		dashboardPage = loginPageService.login(userType.getUsername(), "Welcome2!");
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		Assert.assertTrue(dashboardPage.isOpened(), "Current page is not dashboards page");
 		userPage.getHeader().logOut();
 		dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		userPage = dashboardPage.getNavbar().clickUsersTab();
-		userPage.waitUntilPageIsLoaded(10);
+		userPage.waitUntilPageIsLoaded();
 
 		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		createUserModalWindow.clickDeleteButton();
@@ -178,7 +179,7 @@ public class UserPageTest extends AbstractTest
 				"User presents after deleting");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "user", "search"})
 	public void verifySearchTest() throws ExecutionException, InterruptedException
 	{
 		CompletableFuture<List<UserType>> usersCompletableFuture = generateUsersIfExists(25);
@@ -206,7 +207,7 @@ public class UserPageTest extends AbstractTest
 		verifySearchBlockInputsAreEmpty();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "user", "search"})
 	public void verifyPaginationTest() throws ExecutionException, InterruptedException
 	{
 		CompletableFuture<List<UserType>> completableFuture = generateUsersIfExists(60);
