@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+
+<configuration>
+
+    <configuration>
+        <logger name="org.apache" level="WARN" />
+        <logger name="httpclient" level="WARN" />
+    </configuration>
+
+</configuration>
