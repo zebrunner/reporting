@@ -2,7 +2,7 @@
 
 <suite preserve-order="true" verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
 	
-	<test parallel="methods" name="Login with valid credentials">
+	<test parallel="false" name="Login with valid credentials">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.AuthTest">
 				<methods>
@@ -13,7 +13,7 @@
 		</classes>
 	</test>
 
-	<test parallel="false" name="Test run tests">
+	<test parallel="false" preserve-order="true" name="Test run tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
@@ -39,7 +39,7 @@
 		</classes>
 	</test>
 
-	<test parallel="methods" name="Navigation tests">
+	<test parallel="false" name="Navigation tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.NavigationTest">
 				<methods>
@@ -50,7 +50,7 @@
 		</classes>
 	</test>
 
-	<test parallel="methods" name="Test run view tests">
+	<test parallel="false" name="Test run view tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
@@ -75,7 +75,7 @@
 		</classes>
 	</test>
 
-	<test parallel="methods" name="Profile tests">
+	<test parallel="false" name="Profile tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
 				<methods>

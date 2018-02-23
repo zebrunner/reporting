@@ -270,13 +270,6 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.isElementPresent
                 (userProfilePage.getUserNameInput(),1), "Username input is enabled or is not visible!");
 
-        //Check permissions
-        if(userProfilePage.isElementPresent(userProfilePage.getRoleAdminLabel(),0)){
-            Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getNavbar().getUsersTab(),0), "Admin permissions are not visible");
-        } else {
-            Assert.assertFalse(userProfilePage.isElementPresent(userProfilePage.getNavbar().getUsersTab(),0), "User has admin permissions");
-        }
-
         //Check disabled save for all empty fields
         userProfilePage.getFirstNameInput().clear();
         userProfilePage.getLastNameInput().clear();

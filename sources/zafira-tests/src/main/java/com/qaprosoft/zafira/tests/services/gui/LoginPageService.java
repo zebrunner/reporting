@@ -22,9 +22,9 @@ public class LoginPageService extends AbstractPageService
 	public DashboardPage login(String username, String password)
 	{
 		loginPage.waitUntilLoadingContainerDisappears(10);
-		loginPage.getUsernameTextField().sendKeys(username);
-		loginPage.getPasswordTextField().sendKeys(password);
-		loginPage.getLoginButton().click();
+		loginPage.typeUsername(username);
+		loginPage.typePassword(password);
+		loginPage.clickLoginButton();
 		return new DashboardPage(driver, GENERAL_DASHBOARD_ID);
 	}
 

@@ -32,6 +32,7 @@ public abstract class AbstractUIObject
 	protected WebDriver driver;
 	protected SearchContext context;
 	protected WebElement rootElement;
+	protected String fieldName;
 
 	@FindBy(xpath = "//md-backdrop")
 	private WebElement backdrop;
@@ -67,7 +68,7 @@ public abstract class AbstractUIObject
 			Wait webDriverWait = new WebDriverWait(driver, seconds, 100L);
 			webDriverWait.until(dr -> driver.findElement(by).isDisplayed());
 			return webDriverWait;
-		}, "Start to find element "  + by.toString(), "Finish to find element " + by.toString());
+		});
 	}
 
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
@@ -77,7 +78,7 @@ public abstract class AbstractUIObject
 			Wait webDriverWait = new WebDriverWait(driver, seconds, 100L);
 			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
 			return webDriverWait;
-		}, "Start to find element "  + element, "Finish to find element " + element);
+		});
 	}
 
 	public boolean isElementPresent(WebElement webElement, long seconds)
@@ -96,7 +97,7 @@ public abstract class AbstractUIObject
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
 			return webDriverWait;
-		}, "Start to wait until element is present "  + by.toString(), "Finish to wait element " + by.toString());
+		});
 	}
 
 	public boolean waitUntilElementIsPresent(WebElement webElement, By by, long seconds)
@@ -105,7 +106,7 @@ public abstract class AbstractUIObject
 			Wait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
 			return webDriverWait;
-		}, "Start to wait until element is present "  + by.toString(), "Finish to wait element " + by.toString());
+		});
 	}
 
 	public boolean waitUntilElementIsPresent(WebElement webElement, long seconds)
@@ -114,7 +115,7 @@ public abstract class AbstractUIObject
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.visibilityOf(webElement));
 			return webDriverWait;
-		}, "Start to wait until element is present", "Finish to wait element");
+		});
 	}
 
 	public boolean waitUntilElementIsNotPresent(WebElement webElement, long seconds)
@@ -123,7 +124,7 @@ public abstract class AbstractUIObject
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
 			return webDriverWait;
-		}, "Start to wait until element is not present", "Finish to wait element");
+		});
 	}
 
 	public boolean waitUntilElementWithTextIsPresent(WebElement webElement, String text, long seconds)
@@ -132,7 +133,7 @@ public abstract class AbstractUIObject
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.textToBePresentInElement(webElement, text));
 			return webDriverWait;
-		}, "Start to wait until element is not present", "Finish to wait element");
+		});
 	}
 
 	public boolean waitUntilElementToBeClickable(WebElement webElement, long seconds)
@@ -141,7 +142,7 @@ public abstract class AbstractUIObject
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
 			webDriverWait.until(ExpectedConditions.elementToBeClickable(webElement));
 			return webDriverWait;
-		}, "Start to wait until element is clickable", "Finish to wait element");
+		});
 	}
 
 	public boolean waitUntilElementToBeClickableByBackdropMask(WebElement webElement, long seconds)
@@ -154,13 +155,12 @@ public abstract class AbstractUIObject
 		return waitUntilElementIsPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
-	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier, String startMessage, String finishMessage)
+	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
 	{
 		boolean result = false;
 		try
 		{
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);
-			LOGGER.info(startMessage);
 			operationSupplier.get();
 			result = true;
 		} catch (Exception e)
@@ -168,7 +168,6 @@ public abstract class AbstractUIObject
 			result = false;
 		} finally
 		{
-			LOGGER.info("Status " + Boolean.toString(result) + ": " + finishMessage);
 			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
 		}
 		return result;
@@ -262,6 +261,16 @@ public abstract class AbstractUIObject
 	public void setRootElement(WebElement rootElement)
 	{
 		this.rootElement = rootElement;
+	}
+
+	public String getFieldName()
+	{
+		return fieldName;
+	}
+
+	public void setFieldName(String fieldName)
+	{
+		this.fieldName = fieldName;
 	}
 
 	public boolean isElementPresent(long seconds)
