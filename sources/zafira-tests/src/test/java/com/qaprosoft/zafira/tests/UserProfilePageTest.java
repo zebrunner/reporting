@@ -4,14 +4,20 @@ import com.qaprosoft.zafira.tests.exceptions.NoDashboardsWereLoadedException;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
+import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
+import com.qaprosoft.zafira.tests.services.api.UserAPIService;
+import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
+import com.qaprosoft.zafira.tests.services.gui.UserPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -34,10 +40,12 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePageService = new UserProfilePageService(driver);
         jse = (JavascriptExecutor) driver;
         DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+        dashboardPage.waitUntilPageIsLoaded();
         userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
+        userProfilePage.waitUntilPageIsLoaded();
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile"})
     public void generateTokenTest() {
         // Generate token
         userProfilePageService.generateToken();
@@ -51,7 +59,7 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePageService.copyToken());
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile", "user"})
     public void changeUserProfilePhotoTest(){
         userProfilePage.hoverOnElement(userProfilePage.getLoadProfilePhotoIcon());
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getLoadProfilePhotoHoverIcon(), 1),
@@ -63,7 +71,7 @@ public class UserProfilePageTest extends AbstractTest {
         uploadImageModalWindow.closeModalWindow();
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile", "user"})
     public void changeColorSchemaTest() {
         ColorSchema colorSchema = userProfilePageService.checkCurrentColorSchemeByRadioButton();
         if (colorSchema == ColorSchema.LIGHT){
@@ -118,7 +126,7 @@ public class UserProfilePageTest extends AbstractTest {
         }
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile", "user"})
     public void changePreferencesTest(){
 
         WebElement chosenDashboard = null;
@@ -171,11 +179,23 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 2), "Preferences saving is not successful");
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile", "user"})
     public void changePasswordTest() {
 
         String tempPwd = "qqqqqqqqqqq";
         String shortPwd = "qqq";
+
+        String email = String.format("test+%s@test.test", RandomUtils.nextInt(0, 10000));
+        String username = "username" + RandomUtils.nextInt(0, 10000);
+        String password = "Password1";
+        UserPage userPage = userProfilePage.getNavbar().clickUsersTab();
+        UserPageService userPageService = new UserPageService(driver);
+        userPage.waitUntilPageIsLoaded();
+        userPageService.createUser(email, username, password);
+        loginPageService.logout();
+        DashboardPage dashboardPage = loginPageService.login(username, password);
+        userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
+        userProfilePage.waitUntilPageIsLoaded();
 
         //Check 2 empty inputs
         Assert.assertTrue(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()).isEmpty(), "Password input is not empty");
@@ -225,21 +245,21 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Success Alert is not present");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
         userProfilePage.getHeader().logOut();
-        DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, tempPwd);
+        dashboardPage = loginPageService.login(username, tempPwd);
         Assert.assertTrue(dashboardPage.getUrl().contains("dashboards"), "Dashboard page hasn't been opened");
 
         //Replace test data with default
         userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
         userProfilePage.waitUntilPageIsLoaded(2);
-        userProfilePage.getPasswordInput().sendKeys(ADMIN1_PASS);
-        userProfilePage.getConfirmPasswordInput().sendKeys(ADMIN1_PASS);
+        userProfilePage.getPasswordInput().sendKeys(password);
+        userProfilePage.getConfirmPasswordInput().sendKeys(password);
         userProfilePage.getChangePasswordButton().click();
         userProfilePage.getHeader().logOut();
-        DashboardPage dashboardPage2 = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
+        DashboardPage dashboardPage2 = loginPageService.login(username, password);
         Assert.assertTrue(dashboardPage2.getUrl().contains("dashboards"), "Dashboard page hasn't been opened");
     }
 
-    @Test
+    @Test(groups = {"acceptance", "profile", "user"})
     public void changeUserProfileInfoTest (){
 
         String firstName = userProfilePage.getWebElementValue(userProfilePage.getFirstNameInput());
@@ -268,23 +288,27 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.hasDisabledAttribute(userProfilePage.getSaveUserProfileButton()), "User profile button is enabled with incorrect email");
 
         //Check enabled empty first&last name correct email
+        email = "text@test.com";
         userProfilePage.getEmailInput().clear();
         userProfilePage.getEmailInput().sendKeys(email);
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButton(),0), "User profile button is disabled");
+        Assert.assertFalse(userProfilePage.hasDisabledAttribute(userProfilePage.getSaveUserProfileButton()), "User profile button is disabled");
 
         //Check save empty first&last name
         userProfilePage.getSaveUserProfileButton().click();
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Save User profile action is not successful");
+        userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "User profile updated", 5);
+        Assert.assertEquals(userProfilePage.getSuccessAlert().getText(), "User profile updated", "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
 
         //Check enabled for all filled out data
+        firstName = "ftest";
+        lastName = "ltest";
         userProfilePage.getFirstNameInput().sendKeys(firstName);
         userProfilePage.getLastNameInput().sendKeys(lastName);
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSaveUserProfileButton(),0), "User profile button is disabled");
+        Assert.assertFalse(userProfilePage.hasDisabledAttribute(userProfilePage.getSaveUserProfileButton()), "User profile button is disabled");
 
         //Check save for all filled out data
         userProfilePage.getSaveUserProfileButton().click();
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Save User profile action is not successful");
+        Assert.assertEquals(userProfilePage.getSuccessAlert().getText(), "User profile updated", "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
     }
 }

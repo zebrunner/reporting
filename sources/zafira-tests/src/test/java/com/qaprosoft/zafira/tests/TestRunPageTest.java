@@ -62,12 +62,12 @@ public class TestRunPageTest extends AbstractTest
 		LoginPageService loginPageService = new LoginPageService(driver);
 		loginPage.open();
 		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
-		dashboardPage.waitUntilPageIsLoaded(10);
+		dashboardPage.waitUntilPageIsLoaded();
 		testRunPage = dashboardPage.getNavbar().goToTestRunPage();
 		testRunPage.waitUntilPageIsLoaded();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun", "navigation"})
 	public void verifyNavigationTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -98,7 +98,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(row.isChecked(row.getCheckbox()), "Some checkboxes are not checked"));
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestRunOpenTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -114,7 +114,7 @@ public class TestRunPageTest extends AbstractTest
 				+ "Current url: " + driver.getCurrentUrl() + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestRunCopyLinkTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -129,7 +129,7 @@ public class TestRunPageTest extends AbstractTest
 				+ "Current url: " + url + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyMarkAsReviewedTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -142,6 +142,7 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.clickMarkAsReviewedButton();
 		markAsReviewedModalWindow.waitUntilElementToBeClickableWithBackdropMask(markAsReviewedModalWindow.getCommentInput(), 2);
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId() + " marked as reviewed");
+		pause(1);
 		Assert.assertFalse(markAsReviewedModalWindow.isElementPresent(1));
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		Assert.assertTrue(testRunTableRow.isElementPresent(testRunTableRow.getCommentIcon(), 1), "Comment icon is not displayed");
@@ -161,7 +162,7 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.closeModalWindow();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifySendAsEmailTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -183,13 +184,9 @@ public class TestRunPageTest extends AbstractTest
 		sendAsEmailModalWindow.clickSendButton();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Email was successfully sent!", "Email can not send");
-		sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
-		sendAsEmailModalWindow.typeRecipients(userType.getEmail());
-		sendAsEmailModalWindow.clickSendButton();
-		Assert.assertEquals(sendAsEmailModalWindow.getSuccessAlert().getText(), "Email was successfully sent!", "Email can not send");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyExportTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -197,7 +194,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.clickExportButton(0);
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyBuildNowTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -207,7 +204,7 @@ public class TestRunPageTest extends AbstractTest
 		buildNowModalWindow.closeModalWindow();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyRebuildTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -217,13 +214,14 @@ public class TestRunPageTest extends AbstractTest
 		rebuildModalWindow.clickOnlyFailuresRadioButton();
 		rebuildModalWindow.clickAllTestsRadioButton();
 		rebuildModalWindow.clickCancelButton();
-		Assert.assertFalse(rebuildModalWindow.isElementPresent(1));
+		pause(1);
+		Assert.assertFalse(rebuildModalWindow.isElementPresent(1), "Rebuild modal window is present");
 		rebuildModalWindow = testRunPageService.clickRebuildButton(0);
 		rebuildModalWindow.clickOnlyFailuresRadioButton();
 		rebuildModalWindow.clickRerunButton();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyDeleteTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
@@ -242,7 +240,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is not deleted");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestRunsTable()
 	{
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(new TestRunSearchCriteria());
@@ -256,7 +254,7 @@ public class TestRunPageTest extends AbstractTest
 		verifyTestRunInformation(testRunView, 0);
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestInfoTest()
 	{
 		int count = testRunPage.getTestRunTable().getTestRunTableRows().size();
@@ -267,7 +265,7 @@ public class TestRunPageTest extends AbstractTest
 		verifyTestRunTestInformation(testRunView, 0);
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun", "search"})
 	public void verifyTestRunSearchTest()
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
@@ -304,7 +302,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.clearSearchForm();
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun", "search"})
 	public void verifyPaginationTest()
 	{
 		Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getPaginationBlock().getFirstPageButton()), "First page button is not disabled");
@@ -339,10 +337,9 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunPage.getPaginationBlock().getCountOfPageElementsText(), String.format(COUNT_OF_PAGE_ELEMENTS, 1, 20, totalCount), "Count of user menu buttons is not 20");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyFabButtonActionsTest()
 	{
-		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
 		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getFabButton().getRootElement(), 1), "Main fab button is present");
 		testRunPageService.getTestRunRowByIndex(0).checkCheckbox();
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
@@ -370,7 +367,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(1).getTestRunNameText(), testRuns.get(1).getTestSuite().getName(), "Test run is not deleted");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestAssignTicketTest()
 	{
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
@@ -425,7 +422,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testRow.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is present");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestMarkAsPassedTest()
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
@@ -454,7 +451,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.PASSED, "Test run status is incorrect");
 	}
 
-	@Test
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifyMarkAsKnownIssueTest()
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();

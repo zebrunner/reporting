@@ -1,22 +1,90 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
+<suite preserve-order="true" verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
 	
-	<test name="Login with valid credentials">
+	<test parallel="methods" name="Login with valid credentials">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.AuthTest">
 				<methods>
 					<include name="testValidLogin" />
+					<include name="testInvalidLogin" />
 				</methods>
 			</class>
 		</classes>
 	</test>
-	
-	<test name="Login with invalid credentials">
+
+	<test parallel="false" name="Test run tests">
 		<classes>
-			<class name="com.qaprosoft.zafira.tests.AuthTest">
+			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
-					<include name="testInvalidLogin" />
+					<include name="verifyNavigationTest"/>
+					<include name="verifyTestRunOpenTest"/>
+					<include name="verifyTestRunCopyLinkTest"/>
+					<include name="verifyMarkAsReviewedTest"/>
+					<include name="verifySendAsEmailTest"/>
+					<include name="verifyExportTest"/>
+					<include name="verifyBuildNowTest"/>
+					<include name="verifyRebuildTest"/>
+					<include name="verifyDeleteTest"/>
+					<include name="verifyTestRunsTable"/>
+					<include name="verifyTestInfoTest"/>
+					<include name="verifyTestRunSearchTest"/>
+					<include name="verifyPaginationTest"/>
+					<include name="verifyFabButtonActionsTest"/>
+					<include name="verifyTestAssignTicketTest"/>
+					<include name="verifyTestMarkAsPassedTest"/>
+					<include name="verifyMarkAsKnownIssueTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="methods" name="Navigation tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.NavigationTest">
+				<methods>
+					<include name="verifyNavbarFunctionalityTest"/>
+					<include name="verifyHeaderFunctionalityTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="methods" name="Test run view tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+				<methods>
+					<include name="verifyCreateTestRunViewTest"/>
+					<include name="verifyUpdateTestRunViewTest"/>
+					<include name="verifyViewTableCreationTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" name="User tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.UserPageTest">
+				<methods>
+					<include name="verifyNavigationTest"/>
+					<include name="verifyInfoTest"/>
+					<include name="verifySearchTest"/>
+					<include name="verifyPaginationTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="methods" name="Profile tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
+				<methods>
+					<include name="generateTokenTest"/>
+					<include name="changeUserProfilePhotoTest"/>
+					<include name="changeColorSchemaTest"/>
+					<include name="changePreferencesTest"/>
+					<include name="changePasswordTest"/>
+					<include name="changeUserProfileInfoTest"/>
 				</methods>
 			</class>
 		</classes>

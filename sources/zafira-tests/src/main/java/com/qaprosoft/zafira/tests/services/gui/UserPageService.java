@@ -1,5 +1,6 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
@@ -63,6 +64,12 @@ public class UserPageService extends AbstractPageService
 		userPage.clickFabMenu();
 		userPage.clickFabMenuButtonByClassName(CREATE_USER_BUTTON_CLASS);
 		return userPage.getCreateUserModalWindow();
+	}
+
+	public UserPage createUser(String email, String username, String password)
+	{
+		CreateUserModalWindow createUserModalWindow = goToCreateUserModalWindow();
+		return createUserModalWindow.registerUser(username, "", "", email, password);
 	}
 
 	public CreateGroupModalWindow goToCreateGroupModalWindow()
