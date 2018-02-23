@@ -16,7 +16,9 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.util.List;
+import java.util.Map;
 
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,4 +131,21 @@ public class DashboardService
 	{
 		dashboardMapper.deleteDashboardAttributeById(attributeId);
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void setDefaultDashboard(Map<String, Object> extendedUserProfile, String title, String key) throws ServiceException
+	{
+		Dashboard dashboard;
+		if("defaultDashboardId".equals(key)){
+			dashboard = getDefaultDashboardByUserId(((UserType)extendedUserProfile.get("user")).getId());
+		} else {
+			dashboard = getDashboardByTitle(title);
+		}
+		if (dashboard == null) {
+			extendedUserProfile.put(key, null);
+		} else {
+			extendedUserProfile.put(key, dashboard.getId());
+		}
+	}
+
 }
