@@ -21,8 +21,8 @@
                 <div layout layout-sm="column" layout-align="space-around">
                     <md-input-container flex>
                         <label>Project</label>
-                        <md-select id="projectName" id="projectId" name="projectId" data-ng-model="view.projectId" required>
-                            <md-option ng-repeat="project in projects" value="{{project.id}}">
+                        <md-select id="projectName" name="projectId" data-ng-model="view.projectId" required>
+                            <md-option ng-repeat="project in projects" ng-value="{{project.id}}">
                                 {{project.name}}
                             </md-option>
                         </md-select>
@@ -38,7 +38,7 @@
             <md-button id="create" class="md-raised btn-w-md md-primary" data-ng-click="createView(view)"  data-ng-disabled="view_form.$invalid" data-ng-if="view.id == null">
                 Create
             </md-button>
-            <md-button id="save" class="md-raised btn-w-md md-primary" data-ng-click="updateView(view)"  data-ng-disabled="viewForm.$invalid" data-ng-if="view.id != null">
+            <md-button id="save" class="md-raised btn-w-md md-primary" data-ng-click="updateView(view)"  data-ng-disabled="view_form.$invalid" data-ng-if="view.id != null">
                 Save
             </md-button>
         </md-dialog-actions>
