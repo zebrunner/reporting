@@ -1,6 +1,6 @@
 ## Zafira QA Automation Reporting
 
-Web application that collects test results from QA automation.
+Zafira is a Web application that collects test results from QA automation.
 
 Configurable dashboards based on [D3JS](https://d3js.org/)
 ![Alt text](./public/demo-dashboards.png "Dashboards")
