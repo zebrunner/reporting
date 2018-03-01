@@ -137,6 +137,7 @@ public class TestRunViewPageTest extends AbstractTest
 				.collect(Collectors.toList())).forEach(JobViewSettingModalWindowFilterBox::checkJobCheckbox);
 		Assert.assertFalse(jobViewSettingModalWindow.hasDisabledAttribute(jobViewSettingModalWindow.getCreateButton()), "Create button is disabled");
 		jobViewSettingModalWindow.clickCreateButton();
+		testRunViewPage.waitUntilElementWithTextIsPresent(testRunViewPage.getSuccessAlert(), "Job view created successfully", 5);
 		Assert.assertEquals(testRunViewPage.getSuccessAlert().getText(), "Job view created successfully", "Alert text is incorrect");
 	}
 }

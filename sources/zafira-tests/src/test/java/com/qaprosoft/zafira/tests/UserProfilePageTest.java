@@ -242,7 +242,8 @@ public class UserProfilePageTest extends AbstractTest {
         userProfilePage.getConfirmPasswordInput().sendKeys(tempPwd);
         Assert.assertEquals(userProfilePage.getWebElementValue(userProfilePage.getPasswordInput()), userProfilePage.getWebElementValue(userProfilePage.getConfirmPasswordInput()), "Password Inputs contain different values");
         userProfilePage.getChangePasswordButton().click();
-        Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 1), "Success Alert is not present");
+        userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "Password changed", 5);
+        Assert.assertEquals(userProfilePage.getSuccessAlert().getText(), "Password changed", "Success Alert is incorrect");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
         userProfilePage.getHeader().logOut();
         dashboardPage = loginPageService.login(username, tempPwd);
