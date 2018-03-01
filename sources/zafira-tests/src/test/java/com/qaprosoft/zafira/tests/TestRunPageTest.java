@@ -2,8 +2,10 @@ package com.qaprosoft.zafira.tests;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
@@ -50,6 +52,9 @@ public class TestRunPageTest extends AbstractTest
 
 	@Autowired
 	private TestMapper testMapper;
+
+	@Autowired
+	private UserMapper userMapper;
 
 	@BeforeMethod
 	public void setup()
@@ -166,20 +171,24 @@ public class TestRunPageTest extends AbstractTest
 	public void verifySendAsEmailTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
-		UserAPIService userAPIService = new UserAPIService();
-		UserType userType = userAPIService.createUsers(1).get(0);
+		String email = userMapper.getUserSearchCount(new UserSearchCriteria()) > 2 ? userMapper.searchUsers(new UserSearchCriteria()
+		{
+			{
+				setId(3L);
+			}
+		}).get(0).getEmail() : new UserAPIService().createUsers(2).get(0).getEmail();
 		testRunPage = (TestRunPage) testRunPage.reload();
 		SendAsEmailModalWindow sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
 		Assert.assertEquals(sendAsEmailModalWindow.getHeaderText(), "Email", "Modal is not opened");
-		sendAsEmailModalWindow.typeRecipients(userType.getEmail().substring(0, 4));
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
 		sendAsEmailModalWindow.waitUntilElementIsNotPresent(sendAsEmailModalWindow.getProgressLinear(), 2);
 		sendAsEmailModalWindow.clickSuggestion(0);
 		Chip chip = sendAsEmailModalWindow.getChips().get(0);
 		Assert.assertTrue(chip.isElementPresent(chip.getCloseButton(), 1), "Chip is not present");
-		Assert.assertEquals(chip.getContentText(), userType.getEmail(), "Invalid email in the chip. Current email text is: " + chip.getContentText());
+		Assert.assertEquals(chip.getContentText(), email, "Invalid email in the chip. Current email text is: " + chip.getContentText());
 		chip.clickCloseButton();
 		Assert.assertTrue(! sendAsEmailModalWindow.isElementPresent(chip.getRootElement(), 1), "Chip is present");
-		sendAsEmailModalWindow.typeRecipients(userType.getEmail().substring(0, 4));
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
 		sendAsEmailModalWindow.clickSuggestion(0);
 		sendAsEmailModalWindow.clickSendButton();
 		testRunPage.waitUntilPageIsLoaded();
@@ -214,6 +223,8 @@ public class TestRunPageTest extends AbstractTest
 		rebuildModalWindow.clickOnlyFailuresRadioButton();
 		rebuildModalWindow.clickAllTestsRadioButton();
 		rebuildModalWindow.clickCancelButton();
+		pause(2);
+		testRunPage.clickOutside();
 		pause(1);
 		Assert.assertFalse(rebuildModalWindow.isElementPresent(1), "Rebuild modal window is present");
 		rebuildModalWindow = testRunPageService.clickRebuildButton(0);
@@ -231,8 +242,12 @@ public class TestRunPageTest extends AbstractTest
 		Alert alert = driver.switchTo().alert();
 		Assert.assertEquals(alert.getText(), "Do you really want to delete \"" + testRunName + "\" test run?");
 		alert.dismiss();
+		testRunPage.clickOutside();
+		pause(1);
 		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is deleted");
-		testRunPageService.getTestRunRowByIndex(0).clickTestRunSettingMenu().clickDeleteButton();
+		TestRunSettingMenu testRunSettingMenu = testRunPageService.getTestRunRowByIndex(0).clickTestRunSettingMenu();
+		testRunSettingMenu.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 2);
+		testRunSettingMenu.clickDeleteButton();
 		alert = driver.switchTo().alert();
 		alert.accept();
 		testRunPage.waitUntilPageIsLoaded();
@@ -393,7 +408,8 @@ public class TestRunPageTest extends AbstractTest
 		taskModalWindow.typeDescription("description");
 		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is disabled");
 		taskModalWindow.clickAssignButton();
-		Assert.assertEquals(taskModalWindow.getSuccessAlert().getText(), "A new work item \"JIRA-2222\" was assigned");
+		testRunPage.waitUntilElementWithTextIsPresent(testRunPage.getSuccessAlert(), "A new work item \"JIRA-2222\" was assigned", 5);
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "A new work item \"JIRA-2222\" was assigned");
 		Assert.assertTrue(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
 		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
 		taskModalWindow = testRow.clickEditTask();
@@ -513,12 +529,12 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
 		knownIssueModalWindow.checkBlockerCheckbox();
 		knownIssueModalWindow.clickCreateButton();
-		Assert.assertTrue(testRow.isElementPresent(testRow.getBlockerLabel(), 1), "Blocker label is not present");
+		Assert.assertTrue(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is not present");
 		knownIssueModalWindow = testRow.clickEditKnownIssue();
 		knownIssueModalWindow.clickClearButton();
 		knownIssueModalWindow.getAlert().accept();
 		knownIssueModalWindow.closeModalWindow();
-		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 1), "Blocker label is present");
+		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is present");
 	}
 
 	private void verifyTestRunInformation(TestRun testRun, int index)

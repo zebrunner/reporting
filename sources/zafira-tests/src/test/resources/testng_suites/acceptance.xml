@@ -36,6 +36,11 @@
 					<include name="verifyMarkAsKnownIssueTest"/>
 				</methods>
 			</class>
+			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+				<methods>
+					<include name="verifyViewTableCreationTest"/>
+				</methods>
+			</class>
 		</classes>
 	</test>
 
@@ -56,7 +61,6 @@
 				<methods>
 					<include name="verifyCreateTestRunViewTest"/>
 					<include name="verifyUpdateTestRunViewTest"/>
-					<include name="verifyViewTableCreationTest"/>
 				</methods>
 			</class>
 		</classes>

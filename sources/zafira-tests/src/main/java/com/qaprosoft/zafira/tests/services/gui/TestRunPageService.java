@@ -76,6 +76,7 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
+		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRebuildButton(), 1);
 		testRunSettingMenu.clickRebuildButton();
 		return testRunPage.getRebuildModalWindow();
 	}
@@ -104,6 +105,7 @@ public class TestRunPageService extends AbstractPageService
 		if(! testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1))
 		{
 			testRunPage.hoverOnElement(testRunTableRow.getRootElement());
+			testRunPage.waitUntilElementIsPresent(testRunTableRow.getExpandTestsIcon(), 1);
 			result = testRunTableRow.clickExpandTestsIcon();
 		} else
 		{
