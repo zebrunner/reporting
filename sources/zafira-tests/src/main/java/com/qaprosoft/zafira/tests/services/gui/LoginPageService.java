@@ -22,6 +22,7 @@ public class LoginPageService extends AbstractPageService
 	public DashboardPage login(String username, String password)
 	{
 		loginPage.waitUntilLoadingContainerDisappears(10);
+		loginPage.waitUntilElementIsPresent(loginPage.getUsernameTextField(), 5);
 		loginPage.typeUsername(username);
 		loginPage.typePassword(password);
 		loginPage.clickLoginButton();

@@ -181,6 +181,7 @@ public abstract class AbstractUIObject
 
 	public String getTooltipText()
 	{
+		waitUntilElementIsPresent(tooltip, 1);
 		return tooltip.getText();
 	}
 

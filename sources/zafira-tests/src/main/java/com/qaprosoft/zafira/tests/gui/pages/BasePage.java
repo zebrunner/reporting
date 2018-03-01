@@ -86,9 +86,15 @@ public abstract class BasePage extends AbstractPage
 	{
 		String text;
 		waitUntilPageIsLoaded();
-		if(isElementPresent(pageItemsCount, 1))
+		if(isElementPresent(pageItemsCount, 2))
 		{
-			text = pageItemsCount.getText();
+			try
+			{
+				text = pageItemsCount.getText();
+			} catch (Exception e)
+			{
+				text = "(0)";
+			}
 		} else
 		{
 			text = "(0)";
