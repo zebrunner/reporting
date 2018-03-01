@@ -28,8 +28,11 @@ if [ ! -z "$ZAFIRA_NEWRELIC_KEY" ];
 then
   unzip $CATALINA_HOME/temp/newrelic.zip -d $CATALINA_HOME/
   cd $CATALINA_HOME/newrelic
-  sed -i -e 's#NEWRELIC_KEY#'"$ZAFIRA_NEWRELIC_KEY"'#g' newrelic.yml
-  sed -i -e 's#NEWRELIC_APP#'"$ZAFIRA_NEWRELIC_APP"'#g' newrelic.yml
+  sed -i -e 's#ZAFIRA_NEWRELIC_ENABLED#'"$ZAFIRA_NEWRELIC_ENABLED"'#g' newrelic.yml
+  sed -i -e 's#ZAFIRA_NEWRELIC_KEY#'"$ZAFIRA_NEWRELIC_KEY"'#g' newrelic.yml
+  sed -i -e 's#ZAFIRA_NEWRELIC_APP#'"$ZAFIRA_NEWRELIC_APP"'#g' newrelic.yml
+  sed -i -e 's#ZAFIRA_NEWRELIC_AUDIT_MODE#'"$ZAFIRA_NEWRELIC_AUDIT_MODE"'#g' newrelic.yml
+  sed -i -e 's#ZAFIRA_NEWRELIC_LOG_LEVEL#'"$ZAFIRA_NEWRELIC_LOG_LEVEL"'#g' newrelic.yml
   java -jar newrelic.jar install
   cd ..
 fi
