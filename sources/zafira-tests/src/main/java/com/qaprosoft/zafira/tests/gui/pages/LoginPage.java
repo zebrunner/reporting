@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui;
+package com.qaprosoft.zafira.tests.gui.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LoginPage extends AbstractPage
+public class LoginPage extends BasePage
 {
 	@FindBy(name="username")
 	private WebElement usernameTextField;
@@ -37,18 +34,37 @@ public class LoginPage extends AbstractPage
 	{
 		super(driver, "/signin");
 	}
-	
-	public DashboardPage login(String username, String password)
+
+	public WebElement getUsernameTextField()
 	{
-		new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader-container")));
-		usernameTextField.sendKeys(username);
-		passwordTextField.sendKeys(password);
-		loginButton.click();
-		return new DashboardPage(driver, 2);
+		return usernameTextField;
 	}
-	
-	public boolean isInvalidCredentials()
+
+	public void typeUsername(String username)
 	{
-		return driver.findElement(By.xpath("//p[text()='Invalid credentials']")).isDisplayed();
+		usernameTextField.sendKeys(username);
+		LOGGER.info("Type username: " + username);
+	}
+
+	public WebElement getPasswordTextField()
+	{
+		return passwordTextField;
+	}
+
+	public void typePassword(String password)
+	{
+		passwordTextField.sendKeys(password);
+		LOGGER.info("Type password: " + password);
+	}
+
+	public WebElement getLoginButton()
+	{
+		return loginButton;
+	}
+
+	public void clickLoginButton()
+	{
+		loginButton.click();
+		LOGGER.info("Login button was clicked");
 	}
 }

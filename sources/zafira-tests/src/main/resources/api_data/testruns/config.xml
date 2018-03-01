@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <arg unique="false">
+        <key>url</key>
+        <value>http://demo.qaprosoft.com</value>
+    </arg>
+    <arg unique="false">
+        <key>env</key>
+        <value>DEMO</value>
+    </arg>
+    <arg unique="false">
+        <key>env_arg_resolver</key>
+        <value>com.qaprosoft.carina.core.foundation.utils.DefaultEnvArgResolver</value>
+    </arg>
+    <arg unique="false">
+        <key>platform</key>
+        <value>*</value>
+    </arg>
+    <arg unique="false">
+        <key>browser</key>
+        <value>chrome</value>
+    </arg>
+    <arg unique="false">
+        <key>browser_version</key>
+        <value>*</value>
+    </arg>
+    <arg unique="false">
+        <key>selenium_host</key>
+        <value>http://localhost:4444/wd/hub</value>
+    </arg>
+    <arg unique="false">
+        <key>driver_mode</key>
+        <value>method_mode</value>
+    </arg>
+    <arg unique="false">
+        <key>max_driver_count</key>
+        <value>3</value>
+    </arg>
+    <arg unique="false">
+        <key>custom_capabilities</key>
+    </arg>
+    <arg unique="false">
+        <key>extra_capabilities</key>
+    </arg>
+    <arg unique="false">
+        <key>app_version</key>
+        <value>1.1</value>
+    </arg>
+    <arg unique="false">
+        <key>proxy_host</key>
+    </arg>
+    <arg unique="false">
+        <key>proxy_port</key>
+    </arg>
+    <arg unique="false">
+        <key>proxy_protocols</key>
+        <value>http,https,ftp</value>
+    </arg>
+    <arg unique="false">
+        <key>browsermob_proxy</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>browsermob_port</key>
+        <value>0</value>
+    </arg>
+    <arg unique="false">
+        <key>proxy_set_to_system</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>report_url</key>
+    </arg>
+    <arg unique="false">
+        <key>email_list</key>
+    </arg>
+    <arg unique="false">
+        <key>failure_email_list</key>
+    </arg>
+    <arg unique="false">
+        <key>track_known_issues</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>auto_screenshot</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>smart_screenshot</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>implicit_timeout</key>
+        <value>10</value>
+    </arg>
+    <arg unique="false">
+        <key>explicit_timeout</key>
+        <value>20</value>
+    </arg>
+    <arg unique="false">
+        <key>auto_download</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>auto_download_apps</key>
+    </arg>
+    <arg unique="false">
+        <key>retry_interval</key>
+        <value>5</value>
+    </arg>
+    <arg unique="false">
+        <key>project_report_directory</key>
+        <value>./reports/qa</value>
+    </arg>
+    <arg unique="false">
+        <key>max_screen_history</key>
+        <value>10</value>
+    </arg>
+    <arg unique="false">
+        <key>result_sorting</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>keep_all_screenshots</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>big_screen_width</key>
+        <value>-1</value>
+    </arg>
+    <arg unique="false">
+        <key>big_screen_height</key>
+        <value>-1</value>
+    </arg>
+    <arg unique="false">
+        <key>small_screen_width</key>
+        <value>90</value>
+    </arg>
+    <arg unique="false">
+        <key>small_screen_height</key>
+        <value>60</value>
+    </arg>
+    <arg unique="false">
+        <key>sender_email</key>
+    </arg>
+    <arg unique="false">
+        <key>sender_pswd</key>
+    </arg>
+    <arg unique="false">
+        <key>init_retry_count</key>
+        <value>0</value>
+    </arg>
+    <arg unique="false">
+        <key>init_retry_interval</key>
+        <value>1</value>
+    </arg>
+    <arg unique="false">
+        <key>retry_count</key>
+        <value>0</value>
+    </arg>
+    <arg unique="false">
+        <key>enable_l10n</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>l10n_encoding</key>
+        <value>ISO-8859-1</value>
+    </arg>
+    <arg unique="false">
+        <key>locale</key>
+        <value>en_US</value>
+    </arg>
+    <arg unique="false">
+        <key>enable_i18n</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>language</key>
+        <value>en_US</value>
+    </arg>
+    <arg unique="false">
+        <key>thread_count</key>
+        <value>1</value>
+    </arg>
+    <arg unique="false">
+        <key>data_provider_thread_count</key>
+        <value>-1</value>
+    </arg>
+    <arg unique="false">
+        <key>core_log_level</key>
+        <value>INFO</value>
+    </arg>
+    <arg unique="false">
+        <key>log_all_json</key>
+        <value>true</value>
+    </arg>
+    <arg unique="false">
+        <key>date_format</key>
+        <value>HH:mm:ss yyyy-MM-dd</value>
+    </arg>
+    <arg unique="false">
+        <key>time_format</key>
+        <value>HH:mm:ss</value>
+    </arg>
+    <arg unique="false">
+        <key>crypto_key_path</key>
+        <value>./src/main/resources/crypto.key</value>
+    </arg>
+    <arg unique="false">
+        <key>suite_name</key>
+    </arg>
+    <arg unique="false">
+        <key>ci_url</key>
+    </arg>
+    <arg unique="false">
+        <key>ci_build</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_updater</key>
+        <value>com.qaprosoft.carina.core.foundation.jira.DefaultJiraUpdater</value>
+    </arg>
+    <arg unique="false">
+        <key>jira_url</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_user</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_password</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_suite_id</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_project</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_project_short</key>
+    </arg>
+    <arg unique="false">
+        <key>jira_create_new_ticket</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>mobile_screen_switcher</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>video_recording</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>testrail_url</key>
+    </arg>
+    <arg unique="false">
+        <key>testrail_user</key>
+    </arg>
+    <arg unique="false">
+        <key>testrail_password</key>
+    </arg>
+    <arg unique="false">
+        <key>testrail_updater</key>
+        <value>com.qaprosoft.carina.core.foundation.report.testrail.EmptyTestRailUpdater</value>
+    </arg>
+    <arg unique="false">
+        <key>testrail_milestone</key>
+    </arg>
+    <arg unique="false">
+        <key>testrail_assignee</key>
+    </arg>
+    <arg unique="false">
+        <key>s3_bucket_name</key>
+    </arg>
+    <arg unique="false">
+        <key>access_key_id</key>
+    </arg>
+    <arg unique="false">
+        <key>secret_key</key>
+    </arg>
+    <arg unique="false">
+        <key>s3_local_storage</key>
+        <value>.</value>
+    </arg>
+    <arg unique="false">
+        <key>s3_screenshot_bucket_name</key>
+    </arg>
+    <arg unique="false">
+        <key>s3_save_screenshots</key>
+        <value>FALSE</value>
+    </arg>
+    <arg unique="false">
+        <key>hockeyapp_token</key>
+    </arg>
+    <arg unique="false">
+        <key>hockeyapp_local_storage</key>
+        <value>.</value>
+    </arg>
+    <arg unique="false">
+        <key>add_new_localization</key>
+        <value>false</value>
+    </arg>
+    <arg unique="false">
+        <key>add_new_localization_encoding</key>
+        <value>utf-8</value>
+    </arg>
+    <arg unique="false">
+        <key>add_new_localization_path</key>
+    </arg>
+    <arg unique="false">
+        <key>add_new_localization_property_name</key>
+        <value>new_custom_messages_</value>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_tests</key>
+        <value/>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_tests_app_version</key>
+        <value/>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_tests_name</key>
+        <value/>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_tests_results_image_resize</key>
+        <value>30</value>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_user_js_in_report</key>
+        <value/>
+    </arg>
+    <arg unique="false">
+        <key>cucumber_report_subfolder</key>
+        <value>cucumber-html-reports</value>
+    </arg>
+    <arg unique="false">
+        <key>tls_keysecure_location</key>
+    </arg>
+    <arg unique="false">
+        <key>health_check_class</key>
+    </arg>
+    <arg unique="false">
+        <key>health_check_methods</key>
+    </arg>
+    <arg unique="false">
+        <key>uninstall_related_apps</key>
+        <value>false</value>
+    </arg>
+</config>

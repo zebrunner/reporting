@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.tests.gui;
+package com.qaprosoft.zafira.tests.gui.pages;
 
 import org.openqa.selenium.WebDriver;
 
-public class DashboardPage extends AbstractPage
+public class UserPerformancePage extends BasePage
 {
-	public DashboardPage(WebDriver driver, int dashboardId)
+
+	public UserPerformancePage(WebDriver driver, int dashboardId, int userId)
 	{
-		super(driver, String.format("/dashboards/%d", dashboardId));
+		super(driver, String.format("/dashboards/%d\\?userId=%d", dashboardId, userId));
 	}
 }

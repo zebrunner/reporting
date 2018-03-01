@@ -41,6 +41,8 @@ public class Config
 					.configure(new Parameters().properties().setFileName("config.properties")).getConfiguration());
 			config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
 					.configure(new Parameters().properties().setFileName("testdata.properties")).getConfiguration());
+			config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+					.configure(new Parameters().properties().setFileName("zafira.properties")).getConfiguration());
 		}
 		catch (Exception e) 
 		{
