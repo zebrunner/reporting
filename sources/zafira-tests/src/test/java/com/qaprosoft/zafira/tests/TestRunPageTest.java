@@ -529,6 +529,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
 		knownIssueModalWindow.checkBlockerCheckbox();
 		knownIssueModalWindow.clickCreateButton();
+		testRunPage.waitUntilElementIsNotPresent(knownIssueModalWindow.getRootElement(), 2);
 		Assert.assertTrue(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is not present");
 		knownIssueModalWindow = testRow.clickEditKnownIssue();
 		knownIssueModalWindow.clickClearButton();
