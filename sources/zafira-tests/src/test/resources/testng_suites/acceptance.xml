@@ -13,7 +13,7 @@
 		</classes>
 	</test>
 
-	<test enabled="false" parallel="false" preserve-order="true" name="Test run tests">
+	<!--<test enabled="false" parallel="false" preserve-order="true" name="Test run tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
@@ -92,6 +92,6 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
+	</test>-->
 
 </suite>
