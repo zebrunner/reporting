@@ -2,7 +2,7 @@
 
 <suite preserve-order="true" verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
 	
-	<test enabled="false" parallel="false" name="Login with valid credentials">
+	<test name="Login with valid credentials">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.AuthTest">
 				<methods>
