@@ -15,33 +15,49 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.qaprosoft.zafira.tests.util.Config;
 
-public abstract class AbstractPage
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
+public abstract class AbstractPage extends AbstractUIObject
 {
+
 	protected String url;
-	
-	protected WebDriver driver;
 
 	public AbstractPage(WebDriver driver, String path)
 	{
-		this.driver = driver;
+		super(driver);
 		this.url = Config.get("base_url") + path;
 		PageFactory.initElements(driver, this);
 	}
 	
 	public void open()
 	{
-		driver.get(url);
+		driver.get(url.replace("\\?", "?"));
+		driver.manage().window().maximize();
 	}
 	
 	public boolean isOpened()
 	{
 		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
+	}
+
+	public String getUrl() {
+		return url;
 	}
 }

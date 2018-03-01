@@ -15,31 +15,41 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests;
 
+import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.tests.gui.DashboardPage;
-import com.qaprosoft.zafira.tests.gui.LoginPage;
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 
 
 public class AuthTest extends AbstractTest
 {
-/*
-	@Test(enabled=false, groups= {"acceptance", "auth"})
+
+	private LoginPageService loginPageService;
+
+	@BeforeMethod
+	private void setup()
+	{
+		this.loginPageService = new LoginPageService(driver);
+	}
+
+	@Test(groups= {"acceptance", "auth"})
 	public void testValidLogin()
 	{
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		DashboardPage dashboardPage = loginPage.login(ADMIN1_USER, ADMIN1_PASS);
+		DashboardPage dashboardPage = loginPageService.login(ADMIN1_USER, ADMIN1_PASS);
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard not opened!");
 	}
 	
-	@Test(enabled=false, groups= {"acceptance", "auth"})
+	@Test(groups= {"acceptance", "auth"})
 	public void testInvalidLogin()
 	{
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();
-		loginPage.login("invalid", "credentials");
-		Assert.assertTrue(loginPage.isInvalidCredentials(), "Invalid credentials alert not showed!");
-	}*/
+		loginPageService.login("invalid", "credentials");
+		Assert.assertTrue(loginPageService.isInvalidCredentials(), "Invalid credentials alert not showed!");
+	}
 }
