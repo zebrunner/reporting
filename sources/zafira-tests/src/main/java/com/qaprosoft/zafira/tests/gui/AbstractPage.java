@@ -15,24 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.tests.gui;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.qaprosoft.zafira.tests.util.Config;
-
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public abstract class AbstractPage extends AbstractUIObject
 {
@@ -49,7 +37,7 @@ public abstract class AbstractPage extends AbstractUIObject
 	public void open()
 	{
 		driver.get(url.replace("\\?", "?"));
-		driver.manage().window().maximize();
+		driver.manage().window().setSize(new Dimension(1600,900));
 	}
 	
 	public boolean isOpened()
@@ -60,4 +48,10 @@ public abstract class AbstractPage extends AbstractUIObject
 	public String getUrl() {
 		return url;
 	}
+
+	public void maximize()
+	{
+		driver.manage().window().setSize(new Dimension(1600,900));
+	}
+
 }
