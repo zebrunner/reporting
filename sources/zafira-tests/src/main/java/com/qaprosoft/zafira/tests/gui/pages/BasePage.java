@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import com.qaprosoft.zafira.tests.gui.AbstractPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import com.qaprosoft.zafira.tests.gui.components.Header;
 import com.qaprosoft.zafira.tests.gui.components.Navbar;

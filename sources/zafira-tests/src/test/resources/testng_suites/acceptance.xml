@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite preserve-order="true" verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" data-provider-thread-count="50" annotations="JDK">
+<suite preserve-order="true" verbose="1" name="Zafira Acceptance Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
 	
 	<test name="Login with valid credentials">
 		<classes>
@@ -13,7 +13,7 @@
 		</classes>
 	</test>
 
-	<!--<test enabled="false" parallel="false" preserve-order="true" name="Test run tests">
+	<test parallel="false" preserve-order="true" name="Test run tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
@@ -29,11 +29,11 @@
 					<include name="verifyTestRunsTable"/>
 					<include name="verifyTestInfoTest"/>
 					<include name="verifyTestRunSearchTest"/>
+					<include name="verifyTestAssignTicketTest"/>
+                    <include name="verifyTestMarkAsPassedTest"/>
+                    <include name="verifyMarkAsKnownIssueTest"/>
 					<include name="verifyPaginationTest"/>
 					<include name="verifyFabButtonActionsTest"/>
-					<include name="verifyTestAssignTicketTest"/>
-					<include name="verifyTestMarkAsPassedTest"/>
-					<include name="verifyMarkAsKnownIssueTest"/>
 				</methods>
 			</class>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
@@ -44,7 +44,7 @@
 		</classes>
 	</test>
 
-	<test enabled="false" parallel="false" name="Navigation tests">
+	<test parallel="false" name="Navigation tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.NavigationTest">
 				<methods>
@@ -55,7 +55,7 @@
 		</classes>
 	</test>
 
-	<test enabled="false" parallel="false" name="Test run view tests">
+	<test parallel="false" name="Test run view tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
@@ -66,7 +66,7 @@
 		</classes>
 	</test>
 
-	<test enabled="false" parallel="false" name="User tests">
+	<test parallel="false" name="User tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserPageTest">
 				<methods>
@@ -79,7 +79,7 @@
 		</classes>
 	</test>
 
-	<test enabled="false" parallel="false" name="Profile tests">
+	<test parallel="false" name="Profile tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
 				<methods>
@@ -92,6 +92,6 @@
 				</methods>
 			</class>
 		</classes>
-	</test>-->
+	</test>
 
 </suite>
