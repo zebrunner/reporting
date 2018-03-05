@@ -44,6 +44,7 @@ public class UserSettingMenu extends AbstractMenu
 
 	public CreateUserModalWindow clickEditProfileButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(editProfileButton, 2);
 		editProfileButton.click();
 		return new UserPage(driver).getCreateUserModalWindow();
 	}
