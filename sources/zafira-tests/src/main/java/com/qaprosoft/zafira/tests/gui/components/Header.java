@@ -165,7 +165,7 @@ public class Header extends AbstractUIObject
 	{
 		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
 		if (!isElementClickable(logoutButton, 2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(logoutButton, 1);
+			waitUntilElementToBeClickableWithBackdropMask(logoutButton, 1);
 		logoutButton.click();
 		LOGGER.info("Logout button was clicked");
 		return new LoginPage(driver);
