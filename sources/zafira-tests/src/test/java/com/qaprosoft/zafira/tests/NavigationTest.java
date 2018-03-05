@@ -100,7 +100,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getHeader().getMobileMenuButton(), 2), "Mobile nav bar button is not present");
 		dashboardPage.getHeader().getMobileMenuButton().click();
 
-		driver.manage().window().maximize();
+		dashboardPage.maximize();
 
 		UserProfilePage userProfilePage = dashboardPage.getHeader().goToUserProfilePage();
 		Assert.assertTrue(userProfilePage.isOpened(), "User profile page not opened");
