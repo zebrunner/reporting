@@ -34,6 +34,7 @@ public class RebuildModalWindow extends AbstractModalWindow
 
 	public void clickOnlyFailuresRadioButton()
 	{
+		waitUntilElementToBeClickable(onlyFailuresRadioButton, 2);
 		onlyFailuresRadioButton.click();
 	}
 
@@ -44,6 +45,7 @@ public class RebuildModalWindow extends AbstractModalWindow
 
 	public void clickAllTestsRadioButton()
 	{
+		waitUntilElementToBeClickable(allTestsRadioButton, 2);
 		allTestsRadioButton.click();
 	}
 
