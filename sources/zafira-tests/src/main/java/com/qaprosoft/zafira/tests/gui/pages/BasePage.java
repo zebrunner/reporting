@@ -2,14 +2,12 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import com.qaprosoft.zafira.tests.gui.AbstractPage;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import com.qaprosoft.zafira.tests.gui.components.Header;
 import com.qaprosoft.zafira.tests.gui.components.Navbar;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
@@ -49,6 +47,7 @@ public abstract class BasePage extends AbstractPage
 
 	public boolean waitUntilPageIsLoaded(long seconds)
 	{
+		LOGGER.info("Wait until page is loading");
 		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
 				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
 	}
@@ -64,7 +63,9 @@ public abstract class BasePage extends AbstractPage
 
 	public BasePage reload(){
 		driver.navigate().refresh();
+		waitUntilLoadingContainerDisappears(IMPLICITLY_TIMEOUT);
 		waitUntilPageIsLoaded();
+		LOGGER.info("Page was refreshed. Current url: " + driver.getCurrentUrl());
 		return this;
 	}
 
