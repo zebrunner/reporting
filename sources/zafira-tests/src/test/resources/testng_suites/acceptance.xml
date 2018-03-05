@@ -71,7 +71,7 @@
 			<class name="com.qaprosoft.zafira.tests.UserPageTest">
 				<methods>
 					<include name="verifyNavigationTest"/>
-					<include name="verifyInfoTest"/>
+					<!--<include name="verifyInfoTest"/>-->
 					<include name="verifySearchTest"/>
 					<include name="verifyPaginationTest"/>
 				</methods>
