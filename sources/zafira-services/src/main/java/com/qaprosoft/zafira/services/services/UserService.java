@@ -159,6 +159,7 @@ public class UserService
 				addUserToGroup(newUser, group.getId());
 				newUser.getGroups().add(group);
 			}
+			userPreferenceService.createDefaultUserPreferences(newUser.getId());
 
 		} else
 		{
