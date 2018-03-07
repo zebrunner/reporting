@@ -20,13 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -84,11 +80,6 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("api/tests/runs")
 public class TestRunsAPIController extends AbstractController
 {
-
-	private static final Logger LOGGER = Logger.getLogger(TestRunsAPIController.class);
-
-	@Autowired
-	private ServletContext context;
 
 	@Autowired
 	private Mapper mapper;
@@ -478,25 +469,4 @@ public class TestRunsAPIController extends AbstractController
 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
-	@ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Download application by test run id", nickname = "downloadApplication", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "downloadApp", method = RequestMethod.GET)
-	public void downloadApplication(HttpServletResponse response, @RequestParam(value = "appVersion") String appVersion)
-			throws IOException
-	{
-		File file = new File(String.format("/opt/apk/%s", appVersion));
-		String mimeType = context.getMimeType(file.getPath());
-		if (mimeType == null)
-		{
-			mimeType = "application/octet-stream";
-		}
-		response.setContentType(mimeType);
-		response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getName()));
-		response.setContentLength((int)file.length());
-		FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
-		response.flushBuffer();
-	}
 }

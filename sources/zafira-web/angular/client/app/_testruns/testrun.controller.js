@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -169,13 +169,28 @@
         };
 
         $scope.downloadApplication = function(appVersion) {
-            TestRunService.downloadApplication(appVersion).then(function(rs) {
+            DownloadService.download(appVersion).then(function(rs) {
                 if(rs.success) {
                     downloadFromByteArray(appVersion, rs.res)
                 } else {
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        $scope.checkFilePresence = function (testRun) {
+            if(testRun.appVersionValid == undefined) {
+                testRun.appVersionLoading = true;
+                DownloadService.check(testRun.appVersion).then(function (rs) {
+                    if (rs.success) {
+                        testRun.appVersionValid = rs.data;
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                    delete testRun.appVersionLoading;
+                    return rs.data;
+                })
+            }
         };
 
         $scope.getLengthOfSelectedTestRuns = function () {
