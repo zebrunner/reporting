@@ -25,6 +25,7 @@
         service.getEnvironments = getEnvironments;
         service.getPlatforms = getPlatforms;
         service.getConsoleOutput = getConsoleOutput;
+        service.downloadApplication = downloadApplication;
 
         return service;
 
@@ -94,6 +95,10 @@
 
         function getConsoleOutput(testRunId, count, fullCount) {
             return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
+        }
+
+        function downloadApplication(appVersion) {
+            return $http.get(API_URL + '/api/tests/runs/downloadApp?appVersion=' + appVersion, {responseType:'arraybuffer'}).then(function(res) {return {success: true, res: res}}, UtilService.handleError('Unable to download file \'' + appVersion + "\'"));
         }
     }
 })();

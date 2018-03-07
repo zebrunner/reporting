@@ -158,6 +158,26 @@
             testRun.tests[test.id] = test;
         };
 
+        var downloadFromByteArray = function (filename, array, contentType) {
+            var blob = new Blob([array.data], {type: contentType ? contentType : array.headers('Content-Type')});
+            var link = document.createElement("a");
+            document.body.appendChild(link);
+            link.style = "display: none";
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        };
+
+        $scope.downloadApplication = function(appVersion) {
+            TestRunService.downloadApplication(appVersion).then(function(rs) {
+                if(rs.success) {
+                    downloadFromByteArray(appVersion, rs.res)
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.getLengthOfSelectedTestRuns = function () {
             var count = 0;
             for(var id in $scope.selectedTestRuns) {
@@ -433,14 +453,7 @@
             TestRunService.exportTestRunResultsHTML(testRun.id).then(function(rs) {
                 if(rs.success)
                 {
-                    var html = new Blob([rs.data], {type: 'html'});
-                    var link = document.createElement("a");
-                    document.body.appendChild(link);
-                    link.style = "display: none";
-                    var url = window.URL.createObjectURL(html);
-                    link.href = url;
-                    link.download = testRun.testSuite.name.split(' ').join('_') + ".html";
-                    link.click();
+                    downloadFromByteArray(testRun.testSuite.name.split(' ').join('_') + ".html", rs, 'html');
                 }
                 else
                 {
