@@ -132,7 +132,9 @@
                                              <span data-ng-if="testRun.blocker" class="badge ng-binding bug-label-bg" alt="BLOCKERS">BLOCKERS</span>
                                            	<br/>
                                            	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-                                           	<small><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
+                                           	<small ng-show="!testRun.appVersionValid" ng-mouseenter="checkFilePresence(testRun)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
+                                           	<small ng-show="testRun.appVersionValid" ng-click="downloadApplication(testRun.appVersion)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">file_download</md-icon>{{testRun.appVersion}}</small>
+                                            <md-progress-circular ng-show="testRun.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
                                         </td>
                                         <td name="testRunEnv" md-cell class="no-padding">
                                         	     <span class="label label-default">{{testRun.env}}</span>

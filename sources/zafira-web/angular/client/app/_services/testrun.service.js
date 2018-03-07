@@ -95,5 +95,6 @@
         function getConsoleOutput(testRunId, count, fullCount) {
             return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
+
     }
 })();
