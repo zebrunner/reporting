@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -184,6 +184,41 @@
                     $scope.addToSelectedTestRuns($scope.testRuns[id]);
                 }
             }, 100);
+        };
+
+        var downloadFromByteArray = function (filename, array, contentType) {
+            var blob = new Blob([array.data], {type: contentType ? contentType : array.headers('Content-Type')});
+            var link = document.createElement("a");
+            document.body.appendChild(link);
+            link.style = "display: none";
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        };
+
+        $scope.downloadApplication = function (appVersion) {
+            DownloadService.download(appVersion).then(function (rs) {
+                if (rs.success) {
+                    downloadFromByteArray(appVersion, rs.res)
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.checkFilePresence = function (testRun) {
+            if (testRun.appVersionValid == undefined) {
+                testRun.appVersionLoading = true;
+                DownloadService.check(testRun.appVersion).then(function (rs) {
+                    if (rs.success) {
+                        testRun.appVersionValid = rs.data;
+                    } else {
+                        alertify.error(rs.message);
+                    }
+                    delete testRun.appVersionLoading;
+                    return rs.data;
+                })
+            }
         };
 
        $scope.followSelectedTestRuns = function () {
@@ -433,14 +468,7 @@
             TestRunService.exportTestRunResultsHTML(testRun.id).then(function(rs) {
                 if(rs.success)
                 {
-                    var html = new Blob([rs.data], {type: 'html'});
-                    var link = document.createElement("a");
-                    document.body.appendChild(link);
-                    link.style = "display: none";
-                    var url = window.URL.createObjectURL(html);
-                    link.href = url;
-                    link.download = testRun.testSuite.name.split(' ').join('_') + ".html";
-                    link.click();
+                    downloadFromByteArray(testRun.testSuite.name.split(' ').join('_') + ".html", rs, 'html');
                 }
                 else
                 {
