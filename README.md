@@ -39,7 +39,44 @@ To start Zafira in daemon mode, add '-d' argument:
 
 ## Integration
 
-[Java sample](https://github.com/qaprosoft/carina-demo)
+To integrate Zafira either with your own Java-based application or with [Java sample project](https://github.com/qaprosoft/carina-demo) use [zafira.properties](zafira_sample.properties) file.
+
+**For [sample project](https://github.com/qaprosoft/carina-demo):**
+
+1. Set value *zafira_access_token* in **zafira.properties** file in resources folder. 
+
+To get token value: 
+
+- Navigate to User Menu and open User Profile page in Zafira
+
+![Alt text](./public/user-profile.png "User menu")
+
+- Generate and copy access token
+
+![Alt text](./public/generate-token.png "Generate token")
+
+
+**For custom Java-based project:**
+
+1. Put **zafira.properties** file in a *resources* folder.
+
+2. Set properties parameters:
+
+  - *zafira_enabled* - enabling/disabling writing tests into Zafira
+  - *zafira_service_url* - zafira web services URL
+  - *zafira_access_token* - steps for token generation are given above 
+  - *zafira_project* - your project name
+ 
+   The other parameters are optional.
+ 
+ 3. Make sure that ZafiraListener is configured in one of the following ways:
+ 
+ - testNG xml configuration
+ 
+ - listener class annotation
+ 
+ - maven surefire plugin property
+
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
