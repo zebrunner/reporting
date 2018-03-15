@@ -18,6 +18,10 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
+                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
+                    <md-tooltip md-direction="top">Compare</md-tooltip>
+                    <span class="fa fa-columns" aria-hidden="true"></span>
+                </md-button>
                 <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
                     <span class="fa fa-undo" aria-hidden="true"></span>
