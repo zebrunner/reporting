@@ -319,8 +319,10 @@ public abstract class AbstractUIObject
 	{
 		String id = webElement.getAttribute("aria-owns");
 		webElement.click();
-		driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
-				+ "or contains(text(), '" + value + "')]]")).click();
+		WebElement option = driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
+				+ "or contains(text(), '" + value + "')]]"));
+		waitUntilElementToBeClickable(option, 1);
+		option.click();
 	}
 
 	public String getSelectedValue(WebElement webElement)
