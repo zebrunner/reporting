@@ -141,10 +141,7 @@ public class JenkinsService implements IJMXService
 			JobWithDetails job = getJobWithDetails(ciJob);
 
 			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
-			if (rerunFailures)
-			{
-				params.put("rerun_failures", "true");
-			}
+			params.put("rerun_failures", Boolean.toString(rerunFailures));
 			QueueReference reference = job.build(params, true);
 			success = checkReference(reference);
 		}
