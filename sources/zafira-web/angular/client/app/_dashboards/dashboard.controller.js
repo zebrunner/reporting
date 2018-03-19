@@ -399,6 +399,26 @@
             loadDashboardData(dashboard, refresh);
         };
 
+        $scope.optimizeWidget = function (widget, index) {
+            if (widget.type == 'table' && (Object.size(widget.data.dataset) == 0 || Object.size(widget.data.dataset) == index + 1)) {
+                $timeout(function () {
+                    var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
+                    $scope.gridstackOptions.disableResize = false;
+                    var el = angular.element('#' + widget.id)[0];
+                    console.log('widget ' + widget.title + ": " + el.offsetHeight);
+                    console.log('index' + index);
+                    console.log('size' + Object.size(widget.data.dataset));
+                    var gridstackEl = angular.element('#widget-' + widget.id)[0];
+                    if(Object.size(widget.data.dataset) == 0) {
+                        gridstack.resize(gridstackEl, widget.location.width, (Math.ceil(el.offsetHeight / $scope.gridstackOptions.cellHeight / 2)) + 2);
+                    } else {
+                        gridstack.resize(gridstackEl, widget.location.width, (Math.ceil(el.offsetHeight / $scope.gridstackOptions.cellHeight / 2)) + 2);
+                    }
+                    $scope.gridstackOptions.disableResize = true;
+                }, 100);
+            }
+        };
+
         var refreshPromise;
         var isRefreshing = false;
         function startRefreshing(){
