@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -80,7 +79,7 @@ public class WebDriverUtil
 		boolean result;
 		try
 		{
-			Wait wait = new WebDriverWait(wd, 1);
+			Wait<WebDriver> wait = new WebDriverWait(wd, 10);
 			wait.until(dr -> wd.findElement(By.id("loading-bar-spinner")).isDisplayed());
 			result = true;
 		} catch (Exception e)

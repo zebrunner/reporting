@@ -150,15 +150,15 @@ public class SeleniumService
 				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
 				String name = screenshot.getName();
 
-//                if(titleLocator != null)
-//                {
-//                    name = wd.findElement(titleLocator).getAttribute("value");
-//                }
-//
-//                if(areaLocator != null)
-//				{
-//					cropRegion(wd, screenshot, areaLocator);
-//				}
+                if(titleLocator != null)
+                {
+                    name = wd.findElement(titleLocator).getAttribute("value");
+                }
+
+                if(areaLocator != null)
+				{
+					cropRegion(wd, screenshot, areaLocator);
+				}
 				attachments.add(new Attachment(name, screenshot));
 			}
 		}
