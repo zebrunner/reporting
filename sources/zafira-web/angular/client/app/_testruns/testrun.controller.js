@@ -1755,16 +1755,6 @@
             return ! value || ! value.length;
         }
 
-        Object.size = function(obj) {
-            var size = 0, key;
-            for (key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    size++;
-                }
-            }
-            return size;
-        };
-
         $scope.getSize = function (obj) {
             return Object.size(obj);
         };

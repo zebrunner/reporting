@@ -132,7 +132,7 @@
 	                                    </table>
 						            </td>
 						        </tr>
-                                <tr md-row data-ng-if="sr.results.length == 0">
+                                <tr md-row data-ng-if="! sr.results || sr.results.length == 0">
                                     <td id="noData" md-cell colspan="7" class="text-center">No test cases</td>
                                 </tr>
                             </tbody>
