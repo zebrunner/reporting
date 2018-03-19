@@ -1673,8 +1673,8 @@
         $scope.tr = {};
         angular.copy(selectedTestRuns, $scope.tr);
 
-        const COMPARE_FIELDS = ['status', 'message'];
-        const EXIST_FIELDS = {'name': '', 'testGroup': '', 'testClass': ''};
+        var COMPARE_FIELDS = ['status', 'message'];
+        var EXIST_FIELDS = {'name': '', 'testGroup': '', 'testClass': ''};
 
         function aggregateTests(testRuns) {
             return angular.forEach(collectUniqueTests(testRuns), function (test) {
