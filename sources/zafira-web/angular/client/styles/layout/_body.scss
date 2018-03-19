@@ -23,20 +23,20 @@ body {
 }
 
 .result {
-  border-left: 8px solid #777777;
+  border-left: 8px solid #777777 !important;
   height: 55px;
 }
 
 .result.PASSED {
-  border-color: #8BC34A;
+  border-left-color: #8BC34A !important;
 }
 
 .result.FAILED {
-  border-color: #F44336;
+  border-left-color: #F44336 !important;
 }
 
 .result.IN_PROGRESS {
-  border-color: #00BCD4;
+  border-left-color: #00BCD4 !important;
 }
 
 .test_logs {
@@ -712,4 +712,37 @@ ul.profile-image-actions {
 
 .grey-icon i {
     color: lightgrey !important;
+}
+
+
+/*Compare table*/
+.compare-table {
+    table-layout: fixed;
+    .no-content {
+        text-align: center;
+        color: #F44336;
+    }
+    th {
+        padding-left: 56px !important;
+        width: 400px;
+    }
+    th.crossed {
+        background-image: linear-gradient(to bottom left,  transparent calc(50% - 1px), rgb(221, 221, 221), transparent calc(50% + 1px));
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    td {
+        border-left-width: 4px !important;
+        word-wrap: break-word;
+        .outside-row-element {
+            position: absolute;
+            left: -12px;
+        }
+    }
+    td.md-cell {
+        vertical-align: top !important;
+    }
+    md-checkbox .md-label {
+        width: 100px;
+    }
 }

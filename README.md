@@ -16,10 +16,11 @@ Integrations with multiple services
 #### Simple set with Docker
 
 1. Install [Docker](https://docs.docker.com/engine/installation/) ([Engine](https://docs.docker.com/engine/installation/), [Compose](https://docs.docker.com/compose/install/))
-2. Download [Example of compose descriptor](https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml) to any folder
+2. Download [Example of compose descriptor](https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml) and [Example of integrations](https://raw.githubusercontent.com/qaprosoft/zafira/master/integrations.env) to any folder
 
   ```Shell
   $ curl https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml -o docker-compose.yml
+  $ curl https://raw.githubusercontent.com/qaprosoft/zafira/master/integrations.env -o integrations.env
   ```
 3. Deploy Zafira using `docker-compose` within the same folder
 
@@ -43,9 +44,9 @@ To integrate Zafira either with your own Java-based application or with [Java sa
 
 **For [sample project](https://github.com/qaprosoft/carina-demo):**
 
-1. Set value *zafira_access_token* in **zafira.properties** file in resources folder. 
+1. Set value *zafira_access_token* in **zafira.properties** file in resources folder.
 
-To get token value: 
+To get token value:
 
 - Navigate to User Menu and open User Profile page in Zafira
 
@@ -64,17 +65,17 @@ To get token value:
 
   - *zafira_enabled* - enabling/disabling writing tests into Zafira
   - *zafira_service_url* - zafira web services URL
-  - *zafira_access_token* - steps for token generation are given above 
+  - *zafira_access_token* - steps for token generation are given above
   - *zafira_project* - your project name
- 
+
    The other parameters are optional.
- 
+
  3. Make sure that ZafiraListener is configured in one of the following ways:
- 
+
  - testNG xml configuration
- 
+
  - listener class annotation
- 
+
  - maven surefire plugin property
 
 
