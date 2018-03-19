@@ -58,7 +58,7 @@
                             <i class="material-icons pull-right" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">delete</i>
                             <i class="material-icons pull-right" data-ng-click="showWidgetDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">edit</i>
                         </div>
-                        <div data-ng-attr-id="{{ widget.id }}" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
+                        <div align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                             <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>
                             <div align="center center" class="text-center" data-ng-if="widget.data.dataset == 0 && widget.type != 'table'">
                                 <span>No data</span>
@@ -68,7 +68,7 @@
                                 <pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
                              </div>
                              <div data-ng-if="widget.type == 'table'" class="table-responsive">
-                                <table  data-ng-attr-id="table-{{ widget.id }}" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                                <table class="table table-striped table-bordered table-hover" style="width: 100%;">
                                     <thead>
                                         <tr>
                                             <th class="pointer" data-ng-repeat="column in widget.model.columns track by $index" data-ng-click="changeSorting(widget, column)">
@@ -77,10 +77,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-init="optimizeWidget(widget, rowIndex)" data-ng-repeat="(rowIndex, row) in widget.data.dataset | orderObjectBy:widget.sort.column:widget.sort.descending track by $index">
+                                        <tr data-ng-repeat="row in widget.data.dataset | orderObjectBy:widget.sort.column:widget.sort.descending track by $index">
                                             <td data-ng-repeat="column in widget.model.columns track by $index" data-ng-bind-html="asString(row[column])"></td>
                                         </tr>
-                                        <tr ng-init="optimizeWidget(widget)" class="text-center" data-ng-if="widget.data.dataset == 0">
+                                        <tr class="text-center" data-ng-if="widget.data.dataset == 0">
                                             <td colspan="{{widget.model.columns.length}}">No data</td>
                                         </tr>
                                     </tbody>
