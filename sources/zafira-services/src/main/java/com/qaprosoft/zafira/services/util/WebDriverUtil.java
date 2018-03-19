@@ -29,7 +29,7 @@ public class WebDriverUtil
 {
 	public static boolean waitForJSandJQueryToLoad(final WebDriver wd)
 	{
-		WebDriverWait wait = new WebDriverWait(wd, 30);
+		WebDriverWait wait = new WebDriverWait(wd, 10);
 		// wait for jQuery to load
 		ExpectedCondition<Boolean> jQueryLoad = new ExpectedCondition<Boolean>()
 		{

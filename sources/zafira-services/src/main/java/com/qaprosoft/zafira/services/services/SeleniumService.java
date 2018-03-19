@@ -138,7 +138,6 @@ public class SeleniumService
 			for(String url : urls)
 			{
 				wd.get(url);
-				Thread.sleep(20000);
 				if(WebDriverUtil.isPageLoading(wd))
 				{
 					WebDriverUtil.waitUntilPageIsLoaded(wd);
