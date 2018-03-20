@@ -1673,14 +1673,14 @@
         $scope.tr = {};
         angular.copy(selectedTestRuns, $scope.tr);
 
-        const COMPARE_FIELDS = ['status', 'message'];
-        const EXIST_FIELDS = {'name': '', 'testGroup': '', 'testClass': ''};
+        var COMPARE_FIELDS = ['status', 'message'];
+        var EXIST_FIELDS = {'name': '', 'testGroup': '', 'testClass': ''};
 
         function aggregateTests(testRuns) {
             return angular.forEach(collectUniqueTests(testRuns), function (test) {
                 test.identical = areTestsIdentical(test.referrers, testRuns);
             });
-        }
+        };
 
         function collectUniqueTests(testRuns) {
             var uniqueTests = {};
@@ -1702,7 +1702,7 @@
                 })
             });
             return uniqueTests;
-        }
+        };
 
         function areTestsIdentical(referrers, testRuns) {
             var value = {};
@@ -1733,7 +1733,7 @@
                 $scope.allTestsIdentical = false;
             }
             return result;
-        }
+        };
 
         function verifyValueWithRegex(field, value1, value2) {
             var val1 = field == 'message' && value1 ? value1
@@ -1749,11 +1749,11 @@
                     .replace(new RegExp(".*\\b(Session ID)\\b.*", "gm"), '*')
                 : value2;
             return ! isEmpty(value1) && ! isEmpty(value2) ? value1 == value2 : true;
-        }
+        };
 
         function isEmpty(value) {
             return ! value || ! value.length;
-        }
+        };
 
         $scope.getSize = function (obj) {
             return Object.size(obj);
