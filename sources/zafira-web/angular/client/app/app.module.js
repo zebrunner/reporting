@@ -331,7 +331,7 @@
                 function blobToFormData() {
                     var formData = new FormData();
                     var croppedImage = dataURItoBlob($scope.myCroppedImage);
-                    formData.set("file", croppedImage, $scope.fileName);
+                    formData.append("file", croppedImage, $scope.fileName);
                     return formData;
                 }
 
