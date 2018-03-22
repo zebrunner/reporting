@@ -46,14 +46,34 @@
                     return i;
             return -1;
         };
-        Object.size = function(obj) {	
-            var size = 0, key;	
-            for (key in obj) {	
-                if (obj.hasOwnProperty(key)) {	
-                    size++;	
-                }	
-            }	
-            return size;	
+        Object.size = function(obj) {
+            var size = 0, key;
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    size++;
+                }
+            }
+            return size;
+        };
+
+        Array.prototype.indexOfField = function(fieldName, fieldValue) {
+            for (var i = 0; i < this.length; i++) {
+                var field = this[i];
+                if (field && field[fieldName] === fieldValue) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        Array.prototype.equalsByField = function(arrayToCompare, fieldName) {
+            if(this.length != arrayToCompare.length)
+                return false;
+            for(var arrArgIndex = 0; arrArgIndex < this.length; arrArgIndex++) {
+                var arrArg = this[arrArgIndex];
+                if(arrayToCompare.indexOfField(fieldName, arrArg[fieldName]) == -1)
+                    return false;
+            }
+            return true;
         };
     }
     ]).directive('ngReallyClick', [function() {

@@ -35,7 +35,7 @@
                 }
             }
 
-    		TestCaseService.searchTestCases(ProjectProvider.initProject($scope.sc)).then(function(rs) {
+    		TestCaseService.searchTestCases(ProjectProvider.initProjects($scope.sc)).then(function(rs) {
 				if(rs.success)
         		{
         			$scope.sr = rs.data;

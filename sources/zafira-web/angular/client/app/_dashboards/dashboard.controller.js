@@ -206,10 +206,10 @@
         };
 
         var setQueryParams = function(dashboardName){
-            var params = ProjectProvider.getProjectQueryParam();
+            var params = ProjectProvider.getProjectsQueryParam();
             for(var i = 0; i<$scope.dashboard.attributes.length; i++){
                 if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                    params = "?projects=" + $scope.dashboard.attributes[i].value;
                 }
             }
             params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
@@ -398,7 +398,7 @@
             }
             loadDashboardData(dashboard, refresh);
         };
-        
+
         $scope.optimizeWidget = function (widget, index) {
             if (widget.type == 'table' && (Object.size(widget.data.dataset) == 0 || Object.size(widget.data.dataset) == index + 1)) {
                 $timeout(function () {
@@ -742,10 +742,10 @@
         };
 
         var setQueryParams = function(table){
-            var params = ProjectProvider.getProjectQueryParam();
+            var params = ProjectProvider.getProjectsQueryParam();
             for(var i = 0; i < $scope.dashboard.attributes.length; i++){
                 if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                    params = "?projects=" + $scope.dashboard.attributes[i].value;
                 }
             }
             params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;

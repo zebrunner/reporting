@@ -24,7 +24,7 @@
 
         $scope.showRealTimeEvents = true;
 
-        $scope.project = ProjectProvider.getProject();
+        $scope.projects = ProjectProvider.getProjects();
 
         $scope.showReset = $scope.testRunId != null;
         $scope.selectAll = false;
@@ -82,7 +82,7 @@
                 var event = $scope.getEventFromMessage(data.body);
                 if (($scope.testRunId && $scope.testRunId != event.testRun.id)
                     || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
-                    || ($scope.project != null && $scope.project.id != event.testRun.project.id)
+                    || ($scope.projects && $scope.projects.length && $scope.projects.indexOfField('id', event.testRun.project.id) == -1)
                     || !$scope.checkSearchCriteria($scope.sc)) {
                     return;
                 }
@@ -129,7 +129,7 @@
         $scope.checkStatisticEvent = function (event) {
             return ($scope.testRunId && $scope.testRunId != event.testStatistic.testRunId)
             || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testStatistic.testRunId] == null)
-            || ($scope.project != null)
+            || ($scope.projects)
             || !$scope.checkSearchCriteria($scope.sc);
         };
 
@@ -364,7 +364,7 @@
                 $scope.sc.id = $scope.testRunId;
             }
             else {
-                $scope.sc = ProjectProvider.initProject($scope.sc);
+                $scope.sc = ProjectProvider.initProjects($scope.sc);
             }
 
             if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {

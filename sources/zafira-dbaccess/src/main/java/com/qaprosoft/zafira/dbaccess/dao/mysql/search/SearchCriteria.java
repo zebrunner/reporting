@@ -16,6 +16,9 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
 import com.qaprosoft.zafira.models.db.Project;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 public class SearchCriteria
 {
@@ -25,7 +28,7 @@ public class SearchCriteria
 	private Integer page = 1;
 	// The very default page size, just not to get NPE'd
 	private Integer pageSize = 20;
-	private Project project;
+	private List<Project> projects;
 	
 	private SortOrder sortOrder = SortOrder.ASC;
 
@@ -64,16 +67,16 @@ public class SearchCriteria
 		this.sortOrder = sortOrder;
 	}
 
-	public Project getProject()
+	public List<Project> getProjects()
 	{
-		return project;
+		return projects;
 	}
 
-	public void setProject(Project project)
+	public void setProjects(List<Project> projects)
 	{
-		if(project != null)
+		if(!CollectionUtils.isEmpty(projects))
 		{
-			this.project = project;
+			this.projects = projects;
 		}
 	}
 }
