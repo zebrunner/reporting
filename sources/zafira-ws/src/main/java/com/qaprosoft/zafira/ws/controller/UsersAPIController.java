@@ -21,10 +21,6 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.services.services.DashboardService;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +44,11 @@ import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.DashboardService;
+import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.UserPreferenceService;
 import com.qaprosoft.zafira.services.services.UserService;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
