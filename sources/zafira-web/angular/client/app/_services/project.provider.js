@@ -9,32 +9,49 @@
 
         this.$get = function($cookieStore) {
             return {
-                initProject: function(sc) {
-                    if($cookieStore.get("project") != null)
+                initProjects: function(sc) {
+                    var projects = $cookieStore.get("projects");
+                    if(projects)
                     {
-                        sc.project = $cookieStore.get("project");
+                        sc.projects = projects;
                     }
                     return sc;
                 },
-                getProject: function() {
+                // TODO: 3/20/18  remove on next release
+                getProject: function () {
                     return $cookieStore.get("project");
                 },
-                setProject: function(project) {
-                    $cookieStore.put("project", project);
+                removeProject: function () {
+                    $cookieStore.remove('project');
                 },
-                getProjectQueryParam: function(sc) {
+
+                getProjects: function() {
+                    return $cookieStore.get("projects");
+                },
+                setProjects: function(projects) {
+                    $cookieStore.put("projects", projects);
+                },
+                getProjectsQueryParam: function(sc) {
                     var query = "";
-                    if($cookieStore.get("project") != null)
+                    var projects = $cookieStore.get("projects");
+                    if(projects && projects.length)
                     {
-                        query = "?project=" + $cookieStore.get("project").name;
+                        query = "?";
+                        projects.forEach(function (project) {
+                            query = query + "projects=" + project.name + "&";
+                        });
                     }
                     return query;
                 },
-                getProjectIdQueryParam: function(sc) {
+                getProjectsIdQueryParam: function(sc) {
                     var query = "";
-                    if($cookieStore.get("project") != null)
+                    var projects = $cookieStore.get("projects");
+                    if(projects && projects.length)
                     {
-                        query = "?projectId=" + $cookieStore.get("project").id;
+                        query = "?";
+                        projects.forEach(function (project) {
+                            query = query + "projects=" + project.name + "&";
+                        });
                     }
                     return query;
                 }

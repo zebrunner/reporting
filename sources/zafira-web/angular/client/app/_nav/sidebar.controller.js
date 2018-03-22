@@ -10,7 +10,7 @@
 
     	$scope.DashboardService = DashboardService;
 
-        $scope.project = ProjectProvider.getProject();
+        $scope.selectedProjects = ProjectProvider.getProjects();
         $scope.version = null;
         $scope.projects = [];
         $scope.dashboards = [];
@@ -28,6 +28,13 @@
                 if(rs.success)
                 {
                     $scope.projects = rs.data;
+                    if($scope.selectedProjects) {
+                        $scope.projects.forEach(function (project) {
+                            if ($scope.selectedProjects.indexOfField('id', project.id) >= 0) {
+                                project.selected = true;
+                            }
+                        });
+                    }
                 }
                 else
                 {
@@ -37,7 +44,7 @@
         };
 
         $scope.loadViews = function(){
-            ViewService.getViewById(ProjectProvider.getProjectIdQueryParam()).then(function(rs) {
+            ViewService.getViewById(ProjectProvider.getProjectsIdQueryParam()).then(function(rs) {
                 if(rs.success)
                 {
                     $scope.views = rs.data;
@@ -67,11 +74,40 @@
             }
         };
 
-        $scope.setProject = function(project){
-            ProjectProvider.setProject(project);
-            $scope.project = project;
+        $scope.selectedProjectsPresent = function () {
+            return $scope.selectedProjects && $scope.selectedProjects.length != 0;
+        };
+
+        $scope.joinProjectNames = function () {
+            var proj = $scope.selectedProjects.map(function(project, index) {
+                return project.name;
+            }).join(', ');
+            if(proj.length > 10) {
+                proj = proj.substring(0, 10) + '....';
+            }
+            return proj;
+        };
+
+        $scope.resetProjects = function () {
+            $scope.selectedProjects = [];
+            $scope.projects.forEach(function(project) {
+                project.selected = undefined;
+            });
+            ProjectProvider.setProjects([]);
             $state.reload();
         };
+
+        $scope.$on("$mdMenuClose", function(name, listener) {
+            if(listener[0].id == 'projects-menu') {
+                $scope.selectedProjects = $scope.projects.filter(function (value) {
+                    return value.selected;
+                });
+                if((! ProjectProvider.getProjects() && $scope.selectedProjects) || ! ProjectProvider.getProjects().equalsByField($scope.selectedProjects, 'id')) {
+                    ProjectProvider.setProjects($scope.selectedProjects);
+                    $state.reload();
+                }
+            }
+        });
 
         $scope.showProjectDialog = function(event) {
             $mdDialog.show({
@@ -247,7 +283,14 @@
         }
 
         (function initController() {
-            $scope.project = ProjectProvider.getProject();
+            $scope.selectedProjects = ProjectProvider.getProjects();
+            // TODO: 3/20/18  remove on next release
+            if((!$scope.selectedProjects || ! $scope.selectedProjects.length == 0) && ProjectProvider.getProject())
+            {
+                ProjectProvider.setProjects([].push(ProjectProvider.getProject()));
+                ProjectProvider.removeProject();
+                console.log('Project cookies was removed');
+            }
         })();
     }
 })();

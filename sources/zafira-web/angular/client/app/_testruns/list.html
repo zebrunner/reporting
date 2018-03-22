@@ -18,9 +18,9 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">	
-                    <md-tooltip md-direction="top">Compare</md-tooltip>	
-                    <span class="fa fa-columns" aria-hidden="true"></span>	
+                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
+                    <md-tooltip md-direction="top">Compare</md-tooltip>
+                    <span class="fa fa-columns" aria-hidden="true"></span>
                 </md-button>
                 <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Rerun</md-tooltip>
@@ -34,7 +34,7 @@
                     <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
                     <span class="fa fa-ban" aria-hidden="true"></span>
                 </md-button>
-                <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="batchEmail($event)">
+                <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="batchEmail($event)" data-ng-if="tools['EMAIL']">
                     <md-tooltip md-direction="top">Send as email</md-tooltip>
                     <span class="fa fa-envelope-o" aria-hidden="true"></span>
                 </md-button>

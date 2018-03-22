@@ -21,7 +21,7 @@
                     <md-tooltip md-direction="top">Update widgets</md-tooltip>
                     <span class="fa fa-arrows-alt"></span>
                 </md-button>
-                <md-button id="sendByEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)">
+                <md-button id="sendByEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)" data-ng-if="tools['EMAIL']">
                     <md-tooltip md-direction="top">Send by email</md-tooltip>
                     <span class="fa fa-envelope-o"></span>
                 </md-button>
