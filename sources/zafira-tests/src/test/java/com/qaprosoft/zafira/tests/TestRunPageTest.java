@@ -1,5 +1,16 @@
 package com.qaprosoft.zafira.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
@@ -10,10 +21,14 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.*;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.KnownIssueModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TaskModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
@@ -28,16 +43,6 @@ import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 import com.qaprosoft.zafira.tests.services.api.builders.TestTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class TestRunPageTest extends AbstractTest
 {

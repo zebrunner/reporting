@@ -15,17 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.monitor;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
-import com.qaprosoft.zafira.models.db.Monitor;
-import org.hibernate.validator.constraints.URL;
-import org.quartz.CronExpression;
-
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.quartz.CronExpression;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.db.AbstractEntity;
+import com.qaprosoft.zafira.models.db.Monitor;
 
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity
