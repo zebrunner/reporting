@@ -3,7 +3,7 @@ Zafira
 
 Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes. Among primary features provided by Zafira:
 
-![Integration schema](./docs/img/integration.png")
+![Integration](docs/img/integration.png)
 
 ### Auth
 * OAuth2
