@@ -22,3 +22,4 @@ dist
 bower_components
 /pgdata
 /sources/zafira-ws/phantomjs*
+site
