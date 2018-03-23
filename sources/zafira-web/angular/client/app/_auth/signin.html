@@ -62,6 +62,9 @@
                     <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
                 </div>
 
+                <div ng-if="companyLogo.value" id="loader-container-image" class="login-page-logo">
+                    <img class="img-circle" ng-src="{{ companyLogo.value }}">
+                </div>
             </div>
         </div>
 

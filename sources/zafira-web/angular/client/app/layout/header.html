@@ -14,7 +14,7 @@
             <span id="brand" class="logo-text">{{main.brand}}</span>
         </a>
         <div class="profile-img" style="display: inline-block; vertical-align: top" ng-controller="SidebarController">
-            <profile-photo id="brandPhoto" ng-model="currentUser.companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
+            <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
             <div has-any-role="['ROLE_ADMIN']">
                 <div class="profile-img-content" style="top: 0; left:12px">
                     <span><i id="brandPhotoSetting" class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
