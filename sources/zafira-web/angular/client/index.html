@@ -69,7 +69,11 @@
             </div>
         <![endif]-->
 
-        <div id="loader-container"></div>
+        <div id="loader-container" ng-class="{'company-logo': companyLogo.value, 'company-init': companyLogo}">
+            <div ng-if="companyLogo.value" id="loader-container-image">
+                <img class="img-circle imageRotateHorizontal" ng-src="{{ companyLogo.value }}">
+            </div>
+        </div>
 
         <header data-ng-include=" 'app/layout/header.html' "
                  id="header"

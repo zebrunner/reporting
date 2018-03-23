@@ -2,14 +2,18 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
 	        $rootScope.darkThemes = ['11', '21', '31', '22'];
 	        $rootScope.currentOffset = 0;
+            $rootScope.companyLogo = {
+                name: 'COMPANY_LOGO_URL',
+                value: SettingProvider.getCompanyLogoURl()
+            };
 
 	        // ************** Integrations **************
 
@@ -53,7 +57,6 @@
                         if(rs.success)
                         {
                             $rootScope.currentUser = rs.data["user"];
-                            $rootScope.currentUser.companyLogo = rs.data["companyLogo"];
                             $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
                             $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
                             $rootScope.currentUser.defaultDashboardId= rs.data["defaultDashboardId"];
@@ -188,6 +191,16 @@
                         }
                     });
 	            }
+
+                SettingsService.getCompanyLogo().then(function(rs) {
+                    if(rs.success)
+                    {
+                        if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
+                            $rootScope.companyLogo.value = rs.data;
+                            SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
+                        }
+                    }
+                });
 
                 ConfigService.getConfig("version").then(function(rs) {
                     if(rs.success)

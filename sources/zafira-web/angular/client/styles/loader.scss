@@ -1,11 +1,11 @@
 // Shared variables and mixins
-@import 
+@import
     "global/var"                        // global variables
 ,   "global/var-extra"                  // extra global variables
 ;
 
 #loader-container {
-    background: #EDF0F1 url('#{$image_path}/audio.svg') no-repeat center center;
+    background: #EDF0F1;
     position: fixed;
     overflow: hidden;
     top: 0;
@@ -13,4 +13,47 @@
     left: 0;
     bottom: 0;
     z-index: 99999;
+}
+
+#loader-container.company-init:not(.company-logo) {
+    background: #EDF0F1 url('#{$image_path}/audio.svg') no-repeat center center fixed;
+}
+
+#loader-container.company-logo #loader-container-image {
+    display: block !important;
+}
+
+#loader-container:not(.company-logo) #loader-container-image {
+    display: none !important;
+}
+
+#loader-container-image {
+    position: absolute !important;
+    overflow: hidden;
+    height: 50px;
+    width: 50px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100000;
+    margin: auto;
+    top: 0;
+    border-radius: 50%;
+}
+
+#loader-container-image img {
+    height: 50px;
+    width: 50px;
+}
+
+#loader-container-image.login-page-logo {
+    top: 2% !important;
+    height: 40px !important;
+    width: 40px !important;
+    bottom: auto;
+}
+
+#loader-container-image.login-page-logo img {
+    height: 40px !important;
+    width: 40px !important;
 }

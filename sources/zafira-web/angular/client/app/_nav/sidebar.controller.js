@@ -257,14 +257,16 @@
                 UploadService.upload(multipartFile, FILE_LOGO_TYPE).then(function (rs) {
                     if(rs.success)
                     {
-                        $rootScope.currentUser.companyLogo.value = rs.data.url;
-                        SettingsService.editSetting($rootScope.currentUser.companyLogo)
+                        $rootScope.companyLogo.value = rs.data.url;
+                        SettingsService.editSetting($rootScope.companyLogo)
                             .then(function (prs) {
                                 if(prs.success)
                                 {
-                                    $rootScope.currentUser.companyLogo.value += '?' + (new Date()).getTime();
+                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
                                     alertify.success("Photo was uploaded");
                                     $scope.hide();
+                                } else {
+                                    alertify.error(prs.message);
                                 }
                             });
                     }

@@ -803,7 +803,7 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService) {
+    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider) {
 
         $scope.title = "Zafira Dashboard";
         $scope.subjectRequired = true;
@@ -831,7 +831,7 @@
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            DashboardService.SendDashboardByEmail($scope.email).then(function (rs) {
+            DashboardService.SendDashboardByEmail($scope.email, ProjectProvider.getProjects()).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Email was successfully sent!');
                 }

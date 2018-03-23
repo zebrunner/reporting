@@ -119,11 +119,20 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS') or #name == 'JIRA_CLOSED_STATUS'")
+	@PreAuthorize("hasAnyPermission('VIEW_SETTINGS', 'MODIFY_SETTINGS', 'VIEW_INTEGRATIONS', 'MODIFY_INTEGRATIONSS') or #name == 'JIRA_CLOSED_STATUS' or #name == 'COMPANY_LOGO_URL'")
 	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String getSettingValue(@PathVariable(value = "name") String name) throws ServiceException
 	{
 		return settingsService.getSettingValue(Setting.SettingType.valueOf(name));
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = String.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String getCompanyLogoURL() throws ServiceException
+	{
+		return settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL);
 	}
 
 	@ResponseStatusDetails

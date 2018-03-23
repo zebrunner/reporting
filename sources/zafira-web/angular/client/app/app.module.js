@@ -403,7 +403,7 @@
         return {
             restrict: 'E',
             template: '<span>' +
-            '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
+            '            <img alt="" ng-src="{{ngModel}}" ng-class="{\'imageRotateHorizontal\': rotateHorizontal}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
             '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
             '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
@@ -416,7 +416,8 @@
                 autoResize: '=?',
                 icon: '@',
                 iconVisible: '=?',
-                label: '@'
+                label: '@',
+                rotateHorisontal: '=?'
             },
             compile: function(element, attrs){
                 return {
@@ -424,7 +425,8 @@
                         if (!attrs.size) { scope.size = 120; }
                         if (!attrs.icon) { scope.icon = 'account_circle'; }
                         if (!attrs.iconVisible) { scope.iconVisible = true; }
-                        if (!attrs.autoResize) { scope.autoResize = true; } else { scope.autoResize = scope.autoResize == 'true' }
+                        if (!attrs.autoResize) { scope.autoResize = true; }
+                        if (!attrs.rotateHorisontal) { scope.rotateHorisontal = false; } else { scope.autoResize = scope.autoResize == 'true' }
 
                         scope.imageSize = scope.autoResize ? scope.size - 4 : scope.size;
                     },
