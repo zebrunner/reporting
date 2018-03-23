@@ -124,114 +124,115 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	@Override
 	public void onStart(ISuite suiteContext)
 	{
-		if(initializeZafira())
-		{
-			try
-			{
-				// TODO: investigate possibility to remove methods from suite
-				// context based on need rerun flag. And delete appropriate code
-				// from before method and before class
-				
-				marshaller = JAXBContext.newInstance(ConfigurationType.class).createMarshaller();
-				
-				configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
-				
-				// Override project if specified in XML
-				String project = suiteContext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
-				zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
-				
-				// Register user who initiated test run
-				this.user = zc.registerUser(ci.getCiUserId(), ci.getCiUserEmail(), ci.getCiUserFirstName(), ci.getCiUserLastName());
+		boolean initialized = initializeZafira();
+		// Exit on initialization failure
+		if(!initialized) return;
 		
-				// Register test suite along with suite owner
-				UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteContext), null, null, null);
-				this.suite = zc.registerTestSuite(suiteContext.getName(), FilenameUtils.getName(suiteContext.getXmlSuite().getFileName()), suiteOwner.getId());
-				
-				// Register job that triggers test run
-				this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
-				
-				// Register upstream job if required
-				UserType anonymous = null;
-				if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) 
-				{
-					anonymous = zc.registerUser(ANONYMOUS, null, null, null);
-					parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
-				}
-				
-				// Searching for existing test run with same CI run id in case of rerun
-				if(!StringUtils.isEmpty(ci.getCiRunId())) 
-				{
-					Response<TestRunType> response = zc.getTestRunByCiRunId(ci.getCiRunId());
-					this.run = response.getObject();
-				}
-				
-				if (this.run != null) 
-				{
-					// Already discovered run with the same CI_RUN_ID, it is re-run functionality!
-					// Reset build number for re-run to map to the latest rerun build
-					this.run.setBuildNumber(ci.getCiBuild());
-					// Re-register test run to reset status onto in progress
-					Response<TestRunType> response = zc.startTestRun(this.run);
-					this.run = response.getObject();
-					
-					List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
-					for (TestType test : testRunResults)
-					{
-						registeredTests.put(test.getName(), test);
-						if (test.isNeedRerun())
-						{
-							classesToRerun.add(test.getTestClass());
-						}
-					}
-
-					if (ZAFIRA_RERUN_FAILURES)
-					{
-						ExcludeTestsForRerun.excludeTestsForRerun(suiteContext, testRunResults, configurator);
-					}
-				} 
-				else 
-				{
-					if(ZAFIRA_RERUN_FAILURES) 
-					{
-						LOGGER.error("Unable to find data in Zafira Reporting Service with CI_RUN_ID: '" + ci.getCiRunId() + "'.\n" + "Rerun failures featrure will be disabled!");
-						ZAFIRA_RERUN_FAILURES = false;
-					}
-					// Register new test run
-					DriverMode driverMode = configurator.getDriverMode();
-					
-					switch (ci.getCiBuildCause())
-					{
-						case UPSTREAMTRIGGER:
-							this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, driverMode);
-							break;
-						case TIMERTRIGGER:
-						case SCMTRIGGER:
-							this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, driverMode);
-							break;
-						case MANUALTRIGGER:
-							this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID, driverMode);
-							break;
-						default:
-							throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL + " due to the misses build cause: '" + ci.getCiBuildCause() + "'");
-					}
-				}
-				
-				if (this.run == null) 
-				{
-					throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL);
-				}
-				else
-				{
-					System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
-				}
-				
-				Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
-			}
-			catch (Throwable e) 
+		try
+		{
+			// TODO: investigate possibility to remove methods from suite
+			// context based on need rerun flag. And delete appropriate code
+			// from before method and before class
+			
+			marshaller = JAXBContext.newInstance(ConfigurationType.class).createMarshaller();
+			
+			configurator = (IConfigurator) Class.forName(ZAFIRA_CONFIGURATOR).newInstance();
+			
+			// Override project if specified in XML
+			String project = suiteContext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
+			zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
+			
+			// Register user who initiated test run
+			this.user = zc.registerUser(ci.getCiUserId(), ci.getCiUserEmail(), ci.getCiUserFirstName(), ci.getCiUserLastName());
+	
+			// Register test suite along with suite owner
+			UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteContext), null, null, null);
+			this.suite = zc.registerTestSuite(suiteContext.getName(), FilenameUtils.getName(suiteContext.getXmlSuite().getFileName()), suiteOwner.getId());
+			
+			// Register job that triggers test run
+			this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
+			
+			// Register upstream job if required
+			UserType anonymous = null;
+			if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) 
 			{
-				ZAFIRA_ENABLED = false;
-				LOGGER.error("Undefined error during test run registration!", e);
+				anonymous = zc.registerUser(ANONYMOUS, null, null, null);
+				parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
 			}
+			
+			// Searching for existing test run with same CI run id in case of rerun
+			if(!StringUtils.isEmpty(ci.getCiRunId())) 
+			{
+				Response<TestRunType> response = zc.getTestRunByCiRunId(ci.getCiRunId());
+				this.run = response.getObject();
+			}
+			
+			if (this.run != null) 
+			{
+				// Already discovered run with the same CI_RUN_ID, it is re-run functionality!
+				// Reset build number for re-run to map to the latest rerun build
+				this.run.setBuildNumber(ci.getCiBuild());
+				// Re-register test run to reset status onto in progress
+				Response<TestRunType> response = zc.startTestRun(this.run);
+				this.run = response.getObject();
+				
+				List<TestType> testRunResults = Arrays.asList(zc.getTestRunResults(run.getId()).getObject());
+				for (TestType test : testRunResults)
+				{
+					registeredTests.put(test.getName(), test);
+					if (test.isNeedRerun())
+					{
+						classesToRerun.add(test.getTestClass());
+					}
+				}
+
+				if (ZAFIRA_RERUN_FAILURES)
+				{
+					ExcludeTestsForRerun.excludeTestsForRerun(suiteContext, testRunResults, configurator);
+				}
+			} 
+			else 
+			{
+				if(ZAFIRA_RERUN_FAILURES) 
+				{
+					LOGGER.error("Unable to find data in Zafira Reporting Service with CI_RUN_ID: '" + ci.getCiRunId() + "'.\n" + "Rerun failures featrure will be disabled!");
+					ZAFIRA_RERUN_FAILURES = false;
+				}
+				// Register new test run
+				DriverMode driverMode = configurator.getDriverMode();
+				
+				switch (ci.getCiBuildCause())
+				{
+					case UPSTREAMTRIGGER:
+						this.run = zc.registerTestRunUPSTREAM_JOB(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), parentJob.getId(), ci, Initiator.UPSTREAM_JOB, JIRA_SUITE_ID, driverMode);
+						break;
+					case TIMERTRIGGER:
+					case SCMTRIGGER:
+						this.run = zc.registerTestRunBySCHEDULER(suite.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.SCHEDULER, JIRA_SUITE_ID, driverMode);
+						break;
+					case MANUALTRIGGER:
+						this.run = zc.registerTestRunByHUMAN(suite.getId(), user.getId(), convertToXML(configurator.getConfiguration()), job.getId(), ci, Initiator.HUMAN, JIRA_SUITE_ID, driverMode);
+						break;
+					default:
+						throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL + " due to the misses build cause: '" + ci.getCiBuildCause() + "'");
+				}
+			}
+			
+			if (this.run == null) 
+			{
+				throw new RuntimeException("Unable to register test run for zafira service: " + ZAFIRA_URL);
+			}
+			else
+			{
+				System.setProperty(ZAFIRA_RUN_ID_PARAM, String.valueOf(this.run.getId()));
+			}
+			
+			Runtime.getRuntime().addShutdownHook(new TestRunShutdownHook(this.zc, this.run));
+		}
+		catch (Throwable e) 
+		{
+			ZAFIRA_ENABLED = false;
+			LOGGER.error("Undefined error during test run registration!", e);
 		}
 	}
 	
@@ -612,9 +613,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			JIRA_SUITE_ID = config.getString("jira_suite_id", null);
 			
 			ZAFIRA_ENABLED = config.getBoolean("zafira_enabled", false);
-			ZAFIRA_URL = config.getString("zafira_service_url");
-			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token");
-			ZAFIRA_PROJECT = config.getString("zafira_project");
+			ZAFIRA_URL = config.getString("zafira_service_url", StringUtils.EMPTY);
+			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token", StringUtils.EMPTY);
+			ZAFIRA_PROJECT = config.getString("zafira_project", StringUtils.EMPTY);
 			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
 			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
 			ZAFIRA_REPORT_FOLDER = StringUtils.removeStart(ZAFIRA_REPORT_FOLDER, "/");
