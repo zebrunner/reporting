@@ -1,4 +1,27 @@
-## Zafira QA Automation Reporting
+Zafira
+==================
+
+Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes. Among primary features provided by Zafira:
+
+![Integration](docs/img/integration.png)
+
+### Auth
+* OAuth2
+* LDAP
+
+### Task/Bug tracking
+* JIRA integration
+* TestRail integration
+
+### Notifications
+* Slack
+* Hipchat
+* SMTP
+
+### CI systems
+* Jenkins
+* Hudson
+
 
 Zafira is a Web application that collects test results from QA automation.
 
