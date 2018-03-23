@@ -7,13 +7,13 @@ Zafira is Java-based web application that accumulates test automation results an
 
 ## Features
 
-### Configurable dashboards based on [D3JS](https://d3js.org/)
+#### Configurable dashboards based on [D3JS](https://d3js.org/)
 ![Alt text](docs/img/demo-dashboards.png "Dashboards")
 
-### Real-time test results
+#### Real-time test results
 ![Alt text](docs/img/demo-testruns.png "Test runs")
 
-### Integrations with multiple services
+#### Integrations with multiple services
 ![Alt text](docs/img/demo-integrations.png "Integrations")
 
 ## Installation steps
@@ -45,6 +45,19 @@ To start Zafira in daemon mode, add '-d' argument:
 
 ## Integration
 
+Regardles of Zafira client language you have yo generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
+
+![Alt text](docs/img/generate-token.png "Generate token")
+
+#### Languages supported
+* [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
+* [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
+* [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
+* [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
+
+
+
+
 To integrate Zafira either with your own Java-based application or with [Java sample project](https://github.com/qaprosoft/carina-demo) use [zafira.properties](zafira_sample.properties) file.
 
 **For [sample project](https://github.com/qaprosoft/carina-demo):**
@@ -59,7 +72,7 @@ To get token value:
 
 - Generate and copy access token
 
-![Alt text](docs/img/generate-token.png "Generate token")
+
 
 
 **For custom Java-based project:**
