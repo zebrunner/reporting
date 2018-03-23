@@ -5,13 +5,15 @@ Zafira is Java-based web application that accumulates test automation results an
 
 ![Integration](docs/img/integration.png)
 
-Configurable dashboards based on [D3JS](https://d3js.org/)
+## Features
+
+### Configurable dashboards based on [D3JS](https://d3js.org/)
 ![Alt text](docs/img/demo-dashboards.png "Dashboards")
 
-Real-time test results
+### Real-time test results
 ![Alt text](docs/img/demo-testruns.png "Test runs")
 
-Integrations with multiple services
+### Integrations with multiple services
 ![Alt text](docs/img/demo-integrations.png "Integrations")
 
 ## Installation steps
