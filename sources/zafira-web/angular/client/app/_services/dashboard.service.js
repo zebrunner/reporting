@@ -96,7 +96,7 @@
 
         function SendDashboardByEmail(email, projects) {
         	var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
-            return $http.post(API_URL + '/api/dashboards/email?projects=' + JSON.stringify(projects), email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+            return $http.post(API_URL + '/api/dashboards/email?projects=' + encodeURIComponent(JSON.stringify(projects)), email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function GetWidgets() {
