@@ -114,7 +114,7 @@ public class SeleniumService
 		}
 	}
 
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException 
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -133,7 +133,7 @@ public class SeleniumService
 			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 			
-			authorize(wd, auth, domain, urls.get(0));
+			authorize(wd, auth, projects, domain, urls.get(0));
 			
 			for(String url : urls)
 			{
@@ -192,8 +192,9 @@ public class SeleniumService
 		return domain;
 	}
 	
-	private void authorize(WebDriver wd, String auth, String domain, String url) throws InterruptedException
+	private void authorize(WebDriver wd, String auth, String projects, String domain, String url) throws InterruptedException
 	{
 		wd.manage().addCookie(new Cookie.Builder("Access-Token", auth).domain(normalizeDomain(domain)).build());
+		wd.manage().addCookie(new Cookie.Builder("projects", projects).domain(normalizeDomain(domain)).build());
 	}
 }
