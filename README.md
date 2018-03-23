@@ -1,10 +1,11 @@
 Zafira
 ==================
 
-Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes. Among primary features provided by Zafira:
+Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes.
 
 ![Integration](docs/img/integration.png)
 
+Among primary features provided by Zafira:
 ### Auth
 * OAuth2
 * LDAP
@@ -22,17 +23,14 @@ Zafira is Java-based web application that accumulates test automation results an
 * Jenkins
 * Hudson
 
-
-Zafira is a Web application that collects test results from QA automation.
-
 Configurable dashboards based on [D3JS](https://d3js.org/)
-![Alt text](./public/demo-dashboards.png "Dashboards")
+![Alt text](docs/img/demo-dashboards.png "Dashboards")
 
 Real-time test results
-![Alt text](./public/demo-testruns.png "Test runs")
+![Alt text](docs/img/demo-testruns.png "Test runs")
 
 Integrations with multiple services
-![Alt text](./public/demo-integrations.png "Integrations")
+![Alt text](docs/img/demo-integrations.png "Integrations")
 
 ## Installation steps
 
@@ -73,11 +71,11 @@ To get token value:
 
 - Navigate to User Menu and open User Profile page in Zafira
 
-![Alt text](./public/user-profile.png "User menu")
+![Alt text](docs/img/user-profile.png "User menu")
 
 - Generate and copy access token
 
-![Alt text](./public/generate-token.png "Generate token")
+![Alt text](docs/img/generate-token.png "Generate token")
 
 
 **For custom Java-based project:**
