@@ -5,24 +5,6 @@ Zafira is Java-based web application that accumulates test automation results an
 
 ![Integration](docs/img/integration.png)
 
-Among primary features provided by Zafira:
-### Auth
-* OAuth2
-* LDAP
-
-### Task/Bug tracking
-* JIRA integration
-* TestRail integration
-
-### Notifications
-* Slack
-* Hipchat
-* SMTP
-
-### CI systems
-* Jenkins
-* Hudson
-
 Configurable dashboards based on [D3JS](https://d3js.org/)
 ![Alt text](docs/img/demo-dashboards.png "Dashboards")
 
