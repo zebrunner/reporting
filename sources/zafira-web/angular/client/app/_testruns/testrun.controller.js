@@ -1418,7 +1418,6 @@
         $scope.issueTabDisabled = true;
         $scope.taskTabDisabled = true;
 
-
         $scope.isIssueFound = true;
         $scope.isTaskFound = true;
 
@@ -1429,20 +1428,26 @@
         $scope.testComments = [];
         $scope.knownIssues = [];
         $scope.tasks = [];
+        $scope.currentStatus = $scope.test.status;
         $scope.testStatuses = ["UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED"];
         $scope.selectedTabIndex = 0;
 
-        $scope.changeStatusDropdownIsVisible = false;
-        $scope.addCommentTextfieldIsVisible = false;
+        $scope.changeStatusIsVisible = false;
+        $scope.addCommentIsVisible = false;
         $scope.taskListIsVisible = false;
         $scope.issueListIsVisible = false;
 
         /* TEST_STATUS functionality */
 
         $scope.updateTest = function (test) {
+            var message;
             TestService.updateTest(test).then(function(rs) {
                 if(rs.success) {
-                    alertify.success('Test was successfully updated');
+                    $scope.changeStatusIsVisible = false;
+                    message = 'Test was marked as ' + test.status;
+                    $scope.testComment.description = message;
+                    $scope.addTestComment($scope.testComment);
+                    alertify.success(message);
                 }
                 else {
                     console.error(rs.message);
@@ -1922,7 +1927,7 @@
                 if(rs.success) {
                     $scope.testComments.push(rs.data);
                     $scope.testComment = {};
-                    $scope.addCommentTextfieldIsVisible = false;
+                    $scope.addCommentIsVisible = false;
                 } else {
                     $scope.testComment = {};
                     alertify.error('Failed to create comment for test "' + test.id);

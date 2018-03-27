@@ -32,7 +32,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-lg-3 align-test-name" >
-                                                                        <md-select ng-model="test.status" class="no-margin issue-element-container" placeholder="Status" data-ng-if="changeStatusDropdownIsVisible">
+                                                                        <md-select ng-model="test.status" class="no-margin issue-element-container" placeholder="Status" ng-if="changeStatusIsVisible">
                                                                             <md-option ng-repeat="status in testStatuses" ng-value="status">
                                                                                 {{status}}
                                                                             </md-option>
@@ -40,7 +40,7 @@
                                                                     </div>
                                                                     <div class="col-lg-2 align-test-name test-status-label">
                                                                         <div>
-                                                                            <md-button id="change" class="md-icon-button" data-ng-click="changeStatusDropdownIsVisible =!changeStatusDropdownIsVisible" has-any-permission="['MODIFY_TESTS']">
+                                                                            <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = true" has-any-permission="['MODIFY_TESTS']">
                                                                                 <md-tooltip md-direction="top">Change test status</md-tooltip>
                                                                                 <md-icon aria-label="Change status" class="md-18">edit</md-icon>
                                                                             </md-button>
@@ -55,13 +55,13 @@
                                                                         <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="testOwner" data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                        <span name="testOwner" data-ng-if="test.owner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                                        <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="device" data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                        <span name="device" data-ng-if="test.testConfig.device" class="light_text"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column"  class="no-border" data-ng-if="test.message" >
@@ -73,20 +73,20 @@
                                                                 </div>
                                                                 <md-dialog-actions layout="row">
                                                                     <md-input-container class="md-block">
-                                                                        <md-button id="showcomment" class="md-icon-button" data-ng-click="addCommentTextfieldIsVisible = !addCommentTextfieldIsVisible">
+                                                                        <md-button id="showcomment" class="md-icon-button" ng-click="addCommentIsVisible = !addCommentIsVisible">
                                                                             <md-tooltip md-direction="top">Add comment</md-tooltip>
                                                                             <md-icon aria-label="Add comment" class="md-18">comment</md-icon>
                                                                         </md-button>
-                                                                        <md-button id="commens" class="md-icon-button comments-button"  data-ng-click="moveToTab(3)">
+                                                                        <md-button id="commens" class="md-icon-button comments-button"  ng-click="moveToTab(3)">
                                                                             <a class="comments-font-size" md-no-ink>Comments ({{testComments.length}})</a>
                                                                         </md-button>
-                                                                        <md-button id="saveTest" class="md-raised btn-w-md md-primary" data-ng-click="updateTest(test);changeStatusDropdownIsVisible = !changeStatusDropdownIsVisible" data-ng-disabled="">
+                                                                        <md-button id="saveTest" class="md-raised btn-w-md md-primary" ng-disabled="currentStatus === test.status" ng-click="updateTest(test); currentStatus = test.status">
                                                                             Save
                                                                         </md-button>
                                                                     </md-input-container>
                                                                 </md-dialog-actions>
                                                             </form>
-                                                            <form class="form-validation" name="comments_form" ng-submit="UtilService.untouchForm(comments_form)" ng-cloak data-ng-if="addCommentTextfieldIsVisible">
+                                                            <form class="form-validation" name="comments_form" ng-submit="UtilService.untouchForm(comments_form)" ng-cloak data-ng-if="addCommentIsVisible">
                                                                 <md-dialog-content>
                                                                     <div layout layout-sm="column">
                                                                         <md-input-container flex >
@@ -113,12 +113,21 @@
                     </div>
                 </div>
             </md-tab>
-            <md-tab label="Issues" ng-disabled="issueTabDisabled"   >
+            <md-tab label="Issues" ng-disabled="issueTabDisabled">
                 <div class="tab">
                     <div class="md-dialog-content">
                         <div class="row ui-section">
                             <div class="col-md-12">
-                                <div class="col-lg-8 clearfix"> <h2 class="section-header">Assign Known Issue</h2> </div>
+                                <div layout layout-sm="row">
+                                    <div class="col-lg-11 clearfix">
+                                        <h2 class="section-header">Assign Known Issue</h2>
+                                    </div>
+                                    <div class="col-lg-1 clearfix align-test-name">
+                                        <md-button id="back_from_issue" class="md-icon-button" ng-click="moveToTab(0)">
+                                            <md-icon class="md-18">keyboard_backspace</md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
                                         <div class="panel-body">
@@ -229,7 +238,16 @@
                     <div class="md-dialog-content">
                         <div class="row ui-section">
                             <div class="col-md-12">
-                                <div class="col-lg-8 clearfix"> <h2 class="section-header">Assign Task</h2> </div>
+                                <div layout layout-sm="row">
+                                    <div class="col-lg-11 clearfix">
+                                        <h2 class="section-header">Assign Task</h2>
+                                    </div>
+                                    <div class="col-lg-1 clearfix align-test-name">
+                                        <md-button id="back_from_tasks" class="md-icon-button" ng-click="moveToTab(0)">
+                                            <md-icon class="md-18">keyboard_backspace</md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
                                         <div class="panel-body">
@@ -328,22 +346,26 @@
                     </div>
                 </div>
             </md-tab>
-            <md-tab label="History" ng-disabled="testComments.length == 0">
+            <md-tab label="Comments" ng-disabled="testComments.length == 0">
                 <div class="tab">
                     <div class="md-dialog-content">
                         <div class="row ui-section">
                             <div class="col-md-12">
-                                <div class="col-lg-8 clearfix"> <h2 class="section-header">Comments History</h2> </div>
+                                <div layout layout-sm="row">
+                                    <div class="col-lg-11 clearfix">
+                                        <h2 class="section-header">Comments History</h2>
+                                    </div>
+                                    <div class="col-lg-1 clearfix align-test-name">
+                                        <md-button id="back_from_comments" class="md-icon-button" ng-click="moveToTab(0)">
+                                            <md-icon class="md-18">keyboard_backspace</md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <div layout layout-sm="column" class="align-test-name test-status-label">
-                                                        <md-button id="move_to_tab" class="md-icon-button" data-ng-click="moveToTab(0)">
-                                                            <md-icon class="md-18">keyboard_backspace</md-icon>
-                                                        </md-button>
-                                                    </div>
                                                     <div layout="column" ng-cloak class="md-inline-form">
                                                         <div layout-padding>
                                                             <table md-table zafira-background-theme="table">
