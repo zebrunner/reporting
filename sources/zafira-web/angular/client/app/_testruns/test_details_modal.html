@@ -3,12 +3,12 @@
         <div class="md-toolbar-tools">
             <h2 id="modalTitle">Test Details</h2>
             <span flex></span>
-            <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+            <md-button id="close" class="md-icon-button" ng-click="cancel()">
                 <md-icon aria-label="Close dialog">close</md-icon>
             </md-button>
         </div>
     </md-toolbar>
-    <md-progress-linear md-mode="query" data-ng-show="(!isIssueFound || !isTaskFound) && isConnectedToJira || issueTabDisabled || taskTabDisabled"></md-progress-linear>
+    <md-progress-linear md-mode="query" ng-show="(!isIssueFound || !isTaskFound) && isConnectedToJira || issueTabDisabled || taskTabDisabled"></md-progress-linear>
     <md-dialog-content>
         <md-tabs md-border-bottom md-selected="selectedTabIndex" md-swipe-content class="test-details-dialog">
             <md-tab label="Status">
@@ -26,19 +26,19 @@
                                                         <div layout-padding>
                                                             <form name="testForm">
                                                                 <div layout layout-sm="column">
-                                                                    <div class="col-lg-7 align-test-name">
+                                                                    <div class="col-lg-7 align-middle">
                                                                         <div>
                                                                             <b name="testName">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-lg-3 align-test-name" >
+                                                                    <div class="col-lg-3 align-middle" >
                                                                         <md-select ng-model="test.status" class="no-margin issue-element-container" placeholder="Status" ng-if="changeStatusIsVisible">
                                                                             <md-option ng-repeat="status in testStatuses" ng-value="status">
                                                                                 {{status}}
                                                                             </md-option>
                                                                         </md-select>
                                                                     </div>
-                                                                    <div class="col-lg-2 align-test-name test-status-label">
+                                                                    <div class="col-lg-2 align-middle align-right">
                                                                         <div>
                                                                             <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = true" has-any-permission="['MODIFY_TESTS']">
                                                                                 <md-tooltip md-direction="top">Change test status</md-tooltip>
@@ -55,13 +55,13 @@
                                                                         <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="testOwner" data-ng-if="test.owner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                        <span id="testOwner" data-ng-if="test.owner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                                        <span id="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span name="device" data-ng-if="test.testConfig.device" class="light_text"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                        <span id="device" data-ng-if="test.testConfig.device" class="light_text"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column"  class="no-border" data-ng-if="test.message" >
@@ -96,7 +96,7 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row">
-                                                                    <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" data-ng-click="addTestComment(testComment)" data-ng-disabled="comments_form.$invalid">
+                                                                    <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="addTestComment(testComment)" ng-disabled="comments_form.$invalid">
                                                                         Add comment
                                                                     </md-button>
                                                                 </md-dialog-actions>
@@ -119,12 +119,15 @@
                         <div class="row ui-section">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
-                                    <div class="col-lg-11 clearfix">
+                                    <div class="col-lg-10 clearfix">
                                         <h2 class="section-header">Assign Known Issue</h2>
                                     </div>
-                                    <div class="col-lg-1 clearfix align-test-name">
+                                    <div class="col-lg-2 clearfix align-middle align-right">
                                         <md-button id="back_from_issue" class="md-icon-button" ng-click="moveToTab(0)">
                                             <md-icon class="md-18">keyboard_backspace</md-icon>
+                                        </md-button>
+                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="triggerIssueSearch()" ng-disabled="!isIssueFound">
+                                            <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
                                 </div>
@@ -137,31 +140,26 @@
                                                         <div layout-padding>
                                                             <form class="form-validation" name="known_issue_form" ng-cloak>
                                                                 <md-dialog-content>
-                                                                    <div layout layout-sm="column" class="align-test-name test-status-label">
-                                                                        <md-button id="refresh_issue" class="md-icon-button" data-ng-click="onIssueSearchFieldChangeAction()">
-                                                                            <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
-                                                                        </md-button>
-                                                                    </div>
                                                                     <div layout layout-sm="column" class="issue-row">
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span issue-element-label">Status</span>
+                                                                            <span class="status-span input-like-label">Status</span>
                                                                             <span ng-class="(newKnownIssue.status == 'Done' || !newKnownIssue.status)? 'label label-default' : 'label label-danger'" class="jira-status status-span">
                                                                                     <span>{{newKnownIssue.status}}</span>
                                                                                     <span data-ng-hide="newKnownIssue.status">N/A</span>
                                                                                 </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span issue-element-label">Assignee</span>
+                                                                            <span class="status-span input-like-label">Assignee</span>
                                                                             <span class="status-span">{{newKnownIssue.assignee}}</span>
                                                                         </div>
                                                                         <div class="col-lg-4">
-                                                                            <span class="status-span issue-element-label">Reporter</span>
+                                                                            <span class="status-span input-like-label">Reporter</span>
                                                                             <span class="status-span">{{newKnownIssue.reporter}}</span>
                                                                         </div>
                                                                         <div class="col-lg-2">
-                                                                            <span class="status-span issue-element-label">Blocker</span>
+                                                                            <span class="status-span input-like-label">Blocker</span>
                                                                             <span class="status-span">
-                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" data-ng-model="newKnownIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>                                                                         </span>
+                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newKnownIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>                                                                         </span>
                                                                         </div>
                                                                     </div>
                                                                     <div layout layout-sm="column" class="issue-row">
@@ -173,7 +171,7 @@
                                                                                        ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newKnownIssue.jiraId"
-                                                                                       data-ng-change="onIssueSearchFieldChangeAction()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+                                                                                       data-ng-change="triggerIssueSearch()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                                                                             </md-input-container>
                                                                         </div>
                                                                         <div class="col-lg-9">
@@ -193,16 +191,16 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row">
-                                                                    <md-button id="clear" data-ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" data-ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteIssue(newKnownIssue)"
-                                                                               data-ng-disabled="known_issue_form.$invalid || !isIssueFound">
+                                                                    <md-button id="clear" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteIssue(newKnownIssue)"
+                                                                               ng-disabled="known_issue_form.$invalid || !isIssueFound">
                                                                         Delete
                                                                     </md-button>
-                                                                    <md-button id="create" data-ng-if="isNewIssue" class="md-raised btn-w-md md-primary" data-ng-click="assignIssue(newKnownIssue, isNewIssue)"
-                                                                               data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
+                                                                    <md-button id="create" ng-if="isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newKnownIssue, isNewIssue)"
+                                                                               ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
                                                                         Assign
                                                                     </md-button>
-                                                                    <md-button id="updateIssue" data-ng-if="!isNewIssue" class="md-raised btn-w-md md-primary" data-ng-click="assignIssue(newKnownIssue, isNewIssue)"
-                                                                               data-ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
+                                                                    <md-button id="updateIssue" ng-if="!isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newKnownIssue, isNewIssue)"
+                                                                               ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
                                                                         Update
                                                                     </md-button>
                                                                 </md-dialog-actions>
@@ -218,9 +216,9 @@
                                     <md-sidemenu locked="true">
                                         <md-sidemenu-group>
                                             <md-sidemenu-content md-heading="ATTACHED ISSUES" md-arrow="true" data-ng-hide="knownIssues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
-                                                <md-button class="md-sidemenu-button tickets-font" data-ng-if="issueListIsVisible" data-ng-repeat="issue in knownIssues"
+                                                <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in knownIssues"
                                                            ng-click="selectExistingIssue(issue);$event.stopPropagation();">
-                                                    <span name="knownIssue" >
+                                                    <span id="knownIssue" >
                                                         <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
                                                     </span>
                                                 </md-button>
@@ -239,12 +237,15 @@
                         <div class="row ui-section">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
-                                    <div class="col-lg-11 clearfix">
+                                    <div class="col-lg-10 clearfix">
                                         <h2 class="section-header">Assign Task</h2>
                                     </div>
-                                    <div class="col-lg-1 clearfix align-test-name">
+                                    <div class="col-lg-2 clearfix align-middle align-right">
                                         <md-button id="back_from_tasks" class="md-icon-button" ng-click="moveToTab(0)">
                                             <md-icon class="md-18">keyboard_backspace</md-icon>
+                                        </md-button>
+                                        <md-button id="refresh_task" class="md-icon-button" ng-click="triggerTaskSearch()" ng-disabled="!isTaskFound">
+                                            <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
                                 </div>
@@ -257,25 +258,20 @@
                                                         <div layout-padding>
                                                             <form class="form-validation" name="task_form" ng-cloak>
                                                                 <md-dialog-content>
-                                                                    <div layout layout-sm="column" class="align-test-name test-status-label">
-                                                                        <md-button id="refresh_task" class="md-icon-button" data-ng-click="onTaskSearchFieldChangeAction()">
-                                                                            <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
-                                                                        </md-button>
-                                                                    </div>
                                                                     <div layout layout-sm="column" class="issue-row">
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span issue-element-label">Status</span>
+                                                                            <span class="status-span input-like-label">Status</span>
                                                                             <span ng-class="(newTask.status == 'Done' || !newTask.status)? 'label label-default' : 'label label-danger'" class="jira-status status-span">
                                                                                     <span>{{newTask.status}}</span>
                                                                                     <span data-ng-hide="newTask.status">N/A</span>
                                                                                 </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span issue-element-label">Assignee</span>
+                                                                            <span class="status-span input-like-label">Assignee</span>
                                                                             <span class="status-span">{{newTask.assignee}}</span>
                                                                         </div>
                                                                         <div class="col-lg-4">
-                                                                            <span class="status-span issue-element-label">Reporter</span>
+                                                                            <span class="status-span input-like-label">Reporter</span>
                                                                             <span class="status-span">{{newTask.reporter}}</span>
                                                                         </div>
                                                                     </div>
@@ -288,7 +284,7 @@
                                                                                        ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newTask.jiraId"
-                                                                                       data-ng-change="onTaskSearchFieldChangeAction()" required
+                                                                                       data-ng-change="triggerTaskSearch()" required
                                                                                        placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                                                                             </md-input-container>
                                                                         </div>
@@ -306,16 +302,16 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row" align="end">
-                                                                    <md-button id="delete" data-ng-if="!isNewTask" class="md-raised btn-w-md md-warn" data-ng-click="deleteTask(newTask)"
-                                                                               data-ng-disabled="task_form.$invalid || !isTaskFound">
+                                                                    <md-button id="delete" ng-if="!isNewTask" class="md-raised btn-w-md md-warn" ng-click="deleteTask(newTask)"
+                                                                               ng-disabled="task_form.$invalid || !isTaskFound">
                                                                         Delete
                                                                     </md-button>
-                                                                    <md-button id="assign" data-ng-if="isNewTask" class="md-raised btn-w-md md-primary" data-ng-click="assignTask(newTask, isNewTask)"
-                                                                               data-ng-disabled="task_form.$invalid || (!isTaskFound) && isConnectedToJira">
+                                                                    <md-button id="assign" ng-if="isNewTask" class="md-raised btn-w-md md-primary" ng-click="assignTask(newTask, isNewTask)"
+                                                                               ng-disabled="task_form.$invalid || (!isTaskFound) && isConnectedToJira">
                                                                         Assign
                                                                     </md-button>
-                                                                    <md-button id="updateTask" data-ng-if="!isNewTask" class="md-raised btn-w-md md-primary" data-ng-click="assignTask(newTask, isNewTask)"
-                                                                               data-ng-disabled="task_form.$invalid || (!isTaskFound) && isConnectedToJira">
+                                                                    <md-button id="updateTask" ng-if="!isNewTask" class="md-raised btn-w-md md-primary" ng-click="assignTask(newTask, isNewTask)"
+                                                                               ng-disabled="task_form.$invalid || (!isTaskFound) && isConnectedToJira">
                                                                         Update
                                                                     </md-button>
                                                                 </md-dialog-actions>
@@ -330,8 +326,8 @@
                                 <div class="col-lg-12 issues-select-padding">
                                     <md-sidemenu locked="true">
                                         <md-sidemenu-group>
-                                            <md-sidemenu-content md-heading="ATTACHED TASKS" md-arrow="true" data-ng-hide="tasks.length == 0"ng-click="taskListIsVisible = !taskListIsVisible">
-                                                <md-button class="md-sidemenu-button tickets-font" data-ng-if="taskListIsVisible" data-ng-repeat="task in tasks"
+                                            <md-sidemenu-content md-heading="ATTACHED TASKS" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
+                                                <md-button class="md-sidemenu-button tickets-font" ng-if="taskListIsVisible" ng-repeat="task in tasks"
                                                            ng-click="selectExistingTask(task); $event.stopPropagation();">
                                                     <span name="knownIssue" >
                                                         <b class="settings-line">{{task.jiraId}}</b> {{task.description}}
@@ -355,7 +351,7 @@
                                     <div class="col-lg-11 clearfix">
                                         <h2 class="section-header">Comments History</h2>
                                     </div>
-                                    <div class="col-lg-1 clearfix align-test-name">
+                                    <div class="col-lg-1 clearfix align-middle">
                                         <md-button id="back_from_comments" class="md-icon-button" ng-click="moveToTab(0)">
                                             <md-icon class="md-18">keyboard_backspace</md-icon>
                                         </md-button>
@@ -390,9 +386,9 @@
                                                                 </thead>
                                                                 <tbody md-body >
                                                                 <tr md-row ng-repeat="testComment in testComments | orderBy: 'createdAt':true">
-                                                                    <td name="testCommentText" md-cell class="comments-table-body"><b>{{testComment.description}}</b></td>
-                                                                    <td name="testCommentAuthor" md-cell class="comments-table-body">{{testComment.user.username}}</td>
-                                                                    <td name="testCommentDate" md-cell class="comments-table-body">{{testComment.createdAt | date : "medium"}}</td>
+                                                                    <td id="testCommentText" md-cell class="comments-table-body"><b>{{testComment.description}}</b></td>
+                                                                    <td id="testCommentAuthor" md-cell class="comments-table-body">{{testComment.user.username}}</td>
+                                                                    <td id="testCommentDate" md-cell class="comments-table-body">{{testComment.createdAt | date : "medium"}}</td>
                                                                 </tr>
                                                                 </tbody>
                                                             </table>

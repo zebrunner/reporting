@@ -856,7 +856,7 @@ ul.profile-image-actions {
     clear: left;
 }
 
-.issue-element-label {
+.input-like-label {
     color: rgba(0,0,0,0.54);
     display: inline-block;
     margin-bottom: 5px;
@@ -877,11 +877,11 @@ ul.profile-image-actions {
     margin: 0 15px;
 }
 
-.align-test-name {
+.align-middle {
     display: flex;
     align-items: center;
 }
 
-.test-status-label {
+.align-right {
     justify-content: flex-end;
 }
