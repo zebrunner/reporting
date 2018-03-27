@@ -173,7 +173,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		return workItems;
 	}
 
-	public WorkItem getWorkItem(WorkItem.Type type)
+	public WorkItem getWorkItemByType(WorkItem.Type type)
 	{
 		if (workItems != null)
 		{

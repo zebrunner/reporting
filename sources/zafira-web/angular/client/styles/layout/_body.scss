@@ -799,4 +799,89 @@ ul.profile-image-actions {
     100% {
         -webkit-transform: rotateY(360deg);
     }
+
+
+}
+
+/* Test details modal */
+.test-details-dialog {
+    min-height: 650px !important;
+}
+
+.comment-text-area {
+    min-height: 280px !important;
+}
+
+.label-font-size {
+    font-size: 14px;
+}
+
+.icons-font-size {
+    font-size: 18px;
+}
+
+.comments-font-size {
+    font-size: 12px;
+}
+
+.table-frame {
+    border: 1px rgba(0, 0, 0, 0.12) solid;
+}
+
+.comments-button {
+    width: auto !important;
+}
+
+.tickets-font {
+    font-weight: normal
+}
+
+.comments-table-header {
+    margin-top: 2px;
+}
+.comments-table-body {
+    border-top: none !important;
+}
+
+.issues-select-padding {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.issue-element-container {
+    width: -webkit-fill-available !important;
+}
+
+.status-span {
+    float : left;
+    clear: left;
+}
+
+.issue-element-label {
+    color: rgba(0,0,0,0.54);
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.issue-row {
+    margin: 10px 0;
+    padding: 10px 0;
+}
+
+.status-row {
+    margin: 15px 0;
+}
+.issue-trace-area {
+    background: ghostwhite;
+    margin: 0 15px;
+}
+
+.align-test-name {
+    display: flex;
+    align-items: center;
+}
+
+.test-status-label {
+    justify-content: flex-end;
 }
