@@ -1450,6 +1450,9 @@
             });
         };
 
+        $scope.moveToTab = function (tabIndex) {
+            $scope.selectedTabIndex = tabIndex;
+        };
         /* WORKITEM functionality */
 
         var taskJiraIdInputIsChanged = false;

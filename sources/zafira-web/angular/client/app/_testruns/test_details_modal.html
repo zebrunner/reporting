@@ -77,7 +77,7 @@
                                                                             <md-tooltip md-direction="top">Add comment</md-tooltip>
                                                                             <md-icon aria-label="Add comment" class="md-18">comment</md-icon>
                                                                         </md-button>
-                                                                        <md-button id="commens" class="md-icon-button comments-button"  data-ng-click="selectedTabIndex = 3">
+                                                                        <md-button id="commens" class="md-icon-button comments-button"  data-ng-click="moveToTab(3)">
                                                                             <a class="comments-font-size" md-no-ink>Comments ({{testComments.length}})</a>
                                                                         </md-button>
                                                                         <md-button id="saveTest" class="md-raised btn-w-md md-primary" data-ng-click="updateTest(test);changeStatusDropdownIsVisible = !changeStatusDropdownIsVisible" data-ng-disabled="">
@@ -339,6 +339,11 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-lg-12">
+                                                    <div layout layout-sm="column" class="align-test-name test-status-label">
+                                                        <md-button id="move_to_tab" class="md-icon-button" data-ng-click="moveToTab(0)">
+                                                            <md-icon class="md-18">keyboard_backspace</md-icon>
+                                                        </md-button>
+                                                    </div>
                                                     <div layout="column" ng-cloak class="md-inline-form">
                                                         <div layout-padding>
                                                             <table md-table zafira-background-theme="table">
