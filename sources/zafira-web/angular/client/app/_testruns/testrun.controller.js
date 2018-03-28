@@ -1459,72 +1459,7 @@
             $scope.selectedTabIndex = tabIndex;
         };
 
-        /* WORKITEM functionality */
-
-        var taskJiraIdInputIsChanged = false;
-        var issueJiraIdInputIsChanged = false;
-
-        /* Assigns issue to the test */
-
-        $scope.assignIssue = function (issue) {
-            TestService.createTestWorkItem(test.id, issue).then(function(rs) {
-                var workItemType = issue.type;
-                var jiraId = issue.jiraId;
-                var message;
-                if(rs.success) {
-                    if($scope.isNewIssue) {
-                        message = generateActionResultMessage(workItemType, jiraId, "assign" + "e", true);
-                    } else {
-                        message = generateActionResultMessage(workItemType, jiraId, "update", true);
-                    }
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
-                    updateWorkItemList(rs.data);
-                    initAttachedWorkItems();
-                    $scope.isNewIssue = !(jiraId === $scope.attachedKnownIssue.jiraId);
-                    alertify.success(message);
-                }
-                else {
-                    if($scope.isNewIssue){
-                        message = generateActionResultMessage(workItemType, jiraId, "assign", false);
-                    } else {
-                        message = generateActionResultMessage(workItemType, jiraId, "update", false);
-                    }
-                    alertify.error(message);
-                }
-            });
-        };
-
-        /* Assigns task to the test */
-
-        $scope.assignTask = function (task) {
-            TestService.createTestWorkItem(test.id, task).then(function(rs) {
-                var workItemType = task.type;
-                var jiraId = task.jiraId;
-                var message;
-                if(rs.success) {
-                    if($scope.isNewTask) {
-                        message = generateActionResultMessage(workItemType, jiraId, "assign" + "e", true);
-                    } else {
-                        message = generateActionResultMessage(workItemType, jiraId, "update", true);
-                    }
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
-                    updateWorkItemList(rs.data);
-                    initAttachedWorkItems();
-                    $scope.isNewTask = !(jiraId === $scope.attachedTask.jiraId);
-                    alertify.success(message);
-                }
-                else {
-                    if($scope.isNewTask){
-                        message = generateActionResultMessage(workItemType, jiraId, "assign", false);
-                    } else {
-                        message = generateActionResultMessage(workItemType, jiraId, "update", false);
-                    }
-                    alertify.error(message);
-                }
-            });
-        };
+        /** UI methods for handling actions with ISSUE / TASK */
 
         /* Updates list of workitems on UI */
 
@@ -1591,39 +1526,78 @@
             }
         };
 
-        /* Gets issues attached to the testcase */
+        /***/
 
-        var getKnownIssues = function () {
-            TestService.getTestCaseWorkItemsByType(test.id, 'BUG').then(function(rs) {
+        /** ISSUE / TASK functionality */
+
+        var taskJiraIdInputIsChanged = false;
+        var issueJiraIdInputIsChanged = false;
+
+        /* Assigns issue to the test */
+
+        $scope.assignIssue = function (issue) {
+            TestService.createTestWorkItem(test.id, issue).then(function(rs) {
+                var workItemType = issue.type;
+                var jiraId = issue.jiraId;
+                var message;
                 if(rs.success) {
-                    $scope.knownIssues = rs.data;
-                    if(test.workItems.length && !$scope.isNewIssue) {
-                        angular.copy($scope.attachedKnownIssue, $scope.newKnownIssue);
+                    if($scope.isNewIssue) {
+                        message = generateActionResultMessage(workItemType, jiraId, "assign" + "e", true);
+                    } else {
+                        message = generateActionResultMessage(workItemType, jiraId, "update", true);
                     }
-                } else {
-                    alertify.error(rs.message);
+                    $scope.testComment.description = message;
+                    $scope.addTestComment($scope.testComment);
+                    updateWorkItemList(rs.data);
+                    initAttachedWorkItems();
+                    $scope.isNewIssue = !(jiraId === $scope.attachedKnownIssue.jiraId);
+                    alertify.success(message);
+                }
+                else {
+                    if($scope.isNewIssue){
+                        message = generateActionResultMessage(workItemType, jiraId, "assign", false);
+                    } else {
+                        message = generateActionResultMessage(workItemType, jiraId, "update", false);
+                    }
+                    alertify.error(message);
                 }
             });
         };
 
-        /* Gets tasks attached to the testcase */
+        /* Assigns task to the test */
 
-        var getTasks = function () {
-            TestService.getTestCaseWorkItemsByType(test.id, 'TASK').then(function(rs) {
+        $scope.assignTask = function (task) {
+            TestService.createTestWorkItem(test.id, task).then(function(rs) {
+                var workItemType = task.type;
+                var jiraId = task.jiraId;
+                var message;
                 if(rs.success) {
-                    $scope.tasks = rs.data;
-                    if(test.workItems.length && !$scope.isNewTask) {
-                        angular.copy($scope.attachedTask, $scope.newTask);
+                    if($scope.isNewTask) {
+                        message = generateActionResultMessage(workItemType, jiraId, "assign" + "e", true);
+                    } else {
+                        message = generateActionResultMessage(workItemType, jiraId, "update", true);
                     }
-                } else {
-                    alertify.error(rs.message);
+                    $scope.testComment.description = message;
+                    $scope.addTestComment($scope.testComment);
+                    updateWorkItemList(rs.data);
+                    initAttachedWorkItems();
+                    $scope.isNewTask = !(jiraId === $scope.attachedTask.jiraId);
+                    alertify.success(message);
+                }
+                else {
+                    if($scope.isNewTask){
+                        message = generateActionResultMessage(workItemType, jiraId, "assign", false);
+                    } else {
+                        message = generateActionResultMessage(workItemType, jiraId, "update", false);
+                    }
+                    alertify.error(message);
                 }
             });
         };
 
-        /* Reattaches issue from test */
+        /* Unassignes issue from the test */
 
-        $scope.deleteIssue = function (workItem) {
+        $scope.unassignIssue = function (workItem) {
             TestService.deleteTestWorkItem(test.id, workItem.id).then(function(rs) {
                 var message;
                 if(rs.success) {
@@ -1632,7 +1606,7 @@
                     $scope.addTestComment($scope.testComment);
                     deleteWorkItemFromTestWorkItems(workItem);
                     initAttachedWorkItems();
-                    initNewKnownIssue();
+                    initNewIssue();
                     alertify.success(message);
                 } else {
                     message = generateActionResultMessage(workItem.type, workItem.jiraId, "unassign", false);
@@ -1641,9 +1615,9 @@
             });
         };
 
-        /* Reattaches task from test */
+        /* Unassignes task from the test */
 
-        $scope.deleteTask = function (workItem) {
+        $scope.unassignTask = function (workItem) {
             TestService.deleteTestWorkItem(test.id, workItem.id).then(function(rs) {
                 var message;
                 if(rs.success) {
@@ -1661,11 +1635,20 @@
             });
         };
 
+        /* Generates result message for action comment (needed to be stored into DB and added in UI alert) */
 
-        /* Starts selected from issues list issue search */
+        var generateActionResultMessage = function (item, id, action, success) {
+            if (success) {
+                return item + " " +  id +" was " + action + "d";
+            } else {
+                return "Failed to " + action + " " + item.toLowerCase();
+            }
+        };
 
-        $scope.selectExistingIssue = function (issue) {
-            $scope.triggerIssueSearch();
+        /* Starts set in the scope issue search */
+
+        $scope.searchScopeIssue = function (issue) {
+            $scope.initIssueSearch();
             initAttachedWorkItems();
             $scope.isNewIssue = !(issue.jiraId === $scope.attachedKnownIssue.jiraId);
             $scope.newKnownIssue.id = issue.id;
@@ -1673,10 +1656,10 @@
             $scope.newKnownIssue.description = issue.description;
         };
 
-        /* Starts selected from tasks list task search */
+        /* Starts set in the scope task search */
 
-        $scope.selectExistingTask = function (task) {
-            $scope.triggerTaskSearch();
+        $scope.searchScopeTask = function (task) {
+            $scope.initTaskSearch();
             initAttachedWorkItems();
             $scope.isNewTask = !(task.jiraId === $scope.attachedTask.jiraId);
             $scope.newTask.id = task.id;
@@ -1684,9 +1667,9 @@
             $scope.newTask.description = task.description;
         };
 
-        /* Triggers issue search and processes issue before search */
+        /* Initializes issue object before search */
 
-        $scope.triggerIssueSearch = function () {
+        $scope.initIssueSearch = function () {
             issueJiraIdInputIsChanged = true;
             $scope.newKnownIssue.description = '';
             $scope.newKnownIssue.id = null;
@@ -1696,19 +1679,18 @@
             $scope.issueJiraIdExists = true;
             $scope.isIssueClosed = false;
             $scope.isIssueFound = false;
-            var issueExists;
+            $scope.isNewIssue = true;
             var existingIssue = $scope.knownIssues.filter(function (foundIssue) {
-                issueExists = foundIssue.jiraId === $scope.newKnownIssue.jiraId;
-                return issueExists;
+                return foundIssue.jiraId === $scope.newKnownIssue.jiraId;
             })[0];
-            $scope.isNewIssue = !(issueExists);
-            if(existingIssue)
+            if(existingIssue){
                 angular.copy(existingIssue, $scope.newKnownIssue);
+            }
         };
 
-        /* Triggers task search and processes task before search */
+        /* Initializes task object before search */
 
-        $scope.triggerTaskSearch = function () {
+        $scope.initTaskSearch = function () {
             taskJiraIdInputIsChanged = true;
             $scope.newTask.description = '';
             $scope.newTask.id = null;
@@ -1717,44 +1699,12 @@
             $scope.newTask.reporter = null;
             $scope.taskJiraIdExists = true;
             $scope.isTaskFound = false;
-            var taskExists;
+            $scope.isNewTask = true;
             var existingTask = $scope.tasks.filter(function (foundTask) {
-                taskExists = foundTask.jiraId === $scope.newTask.jiraId;
-                return taskExists;
+                return foundTask.jiraId === $scope.newTask.jiraId;
             })[0];
-            $scope.isNewTask = !(taskExists);
             if(existingTask)
                 angular.copy(existingTask, $scope.newTask);
-        };
-
-        /* Initializes empty issue */
-
-        var initNewKnownIssue = function () {
-            $scope.isNewIssue = isNewIssue;
-            $scope.newKnownIssue = {};
-            $scope.newKnownIssue.type = "BUG";
-            $scope.newKnownIssue.testCaseId = test.testCaseId;
-        };
-
-        /* Initializes empty issue */
-
-        var initNewTask = function () {
-            $scope.isNewTask = isNewTask;
-            $scope.newTask = {};
-            $scope.newTask.type = "TASK";
-            $scope.newTask.testCaseId = test.testCaseId;
-        };
-
-        /* Gets from DB JIRA_CLOSED_STATUS name for the current project*/
-
-        var getJiraClosedStatusName = function() {
-            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
-                if(rs.success){
-                    $scope.closedStatusName = rs.data;
-                } else {
-                    alertify.error(rs.message);
-                }
-            });
         };
 
         /* Writes all attached to the test workitems into scope variables.
@@ -1785,30 +1735,59 @@
             }
         };
 
-        /* Generates result message for action comment (needed to be stored into DB and added in UI alert) */
+        /* Searches issue in Jira by Jira ID */
 
-        var generateActionResultMessage = function (item, id, action, success) {
-            if (success) {
-                return item + " " +  id +" was " + action + "d";
-            } else {
-                return "Failed to " + action + " " + item.toLowerCase();
-            }
+        var searchIssue = function (issue) {
+            $scope.isIssueFound = false;
+            TestService.getJiraTicket(issue.jiraId).then(function(rs) {
+                if(rs.success) {
+                    var searchResultIssue = rs.data;
+                    $scope.isIssueFound = true;
+                    if (searchResultIssue === '') {
+                        $scope.isIssueClosed = false;
+                        $scope.issueJiraIdExists = false;
+                        $scope.issueTabDisabled = false;
+                        return;
+                    }
+                    $scope.issueJiraIdExists = true;
+                    $scope.isIssueClosed = $scope.closedStatusName.toUpperCase() === searchResultIssue.status.name.toUpperCase();
+                    $scope.newKnownIssue.description = searchResultIssue.summary;
+                    $scope.newKnownIssue.assignee = searchResultIssue.assignee.name;
+                    $scope.newKnownIssue.reporter = searchResultIssue.reporter.name;
+                    $scope.newKnownIssue.status = searchResultIssue.status.name.toUpperCase();
+                    $scope.isNewIssue = !($scope.newKnownIssue.jiraId === $scope.attachedKnownIssue.jiraId);
+                    $scope.issueTabDisabled = false;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
         };
 
-        /* On Jira ID input change makes search if conditions are fulfilled */
+        /* Searches task in Jira by Jira ID */
 
-        var workItemSearchInterval = $interval(function () {
-            if(issueJiraIdInputIsChanged){
-                if (isIssueSearchAvailable($scope.newKnownIssue.jiraId)) {
-                    searchIssue($scope.newKnownIssue);
+        var searchTask = function (task) {
+            $scope.isTaskFound = false;
+            TestService.getJiraTicket(task.jiraId).then(function(rs) {
+                if(rs.success) {
+                    var searchResultTask = rs.data;
+                    $scope.isTaskFound = true;
+                    if (searchResultTask === '') {
+                        $scope.taskJiraIdExists = false;
+                        $scope.taskTabDisabled = false;
+                        return;
+                    }
+                    $scope.taskJiraIdExists = true;
+                    $scope.newTask.description = searchResultTask.summary;
+                    $scope.newTask.assignee = searchResultTask.assignee.name;
+                    $scope.newTask.reporter = searchResultTask.reporter.name;
+                    $scope.newTask.status = searchResultTask.status.name;
+                    $scope.isNewTask = !($scope.newTask.jiraId === $scope.attachedTask.jiraId);
+                    $scope.taskTabDisabled = false;
+                } else {
+                    alertify.error(rs.message);
                 }
-            }
-            if(taskJiraIdInputIsChanged){
-                if (isTaskSearchAvailable($scope.newTask.jiraId)) {
-                    searchTask($scope.newTask);
-                }
-            }
-        }, 2000);
+            });
+        };
 
         /*  Checks whether conditions for issue search in Jira are fulfilled */
 
@@ -1842,59 +1821,90 @@
             }
         };
 
-        /* Searches issue in Jira by Jira ID */
+        /* Initializes empty issue */
 
-        var searchIssue = function (issue) {
-            $scope.isIssueFound = false;
-            TestService.getJiraTicket(issue.jiraId).then(function(rs) {
+        var initNewIssue = function (isInit) {
+            if(isInit){
+                $scope.isNewIssue = isNewIssue;
+            } else {
+                $scope.isNewIssue = true;
+            }
+            $scope.newKnownIssue = {};
+            $scope.newKnownIssue.type = "BUG";
+            $scope.newKnownIssue.testCaseId = test.testCaseId;
+        };
+
+        /* Initializes empty task */
+
+        var initNewTask = function (isInit) {
+            if(isInit){
+                $scope.isNewTask = isNewTask;
+            } else {
+                $scope.isNewTask = true;
+            }
+            $scope.newTask = {};
+            $scope.newTask.type = "TASK";
+            $scope.newTask.testCaseId = test.testCaseId;
+        };
+
+        /* Gets issues attached to the testcase */
+
+        var getIssues = function () {
+            TestService.getTestCaseWorkItemsByType(test.id, 'BUG').then(function(rs) {
                 if(rs.success) {
-                    var searchResultIssue = rs.data;
-                    $scope.isIssueFound = true;
-                    if (searchResultIssue === '') {
-                        $scope.isIssueClosed = false;
-                        $scope.issueJiraIdExists = false;
-                        $scope.issueTabDisabled = false;
-                        return;
+                    $scope.knownIssues = rs.data;
+                    if(test.workItems.length && !$scope.isNewIssue) {
+                        angular.copy($scope.attachedKnownIssue, $scope.newKnownIssue);
                     }
-                    $scope.issueJiraIdExists = true;
-                    $scope.isIssueClosed = $scope.closedStatusName.toLowerCase() === searchResultIssue.status.name.toLowerCase();
-                    $scope.newKnownIssue.description = searchResultIssue.summary;
-                    $scope.newKnownIssue.assignee = searchResultIssue.assignee.name;
-                    $scope.newKnownIssue.reporter = searchResultIssue.reporter.name;
-                    $scope.newKnownIssue.status = searchResultIssue.status.name;
-                    $scope.issueTabDisabled = false;
                 } else {
                     alertify.error(rs.message);
                 }
             });
         };
 
-        /* Searches task in Jira by Jira ID */
+        /* Gets tasks attached to the testcase */
 
-        var searchTask = function (task) {
-            $scope.isTaskFound = false;
-            TestService.getJiraTicket(task.jiraId).then(function(rs) {
+        var getTasks = function () {
+            TestService.getTestCaseWorkItemsByType(test.id, 'TASK').then(function(rs) {
                 if(rs.success) {
-                    var searchResultTask = rs.data;
-                    $scope.isTaskFound = true;
-                    if (searchResultTask === '') {
-                        $scope.taskJiraIdExists = false;
-                        $scope.taskTabDisabled = false;
-                        return;
+                    $scope.tasks = rs.data;
+                    if(test.workItems.length && !$scope.isNewTask) {
+                        angular.copy($scope.attachedTask, $scope.newTask);
                     }
-                    $scope.taskJiraIdExists = true;
-                    $scope.newTask.description = searchResultTask.summary;
-                    $scope.newTask.assignee = searchResultTask.assignee.name;
-                    $scope.newTask.reporter = searchResultTask.reporter.name;
-                    $scope.newTask.status = searchResultTask.status.name;
-                    $scope.taskTabDisabled = false;
                 } else {
                     alertify.error(rs.message);
                 }
             });
         };
 
-        /* Closes search interval on modal closing */
+        /* Gets from DB JIRA_CLOSED_STATUS name for the current project*/
+
+        var getJiraClosedStatusName = function() {
+            SettingsService.getSetting('JIRA_CLOSED_STATUS').then(function successCallback(rs) {
+                if(rs.success){
+                    $scope.closedStatusName = rs.data.toUpperCase();
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        /* On Jira ID input change makes search if conditions are fulfilled */
+
+        var workItemSearchInterval = $interval(function () {
+            if(issueJiraIdInputIsChanged){
+                if (isIssueSearchAvailable($scope.newKnownIssue.jiraId)) {
+                    searchIssue($scope.newKnownIssue);
+                }
+            }
+            if(taskJiraIdInputIsChanged){
+                if (isTaskSearchAvailable($scope.newTask.jiraId)) {
+                    searchTask($scope.newTask);
+                }
+            }
+        }, 2000);
+
+        /* Closes search interval when the modal is closed */
 
         $scope.$on('$destroy', function() {
             if(workItemSearchInterval)
@@ -1965,9 +1975,9 @@
             $scope.isConnectedToJira = isConnectedToJira;
             getJiraClosedStatusName();
             initAttachedWorkItems();
-            initNewKnownIssue();
-            initNewTask();
-            getKnownIssues();
+            initNewIssue(true);
+            initNewTask(true);
+            getIssues();
             getTasks();
         })();
     }

@@ -123,10 +123,7 @@
                                         <h2 class="section-header">Assign Known Issue</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
-                                        <md-button id="back_from_issue" class="md-icon-button" ng-click="moveToTab(0)">
-                                            <md-icon class="md-18">keyboard_backspace</md-icon>
-                                        </md-button>
-                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="triggerIssueSearch()" ng-disabled="!isIssueFound">
+                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newKnownIssue)" ng-disabled="!isIssueFound">
                                             <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
@@ -143,10 +140,17 @@
                                                                     <div layout layout-sm="column" class="issue-row">
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Status</span>
-                                                                            <span ng-class="(newKnownIssue.status == 'Done' || !newKnownIssue.status)? 'label label-default' : 'label label-danger'" class="jira-status status-span">
-                                                                                    <span>{{newKnownIssue.status}}</span>
-                                                                                    <span data-ng-hide="newKnownIssue.status">N/A</span>
-                                                                                </span>
+                                                                            <span ng-class="{
+                                                                            'label label-danger' : newKnownIssue.status == 'TO DO' || newKnownIssue.status == 'OPEN' || newKnownIssue.status == 'NOT ASSIGNED',
+                                                                            'label label-info' : newKnownIssue.status == 'IN PROGRESS',
+                                                                            'label label-success' : newKnownIssue.status == closedStatusName || newKnownIssue.status == 'FIXED',
+                                                                            'label label-warning' : newKnownIssue.status == 'REOPENED' || newKnownIssue.status == 'DUBLICATE',
+                                                                            'label label-primary' : newKnownIssue.status == 'READY FOR QA',
+                                                                            'label label-default' : newKnownIssue.status == 'N/A'}"
+                                                                               class="jira-status status-span">
+                                                                                <span>{{newKnownIssue.status}}</span>
+                                                                                <span data-ng-hide="newKnownIssue.status">N/A</span>
+                                                                            </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Assignee</span>
@@ -159,7 +163,8 @@
                                                                         <div class="col-lg-2">
                                                                             <span class="status-span input-like-label">Blocker</span>
                                                                             <span class="status-span">
-                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newKnownIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>                                                                         </span>
+                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newKnownIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                     <div layout layout-sm="column" class="issue-row">
@@ -171,7 +176,7 @@
                                                                                        ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newKnownIssue.jiraId"
-                                                                                       data-ng-change="triggerIssueSearch()" required placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
+                                                                                       data-ng-change="initIssueSearch()" required placeholder="{{ isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                                                                             </md-input-container>
                                                                         </div>
                                                                         <div class="col-lg-9">
@@ -191,9 +196,9 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row">
-                                                                    <md-button id="clear" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" data-ng-really-click="deleteIssue(newKnownIssue)"
+                                                                    <md-button id="clear" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" ng-really-click="unassignIssue(newKnownIssue)"
                                                                                ng-disabled="known_issue_form.$invalid || !isIssueFound">
-                                                                        Delete
+                                                                        Unassign
                                                                     </md-button>
                                                                     <md-button id="create" ng-if="isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newKnownIssue, isNewIssue)"
                                                                                ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
@@ -217,7 +222,7 @@
                                         <md-sidemenu-group>
                                             <md-sidemenu-content md-heading="ATTACHED ISSUES" md-arrow="true" data-ng-hide="knownIssues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
                                                 <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in knownIssues"
-                                                           ng-click="selectExistingIssue(issue);$event.stopPropagation();">
+                                                           ng-click="searchScopeIssue(issue);$event.stopPropagation();">
                                                     <span id="knownIssue" >
                                                         <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
                                                     </span>
@@ -241,10 +246,7 @@
                                         <h2 class="section-header">Assign Task</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
-                                        <md-button id="back_from_tasks" class="md-icon-button" ng-click="moveToTab(0)">
-                                            <md-icon class="md-18">keyboard_backspace</md-icon>
-                                        </md-button>
-                                        <md-button id="refresh_task" class="md-icon-button" ng-click="triggerTaskSearch()" ng-disabled="!isTaskFound">
+                                        <md-button id="refresh_task" class="md-icon-button" ng-click="initTaskSearch()" ng-disabled="!isTaskFound">
                                             <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
@@ -284,7 +286,7 @@
                                                                                        ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
                                                                                        data-ng-model="newTask.jiraId"
-                                                                                       data-ng-change="triggerTaskSearch()" required
+                                                                                       data-ng-change="initTaskSearch()" required
                                                                                        placeholder="{{isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                                                                             </md-input-container>
                                                                         </div>
@@ -302,9 +304,9 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row" align="end">
-                                                                    <md-button id="delete" ng-if="!isNewTask" class="md-raised btn-w-md md-warn" ng-click="deleteTask(newTask)"
+                                                                    <md-button id="delete" ng-if="!isNewTask" class="md-raised btn-w-md md-warn" ng-click="unassignTask(newTask)"
                                                                                ng-disabled="task_form.$invalid || !isTaskFound">
-                                                                        Delete
+                                                                        Unassign
                                                                     </md-button>
                                                                     <md-button id="assign" ng-if="isNewTask" class="md-raised btn-w-md md-primary" ng-click="assignTask(newTask, isNewTask)"
                                                                                ng-disabled="task_form.$invalid || (!isTaskFound) && isConnectedToJira">
@@ -328,7 +330,7 @@
                                         <md-sidemenu-group>
                                             <md-sidemenu-content md-heading="ATTACHED TASKS" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
                                                 <md-button class="md-sidemenu-button tickets-font" ng-if="taskListIsVisible" ng-repeat="task in tasks"
-                                                           ng-click="selectExistingTask(task); $event.stopPropagation();">
+                                                           ng-click="searchScopeTask(task); $event.stopPropagation();">
                                                     <span name="knownIssue" >
                                                         <b class="settings-line">{{task.jiraId}}</b> {{task.description}}
                                                     </span>
