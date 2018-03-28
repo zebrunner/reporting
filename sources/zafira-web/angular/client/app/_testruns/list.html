@@ -264,9 +264,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
-                                                            <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" data-ng-click="showDetailsDialog(test, $event);">
-                                                                <md-icon class="material-icons">menu</md-icon>
-                                                            </md-button>
+
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">
@@ -289,6 +287,11 @@
 				                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" data-ng-click="showDetailsDialog(test, $event);">
+                                                                    <md-icon class="material-icons">more_horiz</md-icon>
+                                                                </md-button>
                                                             </div>
                                                         </td>
                                                     </tr>
