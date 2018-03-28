@@ -15,8 +15,28 @@
                 <div class="tab">
                     <div class="md-dialog-content">
                         <div class="row ui-section">
-                            <div class="col-md-12">
-                                <div class="col-lg-8 clearfix"> <h2 class="section-header">Test Info</h2> </div>
+                            <div class="col-lg-12">
+                                <div class="col-lg-12 align-middle">
+                                    <div class="col-lg-8 clearfix"> <h2 class="section-header">Test Info</h2> </div>
+                                    <div class="col-lg-2 edit-elements">
+                                        <div class="span-with-label input-like-label">Add Comment</div>
+                                        <div class="span-with-label">
+                                            <md-button id="showcomment" class="md-icon-button edit-button" ng-click="addCommentIsVisible = !addCommentIsVisible">
+                                                <md-tooltip md-direction="top">Add comment</md-tooltip>
+                                                <md-icon aria-label="Add comment" class="md-18">comment</md-icon>
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 edit-elements">
+                                        <div class="span-with-label input-like-label">Change Status</div>
+                                        <div class="span-with-label">
+                                            <md-button id="change" class="md-icon-button edit-button" ng-click="changeStatusIsVisible = !changeStatusIsVisible" has-any-permission="['MODIFY_TESTS']">
+                                                <md-tooltip md-direction="top">Change test status</md-tooltip>
+                                                <md-icon aria-label="Change status">edit</md-icon>
+                                            </md-button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
                                         <div class="panel-body">
@@ -25,11 +45,11 @@
                                                     <div layout="column" ng-cloak class="md-inline-form">
                                                         <div layout-padding>
                                                             <form name="testForm">
-                                                                <div layout layout-sm="column">
-                                                                    <div class="col-lg-7 align-middle">
-                                                                        <div>
-                                                                            <b name="testName">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
-                                                                        </div>
+                                                                <div layout layout-sm="column" class="upper-tab-row">
+                                                                    <div class="col-lg-7">
+                                                                        <span class="span-with-label input-like-label">Test Name</span>
+                                                                        <span class="span-with-label test-name">{{test.name}}</span>
+                                                                        <span class="badge ng-binding bug-label-bg" data-ng-if="test.blocker">BLOCKER</span>
                                                                     </div>
                                                                     <div class="col-lg-3 align-middle" >
                                                                         <md-select ng-model="test.status" class="no-margin issue-element-container" placeholder="Status" ng-if="changeStatusIsVisible">
@@ -40,43 +60,47 @@
                                                                     </div>
                                                                     <div class="col-lg-2 align-middle align-right">
                                                                         <div>
-                                                                            <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = true" has-any-permission="['MODIFY_TESTS']">
-                                                                                <md-tooltip md-direction="top">Change test status</md-tooltip>
-                                                                                <md-icon aria-label="Change status" class="md-18">edit</md-icon>
-                                                                            </md-button>
-                                                                        </div>
-                                                                        <div>
-                                                                            <a ng-class="{'label label-info label-font-size' : test.status == 'IN_PROGRESS', 'label label-success label-font-size' : test.status == 'PASSED', 'label label-danger label-font-size' : test.status == 'FAILED', 'label label-warning label-font-size' : test.status == 'SKIPPED', 'label label-default label-font-size' : test.status == 'UNKNOWN' || test.status == 'ABORTED'}">{{test.status}}</a>
+                                                                            <a ng-class="{
+                                                                            'label label-info label-font-size' : test.status == 'IN_PROGRESS',
+                                                                            'label label-success label-font-size' : test.status == 'PASSED',
+                                                                            'label label-danger label-font-size' : test.status == 'FAILED',
+                                                                            'label label-warning label-font-size' : test.status == 'SKIPPED',
+                                                                            'label label-default label-font-size' : test.status == 'UNKNOWN' || test.status == 'ABORTED'}">
+                                                                                {{test.status}}
+                                                                            </a>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div layout layout-sm="column" class="status-row">
+                                                                <div layout layout-sm="column" class="tab-row">
                                                                     <div class="col-lg-3">
-                                                                        <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                                        <span class="span-with-label input-like-label" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">Elapsed Time</span>
+                                                                        <span class="span-with-label light_text" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span id="testOwner" data-ng-if="test.owner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                        <span class="span-with-label input-like-label" data-ng-if="test.owner">Primary Owner</span>
+                                                                        <span class="span-with-label light_text" id="testOwner" data-ng-if="test.owner"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span id="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                                        <span class="span-with-label input-like-label" data-ng-if="test.secondaryOwner">Secondary Owner</span>
+                                                                        <span class="span-with-label light_text" id="secondaryOwner" data-ng-if="test.secondaryOwner"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span id="device" data-ng-if="test.testConfig.device" class="light_text"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                        <span class="span-with-label input-like-label" data-ng-if="test.testConfig.device">Device Name</span>
+                                                                        <span class="span-with-label light_text" id="device" data-ng-if="test.testConfig.device"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
-                                                                <div layout layout-sm="column"  class="no-border scrollable-stacktrace" data-ng-if="test.message" >
+                                                                <div layout layout-sm="column" class="no-border issue-trace-label tab-row" data-ng-if="test.message" >
+                                                                    <div class="input-like-label">Stacktrace</div>
+                                                                </div>
+                                                                <div layout layout-sm="column" class="no-border scrollable-stacktrace" data-ng-if="test.message" >
                                                                     <div class="col-lg-12 issue-trace-area">
-                                                                        <div class="white-space-pre-line">
-                                                                            <show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more>
-                                                                        </div>
+                                                                            <div class="white-space-pre-line">
+                                                                                <show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more>
+                                                                            </div>
                                                                     </div>
                                                                 </div>
                                                                 <md-dialog-actions layout="row">
                                                                     <md-input-container class="md-block">
-                                                                        <md-button id="showcomment" class="md-icon-button" ng-click="addCommentIsVisible = !addCommentIsVisible">
-                                                                            <md-tooltip md-direction="top">Add comment</md-tooltip>
-                                                                            <md-icon aria-label="Add comment" class="md-18">comment</md-icon>
-                                                                        </md-button>
                                                                         <md-button id="commens" class="md-icon-button comments-button"  ng-click="moveToTab(3)">
                                                                             <a class="comments-font-size" md-no-ink>Comments ({{testComments.length}})</a>
                                                                         </md-button>
@@ -137,36 +161,36 @@
                                                         <div layout-padding>
                                                             <form class="form-validation" name="known_issue_form" ng-cloak>
                                                                 <md-dialog-content>
-                                                                    <div layout layout-sm="column" class="issue-row">
+                                                                    <div layout layout-sm="column" class="tab-row">
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span input-like-label">Status</span>
+                                                                            <span class="span-with-label input-like-label">Status</span>
                                                                             <span ng-class="{
                                                                             'label label-danger' : newIssue.status == 'TO DO' || newIssue.status == 'OPEN' || newIssue.status == 'NOT ASSIGNED',
                                                                             'label label-info' : newIssue.status == 'IN PROGRESS',
                                                                             'label label-success' : newIssue.status == closedStatusName || newIssue.status == 'FIXED',
                                                                             'label label-warning' : newIssue.status == 'REOPENED',
                                                                             'label label-default' : issueStatusIsNotRecognized}"
-                                                                               class="jira-status status-span">
+                                                                               class="jira-status span-with-label">
                                                                                 <span>{{newIssue.status}}</span>
-                                                                                <span class="label label-default jira-status status-span" data-ng-hide="newIssue.status">N/A</span>
+                                                                                <span class="label label-default jira-status span-with-label" data-ng-hide="newIssue.status">N/A</span>
                                                                             </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span input-like-label">Assignee</span>
-                                                                            <span class="status-span">{{newIssue.assignee}}</span>
+                                                                            <span class="span-with-label input-like-label">Assignee</span>
+                                                                            <span class="span-with-label">{{newIssue.assignee}}</span>
                                                                         </div>
                                                                         <div class="col-lg-4">
-                                                                            <span class="status-span input-like-label">Reporter</span>
-                                                                            <span class="status-span">{{newIssue.reporter}}</span>
+                                                                            <span class="span-with-label input-like-label">Reporter</span>
+                                                                            <span class="span-with-label">{{newIssue.reporter}}</span>
                                                                         </div>
                                                                         <div class="col-lg-2">
-                                                                            <span class="status-span input-like-label">Blocker</span>
-                                                                            <span class="status-span">
+                                                                            <span class="span-with-label input-like-label">Blocker</span>
+                                                                            <span class="span-with-label">
                                                                             <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>
                                                                             </span>
                                                                         </div>
                                                                     </div>
-                                                                    <div layout layout-sm="column" class="issue-row">
+                                                                    <div layout layout-sm="column" class="tab-row">
                                                                         <div class="col-lg-3">
                                                                             <md-input-container flex class="issue-element-container">
                                                                                 <label>Jira ID</label>
@@ -185,7 +209,7 @@
                                                                             </md-input-container>
                                                                         </div>
                                                                     </div>
-                                                                    <div layout layout-sm="column" class="issue-row no-margin">
+                                                                    <div layout layout-sm="column" class="tab-row no-margin">
                                                                         <div class="callout callout-info no-margin issue-element-container" data-ng-show="!issueJiraIdExists && newIssue.jiraId">
                                                                             Issue {{newIssue.jiraId}} doesn't exist in
                                                                             Jira.
@@ -260,30 +284,30 @@
                                                         <div layout-padding>
                                                             <form class="form-validation" name="task_form" ng-cloak>
                                                                 <md-dialog-content>
-                                                                    <div layout layout-sm="column" class="issue-row">
+                                                                    <div layout layout-sm="column" class="tab-row">
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span input-like-label">Status</span>
+                                                                            <span class="span-with-label input-like-label">Status</span>
                                                                             <span ng-class="{
                                                                             'label label-danger' : newTask.status == 'TO DO' || newTask.status == 'OPEN' || newTask.status == 'NOT ASSIGNED',
                                                                             'label label-info' : newTask.status == 'IN PROGRESS',
                                                                             'label label-success' : newTask.status == closedStatusName || newTask.status == 'FIXED',
                                                                             'label label-warning' : newTask.status == 'REOPENED',
                                                                             'label label-default' : issueStatusIsNotRecognized}"
-                                                                                  class="jira-status status-span">
+                                                                                  class="jira-status span-with-label">
                                                                                 <span>{{newTask.status}}</span>
-                                                                                <span class="label label-default jira-status status-span" data-ng-hide="newTask.status">N/A</span>
+                                                                                <span class="label label-default jira-status span-with-label" data-ng-hide="newTask.status">N/A</span>
                                                                             </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
-                                                                            <span class="status-span input-like-label">Assignee</span>
-                                                                            <span class="status-span">{{newTask.assignee}}</span>
+                                                                            <span class="span-with-label input-like-label">Assignee</span>
+                                                                            <span class="span-with-label">{{newTask.assignee}}</span>
                                                                         </div>
                                                                         <div class="col-lg-4">
-                                                                            <span class="status-span input-like-label">Reporter</span>
-                                                                            <span class="status-span">{{newTask.reporter}}</span>
+                                                                            <span class="span-with-label input-like-label">Reporter</span>
+                                                                            <span class="span-with-label">{{newTask.reporter}}</span>
                                                                         </div>
                                                                     </div>
-                                                                    <div layout layout-sm="column" class="issue-row">
+                                                                    <div layout layout-sm="column" class="tab-row">
                                                                         <div class="col-lg-3">
                                                                             <md-input-container flex class="issue-element-container">
                                                                                 <label>Jira ID</label>
@@ -303,7 +327,7 @@
                                                                             </md-input-container>
                                                                         </div>
                                                                     </div>
-                                                                    <div layout layout-sm="column" class="issue-row no-margin">
+                                                                    <div layout layout-sm="column" class="tab-row no-margin">
                                                                         <div class="callout callout-info no-margin issue-element-container" data-ng-show="!taskJiraIdExists && newTask.jiraId">
                                                                             Issue {{newTask.jiraId}} doesn't exist in Jira.
                                                                         </div>

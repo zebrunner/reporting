@@ -817,7 +817,7 @@ ul.profile-image-actions {
 }
 
 .icons-font-size {
-    font-size: 18px;
+    font-size: 12px;
 }
 
 .comments-font-size {
@@ -851,7 +851,7 @@ ul.profile-image-actions {
     width: -webkit-fill-available !important;
 }
 
-.status-span {
+.span-with-label {
     float : left;
     clear: left;
 }
@@ -864,16 +864,31 @@ ul.profile-image-actions {
     font-size: 11px;
 }
 
-.issue-row {
+.tab-row {
     margin: 10px 0;
     padding: 10px 0;
 }
 
-.status-row {
-    margin: 15px 0;
+.upper-tab-row {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
 }
+
+.edit-button {
+  padding: 0 0 16px 0 !important;
+}
+
+.edit-elements {
+    display: flex;
+    justify-content: space-between;
+}
+
 .issue-trace-area {
     background: ghostwhite;
+    margin: 0 15px;
+}
+
+.issue-trace-label {
     margin: 0 15px;
 }
 
@@ -889,4 +904,8 @@ ul.profile-image-actions {
 .scrollable-stacktrace {
     max-height: 300px;
     overflow-y: scroll;
+}
+
+.test-name {
+    font-weight: bold;
 }
