@@ -123,7 +123,7 @@
                                         <h2 class="section-header">Assign Known Issue</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
-                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newKnownIssue)" ng-disabled="!isIssueFound">
+                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newIssue)" ng-disabled="!isIssueFound">
                                             <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
@@ -141,29 +141,28 @@
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Status</span>
                                                                             <span ng-class="{
-                                                                            'label label-danger' : newKnownIssue.status == 'TO DO' || newKnownIssue.status == 'OPEN' || newKnownIssue.status == 'NOT ASSIGNED',
-                                                                            'label label-info' : newKnownIssue.status == 'IN PROGRESS',
-                                                                            'label label-success' : newKnownIssue.status == closedStatusName || newKnownIssue.status == 'FIXED',
-                                                                            'label label-warning' : newKnownIssue.status == 'REOPENED' || newKnownIssue.status == 'DUBLICATE',
-                                                                            'label label-primary' : newKnownIssue.status == 'READY FOR QA',
-                                                                            'label label-default' : newKnownIssue.status == 'N/A'}"
+                                                                            'label label-danger' : newIssue.status == 'TO DO' || newIssue.status == 'OPEN' || newIssue.status == 'NOT ASSIGNED',
+                                                                            'label label-info' : newIssue.status == 'IN PROGRESS',
+                                                                            'label label-success' : newIssue.status == closedStatusName || newIssue.status == 'FIXED',
+                                                                            'label label-warning' : newIssue.status == 'REOPENED',
+                                                                            'label label-default' : issueStatusIsNotRecognized}"
                                                                                class="jira-status status-span">
-                                                                                <span>{{newKnownIssue.status}}</span>
-                                                                                <span data-ng-hide="newKnownIssue.status">N/A</span>
+                                                                                <span>{{newIssue.status}}</span>
+                                                                                <span class="label label-default jira-status status-span" data-ng-hide="newIssue.status">N/A</span>
                                                                             </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Assignee</span>
-                                                                            <span class="status-span">{{newKnownIssue.assignee}}</span>
+                                                                            <span class="status-span">{{newIssue.assignee}}</span>
                                                                         </div>
                                                                         <div class="col-lg-4">
                                                                             <span class="status-span input-like-label">Reporter</span>
-                                                                            <span class="status-span">{{newKnownIssue.reporter}}</span>
+                                                                            <span class="status-span">{{newIssue.reporter}}</span>
                                                                         </div>
                                                                         <div class="col-lg-2">
                                                                             <span class="status-span input-like-label">Blocker</span>
                                                                             <span class="status-span">
-                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newKnownIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>
+                                                                            <md-checkbox id="blocker" aria-label="Blocker checkbox" ng-model="newIssue.blocker" class="no-margin no-padding no-border"></md-checkbox>
                                                                             </span>
                                                                         </div>
                                                                     </div>
@@ -175,20 +174,21 @@
                                                                                        type="text"
                                                                                        ng-pattern="/^([A-z]+-[0-9]+|\d+)$/"
                                                                                        class="form-control validation"
-                                                                                       data-ng-model="newKnownIssue.jiraId"
+                                                                                       data-ng-model="newIssue.jiraId"
                                                                                        data-ng-change="initIssueSearch()" required placeholder="{{ isConnectedToJira ? 'Connected' : 'Not connected'}} to JIRA"/>
                                                                             </md-input-container>
                                                                         </div>
                                                                         <div class="col-lg-9">
                                                                             <md-input-container flex class="issue-element-container">
                                                                                 <label>Summary</label>
-                                                                                <textarea id="issueDescription" class="form-control validation" rows="1" data-ng-model="newKnownIssue.description" required></textarea>
+                                                                                <textarea id="issueDescription" class="form-control validation" rows="1" data-ng-model="newIssue.description" required></textarea>
                                                                             </md-input-container>
                                                                         </div>
                                                                     </div>
                                                                     <div layout layout-sm="column" class="issue-row no-margin">
-                                                                        <div class="callout callout-info no-margin issue-element-container" data-ng-show="!issueJiraIdExists && newKnownIssue.jiraId">
-                                                                            Issue {{newKnownIssue.jiraId}} doesn't exist in Jira.
+                                                                        <div class="callout callout-info no-margin issue-element-container" data-ng-show="!issueJiraIdExists && newIssue.jiraId">
+                                                                            Issue {{newIssue.jiraId}} doesn't exist in
+                                                                            Jira.
                                                                         </div>
                                                                         <div class="callout callout-danger no-margin issue-element-container" data-ng-show="isIssueClosed">
                                                                             Unable to assign closed issue.
@@ -196,15 +196,15 @@
                                                                     </div>
                                                                 </md-dialog-content>
                                                                 <md-dialog-actions layout="row">
-                                                                    <md-button id="clear" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" ng-really-click="unassignIssue(newKnownIssue)"
+                                                                    <md-button id="clear" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" ng-really-click="unassignIssue(newIssue)"
                                                                                ng-disabled="known_issue_form.$invalid || !isIssueFound">
                                                                         Unassign
                                                                     </md-button>
-                                                                    <md-button id="create" ng-if="isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newKnownIssue, isNewIssue)"
+                                                                    <md-button id="create" ng-if="isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newIssue, isNewIssue)"
                                                                                ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
                                                                         Assign
                                                                     </md-button>
-                                                                    <md-button id="updateIssue" ng-if="!isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newKnownIssue, isNewIssue)"
+                                                                    <md-button id="updateIssue" ng-if="!isNewIssue" class="md-raised btn-w-md md-primary" ng-click="assignIssue(newIssue, isNewIssue)"
                                                                                ng-disabled="known_issue_form.$invalid || (!isIssueFound || isIssueClosed) && isConnectedToJira">
                                                                         Update
                                                                     </md-button>
@@ -220,8 +220,8 @@
                                 <div class="col-md-12 issues-select-padding">
                                     <md-sidemenu locked="true">
                                         <md-sidemenu-group>
-                                            <md-sidemenu-content md-heading="ATTACHED ISSUES" md-arrow="true" data-ng-hide="knownIssues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
-                                                <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in knownIssues"
+                                            <md-sidemenu-content md-heading="ATTACHED ISSUES ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
+                                                <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
                                                            ng-click="searchScopeIssue(issue);$event.stopPropagation();">
                                                     <span id="knownIssue" >
                                                         <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
@@ -328,7 +328,7 @@
                                 <div class="col-lg-12 issues-select-padding">
                                     <md-sidemenu locked="true">
                                         <md-sidemenu-group>
-                                            <md-sidemenu-content md-heading="ATTACHED TASKS" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
+                                            <md-sidemenu-content md-heading="ATTACHED TASKS ({{tasks.length}})" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
                                                 <md-button class="md-sidemenu-button tickets-font" ng-if="taskListIsVisible" ng-repeat="task in tasks"
                                                            ng-click="searchScopeTask(task); $event.stopPropagation();">
                                                     <span name="knownIssue" >

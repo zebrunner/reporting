@@ -1426,12 +1426,15 @@
         $scope.test = angular.copy(test);
         $scope.testComment = {};
         $scope.testComments = [];
-        $scope.knownIssues = [];
+        $scope.issues = [];
         $scope.tasks = [];
         $scope.currentStatus = $scope.test.status;
-        $scope.testStatuses = ["UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED"];
+        $scope.testStatuses = ['UNKNOWN', 'IN_PROGRESS', 'PASSED', 'FAILED', 'SKIPPED', 'ABORTED'];
+        $scope.ticketStatuses = ['TO DO', 'OPEN', 'NOT ASSIGNED', 'IN PROGRESS', 'FIXED', 'REOPENED', 'DUPLICATE'];
+
         $scope.selectedTabIndex = 0;
 
+        $scope.issueStatusIsNotRecognized = false;
         $scope.changeStatusIsVisible = false;
         $scope.addCommentIsVisible = false;
         $scope.taskListIsVisible = false;
@@ -1466,14 +1469,14 @@
         var updateWorkItemList = function (workItem){
             switch (workItem.type){
                 case 'BUG':
-                    var issues = $scope.knownIssues;
+                    var issues = $scope.issues;
                     for (var i = 0; i < issues.length; i++) {
                         if (issues[i].jiraId === workItem.jiraId) {
                             deleteWorkItemFromList(issues[i]);
                             break;
                         }
                     }
-                    $scope.knownIssues.push(workItem);
+                    $scope.issues.push(workItem);
                     break;
                 case 'TASK':
                     var tasks = $scope.tasks;
@@ -1493,12 +1496,12 @@
         var deleteWorkItemFromList = function (workItem){
             switch (workItem.type){
                 case 'BUG':
-                    var issueToDelete =  $scope.knownIssues.filter(function (listWorkItem) {
+                    var issueToDelete =  $scope.issues.filter(function (listWorkItem) {
                         return listWorkItem.jiraId === workItem.jiraId;
                     })[0];
-                    var issueIndex = $scope.knownIssues.indexOf(issueToDelete);
+                    var issueIndex = $scope.issues.indexOf(issueToDelete);
                     if (issueIndex !== -1) {
-                        $scope.knownIssues.splice(issueIndex, 1);
+                        $scope.issues.splice(issueIndex, 1);
                     }
                     break;
                 case 'TASK':
@@ -1550,7 +1553,7 @@
                     $scope.addTestComment($scope.testComment);
                     updateWorkItemList(rs.data);
                     initAttachedWorkItems();
-                    $scope.isNewIssue = !(jiraId === $scope.attachedKnownIssue.jiraId);
+                    $scope.isNewIssue = !(jiraId === $scope.attachedIssue.jiraId);
                     alertify.success(message);
                 }
                 else {
@@ -1650,10 +1653,10 @@
         $scope.searchScopeIssue = function (issue) {
             $scope.initIssueSearch();
             initAttachedWorkItems();
-            $scope.isNewIssue = !(issue.jiraId === $scope.attachedKnownIssue.jiraId);
-            $scope.newKnownIssue.id = issue.id;
-            $scope.newKnownIssue.jiraId = issue.jiraId;
-            $scope.newKnownIssue.description = issue.description;
+            $scope.isNewIssue = !(issue.jiraId === $scope.attachedIssue.jiraId);
+            $scope.newIssue.id = issue.id;
+            $scope.newIssue.jiraId = issue.jiraId;
+            $scope.newIssue.description = issue.description;
         };
 
         /* Starts set in the scope task search */
@@ -1671,20 +1674,20 @@
 
         $scope.initIssueSearch = function () {
             issueJiraIdInputIsChanged = true;
-            $scope.newKnownIssue.description = '';
-            $scope.newKnownIssue.id = null;
-            $scope.newKnownIssue.status = null;
-            $scope.newKnownIssue.assignee = null;
-            $scope.newKnownIssue.reporter = null;
+            $scope.newIssue.description = '';
+            $scope.newIssue.id = null;
+            $scope.newIssue.status = null;
+            $scope.newIssue.assignee = null;
+            $scope.newIssue.reporter = null;
             $scope.issueJiraIdExists = true;
             $scope.isIssueClosed = false;
             $scope.isIssueFound = false;
             $scope.isNewIssue = true;
-            var existingIssue = $scope.knownIssues.filter(function (foundIssue) {
-                return foundIssue.jiraId === $scope.newKnownIssue.jiraId;
+            var existingIssue = $scope.issues.filter(function (foundIssue) {
+                return foundIssue.jiraId === $scope.newIssue.jiraId;
             })[0];
             if(existingIssue){
-                angular.copy(existingIssue, $scope.newKnownIssue);
+                angular.copy(existingIssue, $scope.newIssue);
             }
         };
 
@@ -1714,13 +1717,13 @@
             $scope.testComments = [];
             var attachedWorkItem = {};
             attachedWorkItem.jiraId = '';
-            $scope.attachedKnownIssue = attachedWorkItem;
+            $scope.attachedIssue = attachedWorkItem;
             $scope.attachedTask = attachedWorkItem;
             var workItems = $scope.test.workItems;
             for (var i = 0; i < workItems.length; i++){
                 switch(workItems[i].type) {
                     case 'BUG':
-                        $scope.attachedKnownIssue = workItems[i];
+                        $scope.attachedIssue = workItems[i];
                         break;
                     case 'TASK':
                         $scope.attachedTask = workItems[i];
@@ -1739,6 +1742,7 @@
 
         var searchIssue = function (issue) {
             $scope.isIssueFound = false;
+            $scope.issueStatusIsNotRecognized = false;
             TestService.getJiraTicket(issue.jiraId).then(function(rs) {
                 if(rs.success) {
                     var searchResultIssue = rs.data;
@@ -1751,11 +1755,16 @@
                     }
                     $scope.issueJiraIdExists = true;
                     $scope.isIssueClosed = $scope.closedStatusName.toUpperCase() === searchResultIssue.status.name.toUpperCase();
-                    $scope.newKnownIssue.description = searchResultIssue.summary;
-                    $scope.newKnownIssue.assignee = searchResultIssue.assignee.name;
-                    $scope.newKnownIssue.reporter = searchResultIssue.reporter.name;
-                    $scope.newKnownIssue.status = searchResultIssue.status.name.toUpperCase();
-                    $scope.isNewIssue = !($scope.newKnownIssue.jiraId === $scope.attachedKnownIssue.jiraId);
+                    $scope.newIssue.description = searchResultIssue.summary;
+                    $scope.newIssue.assignee = searchResultIssue.assignee.name;
+                    $scope.newIssue.reporter = searchResultIssue.reporter.name;
+                    $scope.newIssue.status = searchResultIssue.status.name.toUpperCase();
+                    if(!$scope.ticketStatuses.filter(function (status) {
+                            return status === $scope.newIssue.status;
+                        })[0]){
+                        $scope.issueStatusIsNotRecognized = true;
+                    }
+                    $scope.isNewIssue = !($scope.newIssue.jiraId === $scope.attachedIssue.jiraId);
                     $scope.issueTabDisabled = false;
                 } else {
                     alertify.error(rs.message);
@@ -1829,9 +1838,9 @@
             } else {
                 $scope.isNewIssue = true;
             }
-            $scope.newKnownIssue = {};
-            $scope.newKnownIssue.type = "BUG";
-            $scope.newKnownIssue.testCaseId = test.testCaseId;
+            $scope.newIssue = {};
+            $scope.newIssue.type = "BUG";
+            $scope.newIssue.testCaseId = test.testCaseId;
         };
 
         /* Initializes empty task */
@@ -1852,9 +1861,9 @@
         var getIssues = function () {
             TestService.getTestCaseWorkItemsByType(test.id, 'BUG').then(function(rs) {
                 if(rs.success) {
-                    $scope.knownIssues = rs.data;
+                    $scope.issues = rs.data;
                     if(test.workItems.length && !$scope.isNewIssue) {
-                        angular.copy($scope.attachedKnownIssue, $scope.newKnownIssue);
+                        angular.copy($scope.attachedIssue, $scope.newIssue);
                     }
                 } else {
                     alertify.error(rs.message);
@@ -1893,8 +1902,8 @@
 
         var workItemSearchInterval = $interval(function () {
             if(issueJiraIdInputIsChanged){
-                if (isIssueSearchAvailable($scope.newKnownIssue.jiraId)) {
-                    searchIssue($scope.newKnownIssue);
+                if (isIssueSearchAvailable($scope.newIssue.jiraId)) {
+                    searchIssue($scope.newIssue);
                 }
             }
             if(taskJiraIdInputIsChanged){
@@ -1915,10 +1924,10 @@
 
         var issueOnModalOpenSearch = $interval(function(){
             if (angular.element(document.body).hasClass('md-dialog-is-showing')) {
-                if (!isIssueSearchAvailable($scope.newKnownIssue.jiraId)) {
+                if (!isIssueSearchAvailable($scope.newIssue.jiraId)) {
                     $scope.issueTabDisabled = false;
                 } else {
-                    searchIssue($scope.newKnownIssue);
+                    searchIssue($scope.newIssue);
                 }
                 $interval.cancel(issueOnModalOpenSearch);
             }
