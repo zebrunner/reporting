@@ -885,3 +885,8 @@ ul.profile-image-actions {
 .align-right {
     justify-content: flex-end;
 }
+
+.scrollable-stacktrace {
+    max-height: 300px;
+    overflow-y: scroll;
+}

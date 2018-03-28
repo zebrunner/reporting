@@ -1789,7 +1789,7 @@
                     $scope.newTask.description = searchResultTask.summary;
                     $scope.newTask.assignee = searchResultTask.assignee.name;
                     $scope.newTask.reporter = searchResultTask.reporter.name;
-                    $scope.newTask.status = searchResultTask.status.name;
+                    $scope.newTask.status = searchResultTask.status.name.toUpperCase();
                     $scope.isNewTask = !($scope.newTask.jiraId === $scope.attachedTask.jiraId);
                     $scope.taskTabDisabled = false;
                 } else {

@@ -64,7 +64,7 @@
                                                                         <span id="device" data-ng-if="test.testConfig.device" class="light_text"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
-                                                                <div layout layout-sm="column"  class="no-border" data-ng-if="test.message" >
+                                                                <div layout layout-sm="column"  class="no-border scrollable-stacktrace" data-ng-if="test.message" >
                                                                     <div class="col-lg-12 issue-trace-area">
                                                                         <div class="white-space-pre-line">
                                                                             <show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more>
@@ -263,10 +263,16 @@
                                                                     <div layout layout-sm="column" class="issue-row">
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Status</span>
-                                                                            <span ng-class="(newTask.status == 'Done' || !newTask.status)? 'label label-default' : 'label label-danger'" class="jira-status status-span">
-                                                                                    <span>{{newTask.status}}</span>
-                                                                                    <span data-ng-hide="newTask.status">N/A</span>
-                                                                                </span>
+                                                                            <span ng-class="{
+                                                                            'label label-danger' : newTask.status == 'TO DO' || newTask.status == 'OPEN' || newTask.status == 'NOT ASSIGNED',
+                                                                            'label label-info' : newTask.status == 'IN PROGRESS',
+                                                                            'label label-success' : newTask.status == closedStatusName || newTask.status == 'FIXED',
+                                                                            'label label-warning' : newTask.status == 'REOPENED',
+                                                                            'label label-default' : issueStatusIsNotRecognized}"
+                                                                                  class="jira-status status-span">
+                                                                                <span>{{newTask.status}}</span>
+                                                                                <span class="label label-default jira-status status-span" data-ng-hide="newTask.status">N/A</span>
+                                                                            </span>
                                                                         </div>
                                                                         <div class="col-lg-3">
                                                                             <span class="status-span input-like-label">Assignee</span>
