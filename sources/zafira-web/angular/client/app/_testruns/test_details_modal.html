@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
-                                        <div class="panel-body">
+                                        <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
@@ -154,7 +154,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
-                                        <div class="panel-body">
+                                        <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
@@ -241,8 +241,8 @@
                                         </div>
                                     </section>
                                 </div>
-                                <div class="col-md-12 issues-select-padding">
-                                    <md-sidemenu locked="true">
+                                <div class="col-md-12 issues-select-padding" >
+                                    <md-sidemenu locked="true" >
                                         <md-sidemenu-group>
                                             <md-sidemenu-content md-heading="ATTACHED ISSUES ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
                                                 <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
@@ -277,7 +277,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
-                                        <div class="panel-body">
+                                        <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
@@ -380,18 +380,13 @@
                         <div class="row ui-section">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
-                                    <div class="col-lg-11 clearfix">
+                                    <div class="col-lg-12 clearfix">
                                         <h2 class="section-header">Comments History</h2>
-                                    </div>
-                                    <div class="col-lg-1 clearfix align-middle">
-                                        <md-button id="back_from_comments" class="md-icon-button" ng-click="moveToTab(0)">
-                                            <md-icon class="md-18">keyboard_backspace</md-icon>
-                                        </md-button>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
-                                        <div class="panel-body">
+                                        <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
