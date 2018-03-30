@@ -63,9 +63,13 @@
                             if($rootScope.currentUser.defaultDashboardId === null) {
                                 alertify.warning("Default Dashboard is unavailable!");
                             }
+                            $rootScope.currentUser.userPefrDashboardId = rs.data["userPerformanceDashboardId"];
+                            if($rootScope.currentUser.userPefrDashboardId === null) {
+                                alertify.error("'User Performance' dashboard is unavailable!");
+                            }
                             $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
                             if($rootScope.currentUser.pefrDashboardId === null) {
-                                alertify.error("'User Performance' dashboard is unavailable!");
+                                alertify.error("'Performance' dashboard is unavailable!");
                             }
                             $rootScope.currentUser.personalDashboardId = rs.data["personalDashboardId"];
                             if($rootScope.currentUser.personalDashboardId === null) {

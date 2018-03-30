@@ -73,9 +73,9 @@
                                             <md-button name="testCaseMenu" aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                 <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
-                                            <md-menu-content width="2">
+                                            <md-menu-content width="2" class="fixed-md-menu-content">
                                                 <md-menu-item>
-                                                    <md-button name="performance" data-ng-click="">
+                                                    <md-button name="performance" ng-click="goToPerformanceDashboard(testcase.id);">
                                                         <md-icon class="material-icons">timeline</md-icon>
                                                         Performance
                                                     </md-button>
