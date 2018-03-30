@@ -1,0 +1,65 @@
+DO $$
+
+DECLARE test_performance_dashboard_id zafira.DASHBOARDS.id%TYPE;
+
+DECLARE test_case_last_30_performance_id zafira.WIDGETS.id%TYPE;
+DECLARE test_case_last_30_performance_sql zafira.WIDGETS.sql%TYPE;
+DECLARE test_case_last_30_performance_model zafira.WIDGETS.model%TYPE;
+
+BEGIN
+
+INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Performance', TRUE, 9) RETURNING id INTO test_performance_dashboard_id;
+
+	test_case_last_30_performance_sql :=
+	'set schema ''zafira'';
+	SELECT
+		TEST_CONFIGS.ENV || ''-'' || TEST_CONFIGS.DEVICE AS env,
+									TEST_METRICS.OPERATION,
+									TEST_METRICS.ELAPSED AS "ELAPSED",
+									TEST_METRICS.CREATED_AT AS "CREATED_AT"
+	FROM
+		TEST_METRICS
+	INNER JOIN
+		TESTS ON TEST_METRICS.TEST_ID = TESTS.ID INNER JOIN
+		TEST_CONFIGS ON TEST_CONFIGS.ID = TESTS.TEST_CONFIG_ID
+	WHERE
+		TESTS.TEST_CASE_ID = #{test_case_id}
+	AND
+		TESTS.CREATED_AT >= date_trunc("month", CURRENT_TIMESTAMP - interval "1 month")
+	ORDER BY
+		env, "CREATED_AT"';
+
+	test_case_last_30_performance_model :=
+    	'{  
+   		"series":[  
+      		{  
+         		"axis":"y",
+         		"dataset":"dataset",
+         		"key":"ELAPSED",
+         		"label":"ELAPSED",
+         		"color":"#5cb85c",
+         		"thickness":"10px",
+         		"type":[  
+            		"line",
+            		"dot"
+         		],
+         		"id":"ELAPSED"
+      		}
+   		],
+   		"axes":{  
+      		"x":{  
+         		"key":"CREATED_AT",
+         		"type":"int",
+         		"ticks":"functions(value) {return \"wow!\"}"
+      		}
+   		}
+	}';
+
+	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+    	('TEST PERFORMANCE (LAST 30 DAYS)', 'linechart', test_case_last_30_performance_sql, test_case_last_30_performance_model)
+	RETURNING id INTO test_case_last_30_performance_id;
+
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+    	(test_performance_dashboard_id, test_case_last_30_performance_id, '{"x": 0, "y": 0, "height": 11, "width": 4}');
+		
+END$$;

@@ -108,8 +108,9 @@ public class UsersAPIController extends AbstractController
 		userType.setPermissions(user.getPermissions());
 		extendedUserProfile.put("user", userType);
 		dashboardService.setDefaultDashboard(extendedUserProfile, "", "defaultDashboardId");
-		dashboardService.setDefaultDashboard(extendedUserProfile, "User Performance", "performanceDashboardId");
+		dashboardService.setDefaultDashboard(extendedUserProfile, "User Performance", "userPerformanceDashboardId");
 		dashboardService.setDefaultDashboard(extendedUserProfile, "Personal", "personalDashboardId");
+		dashboardService.setDefaultDashboard(extendedUserProfile, "Performance dashboard", "performanceDashboardId");
 		return extendedUserProfile;
 	}
 
