@@ -851,7 +851,7 @@ ul.profile-image-actions {
     width: -webkit-fill-available !important;
 }
 
-.span-with-label {
+.elment-with-label {
     float : left;
     clear: left;
 }
@@ -864,6 +864,11 @@ ul.profile-image-actions {
     font-size: 11px;
 }
 
+.edit-label {
+    color: rgba(0,0,0,0.54);
+    font-weight: bold;
+    font-size: 11px;
+}
 .tab-row {
     margin: 10px 0;
     padding: 10px 0;
@@ -872,10 +877,6 @@ ul.profile-image-actions {
 .upper-tab-row {
     margin-bottom: 15px;
     padding-bottom: 15px;
-}
-
-.edit-button {
-  padding: 0 0 16px 0 !important;
 }
 
 .edit-elements {

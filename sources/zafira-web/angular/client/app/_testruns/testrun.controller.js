@@ -1551,6 +1551,7 @@
                     }
                     $scope.testComment.description = message;
                     $scope.addTestComment($scope.testComment);
+                    $scope.newIssue.id = rs.data.id;
                     updateWorkItemList(rs.data);
                     initAttachedWorkItems();
                     $scope.isNewIssue = !(jiraId === $scope.attachedIssue.jiraId);
@@ -1582,6 +1583,7 @@
                     }
                     $scope.testComment.description = message;
                     $scope.addTestComment($scope.testComment);
+                    $scope.newTask.id = rs.data.id;
                     updateWorkItemList(rs.data);
                     initAttachedWorkItems();
                     $scope.isNewTask = !(jiraId === $scope.attachedTask.jiraId);
