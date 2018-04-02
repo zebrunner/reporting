@@ -806,7 +806,7 @@ ul.profile-image-actions {
 /* Test details modal */
 
 .test-details-dialog {
-    min-height: 800px !important;
+    min-height: 710px !important;
 }
 
 .label-font-size {
@@ -901,12 +901,12 @@ ul.profile-image-actions {
 }
 
 .scrollable-tab {
-    max-height: 300px;
+    max-height: 185px;
     overflow-y: auto;
 }
 
-.scrollable-ticket-tab {
-    max-height: 400px;
+.scrollable-comments {
+    max-height: 280px;
     overflow-y: auto;
 }
 
@@ -924,4 +924,8 @@ ul.profile-image-actions {
 
 .modal-min-width {
     min-width: 920px;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0;
 }

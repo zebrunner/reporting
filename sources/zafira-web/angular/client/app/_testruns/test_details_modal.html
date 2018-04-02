@@ -14,7 +14,7 @@
             <md-tab label="Status">
                 <div class="tab">
                     <div class="md-dialog-content">
-                        <div class="row ui-section">
+                        <div class="row ui-section no-margin-bottom">
                             <div class="col-lg-12">
                                 <div class="col-lg-12 align-middle">
                                     <div class="col-lg-12 clearfix"> <h2 class="section-header">Test info</h2> </div>
@@ -113,7 +113,7 @@
             <md-tab label="Issues" ng-disabled="issueTabDisabled">
                 <div class="tab">
                     <div class="md-dialog-content">
-                        <div class="row ui-section">
+                        <div class="row ui-section no-margin-bottom">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-10 clearfix">
@@ -130,7 +130,7 @@
                                         <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <div layout="column" ng-cloak class="md-inline-form scrollable-ticket-tab">
+                                                    <div layout="column" ng-cloak class="md-inline-form">
                                                         <div layout-padding>
                                                             <form class="form-validation" name="known_issue_form" ng-cloak>
                                                                 <md-dialog-content>
@@ -192,6 +192,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </md-dialog-content>
+
                                                                 <md-dialog-actions layout="row">
                                                                     <md-button id="unassignIssue" ng-if="!isNewIssue" class="md-raised btn-w-md md-warn" ng-really-message="Do you really want to delete known issue from current test run?" ng-really-click="unassignIssue(newIssue)"
                                                                                ng-disabled="known_issue_form.$invalid">
@@ -207,26 +208,26 @@
                                                                     </md-button>
                                                                 </md-dialog-actions>
                                                             </form>
+                                                            <div class="col-md-12 issues-select-padding" >
+                                                                <md-sidemenu locked="true" >
+                                                                    <md-sidemenu-group>
+                                                                        <md-sidemenu-content md-heading="ATTACHED ISSUES ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
+                                                                            <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
+                                                                                       ng-click="searchScopeIssue(issue);$event.stopPropagation();">
+                                                    <span id="knownIssue" >
+                                                        <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
+                                                    </span>
+                                                                            </md-button>
+                                                                        </md-sidemenu-content>
+                                                                    </md-sidemenu-group>
+                                                                </md-sidemenu>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </section>
-                                </div>
-                                <div class="col-md-12 issues-select-padding" >
-                                    <md-sidemenu locked="true" >
-                                        <md-sidemenu-group>
-                                            <md-sidemenu-content md-heading="ATTACHED ISSUES ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
-                                                <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
-                                                           ng-click="searchScopeIssue(issue);$event.stopPropagation();">
-                                                    <span id="knownIssue" >
-                                                        <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
-                                                    </span>
-                                                </md-button>
-                                            </md-sidemenu-content>
-                                        </md-sidemenu-group>
-                                    </md-sidemenu>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +237,7 @@
             <md-tab label="Tasks" ng-disabled="taskTabDisabled">
                 <div class="tab">
                     <div class="md-dialog-content">
-                        <div class="row ui-section">
+                        <div class="row ui-section no-margin-bottom">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-10 clearfix">
@@ -253,7 +254,7 @@
                                         <div class="panel-body" zafira-background-theme="modal">
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <div layout="column" ng-cloak class="md-inline-form scrollable-ticket-tab">
+                                                    <div layout="column" ng-cloak class="md-inline-form">
                                                         <div layout-padding>
                                                             <form class="form-validation" name="task_form" ng-cloak>
                                                                 <md-dialog-content>
@@ -350,7 +351,7 @@
             <md-tab label="Comments" ng-disabled="testComments.length == 0">
                 <div class="tab">
                     <div class="md-dialog-content">
-                        <div class="row ui-section">
+                        <div class="row ui-section no-margin-bottom">
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-12 clearfix">
@@ -363,7 +364,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
-                                                        <div layout-padding class="scrollable-tab">
+                                                        <div layout-padding class="scrollable-comments">
                                                             <table md-table zafira-background-theme="table">
                                                                 <thead md-head>
                                                                 <tr md-row>
@@ -385,7 +386,7 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody md-body >
-                                                                <tr md-row ng-repeat="testComment in testComments | orderBy: 'createdAt':true">
+                                                                <tr md-row ng-repeat="testComment in testComments | orderBy: '-createdAt':true ">
                                                                     <td id="testCommentText" md-cell class="comments-table-body"><b>{{testComment.description}}</b></td>
                                                                     <td id="testCommentAuthor" md-cell class="comments-table-body">{{testComment.user.username}}</td>
                                                                     <td id="testCommentDate" md-cell class="comments-table-body">{{testComment.createdAt | date : "medium"}}</td>
@@ -403,7 +404,7 @@
                                                                                 <div layout layout-sm="column">
                                                                                     <md-input-container flex >
                                                                                         <label>Your comment</label>
-                                                                                        <textarea required id="comment" name="comment" rows=8 class="textarea_border" data-ng-model="testComment.description"></textarea>
+                                                                                        <textarea required id="comment" name="comment" rows=3 class="textarea_border no-margin-bottom" data-ng-model="testComment.description"></textarea>
                                                                                     </md-input-container>
                                                                                 </div>
                                                                             </md-dialog-content>
@@ -432,7 +433,7 @@
             <!--<md-tab label="TestRail">-->
             <!--<div class="tab">-->
             <!--<div class="md-dialog-content">-->
-            <!--<div class="row ui-section">-->
+            <!--<div class="row ui-section no-margin-bottom">-->
             <!--<div class="col-md-12">-->
             <!--<div class="col-lg-8 clearfix"> <h2 class="section-header">TestRail</h2> </div>-->
             <!--<div class="col-md-12">-->

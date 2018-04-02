@@ -812,7 +812,8 @@
                     test: test,
                     isNewIssue: $scope.isNewIssue,
                     isNewTask: $scope.isNewTask,
-                    isConnectedToJira: $rootScope.tools['JIRA']
+                    isConnectedToJira: $rootScope.tools['JIRA'],
+                    isJiraEnabled: $rootScope.jira.enabled
                 }
             })
                 .then(function(answer) {
@@ -1407,7 +1408,7 @@
         })();
     }
 
-    function DetailsController($scope, $mdDialog, $interval,  SettingsService, TestService, test, isNewIssue, isNewTask, isConnectedToJira) {
+    function DetailsController($scope, $rootScope, $mdDialog, $interval,  SettingsService, TestService, test, isNewIssue, isNewTask, isConnectedToJira, isJiraEnabled) {
 
         $scope.jiraId;
         $scope.isConnectedToJira = false;
@@ -1538,6 +1539,9 @@
         /* Assigns issue to the test */
 
         $scope.assignIssue = function (issue) {
+            if(!issue.testCaseId){
+                issue.testCaseId = test.testCaseId;
+            }
             TestService.createTestWorkItem(test.id, issue).then(function(rs) {
                 var workItemType = issue.type;
                 var jiraId = issue.jiraId;
@@ -1570,6 +1574,9 @@
         /* Assigns task to the test */
 
         $scope.assignTask = function (task) {
+            if(!task.testCaseId){
+                task.testCaseId = test.testCaseId;
+            }
             TestService.createTestWorkItem(test.id, task).then(function(rs) {
                 var workItemType = task.type;
                 var jiraId = task.jiraId;
@@ -1802,32 +1809,28 @@
         /*  Checks whether conditions for issue search in Jira are fulfilled */
 
         var isIssueSearchAvailable = function (jiraId) {
-            if ($scope.isConnectedToJira){
-                if (jiraId) {
-                    if ($scope.issueTabDisabled || issueJiraIdInputIsChanged) {
-                        issueJiraIdInputIsChanged = false;
-                        return true;
-                    }
-                } else {
-                    $scope.isIssueFound = true;
-                    return false;
+            if ($scope.isConnectedToJira && jiraId){
+                if ($scope.issueTabDisabled || issueJiraIdInputIsChanged) {
+                    issueJiraIdInputIsChanged = false;
+                    return true;
                 }
+            } else {
+                $scope.isIssueFound = true;
+                return false;
             }
         };
 
         /*  Checks whether conditions for task search in Jira are fulfilled */
 
         var isTaskSearchAvailable = function (jiraId) {
-            if ($scope.isConnectedToJira){
-                if (jiraId) {
-                    if ($scope.taskTabDisabled || taskJiraIdInputIsChanged) {
-                        taskJiraIdInputIsChanged = false;
-                        return true;
-                    }
-                } else {
-                    $scope.isTaskFound = true;
-                    return false;
+            if ($scope.isConnectedToJira && jiraId){
+                if ($scope.taskTabDisabled || taskJiraIdInputIsChanged) {
+                    taskJiraIdInputIsChanged = false;
+                    return true;
                 }
+            } else {
+                $scope.isTaskFound = true;
+                return false;
             }
         };
 
@@ -1981,7 +1984,9 @@
         };
 
         (function initController() {
-            $scope.isConnectedToJira = isConnectedToJira;
+            if(JSON.parse(isJiraEnabled)){
+                $scope.isConnectedToJira = isConnectedToJira;
+            }
             getJiraClosedStatusName();
             initAttachedWorkItems();
             initNewIssue(true);
