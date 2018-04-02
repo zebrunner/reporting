@@ -1436,7 +1436,6 @@
 
         $scope.issueStatusIsNotRecognized = false;
         $scope.changeStatusIsVisible = false;
-        $scope.addCommentIsVisible = false;
         $scope.taskListIsVisible = false;
         $scope.issueListIsVisible = false;
 
@@ -1960,7 +1959,6 @@
                 if(rs.success) {
                     $scope.testComments.push(rs.data);
                     $scope.testComment = {};
-                    $scope.addCommentIsVisible = false;
                 } else {
                     $scope.testComment = {};
                     alertify.error('Failed to create comment for test "' + test.id);

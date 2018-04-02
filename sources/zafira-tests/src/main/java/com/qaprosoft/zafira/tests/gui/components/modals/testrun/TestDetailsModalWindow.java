@@ -12,16 +12,16 @@ public class TestDetailsModalWindow extends AbstractModalWindow
 	@FindBy(xpath = ".//md-progress-linear")
 	private WebElement progressLinear;
 
-	@FindBy(xpath = ".//h2[contains(text(), 'Test Info')]")
+	@FindBy(xpath = ".//h2[contains(text(), 'Test info')]")
 	private WebElement statusTabHeading;
 
-	@FindBy(xpath = ".//h2[contains(text(), 'Assign Known Issue')]")
+	@FindBy(xpath = ".//h2[contains(text(), 'Assign known issue')]")
 	private WebElement issuesTabHeading;
 
-	@FindBy(xpath = ".//h2[contains(text(), 'Assign Task')]")
+	@FindBy(xpath = ".//h2[contains(text(), 'Assign task')]")
 	private WebElement tasksTabHeading;
 
-	@FindBy(xpath = ".//h2[contains(text(), 'Comments History')]")
+	@FindBy(xpath = ".//h2[contains(text(), 'Comments history')]")
 	private WebElement commentsTabHeading;
 
 	@FindBy(xpath = ".//md-tab-item[contains(text(), 'Status')]")

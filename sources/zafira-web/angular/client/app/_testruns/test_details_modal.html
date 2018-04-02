@@ -1,7 +1,7 @@
-<md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal" class="modal-width">
+<md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal">
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2 id="modalTitle">Test Details</h2>
+            <h2 id="modalTitle">Test details</h2>
             <span flex></span>
             <md-button id="close" class="md-icon-button" ng-click="cancel()">
                 <md-icon aria-label="Close dialog">close</md-icon>
@@ -17,23 +17,7 @@
                         <div class="row ui-section">
                             <div class="col-lg-12">
                                 <div class="col-lg-12 align-middle">
-                                    <div class="col-lg-8 clearfix"> <h2 class="section-header">Test Info</h2> </div>
-                                    <div class="col-lg-2 edit-elements">
-                                        <div class="edit-label align-middle">Add Comment</div>
-                                        <div>
-                                            <md-button id="showcomment" class="md-icon-button edit-button" ng-click="addCommentIsVisible = !addCommentIsVisible">
-                                                <md-icon aria-label="Add comment" class="md-18">comment</md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 edit-elements">
-                                        <div class="edit-label align-middle">Change Status</div>
-                                        <div>
-                                            <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = !changeStatusIsVisible" has-any-permission="['MODIFY_TESTS']">
-                                                <md-icon aria-label="Change status">edit</md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
+                                    <div class="col-lg-12 clearfix"> <h2 class="section-header">Test info</h2> </div>
                                 </div>
                                 <div class="col-md-12">
                                     <section class="panel panel-default">
@@ -44,8 +28,8 @@
                                                         <div layout-padding>
                                                             <form name="testForm">
                                                                 <div layout layout-sm="column" class="upper-tab-row">
-                                                                    <div class="col-lg-7">
-                                                                        <span class="elment-with-label input-like-label">Test Name</span>
+                                                                    <div class="col-lg-6">
+                                                                        <span class="elment-with-label input-like-label">Test name</span>
                                                                         <span class="elment-with-label test-name">{{test.name}}</span>
                                                                         <span class="badge ng-binding bug-label-bg" data-ng-if="test.blocker">BLOCKER</span>
                                                                     </div>
@@ -56,7 +40,13 @@
                                                                             </md-option>
                                                                         </md-select>
                                                                     </div>
-                                                                    <div class="col-lg-2 align-middle align-right">
+                                                                    <div class="col-lg-3 align-middle align-right">
+                                                                        <div class="edit-label align-middle">Change status</div>
+                                                                        <div>
+                                                                            <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = !changeStatusIsVisible" has-any-permission="['MODIFY_TESTS']">
+                                                                                <md-icon aria-label="Change status">edit</md-icon>
+                                                                            </md-button>
+                                                                        </div>
                                                                         <div>
                                                                             <a ng-class="{
                                                                             'label label-info label-font-size' : test.status == 'IN_PROGRESS',
@@ -71,26 +61,26 @@
                                                                 </div>
                                                                 <div layout layout-sm="column" class="tab-row">
                                                                     <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">Elapsed Time</span>
+                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">Elapsed time</span>
                                                                         <span class="elment-with-label light_text" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.owner">Primary Owner</span>
+                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.owner">Primary owner</span>
                                                                         <span class="elment-with-label light_text" id="testOwner" data-ng-if="test.owner"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.secondaryOwner">Secondary Owner</span>
+                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.secondaryOwner">Secondary owner</span>
                                                                         <span class="elment-with-label light_text" id="secondaryOwner" data-ng-if="test.secondaryOwner"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                     </div>
                                                                     <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.testConfig.device">Device Name</span>
+                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.testConfig.device">Device name</span>
                                                                         <span class="elment-with-label light_text" id="device" data-ng-if="test.testConfig.device"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column" class="no-border issue-trace-label tab-row" data-ng-if="test.message" >
                                                                     <div class="input-like-label">Stacktrace</div>
                                                                 </div>
-                                                                <div layout layout-sm="column" class="no-border scrollable-stacktrace" data-ng-if="test.message" >
+                                                                <div layout layout-sm="column" class="no-border scrollable-tab" data-ng-if="test.message" >
                                                                     <div class="col-lg-12 issue-trace-area">
                                                                             <div class="white-space-pre-line">
                                                                                 <show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more>
@@ -106,21 +96,6 @@
                                                                             Save
                                                                         </md-button>
                                                                     </md-input-container>
-                                                                </md-dialog-actions>
-                                                            </form>
-                                                            <form class="form-validation" name="comments_form" ng-submit="UtilService.untouchForm(comments_form)" ng-cloak data-ng-if="addCommentIsVisible">
-                                                                <md-dialog-content>
-                                                                    <div layout layout-sm="column">
-                                                                        <md-input-container flex >
-                                                                            <label>Your comment</label>
-                                                                            <textarea required id="comment" name="comment" rows=10 class="textarea_border" data-ng-model="testComment.description"></textarea>
-                                                                        </md-input-container>
-                                                                    </div>
-                                                                </md-dialog-content>
-                                                                <md-dialog-actions layout="row">
-                                                                    <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="addTestComment(testComment)" ng-disabled="comments_form.$invalid">
-                                                                        Add comment
-                                                                    </md-button>
                                                                 </md-dialog-actions>
                                                             </form>
                                                         </div>
@@ -142,7 +117,7 @@
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-10 clearfix">
-                                        <h2 class="section-header">Assign Known Issue</h2>
+                                        <h2 class="section-header">Assign known issue</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
                                         <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newIssue)" ng-disabled="!isIssueFound">
@@ -265,7 +240,7 @@
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-10 clearfix">
-                                        <h2 class="section-header">Assign Task</h2>
+                                        <h2 class="section-header">Assign task</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
                                         <md-button id="refresh_task" class="md-icon-button" ng-click="initTaskSearch()" ng-disabled="!isTaskFound">
@@ -379,7 +354,7 @@
                             <div class="col-md-12">
                                 <div layout layout-sm="row">
                                     <div class="col-lg-12 clearfix">
-                                        <h2 class="section-header">Comments History</h2>
+                                        <h2 class="section-header">Comments ({{testComments.length}})</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -388,7 +363,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div layout="column" ng-cloak class="md-inline-form">
-                                                        <div layout-padding>
+                                                        <div layout-padding class="scrollable-tab">
                                                             <table md-table zafira-background-theme="table">
                                                                 <thead md-head>
                                                                 <tr md-row>
@@ -418,6 +393,31 @@
                                                                 </tbody>
                                                             </table>
                                                         </div>
+                                                        <div layout-padding>
+                                                            <table md-table zafira-background-theme="table">
+                                                                <tbody md-body >
+                                                                <tr md-row>
+                                                                    <td id="commentForm" md-cell class="comments-table-body">
+                                                                        <form class="form-validation" name="comments_form" ng-submit="UtilService.untouchForm(comments_form)" ng-cloak>
+                                                                            <md-dialog-content>
+                                                                                <div layout layout-sm="column">
+                                                                                    <md-input-container flex >
+                                                                                        <label>Your comment</label>
+                                                                                        <textarea required id="comment" name="comment" rows=7 class="textarea_border" data-ng-model="testComment.description"></textarea>
+                                                                                    </md-input-container>
+                                                                                </div>
+                                                                            </md-dialog-content>
+                                                                            <md-dialog-actions layout="row">
+                                                                                <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="addTestComment(testComment)" ng-disabled="comments_form.$invalid">
+                                                                                    Add comment
+                                                                                </md-button>
+                                                                            </md-dialog-actions>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -429,33 +429,6 @@
                     </div>
                 </div>
             </md-tab>
-            <!--<md-tab label="Artifacts">-->
-            <!--<div class="tab">-->
-            <!--<div class="md-dialog-content">-->
-            <!--<div class="row ui-section" >-->
-            <!--<div class="col-md-12">-->
-            <!--<div class="col-lg-8 clearfix"> <h2 class="section-header">Artifacts</h2> </div>-->
-            <!--<div class="col-md-12">-->
-            <!--<section class="panel panel-default">-->
-            <!--<div class="panel-body">-->
-            <!--<div class="row">-->
-            <!--<div class="col-lg-12">-->
-            <!--<div layout="column" ng-cloak class="md-inline-form">-->
-            <!--<div layout-padding>-->
-            <!--<div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</section>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</md-tab>-->
             <!--<md-tab label="TestRail">-->
             <!--<div class="tab">-->
             <!--<div class="md-dialog-content">-->

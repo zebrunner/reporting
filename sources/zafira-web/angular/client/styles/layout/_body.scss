@@ -804,12 +804,13 @@ ul.profile-image-actions {
 }
 
 /* Test details modal */
+
 .test-details-dialog {
-    min-height: 650px !important;
+    min-height: 770px !important;
 }
 
 .comment-text-area {
-    min-height: 280px !important;
+    min-height: 210px !important;
 }
 
 .label-font-size {
@@ -885,6 +886,7 @@ ul.profile-image-actions {
 }
 
 .issue-trace-area {
+    height: 100%;
     background: ghostwhite;
     margin: 0 15px;
 }
@@ -902,15 +904,15 @@ ul.profile-image-actions {
     justify-content: flex-end;
 }
 
-.scrollable-stacktrace {
+.scrollable-tab {
     max-height: 300px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .test-name {
     font-weight: bold;
 }
 
-.modal-width {
-    min-width: 850px !important;
+.outer-border {
+    border: 1px solid #ddd;
 }
