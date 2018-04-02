@@ -1684,7 +1684,7 @@
             issueJiraIdInputIsChanged = true;
             $scope.newIssue.description = '';
             $scope.newIssue.id = null;
-            $scope.newIssue.status = 'N/A';
+            $scope.newIssue.status = null;
             $scope.newIssue.assignee = null;
             $scope.newIssue.reporter = null;
             $scope.issueJiraIdExists = true;
@@ -1705,7 +1705,7 @@
             taskJiraIdInputIsChanged = true;
             $scope.newTask.description = '';
             $scope.newTask.id = null;
-            $scope.newTask.status = 'N/A';
+            $scope.newTask.status = null;
             $scope.newTask.assignee = null;
             $scope.newTask.reporter = null;
             $scope.taskJiraIdExists = true;
