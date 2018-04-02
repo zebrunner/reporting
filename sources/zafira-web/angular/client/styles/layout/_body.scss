@@ -905,6 +905,11 @@ ul.profile-image-actions {
     overflow-y: auto;
 }
 
+.scrollable-ticket-tab {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
 .test-name {
     font-weight: bold;
 }
