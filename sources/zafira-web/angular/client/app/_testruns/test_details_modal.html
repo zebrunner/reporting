@@ -120,7 +120,7 @@
                                         <h2 class="section-header">Assign known issue</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
-                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newIssue)" ng-disabled="!isIssueFound">
+                                        <md-button id="refresh_issue" class="md-icon-button" ng-click="searchScopeIssue(newIssue)" ng-disabled="!isConnectedToJira || !isIssueFound">
                                             <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
@@ -243,7 +243,7 @@
                                         <h2 class="section-header">Assign task</h2>
                                     </div>
                                     <div class="col-lg-2 clearfix align-middle align-right">
-                                        <md-button id="refresh_task" class="md-icon-button" ng-click="initTaskSearch()" ng-disabled="!isTaskFound">
+                                        <md-button id="refresh_task" class="md-icon-button" ng-click="searchScopeTask(newTask)" ng-disabled="!isConnectedToJira || !isTaskFound">
                                             <md-icon aria-label="Add comment" class="md-18">cached</md-icon>
                                         </md-button>
                                     </div>
