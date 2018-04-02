@@ -21,7 +21,7 @@ public class TestDetailsModalWindow extends AbstractModalWindow
 	@FindBy(xpath = ".//h2[contains(text(), 'Assign task')]")
 	private WebElement tasksTabHeading;
 
-	@FindBy(xpath = ".//h2[contains(text(), 'Comments history')]")
+	@FindBy(xpath = ".//h2[contains(text(), 'Comments')]")
 	private WebElement commentsTabHeading;
 
 	@FindBy(xpath = ".//md-tab-item[contains(text(), 'Status')]")

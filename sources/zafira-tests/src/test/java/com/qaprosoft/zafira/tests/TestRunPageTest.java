@@ -393,21 +393,10 @@ public class TestRunPageTest extends AbstractTest
 		testRunAPIService.createTestRun(testRunTypeBuilder,  0, 1, 0, 0, 0, 200);
 		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
 		TestRow testRow = testTable.getTestRows().get(0);
-		Assert.assertTrue(testTable.isElementPresent(testRow.getOpenTestDetailsModalButton(), 1), "Mark as known issue link is not present");
+		Assert.assertTrue(testTable.isElementPresent(testRow.getOpenTestDetailsModalButton(), 1), "Details modal button is not present");
 		TestDetailsModalWindow testDetailsModalWindow = testRow.clickOpenTestDetailsModalButton();
-		Assert.assertEquals(testDetailsModalWindow.getHeaderText(), "Test Details", "Details modal is not opened");
+		Assert.assertEquals(testDetailsModalWindow.getHeaderText(), "Test details", "Details modal is not opened");
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getStatusTabHeading(), 1), "Status tab is not opened");
-		testDetailsModalWindow.clickCommentButton();
-		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getCommentTextArea(), 1), "Textarea is not visible");
-		int startCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsListButton().getText());
-		if(startCommentsCount == 0){
-			Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()));
-		}
-		testDetailsModalWindow.typeComment("Text");
-		testDetailsModalWindow.clickAddCommentButton();
-		int afterCommentActionCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsListButton().getText());
-		Assert.assertTrue((afterCommentActionCommentsCount - startCommentsCount) == 1);
-		Assert.assertFalse(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getCommentTextArea(), 1), "Textarea is not hidden");
 		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
 		Assert.assertFalse(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getChangeStatusSelect(), 1), "Change status select is visible");
 		testDetailsModalWindow.clickEditButton();
@@ -425,8 +414,8 @@ public class TestRunPageTest extends AbstractTest
 			}
 		}
 		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
-		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()), "Comments tab is disabled");
 		testDetailsModalWindow.getChangeStatusSelect().click();
+		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
 		for (WebElement webElement : webElements){
 			if(!webElement.getText().equals(currentStatus)){
 				webElement.click();
@@ -436,6 +425,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is disabled");
 		testDetailsModalWindow.clickSaveButton();
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2));
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()), "Comments tab is disabled");
 
 		/* ISSUES */
 
@@ -534,7 +524,21 @@ public class TestRunPageTest extends AbstractTest
 		testDetailsModalWindow.clickUpdateTaskButton();
 		testDetailsModalWindow.clickUnassignTaskButton();
 		testDetailsModalWindow.getAlert().accept();
+
+		/* COMMENTS */
+
+		testDetailsModalWindow.clickCommentsTab();
+		int startCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getCommentTextArea(), 1), "Textarea is not visible");
+		if(startCommentsCount == 0){
+			Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()));
+		}
+		testDetailsModalWindow.typeComment("Text");
+		testDetailsModalWindow.clickAddCommentButton();
+		int afterCommentActionCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
+		Assert.assertTrue((afterCommentActionCommentsCount - startCommentsCount) == 1);
 		testDetailsModalWindow.closeModalWindow();
+
 	}
 
 	private void verifyTestRunInformation(TestRun testRun, int index)
