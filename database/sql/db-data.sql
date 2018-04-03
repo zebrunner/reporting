@@ -124,18 +124,12 @@ DO $$
 
 -- Declare dashboards
 DECLARE personal_dashboard_id zafira.DASHBOARDS.id%TYPE;
-DECLARE test_performance_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE user_performance_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE general_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE monthly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE weekly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE nightly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE failures_dashboard_id zafira.DASHBOARDS.id%TYPE;
-
--- Declare Performance dashboard widgets
-DECLARE test_case_last_30_performance_id zafira.WIDGETS.id%TYPE;
-DECLARE test_case_last_30_performance_sql zafira.WIDGETS.sql%TYPE;
-DECLARE test_case_last_30_performance_model zafira.WIDGETS.model%TYPE;
 
 -- Declare Failures dashboard widgets
 DECLARE error_message_id zafira.WIDGETS.id%TYPE;
@@ -686,61 +680,6 @@ BEGIN
 		(personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":17,"width":12,"height":11}');
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
 		(personal_dashboard_id, nightly_personal_failures_id, '{"x":0,"y":49,"width":12,"height":15}');
-
-	-- Insert Test Performance dashboard data
-    	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Performance', TRUE, 9) RETURNING id INTO test_performance_dashboard_id;
-
-	test_case_last_30_performance_sql :=
-	'set schema ''zafira'';
-	SELECT
-		TEST_CONFIGS.ENV || ''-'' || TEST_CONFIGS.DEVICE AS env,
-									TEST_METRICS.OPERATION,
-									TEST_METRICS.ELAPSED AS "ELAPSED",
-									TEST_METRICS.CREATED_AT AS "CREATED_AT"
-	FROM
-		TEST_METRICS
-	INNER JOIN
-		TESTS ON TEST_METRICS.TEST_ID = TESTS.ID INNER JOIN
-		TEST_CONFIGS ON TEST_CONFIGS.ID = TESTS.TEST_CONFIG_ID
-	WHERE
-		TESTS.TEST_CASE_ID = #{test_case_id}
-	AND
-		TESTS.CREATED_AT >= date_trunc(''month'', CURRENT_TIMESTAMP - interval ''1 month'')
-	ORDER BY
-		env, "CREATED_AT"';
-
-	test_case_last_30_performance_model :=
-    	'{  
-   		"series":[  
-      		{  
-         		"axis":"y",
-         		"dataset":"dataset",
-         		"key":"ELAPSED",
-         		"label":"ELAPSED",
-         		"color":"#5cb85c",
-         		"thickness":"10px",
-         		"type":[  
-            		"line",
-            		"dot"
-         		],
-         		"id":"ELAPSED"
-      		}
-   		],
-   		"axes":{  
-      		"x":{  
-         		"key":"CREATED_AT",
-         		"type":"int",
-         		"ticks":"functions(value) {return \"wow!\"}"
-      		}
-   		}
-	}';
-
-	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-    	('TEST PERFORMANCE (LAST 30 DAYS)', 'linechart', test_case_last_30_performance_sql, test_case_last_30_performance_model)
-	RETURNING id INTO test_case_last_30_performance_id;
-
-	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-    	(test_performance_dashboard_id, test_case_last_30_performance_id, '{"x": 0, "y": 0, "height": 11, "width": 4}');
 
 	-- Insert User Performance dashboard data
     INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('User Performance', TRUE, 6) RETURNING id INTO user_performance_dashboard_id;
