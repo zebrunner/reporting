@@ -705,7 +705,7 @@ BEGIN
 	WHERE
 		TESTS.TEST_CASE_ID = #{test_case_id}
 	AND
-		TESTS.CREATED_AT >= date_trunc("month", CURRENT_TIMESTAMP - interval "1 month")
+		TESTS.CREATED_AT >= date_trunc(''month'', CURRENT_TIMESTAMP - interval ''1 month'')
 	ORDER BY
 		env, "CREATED_AT"';
 
