@@ -57,10 +57,10 @@ public class TestDetailsModalWindow extends AbstractModalWindow
 	@FindBy(xpath = ".//*[@name = 'knownIssue']")
 	private List<WebElement> knownIssuesHistoryItems;
 
-	@FindBy(xpath = ".//div[contains(@md-heading,'ISSUES')]")
+	@FindBy(xpath = ".//div[@id = 'historicalIssues']")
 	private WebElement issuesListControl;
 
-	@FindBy(xpath = ".//div[contains(@md-heading,'TASKS')]")
+	@FindBy(xpath = ".//div[@id = 'historicalTasks']")
 	private WebElement tasksListControl;
 
 	@FindBy(xpath = ".//button[contains(@class, 'md-sidemenu-button')]")

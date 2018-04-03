@@ -425,7 +425,6 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is disabled");
 		testDetailsModalWindow.clickSaveButton();
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2));
-		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()), "Comments tab is disabled");
 
 		/* ISSUES */
 
@@ -530,9 +529,6 @@ public class TestRunPageTest extends AbstractTest
 		testDetailsModalWindow.clickCommentsTab();
 		int startCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getCommentTextArea(), 1), "Textarea is not visible");
-		if(startCommentsCount == 0){
-			Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getCommentsTab()));
-		}
 		testDetailsModalWindow.typeComment("Text");
 		testDetailsModalWindow.clickAddCommentButton();
 		int afterCommentActionCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
