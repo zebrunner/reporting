@@ -28,7 +28,7 @@
                                                         <div layout-padding>
                                                             <form name="testForm">
                                                                 <div layout layout-sm="column" class="upper-tab-row">
-                                                                    <div class="col-lg-6">
+                                                                    <div class="col-lg-7">
                                                                         <span class="elment-with-label input-like-label">Test name</span>
                                                                         <span class="elment-with-label test-name">{{test.name}}</span>
                                                                         <span class="badge ng-binding bug-label-bg" data-ng-if="test.blocker">BLOCKER</span>
@@ -40,10 +40,10 @@
                                                                             </md-option>
                                                                         </md-select>
                                                                     </div>
-                                                                    <div class="col-lg-3 align-middle align-right">
-                                                                        <div class="edit-label align-middle">Change status</div>
+                                                                    <div class="col-lg-2 align-middle align-right">
                                                                         <div>
                                                                             <md-button id="change" class="md-icon-button" ng-click="changeStatusIsVisible = !changeStatusIsVisible" has-any-permission="['MODIFY_TESTS']">
+                                                                                <md-tooltip md-direction="bottom" md-z-index="2000">Change status</md-tooltip>
                                                                                 <md-icon aria-label="Change status">edit</md-icon>
                                                                             </md-button>
                                                                         </div>
