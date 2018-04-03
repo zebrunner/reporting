@@ -110,7 +110,7 @@ public class UsersAPIController extends AbstractController
 		dashboardService.setDefaultDashboard(extendedUserProfile, "", "defaultDashboardId");
 		dashboardService.setDefaultDashboard(extendedUserProfile, "User Performance", "userPerformanceDashboardId");
 		dashboardService.setDefaultDashboard(extendedUserProfile, "Personal", "personalDashboardId");
-		dashboardService.setDefaultDashboard(extendedUserProfile, "Performance dashboard", "performanceDashboardId");
+		dashboardService.setDefaultDashboard(extendedUserProfile, "Performance", "performanceDashboardId");
 		return extendedUserProfile;
 	}
 
