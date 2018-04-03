@@ -3,10 +3,10 @@
 
     angular
         .module('app.testcase')
-        .controller('TestCaseListController', ['$scope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
+        .controller('TestCaseListController', ['$scope', '$rootScope', '$location', '$mdDateRangePicker', 'TestService', 'TestCaseService', 'UtilService', 'ProjectProvider', TestCaseListController])
 
        // **************************************************************************
-    function TestCaseListController($scope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
+    function TestCaseListController($scope, $rootScope, $location, $mdDateRangePicker, TestService, TestCaseService, UtilService, ProjectProvider) {
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
@@ -84,6 +84,11 @@
     		var parts = fullName.split(".");
     		return parts[parts.length - 1];
     	};
+
+        $scope.goToPerformanceDashboard = function (testCaseId) {
+            $location.path("/dashboards/" + $rootScope.currentUser.pefrDashboardId);
+            $location.search('test_case_id', testCaseId);
+        };
 
         /**
          DataRangePicker functionality
