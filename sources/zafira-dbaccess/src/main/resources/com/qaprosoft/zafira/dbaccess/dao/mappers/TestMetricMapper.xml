@@ -34,6 +34,51 @@
 			WHERE TM.ID = #{id};
 		]]>
 	</select>
+
+	<select id="getEnvsByTestCaseId" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+				DISTINCT(TR.ENV)
+			FROM
+			  zafira.TEST_RUNS TR
+			INNER JOIN
+			  zafira.TESTS T
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			INNER JOIN
+			  zafira.TEST_METRICS TM
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			WHERE
+			  T.TEST_CASE_ID = #{testCaseId};
+		]]>
+	</select>
+
+	<select id="getTestMetricsByTestCaseIdAndEnv" resultMap="TestMetricResultMap">
+		<![CDATA[
+			SELECT
+			  TM.ID AS TEST_METRIC_ID,
+			  TM.OPERATION AS TEST_METRIC_OPERATION,
+			  TM.ELAPSED AS TEST_METRIC_ELAPSED,
+			  TM.TEST_ID AS TEST_METRIC_TEST_ID,
+			  TM.MODIFIED_AT AS TEST_METRIC_MODIFIED_AT,
+			  TM.CREATED_AT AS TEST_METRIC_CREATED_AT
+			FROM
+			  zafira.TEST_METRICS TM
+			INNER JOIN
+			  zafira.TESTS T
+			ON
+			  TM.TEST_ID = T.ID
+			INNER JOIN
+			  zafira.TEST_RUNS TR
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			WHERE
+			  T.TEST_CASE_ID = #{testCaseId}
+		  	AND
+			  TR.ENV = #{env};
+		]]>
+	</select>
 	
 	<sql id="deleteTestMetric">
 		<![CDATA[

@@ -9,11 +9,16 @@
         var service = {};
 
         service.searchTestCases = searchTestCases;
+        service.getTestMetricsByTestCaseId = getTestMetricsByTestCaseId;
 
         return service;
 
         function searchTestCases(criteria) {
             return $http.post(API_URL + '/api/tests/cases/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test cases'));
+        }
+
+        function getTestMetricsByTestCaseId(id) {
+            return $http.get(API_URL + '/api/tests/cases/metrics/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get test metrics'));
         }
     }
 })();
