@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -32,6 +34,23 @@ public class TestMetricService
 	
 	@Autowired
 	private TestMetricMapper testMetricMapper;
+
+	@Transactional(readOnly = true)
+	public List<String> getEnvsByTestCaseId(Long testCaseId)
+	{
+		return testMetricMapper.getEnvsByTestCaseId(testCaseId);
+	}
+
+	@Transactional(readOnly = true)
+	public Map<String, List<TestMetric>> getTestMetricsByTestCaseId(Long testCaseId)
+	{
+		Map<String, List<TestMetric>> result = new HashMap<>();
+		getEnvsByTestCaseId(testCaseId).forEach(env -> {
+			List<TestMetric> testMetrics = testMetricMapper.getTestMetricsByTestCaseIdAndEnv(testCaseId, env);
+			result.put(env, testMetrics);
+		});
+		return result;
+	}
 	
 	@Transactional(rollbackFor = Exception.class)
 	public void createTestMetrics(Long testId, Map<String, Long> testMetrics)
