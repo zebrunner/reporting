@@ -1,3 +1,18 @@
+<#setting date_format="E MMM dd HH:mm:ss Z yyyy">
+<#setting locale="en_US">
+
+<#function getTestElapsed start end isMinute>
+    <#local startDate = start?string("E MMM dd HH:mm:ss Z yyyy")?date>
+    <#local endDate = end?string("E MMM dd HH:mm:ss Z yyyy")?date>
+    <#local result = ((end?long - start?long) / 1000 / 60)>
+    <#if isMinute>
+        <#local result = result?floor>
+    <#else>
+        <#local result = (60 * (result - result?floor))?floor>
+    </#if>
+    <#return result>
+</#function>
+
 <div id="container" style="width: 98%; padding: 10px; margin: 0; background: #EBEBE0; color: #717171; font-family: Calibri;">
 	<div id="summary">
         <h2 align="center" style="background-color: gray; color: white; padding: 10px; margin: 0;">${subject}</h2>
@@ -129,7 +144,7 @@
             <tr>
                 <th width="10%" align="center">Result</th>
                 <th width="60%" align="center">Test name</th>
-                <th width="10%" align="center">Owner</th>
+                <#--<th width="10%" align="center">Info</th>-->
                 <th width="10%" align="center">Jira</th>
                 <th width="10%" align="center">Test files</th>
             </tr>
@@ -149,6 +164,27 @@
 	            		</td>
 	            		<td style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	            			<span>${test.name}</span>
+                            <#if ((test.startTime ?? && test.finishTime??) || (test.testConfig ?? && test.testConfig.device ??) || test.owner ??)>
+                                <div>
+                                    <#if (test.startTime ?? && test.finishTime??)>
+                                        <span>
+                                            Elapsed:
+                                            <span>
+                                                ${getTestElapsed(test.startTime, test.finishTime, true)}m ${getTestElapsed(test.startTime, test.finishTime, false)}s
+                                            </span>
+                                        </span>
+                                    </#if>
+                                    <span> ${test.owner}</span>
+                                        <#if test.secondaryOwner ??>
+                                            ${test.secondaryOwner}
+                                        </#if>
+                                    <#if (test.testConfig ?? && test.testConfig.device ??)>
+                                        <span>
+                                            ${test.testConfig.device}
+                                        </span>
+                                    </#if>
+                                </div>
+                            </#if>
 	            			<#if test.status == 'FAILED' && test.message?? && test.message != ''>
 	            				<pre style="background:#ffcccc; color: black; padding: 5px; margin: 2px 0px 2px 0px; max-width: 1000px; white-space: pre-line; word-wrap: break-word;">
 	            					<#if showStacktrace?? && showStacktrace == false && test.message?contains('\n')>
@@ -168,12 +204,25 @@
 	            				</pre>
 	            			</#if>
 	            		</td>
-                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                        <#--<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                            <#if (test.startTime ?? && test.finishTime??)>
+                                <div>
+                                    Elapsed:
+                                    <span style="color: gray">
+                                        ${getTestElapsed(test.startTime, test.finishTime, true)}m ${getTestElapsed(test.startTime, test.finishTime, false)}s
+                                    </span>
+                                </div>
+                            </#if>
                             <span>${test.owner}</span>
                                 <#if test.secondaryOwner ??>
                                     ${test.secondaryOwner}
                                 </#if>
-                        </td>
+                            <#if (test.testConfig ?? && test.testConfig.device ??)>
+                                <div>
+                                    ${test.testConfig.device}
+                                </div>
+                            </#if>
+                        </td>-->
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
 	                            <#if workItem.type == 'BUG'>
