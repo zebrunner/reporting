@@ -379,7 +379,7 @@ public class TestService
 		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 
-		return workItem;
+		return workItemService.getWorkItemById(workItem.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class)

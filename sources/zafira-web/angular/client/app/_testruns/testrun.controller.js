@@ -1425,7 +1425,7 @@
         $scope.isIssueClosed = false;
 
         $scope.test = angular.copy(test);
-        $scope.testComment = {};
+        $scope.testCommentText = '';
         $scope.testComments = [];
         $scope.issues = [];
         $scope.tasks = [];
@@ -1448,8 +1448,7 @@
                 if(rs.success) {
                     $scope.changeStatusIsVisible = false;
                     message = 'Test was marked as ' + test.status;
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
+                    addTestEvent(message);
                     alertify.success(message);
                 }
                 else {
@@ -1552,8 +1551,7 @@
                     } else {
                         message = generateActionResultMessage(workItemType, jiraId, "update", true);
                     }
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
+                    addTestEvent(message);
                     $scope.newIssue.id = rs.data.id;
                     updateWorkItemList(rs.data);
                     initAttachedWorkItems();
@@ -1587,8 +1585,7 @@
                     } else {
                         message = generateActionResultMessage(workItemType, jiraId, "update", true);
                     }
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
+                    addTestEvent(message);
                     $scope.newTask.id = rs.data.id;
                     updateWorkItemList(rs.data);
                     initAttachedWorkItems();
@@ -1613,8 +1610,7 @@
                 var message;
                 if(rs.success) {
                     message = generateActionResultMessage(workItem.type, workItem.jiraId, "unassign" + "e", true);
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
+                    addTestEvent(message);
                     deleteWorkItemFromTestWorkItems(workItem);
                     initAttachedWorkItems();
                     initNewIssue();
@@ -1633,8 +1629,7 @@
                 var message;
                 if(rs.success) {
                     message = generateActionResultMessage(workItem.type, workItem.jiraId, "unassign" + "e", true);
-                    $scope.testComment.description = message;
-                    $scope.addTestComment($scope.testComment);
+                    addTestEvent(message);
                     deleteWorkItemFromTestWorkItems(workItem);
                     initAttachedWorkItems();
                     initNewTask();
@@ -1644,16 +1639,6 @@
                     alertify.error(message);
                 }
             });
-        };
-
-        /* Generates result message for action comment (needed to be stored into DB and added in UI alert) */
-
-        var generateActionResultMessage = function (item, id, action, success) {
-            if (success) {
-                return item + " " +  id +" was " + action + "d";
-            } else {
-                return "Failed to " + action + " " + item.toLowerCase();
-            }
         };
 
         /* Starts set in the scope issue search */
@@ -1954,19 +1939,49 @@
 
         /* Adds comment to test (either custom or action-related) */
 
-        $scope.addTestComment = function (testComment){
-            $scope.testComment.jiraId = Math.floor(Math.random() * 90000) + 10000;
-            $scope.testComment.testCaseId = test.testCaseId;
-            $scope.testComment.type = 'COMMENT';
+        $scope.addTestComment = function (message){
+            var testComment = {};
+            testComment.description = message;
+            testComment.jiraId = Math.floor(Math.random() * 90000) + 10000;
+            testComment.testCaseId = test.testCaseId;
+            testComment.type = 'COMMENT';
+            var eventMessage = '';
             TestService.createTestWorkItem(test.id, testComment).then(function(rs){
                 if(rs.success) {
                     $scope.testComments.push(rs.data);
-                    $scope.testComment = {};
+                    eventMessage = generateActionResultMessage(testComment.type, '', 'create', true);
+                    addTestEvent(eventMessage);
+                    alertify.success(eventMessage);
                 } else {
-                    $scope.testComment = {};
+                    eventMessage = generateActionResultMessage(testComment.type, '', 'create', false);
                     alertify.error('Failed to create comment for test "' + test.id);
                 }
+                $scope.testCommentText = '';
             })
+        };
+
+        var addTestEvent = function (message){
+            var testEvent = {};
+            testEvent.description = message;
+            testEvent.jiraId = Math.floor(Math.random() * 90000) + 10000;
+            testEvent.testCaseId = test.testCaseId;
+            testEvent.type = 'EVENT';
+            TestService.createTestWorkItem(test.id, testEvent).then(function(rs){
+                if(rs.success) {
+                } else {
+                    alertify.error('Failed to add event test "' + test.id);
+                }
+            })
+        };
+
+        /* Generates result message for action comment (needed to be stored into DB and added in UI alert) */
+
+        var generateActionResultMessage = function (item, id, action, success) {
+            if (success) {
+                return item + " " +  id +" was " + action + "d";
+            } else {
+                return "Failed to " + action + " " + item.toLowerCase();
+            }
         };
 
         /* MODAL_WINDOW functionality */

@@ -211,12 +211,22 @@
                                                             <div class="col-md-12 issues-select-padding" >
                                                                 <md-sidemenu locked="true" >
                                                                     <md-sidemenu-group>
-                                                                        <md-sidemenu-content md-heading="HISORICAL TICKETS ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
+                                                                        <md-sidemenu-content md-heading="HISTORICAL TICKETS ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
                                                                             <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
                                                                                        ng-click="searchScopeIssue(issue);$event.stopPropagation();">
-                                                    <span id="knownIssue" >
-                                                        <b class="settings-line">{{issue.jiraId}}</b> {{issue.description}}
-                                                    </span>
+                                                                                <div class="col-md-12">
+                                                                                    <div layout layout-sm="row">
+                                                                                        <div class="col-lg-2 clearfix align-middle">
+                                                                                            <b class="settings-line">{{issue.jiraId}}</b>
+                                                                                        </div>
+                                                                                        <div class="col-lg-6 clearfix align-middle">
+                                                                                            {{issue.description}}
+                                                                                        </div>
+                                                                                        <div class="col-lg-4 clearfix align-middle">
+                                                                                            {{issue.modifiedAt | date : "medium"}}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
                                                                             </md-button>
                                                                         </md-sidemenu-content>
                                                                     </md-sidemenu-group>
@@ -332,12 +342,22 @@
                                 <div class="col-lg-12 issues-select-padding">
                                     <md-sidemenu locked="true">
                                         <md-sidemenu-group>
-                                            <md-sidemenu-content md-heading="HISORICAL TICKETS ({{tasks.length}})" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
+                                            <md-sidemenu-content md-heading="HISTORICAL TICKETS ({{tasks.length}})" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
                                                 <md-button class="md-sidemenu-button tickets-font" ng-if="taskListIsVisible" ng-repeat="task in tasks"
                                                            ng-click="searchScopeTask(task); $event.stopPropagation();">
-                                                    <span name="knownIssue" >
-                                                        <b class="settings-line">{{task.jiraId}}</b> {{task.description}}
-                                                    </span>
+                                                    <div class="col-md-12">
+                                                        <div layout layout-sm="row">
+                                                            <div class="col-lg-2 clearfix align-middle">
+                                                                <b class="settings-line">{{task.jiraId}}</b>
+                                                            </div>
+                                                            <div class="col-lg-6 clearfix align-middle">
+                                                                {{task.description}}
+                                                            </div>
+                                                            <div class="col-lg-4 clearfix align-middle">
+                                                                {{task.modifiedAt | date : "medium"}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </md-button>
                                             </md-sidemenu-content>
                                         </md-sidemenu-group>
@@ -404,12 +424,12 @@
                                                                                 <div layout layout-sm="column">
                                                                                     <md-input-container flex >
                                                                                         <label>Your comment</label>
-                                                                                        <textarea required id="comment" name="comment" rows=3 class="textarea_border no-margin-bottom" data-ng-model="testComment.description"></textarea>
+                                                                                        <textarea required id="comment" name="comment" rows=4 class="textarea_border no-margin-bottom" data-ng-model="testCommentText"></textarea>
                                                                                     </md-input-container>
                                                                                 </div>
                                                                             </md-dialog-content>
                                                                             <md-dialog-actions layout="row">
-                                                                                <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="addTestComment(testComment)" ng-disabled="comments_form.$invalid">
+                                                                                <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="addTestComment(testCommentText)" ng-disabled="comments_form.$invalid">
                                                                                     Add comment
                                                                                 </md-button>
                                                                             </md-dialog-actions>
