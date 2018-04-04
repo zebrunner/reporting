@@ -173,6 +173,7 @@ public class UserPageTest extends AbstractTest
 
 		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		createUserModalWindow.clickDeleteButton();
+		userPage.waitUntilElementWithTextIsPresent(userPage.getSuccessAlert(), "User deleted", 5);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User deleted", "User deleted alert is not present");
 		userPage.waitUntilPageIsLoaded(10);
 		Assert.assertNotEquals(userPageService.getUserTableRowByIndex(0).getUsername(), userType.getUsername(),
