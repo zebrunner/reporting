@@ -127,27 +127,25 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Mark test passed", nickname = "markTestAsPassed", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Update test", nickname = "updateTest", code = 200, httpMethod = "PUT", response = Test.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_TESTS')")
-	@RequestMapping(value = "{id}/passed", method = RequestMethod.POST)
-	public @ResponseBody TestType markTestAsPassed(@PathVariable(value = "id") long id)
-			throws ServiceException, InterruptedException
+	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Test updateTest(@RequestBody Test test) throws ServiceException
 	{
-		Test test = testService.markTestAsPassed(id);
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
-		
+
 		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 
-		return mapper.map(test, TestType.class);
+		return testService.updateTest(test);
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test work item", nickname = "createTestWorkItems", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Create test work items", nickname = "createTestWorkItems", code = 200, httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -158,8 +156,6 @@ public class TestsAPIController extends AbstractController
 	{
 		return mapper.map(testService.createTestWorkItems(id, workItems), TestType.class);
 	}
-
-
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE")
@@ -185,40 +181,41 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get test known issues", nickname = "getTestKnownIssues", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get test case work items by type", nickname = "getTestCaseWorkItemsByType", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{id}/issues", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<WorkItem> getTestKnownIssues(
-			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id) throws ServiceException
+	@RequestMapping(value = "{id}/workitem/{type}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<WorkItem> getTestCaseWorkItemsByType(
+			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id,  @PathVariable(value = "type") String type) throws ServiceException
 	{
-		List<WorkItem> issues = new ArrayList<>();
+		List<WorkItem> workItems = new ArrayList<>();
 		Test test = testService.getTestById(id);
 		if (test != null)
 		{
-			issues = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), Type.BUG);
+			workItems = workItemService.getWorkItemsByTestCaseIdAndType(test.getTestCaseId(), Type.valueOf(type));
 		}
-		return issues;
+		return workItems;
 	}
 
-
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test known issue", nickname = "createTestKnownIssue", code = 200, httpMethod = "POST", response = WorkItem.class)
+	@ApiOperation(value = "Create or update test work item", nickname = "createOrUpdateTestWorkItem", code = 200, httpMethod = "POST", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{id}/issues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem createTestKnownIssue(
+	@RequestMapping(value = "{id}/workitem", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody WorkItem createOrUpdateTestWorkItem(
 			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id,
 			@RequestBody WorkItem workItem) throws ServiceException, InterruptedException
 	{
-		if (getPrincipalId() > 0)
-		{
+		if (getPrincipalId() > 0) {
 			workItem.setUser(new User(getPrincipalId()));
 		}
-		workItem = testService.createTestKnownIssue(id, workItem);
-
+		if (workItem.getType() == Type.BUG || workItem.getType() == Type.TASK) {
+			workItem = testService.createOrUpdateTestWorkItem(id, workItem);
+		} else  {
+			workItem = testService.createWorkItem(id, workItem);
+		}
 		Test test = testService.getTestById(id);
 
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
@@ -246,25 +243,27 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test known issue", nickname = "deleteTestKnownIssue", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete test work item", nickname = "deleteTestWorkItem", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{testId}/issues/{workItemId}", method = RequestMethod.DELETE)
-	public void deleteTestKnownIssue(@PathVariable(value = "workItemId") long workItemId,
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{testId}/workitem/{workItemId}", method = RequestMethod.DELETE)
+	public void deleteTestWorkItem(@PathVariable(value = "workItemId") long workItemId,
 			@PathVariable(value = "testId") long testId) throws ServiceException, InterruptedException
 	{
 		Test test = testService.getTestById(testId);
-		testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
-		if(test.isBlocker())
-			testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
+		WorkItem workItem = workItemService.getWorkItemById(workItemId);
+		if (workItem.getType() == Type.BUG) {
+			testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
+			if (test.isBlocker())
+				testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
+			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH,
+					new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+			websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+			TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
+		}
 		testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
-		
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
-		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
-		
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 	}
 
 	@ApiIgnore
@@ -285,35 +284,5 @@ public class TestsAPIController extends AbstractController
 	public @ResponseBody boolean getConnectionToJira()
 	{
 		return jiraService.isConnected();
-	}
-
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Assign jira task", nickname = "createTestWorkItemJiraTask", code = 200, httpMethod = "POST", response = WorkItem.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{id}/task", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem assignOrUpdateTestWorkItemTask(
-			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id,
-			@RequestBody WorkItem workItem) throws ServiceException, InterruptedException
-	{
-		return testService.assignOrUpdateTaskWorkItemToTest(id, workItem, getPrincipalId());
-	}
-
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test_work_item task", nickname = "deleteTestWorkItemJiraTask", code = 200, httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{testId}/task/{workItemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody WorkItem deleteTestWorkItemTask(
-			@ApiParam(value = "Test ID", required = true) @PathVariable(value = "testId") long testId,
-			@PathVariable(value = "workItemId") long workItemId) throws ServiceException, InterruptedException
-	{
-		WorkItem item = workItemService.getWorkItemById(workItemId);
-		testService.deleteTestWorkItemByWorkItemIdAndTestId(workItemId, testId);
-		return item;
 	}
 }

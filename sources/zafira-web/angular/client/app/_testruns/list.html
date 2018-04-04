@@ -264,16 +264,12 @@
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
-                                                        	<a name="markAsPassed" href="" class="float_right label-success-empty clearfix" data-ng-if="test.status == 'FAILED' || test.status == 'SKIPPED'" data-ng-really-message="Do you really want to mark test run as passed?" data-ng-really-click="markTestAsPassed(test.id)" has-any-permission="['MODIFY_TESTS']">Mark as passed</a>
-                                                            <a name="markAsKnownIssue" href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue == false" data-ng-click="showKnownIssueDialog(test, true, $event)">Mark as known issue</a>
-                                                            <a name="editKnownIssue" href="" class="float_right label-warning-empty clearfix" data-ng-if="test.status == 'FAILED' && test.knownIssue != false" data-ng-click="showKnownIssueDialog(test, false, $event)">Edit known issue</a>
-                                                            <a name="assignTask" href="" class="float_right label-primary-empty clearfix" data-ng-if="test.workItems.length==0 || (test.workItems.length==1 && test.workItems[0].type=='BUG')" data-ng-click="showAssignJiraTaskDialog(test, true, $event)">Assign task</a>
-                                                            <a name="editTask" href="" class="float_right label-info-empty clearfix" data-ng-if="(test.workItems.length==1 && test.workItems[0].type=='TASK') || test.workItems.length==2" data-ng-click="showAssignJiraTaskDialog(test, false, $event)">Edit task</a>
+
                                                         </td>
                                                         <td class="text-center">
                                                             <span data-ng-repeat="issue in test.workItems">
                                                                 <a name="taskTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix task-label-bg">{{issue.jiraId}}</a>
-                                                                <a name="bugTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG' && test.status == 'FAILED'" class="badge ng-binding clearfix bug-label-bg" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
+                                                                <a name="bugTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG'" class="badge ng-binding clearfix bug-label-bg" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
                                                         </td>
                                                         <td>
@@ -291,6 +287,11 @@
 				                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" data-ng-click="showDetailsDialog(test, $event);">
+                                                                    <md-icon class="material-icons">forum</md-icon>
+                                                                </md-button>
                                                             </div>
                                                         </td>
                                                     </tr>
