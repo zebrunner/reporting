@@ -1,19 +1,32 @@
 package com.qaprosoft.zafira.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import com.mysql.jdbc.StringUtils;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.*;
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
@@ -28,16 +41,6 @@ import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 import com.qaprosoft.zafira.tests.services.api.builders.TestTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class TestRunPageTest extends AbstractTest
 {
@@ -383,159 +386,155 @@ public class TestRunPageTest extends AbstractTest
 	}
 
 	@Test(groups = {"acceptance", "testRun"})
-	public void verifyTestAssignTicketTest()
-	{
-		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
-		TestType testType = new TestTypeBuilder(testRunTypeBuilder).getTestType();
-		testType.setWorkItems(new ArrayList<>());
-		TestAPIService testAPIService = new TestAPIService(testType);
-		TestRunAPIService testRunAPIService = new TestRunAPIService(testAPIService);
-		testRunAPIService.createTestRun(testRunTypeBuilder,  1, 0, 0, 0, 0, 0);
-		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
-		TestRow testRow = testTable.getTestRows().get(0);
-		Assert.assertFalse(testTable.isElementPresent(testRow.getTaskLabel(), 1), "Jira task is present");
-		Assert.assertTrue(testTable.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is not present");
-		TaskModalWindow taskModalWindow = testRow.clickAssignTask();
-		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
-		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
-		Assert.assertEquals(taskModalWindow.getJiraIdInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect jira id input placeholder");
-		taskModalWindow.typeJiraId("JIRA-2222");
-		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
-		taskModalWindow.clearAllInputs();
-		taskModalWindow.typeDescription("description");
-		Assert.assertTrue(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is not disabled");
-		taskModalWindow.typeJiraId("JIRA-2222");
-		taskModalWindow.typeDescription("description");
-		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getAssignButton()), "Assing button is disabled");
-		taskModalWindow.clickAssignButton();
-		testRunPage.waitUntilElementWithTextIsPresent(testRunPage.getSuccessAlert(), "A new work item \"JIRA-2222\" was assigned", 5);
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "A new work item \"JIRA-2222\" was assigned");
-		Assert.assertTrue(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
-		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
-		taskModalWindow = testRow.clickEditTask();
-		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
-		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
-		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getDescriptionTextarea()), "description", "Incorrect jira description in input");
-		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getDeleteButton()), "Delete button is disabled");
-		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getUpdateButton()), "Update button is disabled");
-		taskModalWindow.clearAllInputs();
-		taskModalWindow.typeJiraId("JIRA-6666");
-		taskModalWindow.typeDescription("new description");
-		taskModalWindow.clickUpdateButton();
-		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A new work item \"JIRA-6666\" was updated");
-		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
-		taskModalWindow = testRow.clickEditTask();
-		Assert.assertEquals(taskModalWindow.getHeaderText(), "Assign Task", "Incorrect modal window title");
-		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getJiraIdInput()), "JIRA-6666", "Incorrect jira id in input");
-		Assert.assertEquals(taskModalWindow.getWebElementValue(taskModalWindow.getDescriptionTextarea()), "new description", "Incorrect jira description in input");
-		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getDeleteButton()), "Delete button is disabled");
-		Assert.assertFalse(taskModalWindow.hasDisabledAttribute(taskModalWindow.getUpdateButton()), "Update button is disabled");
-		taskModalWindow.clickDeleteButton();
-		testRunPage.waitUntilElementIsPresent(testRow.getSuccessAlert(), 8);
-		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A work item \"JIRA-6666\" was unassigned");
-		Assert.assertFalse(testRow.isElementPresent(testRow.getEditTask(), 1), "Edit task link is not present");
-		Assert.assertTrue(testRow.isElementPresent(testRow.getAssignTask(), 1), "Assign task link is present");
-	}
-
-	@Test(groups = {"acceptance", "testRun"})
-	public void verifyTestMarkAsPassedTest()
-	{
-		TestRunAPIService testRunAPIService = new TestRunAPIService();
-		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
-		testRunAPIService.createTestRun(testRunTypeBuilder,  0, 2, 0, 0, 0, 200);
-		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
-		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.FAILED, "Test run status is not failed");
-		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
-		verifyTestRunTestInformation(testRun, 0);
-		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
-		testTable.getTestRows().get(0).clickMarkAsPassed();
-		Assert.assertEquals(testRunPage.getAlert().getText(), "Do you really want to mark test run as passed?");
-		testRunPage.getAlert().dismiss();
-		verifyTestRunTestInformation(testRun, 0);
-		testRunPageService.getTestTableByRowIndex(0).getTestRows().get(0).clickMarkAsPassed();
-		testRunPage.getAlert().accept();
-		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testTable.getTestRows().get(0).getStatus(), Status.PASSED, "Test status is not correct");
-		Assert.assertEquals(testTable.getTestRows().get(1).getStatus(), Status.FAILED, "Test status is not correct");
-		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.FAILED, "Test run status is incorrect");
-		testRunPageService.getTestTableByRowIndex(0).getTestRows().get(1).clickMarkAsPassed();
-		testRunPage.getAlert().accept();
-		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testTable.getTestRows().get(0).getStatus(), Status.PASSED, "Test status is not correct");
-		Assert.assertEquals(testTable.getTestRows().get(1).getStatus(), Status.PASSED, "Test status is not correct");
-		Assert.assertEquals(testRunTableRow.getTestRunStatus(), Status.PASSED, "Test run status is incorrect");
-	}
-
-	@Test(groups = {"acceptance", "testRun"})
-	public void verifyMarkAsKnownIssueTest()
+	public void verifyTestDetailsModalTest()
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		testRunAPIService.createTestRun(testRunTypeBuilder,  0, 1, 0, 0, 0, 200);
 		TestTable testTable = testRunPageService.getTestTableByRowIndex(0);
 		TestRow testRow = testTable.getTestRows().get(0);
-		Assert.assertTrue(testTable.isElementPresent(testRow.getMarkAsKnownIssue(), 1), "Mark as known issue link is not present");
-		KnownIssueModalWindow knownIssueModalWindow = testRow.clickMarkAsKnownIssue();
-		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect title");
-		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
-		Assert.assertEquals(knownIssueModalWindow.getJiraIdInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect placeholder");
-		knownIssueModalWindow.typeJiraId("JIRA-2222");
-		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
-		knownIssueModalWindow.clearAllInputs();
-		knownIssueModalWindow.typeDescription("description");
-		Assert.assertTrue(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is not disabled");
-		knownIssueModalWindow.typeJiraId("JIRA-2222");
-		knownIssueModalWindow.typeDescription("description");
-		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getCreateButton()), "Create button is disabled");
-		knownIssueModalWindow.clickCreateButton();
+		Assert.assertTrue(testTable.isElementPresent(testRow.getOpenTestDetailsModalButton(), 1), "Details modal button is not present");
+		TestDetailsModalWindow testDetailsModalWindow = testRow.clickOpenTestDetailsModalButton();
+		Assert.assertEquals(testDetailsModalWindow.getHeaderText(), "Test details", "Details modal is not opened");
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getStatusTabHeading(), 1), "Status tab is not opened");
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
+		Assert.assertFalse(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getChangeStatusSelect(), 1), "Change status select is visible");
+		testDetailsModalWindow.clickEditButton();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getChangeStatusSelect(), 1), "Change status select is not visible");
+        String currentStatus = testDetailsModalWindow.getChangeStatusSelect().getText();
+		Assert.assertFalse(StringUtils.isEmptyOrWhitespaceOnly(currentStatus), "No status is displayed in select");
+		testDetailsModalWindow.getChangeStatusSelect().click();
+		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
+		List<WebElement> webElements = testDetailsModalWindow.getTestStatuses();
+		Assert.assertFalse(CollectionUtils.isEmpty(webElements), "No test statuses were loaded");
+		for (WebElement webElement : webElements){
+			if(webElement.getText().equals(currentStatus)){
+				webElement.click();
+				break;
+			}
+		}
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
+		testDetailsModalWindow.getChangeStatusSelect().click();
+		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
+		for (WebElement webElement : webElements){
+			if(!webElement.getText().equals(currentStatus)){
+				webElement.click();
+				break;
+			}
+		}
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is disabled");
+		testDetailsModalWindow.clickSaveButton();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2));
+
+		/* ISSUES */
+
+		testDetailsModalWindow.clickIssuesTab();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getIssuesTabHeading(), 1), "Issue tab is not opened");
+		Assert.assertEquals(testDetailsModalWindow.getIssueInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect placeholder");
+		testDetailsModalWindow.typeIssueJiraId("JIRA-2222");
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignIssueButton()), "Assign button is not disabled");
+		testDetailsModalWindow.clearAllModalInputs();
+		testDetailsModalWindow.typeIssueDescription("description");
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignIssueButton()), "Assign button is not disabled");
+		testDetailsModalWindow.typeIssueJiraId("JIRA-2222");
+		testDetailsModalWindow.typeIssueDescription("description");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignIssueButton()), "Assign button is disabled");
+		testDetailsModalWindow.clickAssignIssueButton();
 		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "A new known issue \"JIRA-2222\" was created", "Success alert is not present");
-		Assert.assertTrue(testRow.isElementPresent(testRow.getEditKnownIssue(), 1), "Edit known issue link is not present");
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),1), "Success alert is not present");
+		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getSuccessAlert(),3);
 		Assert.assertEquals(testRow.getKnownIssueTicket(), "JIRA-2222", "Invalid known issue label text");
-		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
-		knownIssueModalWindow = testRow.clickEditKnownIssue();
-		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect modal window title");
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
-		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getClearButton()), "Clear button is disabled");
-		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getUpdateButton()), "Update button is disabled");
-		knownIssueModalWindow.clearAllInputs();
-		knownIssueModalWindow.typeJiraId("JIRA-6666");
-		knownIssueModalWindow.typeDescription("new description");
-		knownIssueModalWindow.clickCreateButton();
-		testRunPage.waitUntilElementIsPresent(testRunPage.getSuccessAlert(), 8);
-		Assert.assertEquals(testRow.getSuccessAlert().getText(), "A known issue \"JIRA-6666\" was updated");
-		testRunPage.waitUntilElementIsNotPresent(testRunPage.getSuccessAlert(), 8);
-		knownIssueModalWindow = testRow.clickEditKnownIssue();
-		Assert.assertEquals(knownIssueModalWindow.getHeaderText(), "Known issues", "Incorrect modal window title");
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-6666", "Incorrect jira id in input");
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "new description", "Incorrect jira description in input");
-		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getClearButton()), "Clear button is disabled");
-		Assert.assertFalse(knownIssueModalWindow.hasDisabledAttribute(knownIssueModalWindow.getUpdateButton()), "Update button is disabled");
-		knownIssueModalWindow.clickClearButton();
-		testRunPage.getAlert().accept();
-		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertTrue(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()).isEmpty(), "Jira id input is not empty");
-		Assert.assertTrue(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()).isEmpty(), "Description input is not empty");
-		knownIssueModalWindow.closeModalWindow();
-		testRunPage.reload();
-		testRow = testRunPageService.getTestTableByRowIndex(0).getTestRows().get(0);
-		Assert.assertFalse(testRow.isElementPresent(testRow.getKnownIssueLabel(), 2), "Known issue label is present");
-		knownIssueModalWindow = testRow.clickMarkAsKnownIssue();
-		Assert.assertEquals(knownIssueModalWindow.getKnownIssuesHistoryItems().get(0).getText(), "JIRA-2222 description", "Incorrect history item text");
-		knownIssueModalWindow.getKnownIssuesHistoryItems().get(0).click();
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getJiraIdInput()), "JIRA-2222", "Incorrect jira id in input");
-		Assert.assertEquals(knownIssueModalWindow.getWebElementValue(knownIssueModalWindow.getDescriptionInput()), "description", "Incorrect jira description in input");
-		knownIssueModalWindow.checkBlockerCheckbox();
-		knownIssueModalWindow.clickCreateButton();
-		testRunPage.waitUntilElementIsNotPresent(knownIssueModalWindow.getRootElement(), 2);
+        Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()), "JIRA-2222", "Incorrect jira id in input");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueTextArea()), "description", "Incorrect jira description in input");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUnassignIssueButton()), "Unassign button is disabled");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUpdateIssueButton()), "Update button is disabled");
+		testDetailsModalWindow.clearAllModalInputs();
+		testDetailsModalWindow.typeIssueJiraId("JIRA-6666");
+		testDetailsModalWindow.typeIssueDescription("new description");
+		testDetailsModalWindow.clickAssignIssueButton();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2), "Success alert is not present");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()), "JIRA-6666", "Incorrect jira id in input");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueTextArea()), "new description", "Incorrect jira description in input");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUnassignIssueButton()), "Unassign button is disabled");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUpdateIssueButton()), "Update button is disabled");
+		testDetailsModalWindow.clickUnassignIssueButton();
+		testDetailsModalWindow.getAlert().accept();
+		Assert.assertTrue(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()).isEmpty(), "Jira id input is not empty");
+		Assert.assertTrue(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueTextArea()).isEmpty(), "Description input is not empty");
+		testDetailsModalWindow.clickIssuesListControl();
+		testDetailsModalWindow.getIssuesListItems().get(0).click();
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()), "JIRA-2222", "Incorrect jira id in input");
+		testDetailsModalWindow.checkBlockerCheckbox();
+		testDetailsModalWindow.clickUpdateIssueButton();
+		testDetailsModalWindow.closeModalWindow();
+		testRunPage.waitUntilElementIsNotPresent(testDetailsModalWindow.getRootElement(), 2);
 		Assert.assertTrue(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is not present");
-		knownIssueModalWindow = testRow.clickEditKnownIssue();
-		knownIssueModalWindow.clickClearButton();
-		knownIssueModalWindow.getAlert().accept();
-		knownIssueModalWindow.closeModalWindow();
+		testRunPage.waitUntilElementIsNotPresent(testRow.getOpenTestDetailsModalButton(),1);
+		testDetailsModalWindow = testRow.clickOpenTestDetailsModalButton();
+		testDetailsModalWindow.clickIssuesTab();
+		testDetailsModalWindow.waitUntilElementIsPresent(testDetailsModalWindow.getUnassignIssueButton(),1);
+		testDetailsModalWindow.clickUnassignIssueButton();
+		testDetailsModalWindow.getAlert().accept();
+		testDetailsModalWindow.closeModalWindow();
 		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is present");
+
+		/* TASKS */
+
+		testDetailsModalWindow = testRow.clickOpenTestDetailsModalButton();
+		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getProgressLinear(),5);
+		testDetailsModalWindow.clickTasksTab();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getTasksTabHeading(), 1), "Task tab is not opened");
+		testDetailsModalWindow.clearAllModalInputs();
+		Assert.assertEquals(testDetailsModalWindow.getTaskInput().getAttribute("placeholder"), "Not connected to JIRA", "Incorrect placeholder");
+		testDetailsModalWindow.typeTaskJiraId("JIRA-2222");
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignTaskButton()), "Assign button is not disabled");
+		testDetailsModalWindow.clearAllModalInputs();
+		testDetailsModalWindow.typeTaskDescription("description");
+		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignTaskButton()), "Assign button is not disabled");
+		testDetailsModalWindow.typeTaskJiraId("JIRA-2222");
+		testDetailsModalWindow.typeTaskDescription("description");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignTaskButton()), "Assign button is disabled");
+		testDetailsModalWindow.clickAssignTaskButton();
+		testRunPage.waitUntilPageIsLoaded();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),1), "Success alert is not present");
+		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getSuccessAlert(),3);
+		Assert.assertEquals(testRow.getTaskTicket(), "JIRA-2222", "Invalid known Task label text");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskInput()), "JIRA-2222", "Incorrect jira id in input");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskTextArea()), "description", "Incorrect jira description in input");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUnassignTaskButton()), "Unassign button is disabled");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUpdateTaskButton()), "Update button is disabled");
+		testDetailsModalWindow.clearAllModalInputs();
+		testDetailsModalWindow.typeTaskJiraId("JIRA-6666");
+		testDetailsModalWindow.typeTaskDescription("new description");
+		testDetailsModalWindow.clickAssignTaskButton();
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2), "Success alert is not present");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskInput()), "JIRA-6666", "Incorrect jira id in input");
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskTextArea()), "new description", "Incorrect jira description in input");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUnassignTaskButton()), "Unassign button is disabled");
+		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getUpdateTaskButton()), "Update button is disabled");
+		testDetailsModalWindow.clickUnassignTaskButton();
+		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getSuccessAlert(),2);
+		testDetailsModalWindow.getAlert().accept();
+		Assert.assertTrue(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskInput()).isEmpty(), "Jira id input is not empty");
+		Assert.assertTrue(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskTextArea()).isEmpty(), "Description input is not empty");
+		testDetailsModalWindow.clickTasksListControl();
+		testDetailsModalWindow.getTaskListItems().get(0).click();
+		Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getTaskInput()), "JIRA-2222", "Incorrect jira id in input");
+		testDetailsModalWindow.clickUpdateTaskButton();
+		testDetailsModalWindow.clickUnassignTaskButton();
+		testDetailsModalWindow.getAlert().accept();
+
+		/* COMMENTS */
+
+		testDetailsModalWindow.clickCommentsTab();
+		int startCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getCommentTextArea(), 1), "Textarea is not visible");
+		testDetailsModalWindow.typeComment("Text");
+		testDetailsModalWindow.clickAddCommentButton();
+		int afterCommentActionCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
+		Assert.assertTrue((afterCommentActionCommentsCount - startCommentsCount) == 1);
+		testDetailsModalWindow.closeModalWindow();
+
 	}
 
 	private void verifyTestRunInformation(TestRun testRun, int index)
@@ -587,7 +586,7 @@ public class TestRunPageTest extends AbstractTest
 			Assert.assertEquals(currentTest.getName(), currentTestRow.getTestNameText(), "Invalid test name text");
 			Assert.assertEquals(currentTest.getOwner(), currentTestRow.getOwnerName(), "Invalid owner");
 			//Assert.assertEquals(currentTest.getTestConfig().getDevice(), currentTestRow.getDeviceName(), "Incorrect device");
-			Assert.assertEquals(currentTest.getWorkItem(WorkItem.Type.TASK).getJiraId(), currentTestRow.getTaskTicket(), "Incorrect work item id");
+			Assert.assertEquals(currentTest.getWorkItemByType(WorkItem.Type.TASK).getJiraId(), currentTestRow.getTaskTicket(), "Incorrect work item id");
 			boolean isShowMoreLinkPresent = currentTestRow.isElementPresent(currentTestRow.getShowMoreLink(), 1);
 			switch(status)
 			{
@@ -595,16 +594,12 @@ public class TestRunPageTest extends AbstractTest
 					Assert.assertTrue(currentTest.getMessage().length() > 100 == isShowMoreLinkPresent, "Show more link is not present");
 					Assert.assertTrue(currentTest.getMessage().length() > 100 == (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
 					Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
-				case PASSED:
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is visible");
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
+			    case PASSED:
+			     	Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
 					break;
 				case FAILED:
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is not visible");
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
-
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
 					if(currentTest.getMessage().length() > 100)
 					{
 						Assert.assertTrue(isShowMoreLinkPresent, "Show more link is not present");
@@ -613,14 +608,10 @@ public class TestRunPageTest extends AbstractTest
 					}
 					break;
 				case SKIPPED:
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is not visible");
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
-					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is not visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
 					break;
 				case IN_PROGRESS:
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsPassed(), 1), "Mark as passed is visible");
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getMarkAsKnownIssue(), 1), "Mark as known issue is visible");
-					Assert.assertFalse(currentTestRow.isElementPresent(currentTestRow.getEditTask(), 1), "Edit task is visible");
+					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
 					break;
 			}
 		});
@@ -632,5 +623,9 @@ public class TestRunPageTest extends AbstractTest
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
 		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
 				2, 2, 0, 2, 2, 101);
+	}
+
+	private int parseCommentsCount (String str){
+		return Integer.valueOf(str.substring(str.indexOf("(")+1,str.indexOf(")")));
 	}
 }

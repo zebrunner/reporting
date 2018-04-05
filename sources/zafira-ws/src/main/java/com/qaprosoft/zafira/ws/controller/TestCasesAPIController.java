@@ -15,10 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.TestMetric;
+import com.qaprosoft.zafira.services.services.TestMetricService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -26,12 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
@@ -58,6 +57,9 @@ public class TestCasesAPIController extends AbstractController
 	
 	@Autowired
 	private TestCaseService testCaseService;
+
+	@Autowired
+	private TestMetricService testMetricService;
 	
 	@Autowired
 	private ProjectService projectService;
@@ -69,6 +71,15 @@ public class TestCasesAPIController extends AbstractController
 	public @ResponseBody SearchResult<TestCase> searchTestCases(@Valid @RequestBody TestCaseSearchCriteria sc) throws ServiceException
 	{
 		return testCaseService.searchTestCases(sc);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", code = 200, httpMethod = "GET", response = Map.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value="metrics/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable(value = "id") Long id) throws ServiceException
+	{
+		return testMetricService.getTestMetricsByTestCaseId(id);
 	}
 
 	@ResponseStatusDetails

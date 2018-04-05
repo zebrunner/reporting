@@ -14,7 +14,7 @@
             <span id="brand" class="logo-text">{{main.brand}}</span>
         </a>
         <div class="profile-img" style="display: inline-block; vertical-align: top" ng-controller="SidebarController">
-            <profile-photo id="brandPhoto" ng-model="currentUser.companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
+            <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
             <div has-any-role="['ROLE_ADMIN']">
                 <div class="profile-img-content" style="top: 0; left:12px">
                     <span><i id="brandPhotoSetting" class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
@@ -26,15 +26,15 @@
     <div class="top-nav" ng-controller="SidebarController">
         <ul class="nav-right pull-right list-unstyled">
             <li>
-            	<md-menu md-position-mode="left bottom">
+            	<md-menu id="projects-menu" md-position-mode="left bottom">
                     <md-button id="projects" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event); loadProjects();">
                         <i class="material-icons">keyboard_arrow_down</i>
-                        <small data-ng-if="project">{{project.name}}</small>
-                        <small data-ng-if="!project">Project</small>
+                        <small data-ng-if="selectedProjectsPresent()">{{ joinProjectNames() }}</small>
+                        <small data-ng-if="! selectedProjectsPresent()">Projects</small>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
                         <md-list class="md-dense" >
-                        	<md-list-item id="clearProject" class="md-2-line" ng-click="setProject(null)">
+                        	<md-list-item id="clearProject" class="md-2-line" ng-click="resetProjects()">
                                 <md-icon class="material-icons highlight_red">close</md-icon>
                                 <div class="md-list-item-text">
                                     <h3 class="highlight_red">Clear</h3>
@@ -46,8 +46,8 @@
                                     <h3 class="highlight_green">Create</h3>
                                 </div>
                             </md-list-item>
-                            <md-list-item name="projectName" class="md-2-line" ng-click="setProject(project)" data-ng-repeat="project in projects | orderBy:'name'">
-                                <md-icon class="material-icons">chevron_right</md-icon>
+                            <md-list-item name="projectName" class="md-2-line" data-ng-repeat="project in projects | orderBy:'name'">
+                                <md-checkbox md-prevent-menu-close class="md-primary" ng-model="project.selected" aria-label="project {{ project.id}}"></md-checkbox>
                                 <div class="md-list-item-text">
                                     <h3>{{project.name}}</h3>
                                 </div>

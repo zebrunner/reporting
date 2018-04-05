@@ -19,7 +19,7 @@ public class ProjectFilterMenu extends AbstractUIObject
 	@FindBy(xpath = ".//button[following-sibling::div[.//*[text() = 'Create']]]")
 	private WebElement createButton;
 
-	@FindBy(xpath = ".//div[preceding-sibling::*[text() = 'chevron_right']]/*[text()]")
+	@FindBy(xpath = ".//md-list-item[@name='projectName']//div[@class='md-list-item-text']")
 	private List<WebElement> projectNames;
 
 	public ProjectFilterMenu(WebDriver driver, SearchContext context)

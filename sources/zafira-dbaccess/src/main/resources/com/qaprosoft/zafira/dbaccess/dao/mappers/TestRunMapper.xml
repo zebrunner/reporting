@@ -259,10 +259,14 @@
 	               AND TR.STARTED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
-			<if test="null != project and null != project.id">
-	            <![CDATA[
-	               AND TR.PROJECT_ID = #{project.id}
-	            ]]>
+			<if test="null != projects">
+				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+					<if test="null != project.id">
+						<![CDATA[
+								TR.PROJECT_ID = #{project.id}
+						]]>
+					</if>
+				</foreach>
 			</if>
 			<if test="null != status">
 	            <![CDATA[
@@ -355,10 +359,14 @@
 	               AND TR.STARTED_AT::date <= #{toDate}::date
 	            ]]>
 			</if>
-			<if test="null != project and null != project.id">
-	            <![CDATA[
-	               AND TR.PROJECT_ID = #{project.id}
-	            ]]>
+			<if test="null != projects">
+				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+					<if test="null != project.id">
+						<![CDATA[
+								TR.PROJECT_ID = #{project.id}
+						]]>
+					</if>
+				</foreach>
 			</if>
 			<if test="null != status">
 	            <![CDATA[

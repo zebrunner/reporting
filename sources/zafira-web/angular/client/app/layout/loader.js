@@ -1,9 +1,10 @@
 (function () {
     $(window).on('load', function(){
-        setTimeout( hideLoader , 1000)
+        $('#loader-container #loader-container-image.company-logo').fadeIn("slow");
+        setTimeout( hideLoader , 1000);
     });
 
     function hideLoader() {
-        $('#loader-container').fadeOut("slow")
-    }    
-})(); 
+        $('#loader-container').fadeOut("slow");
+    }
+})();

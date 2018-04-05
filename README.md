@@ -1,15 +1,20 @@
-## Zafira QA Automation Reporting
+Zafira
+==================
 
-Zafira is a Web application that collects test results from QA automation.
+Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes.
 
-Configurable dashboards based on [D3JS](https://d3js.org/)
-![Alt text](./public/demo-dashboards.png "Dashboards")
+![Integration](docs/img/integration.png)
 
-Real-time test results
-![Alt text](./public/demo-testruns.png "Test runs")
+## Features
 
-Integrations with multiple services
-![Alt text](./public/demo-integrations.png "Integrations")
+#### Configurable dashboards based on [D3JS](https://d3js.org/)
+![Alt text](docs/img/demo-dashboards.png "Dashboards")
+
+#### Real-time test results
+![Alt text](docs/img/demo-testruns.png "Test runs")
+
+#### Integrations with multiple services
+![Alt text](docs/img/demo-integrations.png "Integrations")
 
 ## Installation steps
 
@@ -40,43 +45,15 @@ To start Zafira in daemon mode, add '-d' argument:
 
 ## Integration
 
-To integrate Zafira either with your own Java-based application or with [Java sample project](https://github.com/qaprosoft/carina-demo) use [zafira.properties](zafira_sample.properties) file.
+Regardles of Zafira client language you have yo generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
 
-**For [sample project](https://github.com/qaprosoft/carina-demo):**
+![Alt text](docs/img/generate-token.png "Generate token")
 
-1. Set value *zafira_access_token* in **zafira.properties** file in resources folder. 
-
-To get token value: 
-
-- Navigate to User Menu and open User Profile page in Zafira
-
-![Alt text](./public/user-profile.png "User menu")
-
-- Generate and copy access token
-
-![Alt text](./public/generate-token.png "Generate token")
-
-
-**For custom Java-based project:**
-
-1. Put **zafira.properties** file in a *resources* folder.
-
-2. Set properties parameters:
-
-  - *zafira_enabled* - enabling/disabling writing tests into Zafira
-  - *zafira_service_url* - zafira web services URL
-  - *zafira_access_token* - steps for token generation are given above 
-  - *zafira_project* - your project name
- 
-   The other parameters are optional.
- 
- 3. Make sure that ZafiraListener is configured in one of the following ways:
- 
- - testNG xml configuration
- 
- - listener class annotation
- 
- - maven surefire plugin property
+#### Languages supported
+* [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
+* [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
+* [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
+* [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
 
 
 ## License

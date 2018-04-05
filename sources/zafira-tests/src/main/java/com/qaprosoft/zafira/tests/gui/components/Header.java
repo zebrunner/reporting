@@ -1,17 +1,16 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
-import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
 import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.IntegrationsPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPerformancePage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class Header extends AbstractUIObject
 {
@@ -37,8 +36,8 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = ".//*[contains(@class, 'logo')]//i[text() = 'settings']")
 	private WebElement companyProfilePhotoHoverIcon;
 
-	@FindBy(xpath = ".//button[.//*[text() = 'Project']]")
-	private WebElement projectFilterButton;
+	@FindBy(xpath = ".//button[.//*[text() = 'Projects']]")
+	private WebElement projectsFilterButton;
 
 	@FindBy(xpath = ".//md-menu[.//img | .//i[text() = 'account_circle']]")
 	private WebElement userMenuButton;
@@ -91,7 +90,7 @@ public class Header extends AbstractUIObject
 
 	public WebElement getProjectFilterButton()
 	{
-		return projectFilterButton;
+		return projectsFilterButton;
 	}
 
 	public WebElement getUserMenuButton()
@@ -113,10 +112,10 @@ public class Header extends AbstractUIObject
 
 	public ProjectFilterMenu clickProjectFilterButton()
 	{
-		if (!isElementClickable(projectFilterButton, 10) || isElementPresent(getBackdrop(), 1))
+		if (!isElementClickable(projectsFilterButton, 10) || isElementPresent(getBackdrop(), 1))
 			clickOutside();
-		waitUntilElementToBeClickableByBackdropMask(this.projectFilterButton, 1);
-		this.projectFilterButton.click();
+		waitUntilElementToBeClickableByBackdropMask(this.projectsFilterButton, 1);
+		this.projectsFilterButton.click();
 		LOGGER.info("Project filter button was clicked");
 		return projectFilterMenu;
 	}

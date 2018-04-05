@@ -29,7 +29,7 @@ public class WebDriverUtil
 {
 	public static boolean waitForJSandJQueryToLoad(final WebDriver wd)
 	{
-		WebDriverWait wait = new WebDriverWait(wd, 10);
+		WebDriverWait wait = new WebDriverWait(wd, 30);
 		// wait for jQuery to load
 		ExpectedCondition<Boolean> jQueryLoad = new ExpectedCondition<Boolean>()
 		{
@@ -79,7 +79,7 @@ public class WebDriverUtil
 		boolean result;
 		try
 		{
-			Wait<WebDriver> wait = new WebDriverWait(wd, 10);
+			Wait<WebDriver> wait = new WebDriverWait(wd, 1);
 			wait.until(dr -> wd.findElement(By.id("loading-bar-spinner")).isDisplayed());
 			result = true;
 		} catch (Exception e)

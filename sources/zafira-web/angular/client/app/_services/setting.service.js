@@ -11,6 +11,7 @@
         service.getAllSettings = getAllSettings;
         service.getSettingsByIntegration = getSettingsByIntegration;
         service.getSetting = getSetting;
+        service.getCompanyLogo = getCompanyLogo;
         service.getSettingByName = getSettingByName;
         service.getSettingValueByName = getSettingValueByName;
         service.getSettingByTool = getSettingByTool;
@@ -49,6 +50,10 @@
 
         function getSetting(name) {
             return $http.get(API_URL + '/api/settings/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get setting "' + name + '"'));
+        }
+
+        function getCompanyLogo() {
+            return $http.get(API_URL + '/api/settings/companyLogo').then(UtilService.handleSuccess, UtilService.handleError('Unable to get company logo URL'));
         }
 
         function deleteSetting(id) {

@@ -320,7 +320,7 @@ public class TestService
 	@Transactional(readOnly = true)
 	public SearchResult<Test> searchTests(TestSearchCriteria sc) throws ServiceException
 	{
-		SearchResult<Test> results = new SearchResult<Test>();
+		SearchResult<Test> results = new SearchResult<>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
@@ -335,47 +335,60 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public WorkItem createTestKnownIssue(long testId, WorkItem workItem) throws ServiceException, InterruptedException
+	public WorkItem createOrUpdateTestWorkItem(long testId, WorkItem workItem) throws ServiceException, InterruptedException
 	{
 		Test test = getNotNullTestById(testId);
-		WorkItem existingBug = test.getWorkItem(Type.BUG);
+		Type workItemType = workItem.getType();
+		WorkItem attachedWorkItem = test.getWorkItemByType(workItemType);
 
-		workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+		if (workItemType == Type.BUG) {
+			workItem.setHashCode(getTestMessageHashCode(test.getMessage()));
+			if (!test.isKnownIssue())
+				testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
+			if (!test.isBlocker() && workItem.isBlocker())
+				testRunService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
+			else if (test.isBlocker() && !workItem.isBlocker())
+				testRunService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
 
-		if (!test.isKnownIssue())
-			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_KNOWN_ISSUE);
-		if (!test.isBlocker() && workItem.isBlocker())
-			testRunService.updateStatistics(test.getTestRunId(), MARK_AS_BLOCKER);
-		else if (test.isBlocker() && !workItem.isBlocker())
-			testRunService.updateStatistics(test.getTestRunId(), REMOVE_BLOCKER);
+			test.setKnownIssue(true);
+			test.setBlocker(workItem.isBlocker());
+			updateTest(test);
+		}
 
-		test.setKnownIssue(true);
-		test.setBlocker(workItem.isBlocker());
-		updateTest(test);
-
-		if (workItem.getId() != null && existingBug == null)
+		if (workItem.getId() != null && attachedWorkItem == null)
 		{
 			workItemService.updateWorkItem(workItem);
 			testMapper.createTestWorkItem(test, workItem);
 		}
-		else if (workItem.getId() != null && existingBug != null)
+		else if (workItem.getId() != null && attachedWorkItem != null)
 		{
-			// Generate random hashcode to unlink known issue
-			existingBug.setHashCode(RandomUtils.nextInt());
-			workItemService.updateWorkItem(existingBug);
+			if (workItemType == Type.BUG) {
+				// Generate random hashcode to unlink known issue
+				attachedWorkItem.setHashCode(RandomUtils.nextInt());
+				workItemService.updateWorkItem(attachedWorkItem);
+			}
 			workItemService.updateWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, workItemType);
 			testMapper.createTestWorkItem(test, workItem);
 		}
 		else
 		{
 			workItemService.createWorkItem(workItem);
-			deleteTestWorkItemByTestIdAndWorkItemType(testId, Type.BUG);
+			deleteTestWorkItemByTestIdAndWorkItemType(testId, workItemType);
 			testMapper.createTestWorkItem(test, workItem);
 		}
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
 
-		return workItem;
+		return workItemService.getWorkItemById(workItem.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public WorkItem createWorkItem(long testId, WorkItem workItem) throws ServiceException, InterruptedException
+	{
+		Test test = getNotNullTestById(testId);
+		workItemService.createWorkItem(workItem);
+		testMapper.createTestWorkItem(test, workItem);
+		return workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), workItem.getType());
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -387,7 +400,9 @@ public class TestService
 
 		WorkItem workItem = workItemService.getWorkItemById(workItemId);
 		// Generate random hashcode to unlink known issue
-		workItem.setHashCode(RandomUtils.nextInt());
+		if (workItem.getType() == Type.BUG) {
+			workItem.setHashCode(RandomUtils.nextInt());
+		}
 		workItemService.updateWorkItem(workItem);
 		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
 
@@ -514,78 +529,6 @@ public class TestService
 			LOGGER.error("Unable to calculate rurun flags", e);
 			testMapper.updateTestsNeedRerun(testIds, true);
 		}
-	}
-
-	@Transactional(rollbackFor = Exception.class)
-	public WorkItem assignOrUpdateTaskWorkItemToTest(long id, WorkItem workItem, long principalId) throws ServiceException, InterruptedException
-	{
-		Test test = getTestById(id);
-		List<WorkItem> itemList = test.getWorkItems();
-		WorkItem existWorkItem = null;
-
-		for (WorkItem item : itemList)
-		{
-			if (item.getType() == Type.TASK)
-			{
-				existWorkItem = item;
-				break;
-			}
-		}
-
-		if (existWorkItem == null)
-		{
-			if (principalId > 0)
-			{
-				workItem.setUser(new User(principalId));
-			}
-			workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
-		}
-		else
-		{
-
-			if (workItem.getJiraId().equals(existWorkItem.getJiraId()))
-			{
-				workItem = workItemService.updateWorkItem(workItem);
-			}
-			else
-			{
-				deleteTestWorkItemByWorkItemIdAndTestId(existWorkItem.getId(), id);
-				workItem = createOrGetExistTestWorkItemWithTypeTask(id, workItem);
-			}
-		}
-		return workItem;
-	}
-
-	@Transactional(rollbackFor = Exception.class)
-	public WorkItem createOrGetExistTestWorkItemWithTypeTask(long id, WorkItem workItem) throws ServiceException
-	{
-		Test test = getTestById(id);
-		WorkItem item = null;
-
-		if (test == null)
-		{
-			throw new ServiceException("Test not found by id: " + id);
-		}
-
-		if (!StringUtils.isEmpty(workItem.getJiraId()))
-		{
-			item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
-			if (item == null)
-			{
-				workItem.setType(Type.TASK);
-				workItemService.createWorkItem(workItem);
-				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
-			}
-			else if (!item.getDescription().equals(workItem.getDescription()))
-			{
-				workItem.setType(Type.TASK);
-				workItemService.createWorkItem(workItem);
-				item = workItemService.getWorkItemByJiraIdAndType(workItem.getJiraId(), Type.TASK);
-			}
-			testMapper.createTestWorkItem(test, item);
-		}
-
-		return item;
 	}
 
 	public int getTestMessageHashCode(String message)

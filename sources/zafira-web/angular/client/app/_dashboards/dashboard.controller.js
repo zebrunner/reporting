@@ -206,10 +206,10 @@
         };
 
         var setQueryParams = function(dashboardName){
-            var params = ProjectProvider.getProjectQueryParam();
+            var params = ProjectProvider.getProjectsQueryParam();
             for(var i = 0; i<$scope.dashboard.attributes.length; i++){
                 if ($scope.dashboard.attributes[i].key != null && $scope.dashboard.attributes[i].key == 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                    params = "?projects=" + $scope.dashboard.attributes[i].value;
                 }
             }
             params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
@@ -405,9 +405,6 @@
                     var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
                     $scope.gridstackOptions.disableResize = false;
                     var el = angular.element('#' + widget.id)[0];
-                    console.log('widget ' + widget.title + ": " + el.offsetHeight);
-                    console.log('index' + index);
-                    console.log('size' + Object.size(widget.data.dataset));
                     var gridstackEl = angular.element('#widget-' + widget.id)[0];
                     if(Object.size(widget.data.dataset) == 0) {
                         gridstack.resize(gridstackEl, widget.location.width, (Math.ceil(el.offsetHeight / $scope.gridstackOptions.cellHeight / 2)) + 2);
@@ -745,10 +742,10 @@
         };
 
         var setQueryParams = function(table){
-            var params = ProjectProvider.getProjectQueryParam();
+            var params = ProjectProvider.getProjectsQueryParam();
             for(var i = 0; i < $scope.dashboard.attributes.length; i++){
                 if ($scope.dashboard.attributes[i].key !== null && $scope.dashboard.attributes[i].key === 'project'){
-                    params = "?project=" + $scope.dashboard.attributes[i].value;
+                    params = "?projects=" + $scope.dashboard.attributes[i].value;
                 }
             }
             params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
@@ -806,7 +803,7 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService) {
+    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider) {
 
         $scope.title = "Zafira Dashboard";
         $scope.subjectRequired = true;
@@ -834,7 +831,7 @@
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            DashboardService.SendDashboardByEmail($scope.email).then(function (rs) {
+            DashboardService.SendDashboardByEmail($scope.email, ProjectProvider.getProjects()).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Email was successfully sent!');
                 }

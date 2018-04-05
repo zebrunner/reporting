@@ -29,6 +29,7 @@
         ,'gridstack-angular'
         ,'ngImgCrop'
         ,'ngMaterialDateRangePicker'
+        ,'ngMaterialSidemenu'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -54,6 +55,26 @@
                 }
             }
             return size;
+        };
+
+        Array.prototype.indexOfField = function(fieldName, fieldValue) {
+            for (var i = 0; i < this.length; i++) {
+                var field = this[i];
+                if (field && field[fieldName] === fieldValue) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        Array.prototype.equalsByField = function(arrayToCompare, fieldName) {
+            if(this.length != arrayToCompare.length)
+                return false;
+            for(var arrArgIndex = 0; arrArgIndex < this.length; arrArgIndex++) {
+                var arrArg = this[arrArgIndex];
+                if(arrayToCompare.indexOfField(fieldName, arrArg[fieldName]) == -1)
+                    return false;
+            }
+            return true;
         };
     }
     ]).directive('ngReallyClick', [function() {
@@ -331,7 +352,7 @@
                 function blobToFormData() {
                     var formData = new FormData();
                     var croppedImage = dataURItoBlob($scope.myCroppedImage);
-                    formData.set("file", croppedImage, $scope.fileName);
+                    formData.append("file", croppedImage, $scope.fileName);
                     return formData;
                 }
 
@@ -383,7 +404,7 @@
         return {
             restrict: 'E',
             template: '<span>' +
-            '            <img alt="" ng-src="{{ngModel}}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
+            '            <img alt="" ng-src="{{ngModel}}" ng-class="{\'imageRotateHorizontal\': rotateHorizontal}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
             '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
             '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
@@ -396,7 +417,8 @@
                 autoResize: '=?',
                 icon: '@',
                 iconVisible: '=?',
-                label: '@'
+                label: '@',
+                rotateHorisontal: '=?'
             },
             compile: function(element, attrs){
                 return {
@@ -404,7 +426,8 @@
                         if (!attrs.size) { scope.size = 120; }
                         if (!attrs.icon) { scope.icon = 'account_circle'; }
                         if (!attrs.iconVisible) { scope.iconVisible = true; }
-                        if (!attrs.autoResize) { scope.autoResize = true; } else { scope.autoResize = scope.autoResize == 'true' }
+                        if (!attrs.autoResize) { scope.autoResize = true; }
+                        if (!attrs.rotateHorisontal) { scope.rotateHorisontal = false; } else { scope.autoResize = scope.autoResize == 'true' }
 
                         scope.imageSize = scope.autoResize ? scope.size - 4 : scope.size;
                     },

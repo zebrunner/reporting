@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
-import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
+import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
@@ -47,13 +47,12 @@ import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
-import java.util.List;
-
 public abstract class AbstractController
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractController.class);
 	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/testRuns";
+	
 	private static final String TESTS_WEBSOCKET_PATH = "/topic/testRuns/%s/tests";
+	
 	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/statistics";
 
 	@Resource(name = "messageSource")

@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -122,7 +123,7 @@ public class WidgetsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql,
-			@RequestParam(value = "project", defaultValue = "", required = false) String project,
+			@RequestParam(value = "projects", defaultValue = "", required = false) List<String> projects,
 			@RequestParam(value = "currentUserId", required = false) String currentUserId,
 			@RequestParam(value = "dashboardName", required = false) String dashboardName,
             @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired ) throws ServiceException
@@ -141,12 +142,12 @@ public class WidgetsAPIController extends AbstractController
 		}
 
 			query = query
-				.replaceAll("#\\{project\\}", !StringUtils.isEmpty(project) ? project : "")
+				.replaceAll("#\\{project\\}", formatProjects(projects))
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
 				.replaceAll("#\\{zafiraURL\\}", zafiraURL)
-					.replaceAll("#\\{hashcode\\}", "0");
+				.replaceAll("#\\{hashcode\\}", "0");
 
 			String param = StringUtils.substringBetween(query,"#{","}%" );
 			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
@@ -170,8 +171,21 @@ public class WidgetsAPIController extends AbstractController
         }
         return resultList;
     }
-
-
+	
+	private String formatProjects(List<String> projects)
+	{
+		String result = "%";
+		if(!CollectionUtils.isEmpty(projects))
+		{
+			StringBuilder sb = new StringBuilder();
+			for(String project : projects)
+			{
+				sb.append(project + ","); 
+			}
+			result = StringUtils.removeEnd(sb.toString(), ",");
+		}
+		return result;
+	}
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
