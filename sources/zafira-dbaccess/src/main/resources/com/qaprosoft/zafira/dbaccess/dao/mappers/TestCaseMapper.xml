@@ -211,7 +211,7 @@
 				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
 					<if test="null != project.id">
 						<![CDATA[
-								TС.PROJECT_ID = #{project.id}
+								TC.PROJECT_ID = #{project.id}
 						]]>
 					</if>
 				</foreach>
@@ -284,7 +284,7 @@
 				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
 					<if test="null != project.id">
 						<![CDATA[
-								TС.PROJECT_ID = #{project.id}
+								TC.PROJECT_ID = #{project.id}
 						]]>
 					</if>
 				</foreach>
