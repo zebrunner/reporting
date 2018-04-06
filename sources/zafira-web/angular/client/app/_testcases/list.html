@@ -72,10 +72,10 @@
                                     <td name="testCaseOwner" md-cell>{{testcase.primaryOwner.username}}</td>
                                     <td name="testCaseStability" md-cell>
                                         <a ng-class="{
-                                                                            'label label-success' : testcase.stability > 0.66,
-                                                                            'label label-danger' : testcase.stability < 0.33,
-                                                                            'label label-warning' : testcase.stability <= 0.66 && testcase.stability >= 0.33}">
-                                            {{testcase.stability * 100}}
+                                                                            'label label-success' : testcase.stability > range[1],
+                                                                            'label label-danger' : testcase.stability < range[0],
+                                                                            'label label-warning' : testcase.stability <= range[1] && testcase.stability >= range[0]}">
+                                            {{testcase.stability * 100}} %
                                         </a>
                                     </td>
                                     <td name="testCaseCreatedAt" md-cell class="text-center">{{testcase.createdAt | date}}</td>

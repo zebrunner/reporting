@@ -11,6 +11,9 @@
 
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
+    	// TODO: make percent range for testcase label color configurable
+        $scope.range = [0.25, 0.75];
+
     	$scope.UtilService = UtilService;
 
     	$scope.sc = angular.copy(DEFAULT_SC);
