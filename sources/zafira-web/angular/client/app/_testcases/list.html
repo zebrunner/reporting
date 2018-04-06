@@ -70,7 +70,14 @@
                                          </md-button>
                                     	</td>
                                     <td name="testCaseOwner" md-cell>{{testcase.primaryOwner.username}}</td>
-                                    <td name="testCaseStability" md-cell><div data-ng-if="testcase.stability">{{testcase.stability * 100}} % </div></td>
+                                    <td name="testCaseStability" md-cell>
+                                        <a ng-class="{
+                                                                            'label label-success' : testcase.stability > 0.66,
+                                                                            'label label-danger' : testcase.stability < 0.33,
+                                                                            'label label-warning' : testcase.stability <= 0.66 && testcase.stability >= 0.33}">
+                                            {{testcase.stability * 100}}
+                                        </a>
+                                    </td>
                                     <td name="testCaseCreatedAt" md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
                                         <md-menu class="pull-right">
