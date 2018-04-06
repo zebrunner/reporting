@@ -58,7 +58,7 @@
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat-start="testcase in sr.results | orderBy: '-createdAt':true " class="result {{testcase.status}}">
+                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}">
                                     <td name="testCaseId" md-cell>#{{testcase.id}}</td>
                                     <td name="testClassName" md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td name="testMethod" md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
