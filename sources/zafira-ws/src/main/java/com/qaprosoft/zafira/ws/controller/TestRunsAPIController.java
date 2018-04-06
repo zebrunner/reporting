@@ -142,7 +142,7 @@ public class TestRunsAPIController extends AbstractController
 		}
 		testRun.setConfigXML(tr.getConfigXML());
 		// TODO: remove that ASAP from controller
-		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 		{
 			if ("app_version".equals(arg.getKey()))
 			{
