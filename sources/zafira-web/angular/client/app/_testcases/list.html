@@ -1,5 +1,4 @@
 <div class="page page-profile" ng-controller="TestCaseListController">
-
     <div class="row ui-section">
         <div class="col-lg-12" style="min-width: 360px;">
         	<h2 id="pageTitle" class="section-header">Test cases
@@ -46,6 +45,10 @@
                                         </md-input-container>
 									</th>
                                     <th md-column class="no-padding">
+                                    <span>Stability (%)</span>
+                                    </th>
+                                    <th md-column
+                                        class="no-padding">
                                         <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                         <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
                                         <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
@@ -55,7 +58,7 @@
                                	<md-button type="submit" class="hide">Search</md-button>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat-start="testcase in sr.results" class="result {{testcase.status}}">
+                                <tr md-row ng-repeat-start="testcase in sr.results | orderBy: '-createdAt':true " class="result {{testcase.status}}">
                                     <td name="testCaseId" md-cell>#{{testcase.id}}</td>
                                     <td name="testClassName" md-cell><b>{{getClassName(testcase.testClass)}}</b></td>
                                     <td name="testMethod" md-cell>{{UtilService.truncate(testcase.testMethod, 40)}}</td>
@@ -67,10 +70,11 @@
                                          </md-button>
                                     	</td>
                                     <td name="testCaseOwner" md-cell>{{testcase.primaryOwner.username}}</td>
+                                    <td name="testCaseStability" md-cell><div data-ng-if="testcase.stability">{{testcase.stability * 100}} % </div></td>
                                     <td name="testCaseCreatedAt" md-cell class="text-center">{{testcase.createdAt | date}}</td>
                                     <td md-cell>
                                         <md-menu class="pull-right">
-                                            <md-button name="testCaseMenu" aria-label="User settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                            <md-button name="testCaseMenu" aria-label="User settings" class="md-icon-button" ng-click="$mdMenu.open($event);">
                                                 <md-icon class="material-icons">more_vert</md-icon>
                                             </md-button>
                                             <md-menu-content width="2" class="fixed-md-menu-content">
