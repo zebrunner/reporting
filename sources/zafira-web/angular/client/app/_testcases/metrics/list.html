@@ -1,0 +1,24 @@
+<div data-ng-controller="MetricController">
+
+    <div id="dashboard_content" class="page page-dashboard">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="section-header" id="pageTitle">Metrics</h2>
+            </div>
+        </div>
+        <br/>
+        <div ng-repeat="(key, value) in metrics" class="row">
+            <div class="panel panel-default" zafira-background-theme="graph">
+                <div class="panel-heading black-header">
+                    {{::key}}
+                </div>
+                <div align="center" class="panel-body graph-box linechart">
+                    <div align="center center" class="text-center" data-ng-if="! metrics || Object.size(metrics) == 0">
+                        <span>No data</span>
+                    </div>
+                    <linechart data-ng-if="metrics && Object.size(metrics) != 0" data="value" options="value.options"></linechart>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

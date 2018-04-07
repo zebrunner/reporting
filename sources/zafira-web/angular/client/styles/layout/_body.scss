@@ -608,6 +608,11 @@ md-checkbox.main-checkbox div.md-icon {
     border-color: #009688 !important;
 }
 
+.black-header {
+    color: black;
+    text-transform: capitalize;
+}
+
 /* Drop zone */
 input[type="file"].content-input{
     position: absolute;
@@ -801,4 +806,133 @@ ul.profile-image-actions {
     100% {
         -webkit-transform: rotateY(360deg);
     }
+
+
+}
+
+/* Test details modal */
+
+.test-details-dialog {
+    min-height: 710px !important;
+}
+
+.label-font-size {
+    font-size: 14px;
+}
+
+.icons-font-size {
+    font-size: 12px;
+}
+
+.comments-font-size {
+    font-size: 12px;
+}
+
+.table-frame {
+    border: 1px rgba(0, 0, 0, 0.12) solid;
+}
+
+.comments-button {
+    width: auto !important;
+}
+
+.tickets-font {
+    font-weight: normal
+}
+
+.comments-table-header {
+    margin-top: 2px;
+}
+.comments-table-body {
+    border-top: none !important;
+}
+
+.issues-select-padding {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.issue-element-container {
+    width: -webkit-fill-available !important;
+}
+
+.elment-with-label {
+    float : left;
+    clear: left;
+}
+
+.input-like-label {
+    color: rgba(0,0,0,0.54);
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.edit-label {
+    color: rgba(0,0,0,0.54);
+    font-weight: bold;
+    font-size: 11px;
+}
+.tab-row {
+    margin: 10px 0;
+    padding: 10px 0;
+}
+
+.upper-tab-row {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+
+.edit-elements {
+    display: flex;
+    justify-content: space-between;
+}
+
+.issue-trace-area {
+    height: 100%;
+    background: ghostwhite;
+    margin: 0 15px;
+}
+
+.issue-trace-label {
+    margin: 0 15px;
+}
+
+.align-middle {
+    display: flex;
+    align-items: center;
+}
+
+.align-right {
+    justify-content: flex-end;
+}
+
+.scrollable-tab {
+    max-height: 175px;
+    overflow-y: auto;
+}
+
+.scrollable-comments {
+    max-height: 270px;
+    overflow-y: auto;
+}
+
+.test-name {
+    font-weight: bold;
+}
+
+.outer-border {
+    border: 1px solid #ddd;
+}
+
+.info-width {
+    min-width: 200px;
+}
+
+.modal-min-width {
+    min-width: 920px;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0;
 }

@@ -1,0 +1,106 @@
+.md-sidemenu md-divider {
+    width: 100%;
+    margin: 8px 0;
+}
+
+.md-sidemenu md-divider + .md-subheader {
+    margin-top: -8px;
+}
+
+.md-sidemenu .md-button {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    margin: 0;
+    padding: 0 16px;
+    border-radius: 0;
+    background-color: #fff;
+    text-align: left;
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+}
+
+.md-sidemenu .md-button:hover {
+    background-color: #eee;
+}
+
+.md-sidemenu .md-button .md-ripple-container {
+    border-radius: 0 !important;
+}
+
+.md-sidemenu .md-subheader {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+}
+
+md-sidemenu-button {
+    width: 100%;
+    display: flex;
+}
+
+.md-sidemenu-button md-icon:first-child {
+    max-width: 24px;
+    margin-right: 32px;
+}
+
+.md-sidemenu-button span {
+    flex: 1;
+}
+
+.md-sidemenu-content {
+    width: 100%;
+    min-height: 48px;
+    overflow: hidden;
+}
+
+.md-sidemenu-toggle.md-active md-icon:last-child {
+    transform: rotate(180deg) translateZ(0);
+}
+
+.md-sidemenu .md-sidemenu-toggle {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-flow: column;
+    z-index: 1;
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.md-sidemenu-toggle md-icon {
+    transition: 0.4s transform cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.md-sidemenu-toggle md-icon:first-child {
+    max-width: 24px;
+    margin-right: 32px;
+}
+
+.md-sidemenu-toggle > div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.md-sidemenu-wrapper {
+    overflow: hidden;
+    opacity: 0;
+    transform: translate3D(0, 0, 0);
+    transition: 0.4s cubic-bezier(0.55, 0, 0.55, 0.2);
+    transition-property: transform, opacity, margin, background;
+}
+
+.md-sidemenu-wrapper.md-active {
+    margin-top: 0 !important;
+    opacity: 1;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.md-sidemenu-wrapper.md-sidemenu-wrapper-icons .md-button {
+    padding-left: 72px;
+}
+
+.md-sidemenu-wrapper .md-button {
+    padding-left: 32px;
+}

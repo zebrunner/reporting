@@ -16,12 +16,19 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import com.qaprosoft.zafira.models.db.TestMetric;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface TestMetricMapper
 {
 	void createTestMetric(TestMetric user);
 
 	TestMetric getTestMetricById(long id);
+
+	List<TestMetric> getTestMetricsByTestCaseIdAndEnv(@Param(value = "testCaseId") Long testCaseId, @Param(value = "env") String env);
+
+	List<String> getEnvsByTestCaseId(Long testCaseId);
 
 	void deleteTestMetricById(long id);
 }

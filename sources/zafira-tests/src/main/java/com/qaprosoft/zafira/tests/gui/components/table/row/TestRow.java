@@ -2,8 +2,7 @@ package com.qaprosoft.zafira.tests.gui.components.table.row;
 
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestArtifactMenu;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.KnownIssueModalWindow;
-import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TaskModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TestDetailsModalWindow;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -38,20 +37,8 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = ".//*[@name = 'errorMsg']/*")
 	private List<WebElement> logs;
 
-	@FindBy(xpath = "./td[2]//a[text() = 'Mark as passed']")
-	private WebElement markAsPassed;
-
-	@FindBy(xpath = "./td[2]//a[text() = 'Mark as known issue']")
-	private WebElement markAsKnownIssue;
-
-	@FindBy(xpath = "./td[2]//a[text() = 'Edit known issue']")
-	private WebElement editKnownIssue;
-
-	@FindBy(xpath = "./td[2]//a[text() = 'Assign task']")
-	private WebElement assignTask;
-
-	@FindBy(xpath = "./td[2]//a[text() = 'Edit task']")
-	private WebElement editTask;
+	@FindBy(xpath = "./td[4]//button[contains(md-icon, 'forum')]")
+	private WebElement openTestDetailsModalButton;
 
 	@FindBy(xpath = "./td[3]//a[contains(@class, 'bug-label-bg')]")
 	private WebElement knownIssueLabel;
@@ -59,17 +46,14 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = "./td[3]//a[not(contains(@class, 'bug-label-bg'))]")
 	private WebElement taskLabel;
 
-	@FindBy(xpath = "./td[4]//button")
+	@FindBy(xpath = "./td[4]//button[contains(md-icon, 'attachment')]")
 	private WebElement testArtifactMenuButton;
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content")
 	private TestArtifactMenu testArtifactMenu;
 
 	@FindBy(xpath = "//md-dialog")
-	private TaskModalWindow taskModalWindow;
-
-	@FindBy(xpath = "//md-dialog")
-	private KnownIssueModalWindow knownIssueModalWindow;
+	private TestDetailsModalWindow testDetailsModalWindow;
 
 	public TestRow(WebDriver driver, SearchContext context)
 	{
@@ -182,58 +166,15 @@ public class TestRow extends AbstractRow
 		return logs.get(1).getText();
 	}
 
-	public WebElement getMarkAsPassed()
+	public WebElement getOpenTestDetailsModalButton()
 	{
-		return markAsPassed;
+		return openTestDetailsModalButton;
 	}
 
-	public void clickMarkAsPassed()
+	public TestDetailsModalWindow clickOpenTestDetailsModalButton()
 	{
-		markAsPassed.click();
-	}
-
-	public WebElement getMarkAsKnownIssue()
-	{
-		return markAsKnownIssue;
-	}
-
-	public KnownIssueModalWindow clickMarkAsKnownIssue()
-	{
-		markAsKnownIssue.click();
-		return knownIssueModalWindow;
-	}
-
-	public WebElement getEditKnownIssue()
-	{
-		return editKnownIssue;
-	}
-
-	public KnownIssueModalWindow clickEditKnownIssue()
-	{
-		editKnownIssue.click();
-		return knownIssueModalWindow;
-	}
-
-	public WebElement getAssignTask()
-	{
-		return assignTask;
-	}
-
-	public TaskModalWindow clickAssignTask()
-	{
-		assignTask.click();
-		return taskModalWindow;
-	}
-
-	public WebElement getEditTask()
-	{
-		return editTask;
-	}
-
-	public TaskModalWindow clickEditTask()
-	{
-		editTask.click();
-		return taskModalWindow;
+		openTestDetailsModalButton.click();
+		return testDetailsModalWindow;
 	}
 
 	public WebElement getKnownIssueLabel()
@@ -272,13 +213,8 @@ public class TestRow extends AbstractRow
 		return testArtifactMenu;
 	}
 
-	public TaskModalWindow getTaskModalWindow()
+	public TestDetailsModalWindow getTestDetailsModalWindow()
 	{
-		return taskModalWindow;
-	}
-
-	public KnownIssueModalWindow getKnownIssueModalWindow()
-	{
-		return knownIssueModalWindow;
+		return testDetailsModalWindow;
 	}
 }
