@@ -89,7 +89,8 @@
 
 
 
-            >a {
+            >a,
+            >.menu-btn {
                 position: relative;
                 white-space: nowrap;
                 display: block;
@@ -137,7 +138,8 @@
                     border-bottom: 0;
                 }
 
-                > a {
+                > a,
+                >.menu-btn {
                     position: relative;
                     display: block;
                     padding: 13px 0 13px 25px;
