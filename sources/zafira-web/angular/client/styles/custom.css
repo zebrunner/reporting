@@ -1,0 +1,159 @@
+.fixed-search-column button {
+    margin: .6em 0 .6em 8px;
+}
+
+.panel-body {
+    padding: 16px;
+}
+
+.menu-btn {
+    margin: 10px;
+}
+
+.nav .material-icons {
+    font-size: 18px;
+}
+
+.page .md-button {
+    height: 32px;
+    font-size: 13px;
+}
+
+button#save {
+    background-color: #26a69a;
+}
+
+button#reset {
+    color: rgb(255, 255, 256);
+    background-color: #3D4051;
+}
+
+button#reset:hover {
+    background-color: #262b33;
+}
+
+button#delete {
+    color: #d2333b;
+    background-color: rgb(255, 255, 255);
+}
+
+button#delete:hover {
+    background-color: #fcfcfc;
+}
+
+md-select {
+    height: 36px;
+    border: 1px solid #CBD5DD;
+    border-radius: 2px;
+    padding: 0 0 0 16px !important;
+}
+
+md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not([disabled]):focus .md-select-value, .md-select-value {
+    border-bottom-color: #CBD5DD;
+    border-bottom: 1px;
+    border-radius: 2px;
+}
+
+#filter-editor md-select {
+    background-color: #fff;
+}
+
+.input-filter-name {
+    width: 344px;
+    margin-right: 8px;
+}
+
+.filter-input-container {
+    width: 168px;
+    float: left;
+    margin-right: 8px;
+}
+
+#search-input-container {
+    width: 520px;
+}
+
+#search-input-container, .filter-input-container {
+    position: relative;
+    margin: 0 8px 0 0 !important;
+    padding: 0 !important;
+}
+
+.btn-check {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+}
+
+.btn-check label {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    background: #ededed;
+    border-radius: 2px;
+    padding: 6px 8px !important;
+    transition: all .2s;
+    font-size: 13px;
+}
+
+.btn-check label:hover {
+    background-color: #37C88D;
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-control {
+    height: 36px;
+}
+
+.reviewed-check:hover {
+    background-color: rgb(0, 150, 136);
+}
+
+.date-picker-container {
+    border: 1px solid #CBD5DD;
+    border-radius: 2px;
+}
+
+#filter-editor {
+    background-color: #EFEDF0;
+    min-height: 120px;
+}
+
+.filter-text {
+    vertical-align: top;
+    padding-bottom: 16px;
+}
+
+.quadro-btn {
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.date-picker-container {
+    position: relative;
+    height: 36px;
+    margin: 0 0 0 8px !important;
+}
+
+.date-picker-container button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 36px;
+    min-width: 48px;
+}
+
+.date-picker-container i {
+    float: right;
+}
+
+#input-value {
+    width: 124px;
+}
+
+#add-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

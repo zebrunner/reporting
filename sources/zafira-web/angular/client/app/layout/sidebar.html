@@ -1,25 +1,33 @@
 <div class="nav-wrapper" xmlns:font-size="http://www.w3.org/1999/xhtml">
-    <ul id="nav"
-        class="nav"
-        data-slim-scroll
-        data-collapse-nav
-        data-highlight-active
-        data-ng-controller="SidebarController">
-		<li>
-            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards()"><i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span></a>
+    <ul id="nav" class="nav" data-slim-scroll data-collapse-nav data-highlight-active>
+        <li hide-sm>
+            <a md-button class="menu-btn toggle-min" data-toggle-nav-collapsed-min aria-label="menu toggle-nav-collapsed-min">
+            <i class="material-icons">menu</i>
+          </a>
+        </li>
+        <li>
+            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards()">
+              <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
+            </a>
             <ul>
                 <li data-ng-repeat="dashboard in dashboards | orderBy:'position'">
-                    <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}"><i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 14px;"></i>{{dashboard.title}}</a>
+                    <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">
+                      <i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 14px;"></i>
+                      {{dashboard.title}}
+                    </a>
                 </li>
             </ul>
         </li>
-		<li>
-            <a md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews()"><i class="material-icons">playlist_add_check</i><span data-translate="TEST_RUNS"></span></a>
+        <li>
+            <a md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews()">
+              <i class="material-icons">playlist_add_check</i>
+              <span data-translate="TEST_RUNS"></span>
+            </a>
             <ul>
                 <li>
                     <a md-button aria-label="menu" href="#!/tests/runs"><span data-translate="SHOW_LATEST_RUNS"></span></a>
                 </li>
-                <md-divider  data-ng-if="views.length > 0"></md-divider>
+                <md-divider data-ng-if="views.length > 0"></md-divider>
                 <li data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
                     <a md-button href="#!/views/{{view.id}}">{{view.name}}</a>
                     <i style="position: absolute; right: 10px; top: 15px;" class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
@@ -30,9 +38,17 @@
                 </li>
             </ul>
         </li>
-        <li><a md-button aria-label="menu" href="#!/tests/cases"><i class="material-icons">library_books</i><span data-translate="TEST_CASES"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/users" has-any-permission="['VIEW_USERS']"><i class="material-icons">supervisor_account</i><span data-translate="USERS"></span></a></li>
-        <li><a md-button aria-label="menu" href="#!/monitors" has-any-permission="['VIEW_MONITORS']"><i class="material-icons">laptop_chromebook</i><span data-translate="MONITORS"></span></a></li>
+        <li><a md-button aria-label="menu" href="#!/tests/cases">
+          <i class="material-icons">library_books</i>
+          <span data-translate="TEST_CASES"></span>
+        </a></li>
+        <li><a md-button aria-label="menu" href="#!/users" has-any-permission="['VIEW_USERS']">
+          <i class="material-icons">supervisor_account</i>
+          <span data-translate="USERS"></span>
+        </a></li>
+        <li><a md-button aria-label="menu" href="#!/monitors" has-any-permission="['VIEW_MONITORS']">
+          <i class="material-icons">laptop_chromebook</i><span data-translate="MONITORS"></span>
+        </a></li>
         <!-- li><a md-button aria-label="menu" href="#!/settings" has-any-permission="['VIEW_SETTINGS']"><i class="material-icons">settings</i><span data-translate="SETTINGS"></span></a></li-->
     </ul>
 </div>

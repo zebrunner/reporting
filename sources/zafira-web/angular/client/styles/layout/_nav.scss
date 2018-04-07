@@ -12,7 +12,7 @@
     }
 }
 
-// 
+//
 .nav-container {
     .md-button {
         text-align: left;
@@ -44,7 +44,7 @@
             display: inline-block;
             vertical-align: bottom; // for material-icons
             margin-right: 10px;
-            width: 20px;
+            width: 18px;
             line-height: $line-height-computed;
             text-align: center;
             font-size: 16px;
@@ -111,11 +111,11 @@
                     font-size: 9px;
                     line-height: 19px;
                     transition: all .3s ease-in-out;
-                }                
+                }
             }
 
             > .icon-has-ul-h { // icon for horizontal nav
-                display: none; 
+                display: none;
             }
 
 
@@ -167,6 +167,3 @@
 .nav-vertical {
     box-shadow: 2px 0 2px 0 rgba(0,0,0,0.12);
 }
-
-
-
