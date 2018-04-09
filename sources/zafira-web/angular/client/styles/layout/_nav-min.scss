@@ -1,5 +1,5 @@
 @media (min-width: $screen-sm) {
-    
+
     .app.nav-collapsed-min {
 
         // default
@@ -33,7 +33,8 @@
                         font-size: 12px;
                     }
                 }
-                > a {
+                > a,
+                > .menu-btn {
                     padding: 15px 15px;
                     text-align: center;
 

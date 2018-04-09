@@ -2,8 +2,7 @@
     <div ui-preloader></div>
 
     <!-- Logo -->
-    <div class="logo" style="min-width: 180px"
-         ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
+    <div class="logo bg-white" ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
                      'bg-white': main.skin === '21',
                      'bg-primary': ['12','22','32'].indexOf(main.skin) >= 0,
                      'bg-success': ['13','23','33'].indexOf(main.skin) >= 0,
@@ -11,7 +10,8 @@
                      'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
                      'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
         <a href="#!/">
-            <span id="brand" class="logo-text">{{main.brand}}</span>
+            <span class="logo-icon"><img class="img-circle" ng-src="{{ companyLogo.value }}"></span>
+            <!-- <span id="brand" class="logo-text">{{main.brand}}</span> -->
         </a>
         <div class="profile-img" style="display: inline-block; vertical-align: top" ng-controller="SidebarController">
             <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
@@ -24,17 +24,17 @@
     </div>
 
     <div class="top-nav" ng-controller="SidebarController">
-        <ul class="nav-right pull-right list-unstyled">
+        <ul class="nav-left pull-right list-unstyled">
             <li>
-            	<md-menu id="projects-menu" md-position-mode="left bottom">
+                <md-menu id="projects-menu" md-position-mode="left bottom">
                     <md-button id="projects" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event); loadProjects();">
                         <i class="material-icons">keyboard_arrow_down</i>
                         <small data-ng-if="selectedProjectsPresent()">{{ joinProjectNames() }}</small>
                         <small data-ng-if="! selectedProjectsPresent()">Projects</small>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
-                        <md-list class="md-dense" >
-                        	<md-list-item id="clearProject" class="md-2-line" ng-click="resetProjects()">
+                        <md-list class="md-dense">
+                            <md-list-item id="clearProject" class="md-2-line" ng-click="resetProjects()">
                                 <md-icon class="material-icons highlight_red">close</md-icon>
                                 <div class="md-list-item-text">
                                     <h3 class="highlight_red">Clear</h3>
@@ -63,11 +63,26 @@
                         <small style="margin-right: 15px;">{{currentUser.username}}</small>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/users/profile"><md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.personalDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">equalizer</md-icon><span data-translate="PERSONAL"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}"><md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button></md-menu-item>
-                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']"><md-button aria-label="menu" ng-href="#!/integrations"><md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button></md-menu-item>
-                        <md-menu-item><md-button aria-label="menu" ng-href="#!/signin"><md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button></md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="menu" ng-href="#!/users/profile">
+                                <md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.personalDashboardId}}?userId={{currentUser.id}}">
+                                <md-icon class="material-icons">equalizer</md-icon><span data-translate="PERSONAL"></span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                          <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}">
+                                <md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button>
+                        </md-menu-item>
+                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']">
+                            <md-button aria-label="menu" ng-href="#!/integrations">
+                                <md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button>
+                        </md-menu-item>
+                        <md-menu-item>
+                            <md-button aria-label="menu" ng-href="#!/signin">
+                                <md-icon class="material-icons">power_settings_new</md-icon><span data-translate="LOG_OUT"></span></md-button>
+                        </md-menu-item>
                     </md-menu-content>
                 </md-menu>
             </li>

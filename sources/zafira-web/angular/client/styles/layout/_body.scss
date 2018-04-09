@@ -73,10 +73,11 @@ body {
 
 .searchable.select {
     margin-top: 0px !important;
-    margin-right: 8px;
+    margin-left: 8px !important;
     padding-top: 0px;
     padding-bottom: 6px;
     font-size: 12px;
+    width: 140px;
 }
 
 .md-datepicker-input {
@@ -125,6 +126,7 @@ tr.result:hover .expand-button {
 
 .fixed-search-column {
     min-width: 360px;
+    padding: 8px 20px;
 }
 
 .fixed-testrun-name-header {
