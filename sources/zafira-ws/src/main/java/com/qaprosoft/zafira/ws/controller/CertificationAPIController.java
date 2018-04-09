@@ -59,7 +59,7 @@ public class CertificationAPIController extends AbstractController
 		for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
 		{
 			String platform = testRun.getPlatform();
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
 			{
 				if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
 				{

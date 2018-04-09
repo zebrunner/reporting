@@ -78,8 +78,8 @@ public class TestConfigService
 			throw new ServiceException("Test run not found!");
 		}
 		
-		List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
-		List<Argument> testConfig = readConfigArgs(testConfigXML);
+		List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML(), false);
+		List<Argument> testConfig = readConfigArgs(testConfigXML, false);
 		
 		TestConfig config = new TestConfig().init(testRunConfig).init(testConfig);
 
@@ -114,7 +114,7 @@ public class TestConfigService
 		testConfigMapper.deleteTestConfigById(id);
 	}
 	
-	public List<Argument> readConfigArgs(String configXML)
+	public List<Argument> readConfigArgs(String configXML, boolean uniqueOnly)
 	{
 		List<Argument> args = new ArrayList<>();
 		try
@@ -124,7 +124,10 @@ public class TestConfigService
 				Configuration config = (Configuration) unmarshaller.unmarshal(new ByteArrayInputStream(configXML.getBytes()));
 				for(Argument arg : config.getArg())
 				{
-					args.add(arg);
+					if(!uniqueOnly || (uniqueOnly && arg.getUnique()))
+					{
+						args.add(arg);
+					}
 				}
 			}
 		}
