@@ -189,19 +189,22 @@
 	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
-			<if test="null != date">
+            <if test="null == date and null == fromDate and null == toDate">
+                <![CDATA[
+	               AND TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL
+	            ]]>
+            </if>
+            <if test="null != date and null == fromDate and null == toDate">
 	            <![CDATA[
-	               AND TCHV.TESTED_AT >= date_trunc('month', #{date}::date) OR TCHV.STABILITY IS NULL
+	               AND TCHV.TESTED_AT = date_trunc('month', #{date}::date)
+	               OR TCHV.STABILITY IS NULL
 	            ]]>
 			</if>
-			<if test="null != fromDate">
+            <if test="null == date and null != fromDate and null != toDate">
 				<![CDATA[
-				   AND TCHV.TESTED_AT >= date_trunc('month', #{fromDate}::date) OR TCHV.STABILITY IS NULL
-	            ]]>
-			</if>
-			<if test="null != toDate">
-				<![CDATA[
-				   AND TCHV.TESTED_AT <= date_trunc('month', #{toDate}::date) OR TCHV.STABILITY IS NULL
+				   AND TCHV.TESTED_AT <= date_trunc('month', #{toDate}::date)
+				   AND TCHV.TESTED_AT >= date_trunc('month', #{fromDate}::date)
+				   OR TCHV.STABILITY IS NULL
 	            ]]>
 			</if>
             <if test="null != projects">
@@ -213,12 +216,9 @@
 					</if>
 				</foreach>
 			</if>
-            <![CDATA[
-                   AND TCHV.TESTED_AT >= date_trunc('month', current_date) OR TCHV.STABILITY IS NULL
-                ]]>
         </trim>
 		<![CDATA[
-			ORDER BY TC.CREATED_AT DESC
+			ORDER BY TCHV.TESTED_AT DESC
 			LIMIT #{pageSize} OFFSET #{offset}
 		]]>
 	</select>
