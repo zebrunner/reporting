@@ -99,7 +99,7 @@ public class TestCaseService
 		{
 			// Locking by class name and method name to avoid concurrent save of the same test case https://github.com/qaprosoft/zafira/issues/46
 			updateLocks.get(CLASS_METHOD).lock();
-			
+
 			TestCase testCase = getTestCaseByClassAndMethod(newTestCase.getTestClass(), newTestCase.getTestMethod());
 			if(testCase == null)
 			{

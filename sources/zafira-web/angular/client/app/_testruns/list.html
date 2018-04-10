@@ -148,7 +148,7 @@
                                                   </md-button>
                                         </td>
                                         <td name="testRunPlatform" md-cell class="no-padding browser-version_column">
-                                        	 <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform}}"/>
+                                        	 <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
                                              <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
                                              <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
                                         </td>

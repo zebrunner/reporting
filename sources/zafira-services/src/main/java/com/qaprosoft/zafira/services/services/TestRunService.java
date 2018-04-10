@@ -239,7 +239,11 @@ public class TestRunService
 					}
 					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
 					{
-						testRun.setPlatform(arg.getValue());
+						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
+								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
+						{
+							testRun.setPlatform(arg.getValue());
+						}
 					}
 					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
 							&& !arg.getValue().equals("*"))
