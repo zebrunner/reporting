@@ -37,7 +37,7 @@
                 <td>${configuration['app_version']} </td>
             </tr>
             </#if>
-            <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']??>
+            <#if configuration['mobile_platform_name']?? || configuration['mobile_device_name']?? || configuration['browser']?? || ((configuration['platform'] ??) && (configuration['platform']?lower_case == 'api'))>
                 <td>Platform:</td>
                 <td>
                     <#if configuration['platform']?? && (configuration['platform'] != 'NULL') && (configuration['platform'] != '') && (configuration['platform'] != '*')>
@@ -56,12 +56,14 @@
                         ${configuration['mobile_platform_version']}
                     </#if>
 
-                    <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
-                        ${configuration['browser']}
-                    </#if>
+                    <#if ((! configuration['platform'] ??) && (configuration['platform']?lower_case != 'api'))>
+                        <#if (configuration['browser']??) && (configuration['browser'] != 'NULL') && (configuration['browser'] != '')>
+                            ${configuration['browser']}
+                        </#if>
 
-                    <#if (configuration['browser_version'])?? && (configuration['browser_version'] != "*") && (configuration['browser_version'] != 'NULL') && (configuration['browser_version'] != "")>
-                        - ${configuration['browser_version']}
+                        <#if (configuration['browser_version'])?? && (configuration['browser_version'] != "*") && (configuration['browser_version'] != 'NULL') && (configuration['browser_version'] != "")>
+                            - ${configuration['browser_version']}
+                        </#if>
                     </#if>
                 </td>
             </#if>
