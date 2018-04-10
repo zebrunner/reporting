@@ -14,6 +14,10 @@
         $scope.predicate = 'startTime';
         $scope.reverse = false;
 
+        var FAST_SEARCH_TEMPLATE = {currentModel: 'testSuite'};
+
+        $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
+
         $scope.UtilService = UtilService;
 
         $scope.testRunId = $stateParams.id;
@@ -366,6 +370,11 @@
             else {
                 $scope.sc = ProjectProvider.initProjects($scope.sc);
             }
+
+            angular.forEach($scope.fastSearch, function (val, model) {
+                if(model != 'currentModel')
+                    $scope.sc[model] = val;
+            });
 
             if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
                 if(!$scope.isEqualDate()){
@@ -890,6 +899,7 @@
             $scope.selectedRange.dateStart = null;
             $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
+            $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
             $location.search({});
             $scope.search();
         };

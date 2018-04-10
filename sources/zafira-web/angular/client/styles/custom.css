@@ -15,7 +15,6 @@
 }
 
 .page .md-button {
-    height: 32px;
     font-size: 13px;
 }
 
@@ -85,7 +84,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     top: 3px;
 }
 
-.btn-check label {
+.btn-check button {
     -webkit-appearance: none;
     -moz-appearance: none;
     border: none;
@@ -96,9 +95,9 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     font-size: 13px;
 }
 
-.btn-check label:hover {
-    background-color: #37C88D;
-    color: #fff;
+.btn-check button:hover, .btn-check button.active{
+    background-color: #26a69a !important;
+    color: #fff !important;
     cursor: pointer;
 }
 
@@ -128,6 +127,10 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 .quadro-btn {
     width: 36px !important;
     height: 36px !important;
+}
+
+.quadro-btn.default-gray {
+    color: white;
 }
 
 .date-picker-container {
