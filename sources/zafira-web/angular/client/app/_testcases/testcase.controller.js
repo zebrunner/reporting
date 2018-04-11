@@ -90,7 +90,7 @@
     	};
 
         $scope.goToPerformanceDashboard = function (testCaseId) {
-            $location.path("/tests/cases/metrics/" + testCaseId);
+            $location.path("/tests/cases/" + testCaseId + "/metrics");
         };
 
         /**
