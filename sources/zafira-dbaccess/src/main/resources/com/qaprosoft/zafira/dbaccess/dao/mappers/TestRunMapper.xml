@@ -205,80 +205,91 @@
 			WHERE TR.UPSTREAM_JOB_ID = #{jobId} AND TR.UPSTREAM_JOB_BUILD_NUMBER = #{buildNumber};
 		]]>
 	</select>
+
+	<sql id="filterTemplate">
+		${filterTemplate}
+	</sql>
 	
 	<select id="searchTestRuns" resultMap="TestRunResultMap">
-		<include refid="getTestRunFull" />
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != id">
-	            <![CDATA[
-	               AND TR.ID = #{id}
-	            ]]>
-			</if>
-			<if test="null != testSuite">
-	            <![CDATA[
-	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
-	            ]]>
-			</if>
-			<if test="null != testSuiteId">
-	            <![CDATA[
-	               AND TS.ID = #{testSuiteId}
-	            ]]>
-			</if>
-			<if test="null != executionURL">
-	            <![CDATA[
-	               AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%'))
-	            ]]>
-			</if>
-			<if test="null != environment">
-	            <![CDATA[
-	               AND LOWER(TR.ENV) = LOWER(#{environment})
-	            ]]>
-			</if>
-			<if test="null != platform">
-	            <![CDATA[
-	               AND LOWER(TR.PLATFORM) = LOWER(#{platform})
-	            ]]>
-			</if>
-			<if test="null != appVersion">
-	            <![CDATA[
-	               AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
-	            ]]>
-			</if>
-			<if test="null != date">
-	            <![CDATA[
-	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
-	            ]]>
-			</if>
-			<if test="null != fromDate">
-	            <![CDATA[
-	               AND TR.STARTED_AT::date >= #{fromDate}::date
-	            ]]>
-			</if>
-			<if test="null != toDate">
-	            <![CDATA[
-	               AND TR.STARTED_AT::date <= #{toDate}::date
-	            ]]>
-			</if>
-			<if test="null != projects">
-				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
-					<if test="null != project.id">
+		<choose>
+			<when test="null != filterTemplate">
+				<include refid="filterTemplate"/>
+			</when>
+			<otherwise>
+				<include refid="getTestRunFull" />
+				<trim prefix="WHERE" prefixOverrides="AND |OR ">
+					<if test="null != id">
 						<![CDATA[
-								TR.PROJECT_ID = #{project.id}
+						   AND TR.ID = #{id}
 						]]>
 					</if>
-				</foreach>
-			</if>
-			<if test="null != status">
-	            <![CDATA[
-	               AND TR.STATUS = #{status}
-	            ]]>
-			</if>
-			<if test="null != reviewed">
-	            <![CDATA[
-	               AND TR.REVIEWED = #{reviewed}
-	            ]]>
-			</if>
-		</trim>
+					<if test="null != testSuite">
+						<![CDATA[
+						   AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+						]]>
+					</if>
+					<if test="null != testSuiteId">
+						<![CDATA[
+						   AND TS.ID = #{testSuiteId}
+						]]>
+					</if>
+					<if test="null != executionURL">
+						<![CDATA[
+						   AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%'))
+						]]>
+					</if>
+					<if test="null != environment">
+						<![CDATA[
+						   AND LOWER(TR.ENV) = LOWER(#{environment})
+						]]>
+					</if>
+					<if test="null != platform">
+						<![CDATA[
+						   AND LOWER(TR.PLATFORM) = LOWER(#{platform})
+						]]>
+					</if>
+					<if test="null != appVersion">
+						<![CDATA[
+						   AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
+						]]>
+					</if>
+					<if test="null != date">
+						<![CDATA[
+						   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+						]]>
+					</if>
+					<if test="null != fromDate">
+						<![CDATA[
+						   AND TR.STARTED_AT::date >= #{fromDate}::date
+						]]>
+					</if>
+					<if test="null != toDate">
+						<![CDATA[
+						   AND TR.STARTED_AT::date <= #{toDate}::date
+						]]>
+					</if>
+					<if test="null != projects">
+						<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+							<if test="null != project.id">
+								<![CDATA[
+										TR.PROJECT_ID = #{project.id}
+								]]>
+							</if>
+						</foreach>
+					</if>
+					<if test="null != status">
+						<![CDATA[
+						   AND TR.STATUS = #{status}
+						]]>
+					</if>
+					<if test="null != reviewed">
+						<![CDATA[
+						   AND TR.REVIEWED = #{reviewed}
+						]]>
+					</if>
+				</trim>
+			</otherwise>
+		</choose>
 		<if test="sortOrder.toString() == 'ASC'">
 			<![CDATA[
 				ORDER BY TR.STARTED_AT ASC

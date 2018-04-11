@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -60,11 +62,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.StatisticsService;
-import com.qaprosoft.zafira.services.services.TestConfigService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -86,6 +83,9 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private FilterService filterService;
 
 	@Autowired
 	private TestService testService;
@@ -232,9 +232,14 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc)
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
 			throws ServiceException
 	{
+		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class) : null;
+		if(filterType != null)
+		{
+			sc.setFilterTemplate(filterService.getTemplate(filterType));
+		}
 		return testRunService.searchTestRuns(sc);
 	}
 

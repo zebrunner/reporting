@@ -33,6 +33,8 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -75,6 +77,9 @@ public class TestRunService
 	
 	@Autowired
 	private TestService testService;
+
+	@Autowired
+	private FreemarkerUtil freemarkerUtil;
 	
 	@Autowired
 	private TestConfigService testConfigService;
@@ -449,7 +454,7 @@ public class TestRunService
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.getFreeMarkerTemplateContent(email);
+		return freemarkerUtil.getFreeMarkerTemplateContent(email.getTemplate(), email);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException

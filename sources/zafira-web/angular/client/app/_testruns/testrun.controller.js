@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -36,6 +36,204 @@
         $scope.logs = [];
 
         $scope.sc = angular.copy(DEFAULT_SC);
+
+
+        /*
+            Filters
+         */
+        var subjectName = 'TEST_RUN';
+
+        $scope.SYMBOLS = {
+            EQUALS: " == ",
+            NOT_EQUALS: " != ",
+            CONTAINS: " cnt ",
+            NOT_CONTAINS: " !cnt ",
+            MORE: " > ",
+            LESS: " < ",
+            BEFORE: " <= ",
+            AFTER: " >= ",
+            LAST_SEVEN_DAYS: " last 7 days",
+            LAST_FOURTEEN_DAYS: " last 14 days",
+            LAST_THIRTY_DAYS: " last 30 days"
+        };
+
+        $scope.DATE_CRITERIAS = ['DATE'];
+        $scope.DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
+
+        $scope.subjectBuilder = {};
+        $scope.filters = [];
+        var DEFAULT_FILTER_VALUE = {
+            subject: {
+                name: subjectName,
+                criterias: [],
+                publicAccess: false
+            }
+        };
+        $scope.filter = angular.copy(DEFAULT_FILTER_VALUE);
+
+        $scope.selectedFilterRange = {
+            selectedTemplate: null,
+            selectedTemplateName: null,
+            dateStart: null,
+            dateEnd: null,
+            showTemplate: false,
+            onePanel: true
+        };
+
+        function onSelect(scope) {
+            return $scope.selectedFilterRange.selectedTemplateName;
+        };
+
+        $scope.$watch('selectedFilterRange.dateStart', function (oldValue, newVal) {
+            if(oldValue) {
+                $scope.currentValue = angular.copy($scope.selectedFilterRange.dateStart);
+                $scope.clearPickFilter();
+                closeDatePickerMenu();
+            }
+        });
+
+        function closeDatePickerMenu() {
+            var menu = angular.element('#filter-editor md-menu *[aria-owns]').scope();
+            if(menu.$mdMenuIsOpen) {
+                menu.$mdMenu.close();
+            }
+        }
+
+        $scope.isDateCriteria = function (value) {
+            return value ? $scope.DATE_CRITERIAS.indexOf(value.name) >= 0 : false;
+        };
+
+        $scope.isDatePickerOperator = function (value) {
+            return value ? $scope.DATE_CRITERIAS_PICKER_OPERATORS.indexOf(value) >= 0 : false;
+        };
+
+        $scope.pickFilter = function($event, showTemplate) {
+            $scope.selectedFilterRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: $scope.selectedFilterRange,
+                autoConfirm: true
+            }).then(function(result) {
+                if (result) $scope.selectedFilterRange = result;
+            })
+        };
+
+        $scope.clearPickFilter = function() {
+            $scope.selectedFilterRange.selectedTemplate = null;
+            $scope.selectedFilterRange.selectedTemplateName = null;
+            $scope.selectedFilterRange.dateStart = null;
+            $scope.selectedFilterRange.dateEnd = null;
+        };
+
+        function loadSubjectBuilder() {
+            FilterService.getSubjectBuilder(subjectName).then(function (rs) {
+                if(rs.success) {
+                    $scope.subjectBuilder = rs.data;
+                }
+            })
+        };
+
+        function loadPublicFilters() {
+            FilterService.getAllPublicFilters().then(function (rs) {
+                if(rs.success) {
+                    $scope.filters = rs.data;
+                }
+            })
+        };
+
+        $scope.addChip = function () {
+            $scope.filter.subject.criterias.push({
+                name: $scope.currentCriteria.name,
+                operator: $scope.currentOperator,
+                value: $scope.currentValue
+            });
+            delete $scope.currentCriteria;
+            delete $scope.currentOperator;
+            delete $scope.currentValue;
+        };
+
+        $scope.changeChip = function (chip, index) {
+            console.log('in edit');
+            var criteria = $scope.filter.subject.criterias[index];
+            criteria.value = chip.value;
+            return criteria;
+        };
+
+        $scope.chooseFilter = function (filter) {
+            $scope.collapseFilter = true;
+            $scope.filter = angular.copy(filter);
+        };
+
+        $scope.createFilter = function () {
+            FilterService.createFilter($scope.filter).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was created');
+                    $scope.filters.push(rs.data);
+                    $scope.clearFilter();
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.updateFilter = function () {
+            FilterService.updateFilter($scope.filter).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was updated');
+                    $scope.filters[$scope.filters.indexOfField('id', rs.data.id)] = rs.data;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.deleteFilter = function (id) {
+            FilterService.deleteFilter(id).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was deleted');
+                    $scope.filters.splice($scope.filters.indexOfField('id', id), 1);
+                    $scope.clearFilter();
+                    $scope.collapseFilter = false;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.onFilterRemove = function (filter) {
+            if (confirm('Do you really want to delete \'' + filter.name + '\' filter?')) {
+                $scope.deleteFilter(filter.id);
+            } else {
+            }
+        };
+
+        $scope.clearFilterCriterias = function (isOperator) {
+            if($scope.currentOperator && ! isOperator)
+                delete $scope.currentOperator;
+            if($scope.currentValue)
+                delete $scope.currentValue;
+        };
+
+        $scope.clearFilter = function() {
+            $scope.filter = angular.copy(DEFAULT_FILTER_VALUE);
+            delete $scope.currentCriteria;
+            delete $scope.currentOperator;
+            delete $scope.currentValue;
+        };
+
+        $scope.resetFilter = function() {
+            $scope.filter.subject = {};
+            $scope.filter.publicAccess = false;
+            delete $scope.currentCriteria;
+            delete $scope.currentOperator;
+            delete $scope.currentValue;
+        };
+
+        $scope.clearAndOpenFilterBlock = function (value) {
+            $scope.clearFilter();
+            $scope.collapseFilter = value;
+        };
+
 
         // ************** Integrations **************
 
@@ -352,6 +550,11 @@
             return null;
         };
 
+        $scope.searchByFilter = function(filter) {
+            $scope.filterQuery = '?filterId=' + filter.id;
+            $scope.search();
+        };
+
         $scope.search = function (page, pageSize) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
@@ -386,7 +589,7 @@
                 }
            }
 
-            TestRunService.searchTestRuns($scope.sc).then(function(rs) {
+            TestRunService.searchTestRuns($scope.sc, $scope.filterQuery).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
@@ -900,6 +1103,7 @@
             $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
             $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
+            delete $scope.filterQuery;
             $location.search({});
             $scope.search();
         };
@@ -966,6 +1170,8 @@
             $scope.loadPlatforms();
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
+            loadSubjectBuilder();
+            loadPublicFilters();
         })();
     }
 

@@ -941,3 +941,135 @@ ul.profile-image-actions {
     background-color: #777777 !important;
     color: white;
 }
+
+
+
+/*Filters*/
+#filter, #filter-editor {
+    md-input-container {
+        height: 54px !important;
+    }
+    md-radio-button {
+        display: inline-block;
+        padding-right: 10px;
+    }
+    .filter-criteria {
+        padding-right: 0;
+    }
+    .filter-option {
+        padding-left: 0;
+        md-select {
+            background-color: rgba(0, 0, 0, 0.12);
+        }
+    }
+    .filter-value {
+        padding-left: 0;
+    }
+    i.material-icons {
+        color: rgba(0, 0, 0, 0.12);
+    }
+    md-chips-wrap {
+        display: inline-block;
+        box-shadow: 0 0 !important;
+        padding-bottom: 0 !important;
+        .md-chip-input-container {
+            display: none;
+        }
+        i.custom-chip-action {
+            color: rgb(97,97,97) !important;
+            font-size: 18px !important;
+        }
+        md-chip {
+            margin: 2px;
+        }
+    }
+    .right-switch {
+        position: absolute;
+        right: 0;
+        padding-right: 20px;
+        padding-top: 15px;
+    }
+    md-date-range {
+        position: absolute;
+        z-index: 1;
+        .md-select-value {
+            border-bottom-style: none;
+            min-width: 36px !important;
+            width: 36px;
+        }
+        .md-select-icon {
+            display: none;
+        }
+    }
+    i.date-picker-icon {
+        font-size: 36px;
+    }
+    span.label {
+        //font-size: 100%;
+    }
+}
+
+#filter {
+    md-chips-wrap {
+        md-chip {
+            cursor: pointer;
+        }
+    }
+}
+
+.filter-chip {
+    button {
+        border-radius: 50%;
+        height: 31px;
+        width: 31px;
+        position: relative;
+        i {
+            position: absolute;
+            bottom: 40%;
+            right: 40%;
+            margin: auto;
+            height: 50%;
+            width: 50%;
+        }
+    }
+}
+
+div.manage-chip {
+    position: relative;
+    button {
+        position: absolute;
+        top: 5px;
+        right: 5%;
+        border-radius: 50%;
+        height: 26px;
+        width: 26px;
+        md-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+    md-chip {
+        width: 130px;
+        background-color: rgba(0,0,0,0.87);
+        color: white;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    md-icon {
+        color: rgba(0,0,0,0.87);
+    }
+}
+
+.chip-operator {
+    color: #009688;
+}
+
+.manage-filter-button {
+    float: right;
+    padding: 10px;
+    i {
+        color: #009688;
+    }
+}

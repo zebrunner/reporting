@@ -33,16 +33,19 @@
             <h2 id="pageTitle" class="section-header pull-left">Test runs
                 <small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
             </h2>
-            <button id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+            <button id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button id="save" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" ng-click="search(); UtilService.untouchForm(search_form);">
-                <b>SAVE</b>
+            <button ng-if="! filter.id" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+                <b>CREATE</b>
             </button>
-            <button id="cancel" class="md-button md-default md-ink-ripple pull-right" type="button" ng-click="cancel();">
+            <button ng-if="filter.id" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
+                <b>UPDATE</b>
+            </button>
+            <button id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
                 <b>CANCEL</b>
             </button>
-            <button id="delete" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="delete();">
+            <button ng-if="filter.id" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
                 <b>DELETE</b>
             </button>
         </div>
@@ -52,37 +55,84 @@
                     <div class="panel-body no-padding-t">
                         <h5>Filters</h5>
                         <div layout="row">
-                            <md-chips>
-                                <md-chip>
-                                    <span>
-                                        <strong>Super Random</strong>
-                                      </span>
-                                </md-chip>
+                            <div class="filter-chip manage-chip">
+                                <md-chips>
+                                    <md-chip>add filter</md-chip>
+                                </md-chips>
+                                <button ng-click="clearAndOpenFilterBlock(true);" class="md-primary createFilterChip">
+                                    <md-icon class="material-icons">add</md-icon>
+                                </button>
+                            </div>
+                            <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
+                                <input disabled>
+                                <md-chip-template ng-click="searchByFilter($chip);">
+                                    <div style="display: inline-block;">
+                                        <strong>{{$chip.name}}</strong>
+                                    </div>
+                                    <div style="display: inline-block; vertical-align: sub;">
+                                        <i class="material-icons custom-chip-action" ng-click="chooseFilter($chip);">edit</i>
+                                    </div>
+                                </md-chip-template>
                             </md-chips>
                         </div>
                     </div>
                 </div>
-                <div id="filter-editor" class="md-row">
-                    <div class="panel-body">
-                        <div class="filter-text" layout="row">
-                            <input type="text" class="form-control input-filter-name" placeholder="Name" flex="none" />
-                            <input type="text" class="form-control" placeholder="Description" />
+                <div id="filter-editor" ng-show="collapseFilter" class="md-row">
+                    <form class="form-validation" name="filter_form" ng-cloak>
+                        <div class="panel-body">
+                            <div class="filter-text" layout="row">
+                                <input type="text" class="form-control input-filter-name" placeholder="Name" flex="none" ng-model="filter.name"/>
+                                <input type="text" class="form-control" placeholder="Description" ng-model="filter.description"/>
+                            </div>
+                            <div layout="row">
+                                <div flex="60">
+                                    <md-input-container class="filter-input-container select">
+                                        <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
+                                            <md-option ng-value><em>None</em></md-option>
+                                            <md-option ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
+                                                {{ criteria.name }}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container class="filter-input-container select">
+                                        <md-select id="filterOperator" ng-change="clearFilterCriterias(true);" ng-disabled="! currentCriteria" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                            <md-option ng-value><em>None</em></md-option>
+                                            <md-option ng-repeat="op in currentCriteria.operators" ng-value="op">
+                                                {{ op }}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <div class="filter-input-container">
+                                        <input type="text" id="input-value" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
+                                               ng-model="currentValue" ng-show="(! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))"/>
+                                        <label ng-show="isDateCriteria(currentCriteria) && isDatePickerOperator(currentOperator)">
+                                            <md-input-container style="padding-top: 5px" flex class="modal-narrow-row">
+                                                <span ng-if="currentValue" class="label label-default">{{ currentValue | date : 'MMM dd yyyy' }}</span>
+                                                <span ng-if="!currentValue" class="label label-default">MMM dd yyyy</span>
+                                            </md-input-container>
+                                            <md-date-range selected-template="TD" ng-model="selectedFilterRange" ng-disabled="! isDatePickerOperator(currentOperator)" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
+                                            <i class="material-icons md-18 date-picker-icon">today</i>
+                                        </label>
+                                        <button style="margin-left: 15px; margin-bottom: 15px;" ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
+                                            || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
+                                    </div>
+                                </div>
+                                <div flex="40">
+                                    <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false"
+                                              md-on-add="changeChip($chip)">
+                                        <input disabled>
+                                        <md-chip-template>
+                                        <span>
+                                            <strong>{{$chip.name}}</strong>
+                                            <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                        </span>
+                                        </md-chip-template>
+                                    </md-chips>
+                                </div>
+                            </div>
                         </div>
-                        <md-input-container class="filter-input-container select">
-                            <md-select id="filterCriteria" ng-change="onChangeCriteria()" ng-model="sc.criteria" name="criteria" placeholder="PLATFORM">
-                                <md-option value="" disabled>Criteria</md-option>
-                            </md-select>
-                        </md-input-container>
-                        <md-input-container class="filter-input-container select">
-                            <md-select id="filterEquals" ng-change="onChangeCriteria()" ng-model="sc.equals" name="equals" placeholder="EQUALS">
-                                <md-option value="" disabled>Equals</md-option>
-                            </md-select>
-                        </md-input-container>
-                        <div class="filter-input-container">
-                            <input type="text" id="input-value" class="form-control" placeholder="Value" />
-                            <button id="add-button" class="quadro-btn default-gray">+</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <md-divider></md-divider>
                 <div id="search" class="md-row">
