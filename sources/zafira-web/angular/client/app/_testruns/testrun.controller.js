@@ -1724,9 +1724,6 @@
                     case 'COMMENT':
                         $scope.testComments.push(workItems[i]);
                         break;
-                    default:
-                        console.log("Work item type is not defined");
-                        break;
                 }
             }
         };
