@@ -39,7 +39,15 @@ public class TestArtifactType extends AbstractType
 	
 	public TestArtifactType(String name, String link)
 	{
-		this(name, link, null);
+		this.name = name;
+		this.link = link;
+	}
+	
+	public TestArtifactType(Long testId, String name, String link) 
+	{
+		this.name = name;
+		this.link = link;
+		this.testId = testId;
 	}
 
 	public TestArtifactType(String name, String link, Date expiresAt)

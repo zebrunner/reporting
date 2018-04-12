@@ -32,6 +32,7 @@ import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestSuiteType;
@@ -63,6 +64,7 @@ public class ZafiraClient
 	private static final String TEST_FINISH_PATH = "/api/tests/%d/finish";
 	private static final String TEST_BY_ID_PATH = "/api/tests/%d";
 	private static final String TEST_WORK_ITEMS_PATH = "/api/tests/%d/workitems";
+	private static final String TEST_ARTIFACTS_PATH = "/api/tests/%d/artifacts";
 	private static final String TEST_SUITES_PATH = "/api/tests/suites";
 	private static final String TEST_CASES_PATH = "/api/tests/cases";
 	private static final String TEST_CASES_BATCH_PATH = "/api/tests/cases/batch";
@@ -437,6 +439,26 @@ public class ZafiraClient
 			LOGGER.error("Unable to create test work items", e);
 		}
 		return response;
+	}
+	
+	/**
+	 * Attaches test artifact like logs or demo URLs.
+	 * 
+	 * @param artifact - test artifact
+	 */
+	public void addTestArtifact(TestArtifactType artifact)
+	{
+		Response<TestArtifactType> response = new Response<TestArtifactType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(TEST_ARTIFACTS_PATH, artifact.getTestId()));
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, artifact);
+			response.setStatus(clientRS.getStatus());
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to add test artifact", e);
+		}
 	}
 	
 	public synchronized Response<TestCaseType> createTestCase(TestCaseType testCase)
