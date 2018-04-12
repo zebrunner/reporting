@@ -384,7 +384,7 @@ BEGIN
       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
   FROM MONTHLY_VIEW
   WHERE
-      PROJECT LIKE ''#{project}%''
+      PROJECT LIKE ANY (''{#{project}}'')
       AND OWNER_ID = ''#{currentUserId}''
   ORDER BY "value" DESC';
 
@@ -447,7 +447,7 @@ BEGIN
        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
-        PROJECT LIKE ''#{project}%''
+        PROJECT LIKE ANY (''{#{project}}'')
         AND OWNER_ID = ''#{currentUserId}''
     ORDER BY "value" DESC';
 
@@ -464,7 +464,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
-        PROJECT LIKE ''#{project}%''
+        PROJECT LIKE ANY (''{#{project}}'')
         AND OWNER_ID = ''#{currentUserId}''
     ORDER BY "value" DESC';
 
@@ -507,7 +507,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND OWNER_ID = ''#{currentUserId}''
     AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
     GROUP BY "CREATED_AT"
@@ -938,7 +938,7 @@ BEGIN
         sum(SKIPPED) AS "SKIP",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY PROJECT
     UNION
     SELECT  ''<B><I>TOTAL</I></B>'' AS "PROJECT",
@@ -948,7 +948,7 @@ BEGIN
         sum(SKIPPED) AS "SKIP",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "PASS" DESC';
 
 	total_tests_count_model :=
@@ -970,7 +970,7 @@ BEGIN
         unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	total_tests_pie_model :=
@@ -985,7 +985,7 @@ BEGIN
         count(*) AS "AMOUNT"
     FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
-    WHERE PROJECTS.NAME LIKE ''#{project}%''
+    WHERE PROJECTS.NAME LIKE ANY (''{#{project}}'')
     GROUP BY 1
     ORDER BY 1;';
 
@@ -1034,7 +1034,7 @@ BEGIN
         INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
         INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ''#{project}%''
+    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
     GROUP BY "PROJECT"
     ORDER BY "COUNT" DESC;';
 
@@ -1053,7 +1053,7 @@ BEGIN
         SUM(TOTAL_HOURS) AS "ETA",
         TESTED_AT AS "CREATED_AT"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     UNION
     SELECT
@@ -1062,7 +1062,7 @@ BEGIN
         * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day'')) AS "ETA",
         date_trunc(''month'', current_date) AS "CREATED_AT"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
@@ -1123,7 +1123,7 @@ BEGIN
         SUM(TOTAL) AS "TOTAL",
         date_trunc(''month'', TESTED_AT) AS "CREATED_AT"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT"';
 
@@ -1303,7 +1303,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
@@ -1414,7 +1414,7 @@ BEGIN
         INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
         INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ''#{project}%''
+    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
     AND TEST_WORK_ITEMS.CREATED_AT > date_trunc(''month'', current_date  - interval ''1 month'')
     GROUP BY "PROJECT"
     ORDER BY "COUNT" DESC;';
@@ -1488,7 +1488,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM MONTHLY_VIEW
     WHERE
-    PROJECT LIKE ''#{project}%''
+    PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY OWNER_ID, OWNER
     ORDER BY OWNER';
 
@@ -1586,7 +1586,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
@@ -1748,7 +1748,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
    FROM WEEKLY_VIEW
    WHERE
-   PROJECT LIKE ''#{project}%''
+   PROJECT LIKE ANY (''{#{project}}'')
    GROUP BY OWNER_ID, OWNER
    ORDER BY OWNER';
 
@@ -1898,7 +1898,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM NIGHTLY_VIEW
     WHERE
-      PROJECT LIKE ''#{project}%''
+      PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY OWNER_ID, OWNER
     ORDER BY OWNER';
 
