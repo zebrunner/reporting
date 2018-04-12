@@ -1,0 +1,58 @@
+
+select check_version(76);
+
+DO $$
+DECLARE stability_dashboard_id zafira.DASHBOARDS.id%TYPE;
+
+DECLARE monthly_stability_id zafira.WIDGETS.id%TYPE;
+DECLARE monthly_stability_sql zafira.WIDGETS.sql%TYPE;
+DECLARE monthly_stability_model zafira.WIDGETS.model%TYPE;
+
+BEGIN
+INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', FALSE, 8) RETURNING id INTO stability_dashboard_id;
+
+	monthly_stability_sql :=
+	'set schema ''zafira'';
+    SELECT
+        STABILITY as "STABILITY",
+        date_trunc(''month'', TESTED_AT) AS "TESTED_AT"
+    FROM TEST_CASE_HEALTH_VIEW
+    WHERE PROJECT LIKE ANY (''{#{project}}'') AND
+          TEST_CASE_ID = ''#{testCaseId}''
+    ORDER BY "TESTED_AT"';
+
+	monthly_stability_model :=
+	'{
+    "series": [
+        {
+            "axis": "y",
+            "dataset": "dataset",
+            "key": "STABILITY",
+            "label": "STABILITY",
+            "color": "#5cb85c",
+            "thickness": "10px",
+            "type": [
+                "line",
+                "dot",
+                "area"
+            ],
+            "id": "STABILITY"
+        }
+    ],
+    "axes": {
+        "x": {
+            "key": "TESTED_AT",
+            "type": "date"
+        }
+    }
+}';
+
+INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+		('MONTHLY TESTCASE STABILITY', 'linechart', monthly_stability_sql, monthly_stability_model)
+	RETURNING id INTO monthly_stability_id;
+
+INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+		(stability_dashboard_id, monthly_stability_id, '{"x":0,"y":0,"width":12,"height":11}');
+END$$;
+
+select add_version(76);
