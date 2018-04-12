@@ -160,3 +160,13 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     right: 0;
     top: 0;
 }
+
+#filter .panel-body, #search .panel-body {
+    padding: 10px 16px;
+}
+
+#filter .panel-body h5, #search .panel-body h5 {
+    height: 100%;
+    vertical-align: middle;
+    margin: 0;
+}

@@ -112,6 +112,14 @@ tr.result:hover .expand-button {
   display: block;
 }
 
+.show-icon-on-hover {
+    display: none;
+}
+
+.show-on-hover:hover .show-icon-on-hover {
+    display: inline-block;
+}
+
 .tests-loading-spinner {
     margin: 3px auto;
 }
@@ -1032,6 +1040,15 @@ ul.profile-image-actions {
             width: 50%;
         }
     }
+    md-chip {
+        strong {
+            text-transform: capitalize;
+        }
+    }
+}
+
+md-chip-template.selected:parent {
+    background-color: #0b58a2;
 }
 
 div.manage-chip {
@@ -1073,3 +1090,12 @@ div.manage-chip {
         color: #009688;
     }
 }
+.filter-option .md-text, .filter-input-container md-select-value .md-text {
+    text-transform: capitalize;
+}
+
+md-chip md-chip-template.bg-primary {
+    background-color: #009688;
+}
+
+

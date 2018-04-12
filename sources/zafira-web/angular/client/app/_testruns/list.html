@@ -31,21 +31,24 @@
         </md-fab-speed-dial>
         <div class="col-md-12 fixed-search-column">
             <h2 id="pageTitle" class="section-header pull-left">Test runs
-                <small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
+                <small id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
             </h2>
             <button id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button ng-if="! filter.id" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+            <button ng-if="! filter.id && addFilterExpanded && filterBlockExpand" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>CREATE</b>
             </button>
-            <button ng-if="filter.id" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
+            <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+                <b>APPLY</b>
+            </button>
+            <button ng-if="filter.id && addFilterExpanded && filterBlockExpand" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>UPDATE</b>
             </button>
-            <button id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
+            <button ng-if="addFilterExpanded && filterBlockExpand" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
                 <b>CANCEL</b>
             </button>
-            <button ng-if="filter.id" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
+            <button ng-if="filter.id && filterBlockExpand" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
                 <b>DELETE</b>
             </button>
         </div>
@@ -53,31 +56,36 @@
             <md-card class="no-margin _md">
                 <div id="filter" class="md-row">
                     <div class="panel-body no-padding-t">
-                        <h5>Filters</h5>
-                        <div layout="row">
+                        <h5>
+                            Filters
+                            <md-button ng-init="filterBlockExpand = true;" aria-label="Show or hide filters" style="height: auto; width: auto;" ng-click="filterBlockExpand = !filterBlockExpand" md-ink-ripple="false" class="md-icon-button no-padding">
+                                <i class="fa expand-icon" ng-class="filterBlockExpand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
+                            </md-button>
+                        </h5>
+                        <div layout="row" ng-show="filterBlockExpand">
                             <div class="filter-chip manage-chip">
                                 <md-chips>
                                     <md-chip>add filter</md-chip>
                                 </md-chips>
-                                <button ng-click="clearAndOpenFilterBlock(true);" class="md-primary createFilterChip">
+                                <button ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true" class="md-primary createFilterChip">
                                     <md-icon class="material-icons">add</md-icon>
                                 </button>
                             </div>
                             <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
                                 <input disabled>
-                                <md-chip-template ng-click="searchByFilter($chip);">
-                                    <div style="display: inline-block;">
+                                <md-chip-template class="show-on-hover">
+                                    <div style="display: inline-block;" ng-click="searchByFilter($chip, $index); $mdChipsCtrl.selectedChip = $index">
                                         <strong>{{$chip.name}}</strong>
                                     </div>
                                     <div style="display: inline-block; vertical-align: sub;">
-                                        <i class="material-icons custom-chip-action" ng-click="chooseFilter($chip);">edit</i>
+                                        <i class="material-icons custom-chip-action show-icon-on-hover" ng-click="chooseFilter($chip);">edit</i>
                                     </div>
                                 </md-chip-template>
                             </md-chips>
                         </div>
                     </div>
                 </div>
-                <div id="filter-editor" ng-show="collapseFilter" class="md-row">
+                <div id="filter-editor" ng-show="collapseFilter && filterBlockExpand" class="md-row">
                     <form class="form-validation" name="filter_form" ng-cloak>
                         <div class="panel-body">
                             <div class="filter-text" layout="row">
@@ -89,22 +97,30 @@
                                     <md-input-container class="filter-input-container select">
                                         <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
                                             <md-option ng-value><em>None</em></md-option>
-                                            <md-option ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
-                                                {{ criteria.name }}
+                                            <md-option class="filter-option" ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
+                                                {{ criteria.name.split('_').join(' ') | lowercase }}
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
                                     <md-input-container class="filter-input-container select">
                                         <md-select id="filterOperator" ng-change="clearFilterCriterias(true);" ng-disabled="! currentCriteria" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
                                             <md-option ng-value><em>None</em></md-option>
-                                            <md-option ng-repeat="op in currentCriteria.operators" ng-value="op">
-                                                {{ op }}
+                                            <md-option class="filter-option" ng-repeat="op in currentCriteria.operators" ng-value="op">
+                                                {{ op.split('_').join(' ') | lowercase }}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container class="filter-input-container select" ng-if="isSelectCriteria(currentCriteria)">
+                                        <md-select ng-if="! isDateCriteria(currentCriteria) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                            <md-option ng-value><em>None</em></md-option>
+                                            <md-option class="filter-option" ng-repeat="value in currentCriteria.values" ng-value="value">
+                                                {{ value.split('_').join(' ') | lowercase }}
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
                                     <div class="filter-input-container">
                                         <input type="text" id="input-value" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
-                                               ng-model="currentValue" ng-show="(! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))"/>
+                                               ng-model="currentValue" ng-if="! isSelectCriteria(currentCriteria) && ((! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator)))"/>
                                         <label ng-show="isDateCriteria(currentCriteria) && isDatePickerOperator(currentOperator)">
                                             <md-input-container style="padding-top: 5px" flex class="modal-narrow-row">
                                                 <span ng-if="currentValue" class="label label-default">{{ currentValue | date : 'MMM dd yyyy' }}</span>
@@ -123,7 +139,7 @@
                                         <input disabled>
                                         <md-chip-template>
                                         <span>
-                                            <strong>{{$chip.name}}</strong>
+                                            <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
                                             <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
                                             <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
                                         </span>
@@ -137,8 +153,13 @@
                 <md-divider></md-divider>
                 <div id="search" class="md-row">
                     <div class="panel-body">
-                        <h5>Fast search</h5>
-                        <div layout="row">
+                        <h5>
+                            Fast search
+                            <md-button ng-init="fastSearchBlockExpand = true;" aria-label="Show or hide filters" style="height: auto; width: auto;" ng-click="fastSearchBlockExpand = !fastSearchBlockExpand" md-ink-ripple="false" class="md-icon-button no-padding">
+                                <i class="fa expand-icon" ng-class="fastSearchBlockExpand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
+                            </md-button>
+                        </h5>
+                        <div layout="row" ng-show="fastSearchBlockExpand">
                             <div id="search-input-container" flex="none">
                                 <input type="text" class="form-control" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">
                                 <div class="btn-check">
@@ -248,11 +269,10 @@
                                             <md-progress-circular ng-show="testRun.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
                                         </td>
                                         <td name="testRunEnv" md-cell class="no-padding">
-                                        	     <span class="label label-default">{{testRun.env}}</span>
-                                                  <md-button aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
-                                                      <i data-ng-if="!testRun.expand" class="fa fa-angle-double-down expand-icon" aria-hidden="true"></i>
-                                                      <i data-ng-if="testRun.expand" class="fa fa-angle-double-up expand-icon" aria-hidden="true"></i>
-                                                  </md-button>
+                                             <span class="label label-default">{{testRun.env}}</span>
+                                              <md-button aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                                  <i class="fa expand-icon" ng-class="testRun.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
+                                              </md-button>
                                         </td>
                                         <td name="testRunPlatform" md-cell class="no-padding browser-version_column">
                                         	 <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>

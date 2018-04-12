@@ -17,7 +17,8 @@ import java.util.List;
 public class FilterService
 {
 
-	private static final String TEST_RUN_TEMPLATE = "/filters/test_run.ftl";
+	private static final String TEST_RUN_TEMPLATE = "/filters/test_run_search_data.ftl";
+	private static final String TEST_RUN_COUNT_TEMPLATE = "/filters/test_run_search_data.ftl";
 
 	@Autowired
 	private FilterMapper filterMapper;
@@ -27,6 +28,22 @@ public class FilterService
 
 	@Autowired
 	private FreemarkerUtil freemarkerUtil;
+
+	public enum Template
+	{
+		TEST_RUN_TEMPLATE("/filters/test_run_search_data.ftl"), TEST_RUN_COUNT_TEMPLATE("/filters/test_run_search_data.ftl");
+
+		private String path;
+
+		Template(String path)
+		{
+			this.path = path;
+		}
+
+		public String getPath() {
+			return path;
+		}
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Filter createFilter(Filter filter) throws ServiceException
@@ -96,8 +113,8 @@ public class FilterService
 		return storedSubject.getSubjectByName(name);
 	}
 
-	public String getTemplate(FilterType filter) throws ServiceException
+	public String getTemplate(FilterType filter, Template template) throws ServiceException
 	{
-		return freemarkerUtil.getFreeMarkerTemplateContent(TEST_RUN_TEMPLATE, filter);
+		return freemarkerUtil.getFreeMarkerTemplateContent(template.getPath(), filter);
 	}
 }

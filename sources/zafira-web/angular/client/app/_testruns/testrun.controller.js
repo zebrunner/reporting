@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -37,6 +37,8 @@
 
         $scope.sc = angular.copy(DEFAULT_SC);
 
+        $scope.STATUSES = [];
+
 
         /*
             Filters
@@ -58,7 +60,20 @@
         };
 
         $scope.DATE_CRITERIAS = ['DATE'];
+        var SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
         $scope.DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
+
+        $scope.isSelectCriteria = function(criteria) {
+            return criteria ? SELECT_CRITERIAS.indexOf(criteria.name) >= 0 : false;
+        };
+
+        $scope.isDateCriteria = function (criteria) {
+            return criteria ? $scope.DATE_CRITERIAS.indexOf(criteria.name) >= 0 : false;
+        };
+
+        $scope.isDatePickerOperator = function(operator) {
+            return operator ? SELECT_CRITERIAS.indexOf(operator) >= 0 : false;
+        };
 
         $scope.subjectBuilder = {};
         $scope.filters = [];
@@ -99,14 +114,6 @@
             }
         }
 
-        $scope.isDateCriteria = function (value) {
-            return value ? $scope.DATE_CRITERIAS.indexOf(value.name) >= 0 : false;
-        };
-
-        $scope.isDatePickerOperator = function (value) {
-            return value ? $scope.DATE_CRITERIAS_PICKER_OPERATORS.indexOf(value) >= 0 : false;
-        };
-
         $scope.pickFilter = function($event, showTemplate) {
             $scope.selectedFilterRange.showTemplate = showTemplate;
             $mdDateRangePicker.show({
@@ -129,6 +136,24 @@
             FilterService.getSubjectBuilder(subjectName).then(function (rs) {
                 if(rs.success) {
                     $scope.subjectBuilder = rs.data;
+                    $scope.subjectBuilder.criterias.forEach(function(criteria) {
+                        if($scope.isSelectCriteria(criteria)) {
+                            switch(criteria.name) {
+                                case 'ENV':
+                                    criteria.values = $scope.environments;
+                                    break;
+                                case 'PLATFORM':
+                                    criteria.values = $scope.platforms;
+                                    break;
+                                case 'PROJECT':
+                                    criteria.values = $scope.allProjects;
+                                    break;
+                                case 'STATUS':
+                                    criteria.values = $scope.STATUSES;
+                                    break;
+                            }
+                        }
+                    });
                 }
             })
         };
@@ -551,7 +576,8 @@
         };
 
         $scope.searchByFilter = function(filter) {
-            $scope.filterQuery = '?filterId=' + filter.id;
+            $scope.selectedFilterId = filter.id;
+            //$scope.filterQuery = '?filterId=' + filter.id;
             $scope.search();
         };
 
@@ -589,7 +615,9 @@
                 }
            }
 
-            TestRunService.searchTestRuns($scope.sc, $scope.filterQuery).then(function(rs) {
+           var filterQuery = $scope.selectedFilterId ? '?filterId=' + $scope.selectedFilterId : undefined;
+
+            TestRunService.searchTestRuns($scope.sc, filterQuery).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
@@ -810,28 +838,34 @@
         };
 
         $scope.loadEnvironments = function () {
-            TestRunService.getEnvironments().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.environments = rs.data;
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
+            return $q(function(resolve, reject) {
+                TestRunService.getEnvironments().then(function(rs) {
+                    if(rs.success)
+                    {
+                        $scope.environments = rs.data;
+                        resolve($scope.environments);
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
         $scope.loadPlatforms = function () {
-            TestRunService.getPlatforms().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.platforms = rs.data;
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
+            return $q(function(resolve, reject) {
+                TestRunService.getPlatforms().then(function (rs) {
+                    if (rs.success) {
+                        $scope.platforms = rs.data;
+                        resolve($scope.platforms);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
@@ -1103,7 +1137,7 @@
             $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
             $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
-            delete $scope.filterQuery;
+            delete $scope.selectedFilterId;
             $location.search({});
             $scope.search();
         };
@@ -1160,17 +1194,35 @@
             return $date.getTime() < new Date().getTime();
         };
 
+        function loadProjects() {
+            return $q(function(resolve, reject) {
+                ProjectService.getAllProjects().then(function (rs) {
+                    if (rs.success) {
+                        $scope.allProjects = rs.data.map(function(proj) {
+                            return proj.name;
+                        });
+                        resolve(rs.data);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
+            });
+        };
 
         (function init() {
             toSc($location.search());
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
-            $scope.loadEnvironments();
-            $scope.loadPlatforms();
+            var loadFilterDataPromises = [];
+            loadFilterDataPromises.push($scope.loadEnvironments());
+            loadFilterDataPromises.push($scope.loadPlatforms());
+            loadFilterDataPromises.push(loadProjects());
+            $q.all(loadFilterDataPromises).then(function(values) {
+                loadSubjectBuilder();
+            });
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
-            loadSubjectBuilder();
             loadPublicFilters();
         })();
     }

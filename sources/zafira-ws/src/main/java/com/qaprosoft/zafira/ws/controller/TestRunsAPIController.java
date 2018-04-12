@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +72,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
 
 @Controller
 @Api(value = "Test runs API")
@@ -238,7 +242,9 @@ public class TestRunsAPIController extends AbstractController
 		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class) : null;
 		if(filterType != null)
 		{
-			sc.setFilterTemplate(filterService.getTemplate(filterType));
+			sc.setFilterSearchCriteria(new FilterSearchCriteria());
+			sc.getFilterSearchCriteria().setFilterTemplate(filterService.getTemplate(filterType, TEST_RUN_TEMPLATE));
+			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
 		}
 		return testRunService.searchTestRuns(sc);
 	}

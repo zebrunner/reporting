@@ -207,12 +207,16 @@
 	</select>
 
 	<sql id="filterTemplate">
-		${filterTemplate}
+		${filterSearchCriteria.filterTemplate}
+	</sql>
+
+	<sql id="filterSearchCountTemplate">
+		${filterSearchCriteria.filterSearchCountTemplate}
 	</sql>
 	
 	<select id="searchTestRuns" resultMap="TestRunResultMap">
 		<choose>
-			<when test="null != filterTemplate">
+			<when test="null != filterSearchCriteria">
 				<include refid="filterTemplate"/>
 			</when>
 			<otherwise>
@@ -306,90 +310,97 @@
 	</select>
 	
 	<select id="getTestRunsSearchCount" resultType="java.lang.Integer">
-	    <![CDATA[
-            SELECT
-                COUNT(*)
-            FROM
-                zafira.TEST_RUNS TR
-			LEFT JOIN zafira.USERS U
-				ON TR.USER_ID = U.ID
-			LEFT JOIN zafira.JOBS J
-				ON TR.JOB_ID = J.ID
-			LEFT JOIN zafira.TEST_SUITES TS
-				ON TR.TEST_SUITE_ID = TS.ID
-        ]]>
-        <trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="null != id">
-	            <![CDATA[
-	               AND TR.ID = #{id}
-	            ]]>
-			</if>
-			<if test="null != testSuite">
-	            <![CDATA[
-	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
-	            ]]>
-			</if>
-			<if test="null != testSuiteId">
-	            <![CDATA[
-	               AND TS.ID = #{testSuiteId}
-	            ]]>
-			</if>
-			<if test="null != executionURL">
-	            <![CDATA[
-	               AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
-	            ]]>
-			</if>
-			<if test="null != environment">
-	            <![CDATA[
-	               AND TR.ENV = #{environment}
-	            ]]>
-			</if>
-			<if test="null != platform">
-	            <![CDATA[
-	               AND LOWER(TR.PLATFORM) = #{platform}
-	            ]]>
-			</if>
-			<if test="null != appVersion">
-	            <![CDATA[
-	               AND TR.APP_VERSION LIKE CONCAT('%', #{appVersion}, '%')
-	            ]]>
-			</if>
-			<if test="null != date">
-	            <![CDATA[
-	               AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
-	               
-	            ]]>
-			</if>
-			<if test="null != fromDate">
-	            <![CDATA[
-	               AND TR.STARTED_AT::date >= #{fromDate}::date
-	            ]]>
-			</if>
-			<if test="null != toDate">
-	            <![CDATA[
-	               AND TR.STARTED_AT::date <= #{toDate}::date
-	            ]]>
-			</if>
-			<if test="null != projects">
-				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
-					<if test="null != project.id">
-						<![CDATA[
-								TR.PROJECT_ID = #{project.id}
-						]]>
-					</if>
-				</foreach>
-			</if>
-			<if test="null != status">
-	            <![CDATA[
-	               AND TR.STATUS = #{status}
-	            ]]>
-			</if>
-			<if test="null != reviewed">
-	            <![CDATA[
-	               AND TR.REVIEWED = #{reviewed}
-	            ]]>
-			</if>
-		</trim>
+		<choose>
+			<when test="null != filterSearchCriteria">
+				<include refid="filterSearchCountTemplate"/>
+			</when>
+			<otherwise>
+			<![CDATA[
+				SELECT
+					COUNT(*)
+				FROM
+					zafira.TEST_RUNS TR
+				LEFT JOIN zafira.USERS U
+					ON TR.USER_ID = U.ID
+				LEFT JOIN zafira.JOBS J
+					ON TR.JOB_ID = J.ID
+				LEFT JOIN zafira.TEST_SUITES TS
+					ON TR.TEST_SUITE_ID = TS.ID
+			]]>
+			<trim prefix="WHERE" prefixOverrides="AND |OR ">
+				<if test="null != id">
+					<![CDATA[
+					   AND TR.ID = #{id}
+					]]>
+				</if>
+				<if test="null != testSuite">
+					<![CDATA[
+					   AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+					]]>
+				</if>
+				<if test="null != testSuiteId">
+					<![CDATA[
+					   AND TS.ID = #{testSuiteId}
+					]]>
+				</if>
+				<if test="null != executionURL">
+					<![CDATA[
+					   AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
+					]]>
+				</if>
+				<if test="null != environment">
+					<![CDATA[
+					   AND TR.ENV = #{environment}
+					]]>
+				</if>
+				<if test="null != platform">
+					<![CDATA[
+					   AND LOWER(TR.PLATFORM) = #{platform}
+					]]>
+				</if>
+				<if test="null != appVersion">
+					<![CDATA[
+					   AND TR.APP_VERSION LIKE CONCAT('%', #{appVersion}, '%')
+					]]>
+				</if>
+				<if test="null != date">
+					<![CDATA[
+					   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+
+					]]>
+				</if>
+				<if test="null != fromDate">
+					<![CDATA[
+					   AND TR.STARTED_AT::date >= #{fromDate}::date
+					]]>
+				</if>
+				<if test="null != toDate">
+					<![CDATA[
+					   AND TR.STARTED_AT::date <= #{toDate}::date
+					]]>
+				</if>
+				<if test="null != projects">
+					<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+						<if test="null != project.id">
+							<![CDATA[
+									TR.PROJECT_ID = #{project.id}
+							]]>
+						</if>
+					</foreach>
+				</if>
+				<if test="null != status">
+					<![CDATA[
+					   AND TR.STATUS = #{status}
+					]]>
+				</if>
+				<if test="null != reviewed">
+					<![CDATA[
+					   AND TR.REVIEWED = #{reviewed}
+					]]>
+				</if>
+			</trim>
+			</otherwise>
+		</choose>
     </select>
     
     <select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
