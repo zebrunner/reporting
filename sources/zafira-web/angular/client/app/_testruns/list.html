@@ -74,7 +74,7 @@
                             <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
                                 <input disabled>
                                 <md-chip-template class="show-on-hover">
-                                    <div style="display: inline-block;" ng-click="searchByFilter($chip, $index); $mdChipsCtrl.selectedChip = $index">
+                                    <div style="display: inline-block;" ng-click="searchByFilter($chip); $mdChipsCtrl.selectedChip = $index">
                                         <strong>{{$chip.name}}</strong>
                                     </div>
                                     <div style="display: inline-block; vertical-align: sub;">

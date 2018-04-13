@@ -577,7 +577,6 @@
 
         $scope.searchByFilter = function(filter) {
             $scope.selectedFilterId = filter.id;
-            //$scope.filterQuery = '?filterId=' + filter.id;
             $scope.search();
         };
 

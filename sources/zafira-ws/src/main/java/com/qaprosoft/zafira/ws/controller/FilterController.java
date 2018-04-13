@@ -54,8 +54,6 @@ public class FilterController extends AbstractController
 			filterType.setPublicAccess(false);
 		}
 		filterType.getSubject().sortCriterias();
-		String template = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
-		System.out.println(template);
 		Filter filter = mapper.map(filterType, Filter.class);
 		filter.setUserId(getPrincipalId());
 		return mapper.map(filterService.createFilter(filter), FilterType.class);
@@ -82,8 +80,6 @@ public class FilterController extends AbstractController
     FilterType updateFilter(@RequestBody @Valid FilterType filterType) throws ServiceException
 	{
 		filterType.getSubject().sortCriterias();
-		String template = filterService.getTemplate(filterType, TEST_RUN_TEMPLATE);
-		System.out.println(template);
 		return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class)), FilterType.class);
 	}
 

@@ -31,7 +31,7 @@ public class FilterService
 
 	public enum Template
 	{
-		TEST_RUN_TEMPLATE("/filters/test_run_search_data.ftl"), TEST_RUN_COUNT_TEMPLATE("/filters/test_run_search_data.ftl");
+		TEST_RUN_TEMPLATE("/filters/test_run_search_data.ftl"), TEST_RUN_COUNT_TEMPLATE("/filters/test_run_search_count.ftl");
 
 		private String path;
 
