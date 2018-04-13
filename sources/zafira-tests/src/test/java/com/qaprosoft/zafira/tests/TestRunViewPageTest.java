@@ -47,7 +47,7 @@ public class TestRunViewPageTest extends AbstractTest
 		this.testRunViewName = "test" + RandomUtils.nextInt(0, 10000);
 	}
 
-	@Test(groups = {"acceptance", "testRunView"}, enabled = false)
+	@Test(groups = {"acceptance", "testRunView"})
 	public void verifyCreateTestRunViewTest()
 	{
 		DashboardPage dashboardPage = new DashboardPage(driver);
@@ -77,7 +77,7 @@ public class TestRunViewPageTest extends AbstractTest
 		Assert.assertTrue(testRunViewPage.isOpened(), "Test run view page can not open");
 	}
 
-	@Test(groups = {"acceptance", "testRunView"}, enabled = false)
+	@Test(groups = {"acceptance", "testRunView"})
 	public void verifyUpdateTestRunViewTest()
 	{
 		testRunViewPageService.createTestRunView(this.testRunViewName, PROJECT_NAME);
