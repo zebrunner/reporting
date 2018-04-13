@@ -2,6 +2,15 @@ body {
     background: $main_container_bg;
 }
 
+#vnc {
+    div {
+        background-color: inherit !important;
+        canvas {
+            cursor: crosshair !important;
+        }
+    }
+}
+
 #main-fab button.md-fab.md-fab-sm {
     background-color: lightgray;
     margin-bottom: 8px;

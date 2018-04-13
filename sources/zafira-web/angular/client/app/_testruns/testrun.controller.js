@@ -676,6 +676,20 @@
             }
         };
 
+        $scope.showDemoDialog = function(event) {
+            $mdDialog.show({
+                controller: DemoController,
+                templateUrl: 'app/_testruns/demo_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+
         $scope.showCompareDialog = function (event) {
             $mdDialog.show({
                 controller: CompareController,
@@ -1202,6 +1216,53 @@
         (function initController() {
         })();
     }
+
+    function DemoController($scope, $mdDialog, $timeout, $window) {
+
+        var rfb;
+
+        $timeout(function () {
+            rfb = new RFB(angular.element('#vnc')[0], "ws://ua.qaprosoft.com:7600/websockify",
+                { repeaterID: '',
+                    shared: true,
+                    credentials: { password: 'selenoid' } });
+            var display = rfb._display;
+            rfb.scaleViewport = true;
+            rfb.resizeSession = true;
+            display._scale = 1;
+            var container = angular.element($window)[0];
+            var height = container.innerHeight;
+            var width = container.innerWidth;
+            display.autoscale(height, width, false);
+            angular.element($window).bind('resize', function(){
+                var container = angular.element($window)[0];
+                var height = container.innerHeight;
+                var width = container.innerWidth;
+                display.autoscale(height, width, false);
+            });
+        }, 200);
+
+        $scope.$on('$destroy', function () {
+            if(rfb && rfb._connected) {
+                rfb.disconnect();
+            }
+        });
+
+        function connected(e) {
+            console.log("Connected (encrypted)");
+        }
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        (function initController() {
+
+        })();
+    };
 
  	 function LogsController($scope, $mdDialog, $interval, rabbitmq, testRun, test) {
 

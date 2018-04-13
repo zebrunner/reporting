@@ -1,0 +1,20 @@
+<md-dialog flex="100" style="height: 100%;" aria-label="Demo" zafira-background-theme="modal">
+    <form class="form-validation" name="demo_form" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle">
+                    Live demo
+                </h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content" id="demo" style="max-width: 450px;margin: auto;max-height: 790px">
+                <div id="vnc"></div>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>
