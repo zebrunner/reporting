@@ -77,7 +77,7 @@ public class TestRunViewPageTest extends AbstractTest
 		Assert.assertTrue(testRunViewPage.isOpened(), "Test run view page can not open");
 	}
 
-	@Test(groups = {"acceptance", "testRunView"})
+	@Test(groups = {"acceptance", "testRunView"}, enabled = false)
 	public void verifyUpdateTestRunViewTest()
 	{
 		testRunViewPageService.createTestRunView(this.testRunViewName, PROJECT_NAME);
