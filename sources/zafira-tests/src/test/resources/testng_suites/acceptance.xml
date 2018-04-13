@@ -59,7 +59,7 @@
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
-					<include name="verifyCreateTestRunViewTest"/>
+					<!--<include name="verifyCreateTestRunViewTest"/>-->
 					<include name="verifyUpdateTestRunViewTest"/>
 				</methods>
 			</class>
