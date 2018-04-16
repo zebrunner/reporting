@@ -279,15 +279,13 @@
                                                                     <md-icon class="material-icons">attachment</md-icon>
                                                                 </md-button>
                                                                 <md-menu-content>
-                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
-                                                                        <md-button name="artifact" href="{{artifact.link}}" class="artifact-button" target="blank">{{artifact.name}}</md-button>
+                                                                   <md-menu-item data-ng-repeat="artifact in test.artifacts" ng-switch="artifact.name">
+                                                                    	  <md-button ng-switch-when="Live demo" name="artifact" class="artifact-button" data-ng-click="showDemoDialog($event)"  data-ng-if="test.status == 'IN_PROGRESS'">{{artifact.name}}</md-button>
+                                                                        <md-button ng-switch-default name="artifact" href="{{artifact.link}}" class="artifact-button" target="blank">{{artifact.name}}</md-button>
                                                                    </md-menu-item>
                                                                     <md-menu-item data-ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
 				                                                        <md-button name="testLiveLogs" data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
 				                                                    </md-menu-item>
-                                                                    <md-menu-item>
-                                                                        <md-button name="testLiveDemo" data-ng-click="showDemoDialog($event)">Live demo</md-button>
-                                                                    </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
                                                             </div>
