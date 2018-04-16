@@ -76,24 +76,24 @@
 	
 	<!-- ####################### LDAP configuration ####################### -->
 	<security:ldap-server id="contextSource" url="${zafira.ldap.protocol}://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>
-	
-	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+
+	<!--<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
 		<constructor-arg ref="bindAuthenticator" />
 		<property name="userDetailsContextMapper" ref="customUserDetailsContextMapper" />
 	</bean>
-	
+
 	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper" />
-	
+
 	<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
 		<constructor-arg ref="contextSource" />
 		<property name="userSearch" ref="userSearch" />
 	</bean>
-	
+
 	<bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
 		<constructor-arg index="0" value="${zafira.ldap.dn}" />
 		<constructor-arg index="1" value="(${zafira.ldap.search_filter}={0})" />
 		<constructor-arg index="2" ref="contextSource" />
 		<property name="searchSubtree" value="true" />
-	</bean>
+	</bean>-->
 
 </beans>

@@ -12,6 +12,7 @@
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="beans">
 			<map>
+				<entry key="bean:name=ldapService" value-ref="ldapService"/>
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
 				<entry key="bean:name=slackService" value-ref="slackService"/>
@@ -41,6 +42,8 @@
 		  class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
+
+	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.jmx.LDAPService"/>
 
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.jmx.JiraService"/>
 
