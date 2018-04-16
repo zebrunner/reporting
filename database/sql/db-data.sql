@@ -1264,7 +1264,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM MONTHLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	monthly_total_model :=
@@ -1448,7 +1448,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
@@ -1547,7 +1547,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	weekly_total_model :=
@@ -1708,7 +1708,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM WEEKLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
@@ -1807,7 +1807,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	nightly_total_model := '
@@ -1829,7 +1829,7 @@ BEGIN
                    ]) AS "value"
     FROM NIGHTLY_VIEW
 	  WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	nightly_total_percent_model :=
@@ -1858,7 +1858,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM NIGHTLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
