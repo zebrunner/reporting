@@ -31,7 +31,7 @@ import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 /**
  * ZafiraSingleton - singleton wrapper around {@link ZafiraClient}.
  * 
- * @author akhursevich
+ * @author Alexey Khursevich (hursevich@gmail.com)
  */
 public enum ZafiraSingleton {
 

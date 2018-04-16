@@ -676,14 +676,17 @@
             }
         };
 
-        $scope.showDemoDialog = function(event) {
+        $scope.showDemoDialog = function(event, wsURL) {
             $mdDialog.show({
                 controller: DemoController,
                 templateUrl: 'app/_testruns/demo_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
-                fullscreen: true
+                fullscreen: true,
+                locals: {
+                		wsURL: wsURL
+                }
             })
                 .then(function(answer) {
                 }, function() {
@@ -1217,12 +1220,12 @@
         })();
     }
 
-    function DemoController($scope, $mdDialog, $timeout, $window) {
+    function DemoController($scope, $mdDialog, $timeout, $window, wsURL) {
 
         var rfb;
 
         $timeout(function () {
-            rfb = new RFB(angular.element('#vnc')[0], "ws://ua.qaprosoft.com:7600/websockify",
+            rfb = new RFB(angular.element('#vnc')[0], wsURL,
                 { repeaterID: '',
                     shared: true,
                     credentials: { password: 'selenoid' } });
@@ -1248,20 +1251,12 @@
             }
         });
 
-        function connected(e) {
-            console.log("Connected (encrypted)");
-        }
-
         $scope.hide = function() {
             $mdDialog.hide();
         };
         $scope.cancel = function() {
             $mdDialog.cancel();
         };
-
-        (function initController() {
-
-        })();
     };
 
  	 function LogsController($scope, $mdDialog, $interval, rabbitmq, testRun, test) {
