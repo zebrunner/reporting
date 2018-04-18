@@ -1223,27 +1223,37 @@
     function DemoController($scope, $mdDialog, $timeout, $window, wsURL) {
 
         var rfb;
+        var display;
+        var ratio;
 
         $timeout(function () {
-            rfb = new RFB(angular.element('#vnc')[0], wsURL,
-                { repeaterID: '',
-                    shared: true,
-                    credentials: { password: 'selenoid' } });
-            var display = rfb._display;
-            rfb.scaleViewport = true;
-            rfb.resizeSession = true;
-            display._scale = 1;
-            var container = angular.element($window)[0];
-            var height = container.innerHeight;
-            var width = container.innerWidth;
-            display.autoscale(height, width, false);
+            rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
+            rfb.addEventListener("connect",  connected);
+	        rfb.scaleViewport = true;
+	        rfb.resizeSession = true;
+	        display = rfb._display;
+	        display._scale = 1;
             angular.element($window).bind('resize', function(){
-                var container = angular.element($window)[0];
-                var height = container.innerHeight;
-                var width = container.innerWidth;
-                display.autoscale(height, width, false);
+            		autoscale(display, ratio, angular.element($window)[0]);
             });
         }, 200);
+        
+        function connected(e) {
+        		var canvas = document.getElementsByTagName("canvas")[0];
+        		ratio = canvas.width / canvas.height;
+        		autoscale(display, ratio, angular.element($window)[0]);
+        };
+        
+        function autoscale(display, ratio, window) {
+	        	var width = window.innerWidth * 0.9;
+	    		var height = ratio > 1 ?  width / ratio : width * ratio;
+	    		if(height > window.innerHeight)
+	    		{
+	    			height = window.innerHeight - 100;
+	    			width = ratio < 1 ? height / ratio : height * ratio;
+	    		}
+	    		display.autoscale(width, height, false);
+        };
 
         $scope.$on('$destroy', function () {
             if(rfb && rfb._connected) {
@@ -1254,6 +1264,7 @@
         $scope.hide = function() {
             $mdDialog.hide();
         };
+        
         $scope.cancel = function() {
             $mdDialog.cancel();
         };
