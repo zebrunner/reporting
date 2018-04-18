@@ -676,7 +676,7 @@
             }
         };
 
-        $scope.showDemoDialog = function(event, wsURL) {
+        $scope.showDemoDialog = function(event, wsURL, testRun, test) {
             $mdDialog.show({
                 controller: DemoController,
                 templateUrl: 'app/_testruns/demo_modal.html',
@@ -685,7 +685,10 @@
                 clickOutsideToClose:true,
                 fullscreen: true,
                 locals: {
-                		wsURL: wsURL
+                    wsURL: wsURL,
+                    testRun: testRun,
+                    test: test,
+                    rabbitmq: $scope.rabbitmq
                 }
             })
                 .then(function(answer) {
@@ -1220,7 +1223,7 @@
         })();
     }
 
-    function DemoController($scope, $mdDialog, $timeout, $window, wsURL) {
+    function DemoController($scope, $mdDialog, $timeout, $window, wsURL, rabbitmq, testRun, test) {
 
         var rfb;
         var display;
@@ -1229,6 +1232,7 @@
         $timeout(function () {
             rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
             rfb.addEventListener("connect",  connected);
+            rfb.addEventListener("disconnect",  disconnected);
 	        rfb.scaleViewport = true;
 	        rfb.resizeSession = true;
 	        display = rfb._display;
@@ -1237,17 +1241,21 @@
             		autoscale(display, ratio, angular.element($window)[0]);
             });
         }, 200);
-        
+
         function connected(e) {
         		var canvas = document.getElementsByTagName("canvas")[0];
         		ratio = canvas.width / canvas.height;
         		autoscale(display, ratio, angular.element($window)[0]);
         };
-        
+
+        function disconnected(e) {
+            $scope.hide();
+        };
+
         function autoscale(display, ratio, window) {
 	        	var width = window.innerWidth * 0.9;
 	    		var height = ratio > 1 ?  width / ratio : width * ratio;
-	    		if(height > window.innerHeight)
+	    		if(height > window.innerHeight * 0.9)
 	    		{
 	    			height = window.innerHeight - 100;
 	    			width = ratio < 1 ? height / ratio : height * ratio;
@@ -1259,15 +1267,46 @@
             if(rfb && rfb._connected) {
                 rfb.disconnect();
             }
+            $scope.testLogsStomp.disconnect();
+            $scope.logs = [];
         });
 
         $scope.hide = function() {
             $mdDialog.hide();
         };
-        
+
         $scope.cancel = function() {
             $mdDialog.cancel();
         };
+
+        $scope.testLogsStomp = null;
+        $scope.logs = [];
+
+        (function initController() {
+            if(rabbitmq.enabled)
+            {
+                $scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
+                $scope.testLogsStomp.debug = null;
+                $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
+                    $scope.logs = [];
+
+                    $scope.$watch('logs', function (logs) {
+                        var scroll = document.getElementsByClassName("log-demo")[0];
+                        scroll.scrollTop = scroll.scrollHeight;
+                    }, true);
+
+                    $scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
+                        if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
+                            || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
+                        {
+                            var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+                            $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
+                            $scope.$apply();
+                        }
+                    });
+                });
+            }
+        })();
     };
 
  	 function LogsController($scope, $mdDialog, $interval, rabbitmq, testRun, test) {
@@ -1296,9 +1335,9 @@
 	             		$scope.logs = [];
 
 	             		$scope.$watch('logs', function (logs) {
-	             			var scroll = document.getElementsByTagName("md-dialog-content")[0];
-	             			scroll.scrollTop = scroll.scrollHeight;
-	             		}, true);
+                             var scroll = document.getElementsByTagName("md-dialog-content")[0];
+                             scroll.scrollTop = scroll.scrollHeight;
+                         }, true);
 
 	             		$scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
 	                 	   if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])

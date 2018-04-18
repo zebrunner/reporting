@@ -951,3 +951,19 @@ ul.profile-image-actions {
 .no-margin-bottom {
     margin-bottom: 0;
 }
+
+
+.log-demo {
+    width: 100%;
+    height: 130px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    background: white;
+    opacity: 0.9;
+    overflow-y: scroll;
+    .log {
+        padding-left: 20px;
+    }
+}
