@@ -107,7 +107,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			}
 			catch (Exception e)
 			{
-				errorHandler.error(e.getMessage(), e, ErrorCode.GENERIC_FAILURE);
+				errorHandler.error("Unable to create RabbitMQ connection: " + e.getMessage());
 			}
 
 			// Creating channel
@@ -117,7 +117,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			}
 			catch (Exception e)
 			{
-				errorHandler.error(e.getMessage(), e, ErrorCode.GENERIC_FAILURE);
+				errorHandler.error("Unable to create RabbitMQ channel: " + e.getMessage());
 			}
 
 			// Create exchange
@@ -127,7 +127,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			}
 			catch (Exception e)
 			{
-				errorHandler.error(e.getMessage(), e, ErrorCode.GENERIC_FAILURE);
+				errorHandler.error("Unable to create RabbitMQ exchange: " + e.getMessage());
 			}
 		}
 	}
