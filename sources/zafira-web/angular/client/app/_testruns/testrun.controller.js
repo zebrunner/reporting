@@ -45,15 +45,15 @@
         $scope.subscribtions = {};
 
         $scope.initWebsocket = function () {
+            var wsName = 'zafira';
             $scope.zafiraWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
             $scope.zafiraWebsocket.debug = null;
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
                 $scope.subscribtions['testRuns'] = $scope.subscribeTestRunsTopic();
+                UtilService.websocketConnected(wsName);
             }, function () {
-                $timeout(function () {
-                    $scope.initWebsocket();
-                }, 5000)
+                UtilService.reconnectWebsocket(wsName, $scope.initWebsocket);
             });
         };
 
@@ -101,24 +101,10 @@
             }
         };
 
-        $scope.initTestLogsWebsocket = function (ciRunId, testId) {
-            var logsWebsocket = Stomp.over(new SockJS($scope.rabbitmq.ws));
-            logsWebsocket.debug = null;
-            logsWebsocket.connect($scope.user, $scope.pass, function () {
-                logsWebsocket.subscribe("/queue/" + ciRunId, function (data) {
-                    var event = $scope.getEventFromMessage(data.body);
-                    $scope.$apply();
-                });
-            }, function () {
-                $timeout(function () {
-                    $scope.initTestLogsWebsocket(ciRunId, testId);
-                }, 5000)
-            });
-        };
-
         $scope.$on('$destroy', function () {
             if($scope.zafiraWebsocket && $scope.zafiraWebsocket.connected) {
-            		$scope.zafiraWebsocket.disconnect();
+                $scope.zafiraWebsocket.disconnect();
+                UtilService.websocketConnected('zafira');
             }
         });
 
@@ -1223,29 +1209,34 @@
         })();
     }
 
-    function DemoController($scope, $mdDialog, $timeout, $window, wsURL, rabbitmq, testRun, test) {
+    function DemoController($scope, $mdDialog, $timeout, $window, UtilService, wsURL, rabbitmq, testRun, test) {
 
         var rfb;
         var display;
         var ratio;
 
-        $timeout(function () {
+        $scope.loading = true;
+
+        $scope.initVNCWebsocket = function() {
             rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
+            //rfb._viewOnly = true;
             rfb.addEventListener("connect",  connected);
             rfb.addEventListener("disconnect",  disconnected);
-	        rfb.scaleViewport = true;
-	        rfb.resizeSession = true;
-	        display = rfb._display;
-	        display._scale = 1;
+            rfb.scaleViewport = true;
+            rfb.resizeSession = true;
+            display = rfb._display;
+            display._scale = 1;
             angular.element($window).bind('resize', function(){
-            		autoscale(display, ratio, angular.element($window)[0]);
+                autoscale(display, ratio, angular.element($window)[0]);
             });
-        }, 200);
+        };
 
         function connected(e) {
-        		var canvas = document.getElementsByTagName("canvas")[0];
-        		ratio = canvas.width / canvas.height;
-        		autoscale(display, ratio, angular.element($window)[0]);
+            $scope.loading = false;
+            var canvas = document.getElementsByTagName("canvas")[0];
+            ratio = canvas.width / canvas.height;
+            autoscale(display, ratio, angular.element($window)[0]);
+
         };
 
         function disconnected(e) {
@@ -1269,6 +1260,7 @@
             }
             $scope.testLogsStomp.disconnect();
             $scope.logs = [];
+            UtilService.websocketConnected('logs');
         });
 
         $scope.hide = function() {
@@ -1282,13 +1274,16 @@
         $scope.testLogsStomp = null;
         $scope.logs = [];
 
-        (function initController() {
+        $scope.initLogsWebsocket = function () {
             if(rabbitmq.enabled)
             {
+                var wsName = 'logs';
                 $scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
                 $scope.testLogsStomp.debug = null;
                 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
                     $scope.logs = [];
+
+                    UtilService.websocketConnected(wsName);
 
                     $scope.$watch('logs', function (logs) {
                         var scroll = document.getElementsByClassName("log-demo")[0];
@@ -1304,19 +1299,30 @@
                             $scope.$apply();
                         }
                     });
+                }, function () {
+                    UtilService.reconnectWebsocket(wsName, $scope.initLogsWebsocket);
                 });
             }
+        };
+
+        (function initController() {
+            $timeout(function () {
+                $scope.initVNCWebsocket();
+            }, 200);
+            $scope.initLogsWebsocket();
         })();
     };
 
- 	 function LogsController($scope, $mdDialog, $interval, rabbitmq, testRun, test) {
+ 	 function LogsController($scope, $mdDialog, $interval, UtilService, rabbitmq, testRun, test) {
 
 		 $scope.testLogsStomp = null;
 		 $scope.logs = [];
+		 $scope.loading = true;
 
 	     $scope.$on('$destroy', function() {
-	    	 	$scope.testLogsStomp.disconnect();
-	    	 	$scope.logs = [];
+            $scope.testLogsStomp.disconnect();
+            $scope.logs = [];
+            UtilService.websocketConnected('logs');
 	     });
 
 	     $scope.hide = function() {
@@ -1326,30 +1332,40 @@
 	         $mdDialog.cancel();
 	     };
 
+	     $scope.initLogsWebsocket = function () {
+             if(rabbitmq.enabled)
+             {
+                 var wsName = 'logs';
+                 $scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
+                 $scope.testLogsStomp.debug = null;
+                 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
+                     $scope.logs = [];
+
+                     UtilService.websocketConnected(wsName);
+
+                     $scope.$watch('logs', function (logs) {
+                         var scroll = document.getElementsByTagName("md-dialog-content")[0];
+                         scroll.scrollTop = scroll.scrollHeight;
+                     }, true);
+
+                     $scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
+                         if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
+                             || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
+                         {
+                             $scope.loading = false;
+                             var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+                             $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
+                             $scope.$apply();
+                         }
+                     });
+                 }, function () {
+                     UtilService.reconnectWebsocket(wsName, $scope.initLogsWebsocket);
+                 });
+             }
+         };
+
 	     (function initController() {
-	    	 	 if(rabbitmq.enabled)
-	    	 	 {
-	    	 		$scope.testLogsStomp = Stomp.over(new SockJS(rabbitmq.ws));
-		    	 	 $scope.testLogsStomp.debug = null;
-		    	 	 $scope.testLogsStomp.connect(rabbitmq.user, rabbitmq.pass, function () {
-	             		$scope.logs = [];
-
-	             		$scope.$watch('logs', function (logs) {
-                             var scroll = document.getElementsByTagName("md-dialog-content")[0];
-                             scroll.scrollTop = scroll.scrollHeight;
-                         }, true);
-
-	             		$scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-	                 	   if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
-	                 	   || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
-	                 	   {
-	                 		   var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
-	                    	   	   $scope.logs.push({'level': log.level, 'message': log.message, 'timestamp': log.timestamp});
-	               	   	  	   $scope.$apply();
-	                 	   }
-	             		});
-	             });
-	    	 	 }
+	         $scope.initLogsWebsocket();
 	     })();
 	 }
 
