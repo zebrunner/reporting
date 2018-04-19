@@ -77,7 +77,7 @@ body {
     padding-top: 0px;
     padding-bottom: 6px;
     font-size: 12px;
-    width: 140px;
+    min-width: 132px;
 }
 
 .md-datepicker-input {
@@ -449,11 +449,13 @@ span.light_text, div.light_text {
 section.zaf-dark .section-header,
 section.zaf-dark .article-title {
     color: $brand-primary;
+    margin: 8px 0;
 }
 
 section.zaf-light .section-header,
 section.zaf-light .article-title {
     color: $brand-primary;
+    margin: 8px 0;
 }
 
 /*Element backgrounds*/
@@ -951,7 +953,7 @@ ul.profile-image-actions {
 }
 
 .fixed-search-column button {
-    margin: .6em 0 .6em 8px;
+    margin: 8px 0 8px 8px;
 }
 
 button#reset {
@@ -983,9 +985,12 @@ button#resetFilter {
 }
 
 /*Filters*/
-#filter, #filter-editor {
+#filter, #filter-editor, #search {
     md-input-container {
         height: 36px !important;
+        margin: 0;
+        padding: 0;
+        font-size: 14.5px;
     }
     md-radio-button {
         display: inline-block;
@@ -1004,7 +1009,7 @@ button#resetFilter {
         padding-left: 0;
     }
     i.material-icons {
-        color: rgba(0, 0, 0, 0.12);
+        color: rgba(0, 0, 0, 0.8);
     }
     md-chips-wrap {
         display: inline-block;
@@ -1018,7 +1023,7 @@ button#resetFilter {
             font-size: 18px !important;
         }
         md-chip {
-            margin: 2px;
+            margin: 0;
         }
     }
     .right-switch {
@@ -1088,17 +1093,20 @@ md-chip-template.selected:parent {
 
 div.manage-chip {
     position: relative;
-    button {
+    div {
+        background: #fff;
         position: absolute;
-        top: 9px;
-        right: 5%;
+        top: 8px;
+        right: 9px;
         border-radius: 50%;
-        height: 18px;
-        width: 18px;
+        height: 16px;
+        width: 16px;
+        cursor: pointer;
         md-icon {
             position: absolute;
-            top: -4px;
-            left: -4px;
+            top: 0;
+            left: 0;
+            font-size: 16px;
         }
     }
     md-chip {
@@ -1177,7 +1185,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     width: 100%;
   }
     & .panel-body{
-      padding: 10px 16px;
+      padding: 16px;
       width: inherit;
 
       & h5{
@@ -1239,18 +1247,15 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
       }
 }
 
-#search .searchable.select{
-  width: 140px;
-  margin-left: 8px;
+#search .searchable.select, .date-picker-container{
+  margin-left: 8px !important;
 }
 
 .date-picker-container {
     position: relative;
-    height: 36px;
-    margin: 0 0 0 8px;
     border: 1px solid #CBD5DD;
     border-radius: 2px;
-    min-width: 144px;
+    min-width: 140px;
     & span{
       line-height: 2.3;
     }
@@ -1325,4 +1330,8 @@ button#add-button{
 
 .reviewed-check:hover {
     background-color: rgb(0, 150, 136);
+}
+
+.form-control{
+  font-size: 14.5px !important;
 }
