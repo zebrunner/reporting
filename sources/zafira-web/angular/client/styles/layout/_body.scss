@@ -72,8 +72,8 @@ body {
 }
 
 .searchable.select {
-    margin-top: 0px !important;
-    margin-left: 8px !important;
+    margin-top: 0px;
+    margin-left: 8px;
     padding-top: 0px;
     padding-bottom: 6px;
     font-size: 12px;
@@ -946,16 +946,46 @@ ul.profile-image-actions {
 }
 
 .default-gray {
-    background-color: #777777 !important;
+    background-color: $gray-light !important;
     color: white;
 }
 
+.fixed-search-column button {
+    margin: .6em 0 .6em 8px;
+}
 
+button#reset {
+    color: #fff;
+    background-color: $dark;
+
+    &:hover {
+        background-color: $coal;
+    }
+}
+
+button#deleteFilter {
+    color: $faded-red !important;
+    background-color: $fog-gray;
+
+    &:hover {
+      background-color: #fcfcfc;
+    }
+}
+
+button#resetFilter {
+    color: $coal;
+    background-color: #fff;
+    box-shadow: 0 0 2px 0 rgba(4, 0, 0, 0.12), 0px 2px 2px 0 rgba(0, 0, 0, 0.24);
+
+    &:hover {
+      background-color: $gray-lighter;
+    }
+}
 
 /*Filters*/
 #filter, #filter-editor {
     md-input-container {
-        height: 54px !important;
+        height: 36px !important;
     }
     md-radio-button {
         display: inline-block;
@@ -1017,6 +1047,11 @@ ul.profile-image-actions {
     }
 }
 
+md-chip {
+  width: 118px !important;
+  height: 32px;
+}
+
 #filter {
     md-chips-wrap {
         md-chip {
@@ -1055,24 +1090,27 @@ div.manage-chip {
     position: relative;
     button {
         position: absolute;
-        top: 5px;
+        top: 9px;
         right: 5%;
         border-radius: 50%;
-        height: 26px;
-        width: 26px;
+        height: 18px;
+        width: 18px;
         md-icon {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: -4px;
+            left: -4px;
         }
     }
     md-chip {
-        width: 130px;
-        background-color: rgba(0,0,0,0.87);
+        width: 118px;
+        background-color: $dark;
         color: white;
         text-transform: uppercase;
         font-size: 14px;
         font-weight: bold;
+        &:hover{
+          background-color: $coal;
+        }
     }
     md-icon {
         color: rgba(0,0,0,0.87);
@@ -1090,12 +1128,201 @@ div.manage-chip {
         color: #009688;
     }
 }
+
 .filter-option .md-text, .filter-input-container md-select-value .md-text {
     text-transform: capitalize;
 }
 
 md-chip md-chip-template.bg-primary {
-    background-color: #009688;
+    background-color: $brand-primary;
 }
 
+.nav .material-icons {
+    font-size: 18px;
+}
 
+.menu-btn {
+    width: 100%;
+}
+
+.page .md-button {
+    font-size: 13px;
+    height: 32px;
+}
+
+.form-control {
+    height: 36px;
+}
+
+md-select {
+    height: 36px;
+    border: 1px solid #CBD5DD;
+    border-radius: 2px;
+    padding: 0 0 0 12px !important;
+}
+
+md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not([disabled]):focus .md-select-value, .md-select-value {
+    border-bottom-color: $input-border;
+    border-bottom: 1px;
+    border-radius: 2px;
+    font-family: Roboto;
+    font-size: 14.5px;
+    color: $coal;
+}
+
+.search-filter-body{
+  width: 100%;
+
+    & md-card, & form{
+    width: 100%;
+  }
+    & .panel-body{
+      padding: 10px 16px;
+      width: inherit;
+
+      & h5{
+        height: 100%;
+        vertical-align: middle;
+        margin: 0;
+      }
+    }
+}
+
+#filter-editor {
+    background-color: $fog-gray;
+    min-height: 120px;
+
+    & md-select {
+        background-color: #fff;
+    }
+    & .filter-name {
+        width: 344px;
+        margin-right: 8px;
+    }
+
+    & .filter-input-container {
+        width: 168px;
+        float: left;
+        margin-right: 8px !important;
+    }
+
+    & .filter-select{
+      width: 100%;
+    }
+}
+
+.btn-check {
+    position: absolute;
+    right: 10px;
+    top: 3px;
+
+    & button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: none;
+        background: #ededed;
+        border-radius: 2px;
+        padding: 6px 8px !important;
+        transition: all .2s;
+        font-size: 13px;
+        margin: 0 2px;
+
+        &:hover {
+          background-color: $gray-light !important;
+          color: #fff !important;
+          cursor: pointer;
+        }
+        &.active{
+          background-color: $brand-primary !important;
+          color: #fff !important;
+        }
+      }
+}
+
+#search .searchable.select{
+  width: 140px;
+  margin-left: 8px;
+}
+
+.date-picker-container {
+    position: relative;
+    height: 36px;
+    margin: 0 0 0 8px;
+    border: 1px solid #CBD5DD;
+    border-radius: 2px;
+    min-width: 144px;
+    & span{
+      line-height: 2.3;
+    }
+    & span:first-child{
+      padding-left: 12px;
+    }
+    & button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 36px;
+      width: 100%;
+  }
+
+    & i {
+        float: right;
+        font-size: 16px;
+    }
+}
+
+#search-container, .filter-input-container {
+    position: relative;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#search-container .form-control{
+    width: 508px;
+    padding-right: 236px;
+    margin-right: 8px;
+}
+
+.filter-text {
+    vertical-align: top;
+    padding-bottom: 16px;
+}
+
+.value-input {
+    width: 154px !important;
+}
+
+.filter-date{
+  width: 100%;
+  background: #fff;
+}
+
+.quadro-btn {
+    width: 36px !important;
+    height: 36px !important;
+    margin-bottom: 0;
+    border-color: $input-border;
+    border-radius: 2px;
+    font-size: 16px;
+
+    &:hover{
+      cursor: pointer;
+    }
+}
+
+.quadro-btn.default-gray {
+    color: white;
+}
+
+button#add-button{
+  background-color: $dark;
+  color: #fff;
+
+  &:hover{
+    background-color: $coal;
+  }
+}
+
+.reviewed-check:hover {
+    background-color: rgb(0, 150, 136);
+}
