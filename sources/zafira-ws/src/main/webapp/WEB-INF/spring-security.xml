@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ldap="http://www.springframework.org/schema/ldap"
+	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/ldap http://www.springframework.org/schema/ldap/spring-ldap.xsd">
 
 	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserPassAuthService" />
 	
@@ -13,10 +14,19 @@
 	</bean>
 	
 	<security:authentication-manager alias="authenticationManager">
-	
+
+		<!--<security:ldap-authentication-provider server-ref="getLdapContextSource"/>-->
+
 		<security:authentication-provider user-service-ref="userAuthService">
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
+
+		<!--<security:ldap-authentication-provider  server-ref="getLdapContextSource">
+			<security:password-compare>
+				<security:password-encoder ref="passwordEncoder"/>
+			</security:password-compare>
+		</security:ldap-authentication-provider>-->
+		<security:authentication-provider ref="getLdapAuthenticationProvider" />
 		
 		<!-- Comment out to use LDAP (make sure LDAP configuration specified in maven profile) -->
 		<!-- security:authentication-provider ref="ldapAuthProvider"  / -->
@@ -75,7 +85,7 @@
 	</security:http>
 	
 	<!-- ####################### LDAP configuration ####################### -->
-	<security:ldap-server id="contextSource" url="${zafira.ldap.protocol}://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>
+	<!--<security:ldap-server id="contextSource" url="${zafira.ldap.protocol}://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>-->
 
 	<!--<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
 		<constructor-arg ref="bindAuthenticator" />

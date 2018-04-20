@@ -4,6 +4,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
@@ -94,6 +95,7 @@ public class LDAPService implements IJMXService {
             this.ldapContextSource.setUrl(url);
             this.ldapContextSource.setUserDn(managerUser);
             this.ldapContextSource.setPassword(managerPassword);
+            this.ldapContextSource.afterPropertiesSet();
             this.filterBasedLdapUserSearch = new FilterBasedLdapUserSearch(dn, searchFilter, ldapContextSource);
             this.filterBasedLdapUserSearch.setSearchSubtree(true);
             this.bindAuthenticator = new BindAuthenticator(this.ldapContextSource);
@@ -121,8 +123,15 @@ public class LDAPService implements IJMXService {
     }
 
     @ManagedAttribute(description="Get ldap context source")
+    @Bean
     public LdapContextSource getLdapContextSource()
     {
         return this.ldapContextSource;
+    }
+
+    @ManagedAttribute(description="Get ldap authentication provider")
+    @Bean
+    public LdapAuthenticationProvider getLdapAuthenticationProvider() {
+        return ldapAuthenticationProvider;
     }
 }
