@@ -47,6 +47,7 @@ a.label {
 
 .label-primary {
   @include label-variant($label-primary-bg);
+  color: #fff;
 }
 
 .label-success {

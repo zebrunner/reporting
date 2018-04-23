@@ -1,8 +1,8 @@
-@media (max-width: 768px) {
-    #search-container, .filter-input-container, .filter-name, .filter-select-container, .filter-text input, md-input-container.searchable {
+@media (max-width: 599px) {
+    #search-container, .filter-input-container, .filter-name, .filter-select-container, .filter-text input, #search .searchable.select {
         width: 100% !important;
     }
-    #search-container, .filter-text div, .filter-name, .filter-input-container, .filter-select-container, md-input-container.searchable, .date-picker-container {
+    #search-container, .filter-text div, .filter-name, .filter-input-container, .filter-select-container, #search .searchable.select, .date-picker-container {
         margin: 0 0 8px 0 !important;
     }
     .filter-text {
@@ -13,21 +13,11 @@
         padding-right: 12px;
     }
     .value-input, .filter-date {
-        width:100%;
+        width: 100%;
         margin-right: 8px !important;
     }
-    button#add-button{
-      float: right;
-    }
-    .btn-check {
-        position: relative;
-        right: 0;
-        margin: 6px 0;
-        width: 100%;
-    }
-    .btn-check button {
-        display: flex;
-        float: right !important;
+    button#add-button {
+        float: right;
     }
     .reviewed {
         margin-right: 8px;
@@ -35,4 +25,39 @@
     .searchable.select, .date-picker-container {
         padding: 0 !important;
     }
+}
+
+@media (min-width: 601px) and (max-width: 1280px) {
+    #search-container,#search-container input, #search-select {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    #search-container {
+        margin-bottom: 8px !important;
+    }
+    #search-container .form-control {
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 960px) {
+    .value-input, button#add-button {
+        margin-top: 8px !important;
+    }
+
+    #search md-input-container.date-picker-container{
+      margin-top: 8px !important;
+      margin-left: 0 !important;
+      width: 184px !important;
+      flex: none;
+    }
+}
+
+@media (max-width: 599px) {
+  .btn-check {
+      position: relative;
+      right: 0;
+      margin: 6px 0;
+      width: 100%;
+  }
 }
