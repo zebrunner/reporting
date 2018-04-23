@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('UtilService', [UtilService])
+        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', UtilService])
 
-    function UtilService() {
+    function UtilService($rootScope, $mdToast, $timeout) {
         var service = {};
 
         service.untouchForm = untouchForm;
@@ -14,6 +14,8 @@
         service.handleError = handleError;
         service.isEmpty = isEmpty;
         service.settingsAsMap = settingsAsMap;
+        service.reconnectWebsocket = reconnectWebsocket;
+        service.websocketConnected = websocketConnected;
 
         return service;
 
@@ -61,5 +63,69 @@
                 });
             return map;
 	    };
+
+        // ************** Websockets **************
+
+        function reconnectWebsocket(name, func) {
+            if(! $rootScope.disconnectedWebsockets) {
+                $rootScope.disconnectedWebsockets = {};
+                $rootScope.disconnectedWebsockets.websockets = {};
+                $rootScope.disconnectedWebsockets.toastOpened = false;
+            }
+            var attempt = $rootScope.disconnectedWebsockets.websockets[name] ? $rootScope.disconnectedWebsockets.websockets[name].attempt - 1 : 3;
+            $rootScope.disconnectedWebsockets.websockets[name] = {function: func, attempt: attempt};
+            reconnect(name);
+        };
+
+        function reconnect (name) {
+            var websocket = $rootScope.disconnectedWebsockets.websockets[name];
+            if(websocket.attempt > 0) {
+                var delay = 5000;
+                $timeout(function () {
+                    tryToReconnect(name);
+                }, delay);
+            } else {
+                if(! $rootScope.disconnectedWebsockets.toastOpened) {
+                    $rootScope.disconnectedWebsockets.toastOpened = true;
+                    showReconnectWebsocketToast();
+                }
+            }
+        };
+
+        function websocketConnected (name) {
+            if($rootScope.disconnectedWebsockets && $rootScope.disconnectedWebsockets.websockets[name]) {
+                delete $rootScope.disconnectedWebsockets.websockets[name];
+            }
+        };
+
+        function tryToReconnect(name) {
+            $rootScope.$applyAsync($rootScope.disconnectedWebsockets.websockets[name].function);
+        };
+
+        function showReconnectWebsocketToast() {
+            $mdToast.show({
+                hideDelay: 0,
+                position: 'bottom right',
+                scope: $rootScope,
+                preserveScope: true,
+                controller  : function ($rootScope, $mdToast) {
+                    $rootScope.reconnect = function() {
+                        angular.forEach($rootScope.disconnectedWebsockets.websockets, function (websocket, name) {
+                            tryToReconnect(name);
+                        });
+                        $rootScope.closeToast();
+                    };
+
+                    $rootScope.closeToast = function() {
+                        $rootScope.disconnectedWebsockets.toastOpened = false;
+                        $mdToast
+                            .hide()
+                            .then(function() {
+                            });
+                    };
+                },
+                templateUrl : 'app/_testruns/websocket-reconnect_toast.html'
+            });
+        };
     }
 })();
