@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestArtifactMapper;
 import com.qaprosoft.zafira.models.db.TestArtifact;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
 public class TestArtifactService

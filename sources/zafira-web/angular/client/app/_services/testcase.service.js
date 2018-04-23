@@ -18,7 +18,7 @@
         }
 
         function getTestMetricsByTestCaseId(id) {
-            return $http.get(API_URL + '/api/tests/cases/metrics/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get test metrics'));
+            return $http.get(API_URL + '/api/tests/cases/' + id + '/metrics/').then(UtilService.handleSuccess, UtilService.handleError('Unable to get test metrics'));
         }
     }
 })();

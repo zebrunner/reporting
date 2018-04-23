@@ -29,7 +29,6 @@
         ,'gridstack-angular'
         ,'ngImgCrop'
         ,'ngMaterialDateRangePicker'
-        ,'ngMaterialSidemenu'
     ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;

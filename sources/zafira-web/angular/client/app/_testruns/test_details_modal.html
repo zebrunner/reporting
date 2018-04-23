@@ -208,29 +208,30 @@
                                                                     </md-button>
                                                                 </md-dialog-actions>
                                                             </form>
-                                                            <div class="col-md-12 issues-select-padding" >
-                                                                <md-sidemenu locked="true" >
-                                                                    <md-sidemenu-group>
-                                                                        <md-sidemenu-content id="historicalIssues" md-heading="HISTORICAL TICKETS ({{issues.length}})" md-arrow="true" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
-                                                                            <md-button class="md-sidemenu-button tickets-font" ng-if="issueListIsVisible" ng-repeat="issue in issues"
-                                                                                       ng-click="searchScopeIssue(issue);$event.stopPropagation();">
-                                                                                <div class="col-md-12">
-                                                                                    <div layout layout-sm="row">
-                                                                                        <div class="col-lg-2 clearfix align-middle">
-                                                                                            <b class="settings-line">{{issue.jiraId}}</b>
-                                                                                        </div>
-                                                                                        <div class="col-lg-6 clearfix align-middle">
-                                                                                            {{issue.description}}
-                                                                                        </div>
-                                                                                        <div class="col-lg-4 clearfix align-middle">
-                                                                                            {{issue.modifiedAt | date : "medium"}}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </md-button>
-                                                                        </md-sidemenu-content>
-                                                                    </md-sidemenu-group>
-                                                                </md-sidemenu>
+                                                            <div class="col-md-12 no-padding" >
+                                                                <div class="ticket-list-row" data-ng-hide="issues.length == 0" ng-click="issueListIsVisible = !issueListIsVisible">
+                                                                    <div id="historicalIssues" class="col-md-12 ticket-list-row">
+                                                                        <div class="col-md-11"><b>HISTORICAL TICKETS ({{issues.length}})</b></div>
+                                                                        <div class="col-md-1"><md-icon>keyboard_arrow_down</md-icon></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 no-padding" ng-if="issueListIsVisible" ng-repeat="issue in issues">
+                                                                <md-button id="issuesListItem" class="ticket-list-button tickets-font" ng-click="searchScopeIssue(issue)">
+                                                                    <div class="col-md-12 ticket-list-row">
+                                                                        <div layout layout-sm="row">
+                                                                            <div class="col-lg-2 clearfix align-middle">
+                                                                                <b class="settings-line">{{issue.jiraId}}</b>
+                                                                            </div>
+                                                                            <div class="col-lg-6 clearfix align-middle">
+                                                                                {{issue.description}}
+                                                                            </div>
+                                                                            <div class="col-lg-4 clearfix align-middle">
+                                                                                {{issue.modifiedAt | date : "medium"}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </md-button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -332,36 +333,38 @@
                                                                     </md-button>
                                                                 </md-dialog-actions>
                                                             </form>
+                                                            <div class="col-md-12 no-padding" >
+                                                                <div class="ticket-list-row" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
+                                                                    <div id="historicalTasks" class="col-md-12 ticket-list-row">
+                                                                        <div class="col-md-11"><b>HISTORICAL TICKETS ({{tasks.length}})</b></div>
+                                                                        <div class="col-md-1"><md-icon>keyboard_arrow_down</md-icon></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 no-padding" ng-if="taskListIsVisible" ng-repeat="task in tasks">
+                                                                <md-button id="tasksListItem" class="ticket-list-button tickets-font" ng-click="searchScopeTask(task)">
+                                                                    <div class="col-md-12 ticket-list-row">
+                                                                        <div layout layout-sm="row">
+                                                                            <div class="col-lg-2 clearfix align-middle">
+                                                                                <b class="settings-line">{{task.jiraId}}</b>
+                                                                            </div>
+                                                                            <div class="col-lg-6 clearfix align-middle">
+                                                                                {{task.description}}
+                                                                            </div>
+                                                                            <div class="col-lg-4 clearfix align-middle">
+                                                                                {{task.modifiedAt | date : "medium"}}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </md-button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </section>
-                                </div>
-                                <div class="col-lg-12 issues-select-padding">
-                                    <md-sidemenu locked="true">
-                                        <md-sidemenu-group>
-                                            <md-sidemenu-content id="historicalTasks" md-heading="HISTORICAL TICKETS ({{tasks.length}})" md-arrow="true" data-ng-hide="tasks.length == 0" ng-click="taskListIsVisible = !taskListIsVisible">
-                                                <md-button class="md-sidemenu-button tickets-font" ng-if="taskListIsVisible" ng-repeat="task in tasks"
-                                                           ng-click="searchScopeTask(task); $event.stopPropagation();">
-                                                    <div class="col-md-12">
-                                                        <div layout layout-sm="row">
-                                                            <div class="col-lg-2 clearfix align-middle">
-                                                                <b class="settings-line">{{task.jiraId}}</b>
-                                                            </div>
-                                                            <div class="col-lg-6 clearfix align-middle">
-                                                                {{task.description}}
-                                                            </div>
-                                                            <div class="col-lg-4 clearfix align-middle">
-                                                                {{task.modifiedAt | date : "medium"}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </md-button>
-                                            </md-sidemenu-content>
-                                        </md-sidemenu-group>
-                                    </md-sidemenu>
                                 </div>
                             </div>
                         </div>

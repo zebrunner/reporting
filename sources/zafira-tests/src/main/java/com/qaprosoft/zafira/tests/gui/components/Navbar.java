@@ -49,6 +49,7 @@ public class Navbar extends AbstractUIObject
 	{
 		super.hoverOnElement(this.testRunsTab);
 		super.waitUntilElementIsPresent(this.testRunTabMenu.getRootElement(), 10);
+		pause(0.2);
 		LOGGER.info("Test run tab menu was hovered");
 		return this.testRunTabMenu;
 	}
