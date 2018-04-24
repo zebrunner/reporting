@@ -1213,7 +1213,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     & .filter-input-container {
         width: 168px;
         float: left;
-        margin-right: 8px !important;
+        margin-right: 8px;
     }
 
     & .filter-select{
@@ -1226,7 +1226,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     }
 
     & md-chip{
-      min-width: 149px;    
+      min-width: 149px;
       margin-right: 8px;
       border: solid 1px $medium-gray;
       background-color: $fog-gray;
@@ -1303,7 +1303,6 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 
 #search-container, .filter-input-container {
     position: relative;
-    margin: 0 !important;
     padding: 0 !important;
 }
 
@@ -1319,7 +1318,14 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 }
 
 .value-input {
-    width: 154px !important;
+    width: 198px !important;
+    margin-right: 0 !important;
+
+    & input, & md-input-container{
+      width: 154px !important;
+      float: left;
+      margin-right: 8px;
+    }
 }
 
 .filter-date{

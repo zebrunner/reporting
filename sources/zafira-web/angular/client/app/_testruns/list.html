@@ -129,15 +129,17 @@
                                       <div class="filter-input-container value-input">
                                           <input type="text" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
                                                  ng-model="currentValue" ng-if="! isSelectCriteria(currentCriteria) && ((! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator)))"/>
-                                            <md-input-container class="date-picker-container filter-date pull-left no-margin" flex="auto" ng-show="isDateCriteria(currentCriteria)">
-                                                <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null"></span>
-                                                <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} -</span>
-                                                <span>{{selectedRange.dateEnd | date : 'dd MMM'}}</span>
-                                                <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
-                                            </md-input-container>
+                                                 <label ng-show="isDateCriteria(currentCriteria) && isDatePickerOperator(currentOperator)">
+                                                   <md-input-container style="padding-top: 5px" flex class="modal-narrow-row">
+                                                       <span ng-if="currentValue" class="label label-default">{{ currentValue | date : 'MMM dd yyyy' }}</span>
+                                                       <span ng-if="!currentValue" class="label label-default">MMM dd yyyy</span>
+                                                   </md-input-container>
+                                                   <md-date-range selected-template="TD" ng-model="selectedFilterRange" ng-disabled="! isDatePickerOperator(currentOperator)" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
+                                                   <i class="material-icons md-18 date-picker-icon">today</i>
+                                                 </label>
+                                                 <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
+                                                   || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
                                       </div>
-                                      <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
-                                          || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn">+</button>
                                     </div>
                                 </div>
                                 <div layout-sm="row" layout-xs="column">
