@@ -7,6 +7,8 @@
 
     function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
+        $scope.currentUserId = $location.search().userId;
+
         $scope.pristineWidgets = [];
 
         $scope.unexistWidgets = [];
@@ -211,6 +213,9 @@
                 }
             }
             params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
+            if ($scope.currentUserId) {
+                params = params + "&currentUserId=" + $scope.currentUserId;
+            }
             return params;
         };
 
@@ -342,6 +347,7 @@
                     widget: widget,
                     isNew: isNew,
                     dashboard: dashboard,
+                    currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (answer) {
@@ -433,6 +439,22 @@
                 }
             });
         };
+
+        $scope.$watch(
+            function() {
+                if ($scope.currentUserId && $location.$$search.userId){
+                    return $scope.currentUserId !== $location.$$search.userId;
+                }
+            },
+            function() {
+                if ($scope.currentUserId && $location.$$search.userId) {
+                    if ($scope.currentUserId !== $location.$$search.userId) {
+                        $scope.currentUserId = $location.search().userId;
+                        getDashboardById($stateParams.id);
+                    }
+                }
+            }
+        );
 
         $scope.$on("$event:widgetIsUpdated", function () {
             getDashboardById($stateParams.id);
@@ -615,7 +637,7 @@
         })();
     }
 
-    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard) {
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
         $scope.widget = {};
         $scope.dashboard = {};
         $scope.isNew = angular.copy(isNew);
@@ -730,6 +752,9 @@
                 }
             }
             params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
+            if (currentUserId) {
+                params = params + "&currentUserId=" + currentUserId;
+            }
             if (table) {
                 params = params + "&stackTraceRequired=" + true;
             }
