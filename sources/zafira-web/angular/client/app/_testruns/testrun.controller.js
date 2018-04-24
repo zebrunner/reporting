@@ -621,7 +621,6 @@
                             });
                         }
                     });
-                    console.log('Slack mappings list: ' + $scope.slackChannels);
                 }
                 else
                 {
