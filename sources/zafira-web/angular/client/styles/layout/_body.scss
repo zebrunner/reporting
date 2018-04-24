@@ -1025,7 +1025,7 @@ button#resetFilter {
             font-size: 18px !important;
         }
         md-chip {
-            margin: 0;
+            margin-top: 0;
         }
     }
     .right-switch {
@@ -1054,10 +1054,14 @@ button#resetFilter {
     }
 }
 
-md-chip {
+.manage-chip md-chip {
+    margin: 0;
+}
+
+/*md-chip {
   width: 118px !important;
   height: 32px;
-}
+}*/
 
 #filter {
     md-chips-wrap {
