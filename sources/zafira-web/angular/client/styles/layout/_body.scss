@@ -1325,7 +1325,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     width: 198px !important;
     margin-right: 0 !important;
 
-    & input, & md-input-container{
+    & input, & md-input-container, & md-select{
       width: 154px !important;
       float: left;
       margin-right: 8px;
