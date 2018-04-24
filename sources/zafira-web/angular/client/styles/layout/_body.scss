@@ -1217,7 +1217,30 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     }
 
     & .filter-select{
-      width: 100%;
+      width: 552px;
+      margin-right: 16px;
+    }
+
+    & md-chips{
+        padding: 2px 0;
+    }
+
+    & md-chip{
+      min-width: 149px;    
+      margin-right: 8px;
+      border: solid 1px $medium-gray;
+      background-color: $fog-gray;
+      color: $gray-light;
+      font-weight: normal !important;
+
+      &:hover{
+        background-color: $gray-light;
+        color: #fff !important;
+      }
+
+      & .chip-operator{
+        color: $gray-light;
+      }
     }
 }
 
@@ -1249,7 +1272,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
       }
 }
 
-#search .searchable.select, .date-picker-container{
+#search .searchable.select, #search .date-picker-container{
   margin-left: 8px !important;
 }
 
@@ -1259,7 +1282,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     border-radius: 2px;
     min-width: 140px;
     & span{
-      line-height: 2.3;
+      line-height: 2.6;
     }
     & span:first-child{
       padding-left: 12px;

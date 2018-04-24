@@ -140,7 +140,7 @@
                                           || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn">+</button>
                                     </div>
                                 </div>
-                                <div>
+                                <div layout-sm="row" layout-xs="column">
                                     <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false"
                                               md-on-add="changeChip($chip)">
                                         <input disabled>
