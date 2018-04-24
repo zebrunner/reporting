@@ -59,6 +59,29 @@
             LAST_THIRTY_DAYS: " last 30 days"
         };
 
+        function getMode() {
+            var mode = 'NONE';
+            $scope.search_filter;
+            if($scope.filterBlockExpand && $scope.collapseFilter) {
+                if($scope.filter.id) {
+                    mode = 'UPDATE';
+                } else {
+                    mode = 'CREATE';
+                }
+            }
+            if($scope.selectedFilterId) {
+                mode = 'APPLY';
+            }
+            if(! $scope.searchFormIsEmpty) {
+                mode = 'SEARCH';
+            }
+            return mode;
+        };
+
+        $scope.matchMode = function(modes) {
+            return modes.indexOf(getMode()) >= 0;
+        };
+
         $scope.DATE_CRITERIAS = ['DATE'];
         var SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
         $scope.DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
@@ -119,7 +142,11 @@
             $mdDateRangePicker.show({
                 targetEvent: $event,
                 model: $scope.selectedFilterRange,
-                autoConfirm: true
+                autoConfirm: true/*,
+                mdOnSelect: function($dates) {
+                    $scope.selectedDates = $dates;
+                    $scope.onSelect($dates)
+                }*/
             }).then(function(result) {
                 if (result) $scope.selectedFilterRange = result;
             })
@@ -575,8 +602,28 @@
             return null;
         };
 
-        $scope.searchByFilter = function(filter) {
+        function fillDateSc(selectedRange) {
+            if (selectedRange.dateStart && selectedRange.dateEnd) {
+                if(!$scope.isEqualDate()){
+                    $scope.sc.fromDate = selectedRange.dateStart;
+                    $scope.sc.toDate = selectedRange.dateEnd;
+                }
+                else {
+                    $scope.sc.date = selectedRange.dateStart;
+                }
+            }
+        };
+
+        function fillFastSearchSc() {
+            angular.forEach($scope.fastSearch, function (val, model) {
+                if(model != 'currentModel')
+                    $scope.sc[model] = val;
+            });
+        };
+
+        $scope.searchByFilter = function(filter, chipsCtrl) {
             $scope.selectedFilterId = filter.id;
+            $scope.chipsCtrl = chipsCtrl;
             $scope.search();
         };
 
@@ -599,20 +646,9 @@
                 $scope.sc = ProjectProvider.initProjects($scope.sc);
             }
 
-            angular.forEach($scope.fastSearch, function (val, model) {
-                if(model != 'currentModel')
-                    $scope.sc[model] = val;
-            });
+            fillFastSearchSc();
 
-            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
-                if(!$scope.isEqualDate()){
-                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
-                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
-                }
-                else {
-                    $scope.sc.date = $scope.selectedRange.dateStart;
-                }
-           }
+            fillDateSc($scope.selectedRange);
 
            var filterQuery = $scope.selectedFilterId ? '?filterId=' + $scope.selectedFilterId : undefined;
 
@@ -1139,6 +1175,8 @@
             delete $scope.selectedFilterId;
             $location.search({});
             $scope.search();
+            if($scope.chipsCtrl)
+                delete $scope.chipsCtrl.selectedChip;
         };
 
         var toSc = function (qParams) {

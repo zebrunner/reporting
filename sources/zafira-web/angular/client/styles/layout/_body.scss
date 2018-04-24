@@ -1025,7 +1025,7 @@ button#resetFilter {
             font-size: 18px !important;
         }
         md-chip {
-            margin: 0;
+            margin-top: 0;
         }
     }
     .right-switch {
@@ -1054,10 +1054,14 @@ button#resetFilter {
     }
 }
 
-md-chip {
+.manage-chip md-chip {
+    margin: 0;
+}
+
+/*md-chip {
   width: 118px !important;
   height: 32px;
-}
+}*/
 
 #filter {
     md-chips-wrap {
@@ -1216,8 +1220,11 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
         margin-right: 8px !important;
     }
 
-    & .filter-select{
-      width: 100%;
+    & .filter-select {
+        width: 100%;
+    }
+    md-chip {
+        border: 1px solid;
     }
 }
 
