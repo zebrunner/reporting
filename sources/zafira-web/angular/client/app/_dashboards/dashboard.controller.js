@@ -7,8 +7,6 @@
 
     function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
-        $scope.currentUserId = $location.search().userId;
-
         $scope.pristineWidgets = [];
 
         $scope.unexistWidgets = [];
@@ -213,9 +211,6 @@
                 }
             }
             params = params != "" ? params + "&dashboardName=" + dashboardName : params + "?dashboardName=" + dashboardName;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
-            }
             return params;
         };
 
@@ -347,7 +342,6 @@
                     widget: widget,
                     isNew: isNew,
                     dashboard: dashboard,
-                    currentUserId: $scope.currentUserId
                 }
             })
                 .then(function (answer) {
@@ -440,21 +434,9 @@
             });
         };
 
-        $scope.$watch(
-            function() {
-                if ($scope.currentUserId && $location.$$search.userId){
-                    return $scope.currentUserId !== $location.$$search.userId;
-                }
-            },
-            function() {
-                if ($scope.currentUserId && $location.$$search.userId) {
-                    if ($scope.currentUserId !== $location.$$search.userId) {
-                        $scope.currentUserId = $location.search().userId;
-                        getDashboardById($stateParams.id);
-                    }
-                }
-            }
-        );
+        $scope.$on("$event:widgetIsUpdated", function () {
+            getDashboardById($stateParams.id);
+        });
 
         $scope.$on('$destroy', function () {
             $scope.resetGrid();
@@ -633,11 +615,9 @@
         })();
     }
 
-    function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
-        $scope.currentUserId = null;
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard) {
         $scope.widget = {};
         $scope.dashboard = {};
-        angular.copy(currentUserId, $scope.currentUserId);
         $scope.isNew = angular.copy(isNew);
         angular.copy(widget, $scope.widget);
         angular.copy(dashboard, $scope.dashboard);
@@ -660,7 +640,7 @@
             DashboardService.CreateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget created");
-                	$scope.hide(true);
+                	$scope.hide();
                 }
                 else {
                     alertify.error(rs.message);
@@ -672,7 +652,8 @@
             DashboardService.UpdateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget updated");
-                	$scope.hide(true);
+                    $rootScope.$broadcast("$event:widgetIsUpdated");
+                	$scope.hide();
                 }
                 else {
                     alertify.error(rs.message);
@@ -682,7 +663,7 @@
 
         $scope.$on("$event:executeSQL", function () {
             if (widget.sql){
-                $scope.loadModalWidget($scope.widget, true);
+                $scope.loadModalWidget($scope.widget, $scope.dashboard.attributes, true);
             }
             else {
                 alertify.warning('Add SQL query');
@@ -692,7 +673,7 @@
         $scope.$on("$event:showWidget", function () {
             if (widget.sql){
                 if(widget.type){
-                    $scope.loadModalWidget($scope.widget);
+                    $scope.loadModalWidget($scope.widget, $scope.dashboard.attributes);
                 }
                 else {
                     alertify.warning('Choose widget type');
@@ -703,10 +684,10 @@
             }
         });
 
-        $scope.loadModalWidget = function (widget, table) {
+        $scope.loadModalWidget = function (widget, attributes, table) {
 
             $scope.isLoading = true;
-            var sqlAdapter = {'sql': widget.sql};
+            var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = setQueryParams(table);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
@@ -749,9 +730,6 @@
                 }
             }
             params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
-            }
             if (table) {
                 params = params + "&stackTraceRequired=" + true;
             }
@@ -791,8 +769,8 @@
             $scope.showWidget = false;
         };
 
-        $scope.hide = function (result) {
-            $mdDialog.hide(result);
+        $scope.hide = function () {
+            $mdDialog.hide();
         };
 
         $scope.cancel = function () {

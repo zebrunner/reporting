@@ -124,7 +124,6 @@ public class WidgetsAPIController extends AbstractController
 	@RequestMapping(value = "sql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> executeSQL(@RequestBody @Valid SQLAdapter sql,
 			@RequestParam(value = "projects", defaultValue = "", required = false) List<String> projects,
-			@RequestParam(value = "currentUserId", required = false) String currentUserId,
 			@RequestParam(value = "dashboardName", required = false) String dashboardName,
             @RequestParam(value = "stackTraceRequired", required = false) boolean stackTraceRequired ) throws ServiceException
 	{
@@ -144,11 +143,12 @@ public class WidgetsAPIController extends AbstractController
 			query = query
 				.replaceAll("#\\{project\\}", formatProjects(projects))
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
-				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
+				.replaceAll("#\\{userId\\}", "0")
+				.replaceAll("#\\{currentUserId\\}", String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
 				.replaceAll("#\\{zafiraURL\\}", zafiraURL)
 				.replaceAll("#\\{hashcode\\}", "0")
-					.replaceAll("#\\{testCaseId\\}", "0");
+				.replaceAll("#\\{testCaseId\\}", "0");
 
 			String param = StringUtils.substringBetween(query,"#{","}%" );
 			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
