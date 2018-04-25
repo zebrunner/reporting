@@ -38,6 +38,9 @@
     #search-container .form-control {
         width: 100% !important;
     }
+    .btn-check{
+      right: 4px;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 960px) {
@@ -51,13 +54,23 @@
       width: 184px !important;
       flex: none;
     }
+
+    .btn-check{
+      right: 4px;
+    }
 }
 
 @media (max-width: 599px) {
+  #filter-editor .filter-select{
+    width: 100%;
+  }
   .btn-check {
       position: relative;
       right: 0;
       margin: 6px 0;
       width: 100%;
+  }
+  #search md-input-container.date-picker-container{
+    margin-left: 0 !important;
   }
 }

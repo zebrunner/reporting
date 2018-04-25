@@ -25,7 +25,7 @@
             </a>
             <ul>
                 <li>
-                    <a md-button aria-label="menu" href="#!/tests/runs"><span data-translate="SHOW_LATEST_RUNS"></span></a>
+                    <a md-button aria-label="menu" href="#!/tests/runs"><i class="fa fa-circle"></i><span data-translate="SHOW_LATEST_RUNS"></span></a>
                 </li>
                 <md-divider data-ng-if="views.length > 0"></md-divider>
                 <li data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
@@ -34,7 +34,7 @@
                 </li>
                 <md-divider></md-divider>
                 <li has-any-permission="['MODIFY_TEST_RUN_VIEWS']">
-                    <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)">Create view +</a>
+                    <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)"><i class="fa fa-circle"></i>Create view +</a>
                 </li>
             </ul>
         </li>
