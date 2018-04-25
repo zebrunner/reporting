@@ -140,9 +140,9 @@
                                             -->
                                             <md-input-container class="date-picker-container no-padding filter-date pull-left no-margin" flex="auto">
                                                 <span>{{currentValue | date : 'dd MMM'}}</span>
+                                                <i class="material-icons md-18 date-picker-icon">today</i>
                                             </md-input-container>
                                             <md-date-range selected-template="TD" ng-model="selectedFilterRange" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
-                                            <i class="material-icons md-18 date-picker-icon">today</i>
                                             <!--<md-input-container class="date-picker-container filter-date pull-left no-margin" flex="auto" ng-show="isDateCriteria(currentCriteria)">
                                                 <span data-ng-if="selectedFilterRange.dateStart == null && selectedFilterRange.dateEnd == null"></span>
                                                 <span data-ng-if="selectedFilterRange.dateStart && selectedFilterRange.dateEnd && !isEqualDate()">{{selectedFilterRange.dateStart | date : 'dd MMM'}} -</span>
@@ -150,6 +150,8 @@
                                                 <md-button id="filterCalendar" ng-click="pickFilter($event, true)"><i class="material-icons md-18">today</i></md-button>
                                             </md-input-container>-->
                                         </div>
+                                        <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
+                                                   || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
                                     </div>
                                 </div>
                                 <div layout-sm="row" layout-xs="column">
@@ -180,7 +182,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 <md-divider></md-divider>
                 <div id="search" class="md-row">
                     <div class="disable-layer"></div>

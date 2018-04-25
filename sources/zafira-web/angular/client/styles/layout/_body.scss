@@ -1301,13 +1301,8 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     border-radius: 2px;
     width: 152px;
     & span{
-        line-height: 2.3;
+        line-height: 2.6;
         height: 100%;
-        width: inherit;
-        text-align: center;
-        vertical-align: middle;
-        align-content: center;
-        display: inline-block;
     }
     & span:first-child{
       padding-left: 12px;
