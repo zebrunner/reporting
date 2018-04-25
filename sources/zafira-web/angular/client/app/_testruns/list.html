@@ -33,29 +33,29 @@
             <h2 id="pageTitle" class="section-header pull-left">Test runs
                 <small id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
             </h2>
-            <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
+            <button id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button ng-if="matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+            <button ng-if="! filter.id && addFilterExpanded && filterBlockExpand" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>CREATE</b>
             </button>
-            <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
+            <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>APPLY</b>
             </button>
-            <button ng-if="matchMode(['UPDATE'])" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>SAVE</b>
+            <button ng-if="filter.id && addFilterExpanded && filterBlockExpand" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
+                <b>UPDATE</b>
             </button>
-            <button ng-if="matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
+            <button ng-if="addFilterExpanded && filterBlockExpand" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
                 <b>CANCEL</b>
             </button>
-            <button ng-if="matchMode(['UPDATE'])" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
+            <button ng-if="filter.id && filterBlockExpand" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
                 <b>DELETE</b>
             </button>
         </div>
         <div class="search-filter-body col-md-12 no-padding">
             <md-card class="no-margin-h _md">
                 <div id="filter" class="md-row">
-                  <div class="disable-layer"></div>
+                    <div class="disable-layer"></div>
                     <div class="panel-body no-padding-t">
                         <h5>
                             Filters
@@ -75,7 +75,7 @@
                             <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
                                 <input disabled>
                                 <md-chip-template class="show-on-hover">
-                                    <div style="display: inline-block;" ng-click="searchByFilter($chip, $mdChipsCtrl); $mdChipsCtrl.selectedChip = $index">
+                                    <div style="display: inline-block;" ng-click="searchByFilter($chip); $mdChipsCtrl.selectedChip = $index">
                                         <strong>{{$chip.name}}</strong>
                                     </div>
                                     <div style="display: inline-block; vertical-align: sub;">
@@ -87,176 +87,176 @@
                     </div>
                 </div>
                 <div id="filter-editor" ng-show="collapseFilter && filterBlockExpand">
-                    <div class="panel-body">
-                        <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
+                    <form class="form-validation no-padding" name="filter_form" ng-cloak>
+                        <div class="panel-body">
                             <div class="filter-text" layout="row" layout-xs="column">
-                                  <div class="filter-name" layout-xs="column">
-                                    <input type="text" class="form-control" placeholder="Name" flex="none" ng-model="filter.name" required/>
-                                  </div>
-                                  <div class="flex-auto" layout-xs="column">
-                                    <input type="text" class="form-control" placeholder="Description" ng-model="filter.description" required/>
-                                  </div>
-                            </div>
-                        </form>
-                        <div layout="row" layout-xs="column">
-                            <div class="filter-select" layout-sm="column" layout-xs="column">
-                              <div layout-sm="row" layout-xs="column">
-                                <md-input-container class="filter-input-container select">
-                                    <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
-                                        <md-option ng-value><em>None</em></md-option>
-                                        <md-option class="filter-option" ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
-                                            {{ criteria.name.split('_').join(' ') | lowercase }}
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                                <md-input-container class="filter-input-container select">
-                                    <md-select id="filterOperator" ng-change="clearFilterCriterias(true);" ng-disabled="! currentCriteria" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
-                                        <md-option ng-value><em>None</em></md-option>
-                                        <md-option class="filter-option" ng-repeat="op in currentCriteria.operators" ng-value="op">
-                                            {{ op.split('_').join(' ') | lowercase }}
-                                        </md-option>
-                                    </md-select>
-                                </md-input-container>
-                              </div>
-                                <div layout="row">
-                                  <md-input-container class="filter-input-container select value-input" ng-if="isSelectCriteria(currentCriteria)">
-                                      <md-select ng-if="! isDateCriteria(currentCriteria) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
-                                          <md-option ng-value><em>None</em></md-option>
-                                          <md-option class="filter-option" ng-repeat="value in currentCriteria.values" ng-value="value">
-                                              {{ value.split('_').join(' ') | lowercase }}
-                                          </md-option>
-                                      </md-select>
-                                  </md-input-container>
-                                  <div class="filter-input-container value-input">
-                                      <input type="text" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
-                                             ng-model="currentValue" ng-if="! isSelectCriteria(currentCriteria) && ((! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator)))"/>
-                                        <md-input-container class="date-picker-container filter-date pull-left no-margin" flex="auto" ng-show="isDateCriteria(currentCriteria)">
-                                            <span data-ng-if="selectedFilterRange.dateStart == null && selectedFilterRange.dateEnd == null"></span>
-                                            <span data-ng-if="selectedFilterRange.dateStart && selectedFilterRange.dateEnd && !isEqualDate()">{{selectedFilterRange.dateStart | date : 'dd MMM'}} -</span>
-                                            <span>{{selectedFilterRange.dateEnd | date : 'dd MMM'}}</span>
-                                            <md-button id="filterCalendar" ng-click="pickFilter($event, true)"><i class="material-icons md-18">today</i></md-button>
-                                        </md-input-container>
-                                  </div>
-                                  <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
-                                      || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn">+</button>
+                                <div class="filter-name" layout-xs="column">
+                                    <input type="text" class="form-control" placeholder="Name" flex="none" ng-model="filter.name" />
+                                </div>
+                                <div class="flex-auto" layout-xs="column">
+                                    <input type="text" class="form-control" placeholder="Description" ng-model="filter.description" />
                                 </div>
                             </div>
-                            <div class="filter-editor-filters">
-                                <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false"
-                                          md-on-add="changeChip($chip)">
-                                    <input disabled>
-                                    <md-chip-template>
-                                    <span>
-                                        <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
-                                        <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
-                                        <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
-                                    </span>
-                                    </md-chip-template>
-                                </md-chips>
+                            <div layout="row" layout-xs="column">
+                                <div class="filter-select" layout-sm="column" layout-xs="column">
+                                    <div layout-sm="row" layout-xs="column">
+                                        <md-input-container class="filter-input-container select">
+                                            <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
+                                                <md-option ng-value><em>None</em></md-option>
+                                                <md-option class="filter-option" ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
+                                                    {{ criteria.name.split('_').join(' ') | lowercase }}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-input-container class="filter-input-container select">
+                                            <md-select id="filterOperator" ng-change="clearFilterCriterias(true);" ng-disabled="! currentCriteria" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                                <md-option ng-value><em>None</em></md-option>
+                                                <md-option class="filter-option" ng-repeat="op in currentCriteria.operators" ng-value="op">
+                                                    {{ op.split('_').join(' ') | lowercase }}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="row">
+                                        <md-input-container class="filter-input-container select value-input" ng-if="isSelectCriteria(currentCriteria)">
+                                            <md-select ng-if="! isDateCriteria(currentCriteria) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
+                                              ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                                <md-option ng-value><em>None</em></md-option>
+                                                <md-option class="filter-option" ng-repeat="value in currentCriteria.values" ng-value="value">
+                                                    {{ value.split('_').join(' ') | lowercase }}
+                                                </md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <div class="filter-input-container value-input">
+                                            <input type="text" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
+                                              ng-model="currentValue" ng-if="! isSelectCriteria(currentCriteria) && ((! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator)))"
+                                            />
+                                            <label ng-show="isDateCriteria(currentCriteria) && isDatePickerOperator(currentOperator)">
+                                                   <md-input-container style="padding-top: 5px" flex class="modal-narrow-row">
+                                                       <span ng-if="currentValue" class="label label-default">{{ currentValue | date : 'MMM dd yyyy' }}</span>
+                                                       <span ng-if="!currentValue" class="label label-default">MMM dd yyyy</span>
+                                                   </md-input-container>
+                                                   <md-date-range selected-template="TD" ng-model="selectedFilterRange" ng-disabled="! isDatePickerOperator(currentOperator)" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
+                                                   <i class="material-icons md-18 date-picker-icon">today</i>
+                                                 </label>
+                                            <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
+                                                   || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div layout-sm="row" layout-xs="column">
+                                    <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
+                                        <input disabled>
+                                        <md-chip-template>
+                                            <span>
+                                            <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
+                                            <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                            </span>
+                                        </md-chip-template>
+                                    </md-chips>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <md-divider></md-divider>
                 <div id="search" class="md-row">
-                  <div class="disable-layer"></div>
-                  <div class="panel-body">
-                    <h5>
+                    <div class="disable-layer"></div>
+                    <div class="panel-body">
+                        <h5>
                                     Fast search
                                     <md-button ng-init="fastSearchBlockExpand = true;" aria-label="Show or hide filters" style="height: auto; width: auto;" ng-click="fastSearchBlockExpand = !fastSearchBlockExpand" md-ink-ripple="false" class="md-icon-button no-padding">
                                         <i class="fa expand-icon" ng-class="fastSearchBlockExpand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
                                     </md-button>
                     </h5>
-                    <div ng-show="fastSearchBlockExpand" layout-lg="row" layout-xs="column">
-                      <div id="search-container" flex="nogrow">
-                        <div layout="row" layout-xs="column">
-                          <input type="text" id="search-input" class="form-control pull-left" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">
-                            <div class="btn-check" layout-xs="row">
-                              <button type="button" ng-class="{'default-gray': fastSearch['testSuite'] && fastSearch['testSuite'].length != 0, 'active': fastSearch.currentModel == 'testSuite'}" ng-click="fastSearch.currentModel = 'testSuite'" class="btn btn-default">Test Suite</button>
-                              <button type="button" ng-class="{'default-gray': fastSearch['jobURL'] && fastSearch['jobURL'].length != 0, 'active': fastSearch.currentModel == 'jobURL'}" ng-click="fastSearch.currentModel = 'jobURL'" class="btn btn-default">Job URL</button>
-                              <button type="button" ng-class="{'default-gray': fastSearch['appVersion'] && fastSearch['appVersion'].length != 0, 'active': fastSearch.currentModel == 'appVersion'}" ng-click="fastSearch.currentModel = 'appVersion'" class="btn btn-default"> App Version</button>
+                        <div ng-show="fastSearchBlockExpand" layout-lg="row" layout-xs="column">
+                            <div id="search-container" flex="nogrow">
+                                <div layout="row" layout-xs="column">
+                                    <input type="text" id="search-input" class="form-control pull-left" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">
+                                    <div class="btn-check" layout-xs="row">
+                                        <button type="button" ng-class="{'default-gray': fastSearch['testSuite'] && fastSearch['testSuite'].length != 0, 'active': fastSearch.currentModel == 'testSuite'}" ng-click="fastSearch.currentModel = 'testSuite'" class="btn btn-default">Test Suite</button>
+                                        <button type="button" ng-class="{'default-gray': fastSearch['jobURL'] && fastSearch['jobURL'].length != 0, 'active': fastSearch.currentModel == 'jobURL'}" ng-click="fastSearch.currentModel = 'jobURL'" class="btn btn-default">Job URL</button>
+                                        <button type="button" ng-class="{'default-gray': fastSearch['appVersion'] && fastSearch['appVersion'].length != 0, 'active': fastSearch.currentModel == 'appVersion'}" ng-click="fastSearch.currentModel = 'appVersion'" class="btn btn-default"> App Version</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="search-select" layout="row" layout-sm="column" layout-xs="column">
+                                <div layout="row" layout-xs="column">
+                                    <div layout="row">
+                                        <button class="quadro-btn pull-left reviewed" flex="nogrow" data-ng-class="{'label-blank': sc.reviewed == null, 'label-primary': sc.reviewed == true}" data-ng-click="sc.reviewed = !sc.reviewed" flex="nogrow">R</button>
+                                        <md-input-container class="searchable select pull-left no-padding" flex="nogrow">
+                                            <md-select id="searchStatus" ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
+                                                <md-option value="" disabled>Status</md-option>
+                                                <md-option value="PASSED">PASSED</md-option>
+                                                <md-option value="FAILED">FAILED</md-option>
+                                                <md-option value="SKIPPED">SKIPPED</md-option>
+                                                <md-option value="ABORTED">ABORTED</md-option>
+                                                <md-option value="IN_PROGRESS">IN_PROGRESS</md-option>
+                                                <md-option value="UNKNOWN">UNKNOWN</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                    </div>
+                                    <md-input-container class="searchable select pull-left no-padding no-margin-l" flex="auto">
+                                        <md-select id="searchEnv" ng-change="onChangeCriteria()" ng-model="sc.environment" name="environment" placeholder="Environment">
+                                            <md-option value="" disabled>Environment</md-option>
+                                            <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <md-input-container class="searchable select selectPlatform pull-left" flex="auto">
+                                        <md-select id="searchPlatform" ng-change="onChangeCriteria()" ng-model="sc.platform" name="platform" placeholder="Platform">
+                                            <md-option value="" disabled>Platform</md-option>
+                                            <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                                <div layout="row">
+                                    <md-input-container class="date-picker-container pull-left" flex="auto">
+                                        <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null"></span>
+                                        <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span>
+                                        <span>{{selectedRange.dateEnd | date : 'dd MMM'}}</span>
+                                        <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
+                                    </md-input-container>
+                                </div>
                             </div>
                         </div>
-                      </div>
-                      <div id="search-select" layout="row" layout-sm="column" layout-xs="column">
-                        <div layout="row" layout-xs="column">
-                          <div layout="row">
-                            <button class="quadro-btn pull-left reviewed" flex="nogrow" data-ng-class="{'label-blank': sc.reviewed == null, 'label-primary': sc.reviewed == true}" data-ng-click="sc.reviewed = !sc.reviewed" flex="nogrow">R</button>
-                            <md-input-container class="searchable select pull-left no-padding" flex="nogrow">
-                                                    <md-select id="searchStatus" ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
-                                                        <md-option value="" disabled>Status</md-option>
-                                                        <md-option value="PASSED">PASSED</md-option>
-                                                        <md-option value="FAILED">FAILED</md-option>
-                                                        <md-option value="SKIPPED">SKIPPED</md-option>
-                                                        <md-option value="ABORTED">ABORTED</md-option>
-                                                        <md-option value="IN_PROGRESS">IN_PROGRESS</md-option>
-                                                        <md-option value="UNKNOWN">UNKNOWN</md-option>
-                                                    </md-select>
-                            </md-input-container>
-                          </div>
-                          <md-input-container class="searchable select pull-left no-padding no-margin-l" flex="nogrow">
-                                                  <md-select id="searchEnv" ng-change="onChangeCriteria()" ng-model="sc.environment" name="environment" placeholder="Environment">
-                                                      <md-option value="" disabled>Environment</md-option>
-                                                      <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
-                                                  </md-select>
-                          </md-input-container>
-                          <md-input-container class="searchable select selectPlatform pull-left" flex="nogrow">
-                                                  <md-select id="searchPlatform" ng-change="onChangeCriteria()" ng-model="sc.platform" name="platform" placeholder="Platform">
-                                                      <md-option value="" disabled>Platform</md-option>
-                                                      <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
-                                                  </md-select>
-                          </md-input-container>
-                        </div>
-                        <div layout="row">
-                          <md-input-container class="date-picker-container pull-left" flex="auto">
-                                                <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null"></span>
-                                                <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span>
-                                                <span>{{selectedRange.dateEnd | date : 'dd MMM'}}</span>
-                                                <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
-                          </md-input-container>
-                        </div>
                     </div>
-                  </div>
                 </div>
             </md-card>
         </div>
-      </div>
     </div>
-    <div class="col-md-12 no-padding">
-            <article class="article">
-                <md-card class="no-margin-h">
-                    <md-table-container>
-                        <form ng-submit="search()" name="search_form">
-                            <table md-table zafira-background-theme="table">
-                                <thead md-head>
-                                <tr md-row>
-                                    <th md-column>
-                                        <md-input-container>
-                                            <md-checkbox id="searchChechbox" class="md-secondary"
-                                                         aria-label="Select"
-                                                         data-ng-model="selectAll"
-                                                         data-ng-true-value="true"
-                                                         data-ng-false-value="false" ng-click="addToSelectedTestRunsAll()">
-                                            </md-checkbox>
-                                        </md-input-container>
-                                    </th>
-                                    <th md-column class="fixed-testrun-name-header">
-                                    </th>
-                                    <th md-column>
-                                    </th>
-                                    <th md-column>
-                                    </th>
-                                    <th md-column>
-                                    </th>
-                                    <th md-column>
-                                    </th>
-                                </tr>
-                                <md-button type="submit" class="hide">Search</md-button>
-                                </thead>
-                                <tbody md-body>
-                                <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}">
-                                    <td name="testRunStatus" md-cell>
-                                            <span ng-click="addToSelectedTestRuns(testRun)">
+</div>
+<div class="col-md-12 no-padding">
+    <article class="article">
+        <md-card class="no-margin-h">
+            <md-table-container>
+                <form ng-submit="search()" name="search_form">
+                    <table md-table zafira-background-theme="table">
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column>
+                                    <md-input-container>
+                                        <md-checkbox id="searchChechbox" class="md-secondary" aria-label="Select" data-ng-model="selectAll" data-ng-true-value="true" data-ng-false-value="false" ng-click="addToSelectedTestRunsAll()">
+                                        </md-checkbox>
+                                    </md-input-container>
+                                </th>
+                                <th md-column class="fixed-testrun-name-header">
+                                </th>
+                                <th md-column>
+                                </th>
+                                <th md-column>
+                                </th>
+                                <th md-column>
+                                </th>
+                                <th md-column>
+                                </th>
+                            </tr>
+                            <md-button type="submit" class="hide">Search</md-button>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}">
+                                <td name="testRunStatus" md-cell>
+                                    <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox name="testRunCheckbox" class="md-secondary"
                                                              aria-label="Select"
                                                              data-ng-model="testRun.selected"
@@ -271,148 +271,151 @@
                                                      </timer>
                                                  </div>
                                             </span>
-                                        </td>
-                                        <td name="testRunInfo" md-cell>
-	                                         <b>
+                                </td>
+                                <td name="testRunInfo" md-cell>
+                                    <b>
                                                   {{testRun.testSuite.name}}
                                                   <md-icon data-ng-if="testRun.comments" data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" class="comments-area">comments</md-icon>
                                                   <span data-ng-if="testRun.reviewed" class="label label-success">R</span>
                                                   <md-tooltip md-direction="right">{{testRun.testSuite.fileName}}</md-tooltip>
                                              </b>
-                                             <span data-ng-if="testRun.blocker" class="badge ng-binding bug-label-bg" alt="BLOCKERS">BLOCKERS</span>
-                                           	<br/>
-                                           	<a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-                                            <small ng-show="!testRun.appVersionValid" ng-mouseenter="checkFilePresence(testRun)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
-                                            <small ng-show="testRun.appVersionValid" ng-click="downloadApplication(testRun.appVersion)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">file_download</md-icon>{{testRun.appVersion}}</small>
-                                            <md-progress-circular ng-show="testRun.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
-                                        </td>
-                                        <td name="testRunEnv" md-cell class="no-padding">
-                                             <span class="label label-default">{{testRun.env}}</span>
-                                              <md-button aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
-                                                  <i class="fa expand-icon" ng-class="testRun.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
-                                              </md-button>
-                                        </td>
-                                        <td name="testRunPlatform" md-cell class="no-padding browser-version_column">
-                                        	 <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
-                                             <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-                                             <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
-                                        </td>
-                                        <td name="testRunStatistics" md-cell class="fixed-testcount-column">
-                                        	   <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="testRun.passed ? 'label-success' : 'label-success-empty'">{{testRun.passed}}</span>
-                                            <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="testRun.failed ? 'label-danger' : 'label-danger-empty'">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
-                                            <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{testRun.skipped}}</span>
-                                            <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.inProgress ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
-                                        </td>
-                                        <td name="testRunStarted" md-cell class="startedat-column">
-                                            <div class="time">
-                                                Started
-                                                <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
-                                            </div>
-                                            <div data-ng-if="testRun.elapsed && testRun.elapsed > 0" class="light_text">
-                                                <i class="fa fa-clock-o" aria-hidden="true"></i> <timer max-time-unit="'minute'" autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
-                                            </div>
-                                        </td>
-                                        <td md-cell>
-                                            <md-menu class="pull-right" md-offset="0 {{currentOffset}}">
-                                                <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); setOffset($event); $mdMenu.open($event);">
-                                                    <md-icon class="material-icons">more_vert</md-icon>
+                                    <span data-ng-if="testRun.blocker" class="badge ng-binding bug-label-bg" alt="BLOCKERS">BLOCKERS</span>
+                                    <br/>
+                                    <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
+                                    <small ng-show="!testRun.appVersionValid" ng-mouseenter="checkFilePresence(testRun)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
+                                    <small ng-show="testRun.appVersionValid" ng-click="downloadApplication(testRun.appVersion)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">file_download</md-icon>{{testRun.appVersion}}</small>
+                                    <md-progress-circular ng-show="testRun.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
+                                </td>
+                                <td name="testRunEnv" md-cell class="no-padding">
+                                    <span class="label label-default">{{testRun.env}}</span>
+                                    <md-button aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                        <i class="fa expand-icon" ng-class="testRun.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
+                                    </md-button>
+                                </td>
+                                <td name="testRunPlatform" md-cell class="no-padding browser-version_column">
+                                    <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}" />
+                                    <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+                                    <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
+                                </td>
+                                <td name="testRunStatistics" md-cell class="fixed-testcount-column">
+                                    <span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="testRun.passed ? 'label-success' : 'label-success-empty'">{{testRun.passed}}</span>
+                                    <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="testRun.failed ? 'label-danger' : 'label-danger-empty'">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
+                                    <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{testRun.skipped}}</span>
+                                    <span title="In Progress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.inProgress ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
+                                </td>
+                                <td name="testRunStarted" md-cell class="startedat-column">
+                                    <div class="time">
+                                        Started
+                                        <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                                    </div>
+                                    <div data-ng-if="testRun.elapsed && testRun.elapsed > 0" class="light_text">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <timer max-time-unit="'minute'" autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
+                                    </div>
+                                </td>
+                                <td md-cell>
+                                    <md-menu class="pull-right" md-offset="0 {{currentOffset}}">
+                                        <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); setOffset($event); $mdMenu.open($event);">
+                                            <md-icon class="material-icons">more_vert</md-icon>
+                                        </md-button>
+                                        <md-menu-content width="2" class="fixed-md-menu-content">
+                                            <md-menu-item>
+                                                <md-button name="open" data-ng-click="openTestRun(testRun)">
+                                                    Open
                                                 </md-button>
-                                                <md-menu-content width="2" class="fixed-md-menu-content">
-                                                    <md-menu-item>
-                                                        <md-button name="open" data-ng-click="openTestRun(testRun)">
-                                                            Open
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item>
-                                                        <md-button name="copyLink" data-ng-click="copyLink(testRun)">
-                                                            Copy link
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item has-any-permission="['MODIFY_TEST_RUNS']">
-                                                        <md-button name="markAsReviewed" data-ng-click="markAsReviewed(testRun)">
-                                                            Mark as reviewed
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item>
-                                                        <md-button name="sendAsEmail" data-ng-click="sendAsEmail(testRun, $event)">
-                                                            Send as email
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item>
-                                                        <md-button name="export" data-ng-click="export(testRun)">
-                                                            Export
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
-                                                        <md-button name="notifyInSlack" data-ng-click="notifyInSlack(testRun)">
-                                                            Notify in Slack
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-divider></md-divider>
-                                                    <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="buildNow" data-ng-click="buildNow(testRun, $event)">
-                                                            Build now
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="abort" data-ng-click="abort(testRun, $event)">
-                                                            Abort
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="rebuild" data-ng-click="rerun(testRun, $event)">
-                                                            Rebuild
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
-                                                        <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
-                                                            Live logs
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                    <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
-                                                    <md-menu-item ng-if="showDeleteTestRunOption" has-any-permission="['MODIFY_TEST_RUNS']">
-                                                        <md-button name="delete" data-ng-click="deleteTestRunAction(testRun)">
-                                                            Delete
-                                                        </md-button>
-                                                    </md-menu-item>
-                                                </md-menu-content>
-                                            </md-menu>
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="testRun.expand" ng-repeat-end="">
-                                        <td md-cell colspan="7">
-                                            <table md-table class="table">
-                                                <thead md-head data-ng-hide="testRun.tests == null">
-                                                    <tr md-row>
-                                                        <th md-column class="row sort-new" colspan="4">
-                                                            <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
-                                                            <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
-                                                       		<div name="sortOwner" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div >
-                                                       		<div name="sortDevice" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div >
-                                                       		<div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
-                                                       		<div name="sortStartTime" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started&nbsp;</div >
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                		<tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
-                                                        <td>
-                                                        	<b name="testName">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
-                                                        	<div>
-                                                                <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
-                                                                <span name="testOwner" data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
-                                                                <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
-                                                                <span name="device" data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
-                                                            </div>
-                                                        	<div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
-                                                                <div class="white-space-pre-line"><show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more></div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-center">
+                                            </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button name="copyLink" data-ng-click="copyLink(testRun)">
+                                                    Copy link
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item has-any-permission="['MODIFY_TEST_RUNS']">
+                                                <md-button name="markAsReviewed" data-ng-click="markAsReviewed(testRun)">
+                                                    Mark as reviewed
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button name="sendAsEmail" data-ng-click="sendAsEmail(testRun, $event)">
+                                                    Send as email
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item>
+                                                <md-button name="export" data-ng-click="export(testRun)">
+                                                    Export
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
+                                                <md-button name="notifyInSlack" data-ng-click="notifyInSlack(testRun)">
+                                                    Notify in Slack
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-divider></md-divider>
+                                            <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
+                                                <md-button name="buildNow" data-ng-click="buildNow(testRun, $event)">
+                                                    Build now
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
+                                                <md-button name="abort" data-ng-click="abort(testRun, $event)">
+                                                    Abort
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                                                <md-button name="rebuild" data-ng-click="rerun(testRun, $event)">
+                                                    Rebuild
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
+                                                <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
+                                                    Live logs
+                                                </md-button>
+                                            </md-menu-item>
+                                            <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
+                                            <md-menu-item ng-if="showDeleteTestRunOption" has-any-permission="['MODIFY_TEST_RUNS']">
+                                                <md-button name="delete" data-ng-click="deleteTestRunAction(testRun)">
+                                                    Delete
+                                                </md-button>
+                                            </md-menu-item>
+                                        </md-menu-content>
+                                    </md-menu>
+                                </td>
+                            </tr>
+                            <tr ng-if="testRun.expand" ng-repeat-end="">
+                                <td md-cell colspan="7">
+                                    <table md-table class="table">
+                                        <thead md-head data-ng-hide="testRun.tests == null">
+                                            <tr md-row>
+                                                <th md-column class="row sort-new" colspan="4">
+                                                    <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div>
+                                                    <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div>
+                                                    <div name="sortOwner" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div>
+                                                    <div name="sortDevice" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div>
+                                                    <div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div>
+                                                    <div name="sortStartTime" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started&nbsp;</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
+                                                <td>
+                                                    <b name="testName">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
+                                                    <div>
+                                                        <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                        <span name="testOwner" data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                        <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                        <span name="device" data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                    </div>
+                                                    <div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
+                                                        <div class="white-space-pre-line">
+                                                            <show-more name="errorMsg" element-id="test.id" text="test.message" limit="100"></show-more>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
 
                                                 </td>
                                                 <td class="text-center">
-                                                            <span data-ng-repeat="issue in test.workItems">
+                                                    <span data-ng-repeat="issue in test.workItems">
                                                                 <a name="taskTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'TASK'" class="badge ng-binding clearfix task-label-bg">{{issue.jiraId}}</a>
                                                                 <a name="bugTicket" href="{{jira.url + '/browse/' + issue.jiraId}}" target="_blank" data-ng-if="issue.type == 'BUG'" class="badge ng-binding clearfix bug-label-bg" alt="{{issue.description}}" title="{{issue.description}}">{{issue.jiraId}}</a>
                                                             </span>
@@ -440,9 +443,9 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr name="testLoading" md-row >
-                                                <td md-cell colspan="4" class="text-center" data-ng-show="!testRun.tests" >
-	                                                        <span>
+                                            <tr name="testLoading" md-row>
+                                                <td md-cell colspan="4" class="text-center" data-ng-show="!testRun.tests">
+                                                    <span>
 	                                                            <md-progress-circular md-mode="indeterminate" md-diameter="20px" class="tests-loading-spinner"></md-progress-circular>
 	                                                            Tests are loading...
 	                                                        </span>
@@ -455,20 +458,20 @@
                                                     </md-button>
                                                 </td>
                                             </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr md-row data-ng-if="(testRuns | isEmpty)">
-                                    <td id="noData" md-cell colspan="7" class="text-center">No test runs</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </form>
-                    </md-table-container>
-                    <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
-                </md-card>
-            </article>
-        </div>
-    </div>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr md-row data-ng-if="(testRuns | isEmpty)">
+                                <td id="noData" md-cell colspan="7" class="text-center">No test runs</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </md-table-container>
+            <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
+        </md-card>
+    </article>
+</div>
+</div>
 </div>

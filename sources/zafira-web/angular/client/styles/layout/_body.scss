@@ -77,7 +77,7 @@ body {
     padding-top: 0px;
     padding-bottom: 6px;
     font-size: 12px;
-    min-width: 132px;
+    min-width: 120px;
 }
 
 .md-datepicker-input {
@@ -1166,11 +1166,12 @@ md-chip md-chip-template.bg-primary {
 
 .form-control {
     height: 36px;
+    border-color: $custom-gray !important;
 }
 
 md-select {
     height: 36px;
-    border: 1px solid #CBD5DD;
+    border: 1px solid $custom-gray;
     border-radius: 2px;
     padding: 0 0 0 12px !important;
 }
@@ -1206,8 +1207,9 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     background-color: $fog-gray;
     min-height: 120px;
 
-    & md-select {
+    & md-select, & .form-control {
         background-color: #fff;
+        border: none;
     }
     & .filter-name {
         width: 344px;
@@ -1215,22 +1217,47 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     }
 
     & .filter-input-container {
-        width: 168px;
+        width: 148px;
         float: left;
-        margin-right: 8px !important;
+        margin-right: 8px;
+        border: none;
     }
 
-    & .filter-select {
-        width: 100%;
+    & .filter-select{
+      width: 516px;
+      margin-right: 16px;
     }
-    md-chip {
-        border: 1px solid;
+
+    & md-chip{
+      min-width: 149px;
+      margin: 2px 8px 2px 0 !important;
+      border: solid 1px $medium-gray;
+      background-color: $fog-gray;
+      color: $gray-light;
+      font-weight: normal !important;
+
+      &:hover{
+        background-color: $gray-light;
+        color: #fff !important;
+
+        & span{
+          color: #fff !important;
+        }
+      }
+
+      & md-chip-template{
+        padding-right: 4px;
+      }
+
+      & .chip-operator{
+        color: $gray-light;
+      }
     }
 }
 
 .btn-check {
     position: absolute;
-    right: 10px;
+    right: 13px;
     top: 3px;
 
     & button {
@@ -1256,17 +1283,17 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
       }
 }
 
-#search .searchable.select, .date-picker-container{
+#search .searchable.select, #search .date-picker-container{
   margin-left: 8px !important;
 }
 
 .date-picker-container {
     position: relative;
-    border: 1px solid #CBD5DD;
+    border: 1px solid $custom-gray;
     border-radius: 2px;
-    min-width: 140px;
+    min-width: 145px;
     & span{
-      line-height: 2.3;
+      line-height: 2.6;
     }
     & span:first-child{
       padding-left: 12px;
@@ -1287,7 +1314,6 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 
 #search-container, .filter-input-container {
     position: relative;
-    margin: 0 !important;
     padding: 0 !important;
 }
 
@@ -1303,7 +1329,15 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 }
 
 .value-input {
-    width: 154px !important;
+    width: 198px !important;
+    margin-right: 0 !important;
+
+    & input, & md-input-container, & md-select{
+      width: 154px !important;
+      float: left;
+      margin-right: 8px;
+      border: none;
+    }
 }
 
 .filter-date{
@@ -1314,8 +1348,8 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 .quadro-btn {
     width: 36px !important;
     height: 36px !important;
-    margin-bottom: 0;
-    border-color: $input-border;
+    margin: 0;
+    border-color: $custom-gray;
     border-radius: 2px;
     font-size: 14.5px;
 
@@ -1353,4 +1387,8 @@ button#add-button{
   left: 0;
   display: none;
   background: rgba(210, 210, 210, 0.2);
+}
+
+.md-select-value .md-select-icon {
+  margin: 0 8px 0 4px;
 }
