@@ -197,13 +197,13 @@
                                             </md-select>
                                         </md-input-container>
                                     </div>
-                                    <md-input-container class="searchable select pull-left no-padding no-margin-l" flex="nogrow">
+                                    <md-input-container class="searchable select pull-left no-padding no-margin-l" flex="auto">
                                         <md-select id="searchEnv" ng-change="onChangeCriteria()" ng-model="sc.environment" name="environment" placeholder="Environment">
                                             <md-option value="" disabled>Environment</md-option>
                                             <md-option ng-repeat="env in environments" ng-value="env">{{env}}</md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <md-input-container class="searchable select selectPlatform pull-left" flex="nogrow">
+                                    <md-input-container class="searchable select selectPlatform pull-left" flex="auto">
                                         <md-select id="searchPlatform" ng-change="onChangeCriteria()" ng-model="sc.platform" name="platform" placeholder="Platform">
                                             <md-option value="" disabled>Platform</md-option>
                                             <md-option ng-repeat="platform in platforms" ng-value="platform">{{platform}}</md-option>
