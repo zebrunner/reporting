@@ -118,7 +118,7 @@
             onePanel: true
         };
 
-        function onSelect(scope) {
+        function onSelect(dates) {
             return $scope.selectedFilterRange.selectedTemplateName;
         };
 
@@ -142,11 +142,7 @@
             $mdDateRangePicker.show({
                 targetEvent: $event,
                 model: $scope.selectedFilterRange,
-                autoConfirm: true/*,
-                mdOnSelect: function($dates) {
-                    $scope.selectedDates = $dates;
-                    $scope.onSelect($dates)
-                }*/
+                autoConfirm: true
             }).then(function(result) {
                 if (result) $scope.selectedFilterRange = result;
             })
