@@ -37,7 +37,7 @@
 
         $scope.sc = angular.copy(DEFAULT_SC);
 
-        $scope.STATUSES = [];
+        $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'UNKNOWN'];
 
 
         /*
@@ -58,6 +58,27 @@
             LAST_FOURTEEN_DAYS: " last 14 days",
             LAST_THIRTY_DAYS: " last 30 days"
         };
+
+        var CURRENT_CRITERIA = {
+            name: 'CRITERIA',
+            value: null,
+            type: []
+        };
+
+        var CURRENT_OPERATOR = {
+            name: 'OPERATOR',
+            value: null,
+            type: []
+        };
+
+        var CURRENT_VALUE = {
+            name: 'VALUE',
+            value: null
+        };
+
+        $scope.currentCriteria = angular.copy(CURRENT_CRITERIA);
+        $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+        $scope.currentValue = angular.copy(CURRENT_VALUE);
 
         function getMode() {
             var mode = 'NONE';
@@ -95,7 +116,7 @@
         };
 
         $scope.isDatePickerOperator = function(operator) {
-            return operator ? SELECT_CRITERIAS.indexOf(operator) >= 0 : false;
+            return operator ? $scope.DATE_CRITERIAS_PICKER_OPERATORS.indexOf(operator) >= 0 : false;
         };
 
         $scope.subjectBuilder = {};
@@ -124,7 +145,7 @@
 
         $scope.$watch('selectedFilterRange.dateStart', function (oldValue, newVal) {
             if(oldValue) {
-                $scope.currentValue = angular.copy($scope.selectedFilterRange.dateStart);
+                $scope.currentValue.value = angular.copy($scope.selectedFilterRange.dateStart);
                 $scope.clearPickFilter();
                 closeDatePickerMenu();
             }
@@ -191,13 +212,11 @@
 
         $scope.addChip = function () {
             $scope.filter.subject.criterias.push({
-                name: $scope.currentCriteria.name,
-                operator: $scope.currentOperator,
-                value: $scope.currentValue
+                name: $scope.currentCriteria.value.name,
+                operator: $scope.currentOperator.value,
+                value: $scope.currentValue.value && $scope.currentValue.value.value ? $scope.currentValue.value.value : $scope.currentValue.value
             });
-            delete $scope.currentCriteria;
-            delete $scope.currentOperator;
-            delete $scope.currentValue;
+            clearFilterSlice();
         };
 
         $scope.changeChip = function (chip, index) {
@@ -255,26 +274,58 @@
             }
         };
 
-        $scope.clearFilterCriterias = function (isOperator) {
-            if($scope.currentOperator && ! isOperator)
-                delete $scope.currentOperator;
-            if($scope.currentValue)
-                delete $scope.currentValue;
+        function clearFilterCriterias(slice) {
+            switch(slice) {
+                case 'CRITERIA':
+                    $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+                    $scope.currentCriteria.type = [];
+                case 'OPERATOR':
+                    $scope.currentValue = angular.copy(CURRENT_VALUE);
+                    $scope.currentOperator.type = [];
+                case 'VALUE':
+                default:
+                    break;
+            };
+        };
+
+        $scope.onFilterSliceUpdate = function(slice) {
+            clearFilterCriterias(slice);
+            switch(slice) {
+                case 'CRITERIA':
+                    if($scope.isSelectCriteria($scope.currentCriteria.value)) {
+                        $scope.currentCriteria.type.push('SELECT');
+                    }
+                    if($scope.isDateCriteria($scope.currentCriteria.value)) {
+                        $scope.currentCriteria.type.push('DATE');
+                    }
+                    break;
+                case 'OPERATOR':
+                    if($scope.isDateCriteria($scope.currentCriteria.value) && $scope.isDatePickerOperator($scope.currentOperator.value)) {
+                        $scope.currentOperator.type.push('DATE');
+                    }
+                    break;
+                case 'VALUE':
+                    break;
+                default:
+                    break;
+            };
+        };
+
+        function clearFilterSlice() {
+            $scope.currentCriteria = angular.copy(CURRENT_CRITERIA);
+            $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+            $scope.currentValue = angular.copy(CURRENT_VALUE);
         };
 
         $scope.clearFilter = function() {
             $scope.filter = angular.copy(DEFAULT_FILTER_VALUE);
-            delete $scope.currentCriteria;
-            delete $scope.currentOperator;
-            delete $scope.currentValue;
+            clearFilterSlice();
         };
 
         $scope.resetFilter = function() {
             $scope.filter.subject = {};
             $scope.filter.publicAccess = false;
-            delete $scope.currentCriteria;
-            delete $scope.currentOperator;
-            delete $scope.currentValue;
+            clearFilterSlice();
         };
 
         $scope.clearAndOpenFilterBlock = function (value) {
