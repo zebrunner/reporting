@@ -1102,6 +1102,22 @@ button#resetFilter {
         strong {
             text-transform: capitalize;
         }
+        .filter-slice-chip-button {
+            padding-bottom: 1px;
+            background-color: #777777;
+            border: 0;
+            width: 16px;
+            height: 16px;
+            top: 6px;
+            right: 6px;
+            md-icon {
+                position: absolute;
+                top: 0.5px;
+                left: -3.5px;
+                font-size: 15px;
+                color: white;
+            }
+        }
     }
 }
 
@@ -1140,7 +1156,7 @@ div.manage-chip {
 }
 
 .chip-operator {
-    color: #009688;
+    color: #009688 !important;
 }
 
 .manage-filter-button {
@@ -1394,7 +1410,8 @@ button#add-button{
   height: 100%;
   top: 0;
   left: 0;
-  display: none;
+  display: block;
+    z-index: 10000;
   background: rgba(210, 210, 210, 0.2);
 }
 
