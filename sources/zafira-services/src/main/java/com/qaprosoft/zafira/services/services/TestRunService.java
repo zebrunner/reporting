@@ -89,6 +89,9 @@ public class TestRunService
 	private SettingsService settingsService;
 
 	@Autowired
+	private JobsService jobsService;
+
+	@Autowired
 	private StatisticsService statisticsService;
 
 	private static LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
@@ -185,7 +188,32 @@ public class TestRunService
 		}
 		return jobTestRuns;
 	}
-	
+
+	@Transactional(readOnly = true)
+	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
+	{
+		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun queueTestRun(String jobName, String branch, String ciRunId) throws ServiceException
+	{
+		TestRun testRun = getLatestJobTestRunByBranchAndJobName(branch, jobName);
+		if(testRun != null) {
+			Long testRunId = testRun.getId();
+			testRun.setCiRunId(ciRunId);
+			testRun.setStatus(Status.QUEUED);
+			createTestRun(testRun);
+			List<Test> tests = testService.getTestsByTestRunId(testRunId);
+			TestRun queuedTestRun = getTestRunByCiRunId(ciRunId);
+			for (Test test : tests)
+			{
+				testService.createScheduledTest(test, queuedTestRun.getId());
+			}
+		}
+		return testRun;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun updateTestRun(TestRun testRun) throws ServiceException
 	{
@@ -261,7 +289,6 @@ public class TestRunService
 				}
 			}
 		}
-		
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
@@ -304,7 +331,7 @@ public class TestRunService
 			testRun.setStatus(IN_PROGRESS);
 			updateTestRun(testRun);
 		}
-		
+		testRun.setScmBranch("origin/master");
 		return testRun;
 	}
 	
@@ -602,7 +629,11 @@ public class TestRunService
 				case ABORTED:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
-				default:
+			    case QUEUED:
+			    	testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+			    	break;
+
+			default:
 					break;
 			}
 		} catch (Exception e)

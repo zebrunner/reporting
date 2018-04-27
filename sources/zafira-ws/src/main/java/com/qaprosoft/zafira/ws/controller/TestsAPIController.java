@@ -126,6 +126,7 @@ public class TestsAPIController extends AbstractController
 	{
 		t.setId(id);
 		Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
+		testService.deleteScheduledTest(test);
 		testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -60,11 +61,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.StatisticsService;
-import com.qaprosoft.zafira.services.services.TestConfigService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -89,6 +85,9 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private TestService testService;
+
+	@Autowired
+	private JobsService jobsService;
 
 	@Autowired
 	private TestConfigService testConfigService;
@@ -205,6 +204,28 @@ public class TestRunsAPIController extends AbstractController
 			}
 		}
 
+		return mapper.map(testRun, TestRunType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "schedule",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType createScheduledJobTests(
+			@RequestParam("jobName") String jobName,
+			@RequestParam("branch") String branch,
+			@RequestParam("ciRunId") String ciRunId,
+			@RequestParam(value = "autoMilestones", defaultValue = "false") boolean autoMilestones) throws
+			ServiceException
+	{
+		TestRun testRun = new TestRun();
+		if(autoMilestones && jobsService.getJobByName(jobName) != null)
+		{
+			testRun = testRunService.queueTestRun(jobName, branch, ciRunId);
+			TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+
+		}
 		return mapper.map(testRun, TestRunType.class);
 	}
 

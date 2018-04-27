@@ -116,6 +116,22 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
+	public void createScheduledTest(Test test, Long scheduledTestRunId) throws ServiceException
+	{
+		test.setId(null);
+		test.setTestRunId(scheduledTestRunId);
+		test.setStatus(Status.QUEUED);
+		testMapper.createTest(test);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void updateScheduledTest(Test test, Long testRunId) throws ServiceException
+	{
+		test.setTestRunId(testRunId);
+		testMapper.updateTest(test);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public Test finishTest(Test test, String configXML) throws ServiceException
 	{
 		Test existingTest = getNotNullTestById(test.getId());
@@ -200,7 +216,6 @@ public class TestService
 			testMapper.updateTest(existingTest);
 			testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
 		}
-		
 		return existingTest;
 	}
 	
@@ -293,6 +308,12 @@ public class TestService
 	}
 
 	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunIdAndStatus(long testRunId, Status status) throws ServiceException
+	{
+		return testMapper.getTestsByTestRunIdAndStatus(testRunId, status);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByWorkItemId(long workItemId) throws ServiceException
 	{
 		return testMapper.getTestsByWorkItemId(workItemId);
@@ -315,6 +336,12 @@ public class TestService
 	public void deleteTestById(long id) throws ServiceException
 	{
 		testMapper.deleteTestById(id);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteScheduledTest(Test test) throws ServiceException
+	{
+		testMapper.deleteTestByTestRunIdAndNameAndStatus(test.getTestRunId(), test.getName(), Status.QUEUED);
 	}
 
 	@Transactional(readOnly = true)
