@@ -1201,7 +1201,7 @@ md-chip md-chip-template.bg-primary {
     width: 100%;
 }
 
-.page .md-button {
+#search-filter-body .md-button, .fixed-search-column .md-button {
     font-size: 13px;
     height: 32px;
 }
@@ -1249,6 +1249,10 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     background-color: $fog-gray;
     min-height: 120px;
 
+    .panel-body{
+      padding-bottom: 10px;
+    }
+
     & div > div{
       float: left;
     }
@@ -1286,7 +1290,7 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
           float: left;
           border: none;
         }
-        & div {
+        & div, & md-select {
           width: 100%;
         }
     }
@@ -1327,18 +1331,18 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 .btn-check {
     position: absolute;
     right: 13px;
-    top: 3px;
 
     & button {
         -webkit-appearance: none;
         -moz-appearance: none;
         border: none;
-        background: #ededed;
+        background: $fog-gray;
         border-radius: 2px;
+        height: 28px;
         padding: 6px 8px !important;
         transition: all .2s;
         font-size: 13px;
-        margin: 0 2px;
+        margin: 4px 2px;
 
         &:hover {
           background-color: $gray-light !important;
