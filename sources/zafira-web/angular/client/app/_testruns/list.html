@@ -55,7 +55,7 @@
         <div class="search-filter-body col-md-12 no-padding">
             <md-card class="no-margin-h _md">
                 <div id="filter" class="md-row">
-                    <div class="disable-layer"></div>
+                    <div ng-class="{'disable-layer': selectedFilterId}"></div>
                     <div class="panel-body no-padding-t">
                         <h5>
                             Filters
@@ -102,7 +102,7 @@
                             <div class="filter-select" layout-sm="column" layout-xs="column" flex="none">
                                 <div layout-sm="row" layout-xs="column">
                                     <md-input-container class="filter-input-container select">
-                                        <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
+                                        <md-select id="filterCriteria" ng-change="onFilterSliceUpdate('CRITERIA');" ng-model="currentCriteria.value" name="criteria" placeholder="CRITERIA">
                                             <md-option ng-value><em>None</em></md-option>
                                             <md-option class="filter-option" ng-repeat="criteria in subjectBuilder.criterias | orderBy:'name'" ng-value="criteria">
                                                 {{ criteria.name.split('_').join(' ') | lowercase }}
@@ -110,68 +110,59 @@
                                         </md-select>
                                     </md-input-container>
                                     <md-input-container class="filter-input-container select">
-                                        <md-select id="filterOperator" ng-change="clearFilterCriterias(true);" ng-disabled="! currentCriteria" ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                        <md-select id="filterOperator" ng-change="onFilterSliceUpdate('OPERATOR');" ng-disabled="! currentCriteria.value" ng-model="currentOperator.value" name="operator" placeholder="OPERATOR">
                                             <md-option ng-value><em>None</em></md-option>
-                                            <md-option class="filter-option" ng-repeat="op in currentCriteria.operators" ng-value="op">
+                                            <md-option class="filter-option" ng-repeat="op in currentCriteria.value.operators" ng-value="op">
                                                 {{ op.split('_').join(' ') | lowercase }}
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
                                 </div>
                                 <div layout="row">
-                                    <md-input-container class="filter-input-container select value-input" ng-if="isSelectCriteria(currentCriteria)">
-                                        <md-select ng-if="! isDateCriteria(currentCriteria) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator))" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
-                                          ng-model="currentOperator" name="operator" placeholder="OPERATOR">
+                                    <md-input-container class="filter-input-container select value-input" ng-if="currentCriteria.type.indexOf('SELECT') >= 0">
+                                        <md-select ng-change="onFilterSliceUpdate('VALUE');" ng-disabled="! currentOperator.value"
+                                          ng-model="currentValue.value.value" name="value" placeholder="Value">
                                             <md-option ng-value><em>None</em></md-option>
-                                            <md-option class="filter-option" ng-repeat="value in currentCriteria.values" ng-value="value">
+                                            <md-option class="filter-option" ng-repeat="value in currentCriteria.value.values" ng-value="value">
                                                 {{ value.split('_').join(' ') | lowercase }}
                                             </md-option>
                                         </md-select>
                                     </md-input-container>
-                                    <div class="filter-input-container value-input">
-                                        <input type="text" class="form-control" placeholder="Value" ng-disabled="! (currentOperator && currentCriteria.name && ! isDateCriteria(currentCriteria)) || (isDateCriteria(currentCriteria) && currentCriteria.name && isDatePickerOperator(currentOperator))"
-                                               ng-model="currentValue" ng-if="! isSelectCriteria(currentCriteria) && ((! isDateCriteria(currentCriteria)) || (! isDateCriteria(currentCriteria) && currentCriteria.name && ! isDatePickerOperator(currentOperator)))"/>
-                                        <md-input-container class="date-picker-container no-padding filter-date pull-left no-margin" flex="auto">
-                                            <span>{{currentValue | date : 'dd MMM'}}</span>
-                                            <i class="material-icons md-18 date-picker-icon">today</i>
-                                        </md-input-container>
-                                        <md-date-range selected-template="TD" ng-model="selectedFilterRange" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
+                                    <div ng-if="currentOperator.type.indexOf('DATE') >= 0 || (currentCriteria.type.length == 0 && currentOperator.type.length == 0)" class="filter-input-container value-input">
+                                        <input type="text" class="form-control" placeholder="Value" ng-disabled="! currentOperator.value"
+                                               ng-change="onFilterSliceUpdate('VALUE');" ng-model="currentValue.value" ng-if="currentCriteria.type.length == 0 && currentOperator.type.length == 0"/>
+                                        <div ng-if="currentOperator.type.indexOf('DATE') >= 0">
+                                            <md-input-container class="date-picker-container no-padding filter-date pull-left no-margin" flex="auto">
+                                                <span>{{currentValue.value | date : 'dd MMM'}}</span>
+                                                <i class="material-icons md-18 date-picker-icon">today</i>
+                                            </md-input-container>
+                                            <md-date-range selected-template="TD" ng-model="selectedFilterRange" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
+                                        </div>
                                     </div>
-                                    <button ng-disabled="(!currentValue && isDatePickerOperator(currentOperator)) || (!currentValue && !isDateCriteria(currentCriteria))
-                                               || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
+                                    <button ng-disabled="! currentOperator.value || (! currentValue.value && currentCriteria.type.indexOf('DATE') == -1) || (! currentValue.value && currentCriteria.type.indexOf('DATE') >= 0 && currentOperator.type.indexOf('DATE') >= 0)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
                                 </div>
                             </div>
-                            <!-- <div layout-sm="row" layout-xs="column">
-                                <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
-                                    <input disabled>
-                                    <md-chip-template>
-                                        <span>
-                                        <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
-                                        <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
-                                        <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
-                                        </span>
-                                    </md-chip-template>
-                                </md-chips>
-                            </div> -->
-                        <div class="filter-editor-filters layout="row" layout-sm="row" layout-xs="column"">
-                            <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false"
-                                      md-on-add="changeChip($chip)">
-                                <input disabled>
-                                <md-chip-template>
-                                <span>
-                                    <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
-                                    <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
-                                    <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
-                                </span>
-                                </md-chip-template>
-                            </md-chips>
+                            <div layout-sm="row" layout-xs="column">
+                                    <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
+                                        <input disabled>
+                                        <md-chip-template>
+                                            <span>
+                                            <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
+                                            <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                            </span>
+                                        </md-chip-template>
+                                        <button md-chip-remove class="md-primary filter-slice-chip-button">
+                                            <md-icon aria-label="Close dialog">close</md-icon>
+                                        </button>
+                                    </md-chips>
+                              </div>
                         </div>
-                      </div>
                     </div>
                 </div>
                 <md-divider></md-divider>
                 <div id="search" class="md-row">
-                    <div class="disable-layer"></div>
+                    <div ng-class="{'disable-layer': selectedFilterId}"></div>
                     <div class="panel-body">
                         <h5>
                             Fast search
@@ -197,12 +188,7 @@
                                         <md-input-container class="searchable select pull-left no-padding" flex="nogrow">
                                             <md-select id="searchStatus" ng-change="onChangeCriteria()" ng-model="sc.status" name="status" placeholder="Status">
                                                 <md-option value="" disabled>Status</md-option>
-                                                <md-option value="PASSED">PASSED</md-option>
-                                                <md-option value="FAILED">FAILED</md-option>
-                                                <md-option value="SKIPPED">SKIPPED</md-option>
-                                                <md-option value="ABORTED">ABORTED</md-option>
-                                                <md-option value="IN_PROGRESS">IN_PROGRESS</md-option>
-                                                <md-option value="UNKNOWN">UNKNOWN</md-option>
+                                                <md-option ng-repeat="status in STATUSES" ng-value="status">{{ status }}</md-option>
                                             </md-select>
                                         </md-input-container>
                                     </div>
