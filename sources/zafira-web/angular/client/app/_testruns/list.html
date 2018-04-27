@@ -99,7 +99,7 @@
                             </div>
                         </form>
                         <div layout="row" layout-xs="column">
-                            <div class="filter-select" layout-sm="column" layout-xs="column">
+                            <div class="filter-select" layout-sm="column" layout-xs="column" flex="none">
                                 <div layout-sm="row" layout-xs="column">
                                     <md-input-container class="filter-input-container select">
                                         <md-select id="filterCriteria" ng-change="clearFilterCriterias(false);" ng-model="currentCriteria" name="criteria" placeholder="CRITERIA">
@@ -141,7 +141,7 @@
                                                || (isDateCriteria(currentCriteria) && ! isDatePickerOperator(currentOperator) && !currentOperator)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
                                 </div>
                             </div>
-                            <div layout-sm="row" layout-xs="column">
+                            <!-- <div layout-sm="row" layout-xs="column">
                                 <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
                                     <input disabled>
                                     <md-chip-template>
@@ -152,9 +152,8 @@
                                         </span>
                                     </md-chip-template>
                                 </md-chips>
-                            </div>
-                        </div>
-                        <div class="filter-editor-filters">
+                            </div> -->
+                        <div class="filter-editor-filters layout="row" layout-sm="row" layout-xs="column"">
                             <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false"
                                       md-on-add="changeChip($chip)">
                                 <input disabled>
@@ -167,6 +166,7 @@
                                 </md-chip-template>
                             </md-chips>
                         </div>
+                      </div>
                     </div>
                 </div>
                 <md-divider></md-divider>

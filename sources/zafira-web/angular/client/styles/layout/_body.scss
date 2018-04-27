@@ -1215,6 +1215,10 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     background-color: $fog-gray;
     min-height: 120px;
 
+    & div > div{
+      float: left;
+    }
+
     & md-select, & .form-control {
         background-color: #fff;
         border: none;
@@ -1232,13 +1236,32 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     }
 
     & .filter-select{
-      width: 550px;
+      max-width: 548px;
       margin-right: 16px;
     }
 
+    .filter-text {
+        vertical-align: top;
+        padding-bottom: 16px;
+    }
+
+    & .value-input {
+        width: 152px !important;
+
+        & input, & md-input-container, & md-select{
+          float: left;
+          border: none;
+        }
+    }
+
+    & .filter-date{
+      width: 100%;
+      background: #fff;
+    }
+
     & md-chip{
-      min-width: 149px;
-      margin: 2px 8px 2px 0 !important;
+      min-width: 148px;
+      margin: 2px 8px 6px 0 !important;
       border: solid 1px $medium-gray;
       background-color: $fog-gray;
       color: $gray-light;
@@ -1330,28 +1353,6 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 #search-container .form-control{
     padding-right: 236px;
     margin-right: 8px;
-}
-
-.filter-text {
-    vertical-align: top;
-    padding-bottom: 16px;
-}
-
-.value-input {
-    width: 196px !important;
-    margin-right: 0 !important;
-
-    & input, & md-input-container, & md-select{
-      width: 152px !important;
-      float: left;
-      margin-right: 8px;
-      border: none;
-    }
-}
-
-.filter-date{
-  width: 100%;
-  background: #fff;
 }
 
 .quadro-btn {

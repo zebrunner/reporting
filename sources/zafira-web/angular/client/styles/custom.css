@@ -61,9 +61,14 @@
 }
 
 @media (max-width: 599px) {
-  #filter-editor .filter-select{
-    width: 100%;
+  #filter-editor div > div{
+      width: 100%;
   }
+
+  #filter-editor .filter-text{
+      padding-bottom: 0;
+  }
+
   .btn-check {
       position: relative;
       right: 0;
