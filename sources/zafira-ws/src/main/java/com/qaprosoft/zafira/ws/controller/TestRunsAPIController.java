@@ -210,8 +210,8 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "schedule",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createScheduledJobTests(
+	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType createQueuedTestRun(
 			@RequestParam("jobName") String jobName,
 			@RequestParam("branch") String branch,
 			@RequestParam("ciRunId") String ciRunId,

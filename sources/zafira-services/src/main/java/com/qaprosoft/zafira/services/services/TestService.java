@@ -339,7 +339,7 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteScheduledTest(Test test) throws ServiceException
+	public void deleteQueuedTest(Test test) throws ServiceException
 	{
 		testMapper.deleteTestByTestRunIdAndNameAndStatus(test.getTestRunId(), test.getName(), Status.QUEUED);
 	}
