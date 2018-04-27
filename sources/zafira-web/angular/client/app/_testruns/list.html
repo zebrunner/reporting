@@ -36,7 +36,7 @@
             <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button ng-if="matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+            <button id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>CREATE</b>
             </button>
             <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
@@ -64,8 +64,8 @@
                             </md-button>
                         </h5>
                         <div layout="row" ng-show="filterBlockExpand">
-                            <div class="filter-chip manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
-                                <md-chips>
+                            <div class="manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
+                                <md-chips class="filter-chip">
                                     <md-chip>add filter</md-chip>
                                 </md-chips>
                                 <div class="md-primary createFilterChip">
@@ -76,7 +76,7 @@
                                 <input disabled>
                                 <md-chip-template class="show-on-hover">
                                     <div style="display: inline-block;" ng-click="searchByFilter($chip, $mdChipsCtrl); $mdChipsCtrl.selectedChip = $index">
-                                        <strong>{{$chip.name}}</strong>
+                                        <span>{{$chip.name}}</span>
                                     </div>
                                     <div style="display: inline-block; vertical-align: sub;">
                                         <i class="material-icons custom-chip-action show-icon-on-hover" ng-click="chooseFilter($chip);">edit</i>
@@ -139,7 +139,7 @@
                                             <md-date-range selected-template="TD" ng-model="selectedFilterRange" one-panel="true" auto-confirm="true" show-template="false" md-on-select="selectedDates = $dates; onSelect($dates)"></md-date-range>
                                         </div>
                                     </div>
-                                    <button ng-disabled="! currentOperator.value || (! currentValue.value && currentCriteria.type.indexOf('DATE') == -1) || (! currentValue.value && currentCriteria.type.indexOf('DATE') >= 0 && currentOperator.type.indexOf('DATE') >= 0)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
+                                    <button ng-class="{'default-gray': ! currentOperator.value || (! currentValue.value && currentCriteria.type.indexOf('DATE') == -1) || (! currentValue.value && currentCriteria.type.indexOf('DATE') >= 0 && currentOperator.type.indexOf('DATE') >= 0)}" ng-disabled="! currentOperator.value || (! currentValue.value && currentCriteria.type.indexOf('DATE') == -1) || (! currentValue.value && currentCriteria.type.indexOf('DATE') >= 0 && currentOperator.type.indexOf('DATE') >= 0)" ng-click="addChip()" id="add-button" class="quadro-btn default-gray">+</button>
                                 </div>
                             </div>
                             <div layout-sm="row" layout-xs="column">
