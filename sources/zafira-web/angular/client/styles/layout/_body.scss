@@ -1099,7 +1099,6 @@ button#resetFilter {
     md-chip {
         margin-left: 8px;
         margin-right: 0;
-        min-width: 118px;
         font-size: 14.5px;
         background-color: $fog-gray;
         color: $gray-light !important;
@@ -1158,6 +1157,7 @@ div.manage-chip {
         }
     }
     & md-chip {
+        width: 118px;
         margin: 0 2px 0 0;
         background-color: $dark;
         color: #fff !important;
