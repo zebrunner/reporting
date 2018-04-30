@@ -36,7 +36,7 @@
             <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
+            <button ng-if="matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
                 <b>APPLY</b>
             </button>
             <button ng-if="matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
@@ -55,7 +55,7 @@
         <div class="search-filter-body col-md-12 no-padding">
             <md-card class="no-margin-h _md">
                 <div id="filter" class="md-row">
-                    <div ng-class="{'disable-layer': selectedFilterId}"></div>
+                    <div ng-class="{'disable-layer': ! searchFormIsEmpty}"></div>
                     <div class="panel-body no-padding-t">
                         <h5>
                             Filters
@@ -87,7 +87,7 @@
                     </div>
                 </div>
                 <div id="filter-editor" ng-show="collapseFilter && filterBlockExpand">
-                    <div ng-class="{'disable-layer': selectedFilterId}"></div>
+                    <div ng-class="{'disable-layer': ! searchFormIsEmpty}"></div>
                     <div class="panel-body">
                         <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
                             <div class="filter-text" layout="row" layout-xs="column">
@@ -97,6 +97,10 @@
                                 <div class="flex-auto" layout-xs="column">
                                     <input type="text" class="form-control" placeholder="Description" ng-model="filter.description" required/>
                                 </div>
+                                <md-switch ng-model="filter.publicAccess" class="md-primary" aria-label="public access">
+                                    <span ng-if="filter.publicAccess">Public</span>
+                                    <span ng-if="! filter.publicAccess">Private</span>
+                                </md-switch>
                             </div>
                         </form>
                         <div layout="row" layout-xs="column">
