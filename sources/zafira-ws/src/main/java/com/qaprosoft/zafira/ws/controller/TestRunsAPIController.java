@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.dto.*;
 import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -48,12 +49,6 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.dto.BuildParameterType;
-import com.qaprosoft.zafira.models.dto.CommentType;
-import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
@@ -211,17 +206,13 @@ public class TestRunsAPIController extends AbstractController
 	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createQueuedTestRun(
-			@RequestParam("jobName") String jobName,
-			@RequestParam("branch") String branch,
-			@RequestParam("ciRunId") String ciRunId,
-			@RequestParam(value = "autoMilestones", defaultValue = "false") boolean autoMilestones) throws
+	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueuedTestRunDataType dataType) throws
 			ServiceException
 	{
 		TestRun testRun = new TestRun();
-		if(autoMilestones && jobsService.getJobByName(jobName) != null)
+		if(jobsService.getJobByName(dataType.getJobName()) != null)
 		{
-			testRun = testRunService.queueTestRun(jobName, branch, ciRunId);
+			testRun = testRunService.queueTestRun(dataType.getJobName(), dataType.getBranch(), dataType.getCiRunId());
 			TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
 
