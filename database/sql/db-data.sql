@@ -606,9 +606,9 @@ BEGIN
 	monthly_total_personal_pie_sql :=
 	'set schema ''zafira'';
   SELECT
-      unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-      unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-      unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+      unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+      unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+      unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
   FROM MONTHLY_VIEW
   WHERE
       PROJECT LIKE ANY (''{#{project}}'')
@@ -669,9 +669,9 @@ BEGIN
 	weekly_total_personal_pie_sql :=
 	'set schema ''zafira'';
     SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
         PROJECT LIKE ANY (''{#{project}}'')
@@ -686,9 +686,9 @@ BEGIN
 	nightly_total_personal_pie_sql :=
 	'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
         PROJECT LIKE ANY (''{#{project}}'')
@@ -732,7 +732,8 @@ BEGIN
         sum(SKIPPED) AS "SKIPPED",
         sum(IN_PROGRESS) AS "IN_PROGRESS",
         sum(ABORTED) AS "ABORTED",
-        STARTED::date AS "CREATED_AT"
+        sum(QUEUED) AS "QUEUED",
+STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND OWNER_ID = ''#{currentUserId}''
@@ -804,7 +805,7 @@ BEGIN
                  "dataset": "dataset",
                  "key": "ABORTED",
                  "label": "ABORTED",
-                 "color": "#f0ad4e",
+                 "color": "#AAAAAA",
                  "thickness": "10px",
                  "type": [
                      "line",
@@ -819,12 +820,27 @@ BEGIN
                  "key": "IN_PROGRESS",
                  "label": "IN_PROGRESS",
                  "color": "#3a87ad",
+                 "thickness": "10px",
                  "type": [
                      "line",
                      "dot",
                      "area"
                  ],
                  "id": "IN_PROGRESS"
+             },
+             {
+                 "axis": "y",
+                 "dataset": "dataset",
+                 "key": "QUEUED",
+                 "label": "QUEUED",
+                 "color": "#6C6C6C",
+                 "thickness": "10px",
+                 "type": [
+                     "line",
+                     "dot",
+                     "area"
+                 ],
+                 "id": "QUEUED"
              }
          ],
          "axes": {
@@ -1030,6 +1046,7 @@ BEGIN
         sum( SKIPPED ) AS "SKIPPED",
         sum( IN_PROGRESS ) AS "IN_PROGRESS",
         sum( ABORTED ) AS "ABORTED",
+        sum( QUEUED ) AS "QUEUED",
         sum( TOTAL ) AS "TOTAL"
     FROM TOTAL_VIEW
     WHERE OWNER_ID=''#{currentUserId}''
@@ -1119,8 +1136,21 @@ BEGIN
             "area"
           ],
           "id": "TOTAL"
+        },
+        {
+          "axis": "y",
+          "dataset": "dataset",
+          "key": "QUEUED",
+          "label": "QUEUED",
+          "color": "#6C6C6C",
+          "type": [
+              "line",
+              "dot",
+              "area"
+          ],
+          "id": "QUEUED"
         }
-      ],
+   ],
       "axes": {
         "x": {
           "key": "MONTH",
@@ -1163,6 +1193,7 @@ BEGIN
         sum(FAILED) AS "FAIL",
         sum(KNOWN_ISSUE) AS "ISSUE",
         sum(SKIPPED) AS "SKIP",
+        sum(QUEUED) AS "QUEUE",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
@@ -1173,6 +1204,7 @@ BEGIN
         sum(FAILED) AS "FAIL",
         sum(KNOWN_ISSUE) AS "ISSUE",
         sum(SKIPPED) AS "SKIP",
+        sum(QUEUED) AS "QUEUE",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
@@ -1186,6 +1218,7 @@ BEGIN
             "FAIL",
             "ISSUE",
             "SKIP",
+            "QUEUE",
             "PASS RATE"
         ]
     }';
@@ -1193,9 +1226,9 @@ BEGIN
 	total_tests_pie_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM TOTAL_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
@@ -1347,6 +1380,7 @@ BEGIN
         SUM(SKIPPED) AS "SKIPPED",
         SUM(IN_PROGRESS) AS "IN PROGRESS",
         SUM(ABORTED) AS "ABORTED",
+        SUM(QUEUED) AS "QUEUED",
         SUM(TOTAL) AS "TOTAL",
         date_trunc(''month'', TESTED_AT) AS "CREATED_AT"
     FROM TOTAL_VIEW
@@ -1426,6 +1460,19 @@ BEGIN
                 "id": "ABORTED"
             },
             {
+              "axis": "y",
+              "dataset": "dataset",
+              "key": "QUEUED",
+              "label": "QUEUED",
+              "color": "#6C6C6C",
+              "type": [
+                  "line",
+                  "dot",
+                  "area"
+              ],
+              "id": "QUEUED"
+            },
+            {
                 "axis": "y",
                 "dataset": "dataset",
                 "key": "TOTAL",
@@ -1486,9 +1533,9 @@ BEGIN
     monthly_total_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM MONTHLY_VIEW
     WHERE
         PROJECT LIKE ANY (''{#{project}}'')
@@ -1502,15 +1549,16 @@ BEGIN
     monthly_total_percent_sql :=
     'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
         unnest(
         array[round(100.0 * sum(PASSED)/sum(TOTAL), 2),
             round(100.0 * sum(FAILED)/sum(TOTAL), 2),
             round(100.0 * sum(SKIPPED)/sum(TOTAL), 2),
             round(100.0 * sum(KNOWN_ISSUE)/sum(TOTAL), 2),
-            round(100.0 * sum(ABORTED)/sum(TOTAL), 2)
-                   ]) AS "value"
+            round(100.0 * sum(ABORTED)/sum(TOTAL), 2),
+            round(100.0 * sum(QUEUED)/sum(TOTAL), 2)
+                       ]) AS "value"
     FROM MONTHLY_VIEW
     ORDER BY "value" DESC';
 
@@ -1528,6 +1576,7 @@ BEGIN
         sum(SKIPPED) AS "SKIPPED",
         sum(IN_PROGRESS) AS "IN_PROGRESS",
         sum(ABORTED) AS "ABORTED",
+        sum(QUEUED) AS "QUEUED",
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
@@ -1586,7 +1635,7 @@ BEGIN
           "key": "SKIPPED",
           "label": "SKIPPED",
           "color": "#f0ad4e",
-        "thickness": "10px",
+          "thickness": "10px",
           "type": [
             "line",
             "dot",
@@ -1599,14 +1648,28 @@ BEGIN
           "dataset": "dataset",
           "key": "ABORTED",
           "label": "ABORTED",
-          "color": "#f0ad4e",
-        "thickness": "10px",
+          "color": "#AAAAAA",
+          "thickness": "10px",
           "type": [
             "line",
             "dot",
             "area"
           ],
           "id": "ABORTED"
+        },
+        {
+          "axis": "y",
+          "dataset": "dataset",
+          "key": "QUEUED",
+          "label": "QUEUED",
+          "color": "#6C6C6C",
+          "thickness": "10px",
+          "type": [
+              "line",
+              "dot",
+              "area"
+          ],
+          "id": "QUEUED"
         },
         {
           "axis": "y",
@@ -1668,12 +1731,14 @@ BEGIN
         sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
         sum( SKIPPED) AS "SKIPPED",
         sum( ABORTED ) AS "ABORTED",
+        sum(QUEUED) AS "QUEUED",
         sum(TOTAL) AS "TOTAL",
         round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED (%)",
         round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED (%)",
         round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
+        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)",
+        round (100.0 * sum( QUEUED ) / sum(TOTAL), 0)::integer AS "QUEUED (%)"
     FROM MONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
@@ -1689,12 +1754,14 @@ BEGIN
         "KNOWN ISSUE",
         "SKIPPED",
         "ABORTED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
         "SKIPPED (%)",
-        "ABORTED (%)"
+        "ABORTED (%)",
+        "QUEUED (%)"
       ]
     }';
 
@@ -1707,11 +1774,13 @@ BEGIN
         SUM(FAILED) AS "FAILED",
         SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
         SUM(SKIPPED) AS "SKIPPED",
+        SUM(QUEUED) AS "QUEUED",
         SUM(TOTAL) AS "TOTAL",
         round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
         round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
         round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+        round (100.0 * sum( QUEUED ) / sum(TOTAL), 0)::integer AS "QUEUED (%)",
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM MONTHLY_VIEW
     WHERE
@@ -1728,11 +1797,13 @@ BEGIN
         "FAILED",
         "KNOWN ISSUE",
         "SKIPPED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
-        "SKIPPED (%)"
+        "SKIPPED (%)",
+        "QUEUED (%)"
       ]
     }';
 
@@ -1769,9 +1840,9 @@ BEGIN
 	weekly_total_sql :=
 	'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
         PROJECT LIKE ANY (''{#{project}}'')
@@ -1785,14 +1856,15 @@ BEGIN
     weekly_total_percent_sql :=
 	'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
         unnest(
          array[round(100.0 * sum(PASSED)/sum(TOTAL), 2),
              round(100.0 * sum(FAILED)/sum(TOTAL), 2),
              round(100.0 * sum(SKIPPED)/sum(TOTAL), 2),
              round(100.0 * sum(KNOWN_ISSUE)/sum(TOTAL), 2),
-             round(100.0 * sum(ABORTED)/sum(TOTAL), 2)
+             round(100.0 * sum(ABORTED)/sum(TOTAL), 2),
+             round(100.0 * sum(QUEUED)/sum(TOTAL), 2)
                     ]) AS "value"
     FROM WEEKLY_VIEW
     ORDER BY "value" DESC';
@@ -1811,6 +1883,7 @@ BEGIN
         sum(SKIPPED) AS "SKIPPED",
         sum(IN_PROGRESS) AS "IN_PROGRESS",
         sum(ABORTED) AS "ABORTED",
+        sum(QUEUED) AS "QUEUED",
         STARTED::date AS "CREATED_AT"
     FROM MONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
@@ -1882,7 +1955,7 @@ BEGIN
           "dataset": "dataset",
           "key": "ABORTED",
           "label": "ABORTED",
-          "color": "#f0ad4e",
+          "color": "#AAAAAA",
         "thickness": "10px",
           "type": [
             "line",
@@ -1903,6 +1976,19 @@ BEGIN
             "area"
           ],
           "id": "IN_PROGRESS"
+        },
+        {
+          "axis": "y",
+          "dataset": "dataset",
+          "key": "QUEUED",
+          "label": "QUEUED",
+          "color": "#6C6C6C",
+          "type": [
+              "line",
+              "dot",
+              "area"
+          ],
+          "id": "QUEUED"
         }
       ],
       "axes": {
@@ -1928,12 +2014,14 @@ BEGIN
         sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
         sum( SKIPPED) AS "SKIPPED",
         sum( ABORTED ) AS "ABORTED",
+        sum( QUEUED ) AS "QUEUED",
         sum(TOTAL) AS "TOTAL",
         round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED (%)",
         round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED (%)",
         round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
+        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)",
+        round (100.0 * sum( QUEUED ) / sum(TOTAL), 0)::integer AS "QUEUED (%)"
     FROM WEEKLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
@@ -1949,12 +2037,14 @@ BEGIN
         "KNOWN ISSUE",
         "SKIPPED",
         "ABORTED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
         "SKIPPED (%)",
-        "ABORTED (%)"
+        "ABORTED (%)",
+        "QUEUED (%)"
       ]
     }';
 
@@ -1967,11 +2057,13 @@ BEGIN
         SUM(FAILED) AS "FAILED",
         SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
         SUM(SKIPPED) AS "SKIPPED",
+        sum( QUEUED ) AS "QUEUED",
         SUM(TOTAL) AS "TOTAL",
         round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
         round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
         round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+        round (100.0 * sum( QUEUED ) / sum(TOTAL), 0)::integer AS "QUEUED (%)",
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
    FROM WEEKLY_VIEW
    WHERE
@@ -1988,11 +2080,13 @@ BEGIN
         "FAILED",
         "KNOWN ISSUE",
         "SKIPPED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
-        "SKIPPED (%)"
+        "SKIPPED (%)",
+        "QUEUED (%)"
       ]
     }';
 
@@ -2029,9 +2123,9 @@ BEGIN
 	nightly_total_sql :=
 	'set schema ''zafira'';
     SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
+       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
         PROJECT LIKE ANY (''{#{project}}'')
@@ -2045,14 +2139,15 @@ BEGIN
 	nightly_total_percent_sql :=
 	'set schema ''zafira'';
     SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'']) AS "label",
-       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
+       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
+       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
        unnest(
         array[round(100.0 * sum(PASSED)/sum(TOTAL), 2),
             round(100.0 * sum(FAILED)/sum(TOTAL), 2),
             round(100.0 * sum(SKIPPED)/sum(TOTAL), 2),
             round(100.0 * sum(KNOWN_ISSUE)/sum(TOTAL), 2),
-            round(100.0 * sum(ABORTED)/sum(TOTAL), 2)
+            round(100.0 * sum(ABORTED)/sum(TOTAL), 2),
+            round(100.0 * sum(QUEUED)/sum(TOTAL), 2)
                    ]) AS "value"
     FROM NIGHTLY_VIEW
 	  WHERE
@@ -2078,12 +2173,14 @@ BEGIN
         sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
         sum( SKIPPED) AS "SKIPPED",
         sum( ABORTED ) AS "ABORTED",
+        sum( QUEUED ) AS "QUEUED",
         sum(TOTAL) AS "TOTAL",
         round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED (%)",
         round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED (%)",
         round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
+        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)",
+        round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED (%)"
     FROM NIGHTLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
@@ -2099,12 +2196,14 @@ BEGIN
         "KNOWN ISSUE",
         "SKIPPED",
         "ABORTED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
         "SKIPPED (%)",
-        "ABORTED (%)"
+        "ABORTED (%)",
+        "QUEUED (%)"
       ]
     }';
 
@@ -2117,11 +2216,13 @@ BEGIN
         SUM(FAILED) AS "FAILED",
         SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
         SUM(SKIPPED) AS "SKIPPED",
+        sum( QUEUED ) AS "QUEUED",
         SUM(TOTAL) AS "TOTAL",
         round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
         round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
         round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
         round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
+        round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED (%)",
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM NIGHTLY_VIEW
     WHERE
@@ -2138,11 +2239,13 @@ BEGIN
         "FAILED",
         "KNOWN ISSUE",
         "SKIPPED",
+        "QUEUED",
         "TOTAL",
         "PASSED (%)",
         "FAILED (%)",
         "KNOWN ISSUE (%)",
-        "SKIPPED (%)"
+        "SKIPPED (%)",
+        "QUEUED (%)"
       ]
     }';
 
