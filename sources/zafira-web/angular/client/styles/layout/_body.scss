@@ -639,6 +639,15 @@ input[type="file"].content-input.not-empty{
     z-index: -1;
 }
 
+md-input-container label{
+  padding-left: 16px !important;
+  font-weight: normal;
+}
+input{
+  height: 36px !important;
+  padding: 0 12px !important;
+  border: 1px solid $custom-gray !important;
+}
 .page-profile .container {
     padding: 0;
     margin: 0;
