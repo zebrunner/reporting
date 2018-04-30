@@ -116,7 +116,7 @@ tr.result:hover .expand-button {
     display: none;
 }
 
-.show-on-hover:hover .show-icon-on-hover {
+md-chip:hover .show-icon-on-hover {
     display: inline-block;
 }
 
@@ -645,7 +645,7 @@ md-input-container label{
 }
 input{
   height: 36px !important;
-  padding-left: 12px;
+  padding: 0 12px !important;
   border: 1px solid $custom-gray !important;
 }
 .page-profile .container {
@@ -1181,10 +1181,10 @@ div.manage-chip {
         color: rgba(0,0,0,0.87);
     }
 }
-//
-// .chip-operator {
-//     color: #009688 !important;
-// }
+
+.chip-operator {
+    color: #009688 !important;
+}
 
 .manage-filter-button {
     float: right;
@@ -1337,6 +1337,10 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
     }
 }
 
+div[aria-selected='true'] span.ng-binding {
+    color: white;
+}
+
 .btn-check {
     position: absolute;
     right: 13px;
@@ -1447,7 +1451,7 @@ button#add-button{
   top: 0;
   left: 0;
   display: block;
-    z-index: 10000;
+  z-index: 2;
   background: rgba(210, 210, 210, 0.2);
 }
 
