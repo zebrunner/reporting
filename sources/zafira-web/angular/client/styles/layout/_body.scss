@@ -639,15 +639,6 @@ input[type="file"].content-input.not-empty{
     z-index: -1;
 }
 
-md-input-container label{
-  padding-left: 16px !important;
-  font-weight: normal;
-}
-input{
-  height: 36px !important;
-  padding-left: 12px;
-  border: 1px solid $custom-gray !important;
-}
 .page-profile .container {
     padding: 0;
     margin: 0;
@@ -1210,30 +1201,9 @@ md-chip md-chip-template.bg-primary {
     width: 100%;
 }
 
-#search-filter-body .md-button, .fixed-search-column .md-button {
+.fixed-search-column .md-button {
     font-size: 13px;
     height: 32px;
-}
-
-.form-control {
-    height: 36px;
-    border-color: $custom-gray !important;
-}
-
-md-select {
-    height: 36px;
-    border: 1px solid $custom-gray;
-    border-radius: 2px;
-    padding: 0 0 0 12px !important;
-}
-
-md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not([disabled]):focus .md-select-value, .md-select-value {
-    border-bottom-color: $input-border;
-    border-bottom: 1px;
-    border-radius: 2px;
-    font-family: Roboto;
-    font-size: 14.5px;
-    color: $coal;
 }
 
 .search-filter-body{
@@ -1241,7 +1211,11 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
 
     & md-card, & form{
     width: 100%;
-  }
+    }
+    & md-card{
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
     & .panel-body{
       padding: 16px;
       width: inherit;
@@ -1251,6 +1225,29 @@ md-select.md-default-theme:not([disabled]):focus .md-select-value, md-select:not
         vertical-align: middle;
         margin: 0;
       }
+    }
+
+    & .form-control {
+        height: 36px;
+        border-color: $custom-gray !important;
+    }
+
+    & md-select {
+        height: 36px;
+        border: 1px solid $custom-gray;
+        border-radius: 2px;
+        padding: 0 0 0 12px !important;
+    }
+
+    & md-select.md-default-theme:not([disabled]):focus .md-select-value,
+    & md-select:not([disabled]):focus .md-select-value,
+    & .md-select-value {
+        border-bottom-color: $input-border;
+        border-bottom: 1px;
+        border-radius: 2px;
+        font-family: Roboto;
+        font-size: 14.5px;
+        color: $coal;
     }
 }
 
