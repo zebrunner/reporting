@@ -124,6 +124,7 @@
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.BLOCKER = TRUE) AS TEST_RUN_FAILED_AS_BLOCKER,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'IN_PROGRESS') AS TEST_RUN_IN_PROGRESS,
+				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'ABORTED') AS TEST_RUN_ABORTED,
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'QUEUED') AS TEST_RUN_QUEUED,
 				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
 				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
@@ -668,6 +669,7 @@
 		<result column="TEST_RUN_SKIPPED" property="skipped" />
 		<result column="TEST_RUN_IN_PROGRESS" property="inProgress" />
 		<result column="TEST_RUN_QUEUED" property="queued" />
+		<result column="TEST_RUN_ABORTED" property="aborted" />
 		<result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_RUN_CREATED_AT" property="createdAt" />
 

@@ -372,6 +372,26 @@ button.red {
 	color: #00BCD4;
 }
 
+.label-aborted-border {
+    border: 1px solid #AAAAAA;
+}
+
+.label-aborted-empty {
+    color: #AAAAAA;
+}
+
+.label-aborted-bg {
+    background-color: #AAAAAA;
+}
+
+.label-default-border {
+    border: 1px solid #6C6C6C;
+}
+
+.label-default-empty {
+    color: #6C6C6C;
+}
+
 span.light_text, div.light_text {
 	color: #aaa !important;
 }

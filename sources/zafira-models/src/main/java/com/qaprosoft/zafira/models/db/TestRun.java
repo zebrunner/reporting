@@ -73,6 +73,7 @@ public class TestRun extends AbstractEntity
 	private Integer failedAsBlocker;
 	private Integer skipped;
 	private Integer inProgress;
+	private Integer aborted;
 	private Integer queued;
 	private boolean reviewed;
 
@@ -278,6 +279,16 @@ public class TestRun extends AbstractEntity
 
 	public void setInProgress(Integer inProgress) {
 		this.inProgress = inProgress;
+	}
+
+	public Integer getAborted()
+	{
+		return aborted;
+	}
+
+	public void setAborted(Integer aborted)
+	{
+		this.aborted = aborted;
 	}
 
 	public Integer getQueued()

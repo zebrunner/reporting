@@ -613,6 +613,7 @@ public class TestRunService
 				case IN_PROGRESS:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
+					testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
 					break;
 				case PASSED:
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
@@ -629,10 +630,6 @@ public class TestRunService
 				case ABORTED:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
-			    case QUEUED:
-			    	testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
-			    	break;
-
 			default:
 					break;
 			}
