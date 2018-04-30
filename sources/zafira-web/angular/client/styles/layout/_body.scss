@@ -455,7 +455,7 @@ section.zaf-dark .article-title {
 section.zaf-light .section-header,
 section.zaf-light .article-title {
     color: $brand-primary;
-    margin: 8px 0;
+    margin: 10px 0;
 }
 
 /*Element backgrounds*/
@@ -1283,6 +1283,10 @@ md-chip md-chip-template.bg-primary {
     .filter-text {
         vertical-align: top;
         padding-bottom: 16px;
+        md-switch {
+            padding-left: 9px;
+            margin: 0;
+        }
     }
 
     & .value-input {

@@ -39,6 +39,7 @@
 
         $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'UNKNOWN'];
 
+        $scope.searchFormIsEmpty = true;
 
         /*
             Filters
@@ -140,6 +141,12 @@
             showTemplate: false,
             onePanel: true
         };
+
+        $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
+            'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && value.length > 0;});
+            $scope.searchFormIsEmpty = notEmptyValues.length == 0;
+        });
 
         function onSelect(dates) {
             return $scope.selectedFilterRange.selectedTemplateName;
