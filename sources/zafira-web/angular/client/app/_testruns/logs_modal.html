@@ -14,6 +14,9 @@
                 <md-input-container flex>
                 		<div ng-repeat="log in logs track by $index"><small data-ng-class="{'text-warning': 'WARN' == log.level, 'text-danger': 'ERROR' == log.level}"><b>{{log.timestamp | date : 'hh:mm:ss'}}</b> [{{log.level}}] {{log.message}}</small></div>
                 </md-input-container>
+                <div ng-if="loading" style="display: flex; align-items: center;" layout="row" layout-sm="column" layout-align="space-around">
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
             </div>
         </md-dialog-content>
     </form>

@@ -1,31 +1,37 @@
 package com.qaprosoft.zafira.tests.gui;
 
-import com.qaprosoft.zafira.tests.util.Config;
-import com.qaprosoft.zafira.tests.util.webdriver.SearchElementLocatorFactory;
-import com.qaprosoft.zafira.tests.util.webdriver.UIElementDecorator;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.qaprosoft.zafira.tests.util.Config;
+import com.qaprosoft.zafira.tests.util.webdriver.SearchElementLocatorFactory;
+import com.qaprosoft.zafira.tests.util.webdriver.UIElementDecorator;
+
 public abstract class AbstractUIObject
 {
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
-	protected static final Long IMPLICITLY_TIMEOUT = 20L;
+	protected static final Long IMPLICITLY_TIMEOUT = 30L;
 	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
 	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 

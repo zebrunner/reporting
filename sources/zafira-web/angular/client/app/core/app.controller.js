@@ -71,6 +71,7 @@
                             if($rootScope.currentUser.personalDashboardId === null) {
                                 alertify.error("'Personal' dashboard is unavailable!");
                             }
+                            $rootScope.currentUser.stabilityDashboardId = rs.data["stabilityDashboardId"];
                             resolve(rs.data['defaultDashboardId']);
                         } else {
                             reject(rs);

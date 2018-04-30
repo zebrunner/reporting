@@ -18,14 +18,6 @@
                 </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
-                    <md-tooltip md-direction="top">Compare</md-tooltip>
-                    <span class="fa fa-columns" aria-hidden="true"></span>
-                </md-button>
-                <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
-                    <md-tooltip md-direction="top">Rerun</md-tooltip>
-                    <span class="fa fa-undo" aria-hidden="true"></span>
-                </md-button>
                 <md-button id="deleteTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm"  data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" has-any-permission="['MODIFY_TEST_RUNS']">
                     <md-tooltip md-direction="top">Delete</md-tooltip>
                     <span class="fa fa-trash" aria-hidden="true"></span>
@@ -33,6 +25,14 @@
                 <md-button id="abortTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
                     <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
                     <span class="fa fa-ban" aria-hidden="true"></span>
+                </md-button>
+                <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
+                    <md-tooltip md-direction="top">Rerun</md-tooltip>
+                    <span class="fa fa-undo" aria-hidden="true"></span>
+                </md-button>
+                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
+                    <md-tooltip md-direction="top">Compare</md-tooltip>
+                    <span class="fa fa-columns" aria-hidden="true"></span>
                 </md-button>
                 <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="batchEmail($event)" data-ng-if="tools['EMAIL']">
                     <md-tooltip md-direction="top">Send as email</md-tooltip>
@@ -279,12 +279,15 @@
                                                                     <md-icon class="material-icons">attachment</md-icon>
                                                                 </md-button>
                                                                 <md-menu-content>
-                                                                    <md-menu-item data-ng-repeat="artifact in test.artifacts">
-                                                                        <md-button name="artifact" href="{{artifact.link}}" class="artifact-button" target="blank">{{artifact.name}}</md-button>
+                                                                   <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' }">
+                                                                   		<md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                    </md-menu-item>
-                                                                    <md-menu-item data-ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
-				                                                        <md-button name="testLiveLogs" data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
-				                                                    </md-menu-item>
+                                                                   <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
+                                                                   		<md-button class="artifact-button" data-ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
+                                                                   </md-menu-item>
+                                                                   <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
+				                                                    		<md-button name="testLiveLogs" data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
+				                                                   </md-menu-item>
                                                                 </md-menu-content>
                                                             </md-menu>
                                                             </div>
