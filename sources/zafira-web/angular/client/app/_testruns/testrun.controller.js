@@ -81,26 +81,28 @@
         $scope.currentValue = angular.copy(CURRENT_VALUE);
 
         function getMode() {
-            var mode = 'NONE';
+            var mode = [];
             $scope.search_filter;
             if($scope.filterBlockExpand && $scope.collapseFilter) {
                 if($scope.filter.id) {
-                    mode = 'UPDATE';
+                    mode.push('UPDATE');
                 } else {
-                    mode = 'CREATE';
+                    mode.push('CREATE');
                 }
             }
-            if($scope.selectedFilterId) {
-                mode = 'APPLY';
+            if ($scope.selectedFilterId) {
+                mode.push('APPLY');
             }
-            if(! $scope.searchFormIsEmpty) {
-                mode = 'SEARCH';
+            if (!$scope.searchFormIsEmpty) {
+                mode.push('SEARCH');
             }
             return mode;
         };
 
         $scope.matchMode = function(modes) {
-            return modes.indexOf(getMode()) >= 0;
+            return getMode().filter(function (m) {
+                return modes.indexOf(m) >= 0;
+            }).length > 0;
         };
 
         $scope.DATE_CRITERIAS = ['DATE'];
@@ -237,6 +239,7 @@
                     alertify.success('Filter was created');
                     $scope.filters.push(rs.data);
                     $scope.clearFilter();
+                    $scope.collapseFilter = false;
                 } else {
                     alertify.error(rs.message);
                 }
@@ -248,6 +251,7 @@
                 if (rs.success) {
                     alertify.success('Filter was updated');
                     $scope.filters[$scope.filters.indexOfField('id', rs.data.id)] = rs.data;
+                    $scope.clearAndOpenFilterBlock(false);
                 } else {
                     alertify.error(rs.message);
                 }

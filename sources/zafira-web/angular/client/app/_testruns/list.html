@@ -36,16 +36,16 @@
             <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
-            <button id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>CREATE</b>
-            </button>
             <button id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
                 <b>APPLY</b>
+            </button>
+            <button ng-if="matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
+                <b>CREATE</b>
             </button>
             <button ng-if="matchMode(['UPDATE'])" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
                 <b>SAVE</b>
             </button>
-            <button ng-if="matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearFilter();">
+            <button ng-if="matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearAndOpenFilterBlock(false);">
                 <b>CANCEL</b>
             </button>
             <button ng-if="matchMode(['UPDATE'])" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="deleteFilter(filter.id);">
@@ -74,7 +74,7 @@
                             </div>
                             <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
                                 <input disabled>
-                                <md-chip-template class="show-on-hover">
+                                <md-chip-template>
                                     <div style="display: inline-block;" ng-click="searchByFilter($chip, $mdChipsCtrl); $mdChipsCtrl.selectedChip = $index">
                                         <span>{{$chip.name}}</span>
                                     </div>
@@ -87,6 +87,7 @@
                     </div>
                 </div>
                 <div id="filter-editor" ng-show="collapseFilter && filterBlockExpand">
+                    <div ng-class="{'disable-layer': selectedFilterId}"></div>
                     <div class="panel-body">
                         <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
                             <div class="filter-text" layout="row" layout-xs="column">
@@ -176,7 +177,7 @@
                                     <input type="text" id="search-input" class="form-control pull-left" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">
                                     <div class="btn-check" layout-xs="row">
                                         <button type="button" ng-class="{'default-gray': fastSearch['testSuite'] && fastSearch['testSuite'].length != 0, 'active': fastSearch.currentModel == 'testSuite'}" ng-click="fastSearch.currentModel = 'testSuite'" class="btn btn-default">Test Suite</button>
-                                        <button type="button" ng-class="{'default-gray': fastSearch['jobURL'] && fastSearch['jobURL'].length != 0, 'active': fastSearch.currentModel == 'jobURL'}" ng-click="fastSearch.currentModel = 'jobURL'" class="btn btn-default">Job URL</button>
+                                        <button type="button" ng-class="{'default-gray': fastSearch['executionURL'] && fastSearch['executionURL'].length != 0, 'active': fastSearch.currentModel == 'executionURL'}" ng-click="fastSearch.currentModel = 'executionURL'" class="btn btn-default">Job URL</button>
                                         <button type="button" ng-class="{'default-gray': fastSearch['appVersion'] && fastSearch['appVersion'].length != 0, 'active': fastSearch.currentModel == 'appVersion'}" ng-click="fastSearch.currentModel = 'appVersion'" class="btn btn-default"> App Version</button>
                                     </div>
                                 </div>
