@@ -144,7 +144,7 @@
 
         $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
             'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
-            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && value.length > 0;});
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0 || value.$$hashKey);});
             $scope.searchFormIsEmpty = notEmptyValues.length == 0;
         });
 
