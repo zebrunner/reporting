@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -416,27 +416,39 @@
             }
         };
 
-        var refreshPromise;
-        var isRefreshing = false;
-        function startRefreshing(){
-            if(isRefreshing) return;
-            isRefreshing = true;
-            (function refreshEvery(){
-                if ($location.$$url.indexOf("dashboards") > -1){
-                    if ($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0){
-                        loadDashboardData($scope.dashboard, true);
-                        refreshPromise = $timeout(refreshEvery, $rootScope.currentUser.refreshInterval)
-                    }
-                }
-         }());
+
+        var refreshIntervalInterval;
+
+        function refresh() {
+            if($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0) {
+                refreshIntervalInterval = $interval(function () {
+                    loadDashboardData($scope.dashboard, true);
+                }, $rootScope.currentUser.refreshInterval);
+            }
         };
 
+        $scope.stopRefreshIntervalInterval = function() {
+            if (angular.isDefined(refreshIntervalInterval)) {
+                $interval.cancel(refreshIntervalInterval);
+                refreshIntervalInterval = undefined;
+            }
+        };
+
+        $scope.$on('$destroy', function() {
+            $scope.stopRefreshIntervalInterval();
+        });
+
         function getDashboardById (dashboardId) {
-            DashboardService.GetDashboardById(dashboardId).then(function (rs) {
-                if (rs.success) {
-                    $scope.dashboard = rs.data;
-                    $scope.getDataWithAttributes($scope.dashboard, false);
-                }
+            return $q(function (resolve, reject) {
+                DashboardService.GetDashboardById(dashboardId).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboard = rs.data;
+                        $scope.getDataWithAttributes($scope.dashboard, false);
+                        resolve(rs.data);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
@@ -466,7 +478,6 @@
 
         var defaultDashboardWatcher = $scope.$watch('currentUser.defaultDashboard', function (newVal) {
             if(newVal) {
-                startRefreshing();
                 if ($rootScope.currentUser.isAdmin)
                     DashboardService.GetWidgets().then(function (rs) {
                         if (rs.success) {
@@ -485,7 +496,10 @@
             if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
-            getDashboardById($stateParams.id);
+            getDashboardById($stateParams.id).then(function (rs) {
+                refresh();
+            }, function () {
+            });
         })();
     }
 
