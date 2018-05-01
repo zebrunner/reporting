@@ -1,7 +1,9 @@
-package com.qaprosoft.zafira.services.services.jmx;
+package com.qaprosoft.zafira.services.services.jmx.ldap;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
