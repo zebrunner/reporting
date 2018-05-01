@@ -134,6 +134,6 @@ public class LDAPService implements IJMXService {
     @ManagedAttribute(description="Get ldap authentication provider")
     @Bean
     public LdapAuthenticationProvider getLdapAuthenticationProvider() {
-        return ldapAuthenticationProvider;
+        return this.ldapAuthenticationProvider;
     }
 }

@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -34,7 +35,7 @@ import java.util.Collection;
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 {
 	private Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
-	
+
 	private static final String ANONYMOUS = "ananymous";
 	
 	@Autowired
@@ -49,7 +50,26 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 			user = userService.getUserByUsername(username);
 			if(user == null)
 			{
-				user = userService.getUserByUsername(ANONYMOUS);
+				String email = operations.getStringAttribute("mail");
+				String cn = operations.getStringAttribute("cn");
+				String sn = operations.getStringAttribute("sn");
+				String password = new String((byte[]) operations.getObjectAttribute("userpassword"));
+				if(!StringUtils.isEmpty(email) && ! StringUtils.isEmpty(cn) && ! StringUtils.isEmpty(sn) && ! StringUtils.isEmpty(password))
+				{
+					String[] cna = cn.split(" ");
+					String firstName = cna.length == 2 ? cna[0] : cn;
+					String lastName = cna.length == 2 ? cna[1] : sn;
+					user = new User();
+					user.setUsername(username);
+					user.setEmail(email);
+					user.setFirstName(firstName);
+					user.setLastName(lastName);
+					user.setPassword(password);
+					user = userService.createOrUpdateUser(user);
+				} else
+				{
+					userService.getUserByUsername(ANONYMOUS);
+				}
 			}
 		} catch (ServiceException e)
 		{
