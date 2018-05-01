@@ -15,17 +15,10 @@
 	
 	<security:authentication-manager alias="authenticationManager">
 
-		<!--<security:ldap-authentication-provider server-ref="getLdapContextSource"/>-->
-
 		<security:authentication-provider user-service-ref="userAuthService">
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
 
-		<!--<security:ldap-authentication-provider  server-ref="getLdapContextSource">
-			<security:password-compare>
-				<security:password-encoder ref="passwordEncoder"/>
-			</security:password-compare>
-		</security:ldap-authentication-provider>-->
 		<security:authentication-provider ref="getLdapAuthenticationProvider" />
 		
 		<!-- Comment out to use LDAP (make sure LDAP configuration specified in maven profile) -->
@@ -83,27 +76,5 @@
 		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
 
 	</security:http>
-	
-	<!-- ####################### LDAP configuration ####################### -->
-	<!--<security:ldap-server id="contextSource" url="${zafira.ldap.protocol}://${zafira.ldap.server}:${zafira.ldap.port}/"  manager-dn="${zafira.ldap.manager.user}" manager-password="${zafira.ldap.manager.password}"/>-->
-
-	<!--<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
-		<constructor-arg ref="bindAuthenticator" />
-		<property name="userDetailsContextMapper" ref="customUserDetailsContextMapper" />
-	</bean>
-
-	<bean id="customUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper" />
-
-	<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
-		<constructor-arg ref="contextSource" />
-		<property name="userSearch" ref="userSearch" />
-	</bean>
-
-	<bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-		<constructor-arg index="0" value="${zafira.ldap.dn}" />
-		<constructor-arg index="1" value="(${zafira.ldap.search_filter}={0})" />
-		<constructor-arg index="2" ref="contextSource" />
-		<property name="searchSubtree" value="true" />
-	</bean>-->
 
 </beans>
