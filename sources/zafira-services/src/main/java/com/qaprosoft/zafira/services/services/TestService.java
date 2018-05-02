@@ -128,6 +128,7 @@ public class TestService
 		test.setStatus(Status.QUEUED);
 		test.setStartTime(null);
 		test.setTestConfig(null);
+		test.setNeedRerun(false);
 		testMapper.createTest(test);
 	}
 
