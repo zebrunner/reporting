@@ -158,7 +158,7 @@
                                             <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{testRun.skipped}}</span>
                                             <span title="In Progress" data-ng-if="testRun.inProgress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.inProgress ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span>
                                             <span title="Aborted" data-ng-if="testRun.aborted" class="label arrowed arrowed-in-right label-aborted-border" data-ng-class="testRun.aborted ? 'label-aborted-bg' : 'label-aborted-empty'">{{testRun.aborted}}</span>
-                                            <span title="Queued" data-ng-if="testRun.queued" class="label arrowed arrowed-in-right label-default-border" data-ng-class="testRun.queued ? 'label-default' : 'label-default-empty'">{{testRun.queued}}</span>
+                                            <span title="Queued" data-ng-if="testRun.queued" class="label arrowed arrowed-in-right label-default-empty label-default-border" >{{testRun.queued}}</span>
                                         </td>
                                         <td name="testRunStarted" md-cell class="startedat-column">
                                             <div class="time">
@@ -252,14 +252,14 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                		<tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index" ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED'}">
+                                                		<tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"  ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}">
                                                         <td>
-                                                        	<b name="testName">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
+                                                        	<b name="testName" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'black_font'">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                         	<div>
-                                                                <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" class="light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
-                                                                <span name="testOwner" data-ng-if="test.owner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
-                                                                <span name="secondaryOwner" data-ng-if="test.secondaryOwner" class="light_text"></i> <i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
-                                                                <span name="device" data-ng-if="test.testConfig.device" class="light_text"></i> <i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                                <span name="testOwner" data-ng-if="test.owner" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                <span name="secondaryOwner" data-ng-if="test.secondaryOwner" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                                <span name="device" data-ng-if="test.testConfig.device" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                             </div>
                                                         	<div class="result_error {{test.status}} {{main.theme}}" data-ng-if="test.message && (test.status == 'FAILED' || test.status == 'SKIPPED')">
                                                                 <div class="white-space-pre-line"><show-more name="errorMsg" element-id="test.id" text="test.message" limit="100" ></show-more></div>
@@ -275,30 +275,33 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <div data-ng-if="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')" class="pull-right">
-                                                            <md-menu>
-                                                                <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
-                                                                    <md-icon class="material-icons">attachment</md-icon>
-                                                                </md-button>
-                                                                <md-menu-content>
-                                                                   <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' }">
-                                                                   		<md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
-                                                                   </md-menu-item>
-                                                                   <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
-                                                                   		<md-button class="artifact-button" data-ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
-                                                                   </md-menu-item>
-                                                                   <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
-				                                                    		<md-button name="testLiveLogs" data-ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
-				                                                   </md-menu-item>
-                                                                </md-menu-content>
-                                                            </md-menu>
+                                                            <div class="align-middle align-right">
+                                                                <div data-ng-if="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')">
+                                                                    <md-menu>
+                                                                        <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
+                                                                            <md-icon class="material-icons">attachment</md-icon>
+                                                                        </md-button>
+                                                                        <md-menu-content>
+                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' }">
+                                                                                <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
+                                                                            </md-menu-item>
+                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
+                                                                                <md-button class="artifact-button" ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
+                                                                            </md-menu-item>
+                                                                            <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
+                                                                                <md-button name="testLiveLogs" ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
+                                                                            </md-menu-item>
+                                                                        </md-menu-content>
+                                                                    </md-menu>
+                                                                </div>
+                                                                <div>
+                                                                    <md-button name="testDetails" aria-label="Test details" class="md-icon-button" ng-click="showDetailsDialog(test, $event);">
+                                                                        <md-icon data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'" class="material-icons">forum</md-icon>
+                                                                    </md-button>
+                                                                </div>
+
                                                             </div>
-                                                            <div class="pull-right">
-                                                                <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" data-ng-click="showDetailsDialog(test, $event);">
-                                                                    <md-icon class="material-icons">forum</md-icon>
-                                                                </md-button>
-                                                            </div>
-                                                        </td>
+                                                           </td>
                                                     </tr>
                                                     <tr name="testLoading" md-row >
 	                                                    <td md-cell colspan="4" class="text-center" data-ng-show="!testRun.tests" >

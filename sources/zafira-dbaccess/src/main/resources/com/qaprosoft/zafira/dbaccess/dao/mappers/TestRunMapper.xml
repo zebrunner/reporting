@@ -536,7 +536,10 @@
 			USING
 				(JOB_ID, STARTED_AT)
 			WHERE
-				TR.SCM_BRANCH = #{branch} AND TR.JOB_ID = #{jobId}
+				TR.STATUS <> 'IN_PROGRESS' AND
+				TR.STATUS <> 'ABORTED' AND
+				TR.SCM_BRANCH = #{branch} AND
+				TR.JOB_ID = #{jobId}
 		]]>
 	</select>
 

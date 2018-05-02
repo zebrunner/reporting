@@ -200,11 +200,12 @@ public class TestRunService
 	{
 		TestRun testRun = getLatestJobTestRunByBranchAndJobName(branch, jobName);
 		if(testRun != null) {
-			Long testRunId = testRun.getId();
+			Long latestTestRunId = testRun.getId();
 			testRun.setCiRunId(ciRunId);
 			testRun.setStatus(Status.QUEUED);
+			testRun.setStartedAt(null);
 			createTestRun(testRun);
-			List<Test> tests = testService.getTestsByTestRunId(testRunId);
+			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(ciRunId);
 			for (Test test : tests)
 			{
@@ -613,7 +614,7 @@ public class TestRunService
 				case IN_PROGRESS:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
-					testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
+					testRunStatistics.setQueued(testRunStatistics.getQueued() - increment);
 					break;
 				case PASSED:
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);

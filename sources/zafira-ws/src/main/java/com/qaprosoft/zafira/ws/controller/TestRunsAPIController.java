@@ -206,13 +206,13 @@ public class TestRunsAPIController extends AbstractController
 	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueuedTestRunDataType dataType) throws
+	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueuedTestRunType queuedTestRun) throws
 			ServiceException
 	{
 		TestRun testRun = new TestRun();
-		if(jobsService.getJobByName(dataType.getJobName()) != null)
+		if(jobsService.getJobByName(queuedTestRun.getJobName()) != null)
 		{
-			testRun = testRunService.queueTestRun(dataType.getJobName(), dataType.getBranch(), dataType.getCiRunId());
+			testRun = testRunService.queueTestRun(queuedTestRun.getJobName(), queuedTestRun.getBranch(), queuedTestRun.getCiRunId());
 			TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
 

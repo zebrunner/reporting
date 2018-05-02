@@ -2,8 +2,10 @@ package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.io.Serializable;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QueuedTestRunDataType extends AbstractType
+public class QueuedTestRunType implements Serializable
 {
 	private static final long serialVersionUID = 5893913105698710480L;
 

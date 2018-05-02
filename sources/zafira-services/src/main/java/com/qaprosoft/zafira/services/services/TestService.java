@@ -81,6 +81,7 @@ public class TestService
 		// New test
 		if (test.getId() == null || test.getId() == 0)
 		{
+			//This code block is executed only for the first job run
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
 			test.setTestConfig(config);
 			test.setStatus(Status.IN_PROGRESS);
@@ -101,6 +102,10 @@ public class TestService
 		// Existing test
 		else
 		{
+			boolean rerun = true;
+			if(test.getStatus() == Status.QUEUED){
+				rerun = false;
+			}
 			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
 
 			test.setMessage(null);
@@ -121,6 +126,8 @@ public class TestService
 		test.setId(null);
 		test.setTestRunId(scheduledTestRunId);
 		test.setStatus(Status.QUEUED);
+		test.setStartTime(null);
+		test.setTestConfig(null);
 		testMapper.createTest(test);
 	}
 

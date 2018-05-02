@@ -384,12 +384,16 @@ button.red {
     background-color: #AAAAAA;
 }
 
+.aborted-test-bg {
+    background-color: #eaeaea;
+}
+
 .label-default-border {
-    border: 1px solid #6C6C6C;
+    border: 1px solid #afafaf;
 }
 
 .label-default-empty {
-    color: #6C6C6C;
+    color: #afafaf;
 }
 
 span.light_text, div.light_text {
@@ -453,6 +457,14 @@ span.light_text, div.light_text {
 
 .highlight_gray {
     color: lightgrey !important;
+}
+
+.grey_font {
+    color: #afafaf !important;
+}
+
+.black_font {
+    color: black !important;
 }
 
 /*Page backgrounds*/
