@@ -61,7 +61,7 @@
 }
 
 @media (max-width: 599px) {
-  #filter-editor div > div{
+    #filter-editor div > div:not(.md-ripple-container):not(.md-thumb) {
       width: 100%;
   }
 

@@ -83,7 +83,7 @@ public class FilterService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Filter updateFilter(Filter filter) throws ServiceException
+	public Filter updateFilter(Filter filter, boolean isAdmin) throws ServiceException
 	{
 		Filter dbFilter = getFilterById(filter.getId());
 		if(dbFilter == null)
@@ -97,7 +97,7 @@ public class FilterService
 		dbFilter.setName(filter.getName());
 		dbFilter.setDescription(filter.getDescription());
 		dbFilter.setSubject(filter.getSubject());
-		dbFilter.setPublicAccess(filter.isPublicAccess());
+		dbFilter.setPublicAccess(isAdmin && filter.isPublicAccess());
 		filterMapper.updateFilter(dbFilter);
 		return dbFilter;
 	}

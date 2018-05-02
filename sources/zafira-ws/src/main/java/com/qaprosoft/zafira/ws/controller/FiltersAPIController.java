@@ -28,7 +28,7 @@ import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST
 @Api(value = "Filters API")
 @CrossOrigin
 @RequestMapping("api/filters")
-public class FilterController extends AbstractController
+public class FiltersAPIController extends AbstractController
 {
 
 	@Autowired
@@ -80,7 +80,7 @@ public class FilterController extends AbstractController
     FilterType updateFilter(@RequestBody @Valid FilterType filterType) throws ServiceException
 	{
 		filterType.getSubject().sortCriterias();
-		return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class)), FilterType.class);
+		return mapper.map(filterService.updateFilter(mapper.map(filterType, Filter.class), isAdmin()), FilterType.class);
 	}
 
 	@ResponseStatusDetails
