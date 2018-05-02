@@ -59,11 +59,8 @@
                     <div class="panel-body no-padding-t">
                         <h5>
                             Filters
-                            <md-button ng-init="filterBlockExpand = true;" aria-label="Show or hide filters" style="height: auto; width: auto;" ng-click="filterBlockExpand = !filterBlockExpand" md-ink-ripple="false" class="md-icon-button no-padding">
-                                <i class="fa expand-icon" ng-class="filterBlockExpand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
-                            </md-button>
                         </h5>
-                        <div layout="row" ng-show="filterBlockExpand">
+                        <div layout="row" ng-init="filterBlockExpand = true;" ng-show="filterBlockExpand">
                             <div class="manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
                                 <md-chips class="filter-chip">
                                     <md-chip>add filter</md-chip>
@@ -97,7 +94,7 @@
                                 <div class="flex-auto" layout-xs="column">
                                     <input type="text" class="form-control" placeholder="Description" ng-model="filter.description" required/>
                                 </div>
-                                <md-switch ng-model="filter.publicAccess" class="md-primary" aria-label="public access">
+                                <md-switch has-any-role="['ROLE_ADMIN']" ng-model="filter.publicAccess" class="md-primary" aria-label="public access">
                                     <span ng-if="filter.publicAccess">Public</span>
                                     <span ng-if="! filter.publicAccess">Private</span>
                                 </md-switch>
@@ -171,11 +168,8 @@
                     <div class="panel-body">
                         <h5>
                             Fast search
-                            <md-button ng-init="fastSearchBlockExpand = true;" aria-label="Show or hide filters" style="height: auto; width: auto;" ng-click="fastSearchBlockExpand = !fastSearchBlockExpand" md-ink-ripple="false" class="md-icon-button no-padding">
-                                <i class="fa expand-icon" ng-class="fastSearchBlockExpand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
-                            </md-button>
                         </h5>
-                        <div ng-show="fastSearchBlockExpand" layout-lg="row" layout-xs="column">
+                        <div ng-init="fastSearchBlockExpand = true;" ng-show="fastSearchBlockExpand" layout-lg="row" layout-xs="column">
                             <div id="search-container" flex="auto">
                                 <div layout="row" layout-xs="column">
                                     <input type="text" id="search-input" class="form-control pull-left" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">
