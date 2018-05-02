@@ -615,7 +615,10 @@ public class TestRunService
 				case IN_PROGRESS:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
-					testRunStatistics.setQueued(testRunStatistics.getQueued() - increment);
+					if(testRunStatistics.getQueued() > 0){
+						testRunStatistics.setQueued(testRunStatistics.getQueued());
+						testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
+					}
 					break;
 				case PASSED:
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
@@ -637,7 +640,7 @@ public class TestRunService
 			}
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		} finally
 		{
 			try
@@ -645,7 +648,7 @@ public class TestRunService
 				updateLocks.get(testRunId).unlock();
 			} catch (ExecutionException e)
 			{
-				LOGGER.error(e.getMessage());
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return testRunStatistics;
