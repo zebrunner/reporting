@@ -94,6 +94,8 @@
                 currentWidth = $window.width();
                 if (currentWidth < 768) {
                     $app.removeClass('nav-collapsed-min');
+                } else {
+                    $app.addClass('nav-collapsed-min');
                 }
                 if (prevWidth < 768 && currentWidth >= 768 && $nav.hasClass('nav-horizontal')) {
                     $lists.removeClass('open').find('ul').slideUp(slideTime);
