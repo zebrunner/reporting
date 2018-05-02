@@ -12,7 +12,7 @@
 	        $rootScope.currentOffset = 0;
             $rootScope.companyLogo = {
                 name: 'COMPANY_LOGO_URL',
-                value: SettingProvider.getCompanyLogoURl()
+                value: SettingProvider.getCompanyLogoURl() || ''
             };
 
 	        // ************** Integrations **************
