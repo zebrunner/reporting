@@ -1,4 +1,10 @@
 INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
+	('LDAP_DN', '', 'LDAP'),
+  	('LDAP_SEARCH_FILTER', '', 'LDAP'),
+  	('LDAP_URL', '', 'LDAP'),
+  	('LDAP_MANAGER_USER', '', 'LDAP'),
+  	('LDAP_MANAGER_PASSWORD', '', 'LDAP'),
+  	('LDAP_ENABLED', false, 'LDAP'),
 	('JIRA_CLOSED_STATUS', 'CLOSED', 'JIRA'),
 	('JIRA_URL', '', 'JIRA'),
 	('JIRA_USER', '', 'JIRA'),

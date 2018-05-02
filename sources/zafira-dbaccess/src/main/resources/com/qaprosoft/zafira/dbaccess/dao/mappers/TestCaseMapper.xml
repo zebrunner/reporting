@@ -191,20 +191,20 @@
 			</if>
             <if test="null == date and null == fromDate and null == toDate">
                 <![CDATA[
-	               AND TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL
+	               AND (TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL)
 	            ]]>
             </if>
             <if test="null != date and null == fromDate and null == toDate">
 	            <![CDATA[
-	               AND TCHV.TESTED_AT = date_trunc('month', #{date}::date)
-	               OR TCHV.STABILITY IS NULL
+	               AND (TCHV.TESTED_AT = date_trunc('month', #{date}::date)
+	               OR TCHV.STABILITY IS NULL)
 	            ]]>
 			</if>
             <if test="null == date and null != fromDate and null != toDate">
 				<![CDATA[
-				   AND TCHV.TESTED_AT <= date_trunc('month', #{toDate}::date)
+				   AND (TCHV.TESTED_AT <= date_trunc('month', #{toDate}::date)
 				   AND TCHV.TESTED_AT >= date_trunc('month', #{fromDate}::date)
-				   OR TCHV.STABILITY IS NULL
+				   OR TCHV.STABILITY IS NULL)
 	            ]]>
 			</if>
             <if test="null != projects">
@@ -233,6 +233,8 @@
 				zafira.USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
 			LEFT JOIN 
 			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			LEFT JOIN
+			    zafira.TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
         ]]>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
@@ -265,19 +267,22 @@
 	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
 	            ]]>
 			</if>
-			<if test="null != date">
-	            <![CDATA[
-	               AND TC.CREATED_AT::date = #{date}::date
+			<if test="null == date and null == fromDate and null == toDate">
+				<![CDATA[
+	               AND (TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL)
 	            ]]>
 			</if>
-			<if test="null != fromDate">
+			<if test="null != date and null == fromDate and null == toDate">
 				<![CDATA[
-	               AND TC.CREATED_AT::date >= #{fromDate}::date
+	               AND (TCHV.TESTED_AT = date_trunc('month', #{date}::date)
+	               OR TCHV.STABILITY IS NULL)
 	            ]]>
 			</if>
-			<if test="null != toDate">
+			<if test="null == date and null != fromDate and null != toDate">
 				<![CDATA[
-	               AND TC.CREATED_AT::date <= #{toDate}::date
+				   AND (TCHV.TESTED_AT <= date_trunc('month', #{toDate}::date)
+				   AND TCHV.TESTED_AT >= date_trunc('month', #{fromDate}::date)
+				   OR TCHV.STABILITY IS NULL)
 	            ]]>
 			</if>
 			<if test="null != projects">
