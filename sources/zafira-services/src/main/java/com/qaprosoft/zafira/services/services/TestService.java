@@ -78,36 +78,39 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
-		// New test
-		if (test.getId() == null || test.getId() == 0)
+		// New or Queued test
+		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == null)
 		{
 			//This code block is executed only for the first job run
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
 			test.setTestConfig(config);
 			test.setStatus(Status.IN_PROGRESS);
-			testMapper.createTest(test);
-			if (jiraIds != null)
+
+			if((test.getId() == null || test.getId() == 0))
 			{
-				for (String jiraId : jiraIds)
+				testMapper.createTest(test);
+				if (jiraIds != null)
 				{
-					if (!StringUtils.isEmpty(jiraId))
+					for (String jiraId : jiraIds)
 					{
-						WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-						testMapper.createTestWorkItem(test, workItem);
+						if (!StringUtils.isEmpty(jiraId))
+						{
+							WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+							testMapper.createTestWorkItem(test, workItem);
+						}
 					}
 				}
+			}
+			else
+			{
+				updateTest(test);
 			}
 			testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
 		}
 		// Existing test
 		else
 		{
-			boolean rerun = true;
-			if(test.getStatus() == Status.QUEUED){
-				rerun = false;
-			}
-			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), rerun);
-
+			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
 			test.setMessage(null);
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
