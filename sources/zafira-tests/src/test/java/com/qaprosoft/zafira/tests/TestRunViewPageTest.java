@@ -66,6 +66,7 @@ public class TestRunViewPageTest extends AbstractTest
 		createTestRunViewModalWindow.typeName(testRunViewName);
 		Assert.assertFalse(createTestRunViewModalWindow.hasDisabledAttribute(createTestRunViewModalWindow.getCreateButton()), "Create button is disabled");
 		createTestRunViewModalWindow.clickCreateButton();
+		dashboardPage.waitUntilElementWithTextIsPresent(dashboardPage.getSuccessAlert(), "View created successfully", 15);
 		Assert.assertEquals(dashboardPage.getSuccessAlert().getText(), "View created successfully", "Alert text is incorrect");
 		TestRunTabMenu testRunTabMenu = dashboardPage.getNavbar().hoverOnTestRunTab();
 		WebElement testRunView = testRunTabMenu.getTestRunsViewByName(testRunViewName);

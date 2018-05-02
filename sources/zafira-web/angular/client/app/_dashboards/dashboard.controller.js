@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$timeout', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $timeout, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -416,27 +416,39 @@
             }
         };
 
-        var refreshPromise;
-        var isRefreshing = false;
-        function startRefreshing(){
-            if(isRefreshing) return;
-            isRefreshing = true;
-            (function refreshEvery(){
-                if ($location.$$url.indexOf("dashboards") > -1){
-                    if ($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0){
-                        loadDashboardData($scope.dashboard, true);
-                        refreshPromise = $timeout(refreshEvery, $rootScope.currentUser.refreshInterval)
-                    }
-                }
-         }());
+
+        var refreshIntervalInterval;
+
+        function refresh() {
+            if($scope.dashboard.title && $rootScope.currentUser.refreshInterval && $rootScope.currentUser.refreshInterval != 0) {
+                refreshIntervalInterval = $interval(function () {
+                    loadDashboardData($scope.dashboard, true);
+                }, $rootScope.currentUser.refreshInterval);
+            }
         };
 
+        $scope.stopRefreshIntervalInterval = function() {
+            if (angular.isDefined(refreshIntervalInterval)) {
+                $interval.cancel(refreshIntervalInterval);
+                refreshIntervalInterval = undefined;
+            }
+        };
+
+        $scope.$on('$destroy', function() {
+            $scope.stopRefreshIntervalInterval();
+        });
+
         function getDashboardById (dashboardId) {
-            DashboardService.GetDashboardById(dashboardId).then(function (rs) {
-                if (rs.success) {
-                    $scope.dashboard = rs.data;
-                    $scope.getDataWithAttributes($scope.dashboard, false);
-                }
+            return $q(function (resolve, reject) {
+                DashboardService.GetDashboardById(dashboardId).then(function (rs) {
+                    if (rs.success) {
+                        $scope.dashboard = rs.data;
+                        $scope.getDataWithAttributes($scope.dashboard, false);
+                        resolve(rs.data);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
@@ -456,13 +468,16 @@
             }
         );
 
+        $scope.$on("$event:widgetIsUpdated", function () {
+            getDashboardById($stateParams.id);
+        });
+
         $scope.$on('$destroy', function () {
             $scope.resetGrid();
         });
 
         var defaultDashboardWatcher = $scope.$watch('currentUser.defaultDashboard', function (newVal) {
             if(newVal) {
-                startRefreshing();
                 if ($rootScope.currentUser.isAdmin)
                     DashboardService.GetWidgets().then(function (rs) {
                         if (rs.success) {
@@ -481,7 +496,10 @@
             if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
-            getDashboardById($stateParams.id);
+            getDashboardById($stateParams.id).then(function (rs) {
+                refresh();
+            }, function () {
+            });
         })();
     }
 
@@ -633,11 +651,9 @@
         })();
     }
 
-    function WidgetController($scope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
-        $scope.currentUserId = null;
+    function WidgetController($scope, $rootScope, $mdDialog, DashboardService, ProjectProvider, widget, isNew, dashboard, currentUserId) {
         $scope.widget = {};
         $scope.dashboard = {};
-        angular.copy(currentUserId, $scope.currentUserId);
         $scope.isNew = angular.copy(isNew);
         angular.copy(widget, $scope.widget);
         angular.copy(dashboard, $scope.dashboard);
@@ -660,7 +676,7 @@
             DashboardService.CreateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget created");
-                	$scope.hide(true);
+                	$scope.hide();
                 }
                 else {
                     alertify.error(rs.message);
@@ -672,7 +688,8 @@
             DashboardService.UpdateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget updated");
-                	$scope.hide(true);
+                    $rootScope.$broadcast("$event:widgetIsUpdated");
+                	$scope.hide();
                 }
                 else {
                     alertify.error(rs.message);
@@ -682,7 +699,7 @@
 
         $scope.$on("$event:executeSQL", function () {
             if (widget.sql){
-                $scope.loadModalWidget($scope.widget, true);
+                $scope.loadModalWidget($scope.widget, $scope.dashboard.attributes, true);
             }
             else {
                 alertify.warning('Add SQL query');
@@ -692,7 +709,7 @@
         $scope.$on("$event:showWidget", function () {
             if (widget.sql){
                 if(widget.type){
-                    $scope.loadModalWidget($scope.widget);
+                    $scope.loadModalWidget($scope.widget, $scope.dashboard.attributes);
                 }
                 else {
                     alertify.warning('Choose widget type');
@@ -703,10 +720,10 @@
             }
         });
 
-        $scope.loadModalWidget = function (widget, table) {
+        $scope.loadModalWidget = function (widget, attributes, table) {
 
             $scope.isLoading = true;
-            var sqlAdapter = {'sql': widget.sql};
+            var sqlAdapter = {'sql': widget.sql, 'attributes': attributes};
             var params = setQueryParams(table);
             DashboardService.ExecuteWidgetSQL(params, sqlAdapter).then(function (rs) {
                 if (rs.success) {
@@ -749,8 +766,8 @@
                 }
             }
             params = params !== "" ? params + "&dashboardName=" + $scope.dashboard.title : params + "?dashboardName=" + $scope.dashboard.title;
-            if ($scope.currentUserId) {
-                params = params + "&currentUserId=" + $scope.currentUserId;
+            if (currentUserId) {
+                params = params + "&currentUserId=" + currentUserId;
             }
             if (table) {
                 params = params + "&stackTraceRequired=" + true;
@@ -791,8 +808,8 @@
             $scope.showWidget = false;
         };
 
-        $scope.hide = function (result) {
-            $mdDialog.hide(result);
+        $scope.hide = function () {
+            $mdDialog.hide();
         };
 
         $scope.cancel = function () {

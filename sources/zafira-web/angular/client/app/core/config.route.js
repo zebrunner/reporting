@@ -39,7 +39,7 @@
                         templateUrl: 'app/_testcases/list.html'
                     })
                     .state('tests/cases/metrics', {
-                        url: '/tests/cases/metrics/:id',
+                        url: '/tests/cases/:id/metrics',
                         templateUrl: 'app/_testcases/metrics/list.html'
                     })
                     .state('tests/run', {

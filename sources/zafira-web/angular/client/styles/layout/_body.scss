@@ -2,6 +2,15 @@ body {
     background: $main_container_bg;
 }
 
+#vnc {
+    div {
+        background-color: inherit !important;
+        canvas {
+            cursor: crosshair !important;
+        }
+    }
+}
+
 #main-fab button.md-fab.md-fab-sm {
     background-color: lightgray;
     margin-bottom: 8px;
@@ -908,6 +917,14 @@ ul.profile-image-actions {
     margin: 0 15px;
 }
 
+.ticket-list-row {
+    margin: 13px 0;
+}
+
+.ticket-list-button {
+    width: 100%;
+}
+
 .align-middle {
     display: flex;
     align-items: center;
@@ -1460,5 +1477,29 @@ button#add-button{
 }
 
 .md-select-value .md-select-icon {
-  margin: 0 8px 0 4px;
+    margin: 0 8px 0 4px;
+}
+
+.log-demo {
+    width: 100%;
+    height: 130px;
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    z-index: 1;
+    background: white;
+    opacity: 0.9;
+    overflow-y: scroll;
+    .log {
+        padding-left: 20px;
+        position: relative;
+    }
+}
+
+.modal-spinner {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 }

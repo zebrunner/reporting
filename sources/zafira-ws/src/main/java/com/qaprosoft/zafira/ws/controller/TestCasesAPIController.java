@@ -76,7 +76,7 @@ public class TestCasesAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get test metrics by test case id", nickname = "getTestMetricsByTestCaseId", code = 200, httpMethod = "GET", response = Map.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value="metrics/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="{id}/metrics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, List<TestMetric>> getTestMetricsByTestCaseId(@PathVariable(value = "id") Long id) throws ServiceException
 	{
 		return testMetricService.getTestMetricsByTestCaseId(id);

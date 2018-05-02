@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import java.util.List;
 
@@ -48,6 +49,9 @@ public abstract class BasePage extends AbstractPage
 	public boolean waitUntilPageIsLoaded(long seconds)
 	{
 		LOGGER.info("Wait until page is loading");
+		if(!isElementPresent(header.getZafiraLogo(), IMPLICITLY_TIMEOUT)){
+			Assert.fail("Zafira is not loaded for " + IMPLICITLY_TIMEOUT );
+		}
 		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
 				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
 	}
