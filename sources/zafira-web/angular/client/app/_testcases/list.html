@@ -75,7 +75,7 @@
                                                                             'label label-success' : testcase.stability > range[1],
                                                                             'label label-danger' : testcase.stability < range[0],
                                                                             'label label-warning' : testcase.stability <= range[1] && testcase.stability >= range[0]}">
-                                            {{testcase.stability * 100}} %
+                                            {{testcase.stability}} %
                                         </a>
                                         <a data-ng-hide="testcase.stability || testcase.stability == 0" class="label label-default">
                                             N/A
@@ -91,7 +91,13 @@
                                                 <md-menu-item>
                                                     <md-button name="performance" ng-click="goToPerformanceDashboard(testcase.id);">
                                                         <md-icon class="material-icons">timeline</md-icon>
-                                                        Performance
+                                                        Metrics
+                                                    </md-button>
+                                                </md-menu-item>
+                                                <md-menu-item >
+                                                    <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.stabilityDashboardId}}?testCaseId={{testcase.id}}" style="display: flex;">
+                                                        <md-icon class="material-icons">brightness_5</md-icon>
+                                                        Stability
                                                     </md-button>
                                                 </md-menu-item>
                                             </md-menu-content>
@@ -99,7 +105,7 @@
 									</td>
                                 </tr>
                                 <tr ng-if="testcase.expand" ng-repeat-end="">
-						            <td md-cell colspan="7">
+						            <td md-cell colspan="8">
 						            	<table class="table">
 	                                        <thead>
 	                                            <tr>

@@ -1,4 +1,10 @@
 INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
+	('LDAP_DN', '', 'LDAP'),
+  	('LDAP_SEARCH_FILTER', '', 'LDAP'),
+  	('LDAP_URL', '', 'LDAP'),
+  	('LDAP_MANAGER_USER', '', 'LDAP'),
+  	('LDAP_MANAGER_PASSWORD', '', 'LDAP'),
+  	('LDAP_ENABLED', false, 'LDAP'),
 	('JIRA_CLOSED_STATUS', 'CLOSED', 'JIRA'),
 	('JIRA_URL', '', 'JIRA'),
 	('JIRA_USER', '', 'JIRA'),
@@ -30,7 +36,8 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('RABBITMQ_PASSWORD', 'qpsdemo', 'RABBITMQ'),
 	('RABBITMQ_WS', 'http://demo.qaprosoft.com/stomp', 'RABBITMQ'),
 	('RABBITMQ_ENABLED', true, 'RABBITMQ'),
-	('COMPANY_LOGO_URL', null, null);
+	('COMPANY_LOGO_URL', null, null),
+	('LAST_ALTER_VERSION', '0', null);
 
 INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION) VALUES ('UNKNOWN', '');
 
@@ -130,6 +137,22 @@ DECLARE monthly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE weekly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE nightly_dashboard_id zafira.DASHBOARDS.id%TYPE;
 DECLARE failures_dashboard_id zafira.DASHBOARDS.id%TYPE;
+DECLARE stability_dashboard_id zafira.DASHBOARDS.id%TYPE;
+
+-- Declare Stability dashboard widgets
+DECLARE average_stability_percent_id zafira.WIDGETS.id%TYPE;
+DECLARE average_stability_percent_sql zafira.WIDGETS.sql%TYPE;
+DECLARE average_stability_percent_model zafira.WIDGETS.model%TYPE;
+DECLARE test_case_info_id zafira.WIDGETS.id%TYPE;
+DECLARE test_case_info_sql zafira.WIDGETS.sql%TYPE;
+DECLARE test_case_info_model zafira.WIDGETS.model%TYPE;
+DECLARE stability_trend_id zafira.WIDGETS.id%TYPE;
+DECLARE stability_trend_sql zafira.WIDGETS.sql%TYPE;
+DECLARE stability_trend_model zafira.WIDGETS.model%TYPE;
+DECLARE test_execution_time_id zafira.WIDGETS.id%TYPE;
+DECLARE test_execution_time_sql zafira.WIDGETS.sql%TYPE;
+DECLARE test_execution_time_model zafira.WIDGETS.model%TYPE;
+
 
 -- Declare Failures dashboard widgets
 DECLARE error_message_id zafira.WIDGETS.id%TYPE;
@@ -263,6 +286,217 @@ DECLARE nightly_failures_sql zafira.WIDGETS.sql%TYPE;
 DECLARE nightly_failures_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
+	-- Insert Stability dashboard data
+
+  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', FALSE, 8) RETURNING id INTO stability_dashboard_id;
+
+	average_stability_percent_sql :=
+	'set schema ''zafira'';
+    SELECT
+        unnest(array[''STABILITY'', ''FAILURE'', ''OMISSION'', ''KNOWN FAILURE'', ''INTERRUPT'']) AS "label",
+        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
+        unnest(array[ROUND(AVG(STABILITY)::numeric, 0),
+                     ROUND(AVG(FAILURE)::numeric, 0),
+                     ROUND(AVG(OMISSION)::numeric, 0),
+                     ROUND(AVG(KNOWN_FAILURE)::numeric, 0),
+                     ROUND(AVG(INTERRUPT)::numeric, 0)]) AS "value"
+    FROM TEST_CASE_HEALTH_VIEW
+    WHERE
+        TEST_CASE_ID = ''#{testCaseId}''
+    ORDER BY "value" DESC';
+
+	average_stability_percent_model :=
+	'{
+        "thickness": 20
+     }';
+
+	test_case_info_sql :=
+	'SET SCHEMA ''zafira'';
+     SELECT
+     TEST_CASES.ID AS "ID",
+     TEST_CASES.TEST_CLASS AS "TEST CLASS",
+     TEST_CASES.TEST_METHOD AS "TEST METHOD",
+     TEST_SUITES.FILE_NAME AS "TEST SUITE",
+     USERS.USERNAME AS "OWNER",
+     TEST_CASES.CREATED_AT::date AS "CREATED AT"
+     FROM TEST_CASES
+     LEFT JOIN TEST_SUITES ON TEST_CASES.TEST_SUITE_ID = TEST_SUITES.ID
+     LEFT JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
+ WHERE TEST_CASES.ID = ''#{testCaseId}''';
+
+	test_case_info_model :=
+	'{
+         "columns": [
+             "ID",
+             "TEST CLASS",
+             "TEST METHOD",
+             "TEST SUITE",
+             "OWNER",
+             "CREATED AT"
+         ]
+     }';
+
+	stability_trend_sql :=
+	'set schema ''zafira'';
+    SELECT
+        STABILITY as "STABILITY",
+        100 - OMISSION - KNOWN_FAILURE - ABORTED as "FAILURE",
+        100 - KNOWN_FAILURE - ABORTED as "OMISSION",
+        date_trunc(''month'', TESTED_AT) AS "TESTED_AT"
+    FROM TEST_CASE_HEALTH_VIEW
+    WHERE TEST_CASE_ID = ''#{testCaseId}''
+    ORDER BY "TESTED_AT"';
+
+	stability_trend_model :=
+	'{
+        "series": [
+            {
+                "axis": "y",
+                "dataset": "dataset",
+                "key": "OMISSION",
+                "label": "OMISSION",
+                "interpolation": {
+                    "mode": "bundle",
+                    "tension": 1
+                },
+                "color": "#FDE9B4",
+                "thickness": "10px",
+                "type": [
+                    "line",
+                    "area"
+                ],
+                "id": "OMISSION",
+                "visible": true
+            },
+            {
+                "dataset": "dataset",
+                "key": "FAILURE",
+                "label": "FAILURE",
+                "interpolation": {
+                    "mode": "bundle",
+                    "tension": 1
+                },
+                "color": "#F2C3C0",
+                "thickness": "10px",
+                "type": [
+                    "line",
+                    "area"
+                ],
+                "id": "FAILURE",
+                "visible": true
+            },
+            {
+                "axis": "y",
+                "dataset": "dataset",
+                "key": "STABILITY",
+                "label": "STABILITY",
+                "interpolation": {
+                    "mode": "bundle",
+                    "tension": 1
+                },
+                "color": "#5CB85C",
+                "thickness": "10px",
+                "type": [
+                    "line",
+                    "area"
+                ],
+                "id": "STABILITY",
+                "visible": true
+            }
+        ],
+        "axes": {
+            "x": {
+                "key": "TESTED_AT",
+                "type": "date"
+            }
+        }
+    }';
+
+	test_execution_time_sql :=
+	'set schema ''zafira'';
+    SELECT
+        AVG_TIME as "AVG TIME",
+        MAX_TIME as "MAX TIME",
+        MIN_TIME as "MIN TIME",
+        date_trunc(''month'', TESTED_AT) AS "TESTED_AT"
+    FROM TEST_CASE_HEALTH_VIEW
+    WHERE TEST_CASE_ID = ''#{testCaseId}''
+    ORDER BY "TESTED_AT"';
+
+	test_execution_time_model :=
+	'{
+        "series": [
+            {
+                "dataset": "dataset",
+                "key": "MAX TIME",
+                "label": "MAX TIME",
+                "color": "#DC4437",
+                "thickness": "20px",
+                "type": [
+                    "line",
+                    "dot"
+                ],
+                "id": "MAX TIME",
+                "visible": true
+            },
+            {
+                "axis": "y",
+                "dataset": "dataset",
+                "key": "MIN TIME",
+                "label": "MIN TIME",
+                "color": "#5CB85C",
+                "thickness": "20px",
+                "type": [
+                    "line",
+                    "dot"
+                ],
+                "id": "MIN TIME",
+                "visible": true
+            },
+            {
+                "axis": "y",
+                "dataset": "dataset",
+                "key": "AVG TIME",
+                "label": "AVG TIME",
+                "color": "#3A87AD",
+                "thickness": "20px",
+                "type": [
+                    "line",
+                    "dot"
+                ],
+                "id": "AVG TIME",
+                "visible": true
+            }
+        ],
+        "axes": {
+            "x": {
+                "key": "TESTED_AT",
+                "type": "date"
+            }
+        }
+    }';
+
+	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+		('STABILITY (%)', 'piechart', average_stability_percent_sql, average_stability_percent_model)
+	RETURNING id INTO average_stability_percent_id;
+	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+		('TESTCASE INFO', 'table', test_case_info_sql, test_case_info_model)
+	RETURNING id INTO test_case_info_id;
+	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+		('STABILITY TREND (%)', 'linechart', stability_trend_sql, stability_trend_model)
+	RETURNING id INTO stability_trend_id;
+	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+		('TEST EXECUTION TIME DETAILS (sec)', 'linechart', test_execution_time_sql, test_execution_time_model)
+	RETURNING id INTO test_execution_time_id;
+
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+		(stability_dashboard_id, average_stability_percent_id, '{"x":0,"y":0,"width":4,"height":11}');
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+		(stability_dashboard_id, test_case_info_id, '{"x":4,"y":0,"width":8,"height":11}');
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+		(stability_dashboard_id, stability_trend_id, '{"x":0,"y":11,"width":12,"height":11}');
+	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+		(stability_dashboard_id, test_execution_time_id, '{"x":0,"y":22,"width":12,"height":11}');
 
 	-- Insert Failures dashboard data
 	INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Failures analysis', TRUE, 5) RETURNING id INTO failures_dashboard_id;
@@ -383,7 +617,7 @@ BEGIN
       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
   FROM MONTHLY_VIEW
   WHERE
-      PROJECT LIKE ''#{project}%''
+      PROJECT LIKE ANY (''{#{project}}'')
       AND OWNER_ID = ''#{currentUserId}''
   ORDER BY "value" DESC';
 
@@ -446,7 +680,7 @@ BEGIN
        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
-        PROJECT LIKE ''#{project}%''
+        PROJECT LIKE ANY (''{#{project}}'')
         AND OWNER_ID = ''#{currentUserId}''
     ORDER BY "value" DESC';
 
@@ -463,7 +697,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
-        PROJECT LIKE ''#{project}%''
+        PROJECT LIKE ANY (''{#{project}}'')
         AND OWNER_ID = ''#{currentUserId}''
     ORDER BY "value" DESC';
 
@@ -506,7 +740,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND OWNER_ID = ''#{currentUserId}''
     AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
     GROUP BY "CREATED_AT"
@@ -937,7 +1171,7 @@ BEGIN
         sum(SKIPPED) AS "SKIP",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY PROJECT
     UNION
     SELECT  ''<B><I>TOTAL</I></B>'' AS "PROJECT",
@@ -947,7 +1181,7 @@ BEGIN
         sum(SKIPPED) AS "SKIP",
         round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "PASS" DESC';
 
 	total_tests_count_model :=
@@ -969,7 +1203,7 @@ BEGIN
         unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'']) AS "color",
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	total_tests_pie_model :=
@@ -984,7 +1218,7 @@ BEGIN
         count(*) AS "AMOUNT"
     FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
-    WHERE PROJECTS.NAME LIKE ''#{project}%''
+    WHERE PROJECTS.NAME LIKE ANY (''{#{project}}'')
     GROUP BY 1
     ORDER BY 1;';
 
@@ -1033,7 +1267,7 @@ BEGIN
         INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
         INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ''#{project}%''
+    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
     GROUP BY "PROJECT"
     ORDER BY "COUNT" DESC;';
 
@@ -1052,7 +1286,7 @@ BEGIN
         SUM(TOTAL_HOURS) AS "ETA",
         TESTED_AT AS "CREATED_AT"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     UNION
     SELECT
@@ -1061,7 +1295,7 @@ BEGIN
         * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day'')) AS "ETA",
         date_trunc(''month'', current_date) AS "CREATED_AT"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
@@ -1122,7 +1356,7 @@ BEGIN
         SUM(TOTAL) AS "TOTAL",
         date_trunc(''month'', TESTED_AT) AS "CREATED_AT"
     FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT"';
 
@@ -1263,7 +1497,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM MONTHLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	monthly_total_model :=
@@ -1302,7 +1536,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
@@ -1413,7 +1647,7 @@ BEGIN
         INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
         INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
     WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ''#{project}%''
+    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
     AND TEST_WORK_ITEMS.CREATED_AT > date_trunc(''month'', current_date  - interval ''1 month'')
     GROUP BY "PROJECT"
     ORDER BY "COUNT" DESC;';
@@ -1447,7 +1681,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
@@ -1487,7 +1721,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM MONTHLY_VIEW
     WHERE
-    PROJECT LIKE ''#{project}%''
+    PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY OWNER_ID, OWNER
     ORDER BY OWNER';
 
@@ -1546,7 +1780,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM WEEKLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	weekly_total_model :=
@@ -1585,7 +1819,7 @@ BEGIN
         sum(ABORTED) AS "ABORTED",
         STARTED::date AS "CREATED_AT"
     FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ''#{project}%''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
@@ -1707,7 +1941,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM WEEKLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
@@ -1747,7 +1981,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
    FROM WEEKLY_VIEW
    WHERE
-   PROJECT LIKE ''#{project}%''
+   PROJECT LIKE ANY (''{#{project}}'')
    GROUP BY OWNER_ID, OWNER
    ORDER BY OWNER';
 
@@ -1806,7 +2040,7 @@ BEGIN
         unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED)]) AS "value"
     FROM NIGHTLY_VIEW
     WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	nightly_total_model := '
@@ -1828,7 +2062,7 @@ BEGIN
                    ]) AS "value"
     FROM NIGHTLY_VIEW
 	  WHERE
-        PROJECT LIKE ''%#{project}''
+        PROJECT LIKE ANY (''{#{project}}'')
     ORDER BY "value" DESC';
 
 	nightly_total_percent_model :=
@@ -1857,7 +2091,7 @@ BEGIN
         round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
         round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)"
     FROM NIGHTLY_VIEW
-    WHERE PROJECT LIKE ''%#{project}''
+    WHERE PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY "PLATFORM", "BUILD"
     ORDER BY "PLATFORM"';
 
@@ -1897,7 +2131,7 @@ BEGIN
         round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
     FROM NIGHTLY_VIEW
     WHERE
-      PROJECT LIKE ''#{project}%''
+      PROJECT LIKE ANY (''{#{project}}'')
     GROUP BY OWNER_ID, OWNER
     ORDER BY OWNER';
 

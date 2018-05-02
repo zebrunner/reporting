@@ -299,6 +299,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			testByThread.put(Thread.currentThread().getId(), startedTest);
 			
 			registeredTests.put(testName, startedTest);
+			
+			// Add Zafira test id for internal usage
+			result.setAttribute("ztid", startedTest.getId());
 		}
 		catch (SkipException e)
 		{

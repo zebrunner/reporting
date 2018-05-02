@@ -38,10 +38,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestArtifact;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
@@ -49,6 +51,7 @@ import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.StatisticsService;
+import com.qaprosoft.zafira.services.services.TestArtifactService;
 import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
@@ -74,6 +77,9 @@ public class TestsAPIController extends AbstractController
 
 	@Autowired
 	private TestService testService;
+	
+	@Autowired
+	private TestArtifactService testArtifactService;
 
 	@Autowired
 	private TestMetricService testMetricService;
@@ -284,5 +290,21 @@ public class TestsAPIController extends AbstractController
 	public @ResponseBody boolean getConnectionToJira()
 	{
 		return jiraService.isConnected();
+	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Add test artifact", nickname = "addTestArtifact", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}/artifacts", method = RequestMethod.POST)
+	public void addTestArtifact(@ApiParam(value = "Test ID", required = true) @PathVariable(value = "id") long id, @RequestBody TestArtifactType artifact)
+			throws ServiceException
+	{
+		artifact.setTestId(id);
+		testArtifactService.createOrUpdateTestArtifact(mapper.map(artifact, TestArtifact.class));
+		// Updating web client with latest artifacts
+		Test test = testService.getTestById(id);
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 	}
 }

@@ -12,7 +12,7 @@
     	var DEFAULT_SC = {page : 1, pageSize : 20};
 
     	// TODO: make percent range for testcase label color configurable
-        $scope.range = [0.25, 0.75];
+        $scope.range = [25, 75];
 
     	$scope.UtilService = UtilService;
 
@@ -90,7 +90,7 @@
     	};
 
         $scope.goToPerformanceDashboard = function (testCaseId) {
-            $location.path("/tests/cases/metrics/" + testCaseId);
+            $location.path("/tests/cases/" + testCaseId + "/metrics");
         };
 
         /**
