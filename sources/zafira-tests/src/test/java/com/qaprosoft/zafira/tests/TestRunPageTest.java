@@ -551,7 +551,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunTableRow.getKnownIssuesCount(), testRun.getFailedAsKnown(), "Invalid known issues count");
 		Assert.assertEquals(testRunTableRow.getBlockersCount(), testRun.getFailedAsBlocker(), "Invalid tests blockers count");
 		Assert.assertEquals(testRunTableRow.getSkippedCount(), testRun.getSkipped(), "Invalid skipped tests count");
-		if(testRunTableRow.getInProgressCount() != 0){
+		if(testRun.getInProgress() != 0){
 			Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
 		}
 		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
