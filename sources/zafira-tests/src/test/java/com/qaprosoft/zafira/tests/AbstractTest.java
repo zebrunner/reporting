@@ -72,7 +72,11 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 	public void shutdown(ITestContext context)
 	{
 		LOGGER.info(context.getCurrentXmlTest().getName() + " finished");
-		driver.quit();
+		try{
+			driver.quit();
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	public void pause(double timeout)
@@ -82,7 +86,7 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 			Thread.sleep(new Double(timeout * 1000).intValue());
 		} catch (InterruptedException e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 }
