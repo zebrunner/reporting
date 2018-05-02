@@ -147,7 +147,8 @@ public class WidgetsAPIController extends AbstractController
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
 				.replaceAll("#\\{zafiraURL\\}", zafiraURL)
-				.replaceAll("#\\{hashcode\\}", "0");
+				.replaceAll("#\\{hashcode\\}", "0")
+					.replaceAll("#\\{testCaseId\\}", "0");
 
 			String param = StringUtils.substringBetween(query,"#{","}%" );
 			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))

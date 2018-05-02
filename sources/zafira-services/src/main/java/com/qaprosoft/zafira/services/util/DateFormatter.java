@@ -43,18 +43,18 @@ public class DateFormatter
 		}
 	}
 
-	public static boolean isToday(Date date)
+	private static boolean isToday(Date date)
 	{
 		boolean today = false;
 		LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
-		if (ld.isEqual(LocalDate.now()) || ld.isAfter(LocalDate.now()))
+		if (ld.isEqual(LocalDate.now()))
 		{
 			today = true;
 		}
 		return today;
 	}
 
-	public static Date formatDateToStartOfDay(Date date)
+	private static Date formatDateToStartOfDay(Date date)
 	{
 		LocalDate ld = new java.sql.Date(date.getTime()).toLocalDate();
 		return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());

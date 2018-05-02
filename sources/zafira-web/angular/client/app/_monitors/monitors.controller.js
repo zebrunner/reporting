@@ -271,6 +271,12 @@
 
         (function init(){
             $scope.search(1);
+//          var rfb = new RFB(document.body, "ws://host:port/websockify",
+//                    { repeaterID: '',
+//                      shared: true,
+//                      credentials: { password: 'selenoid' } });
+            
+            
         })();
     }
 })();

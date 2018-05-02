@@ -63,8 +63,7 @@ public class DashboardService
 	@Transactional(readOnly = true)
 	public Dashboard getDashboardByTitle(String title) throws ServiceException
 	{
-        Dashboard dashboard = dashboardMapper.getDashboardByTitle(title);
-		return dashboard;
+		return dashboardMapper.getDashboardByTitle(title);
 	}
 
 	@Transactional(readOnly = true)

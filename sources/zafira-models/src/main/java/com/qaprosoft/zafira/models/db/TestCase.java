@@ -32,7 +32,7 @@ public class TestCase extends AbstractEntity
 	private User secondaryOwner = new User();
 	private TestSuite testSuite = new TestSuite();
 	private Project project;
-	private Double stability;
+	private Long stability;
 
 	public String getTestClass()
 	{
@@ -124,12 +124,12 @@ public class TestCase extends AbstractEntity
 		this.project = project;
 	}
 
-	public Double getStability()
+	public Long getStability()
 	{
 		return stability;
 	}
 
-	public void setStability(Double stability)
+	public void setStability(Long stability)
 	{
 		this.stability = stability;
 	}
