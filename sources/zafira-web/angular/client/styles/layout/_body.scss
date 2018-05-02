@@ -1030,6 +1030,7 @@ button#resetFilter {
         }
         md-chip {
             margin-top: 0;
+            margin-bottom: 8px;
         }
     }
     .right-switch {
@@ -1064,6 +1065,10 @@ button#resetFilter {
     span.label {
         //font-size: 100%;
     }
+}
+
+#filter .panel-body{
+  padding-bottom: 8px !important;
 }
 
 #filter {
