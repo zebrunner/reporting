@@ -204,6 +204,7 @@ public class TestRunService
 			testRun.setCiRunId(ciRunId);
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(null);
+			testRun.setConfigXML(null);
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(ciRunId);

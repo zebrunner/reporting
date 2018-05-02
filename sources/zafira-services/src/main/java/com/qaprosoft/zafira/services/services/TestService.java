@@ -106,7 +106,7 @@ public class TestService
 			if(test.getStatus() == Status.QUEUED){
 				rerun = false;
 			}
-			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
+			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), rerun);
 
 			test.setMessage(null);
 			test.setFinishTime(null);
