@@ -61,7 +61,8 @@
             width: 100%;
             height: $header_height;
             line-height: $header_height;
-            text-align: center;
+            text-align: left;
+            left: 16px;
             transition: width .25s ease-in-out;
             @media (min-width: $screen-sm) {
                 display: inline-block;
@@ -77,6 +78,12 @@
             > a {
                 font-size: 25px;
                 white-space: nowrap;
+            }
+            img {
+
+                height: 36px;
+                width: 36px;
+                background: url(../assets/images/zafira-logo-color.svg) no-repeat;
             }
         }
 
