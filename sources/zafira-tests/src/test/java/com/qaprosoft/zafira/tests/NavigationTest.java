@@ -58,7 +58,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getIntegrationsButton(), 2), "Integrations button is not present");
 		Assert.assertTrue(userMenu.isElementPresent(userMenu.getLogoutButton(), 2), "Logout button is not present");
 
-		Assert.assertEquals(dashboardPage.getHeader().getZafiraLogo().getText(), "ZAFIRA", "Invalid zafira logo text in header");
+		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getHeader().getZafiraLogo(), 2), "Invalid zafira logo text in header");
 		Assert.assertTrue(dashboardPage.getHeader().getCompanyLogoBackgroundIcon().isDisplayed() ||
 				dashboardPage.getHeader().getCompanyLogo().isDisplayed(), "Invalid company icon in header");
 

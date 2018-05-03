@@ -174,6 +174,7 @@ public class TestRow extends AbstractRow
 	public TestDetailsModalWindow clickOpenTestDetailsModalButton()
 	{
 		openTestDetailsModalButton.click();
+		waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getCloseButton(), 2);
 		return testDetailsModalWindow;
 	}
 

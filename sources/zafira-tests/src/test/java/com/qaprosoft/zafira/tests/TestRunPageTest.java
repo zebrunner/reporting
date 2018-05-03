@@ -289,14 +289,15 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		TestRunViewType testRunViewType = testRunAPIService.createTestRun(testRunTypeBuilder, 2, 0, 0, 0, 0, 0);
+		testRunPage = (TestRunPage) testRunPage.reload();
 		testRunPageService.clickMarkAsReviewedButton(0).clickMarkAsReviewedButton();
 		generateTestRunsIfNeed(0, 2);
-		testRunPage = (TestRunPage) testRunPage.reload();
-		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria() {
+		TestRunSearchCriteria sc = new TestRunSearchCriteria() {
 			{
 				setId(testRunViewType.getTestRunType().getId());
 			}
-		}).get(0);
+		};
+		TestRun testRun = testRunMapper.searchTestRuns(sc).get(0);
 		testRunPageService.search("PASSED", null, null, null, false, null, null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
@@ -309,9 +310,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.search("PASSED", null, null, "DEMO", false, null, null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
-		testRunPageService.search(null, null, null, null, true, null, null);
-		verifyTestRunInformation(testRun, 0);
-		testRunPageService.clearSearchForm();
+		verifyTestRunInformation(testRun, 2);
 		testRunPageService.search("PASSED", null, null, null, false, "chrome", null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
@@ -403,25 +402,10 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getChangeStatusSelect(), 1), "Change status select is not visible");
         String currentStatus = testDetailsModalWindow.getChangeStatusSelect().getText();
 		Assert.assertFalse(StringUtils.isEmptyOrWhitespaceOnly(currentStatus), "No status is displayed in select");
-		testDetailsModalWindow.getChangeStatusSelect().click();
-		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
-		List<WebElement> webElements = testDetailsModalWindow.getTestStatuses();
-		Assert.assertFalse(CollectionUtils.isEmpty(webElements), "No test statuses were loaded");
-		for (WebElement webElement : webElements){
-			if(webElement.getText().equals(currentStatus)){
-				webElement.click();
-				break;
-			}
-		}
+		testDetailsModalWindow.select(testDetailsModalWindow.getChangeStatusSelect(),  currentStatus);
 		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
-		testDetailsModalWindow.getChangeStatusSelect().click();
-		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
-		for (WebElement webElement : webElements){
-			if(!webElement.getText().equals(currentStatus)){
-				webElement.click();
-				break;
-			}
-		}
+		pause(0.2);
+		testDetailsModalWindow.select(testDetailsModalWindow.getChangeStatusSelect(),  currentStatus.equals("PASSED") ? "FAILED" : "PASSED");
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is disabled");
 		testDetailsModalWindow.clickSaveButton();
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2));
@@ -441,7 +425,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignIssueButton()), "Assign button is disabled");
 		testDetailsModalWindow.clickAssignIssueButton();
 		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),1), "Success alert is not present");
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2), "Success alert is not present");
 		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getSuccessAlert(),3);
 		Assert.assertEquals(testRow.getKnownIssueTicket(), "JIRA-2222", "Invalid known issue label text");
         Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()), "JIRA-2222", "Incorrect jira id in input");
@@ -474,6 +458,7 @@ public class TestRunPageTest extends AbstractTest
 		testDetailsModalWindow.clickIssuesTab();
 		testDetailsModalWindow.waitUntilElementIsPresent(testDetailsModalWindow.getUnassignIssueButton(),1);
 		testDetailsModalWindow.clickUnassignIssueButton();
+		pause(0.2);
 		testDetailsModalWindow.getAlert().accept();
 		testDetailsModalWindow.closeModalWindow();
 		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is present");

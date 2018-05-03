@@ -93,8 +93,10 @@ public class TestRunPageService extends AbstractPageService
 			testRunSearchBlock.clickReviewedCheckbox();
 		testRunSearchBlock.selectPlatform(platform);
 		testRunSearchBlock.typeAppVersion(appVersion);
-		testRunSearchBlock.clickSearchButton();
-		testRunPage.waitUntilPageIsLoaded();
+		if(testRunSearchBlock.isElementPresent(testRunSearchBlock.getSearchButton(), 2)) {
+			testRunSearchBlock.clickSearchButton();
+			testRunPage.waitUntilPageIsLoaded();
+		}
 		return testRunPage;
 	}
 
