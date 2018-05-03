@@ -4,7 +4,7 @@
 angular
   .module('app.services')
   .factory('AuthIntercepter', ['$rootScope', '$state','httpBuffer', function($rootScope, $state, httpBuffer) {
-	  
+
 	 return {
       /**
        * Call this function to indicate that authentication was successful and trigger a
@@ -43,13 +43,14 @@ angular
     $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
       return {
         responseError: function(rejection) {
-        	if(!window.location.href.endsWith('signin'))
+            var location = window.location.href;
+        	if(!location.endsWith('signin'))
         	{
         		var config = rejection.config || {};
                 switch (rejection.status) {
                   case 401:
                     var deferred = $q.defer();
-                    var bufferLength = httpBuffer.append(config, deferred);
+                    var bufferLength = httpBuffer.append(config, deferred, location);
                     if (bufferLength === 1)
                       $rootScope.$broadcast('event:auth-loginRequired', rejection);
                     return deferred.promise;
@@ -95,10 +96,11 @@ angular
        * Appends HTTP request configuration object with deferred response attached to buffer.
        * @return {Number} The new length of the buffer.
        */
-      append: function(config, deferred) {
+      append: function(config, deferred, location) {
         return buffer.push({
           config: config,
-          deferred: deferred
+          deferred: deferred,
+          location: location
         });
       },
 
@@ -124,6 +126,10 @@ angular
             retryHttpRequest(_cfg, buffer[i].deferred);
         }
         buffer = [];
+      },
+
+      getBuffer: function () {
+          return buffer;
       }
     };
   }]);
