@@ -54,7 +54,7 @@
 
 }
 
-@media (min-width: 600px) and (max-width: 1280px) {
+@media (min-width: 600px) and (max-width: 1279px) {
     #search-container,#search-container input, #search-select {
         width: 100% !important;
         margin: 0 !important;
@@ -70,13 +70,13 @@
     }
 }
 
-@media (min-width: 768px) and (max-width: 960px) {
+@media (min-width: 768px) and (max-width: 959px) {
     .btn-check {
       right: 4px;
     }
 }
 
-@media (min-width: 600px) and (max-width: 960px) {
+@media (min-width: 600px) and (max-width: 959px) {
     .value-input, button#add-button {
       margin-top: 16px !important;
     }

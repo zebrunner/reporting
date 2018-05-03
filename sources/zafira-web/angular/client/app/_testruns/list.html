@@ -57,9 +57,6 @@
                 <div id="filter" class="md-row">
                     <div ng-class="{'disable-layer': ! searchFormIsEmpty}"></div>
                     <div class="panel-body no-padding-t">
-                        <h5>
-                            Filters
-                        </h5>
                         <div layout="row" ng-init="filterBlockExpand = true;" ng-show="filterBlockExpand">
                             <div class="manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
                                 <md-chips class="filter-chip">
@@ -166,10 +163,7 @@
                 <div id="search" class="md-row">
                     <div ng-class="{'disable-layer': selectedFilterId}"></div>
                     <div class="panel-body">
-                        <h5>
-                            Fast search
-                        </h5>
-                        <div ng-init="fastSearchBlockExpand = true;" ng-show="fastSearchBlockExpand" layout-lg="row" layout-xs="column">
+                        <div ng-init="fastSearchBlockExpand = true;" ng-show="fastSearchBlockExpand" layout="row" layout-md="column" layout-sm="column" layout-xs="column">
                             <div id="search-container" flex="auto">
                                 <div layout="row" layout-xs="column">
                                     <input type="text" id="search-input" class="form-control pull-left" placeholder="Search items" ng-model="fastSearch[fastSearch.currentModel]" aria-label="Search items" aria-describedby="basic-addon2">

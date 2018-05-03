@@ -1122,11 +1122,11 @@ button#resetFilter {
         margin-left: 8px;
         margin-right: 0;
         font-size: 14.5px;
-        background-color: $fog-gray;
+        background-color: $fog-gray !important;
         color: $gray-light !important;
 
         &:hover{
-          background-color: $gray-light;
+          background-color: $gray-light !important;
           color: #fff !important;
           .filter-slice-chip-button {
               background-color: #fff;
@@ -1181,13 +1181,13 @@ div.manage-chip {
     & md-chip {
         width: 118px;
         margin: 0 2px 0 0;
-        background-color: $dark;
+        background-color: $dark !important;
         color: #fff !important;
         font-weight: bold;
         text-transform: uppercase;
         line-height: 2.3;
         &:hover{
-            background-color: $coal;
+            background-color: $coal !important;
         }
     }
     md-icon {
@@ -1256,6 +1256,11 @@ md-chip md-chip-template.bg-primary {
         border: 1px solid $custom-gray;
         border-radius: 2px;
         padding: 0 0 0 12px !important;
+    }
+    & md-select.md-default-theme[disabled] .md-select-value,
+    & md-select[disabled] .md-select-value {
+      border: none;
+      background-image: none;
     }
 
     & md-select.md-default-theme:not([disabled]):focus .md-select-value,
@@ -1502,4 +1507,10 @@ button#add-button{
     position: absolute;
     top: 50%;
     left: 50%;
+}
+
+.md-head th.md-column{
+  font-size: 14px !important;
+  color: $coal !important;
+  line-height: 1.2;
 }

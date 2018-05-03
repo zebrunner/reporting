@@ -62,14 +62,16 @@
             height: $header_height;
             line-height: $header_height;
             text-align: left;
-            left: 16px;
+            left: 12px;
             transition: width .25s ease-in-out;
             @media (min-width: $screen-sm) {
                 display: inline-block;
                 width: 220px;
                 border-right: 1px solid $header-border;
             }
-
+            @media (max-width: 767px) {
+                left: 20px;
+            }
             .logo-icon {
                 font-size: 19px;
             }
@@ -86,7 +88,6 @@
             }
         }
 
-        //
         .menu-button {
             display: block;
             position: absolute;
@@ -169,7 +170,9 @@
             @media (min-width: $screen-sm) {
                 padding: 0 0 0 220px;
             }
-
+            @media (max-width: $screen-sm)  {
+                border-bottom: 1px solid rgba(0,0,0,.1);
+            }
             > ul {
                 margin-bottom: 0;
             }
@@ -547,7 +550,7 @@
     //
     > .top-header {
         .logo {
-            border: 1px solid rgba(0,0,0,.1);
+            //border: 1px solid rgba(0,0,0,.1);
             @media (min-width: $screen-sm-min) {
                 border: 0;
             }
