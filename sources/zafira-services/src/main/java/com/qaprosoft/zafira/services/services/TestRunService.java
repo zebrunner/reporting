@@ -213,7 +213,6 @@ public class TestRunService
 			}
 			testRun.setCiRunId(queueTestRunParams.getCiRunId());
 			testRun.setStatus(Status.QUEUED);
-			testRun.setStartedAt(null);
 			testRun.setElapsed(null);
 			testRun.setConfigXML(null);
 			createTestRun(testRun);
