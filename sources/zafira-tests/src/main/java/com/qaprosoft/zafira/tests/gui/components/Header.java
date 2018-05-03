@@ -24,16 +24,16 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content[.//*[text() = 'My profile']]")
 	private UserMenu userMenu;
 
-	@FindBy(xpath = ".//*[contains(@class, 'logo-text')]")
+	@FindBy(css = ".logo-icon img")
 	private WebElement zafiraLogo;
 
 	@FindBy(xpath = ".//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
 	private WebElement companyLogo;
 
-	@FindBy(xpath = ".//*[contains(@class, 'logo')]//i[text() = 'image']")
+	@FindBy(xpath = ".//*[@id = 'brandPhoto']//i[text() = 'image']")
 	private WebElement companyLogoBackgroundIcon;
 
-	@FindBy(xpath = ".//*[contains(@class, 'logo')]//i[text() = 'settings']")
+	@FindBy(xpath = ".//*[contains(@class, 'profile-img')]//i[text() = 'settings']")
 	private WebElement companyProfilePhotoHoverIcon;
 
 	@FindBy(xpath = ".//button[.//*[text() = 'Projects']]")

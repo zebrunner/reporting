@@ -38,5 +38,6 @@ public class MarkAsReviewedModalWindow extends AbstractModalWindow
 	public void clickMarkAsReviewedButton()
 	{
 		markAsReviewedButton.click();
+		waitUntilElementIsNotPresent(commentInput, IMPLICITLY_TIMEOUT);
 	}
 }

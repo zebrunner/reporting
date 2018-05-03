@@ -31,7 +31,7 @@ public abstract class AbstractUIObject
 {
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
-	protected static final Long IMPLICITLY_TIMEOUT = 30L;
+	protected static final Long IMPLICITLY_TIMEOUT = 6L;
 	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
 	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
@@ -40,7 +40,7 @@ public abstract class AbstractUIObject
 	protected WebElement rootElement;
 	protected String fieldName;
 
-	@FindBy(xpath = "//md-backdrop")
+	@FindBy(css = "md-backdrop:not(.ng-animate)")
 	private WebElement backdrop;
 
 	@FindBy(xpath = "//md-tooltip")
@@ -158,7 +158,7 @@ public abstract class AbstractUIObject
 
 	public boolean waitUntilElementToBeClickableWithBackdropMask(WebElement webElement, long seconds)
 	{
-		return waitUntilElementIsPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
+		return waitUntilElementIsPresent(getBackdrop(), 2) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
