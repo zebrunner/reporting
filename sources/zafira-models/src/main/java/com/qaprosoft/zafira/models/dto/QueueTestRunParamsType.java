@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QueuedTestRunType implements Serializable
+public class QueueTestRunParamsType implements Serializable
 {
 	private static final long serialVersionUID = 5893913105698710480L;
 
@@ -14,6 +14,10 @@ public class QueuedTestRunType implements Serializable
 	private String branch;
 
 	private String ciRunId;
+
+	private String ciParentUrl;
+
+	private String ciParentBuild;
 
 	public String getJobName()
 	{
@@ -43,5 +47,25 @@ public class QueuedTestRunType implements Serializable
 	public void setCiRunId(String ciRunId)
 	{
 		this.ciRunId = ciRunId;
+	}
+
+	public String getCiParentUrl()
+	{
+		return ciParentUrl;
+	}
+
+	public void setCiParentUrl(String ciParentUrl)
+	{
+		this.ciParentUrl = ciParentUrl;
+	}
+
+	public String getCiParentBuild()
+	{
+		return ciParentBuild;
+	}
+
+	public void setCiParentBuild(String ciParentBuild)
+	{
+		this.ciParentBuild = ciParentBuild;
 	}
 }

@@ -32,6 +32,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -196,21 +197,30 @@ public class TestRunService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun queueTestRun(String jobName, String branch, String ciRunId) throws ServiceException
+	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
-		TestRun testRun = getLatestJobTestRunByBranchAndJobName(branch, jobName);
+		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
 		if(testRun != null) {
 			Long latestTestRunId = testRun.getId();
-			testRun.setCiRunId(ciRunId);
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
+			{
+				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+				testRun.setJob(job);
+			}
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
+			{
+				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+			}
+			testRun.setCiRunId(queueTestRunParams.getCiRunId());
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(null);
 			testRun.setConfigXML(null);
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-			TestRun queuedTestRun = getTestRunByCiRunId(ciRunId);
+			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 			for (Test test : tests)
 			{
-				testService.createScheduledTest(test, queuedTestRun.getId());
+				testService.createQueuedTest(test, queuedTestRun.getId());
 			}
 		}
 		return testRun;

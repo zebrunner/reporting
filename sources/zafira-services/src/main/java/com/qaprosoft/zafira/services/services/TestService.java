@@ -124,10 +124,10 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void createScheduledTest(Test test, Long scheduledTestRunId) throws ServiceException
+	public void createQueuedTest(Test test, Long queuedTestRunId) throws ServiceException
 	{
 		test.setId(null);
-		test.setTestRunId(scheduledTestRunId);
+		test.setTestRunId(queuedTestRunId);
 		test.setStatus(Status.QUEUED);
 		test.setStartTime(null);
 		test.setTestConfig(null);
@@ -136,7 +136,7 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void updateScheduledTest(Test test, Long testRunId) throws ServiceException
+	public void updateQueuedTest(Test test, Long testRunId) throws ServiceException
 	{
 		test.setTestRunId(testRunId);
 		testMapper.updateTest(test);
