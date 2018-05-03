@@ -217,9 +217,6 @@ public class TestRunsAPIController extends AbstractController
 		if(jobsService.getJobByName(queuedTestRunParams.getJobName()) != null)
 		{
 			testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
-			TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
-
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
