@@ -1257,6 +1257,11 @@ md-chip md-chip-template.bg-primary {
         border-radius: 2px;
         padding: 0 0 0 12px !important;
     }
+    & md-select.md-default-theme[disabled] .md-select-value,
+    & md-select[disabled] .md-select-value {
+      border: none;
+      background-image: none;
+    }
 
     & md-select.md-default-theme:not([disabled]):focus .md-select-value,
     & md-select:not([disabled]):focus .md-select-value,
