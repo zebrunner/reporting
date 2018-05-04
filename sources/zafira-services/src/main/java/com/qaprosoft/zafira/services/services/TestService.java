@@ -78,23 +78,32 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
-		// New test
-		if (test.getId() == null || test.getId() == 0)
+		// New or Queued test
+		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == null)
 		{
+			//This code block is executed only for the first job run
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
 			test.setTestConfig(config);
 			test.setStatus(Status.IN_PROGRESS);
-			testMapper.createTest(test);
-			if (jiraIds != null)
+
+			if((test.getId() == null || test.getId() == 0))
 			{
-				for (String jiraId : jiraIds)
+				testMapper.createTest(test);
+				if (jiraIds != null)
 				{
-					if (!StringUtils.isEmpty(jiraId))
+					for (String jiraId : jiraIds)
 					{
-						WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
-						testMapper.createTestWorkItem(test, workItem);
+						if (!StringUtils.isEmpty(jiraId))
+						{
+							WorkItem workItem = workItemService.createOrGetWorkItem(new WorkItem(jiraId));
+							testMapper.createTestWorkItem(test, workItem);
+						}
 					}
 				}
+			}
+			else
+			{
+				updateTest(test);
 			}
 			testRunService.updateStatistics(test.getTestRunId(), test.getStatus());
 		}
@@ -102,7 +111,6 @@ public class TestService
 		else
 		{
 			testRunService.updateStatistics(test.getTestRunId(), test.getStatus(), true);
-
 			test.setMessage(null);
 			test.setFinishTime(null);
 			test.setStatus(Status.IN_PROGRESS);
@@ -113,6 +121,24 @@ public class TestService
 			testArtifactService.deleteTestArtifactsByTestId(test.getId());
 		}
 		return test;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void createQueuedTest(Test test, Long queuedTestRunId) throws ServiceException
+	{
+		test.setId(null);
+		test.setTestRunId(queuedTestRunId);
+		test.setStatus(Status.QUEUED);
+		test.setTestConfig(null);
+		test.setNeedRerun(false);
+		testMapper.createTest(test);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void updateQueuedTest(Test test, Long testRunId) throws ServiceException
+	{
+		test.setTestRunId(testRunId);
+		testMapper.updateTest(test);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -200,7 +226,6 @@ public class TestService
 			testMapper.updateTest(existingTest);
 			testRunService.updateStatistics(existingTest.getTestRunId(), existingTest.getStatus());
 		}
-		
 		return existingTest;
 	}
 	
@@ -214,9 +239,10 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Test abortTest(Test test) throws ServiceException
+	public Test abortTest(Test test, String abortCause) throws ServiceException
 	{
 		test.setStatus(Status.ABORTED);
+		test.setMessage(abortCause);
 		testRunService.updateStatistics(test.getTestRunId(), Status.ABORTED);
 		updateTest(test);
 		return test;
@@ -293,6 +319,12 @@ public class TestService
 	}
 
 	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunIdAndStatus(long testRunId, Status status) throws ServiceException
+	{
+		return testMapper.getTestsByTestRunIdAndStatus(testRunId, status);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByWorkItemId(long workItemId) throws ServiceException
 	{
 		return testMapper.getTestsByWorkItemId(workItemId);
@@ -315,6 +347,12 @@ public class TestService
 	public void deleteTestById(long id) throws ServiceException
 	{
 		testMapper.deleteTestById(id);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteQueuedTest(Test test) throws ServiceException
+	{
+		testMapper.deleteTestByTestRunIdAndNameAndStatus(test.getTestRunId(), test.getName(), Status.QUEUED);
 	}
 
 	@Transactional(readOnly = true)

@@ -29,6 +29,8 @@ public class TestRunStatistics
 	private int failedAsBlocker;
 	private int skipped;
 	private int inProgress;
+	private int aborted;
+	private int queued;
 	private boolean reviewed;
 
 	public long getTestRunId()
@@ -99,6 +101,26 @@ public class TestRunStatistics
 	public void setInProgress(int inProgress)
 	{
 		this.inProgress = inProgress;
+	}
+
+	public int getAborted()
+	{
+		return aborted;
+	}
+
+	public void setAborted(int aborted)
+	{
+		this.aborted = aborted;
+	}
+
+	public int getQueued()
+	{
+		return queued;
+	}
+
+	public void setQueued(int queued)
+	{
+		this.queued = queued;
 	}
 
 	public boolean isReviewed()

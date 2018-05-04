@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.services.services;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.models.db.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +43,26 @@ public class JobsService
 	{
 		jobMapper.createJob(job);
 	}
-	
+
+	//Check the same logics in ZafiraClient method registerJob
+	@Transactional(rollbackFor = Exception.class)
+	public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException
+	{
+		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
+		String jenkinsHost = StringUtils.EMPTY;
+		if(jobUrl.contains("/view/"))
+		{
+			jenkinsHost = jobUrl.split("/view/")[0];
+		}
+		else if(jobUrl.contains("/job/"))
+		{
+			jenkinsHost = jobUrl.split("/job/")[0];
+		}
+		Job job = new Job(jobName, jobUrl, jenkinsHost, user);
+		createOrUpdateJob(job);
+		return job;
+	}
+
 	@Transactional(readOnly = true)
 	public List<Job> getAllJobs() throws ServiceException
 	{

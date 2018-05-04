@@ -25,6 +25,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.TestRunService;
 
+//TODO: remove AbortFrozenTestRunsTask class
 public class AbortFrozenTestRunsTask 
 {	
 	@Autowired
@@ -39,7 +40,7 @@ public class AbortFrozenTestRunsTask
 		cal.add(Calendar.HOUR, -testRunExpirationHours);
 		for(TestRun testRun : testRunService.getTestRunsByStatusAndStartedBefore(Status.IN_PROGRESS, cal.getTime()))
 		{
-			testRunService.abortTestRun(testRun);
+			testRunService.abortTestRun(testRun, "");
 		}
 	}
 }
