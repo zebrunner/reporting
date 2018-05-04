@@ -60,25 +60,25 @@
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column" class="tab-row">
-                                                                    <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">Elapsed time</span>
-                                                                        <span class="elment-with-label light_text" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                                    <div class="col-lg-3" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">
+                                                                        <span class="elment-with-label input-like-label" >Elapsed time</span>
+                                                                        <span class="elment-with-label light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
-                                                                    <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.owner">Primary owner</span>
-                                                                        <span class="elment-with-label light_text" id="testOwner" data-ng-if="test.owner"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
+                                                                    <div class="col-lg-3" data-ng-if="test.owner">
+                                                                        <span class="elment-with-label input-like-label" >Primary owner</span>
+                                                                        <span class="elment-with-label light_text" id="testOwner"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                     </div>
-                                                                    <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.secondaryOwner">Secondary owner</span>
-                                                                        <span class="elment-with-label light_text" id="secondaryOwner" data-ng-if="test.secondaryOwner"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
+                                                                    <div class="col-lg-3" data-ng-if="test.secondaryOwner">
+                                                                        <span class="elment-with-label input-like-label">Secondary owner</span>
+                                                                        <span class="elment-with-label light_text" id="secondaryOwner"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                     </div>
-                                                                    <div class="col-lg-3">
-                                                                        <span class="elment-with-label input-like-label" data-ng-if="test.testConfig.device">Device name</span>
-                                                                        <span class="elment-with-label light_text" id="device" data-ng-if="test.testConfig.device"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
+                                                                    <div class="col-lg-3" data-ng-if="test.testConfig.device">
+                                                                        <span class="elment-with-label input-like-label">Device name</span>
+                                                                        <span class="elment-with-label light_text" id="device""><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column" class="no-border issue-trace-label tab-row" data-ng-if="test.message" >
-                                                                    <div class="input-like-label">Stacktrace</div>
+                                                                    <div class="input-like-label">Test message</div>
                                                                 </div>
                                                                 <div layout layout-sm="column" class="no-border scrollable-tab" data-ng-if="test.message" >
                                                                     <div class="col-lg-12 issue-trace-area">
