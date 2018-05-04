@@ -51,6 +51,7 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void checkMainCheckbox()
 	{
+		waitUntilElementToBeClickableByBackdropMask(mainCheckbox, 2);
 		check(mainCheckbox);
 	}
 

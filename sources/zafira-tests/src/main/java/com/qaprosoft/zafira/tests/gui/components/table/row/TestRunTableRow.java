@@ -283,7 +283,7 @@ public class TestRunTableRow extends AbstractRow
 	{
 		testRunSettingMenu.getRootElement().click();
 		pause(0.5);
-		//waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 1);
+		waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getSendAsEmailButton(), 5);
 		return testRunSettingMenu;
 	}
 

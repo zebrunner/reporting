@@ -921,7 +921,9 @@
                 TestRunService.getEnvironments().then(function(rs) {
                     if(rs.success)
                     {
-                        $scope.environments = rs.data;
+                        $scope.environments = rs.data.filter(function (env) {
+                            return env && env != null;
+                        });
                         resolve($scope.environments);
                     }
                     else

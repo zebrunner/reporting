@@ -130,6 +130,7 @@ public abstract class BasePage extends AbstractPage
 
 	public void clickFabMenuButtonByClassName(String classPartialName)
 	{
+		pause(0.9);
 		getFabMenuButtonByClassName(classPartialName).click();
 	}
 }

@@ -123,6 +123,7 @@ public class UserPageTest extends AbstractTest
 		userType.setUsername(username);
 		userType.setPassword("Welcome1!");
 		userPage = createUserModalWindow.registerUser(userType);
+		userPage.waitUntilElementWithTextIsPresent(userPage.getSuccessAlert(), "User created", 5);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "User created", "Invalid user created alert");
 		userPage.waitUntilPageIsLoaded(10);
 		userType.setId(userMapper.getUserByUserName(userType.getUsername()).getId());
@@ -159,6 +160,7 @@ public class UserPageTest extends AbstractTest
 				"Change button is not disabled");
 
 		changePasswordModalWindow.changePassword("Welcome2!");
+		userPage.waitUntilAlertWithTextIsPresent(5);
 		Assert.assertEquals(userPage.getSuccessAlert().getText(), "Password changed",
 				"Password changed alert is not present");
 		userPage.getHeader().logOut();

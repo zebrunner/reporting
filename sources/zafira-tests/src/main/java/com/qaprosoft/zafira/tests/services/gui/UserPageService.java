@@ -49,13 +49,13 @@ public class UserPageService extends AbstractPageService
 	public UserSettingMenu clickUserMenuButtonByIndex(int index)
 	{
 		UserTableRow userTableRow = getUserTableRowByIndex(index);
-		if(userPage.isElementPresent(userPage.getBackdrop(), 1))
+		if(userPage.isBackdropPresent(1))
 		{
 			userPage.clickOutside();
 			userPage.waitUntilElementToBeClickableByBackdropMask(userTableRow.getUserSettingMenu().getRootElement(), 1);
 		}
 		UserSettingMenu userSettingMenu = userTableRow.clickUserSettingMenu();
-		userSettingMenu.waitUntilElementToBeClickableWithBackdropMask(userSettingMenu.getRootElement(), 1);
+		userSettingMenu.waitUntilElementToBeClickableWithBackdropMask(userSettingMenu.getRootElement(), 2);
 		return userSettingMenu;
 	}
 

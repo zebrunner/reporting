@@ -223,7 +223,7 @@
                                 <tr md-row>
                                     <th md-column>
                                         <md-input-container>
-                                            <md-checkbox id="searchChechbox" class="md-secondary"
+                                            <md-checkbox id="searchChechbox" class="md-primary"
                                                          aria-label="Select"
                                                          data-ng-model="selectAll"
                                                          data-ng-true-value="true"
@@ -253,7 +253,7 @@
                                 <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}">
                                     <td name="testRunStatus" md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
-                                        		<md-checkbox name="testRunCheckbox" class="md-secondary"
+                                        		<md-checkbox name="testRunCheckbox" class="md-primary"
                                                              aria-label="Select"
                                                              data-ng-model="testRun.selected"
                                                              data-ng-if="testRun.selected || testRun.status != 'IN_PROGRESS'"

@@ -1121,7 +1121,7 @@ button#resetFilter {
     md-chip {
         margin-left: 8px;
         margin-right: 0;
-        font-size: 14.5px;
+        font-size: 13.5px;
         background-color: $fog-gray !important;
         color: $gray-light !important;
 
@@ -1391,6 +1391,7 @@ div[aria-selected='true'] span.ng-binding {
         &.active{
           background-color: $brand-primary !important;
           color: #fff !important;
+          box-shadow: none;
         }
       }
 }
@@ -1443,6 +1444,7 @@ div[aria-selected='true'] span.ng-binding {
     border-color: $custom-gray;
     border-radius: 2px;
     font-size: 14.5px;
+    font-weight: 500;
 
     &:hover{
       cursor: pointer;
@@ -1458,7 +1460,7 @@ button#add-button{
   color: #fff;
 
   &:hover{
-    background-color: $coal;
+    background-color: #777777;
   }
 }
 
@@ -1513,4 +1515,9 @@ button#add-button{
   font-size: 14px !important;
   color: $coal !important;
   line-height: 1.2;
+}
+
+
+#filter-editor .md-select-icon:after, #search .md-select-icon:after {
+    font-size: 9px;
 }

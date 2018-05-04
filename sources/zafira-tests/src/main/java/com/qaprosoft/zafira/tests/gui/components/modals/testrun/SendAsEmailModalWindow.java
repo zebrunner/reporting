@@ -41,6 +41,7 @@ public class SendAsEmailModalWindow extends AbstractModalWindow
 	{
 		recipientsInput.click();
 		recipientsInput.sendKeys(recipient);
+		LOGGER.debug("Keys " + recipient + " was typed");
 	}
 
 	public WebElement getProgressLinear()
