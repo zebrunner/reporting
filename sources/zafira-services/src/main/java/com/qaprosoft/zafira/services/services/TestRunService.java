@@ -32,6 +32,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -87,6 +88,9 @@ public class TestRunService
 	
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private JobsService jobsService;
 
 	@Autowired
 	private StatisticsService statisticsService;
@@ -185,7 +189,43 @@ public class TestRunService
 		}
 		return jobTestRuns;
 	}
-	
+
+	@Transactional(readOnly = true)
+	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
+	{
+		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
+	{
+		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
+		if(testRun != null) {
+			Long latestTestRunId = testRun.getId();
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
+			{
+				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+				testRun.setJob(job);
+			}
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
+			{
+				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+			}
+			testRun.setCiRunId(queueTestRunParams.getCiRunId());
+			testRun.setStatus(Status.QUEUED);
+			testRun.setElapsed(null);
+			testRun.setConfigXML(null);
+			createTestRun(testRun);
+			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+			for (Test test : tests)
+			{
+				testService.createQueuedTest(test, queuedTestRun.getId());
+			}
+		}
+		return testRun;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun updateTestRun(TestRun testRun) throws ServiceException
 	{
@@ -261,7 +301,6 @@ public class TestRunService
 				}
 			}
 		}
-		
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
@@ -304,7 +343,6 @@ public class TestRunService
 			testRun.setStatus(IN_PROGRESS);
 			updateTestRun(testRun);
 		}
-		
 		return testRun;
 	}
 	
@@ -586,6 +624,10 @@ public class TestRunService
 				case IN_PROGRESS:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
+					if(testRunStatistics.getQueued() > 0){
+						testRunStatistics.setQueued(testRunStatistics.getQueued());
+						testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
+					}
 					break;
 				case PASSED:
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
@@ -602,12 +644,12 @@ public class TestRunService
 				case ABORTED:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
-				default:
-					break;
-			}
+			    default:
+			    	break;
+			    }
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		} finally
 		{
 			try
@@ -615,7 +657,7 @@ public class TestRunService
 				updateLocks.get(testRunId).unlock();
 			} catch (ExecutionException e)
 			{
-				LOGGER.error(e.getMessage());
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return testRunStatistics;

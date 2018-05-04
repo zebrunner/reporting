@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.dto.*;
+import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -47,12 +49,6 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.dto.BuildParameterType;
-import com.qaprosoft.zafira.models.dto.CommentType;
-import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
@@ -60,11 +56,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.StatisticsService;
-import com.qaprosoft.zafira.services.services.TestConfigService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -91,10 +82,16 @@ public class TestRunsAPIController extends AbstractController
 	private TestService testService;
 
 	@Autowired
+	private JobsService jobsService;
+
+	@Autowired
 	private TestConfigService testConfigService;
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private JenkinsService jenkinsService;
@@ -123,6 +120,7 @@ public class TestRunsAPIController extends AbstractController
 		testRun = testRunService.startTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -205,6 +203,21 @@ public class TestRunsAPIController extends AbstractController
 			}
 		}
 
+		return mapper.map(testRun, TestRunType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams) throws
+			ServiceException
+	{
+		TestRun testRun = new TestRun();
+		if(jobsService.getJobByName(queuedTestRunParams.getJobName()) != null)
+		{
+			testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
+		}
 		return mapper.map(testRun, TestRunType.class);
 	}
 

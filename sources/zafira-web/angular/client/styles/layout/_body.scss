@@ -372,6 +372,30 @@ button.red {
 	color: #00BCD4;
 }
 
+.label-aborted-border {
+    border: 1px solid #AAAAAA;
+}
+
+.label-aborted-empty {
+    color: #AAAAAA;
+}
+
+.label-aborted-bg {
+    background-color: #AAAAAA;
+}
+
+.aborted-test-bg {
+    background-color: #eaeaea;
+}
+
+.label-default-border {
+    border: 1px solid #afafaf;
+}
+
+.label-default-empty {
+    color: #afafaf;
+}
+
 span.light_text, div.light_text {
 	color: #aaa !important;
 }
@@ -433,6 +457,14 @@ span.light_text, div.light_text {
 
 .highlight_gray {
     color: lightgrey !important;
+}
+
+.grey_font {
+    color: #afafaf !important;
+}
+
+.black_font {
+    color: rgba(0,0,0,0.87) !important;
 }
 
 /*Page backgrounds*/

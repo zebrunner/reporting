@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.models.db.Status;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
@@ -31,6 +32,8 @@ public interface TestMapper
 	
 	List<Test> getTestsByTestRunId(long testRunId);
 
+	List<Test> getTestsByTestRunIdAndStatus(@Param("testRunId") long testRunId, @Param("status") Status status);
+
 	List<Test> getTestsByWorkItemId(long workItemId);
 	
 	void createTestWorkItem(@Param("test") Test test, @Param("workItem") WorkItem workItem);
@@ -44,6 +47,8 @@ public interface TestMapper
 	void updateTestsNeedRerun(@Param("ids") List<Long> ids, @Param("rerun") boolean needRerun);
 
 	void deleteTestById(long id);
+
+	void deleteTestByTestRunIdAndNameAndStatus(@Param("testRunId") long testRunId, @Param("testName") String testName, @Param("status") Status status);
 
 	void deleteTest(Test test);
 	

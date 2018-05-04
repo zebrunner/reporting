@@ -72,6 +72,8 @@
                     currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
                     currentTestRun.skipped = event.testRunStatistics.skipped;
                     currentTestRun.reviewed = event.testRunStatistics.reviewed;
+                    currentTestRun.aborted = event.testRunStatistics.aborted;
+                    currentTestRun.queued = event.testRunStatistics.queued;
                 }
                 $scope.$apply();
             });
