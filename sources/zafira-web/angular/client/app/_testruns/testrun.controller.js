@@ -506,7 +506,7 @@
                     if(rs.success)
                     {
                         var abortCause = {};
-                        abortCause.comment = "TestRun is was aborted manually";
+                        abortCause.comment = "TestRun is aborted manually";
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
