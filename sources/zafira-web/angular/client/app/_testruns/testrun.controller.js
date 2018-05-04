@@ -384,6 +384,8 @@
                     currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
                     currentTestRun.skipped = event.testRunStatistics.skipped;
                     currentTestRun.reviewed = event.testRunStatistics.reviewed;
+                    currentTestRun.aborted = event.testRunStatistics.aborted;
+                    currentTestRun.queued = event.testRunStatistics.queued;
                 }
                 $scope.$apply();
             });
@@ -836,7 +838,9 @@
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
                     if(rs.success)
                     {
-                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId).then(function(rs) {
+                        var abortCause = {};
+                        abortCause.comment = "TestRun is aborted manually";
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
                                 alertify.success("Testrun " + testRun.testSuite.name + " is aborted");

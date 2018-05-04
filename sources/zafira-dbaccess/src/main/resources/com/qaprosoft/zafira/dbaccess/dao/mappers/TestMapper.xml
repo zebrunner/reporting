@@ -37,6 +37,18 @@
 		]]>
 	</insert>
 
+	<delete id="deleteTestByTestRunIdAndNameAndStatus">
+		<![CDATA[
+		    DELETE FROM zafira.TESTS
+			WHERE
+				TEST_RUN_ID = #{testRunId}
+				AND
+				NAME = #{testName}
+				AND
+				STATUS = #{status};
+		]]>
+	</delete>
+
 	<delete id="deleteTestWorkItemByWorkItemIdAndTestId">
 		<![CDATA[
 			DELETE FROM zafira.TEST_WORK_ITEMS
@@ -184,6 +196,13 @@
 		<include refid="getTest" />
 		<![CDATA[
 			WHERE T.TEST_RUN_ID = #{testRunId};
+		]]>
+	</select>
+
+	<select id="getTestsByTestRunIdAndStatus" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE T.TEST_RUN_ID = #{testRunId} AND T.STATUS =  #{status};
 		]]>
 	</select>
 
