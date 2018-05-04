@@ -505,7 +505,9 @@
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
                     if(rs.success)
                     {
-                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId).then(function(rs) {
+                        var abortCause = {};
+                        abortCause.comment = "TestRun is was aborted manually";
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
                                 alertify.success("Testrun " + testRun.testSuite.name + " is aborted");

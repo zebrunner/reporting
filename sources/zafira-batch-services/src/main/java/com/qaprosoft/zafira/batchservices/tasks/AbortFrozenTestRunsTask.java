@@ -39,7 +39,7 @@ public class AbortFrozenTestRunsTask
 		cal.add(Calendar.HOUR, -testRunExpirationHours);
 		for(TestRun testRun : testRunService.getTestRunsByStatusAndStartedBefore(Status.IN_PROGRESS, cal.getTime()))
 		{
-			testRunService.abortTestRun(testRun);
+			testRunService.abortTestRun(testRun, "IN_PROGRESS timeout was reached");
 		}
 	}
 }

@@ -348,8 +348,11 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(TestRun testRun) throws ServiceException
+	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{
+		if (StringUtils.isEmpty(abortCause)){
+			abortCause = "Abort cause is unknown";
+		}
 		if(testRun != null && IN_PROGRESS.equals(testRun.getStatus()))
 		{
 			testRun.setStatus(Status.ABORTED);
@@ -360,7 +363,7 @@ public class TestRunService
 			{
 				if(IN_PROGRESS.equals(test.getStatus()))
 				{
-					testService.abortTest(test);
+					testService.abortTest(test, abortCause);
 				}
 			}
 			testService.updateTestRerunFlags(testRun, tests);

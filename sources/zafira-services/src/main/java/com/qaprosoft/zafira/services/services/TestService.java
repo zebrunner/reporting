@@ -239,9 +239,10 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Test abortTest(Test test) throws ServiceException
+	public Test abortTest(Test test, String abortCause) throws ServiceException
 	{
 		test.setStatus(Status.ABORTED);
+		test.setMessage(abortCause);
 		testRunService.updateStatistics(test.getTestRunId(), Status.ABORTED);
 		updateTest(test);
 		return test;
