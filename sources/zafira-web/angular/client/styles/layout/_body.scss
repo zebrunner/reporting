@@ -67,6 +67,10 @@ body {
     background: #bd6f6f;
 }
 
+.result_error.ABORTED {
+    background: #d6d6d6;
+}
+
 .result_error.SKIPPED {
     background: #ffe680;
 }
