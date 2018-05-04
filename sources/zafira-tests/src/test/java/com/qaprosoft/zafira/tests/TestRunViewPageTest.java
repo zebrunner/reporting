@@ -64,10 +64,12 @@ public class TestRunViewPageTest extends AbstractTest
 		createTestRunViewModalWindow.selectProject(PROJECT_NAME);
 		Assert.assertTrue(createTestRunViewModalWindow.hasDisabledAttribute(createTestRunViewModalWindow.getCreateButton()), "Create button is enabled");
 		createTestRunViewModalWindow.typeName(testRunViewName);
+		pause(0.2);
 		Assert.assertFalse(createTestRunViewModalWindow.hasDisabledAttribute(createTestRunViewModalWindow.getCreateButton()), "Create button is disabled");
 		createTestRunViewModalWindow.clickCreateButton();
 		dashboardPage.waitUntilElementWithTextIsPresent(dashboardPage.getSuccessAlert(), "View created successfully", 15);
 		Assert.assertEquals(dashboardPage.getSuccessAlert().getText(), "View created successfully", "Alert text is incorrect");
+		dashboardPage.reload();
 		TestRunTabMenu testRunTabMenu = dashboardPage.getNavbar().hoverOnTestRunTab();
 		WebElement testRunView = testRunTabMenu.getTestRunsViewByName(testRunViewName);
 		Assert.assertTrue(dashboardPage.isElementPresent(testRunView, 1), "Test run view is not present");
@@ -97,6 +99,7 @@ public class TestRunViewPageTest extends AbstractTest
 		createTestRunViewModalWindow.typeName(this.testRunViewName);
 		createTestRunViewModalWindow.selectProject(PROJECT_NAME);
 		createTestRunViewModalWindow.clickSaveButton();
+		dashboardPage.waitUntilAlertWithTextIsPresent(5);
 		dashboardPage.waitUntilElementWithTextIsPresent(dashboardPage.getSuccessAlert(), "View updated successfully", 5);
 		Assert.assertEquals(dashboardPage.getSuccessAlert().getText(), "View updated successfully", "Success alert has incorrect text");
 		dashboardPage.waitUntilElementIsNotPresent(dashboardPage.getSuccessAlert(), 5);

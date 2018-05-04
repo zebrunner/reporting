@@ -71,7 +71,7 @@ public class TestRunTabMenu extends AbstractUIObject
 	public CreateTestRunViewModalWindow clickCreateTestRunViewButton()
 	{
 		createViewButton.click();
-		waitUntilElementIsPresent(createTestRunViewModalWindow.getRootElement(), 5);
+		waitUntilElementIsPresent(createTestRunViewModalWindow.getNameInput(), 5);
 		return createTestRunViewModalWindow;
 	}
 

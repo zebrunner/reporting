@@ -99,6 +99,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testRunSettingMenu.isElementPresent(testRunSettingMenu.getRebuildButton(), 1), "Rebuild button is not visible");
 		Assert.assertTrue(testRunSettingMenu.isElementPresent(testRunSettingMenu.getDeleteButton(), 1), "Delete button is not visible");
 		testRunPage.clickOutside();
+		pause(0.5);
 		testRunPage.getTestRunSearchBlock().checkMainCheckbox();
 		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(row.isChecked(row.getCheckbox()), "Some checkboxes are not checked"));
 	}
@@ -129,6 +130,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunSettingMenu.clickCopyLinkButton();
 		testRunPage.getTestRunSearchBlock().getAppVersionInput().sendKeys(Keys.CONTROL + "v");
 		String url = testRunPage.getWebElementValue(testRunPage.getTestRunSearchBlock().getAppVersionInput());
+		LOGGER.debug("Coped url is " + url);
 		String[] urlSplit = url.split("/");
 		Assert.assertEquals(urlSplit[urlSplit.length - 1], String.valueOf(testRunViewTypes.get(0).getTestRunType().getId()), "Invalid test run was opened. "
 				+ "Current url: " + url + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
@@ -183,15 +185,17 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage = (TestRunPage) testRunPage.reload();
 		SendAsEmailModalWindow sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
 		Assert.assertEquals(sendAsEmailModalWindow.getHeaderText(), "Email", "Modal is not opened");
-		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 5));
 		sendAsEmailModalWindow.waitUntilElementIsNotPresent(sendAsEmailModalWindow.getProgressLinear(), 2);
+		pause(0.5);
 		sendAsEmailModalWindow.clickSuggestion(0);
 		Chip chip = sendAsEmailModalWindow.getChips().get(0);
 		Assert.assertTrue(chip.isElementPresent(chip.getCloseButton(), 1), "Chip is not present");
 		Assert.assertEquals(chip.getContentText(), email, "Invalid email in the chip. Current email text is: " + chip.getContentText());
 		chip.clickCloseButton();
 		Assert.assertTrue(! sendAsEmailModalWindow.isElementPresent(chip.getRootElement(), 1), "Chip is present");
-		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
+		pause(2);
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 5));
 		sendAsEmailModalWindow.clickSuggestion(0);
 		sendAsEmailModalWindow.clickSendButton();
 		testRunPage.waitUntilPageIsLoaded();
@@ -249,9 +253,8 @@ public class TestRunPageTest extends AbstractTest
 		pause(1);
 		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is deleted");
 		TestRunSettingMenu testRunSettingMenu = testRunPageService.getTestRunRowByIndex(0).clickTestRunSettingMenu();
-		testRunSettingMenu.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 2);
 		testRunSettingMenu.clickDeleteButton();
-		alert = driver.switchTo().alert();
+		alert = testRunPage.getAlert();
 		alert.accept();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " removed");
@@ -378,6 +381,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
 		testRunPage.getFabButton().clickButtonTrigger();
 		testRunPage.getFabButton().clickButtonMiniByClassName("trash");
+		pause(2);
 		testRunPage.getAlert().accept();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");

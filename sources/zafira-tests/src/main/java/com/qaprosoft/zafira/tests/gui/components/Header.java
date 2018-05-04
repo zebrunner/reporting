@@ -112,7 +112,7 @@ public class Header extends AbstractUIObject
 
 	public ProjectFilterMenu clickProjectFilterButton()
 	{
-		if (!isElementClickable(projectsFilterButton, 10) || isElementPresent(getBackdrop(), 1))
+		if (!isElementClickable(projectsFilterButton, 10) || isBackdropPresent(1))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.projectsFilterButton, 1);
 		this.projectsFilterButton.click();
@@ -122,7 +122,7 @@ public class Header extends AbstractUIObject
 
 	public UserMenu clickUserMenuButton()
 	{
-		if (isElementPresent(getBackdrop(), 2) || !isElementClickable(userMenuButton, 2))
+		if (isBackdropPresent(2) || !isElementClickable(userMenuButton, 2))
 			clickOutside();
 		waitUntilElementToBeClickableByBackdropMask(this.userMenuButton, 2);
 		this.userMenuButton.click();
@@ -133,8 +133,7 @@ public class Header extends AbstractUIObject
 	public UserProfilePage goToUserProfilePage()
 	{
 		WebElement userProfileButton = this.clickUserMenuButton().getUserProfileButton();
-		if (!isElementClickable(userProfileButton, 2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(userProfileButton, 1);
+		waitUntilElementToBeClickableWithBackdropMask(userProfileButton, 5);
 		userProfileButton.click();
 		LOGGER.info("Profile button was clicked");
 		return new UserProfilePage(driver);
@@ -143,8 +142,8 @@ public class Header extends AbstractUIObject
 	public UserPerformancePage goToUserPerformancePage()
 	{
 		WebElement userPerformanceButton = this.clickUserMenuButton().getUserPerformanceButton();
-		if (!isElementClickable(userPerformanceButton, 2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(userPerformanceButton, 1);
+		//if (!isElementClickable(userPerformanceButton, 2) || isBackdropPresent(2))
+		waitUntilElementToBeClickableWithBackdropMask(userPerformanceButton, 5);
 		userPerformanceButton.click();
 		LOGGER.info("User performance button was clicked");
 		return new UserPerformancePage(driver, PERFORMANCE_DASHBOARD_ID, ADMIN_ID);
@@ -153,8 +152,8 @@ public class Header extends AbstractUIObject
 	public IntegrationsPage goToIntegrationsPage()
 	{
 		WebElement integrationsButton = this.clickUserMenuButton().getIntegrationsButton();
-		if (!isElementClickable(integrationsButton, 2) || isElementPresent(getBackdrop(), 1))
-			waitUntilElementToBeClickableByBackdropMask(integrationsButton, 1);
+		//if (!isElementClickable(integrationsButton, 2) || isBackdropPresent(1))
+		waitUntilElementToBeClickableWithBackdropMask(integrationsButton, 5);
 		integrationsButton.click();
 		LOGGER.info("Integration button was clicked");
 		return new IntegrationsPage(driver);
@@ -163,7 +162,7 @@ public class Header extends AbstractUIObject
 	public LoginPage logOut()
 	{
 		WebElement logoutButton = this.clickUserMenuButton().getLogoutButton();
-		if (!isElementClickable(logoutButton, 2) || isElementPresent(getBackdrop(), 1))
+		if (!isElementClickable(logoutButton, 2) || isBackdropPresent(1))
 			waitUntilElementToBeClickableWithBackdropMask(logoutButton, 1);
 		logoutButton.click();
 		LOGGER.info("Logout button was clicked");

@@ -37,8 +37,8 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
-		testRunSettingMenu.clickMarkAsReviewedButton();
 		testRunPage.getMarkAsReviewedModalWindow().waitUntilElementToBeClickableWithBackdropMask(testRunPage.getMarkAsReviewedModalWindow().getMarkAsReviewedButton(), 1);
+		testRunSettingMenu.clickMarkAsReviewedButton();
 		return testRunPage.getMarkAsReviewedModalWindow();
 	}
 
@@ -53,6 +53,7 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
+		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getSendAsEmailButton(), 1);
 		testRunSettingMenu.clickSendAsEmailButton();
 		return testRunPage.getSendAsEmailModalWindow();
 	}
@@ -61,6 +62,7 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
+		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getExportButton(), 2);
 		testRunSettingMenu.clickExportButton();
 	}
 
@@ -68,7 +70,9 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
+		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getBuildNowButton(), 2);
 		testRunSettingMenu.clickBuildNowButton();
+		testRunPage.getBuildNowModalWindow().waitUntilModalIsNotPresent();
 		return testRunPage.getBuildNowModalWindow();
 	}
 
@@ -76,7 +80,7 @@ public class TestRunPageService extends AbstractPageService
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
-		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRebuildButton(), 1);
+		testRunPage.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRebuildButton(), 5);
 		testRunSettingMenu.clickRebuildButton();
 		return testRunPage.getRebuildModalWindow();
 	}
