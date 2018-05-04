@@ -343,7 +343,6 @@ public class TestRunService
 			testRun.setStatus(IN_PROGRESS);
 			updateTestRun(testRun);
 		}
-		testRun.setScmBranch("origin/master");
 		return testRun;
 	}
 	
@@ -648,9 +647,9 @@ public class TestRunService
 				case ABORTED:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
-			default:
-					break;
-			}
+			    default:
+			    	break;
+			    }
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);

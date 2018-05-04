@@ -44,6 +44,7 @@ public class JobsService
 		jobMapper.createJob(job);
 	}
 
+	//Check the same logics in ZafiraClient method registerJob
 	@Transactional(rollbackFor = Exception.class)
 	public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException
 	{
@@ -57,7 +58,7 @@ public class JobsService
 		{
 			jenkinsHost = jobUrl.split("/job/")[0];
 		}
-        Job job = new Job(jobName, jobUrl, jenkinsHost, user);
+		Job job = new Job(jobName, jobUrl, jenkinsHost, user);
 		createOrUpdateJob(job);
 		return job;
 	}
