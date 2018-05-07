@@ -53,7 +53,7 @@
                                                                             'label label-success label-font-size' : test.status == 'PASSED',
                                                                             'label label-danger label-font-size' : test.status == 'FAILED',
                                                                             'label label-warning label-font-size' : test.status == 'SKIPPED',
-                                                                            'label label-default label-font-size' : test.status == 'UNKNOWN' || test.status == 'ABORTED'}">
+                                                                            'label label-default label-font-size' : test.status == 'UNKNOWN' || test.status == 'ABORTED' || test.status == 'QUEUED'}">
                                                                                 {{test.status}}
                                                                             </a>
                                                                         </div>

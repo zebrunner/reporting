@@ -37,7 +37,7 @@
 
         $scope.sc = angular.copy(DEFAULT_SC);
 
-        $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'UNKNOWN'];
+        $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
 
         $scope.searchFormIsEmpty = true;
 
