@@ -1,8 +1,8 @@
-<header class="top-header clearfix">
+<header zafira-background-theme="table" class="top-header clearfix">
     <div ui-preloader></div>
 
     <!-- Logo -->
-    <div class="logo bg-white" ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
+    <div zafira-background-theme="table" class="logo bg-white" ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
                      'bg-white': main.skin === '21',
                      'bg-primary': ['12','22','32'].indexOf(main.skin) >= 0,
                      'bg-success': ['13','23','33'].indexOf(main.skin) >= 0,
@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    <div class="top-nav" ng-controller="SidebarController">
+    <div zafira-background-theme="table" class="top-nav" ng-controller="SidebarController">
         <ul class="nav-right pull-right list-unstyled">
             <li>
                 <div class="profile-img" style="display: inline-block;" ng-controller="SidebarController">
