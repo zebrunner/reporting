@@ -15,6 +15,7 @@ public class FilterType extends AbstractEntity
 	private String description;
 	@Valid
 	private Subject subject;
+	private Long userId;
 	private boolean publicAccess;
 
 	public String getName()
@@ -45,6 +46,16 @@ public class FilterType extends AbstractEntity
 	public void setSubject(Subject subject)
 	{
 		this.subject = subject;
+	}
+
+	public Long getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
 	}
 
 	public boolean isPublicAccess()

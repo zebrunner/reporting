@@ -72,7 +72,7 @@
                                     <div style="display: inline-block;" ng-click="searchByFilter($chip, $mdChipsCtrl); $mdChipsCtrl.selectedChip = $index">
                                         <span>{{$chip.name}}</span>
                                     </div>
-                                    <div style="display: inline-block; vertical-align: sub;">
+                                    <div is-owner="{{ $chip.userId }}" user="{{ currentUser }}" style="display: inline-block; vertical-align: sub;">
                                         <i class="material-icons custom-chip-action show-icon-on-hover" ng-click="chooseFilter($chip);">edit</i>
                                     </div>
                                 </md-chip-template>

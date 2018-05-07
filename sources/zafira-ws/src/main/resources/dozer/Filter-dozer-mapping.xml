@@ -19,6 +19,10 @@
             <b>description</b>
         </field>
         <field>
+            <a>userId</a>
+            <b>userId</b>
+        </field>
+        <field>
             <a set-method="setSubjectFromString">subject</a>
             <b set-method="setSubjectFromObject">subject</b>
         </field>
