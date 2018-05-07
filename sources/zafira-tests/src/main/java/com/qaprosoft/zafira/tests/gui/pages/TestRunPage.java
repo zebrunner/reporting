@@ -14,7 +14,7 @@ import org.openqa.selenium.support.FindBy;
 public class TestRunPage extends BasePage
 {
 
-	@FindBy(xpath = ".//thead")
+	@FindBy(id = "search")
 	private TestRunSearchBlock testRunSearchBlock;
 
 	@FindBy(xpath = ".//tbody[@md-body]")

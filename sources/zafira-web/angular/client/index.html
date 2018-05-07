@@ -49,6 +49,7 @@
         <link rel="stylesheet" href="styles/LineChart.min.css">
         <link rel="stylesheet" href="styles/textAngular.css">
         <link rel="stylesheet" href="styles/vs.css">
+        <link rel="stylesheet" href="styles/custom.css">
         <!-- endbuild -->
 
     </head>
@@ -61,53 +62,34 @@
                             'nav-collapsed-min': main.isMenuCollapsed,
                             'dark-container zaf-dark': darkThemes.indexOf(main.skin) != -1,
                              'bg-page-grey zaf-light': darkThemes.indexOf(main.skin) === -1
-          } "  md-theme="{{ main.default }}" md-theme-watch>
-        <!--[if lt IE 9]>
+          } " md-theme="{{ main.default }}" md-theme-watch>
+    <!--[if lt IE 9]>
             <div class="lt-ie9-bg">
                 <p class="browsehappy">You are using an <strong>outdated</strong> browser.</p>
                 <p>Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
             </div>
         <![endif]-->
 
-        <div id="loader-container" ng-class="{'company-logo': companyLogo.value, 'company-init': companyLogo}">
-            <div ng-if="companyLogo.value" id="loader-container-image">
-                <img class="img-circle imageRotateHorizontal" ng-src="{{ companyLogo.value }}">
-            </div>
+    <div id="loader-container" ng-class="{'company-logo': companyLogo.value, 'company-init': companyLogo}">
+        <div ng-if="companyLogo.value" id="loader-container-image">
+            <img class="img-circle imageRotateHorizontal" ng-src="{{ companyLogo.value }}">
         </div>
+    </div>
 
-        <header data-ng-include=" 'app/layout/header.html' "
-                 id="header"
-                 class="header-container "
-                 data-ng-class="{ 'header-fixed': main.fixedHeader,
-                                  'bg-white': ['11','12','13','14','15','16','21'].indexOf(main.skin) >= 0,
-                                  'bg-dark': main.skin === '31',
-                                  'bg-primary': ['22','32'].indexOf(main.skin) >= 0,
-                                  'bg-success': ['23','33'].indexOf(main.skin) >= 0,
-                                  'bg-info': ['24','34'].indexOf(main.skin) >= 0,
-                                  'bg-warning': ['25','35'].indexOf(main.skin) >= 0,
-                                  'bg-danger': ['26','36'].indexOf(main.skin) >= 0
+    <header data-ng-include=" 'app/layout/header.html' " id="header" class="header-container bg-white" data-ng-class="{ 'header-fixed': main.fixedHeader,
+                                  'bg-white': ['11','12','13','14','15','16','21'].indexOf(main.skin) >= 0
                  }"></header>
 
-        <div class="main-container"
-             data-ng-class="{ 'app-nav-horizontal': main.menu === 'horizontal' }">
-            <aside data-ng-include=" 'app/layout/sidebar.html' "
-                   id="nav-container"
-                   class="nav-container"
-                   data-ng-class="{ 'nav-fixed': main.fixedSidebar,
-                                    'nav-horizontal': main.menu === 'horizontal',
+    <div class="main-container" data-ng-class="{ 'app-nav-horizontal': main.menu === 'horizontal' }">
+        <aside data-ng-include=" 'app/layout/sidebar.html' " id="nav-container" class="nav-container ng-scope nav-vertical bg-dark" data-ng-class="{ 'nav-fixed': main.fixedSidebar,
                                     'nav-vertical': main.menu === 'vertical',
-                                    'bg-white': ['31','32','33','34','35','36'].indexOf(main.skin) >= 0,
                                     'bg-dark': ['31','32','33','34','35','36'].indexOf(main.skin) < 0
                    }">
-            </aside>
+        </aside>
 
-            <div id="content" class="content-container">
-                <section data-ui-view
-                         class="view-container {{main.pageTransition.class}}"
-                         ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
+        <div id="content" class="content-container">
+            <section data-ui-view class="view-container {{main.pageTransition.class}}" ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
                              'bg-page-grey zaf-light': darkThemes.indexOf(main.skin) === -1}"></section>
-            </div>
-
         </div>
 
         <aside data-ng-include=" 'app/layout/customizer.html' "></aside>
@@ -174,39 +156,39 @@
         <script src="app/_auth/auth.module.js"></script>
         <script src="app/_certifications/certification.module.js"></script>
         <script src="app/_dashboards/dashboard.module.js"></script>
-        <script src="app/_monitors/monitors.module.js"></script>
         <script src="app/_integrations/integrations.module.js"></script>
+        <script src="app/_monitors/monitors.module.js"></script>
         <script src="app/_nav/sidebar.module.js"></script>
         <script src="app/_settings/settings.module.js"></script>
-        <script src="app/_testruns/testrun.module.js"></script>
-        <script src="app/_testcases/testcase.module.js"></script>
         <script src="app/_services/services.module.js"></script>
+        <script src="app/_testcases/testcase.module.js"></script>
+        <script src="app/_testruns/testrun.module.js"></script>
         <script src="app/_users/user.module.js"></script>
         <script src="app/_views/view.module.js"></script>
         <script src="app/core/core.module.js"></script>
-        <script src="app/page/page.module.js"></script>
         <script src="app/layout/layout.module.js"></script>
+        <script src="app/page/page.module.js"></script>
         <script src="app/_auth/auth.controller.js"></script>
         <script src="app/_auth/auth.intercepter.js"></script>
         <script src="app/_certifications/certification.controller.js"></script>
         <script src="app/_dashboards/dashboard.controller.js"></script>
-        <script src="app/_monitors/monitors.controller.js"></script>
         <script src="app/_integrations/integrations.controller.js"></script>
+        <script src="app/_monitors/monitors.controller.js"></script>
         <script src="app/_nav/sidebar.controller.js"></script>
         <script src="app/_settings/settings.controller.js"></script>
-        <script src="app/_testruns/testrun.controller.js"></script>
-        <script src="app/_testcases/testcase.controller.js"></script>
         <script src="app/_services/auth.service.js"></script>
         <script src="app/_services/certification.service.js"></script>
         <script src="app/_services/config.service.js"></script>
         <script src="app/_services/dashboard.service.js"></script>
         <script src="app/_services/download.service.js"></script>
+        <script src="app/_services/filter.service.js"></script>
         <script src="app/_services/group.service.js"></script>
         <script src="app/_services/job.service.js"></script>
         <script src="app/_services/monitor.service.js"></script>
         <script src="app/_services/permission.service.js"></script>
         <script src="app/_services/project.provider.js"></script>
         <script src="app/_services/project.service.js"></script>
+        <script src="app/_services/setting.provider.js"></script>
         <script src="app/_services/setting.service.js"></script>
         <script src="app/_services/slack.service.js"></script>
         <script src="app/_services/test.service.js"></script>
@@ -216,6 +198,8 @@
         <script src="app/_services/user.service.js"></script>
         <script src="app/_services/util.service.js"></script>
         <script src="app/_services/view.service.js"></script>
+        <script src="app/_testcases/testcase.controller.js"></script>
+        <script src="app/_testruns/testrun.controller.js"></script>
         <script src="app/_users/user.controller.js"></script>
         <script src="app/_views/view.controller.js"></script>
         <script src="app/core/app.config.js"></script>
@@ -223,12 +207,12 @@
         <script src="app/core/config.lazyload.js"></script>
         <script src="app/core/config.route.js"></script>
         <script src="app/core/i18n.js"></script>
-        <script src="app/page/page.controller.js"></script>
-        <script src="app/page/page.directive.js"></script>
         <script src="app/layout/customizer.controller.js"></script>
         <script src="app/layout/layout.diretive.js"></script>
         <script src="app/layout/loader.js"></script>
         <script src="app/layout/sidebar.directive.js"></script>
+        <script src="app/page/page.controller.js"></script>
+        <script src="app/page/page.directive.js"></script>
         <!-- endinject -->
         <!-- endbuild -->
     </body>

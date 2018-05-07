@@ -37,7 +37,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 @ContextConfiguration("classpath:dbaccess-test.xml")
 public class AbstractTest extends AbstractTestNGSpringContextTests
 {
-	private Logger LOGGER = Logger.getLogger(AbstractTest.class);
+	protected Logger LOGGER = Logger.getLogger(AbstractTest.class);
 
 	protected String ADMIN1_USER = Config.get("admin1.user");
 	protected String ADMIN1_PASS = Config.get("admin1.pass");

@@ -30,8 +30,9 @@ public class FabButton extends AbstractUIObject
 
 	public List<WebElement> clickButtonTrigger()
 	{
+		waitUntilElementIsPresent(buttonTrigger, 2);
 		buttonTrigger.click();
-		pause(0.5);
+		pause(0.6);
 		return buttonsMini;
 	}
 
@@ -47,6 +48,7 @@ public class FabButton extends AbstractUIObject
 
 	public void clickButtonMiniByClassName(String className)
 	{
+		pause(0.6);
 		getButtonMiniByClassName(className).click();
 	}
 }

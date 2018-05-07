@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.expressions;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.log4j.Logger;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,8 @@ import org.springframework.security.core.Authentication;
 public class RestMethodSecurityExpressionRoot extends SecurityExpressionRoot
 		implements MethodSecurityExpressionOperations
 {
+
+	private static final Logger LOGGER = Logger.getLogger(RestMethodSecurityExpressionRoot.class);
 
 	private UserPermissionEvaluator permissionEvaluator;
 
@@ -43,6 +47,20 @@ public class RestMethodSecurityExpressionRoot extends SecurityExpressionRoot
 	public boolean hasAnyPermission(String... permissions)
 	{
 		return permissionEvaluator.hasAnyPermission(super.authentication, permissions);
+	}
+
+	public boolean isOwner(Object targetDomainObject, String fieldName)
+	{
+		boolean result = false;
+		try
+		{
+			result = targetDomainObject != null && permissionEvaluator
+					.isOwner(super.authentication, FieldUtils.readDeclaredField(targetDomainObject, fieldName, true));
+		} catch (IllegalAccessException e)
+		{
+			LOGGER.debug(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override

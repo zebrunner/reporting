@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security.expressions;
 
+import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * Checks user permissions
  * @author Bogdan Rutskov
  */
-public class UserPermissionEvaluator implements PermissionEvaluator
+public class UserPermissionEvaluator implements IUserPermissionEvaluator
 {
 	@Override
 	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission)
@@ -43,11 +44,22 @@ public class UserPermissionEvaluator implements PermissionEvaluator
 		return false;
 	}
 
+	@Override
 	public boolean hasAnyPermission(Authentication authentication, String... permissions)
 	{
 		if(authentication != null)
 		{
 			return checkAuthority(authentication, p -> Arrays.asList(permissions).contains(p));
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isOwner(Authentication authentication, Object targetDomainObject)
+	{
+		if(authentication != null && targetDomainObject instanceof Long)
+		{
+			return ((JwtUserType)authentication.getPrincipal()).getId() == ((Long) targetDomainObject).longValue();
 		}
 		return false;
 	}

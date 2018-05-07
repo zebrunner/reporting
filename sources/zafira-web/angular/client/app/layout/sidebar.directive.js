@@ -22,14 +22,15 @@
             app = $('#app');
 
             ele.on('click', function(e) {
-                if (app.hasClass('nav-collapsed-min')) {
+                var hasClass = app.hasClass('nav-collapsed-min');
+                if (hasClass && attrs.back == undefined) {
                     app.removeClass('nav-collapsed-min');
-                } else {
+                } else if(! hasClass) {
                     app.addClass('nav-collapsed-min');
                     $rootScope.$broadcast('nav:reset');
                 }
-                return e.preventDefault();
-            });            
+                //return e.preventDefault();
+            });
         }
     }
 
@@ -93,6 +94,8 @@
                 currentWidth = $window.width();
                 if (currentWidth < 768) {
                     $app.removeClass('nav-collapsed-min');
+                } else {
+                    $app.addClass('nav-collapsed-min');
                 }
                 if (prevWidth < 768 && currentWidth >= 768 && $nav.hasClass('nav-horizontal')) {
                     $lists.removeClass('open').find('ul').slideUp(slideTime);
@@ -105,7 +108,7 @@
                 clearTimeout(t);
                 t = setTimeout(updateClass, 300);
             });
-          
+
         }
     }
 
@@ -168,12 +171,12 @@
         function link(scope, ele, attrs) {
             ele.on('click', function() {
                 return $('#app').toggleClass('on-canvas');
-            });         
+            });
         }
     }
 
 
-})(); 
+})();
 
 
 

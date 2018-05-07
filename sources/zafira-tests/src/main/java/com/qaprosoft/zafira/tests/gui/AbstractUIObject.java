@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +32,7 @@ public abstract class AbstractUIObject
 {
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
-	protected static final Long IMPLICITLY_TIMEOUT = 30L;
+	protected static final Long IMPLICITLY_TIMEOUT = 6L;
 	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
 	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
@@ -40,8 +41,11 @@ public abstract class AbstractUIObject
 	protected WebElement rootElement;
 	protected String fieldName;
 
-	@FindBy(xpath = "//md-backdrop")
+	@FindBy(css = "md-backdrop")
 	private WebElement backdrop;
+
+	@FindBy(css = "md-backdrop:not(.ng-animate)")
+	private WebElement backdropNotAnimate;
 
 	@FindBy(xpath = "//md-tooltip")
 	private WebElement tooltip;
@@ -77,6 +81,22 @@ public abstract class AbstractUIObject
 		});
 	}
 
+	public boolean isElementNotPresent(By by, long seconds)
+	{
+		boolean result = true;
+		final double pause = 0.2;
+		double attemps = seconds / pause;
+		while(result)
+		{
+			result = isElementPresent(by, seconds);
+			if(attemps == 0)
+				break;
+			pause(pause);
+			attemps --;
+		}
+		return result;
+	}
+
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
 	{
 		String element = by == null ? "" : by.toString();
@@ -85,6 +105,21 @@ public abstract class AbstractUIObject
 			webDriverWait.until(dr -> webElement.findElement(by).isDisplayed());
 			return webDriverWait;
 		});
+	}
+
+	public boolean isBackdropPresent(long seconds)
+	{
+		return isElementPresent(By.xpath("//md-backdrop"), seconds);
+	}
+
+	public boolean isBackdropNotPresent(long seconds)
+	{
+		return isElementNotPresent(By.xpath("//md-backdrop"), seconds);
+	}
+
+	public boolean isBackdropAnimatePresent(long seconds)
+	{
+		return isElementPresent(By.xpath("//md-backdrop:not(.ng-animate)"), seconds);
 	}
 
 	public boolean isElementPresent(WebElement webElement, long seconds)
@@ -142,6 +177,16 @@ public abstract class AbstractUIObject
 		});
 	}
 
+	public boolean waitUntilAlertWithTextIsPresent(long seconds)
+	{
+		return innerTimeoutOperation(() -> {
+			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
+			webDriverWait.until(ExpectedConditions.textMatches(By.xpath("//div[contains(@class, 'ajs') and not(contains(@class, 'ajs-right') )]"), Pattern.compile("^(?=\\s*\\S).*$")));
+			pause(0.5);
+			return webDriverWait;
+		});
+	}
+
 	public boolean waitUntilElementToBeClickable(WebElement webElement, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -153,12 +198,12 @@ public abstract class AbstractUIObject
 
 	public boolean waitUntilElementToBeClickableByBackdropMask(WebElement webElement, long seconds)
 	{
-		return waitUntilElementIsNotPresent(backdrop, seconds) && waitUntilElementToBeClickable(webElement, seconds);
+		return isBackdropNotPresent(seconds) && ! isBackdropAnimatePresent(2) & waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	public boolean waitUntilElementToBeClickableWithBackdropMask(WebElement webElement, long seconds)
 	{
-		return waitUntilElementIsPresent(getBackdrop(), 1) && waitUntilElementToBeClickable(webElement, seconds);
+		return isBackdropPresent(seconds) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
@@ -200,7 +245,7 @@ public abstract class AbstractUIObject
 	public void clickOutside()
 	{
 		clickByCoordinates("1", "1");
-		waitUntilElementIsNotPresent(getBackdrop(), 4);
+		isBackdropNotPresent(1);
 	}
 
 	public void clickByCoordinates(String x, String y)
@@ -238,6 +283,11 @@ public abstract class AbstractUIObject
 	public WebElement getBackdrop()
 	{
 		return backdrop;
+	}
+
+	public WebElement getBackdropNotAnimate()
+	{
+		return backdropNotAnimate;
 	}
 
 	public WebElement getTooltip()

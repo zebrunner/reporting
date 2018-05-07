@@ -17,19 +17,19 @@ public class Navbar extends AbstractUIObject
 	@FindBy(xpath = ".//ul[preceding-sibling::a[.//*[text() = 'Test runs']]]")
 	private TestRunTabMenu testRunTabMenu;
 
-	@FindBy(xpath = ".//*[text() = 'Dashboards']")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Dashboards']]")
 	private WebElement dashboardsTab;
 
-	@FindBy(xpath = ".//*[text() = 'Test runs']")
+	@FindBy(xpath = ".//i[following-sibling::*[text() = 'Test runs']]")
 	private WebElement testRunsTab;
 
-	@FindBy(xpath = ".//*[text() = 'Test cases']")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Test cases']]")
 	private WebElement testCasesTab;
 
-	@FindBy(xpath = ".//*[text() = 'Users']")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Users']]")
 	private WebElement usersTab;
 
-	@FindBy(xpath = ".//*[text() = 'Monitors']")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Monitors']]")
 	private WebElement monitorsTab;
 
 	public Navbar(WebDriver driver, SearchContext context)

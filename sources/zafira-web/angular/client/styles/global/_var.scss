@@ -12,7 +12,7 @@ $gray-base:              #000 !default;
 $gray-darker:            lighten($gray-base, 13.5%) !default; // #222
 $gray-dark:              lighten($gray-base, 20%) !default;   // #333
 $gray:                   lighten($gray-base, 33.5%) !default; // #555
-$gray-light:             lighten($gray-base, 46.7%) !default; // #777
+$gray-light:             lighten($gray-base, 46.7%) !default; // #777 dark-gray
 $gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
 
 $brand-primary:         #009688 !default; // Teal 500
@@ -29,15 +29,23 @@ $skin-warn:             $brand-danger;
 $skin-gray-dark:        #A5AEB1;
 $skin-gray:             #EDF0F1;
 
-$dark:                  #262B33;
+$dark:                  #262B33; // medium-coal
 $dark-light:            #3D4051;
-$dark-lighter:          #A0A2AA; 
-$bright:                #fafafa; 
+$dark-lighter:          #A0A2AA;
+$bright:                #fafafa;
 $reverse:               #ffffff;
 
+$coal:                  #1f242a;
+$custom-gray:           #d2d2d2;
+$fog-gray:              #e5e5e5;
+$medium-gray:           #afafaf;
+$bg-gray:               #f3f3f3;
+
+$faded-red:             #d2333b;
+
 $state-default-bg:              #F2F7F7; // also: flat button bg, pagination bg
-$state-default-border:          darken(adjust-hue($state-default-bg, -10), 5%); 
-$state-default-border-light:    #f3f3f3; 
+$state-default-border:          darken(adjust-hue($state-default-bg, -10), 5%);
+$state-default-border-light:    #f3f3f3;
 
 
 //== Scaffolding

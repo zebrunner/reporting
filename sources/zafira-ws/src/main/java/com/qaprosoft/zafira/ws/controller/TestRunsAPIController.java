@@ -23,7 +23,9 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.models.dto.*;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -66,6 +68,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
+
 @Controller
 @Api(value = "Test runs API")
 @RequestMapping("api/tests/runs")
@@ -77,6 +82,9 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private FilterService filterService;
 
 	@Autowired
 	private TestService testService;
@@ -245,9 +253,16 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc)
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
 			throws ServiceException
 	{
+		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class) : null;
+		if(filterType != null)
+		{
+			sc.setFilterSearchCriteria(new FilterSearchCriteria());
+			sc.getFilterSearchCriteria().setFilterTemplate(filterService.getTemplate(filterType, TEST_RUN_TEMPLATE));
+			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
+		}
 		return testRunService.searchTestRuns(sc);
 	}
 

@@ -9,28 +9,31 @@ import org.openqa.selenium.support.FindBy;
 public class TestRunSearchBlock extends AbstractSearchBlock
 {
 
-	@FindBy(xpath = ".//md-checkbox")
+	@FindBy(xpath = "//*[@id = 'searchChechbox']")
 	private WebElement mainCheckbox;
 
-	@FindBy(xpath = ".//md-select[@placeholder = 'Status']")
+	@FindBy(xpath = ".//md-select[@aria-label = 'Status']")
 	private WebElement statusSelect;
 
-	@FindBy(xpath = ".//input[preceding-sibling::label[text() = 'Test suite']]")
+	@FindBy(id = "search-input")
+	private WebElement commonInput;
+
+	@FindBy(xpath = ".//button[text() = 'Test Suite']")
 	private WebElement testSuiteInput;
 
-	@FindBy(xpath = ".//input[preceding-sibling::label[text() = 'Job URL']]")
+	@FindBy(xpath = ".//button[text() = 'Job URL']")
 	private WebElement jobURLInput;
 
-	@FindBy(xpath = ".//md-select[@placeholder = 'Environment']")
+	@FindBy(xpath = ".//md-select[@aria-label = 'Environment']")
 	private WebElement environmentSelect;
 
-	@FindBy(xpath = ".//span[text() = 'R']")
+	@FindBy(xpath = ".//button[text() = 'R']")
 	private WebElement reviewedCheckbox;
 
-	@FindBy(xpath = ".//md-select[@placeholder = 'Platform']")
+	@FindBy(xpath = ".//md-select[@aria-label = 'Platform']")
 	private WebElement platformSelect;
 
-	@FindBy(xpath = ".//input[preceding-sibling::label[text() = 'App version']]")
+	@FindBy(xpath = ".//button[text() = ' App Version']")
 	private WebElement appVersionInput;
 
 	@FindBy(xpath = ".//button[.//*[text() = 'today']]")
@@ -48,6 +51,7 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void checkMainCheckbox()
 	{
+		waitUntilElementToBeClickableByBackdropMask(mainCheckbox, 2);
 		check(mainCheckbox);
 	}
 
@@ -69,24 +73,31 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public WebElement getTestSuiteInput()
 	{
-		return testSuiteInput;
+		testSuiteInput.click();
+		commonInput.click();
+		return commonInput;
 	}
 
 	public void typeTestSuiteName(String name)
 	{
-		if(! isBlank(name))
-			testSuiteInput.sendKeys(name);
+		if(! isBlank(name)) {
+			testSuiteInput.click();
+			commonInput.sendKeys(name);
+		}
 	}
 
 	public WebElement getJobURLInput()
 	{
-		return jobURLInput;
+		jobURLInput.click();
+		return commonInput;
 	}
 
 	public void typeJobURL(String url)
 	{
-		if(! isBlank(url))
-			jobURLInput.sendKeys(url);
+		if(! isBlank(url)) {
+			jobURLInput.click();
+			commonInput.sendKeys(url);
+		}
 	}
 
 	public WebElement getEnvironmentSelect()
@@ -123,13 +134,17 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public WebElement getAppVersionInput()
 	{
-		return appVersionInput;
+		appVersionInput.click();
+		commonInput.click();
+		return commonInput;
 	}
 
 	public void typeAppVersion(String appVersion)
 	{
-		if(! isBlank(appVersion))
-			appVersionInput.sendKeys(appVersion);
+		if(! isBlank(appVersion)) {
+			appVersionInput.click();
+			commonInput.sendKeys(appVersion);
+		}
 	}
 
 	public WebElement getDateButton()

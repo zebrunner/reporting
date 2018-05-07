@@ -29,7 +29,8 @@ public class DashboardTabMenu extends AbstractUIObject
 
 	public WebElement getDashboardByName(String name)
 	{
-		return context.findElement(By.xpath(".//a[text() = '" + name + "']"));
+		return context.findElements(By.xpath(".//a")).stream()
+				.filter(webElement -> webElement.getText().equals(name)).findFirst().orElse(null);
 	}
 
 	public DashboardPage clickDashboardByName(String name)

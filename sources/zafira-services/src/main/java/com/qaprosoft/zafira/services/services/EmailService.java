@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import javax.mail.internet.MimeMessage;
 
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -42,6 +43,9 @@ import freemarker.template.Configuration;
 public class EmailService
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
+
+	@Autowired
+	private FreemarkerUtil freemarkerUtil;
 	
 	@Autowired
 	private Configuration freemarkerConfiguration;
@@ -56,7 +60,7 @@ public class EmailService
 	
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
-		final String text = getFreeMarkerTemplateContent(message);
+		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getTemplate(), message);
 		final String [] recipients = processRecipients(emails);
 		
 		if(recipients.length > 0)
@@ -87,21 +91,6 @@ public class EmailService
 			Executors.newSingleThreadExecutor().execute(task);
 		}
 		return text;
-	}
-	
-	
-	public String getFreeMarkerTemplateContent(IEmailMessage message) throws ServiceException
-	{
-		StringBuffer content = new StringBuffer();
-		try
-		{
-			content.append(FreeMarkerTemplateUtils.processTemplateIntoString(freemarkerConfiguration.getTemplate(message.getTemplate()), message));
-		} catch (Exception e)
-		{
-			LOGGER.error("Problem with email template compilation: " + e.getMessage());
-			throw new ServiceException(e.getMessage());
-		}
-		return content.toString();
 	}
 	
 	private String [] processRecipients(String ... emails)

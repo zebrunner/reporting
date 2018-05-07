@@ -32,7 +32,7 @@
             year: year,
             layout: 'wide',                                 // String: 'boxed', 'wide'
             menu: 'horizontal',                               // String: 'horizontal', 'vertical'
-            isMenuCollapsed: false,                         // Boolean: true, false
+            isMenuCollapsed: true,                         // Boolean: true, false
             fixedHeader: false,                              // Boolean: true, false
             fixedSidebar: false,                             // Boolean: true, false
             pageTransition: pageTransitionOpts[0],          // Object: 0, 1, 2, 3 and build your own

@@ -120,5 +120,19 @@
                     });
                 }
             }
-        }]);
+        }]).directive('isOwner', ['AuthService', function(AuthService) {
+        return {
+            restrict: 'A',
+            link: function(scope, elem, attrs) {
+                scope.$watch(AuthService.IsLoggedIn, function() {
+                    var currentUser = JSON.parse(attrs.user);
+                    if (currentUser && currentUser.id == attrs.isOwner) {
+                        elem.show();
+                    } else {
+                        elem.hide();
+                    }
+                });
+            }
+        }
+    }]);
 })();
