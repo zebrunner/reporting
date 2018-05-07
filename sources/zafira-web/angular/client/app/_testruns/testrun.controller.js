@@ -443,7 +443,7 @@
 
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
-            var path = $location.$$path;
+            var path = $location.$$path.split('/' + $stateParams.id)[0];
             var url = $location.$$absUrl.split(path)[0] + path;
             node.textContent = url + "/" + testRun.id;
             document.body.appendChild(node);
