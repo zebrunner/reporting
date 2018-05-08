@@ -122,6 +122,11 @@ public abstract class AbstractUIObject
 		return isElementPresent(By.xpath("//md-backdrop:not(.ng-animate)"), seconds);
 	}
 
+	public boolean isBackdropAnimateNotPresent(long seconds)
+	{
+		return isElementNotPresent(By.xpath("//md-backdrop:not(.ng-animate)"), seconds);
+	}
+
 	public boolean isElementPresent(WebElement webElement, long seconds)
 	{
 		return waitUntilElementIsPresent(webElement, seconds);
@@ -203,7 +208,7 @@ public abstract class AbstractUIObject
 
 	public boolean waitUntilElementToBeClickableWithBackdropMask(WebElement webElement, long seconds)
 	{
-		return isBackdropPresent(seconds) && waitUntilElementToBeClickable(webElement, seconds);
+		return isBackdropPresent(seconds) && isBackdropAnimateNotPresent(seconds) && waitUntilElementToBeClickable(webElement, seconds);
 	}
 
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
