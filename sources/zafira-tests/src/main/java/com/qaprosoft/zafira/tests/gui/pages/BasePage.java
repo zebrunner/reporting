@@ -50,7 +50,7 @@ public abstract class BasePage extends AbstractPage
 	{
 		LOGGER.info("Wait until page is loading");
 		if(!isElementPresent(header.getZafiraLogo(), IMPLICITLY_TIMEOUT)){
-			Assert.fail("Zafira is not loaded for " + IMPLICITLY_TIMEOUT );
+			Assert.fail("Zafira is not loaded for " + IMPLICITLY_TIMEOUT + " seconds" );
 		}
 		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
 				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
