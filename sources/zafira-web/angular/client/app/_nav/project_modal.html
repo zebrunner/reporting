@@ -28,10 +28,10 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button id="delete" data-ng-if="project.id" class="btn btn-danger" data-ng-click="deleteProject(project)">
+            <md-button id="delete" data-ng-if="project.id" class="md-raised btn-w-md md-warn" data-ng-click="deleteProject(project)">
                 Delete
             </md-button>
-            <md-button id="create" class="btn btn-success" data-ng-disabled="project_form.$invalid" data-ng-click="createProject(project)">
+            <md-button id="create" class="md-raised btn-w-md md-primary" data-ng-disabled="project_form.$invalid" data-ng-click="createProject(project)">
                 Create
             </md-button>
         </md-dialog-actions>

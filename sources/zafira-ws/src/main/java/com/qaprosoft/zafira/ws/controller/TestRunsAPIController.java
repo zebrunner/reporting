@@ -191,17 +191,12 @@ public class TestRunsAPIController extends AbstractController
 			throws ServiceException, InterruptedException
 	{
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		if(testRun == null)
-		{
+		if(testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
 		
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
-		{
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
 			testRunService.abortTestRun(testRun, abortCause.getComment());
-			
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 			for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
 				if(Status.ABORTED.equals(test.getStatus()))
@@ -209,8 +204,9 @@ public class TestRunsAPIController extends AbstractController
 					websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 				}
 			}
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		}
-
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -367,13 +363,7 @@ public class TestRunsAPIController extends AbstractController
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
 			throws ServiceException, JAXBException
 	{
-		testRunService.addComment(id, comment.getComment());
-
-		TestRun tr = testRunService.getTestRunByIdFull(id);
-		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
-		testRunService.updateStatistics(tr.getId(), action);
-		tr.setReviewed(true);
-		tr = testRunService.updateTestRun(tr);
+		TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
 	}
 
