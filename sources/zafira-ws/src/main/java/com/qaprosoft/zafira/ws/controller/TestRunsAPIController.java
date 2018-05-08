@@ -191,17 +191,12 @@ public class TestRunsAPIController extends AbstractController
 			throws ServiceException, InterruptedException
 	{
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		if(testRun == null)
-		{
+		if(testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
 		
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus()))
-		{
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
 			testRunService.abortTestRun(testRun, abortCause.getComment());
-			
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 			for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
 				if(Status.ABORTED.equals(test.getStatus()))
@@ -209,8 +204,9 @@ public class TestRunsAPIController extends AbstractController
 					websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 				}
 			}
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		}
-
 		return mapper.map(testRun, TestRunType.class);
 	}
 
