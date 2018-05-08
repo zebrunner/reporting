@@ -24,7 +24,7 @@ services:
      - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
   zafira:
-    image: qaprosoft/zafira:${tag}
+    image: qaprosoft/zafira:latest
     ports:
      - "9000:8080"
     environment:
