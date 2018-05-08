@@ -235,7 +235,7 @@
                     if(! newValue && !oldValue) {
                         newValue = $rootScope.main.skin;
                         oldValue = $rootScope.main.skin;
-                    } else {
+                    } else if($rootScope.main) {
                         $rootScope.main.skin = newValue;
                         $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
                         $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
