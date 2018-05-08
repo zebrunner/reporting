@@ -667,8 +667,11 @@ public class TestRunService
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case ABORTED:
-					testRunStatistics.setAborted(testRunStatistics.getInProgress() + increment);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
+					if(testRunStatistics.getInProgress() > 0)
+					{
+						testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					}
 					break;
 			    default:
 			    	break;
