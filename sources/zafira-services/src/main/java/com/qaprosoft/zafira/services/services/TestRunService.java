@@ -146,7 +146,7 @@ public class TestRunService
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
 		for(TestRun testRun: testRuns) {
 			if (!StringUtils.isEmpty(testRun.getConfigXML())) {
-				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
 					if (!StringUtils.isEmpty(arg.getValue())) {
 						if ("browser_version".equals(arg.getKey())&&!arg.getValue().equals("*")&&!arg.getValue().equals("")&&arg.getValue()!=null) {
 							testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
@@ -274,7 +274,7 @@ public class TestRunService
 		
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 			{
 				if(!StringUtils.isEmpty(arg.getValue()))
 				{
