@@ -85,14 +85,14 @@ public abstract class AbstractUIObject
 	{
 		boolean result = true;
 		final double pause = 0.2;
-		double attemps = seconds / pause;
+		double attempts = seconds / pause;
 		while(result)
 		{
 			result = isElementPresent(by, seconds);
-			if(attemps == 0)
+			if(attempts == 0)
 				break;
 			pause(pause);
-			attemps --;
+			attempts --;
 		}
 		return result;
 	}
@@ -232,7 +232,7 @@ public abstract class AbstractUIObject
 	public void hoverOnElement(WebElement webElement)
 	{
 		Actions actions = new Actions(driver);
-		actions.moveToElement(webElement).perform();
+		actions.moveToElement(webElement).build().perform();
 	}
 
 	public String getTooltipText()
@@ -342,13 +342,17 @@ public abstract class AbstractUIObject
 
 	public void clearAllInputs()
 	{
-		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)] | .//textarea")).forEach(input -> {
-			while(! input.getAttribute("value").isEmpty())
-			{
-				input.click();
-				input.sendKeys(Keys.BACK_SPACE);
-			}
-		});
+		getRootElement().findElements(By.xpath(".//input[not(@type = 'checkbox') and not(@disabled)] | .//textarea"))
+				.forEach(this::clearInput);
+	}
+
+	public void clearInput(WebElement input)
+	{
+		while(! input.getAttribute("value").isEmpty())
+		{
+			input.click();
+			input.sendKeys(Keys.BACK_SPACE);
+		}
 	}
 
 	public boolean isChecked(WebElement webElement)
@@ -382,7 +386,7 @@ public abstract class AbstractUIObject
 		webElement.click();
 		WebElement option = driver.findElement(By.xpath("//div[@id = '" + id + "' and preceding-sibling::header]//md-option[.//*[contains(text(), '" + value + "') "
 				+ "or contains(text(), '" + value + "')]]"));
-		waitUntilElementToBeClickable(option, 1);
+		waitUntilElementToBeClickableWithBackdropMask(option, 1);
 		option.click();
 	}
 
@@ -391,20 +395,20 @@ public abstract class AbstractUIObject
 		return webElement.findElement(By.xpath(".//md-select-value//div")).getText();
 	}
 
-	public String getCurrentNodeText(WebElement webElement)
+	public String getCurrentNodeText(WebElement webElement, boolean replaceChildText)
 	{
 		String text = webElement.getText();
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-		try
+		if(replaceChildText)
 		{
-			List<WebElement> childs = webElement.findElements(By.xpath("./*"));
-			for (WebElement child : childs)
-			{
-				text = text.replaceFirst(child.getText(), "");
+			try {
+				List<WebElement> childs = webElement.findElements(By.xpath("./*"));
+				for (WebElement child : childs) {
+					text = text.replaceFirst(child.getText(), "");
+				}
+			} finally {
+				driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
 			}
-		} finally
-		{
-			driver.manage().timeouts().implicitlyWait(IMPLICITLY_TIMEOUT, TimeUnit.SECONDS);
 		}
 		return text.trim();
 	}
