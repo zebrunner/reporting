@@ -158,7 +158,7 @@ public class TestRow extends AbstractRow
 
 	public String getShowMoreLogText()
 	{
-		return getCurrentNodeText(logs.get(0));
+		return getCurrentNodeText(logs.get(0), true);
 	}
 
 	public String getShowLessLogText()

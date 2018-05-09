@@ -1,30 +1,48 @@
 <md-dialog flex="50" aria-label="User profile" zafira-background-theme="modal">
-    <form class="form-validation" name="comments_form" ng-submit="createUser(); UtilService.untouchForm(comments_form)" ng-cloak>
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <h2 id="modalTitle">Comments</h2>
-                <span flex></span>
-                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
-                    <md-icon aria-label="Close dialog">close</md-icon>
-                </md-button>
-            </div>
-        </md-toolbar>
-
-        <md-dialog-content>
-            <div class="md-dialog-content">
-                <div layout layout-sm="column">
-                    <md-input-container flex>
-                        <label>Comments</label>
-                        <textarea id="comment" name="comment" rows=10 class="textarea_border" data-ng-model="testRun.comments"></textarea>
-                    </md-input-container>
-                </div>
-            </div>
-        </md-dialog-content>
-
-        <md-dialog-actions layout="row">
-            <md-button id="markAsReviewed" class="btn btn-success" data-ng-click="markReviewed()" data-ng-disabled="comments_form.$invalid">
-                Mark as reviewed
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 id="modalTitle">Comments</h2>
+            <span flex></span>
+            <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                <md-icon aria-label="Close dialog">close</md-icon>
             </md-button>
-        </md-dialog-actions>
-    </form>
+        </div>
+    </md-toolbar>
+    <div class="md-dialog-content">
+        <div class="row ui-section no-margin-bottom">
+            <div class="col-lg-12">
+                <div class="clearfix">
+                    <h2 class="section-header">Review testrun</h2>
+                </div>
+                <section class="panel panel-default">
+                    <div zafira-background-theme="modal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div layout="column" ng-cloak class="md-inline-form">
+                                    <div layout-padding>
+                                        <form class="form-validation" name="comments_form" ng-submit="createUser(); UtilService.untouchForm(comments_form)" ng-cloak>
+                                            <md-dialog-content>
+                                                    <div layout layout-sm="column">
+                                                        <md-input-container flex class="no-margin-bottom">
+                                                            <label>Comment</label>
+                                                            <textarea id="comment" name="comment" rows=10 class="textarea_border" data-ng-model="testRun.comments"></textarea>
+                                                        </md-input-container>
+                                                    </div>
+                                            </md-dialog-content>
+                                            <md-dialog-actions layout="row">
+                                                <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="markReviewed()" ng-disabled="comments_form.$invalid">
+                                                    Mark as reviewed
+                                                </md-button>
+                                            </md-dialog-actions>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
 </md-dialog>

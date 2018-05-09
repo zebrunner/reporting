@@ -146,7 +146,7 @@ public class TestRunService
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
 		for(TestRun testRun: testRuns) {
 			if (!StringUtils.isEmpty(testRun.getConfigXML())) {
-				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
 					if (!StringUtils.isEmpty(arg.getValue())) {
 						if ("browser_version".equals(arg.getKey())&&!arg.getValue().equals("*")&&!arg.getValue().equals("")&&arg.getValue()!=null) {
 							testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
@@ -274,7 +274,7 @@ public class TestRunService
 		
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 			{
 				if(!StringUtils.isEmpty(arg.getValue()))
 				{
@@ -357,24 +357,41 @@ public class TestRunService
 		if (StringUtils.isEmpty(abortCause)){
 			abortCause = "Abort cause is unknown";
 		}
-		if(testRun != null && IN_PROGRESS.equals(testRun.getStatus()))
-		{
+		if(testRun != null){
+			if(QUEUED.equals(testRun.getStatus()))
+			{
+				testRun = markAsReviewed(testRun.getId(), abortCause);
+			}
+			if(IN_PROGRESS.equals(testRun.getStatus()))
+			{
+				List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+				for(Test test : tests)
+				{
+					if(IN_PROGRESS.equals(test.getStatus()))
+					{
+						testService.abortTest(test, abortCause);
+					}
+				}
+				testService.updateTestRerunFlags(testRun, tests);
+			}
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
-			
-			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-			for(Test test : tests)
-			{
-				if(IN_PROGRESS.equals(test.getStatus()))
-				{
-					testService.abortTest(test, abortCause);
-				}
-			}
-			testService.updateTestRerunFlags(testRun, tests);
 		}
 		return testRun;
 	}
-	
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun markAsReviewed(Long id, String comment) throws ServiceException
+	{
+		addComment(id, comment);
+		TestRun tr = getTestRunByIdFull(id);
+		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+		updateStatistics(tr.getId(), action);
+		tr.setReviewed(true);
+		tr = updateTestRun(tr);
+		return tr;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException
 	{
@@ -650,7 +667,11 @@ public class TestRunService
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case ABORTED:
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
+					if(testRunStatistics.getInProgress() > 0)
+					{
+						testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					}
 					break;
 			    default:
 			    	break;
