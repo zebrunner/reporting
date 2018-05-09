@@ -37,6 +37,18 @@
 		]]>
 	</insert>
 
+	<delete id="deleteTestByTestRunIdAndNameAndStatus">
+		<![CDATA[
+		    DELETE FROM zafira.TESTS
+			WHERE
+				TEST_RUN_ID = #{testRunId}
+				AND
+				NAME = #{testName}
+				AND
+				STATUS = #{status};
+		]]>
+	</delete>
+
 	<delete id="deleteTestWorkItemByWorkItemIdAndTestId">
 		<![CDATA[
 			DELETE FROM zafira.TEST_WORK_ITEMS
@@ -187,6 +199,13 @@
 		]]>
 	</select>
 
+	<select id="getTestsByTestRunIdAndStatus" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE T.TEST_RUN_ID = #{testRunId} AND T.STATUS =  #{status};
+		]]>
+	</select>
+
 	<select id="getTestsByWorkItemId" resultMap="TestResultMap">
 		<include refid="getTest" />
 		<![CDATA[
@@ -302,14 +321,13 @@
 				ID IN
 		]]>
 		<if test="null != ids and ids.size > 0">
-			<foreach item="id" index="index" collection="ids" open="("
-					separator="," close=")">
+			<foreach item="id" index="index" collection="ids" open="(" separator="," close=");">
 					#{id}
 			</foreach>
 		</if>
 		<if test="null == ids or ids.size == 0">
 			<![CDATA[
-				(-1)
+				(-1);
 			]]>
 		</if>
 	</update>	    

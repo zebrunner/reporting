@@ -57,6 +57,7 @@
 
 		<security:intercept-url pattern="/api/auth/access" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/users/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/filters/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/profiles/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/tests/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/dashboards/**" access="isAuthenticated()" />

@@ -124,7 +124,7 @@ public class TestRunTableRow extends AbstractRow
 
 	public String getTestRunNameText()
 	{
-		return getCurrentNodeText(testRunName);
+		return getCurrentNodeText(testRunName, true);
 	}
 
 	public String getTestSuiteFileName()
@@ -283,7 +283,7 @@ public class TestRunTableRow extends AbstractRow
 	{
 		testRunSettingMenu.getRootElement().click();
 		pause(0.5);
-		//waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 1);
+		waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getSendAsEmailButton(), 5);
 		return testRunSettingMenu;
 	}
 

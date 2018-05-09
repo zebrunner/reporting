@@ -3,16 +3,20 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
+
+        var FAST_SEARCH_TEMPLATE = {currentModel: 'testSuite'};
+
+        $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
 
         $scope.UtilService = UtilService;
 
@@ -32,6 +36,314 @@
         $scope.logs = [];
 
         $scope.sc = angular.copy(DEFAULT_SC);
+
+        $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
+
+        $scope.searchFormIsEmpty = true;
+
+        /*
+            Filters
+         */
+        var subjectName = 'TEST_RUN';
+
+        $scope.SYMBOLS = {
+            EQUALS: " == ",
+            NOT_EQUALS: " != ",
+            CONTAINS: " cnt ",
+            NOT_CONTAINS: " !cnt ",
+            MORE: " > ",
+            LESS: " < ",
+            BEFORE: " <= ",
+            AFTER: " >= ",
+            LAST_SEVEN_DAYS: " last 7 days",
+            LAST_FOURTEEN_DAYS: " last 14 days",
+            LAST_THIRTY_DAYS: " last 30 days"
+        };
+
+        var CURRENT_CRITERIA = {
+            name: 'CRITERIA',
+            value: null,
+            type: []
+        };
+
+        var CURRENT_OPERATOR = {
+            name: 'OPERATOR',
+            value: null,
+            type: []
+        };
+
+        var CURRENT_VALUE = {
+            name: 'VALUE',
+            value: null
+        };
+
+        $scope.currentCriteria = angular.copy(CURRENT_CRITERIA);
+        $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+        $scope.currentValue = angular.copy(CURRENT_VALUE);
+
+        function getMode() {
+            var mode = [];
+            $scope.search_filter;
+            if($scope.filterBlockExpand && $scope.collapseFilter) {
+                if($scope.filter.id) {
+                    mode.push('UPDATE');
+                } else {
+                    mode.push('CREATE');
+                }
+            }
+            if ($scope.selectedFilterId) {
+                mode.push('APPLY');
+            }
+            if (!$scope.searchFormIsEmpty) {
+                mode.push('SEARCH');
+            }
+            return mode;
+        };
+
+        $scope.matchMode = function(modes) {
+            return getMode().filter(function (m) {
+                return modes.indexOf(m) >= 0;
+            }).length > 0;
+        };
+
+        $scope.DATE_CRITERIAS = ['DATE'];
+        var SELECT_CRITERIAS = ['ENV', 'PLATFORM', 'PROJECT', 'STATUS'];
+        $scope.DATE_CRITERIAS_PICKER_OPERATORS = ['EQUALS', 'NOT_EQUALS', 'BEFORE', 'AFTER'];
+
+        $scope.isSelectCriteria = function(criteria) {
+            return criteria ? SELECT_CRITERIAS.indexOf(criteria.name) >= 0 : false;
+        };
+
+        $scope.isDateCriteria = function (criteria) {
+            return criteria ? $scope.DATE_CRITERIAS.indexOf(criteria.name) >= 0 : false;
+        };
+
+        $scope.isDatePickerOperator = function(operator) {
+            return operator ? $scope.DATE_CRITERIAS_PICKER_OPERATORS.indexOf(operator) >= 0 : false;
+        };
+
+        $scope.subjectBuilder = {};
+        $scope.filters = [];
+        var DEFAULT_FILTER_VALUE = {
+            subject: {
+                name: subjectName,
+                criterias: [],
+                publicAccess: false
+            }
+        };
+        $scope.filter = angular.copy(DEFAULT_FILTER_VALUE);
+
+        $scope.selectedFilterRange = {
+            selectedTemplate: null,
+            selectedTemplateName: null,
+            dateStart: null,
+            dateEnd: null,
+            showTemplate: false,
+            onePanel: true
+        };
+
+        $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
+            'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0 || value.$$hashKey);});
+            $scope.searchFormIsEmpty = notEmptyValues.length == 0;
+        });
+
+        function onSelect(dates) {
+            return $scope.selectedFilterRange.selectedTemplateName;
+        };
+
+        $scope.$watch('selectedFilterRange.dateStart', function (oldValue, newVal) {
+            if(oldValue) {
+                $scope.currentValue.value = angular.copy($scope.selectedFilterRange.dateStart);
+                $scope.clearPickFilter();
+                closeDatePickerMenu();
+            }
+        });
+
+        function closeDatePickerMenu() {
+            var menu = angular.element('#filter-editor md-menu *[aria-owns]').scope();
+            if(menu.$mdMenuIsOpen) {
+                menu.$mdMenu.close();
+            }
+        }
+
+        $scope.pickFilter = function($event, showTemplate) {
+            $scope.selectedFilterRange.showTemplate = showTemplate;
+            $mdDateRangePicker.show({
+                targetEvent: $event,
+                model: $scope.selectedFilterRange,
+                autoConfirm: true
+            }).then(function(result) {
+                if (result) $scope.selectedFilterRange = result;
+            })
+        };
+
+        $scope.clearPickFilter = function() {
+            $scope.selectedFilterRange.selectedTemplate = null;
+            $scope.selectedFilterRange.selectedTemplateName = null;
+            $scope.selectedFilterRange.dateStart = null;
+            $scope.selectedFilterRange.dateEnd = null;
+        };
+
+        function loadSubjectBuilder() {
+            FilterService.getSubjectBuilder(subjectName).then(function (rs) {
+                if(rs.success) {
+                    $scope.subjectBuilder = rs.data;
+                    $scope.subjectBuilder.criterias.forEach(function(criteria) {
+                        if($scope.isSelectCriteria(criteria)) {
+                            switch(criteria.name) {
+                                case 'ENV':
+                                    criteria.values = $scope.environments;
+                                    break;
+                                case 'PLATFORM':
+                                    criteria.values = $scope.platforms;
+                                    break;
+                                case 'PROJECT':
+                                    criteria.values = $scope.allProjects;
+                                    break;
+                                case 'STATUS':
+                                    criteria.values = $scope.STATUSES;
+                                    break;
+                            }
+                        }
+                    });
+                }
+            })
+        };
+
+        function loadPublicFilters() {
+            FilterService.getAllPublicFilters().then(function (rs) {
+                if(rs.success) {
+                    $scope.filters = rs.data;
+                }
+            })
+        };
+
+        $scope.addChip = function () {
+            $scope.filter.subject.criterias.push({
+                name: $scope.currentCriteria.value.name,
+                operator: $scope.currentOperator.value,
+                value: $scope.currentValue.value && $scope.currentValue.value.value ? $scope.currentValue.value.value : $scope.currentValue.value
+            });
+            clearFilterSlice();
+        };
+
+        $scope.changeChip = function (chip, index) {
+            console.log('in edit');
+            var criteria = $scope.filter.subject.criterias[index];
+            criteria.value = chip.value;
+            return criteria;
+        };
+
+        $scope.chooseFilter = function (filter) {
+            $scope.collapseFilter = true;
+            $scope.filter = angular.copy(filter);
+        };
+
+        $scope.createFilter = function () {
+            FilterService.createFilter($scope.filter).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was created');
+                    $scope.filters.push(rs.data);
+                    $scope.clearFilter();
+                    $scope.collapseFilter = false;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.updateFilter = function () {
+            FilterService.updateFilter($scope.filter).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was updated');
+                    $scope.filters[$scope.filters.indexOfField('id', rs.data.id)] = rs.data;
+                    $scope.clearAndOpenFilterBlock(false);
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.deleteFilter = function (id) {
+            FilterService.deleteFilter(id).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Filter was deleted');
+                    $scope.filters.splice($scope.filters.indexOfField('id', id), 1);
+                    $scope.clearFilter();
+                    $scope.collapseFilter = false;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.onFilterRemove = function (filter) {
+            if (confirm('Do you really want to delete \'' + filter.name + '\' filter?')) {
+                $scope.deleteFilter(filter.id);
+            } else {
+            }
+        };
+
+        function clearFilterCriterias(slice) {
+            switch(slice) {
+                case 'CRITERIA':
+                    $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+                    $scope.currentCriteria.type = [];
+                case 'OPERATOR':
+                    $scope.currentValue = angular.copy(CURRENT_VALUE);
+                    $scope.currentOperator.type = [];
+                case 'VALUE':
+                default:
+                    break;
+            };
+        };
+
+        $scope.onFilterSliceUpdate = function(slice) {
+            clearFilterCriterias(slice);
+            switch(slice) {
+                case 'CRITERIA':
+                    if($scope.isSelectCriteria($scope.currentCriteria.value)) {
+                        $scope.currentCriteria.type.push('SELECT');
+                    }
+                    if($scope.isDateCriteria($scope.currentCriteria.value)) {
+                        $scope.currentCriteria.type.push('DATE');
+                    }
+                    break;
+                case 'OPERATOR':
+                    if($scope.isDateCriteria($scope.currentCriteria.value) && $scope.isDatePickerOperator($scope.currentOperator.value)) {
+                        $scope.currentOperator.type.push('DATE');
+                    }
+                    break;
+                case 'VALUE':
+                    break;
+                default:
+                    break;
+            };
+        };
+
+        function clearFilterSlice() {
+            $scope.currentCriteria = angular.copy(CURRENT_CRITERIA);
+            $scope.currentOperator = angular.copy(CURRENT_OPERATOR);
+            $scope.currentValue = angular.copy(CURRENT_VALUE);
+        };
+
+        $scope.clearFilter = function() {
+            $scope.filter = angular.copy(DEFAULT_FILTER_VALUE);
+            clearFilterSlice();
+        };
+
+        $scope.resetFilter = function() {
+            $scope.filter.subject = {};
+            $scope.filter.publicAccess = false;
+            clearFilterSlice();
+        };
+
+        $scope.clearAndOpenFilterBlock = function (value) {
+            $scope.clearFilter();
+            $scope.collapseFilter = value;
+        };
+
 
         // ************** Integrations **************
 
@@ -72,6 +384,8 @@
                     currentTestRun.failedAsBlocker = event.testRunStatistics.failedAsBlocker;
                     currentTestRun.skipped = event.testRunStatistics.skipped;
                     currentTestRun.reviewed = event.testRunStatistics.reviewed;
+                    currentTestRun.aborted = event.testRunStatistics.aborted;
+                    currentTestRun.queued = event.testRunStatistics.queued;
                 }
                 $scope.$apply();
             });
@@ -334,6 +648,31 @@
             return null;
         };
 
+        function fillDateSc(selectedRange) {
+            if (selectedRange.dateStart && selectedRange.dateEnd) {
+                if(!$scope.isEqualDate()){
+                    $scope.sc.fromDate = selectedRange.dateStart;
+                    $scope.sc.toDate = selectedRange.dateEnd;
+                }
+                else {
+                    $scope.sc.date = selectedRange.dateStart;
+                }
+            }
+        };
+
+        function fillFastSearchSc() {
+            angular.forEach($scope.fastSearch, function (val, model) {
+                if(model != 'currentModel')
+                    $scope.sc[model] = val;
+            });
+        };
+
+        $scope.searchByFilter = function(filter, chipsCtrl) {
+            $scope.selectedFilterId = filter.id;
+            $scope.chipsCtrl = chipsCtrl;
+            $scope.search();
+        };
+
         $scope.search = function (page, pageSize) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
@@ -353,17 +692,13 @@
                 $scope.sc = ProjectProvider.initProjects($scope.sc);
             }
 
-            if ($scope.selectedRange.dateStart && $scope.selectedRange.dateEnd) {
-                if(!$scope.isEqualDate()){
-                    $scope.sc.fromDate = $scope.selectedRange.dateStart;
-                    $scope.sc.toDate = $scope.selectedRange.dateEnd;
-                }
-                else {
-                    $scope.sc.date = $scope.selectedRange.dateStart;
-                }
-           }
+            fillFastSearchSc();
 
-            TestRunService.searchTestRuns($scope.sc).then(function(rs) {
+            fillDateSc($scope.selectedRange);
+
+           var filterQuery = $scope.selectedFilterId ? '?filterId=' + $scope.selectedFilterId : undefined;
+
+            TestRunService.searchTestRuns($scope.sc, filterQuery).then(function(rs) {
                 if(rs.success)
                 {
                     var data = rs.data;
@@ -441,7 +776,7 @@
 
         $scope.copyLink = function (testRun) {
             var node = document.createElement('pre');
-            var path = $location.$$path;
+            var path = $location.$$path.split('/' + $stateParams.id)[0];
             var url = $location.$$absUrl.split(path)[0] + path;
             node.textContent = url + "/" + testRun.id;
             document.body.appendChild(node);
@@ -503,7 +838,9 @@
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
                     if(rs.success)
                     {
-                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId).then(function(rs) {
+                        var abortCause = {};
+                        abortCause.comment = "TestRun is aborted manually";
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
                                 alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
@@ -584,28 +921,36 @@
         };
 
         $scope.loadEnvironments = function () {
-            TestRunService.getEnvironments().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.environments = rs.data;
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
+            return $q(function(resolve, reject) {
+                TestRunService.getEnvironments().then(function(rs) {
+                    if(rs.success)
+                    {
+                        $scope.environments = rs.data.filter(function (env) {
+                            return env && env != null;
+                        });
+                        resolve($scope.environments);
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
         $scope.loadPlatforms = function () {
-            TestRunService.getPlatforms().then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.platforms = rs.data;
-                }
-                else
-                {
-                    alertify.error(rs.message);
-                }
+            return $q(function(resolve, reject) {
+                TestRunService.getPlatforms().then(function (rs) {
+                    if (rs.success) {
+                        $scope.platforms = rs.data;
+                        resolve($scope.platforms);
+                    }
+                    else {
+                        alertify.error(rs.message);
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
@@ -895,8 +1240,12 @@
             $scope.selectedRange.dateStart = null;
             $scope.selectedRange.dateEnd = null;
             $scope.sc = angular.copy(DEFAULT_SC);
+            $scope.fastSearch = angular.copy(FAST_SEARCH_TEMPLATE);
+            delete $scope.selectedFilterId;
             $location.search({});
             $scope.search();
+            if($scope.chipsCtrl)
+                delete $scope.chipsCtrl.selectedChip;
         };
 
         var toSc = function (qParams) {
@@ -951,16 +1300,36 @@
             return $date.getTime() < new Date().getTime();
         };
 
+        function loadProjects() {
+            return $q(function(resolve, reject) {
+                ProjectService.getAllProjects().then(function (rs) {
+                    if (rs.success) {
+                        $scope.allProjects = rs.data.map(function(proj) {
+                            return proj.name;
+                        });
+                        resolve(rs.data);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
+            });
+        };
 
         (function init() {
             toSc($location.search());
             $scope.initWebsocket();
             $scope.search(1);
             $scope.populateSearchQuery();
-            $scope.loadEnvironments();
-            $scope.loadPlatforms();
+            var loadFilterDataPromises = [];
+            loadFilterDataPromises.push($scope.loadEnvironments());
+            loadFilterDataPromises.push($scope.loadPlatforms());
+            loadFilterDataPromises.push(loadProjects());
+            $q.all(loadFilterDataPromises).then(function(values) {
+                loadSubjectBuilder();
+            });
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
+            loadPublicFilters();
         })();
     }
 

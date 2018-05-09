@@ -51,12 +51,14 @@ public class UserSettingMenu extends AbstractMenu
 
 	public ChangePasswordModalWindow clickChangePasswordButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(changePasswordButton, 2);
 		changePasswordButton.click();
 		return new UserPage(driver).getChangePasswordModalWindow();
 	}
 
 	public DashboardPage clickPerformanceButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(performanceButton, 2);
 		performanceButton.click();
 		DashboardPage dashboardPage = new DashboardPage(driver);
 		dashboardPage.waitUntilPageIsLoaded();

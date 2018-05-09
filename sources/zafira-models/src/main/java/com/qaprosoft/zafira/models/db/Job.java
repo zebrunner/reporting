@@ -27,7 +27,19 @@ public class Job extends AbstractEntity
 	private String jobURL;
 	private String jenkinsHost;
 	private User user = new User();
-	
+
+	public Job()
+	{
+	}
+
+	public Job(String name, String jobURL, String jenkinsHost, User user)
+	{
+		this.name = name;
+		this.jobURL = jobURL;
+		this.jenkinsHost = jenkinsHost;
+		this.user = user;
+	}
+
 	public User getUser()
 	{
 		return user;

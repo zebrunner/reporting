@@ -43,6 +43,7 @@ public abstract class AbstractModalWindow extends AbstractUIObject
 
 	public boolean waitUntilModalIsNotPresent()
 	{
+		pause(1.4);
 		return waitUntilElementIsNotPresent(getBackdrop(), 4);
 	}
 }

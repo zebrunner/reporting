@@ -261,8 +261,8 @@
         <result column="MONITOR_SUCCESS" property="success"/>
         <result column="MONITOR_RECIPIENTS" property="recipients"/>
         <result column="MONITOR_TYPE" property="type"/>
-        <result column="JOB_MODIFIED_AT" property="modifiedAt"/>
-        <result column="JOB_CREATED_AT" property="createdAt"/>
+        <result column="MONITOR_MODIFIED_AT" property="modifiedAt"/>
+        <result column="MONITOR_CREATED_AT" property="createdAt"/>
     </resultMap>
 
     <resultMap type="com.qaprosoft.zafira.models.db.MonitorStatus" id="MonitorStatusResultMap" autoMapping="false">

@@ -82,10 +82,17 @@ html {
 
         > .nav-container {
             display: none;
-            z-index: 11; // should be highter than top header
-            position: static;
+            z-index: 100; // should be highter than top header
+            position: sticky;
+            position: -webkit-sticky;
+            position: -moz-sticky;
+            position: -ms-sticky;
+            position: -o-sticky;
+            left: 0;
+            top: 0;
             float: left;
             width: 220px;
+            height: 100vh;
             transition: width .25s ease-in-out;
             // border-width: 0 1px 0 0;
             // border-style: solid;
@@ -124,10 +131,10 @@ html {
             overflow: hidden;
             min-height: 100%;
             margin-left: 0;
-            // transition: none;
+            //transition: none;
             transition: margin-left .25s ease-in-out;
             @media (min-width:$screen-sm) {
-                margin-left: 220px;
+                margin-left: 60px;
             }
         }
 

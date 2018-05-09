@@ -12,7 +12,7 @@
     }
 }
 
-// 
+//
 .nav-container {
     .md-button {
         text-align: left;
@@ -44,7 +44,7 @@
             display: inline-block;
             vertical-align: bottom; // for material-icons
             margin-right: 10px;
-            width: 20px;
+            width: 18px;
             line-height: $line-height-computed;
             text-align: center;
             font-size: 16px;
@@ -89,7 +89,8 @@
 
 
 
-            >a {
+            >a,
+            >.menu-btn {
                 position: relative;
                 white-space: nowrap;
                 display: block;
@@ -111,11 +112,11 @@
                     font-size: 9px;
                     line-height: 19px;
                     transition: all .3s ease-in-out;
-                }                
+                }
             }
 
             > .icon-has-ul-h { // icon for horizontal nav
-                display: none; 
+                display: none;
             }
 
 
@@ -137,7 +138,8 @@
                     border-bottom: 0;
                 }
 
-                > a {
+                > a,
+                >.menu-btn {
                     position: relative;
                     display: block;
                     padding: 13px 0 13px 25px;
@@ -167,6 +169,3 @@
 .nav-vertical {
     box-shadow: 2px 0 2px 0 rgba(0,0,0,0.12);
 }
-
-
-

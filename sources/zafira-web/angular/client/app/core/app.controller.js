@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -12,7 +12,7 @@
 	        $rootScope.currentOffset = 0;
             $rootScope.companyLogo = {
                 name: 'COMPANY_LOGO_URL',
-                value: SettingProvider.getCompanyLogoURl()
+                value: SettingProvider.getCompanyLogoURl() || ''
             };
 
 	        // ************** Integrations **************
@@ -138,7 +138,12 @@
 	        	AuthService.SetCredentials(auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
-                    $state.go('dashboard', {id: rs});
+                    var bufferedRequests = httpBuffer.getBuffer();
+                    if(bufferedRequests && bufferedRequests.length) {
+                        $window.location.href = bufferedRequests[0].location;
+                    } else {
+                        $state.go('dashboard', {id: rs});
+                    }
                 }, function (rs) {
                 })
 	        });

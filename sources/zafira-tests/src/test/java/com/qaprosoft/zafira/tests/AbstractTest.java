@@ -37,7 +37,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 @ContextConfiguration("classpath:dbaccess-test.xml")
 public class AbstractTest extends AbstractTestNGSpringContextTests
 {
-	private Logger LOGGER = Logger.getLogger(AbstractTest.class);
+	protected Logger LOGGER = Logger.getLogger(AbstractTest.class);
 
 	protected String ADMIN1_USER = Config.get("admin1.user");
 	protected String ADMIN1_PASS = Config.get("admin1.pass");
@@ -72,7 +72,11 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 	public void shutdown(ITestContext context)
 	{
 		LOGGER.info(context.getCurrentXmlTest().getName() + " finished");
-		driver.quit();
+		try{
+			driver.quit();
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	public void pause(double timeout)
@@ -82,7 +86,7 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 			Thread.sleep(new Double(timeout * 1000).intValue());
 		} catch (InterruptedException e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 }

@@ -28,12 +28,13 @@
 
         return service;
 
-        function searchTestRuns(criteria) {
-            return $http.post(API_URL + '/api/tests/runs/search', criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test runs'));
+        function searchTestRuns(criteria, filterQuery) {
+            var endpoint = filterQuery ? '/api/tests/runs/search' + filterQuery : '/api/tests/runs/search';
+            return $http.post(API_URL + endpoint, criteria).then(UtilService.handleSuccess, UtilService.handleError('Unable to search test runs'));
         }
 
-        function abortTestRun(id, ciRunId) {
-            return $http.get(API_URL + '/api/tests/runs/abort', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort test run'));
+        function abortTestRun(id, ciRunId, comment) {
+            return $http.post(API_URL + '/api/tests/runs/abort', comment, {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort test run'));
         }
 
         function getTestRun(id) {

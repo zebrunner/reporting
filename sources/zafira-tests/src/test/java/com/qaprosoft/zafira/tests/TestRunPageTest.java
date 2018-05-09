@@ -7,8 +7,11 @@ import java.util.stream.IntStream;
 import com.mysql.jdbc.StringUtils;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.tests.gui.components.FilterBlock;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -99,6 +102,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testRunSettingMenu.isElementPresent(testRunSettingMenu.getRebuildButton(), 1), "Rebuild button is not visible");
 		Assert.assertTrue(testRunSettingMenu.isElementPresent(testRunSettingMenu.getDeleteButton(), 1), "Delete button is not visible");
 		testRunPage.clickOutside();
+		pause(0.5);
 		testRunPage.getTestRunSearchBlock().checkMainCheckbox();
 		testRunPage.getTestRunTable().getTestRunTableRows().forEach(row -> Assert.assertTrue(row.isChecked(row.getCheckbox()), "Some checkboxes are not checked"));
 	}
@@ -129,6 +133,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunSettingMenu.clickCopyLinkButton();
 		testRunPage.getTestRunSearchBlock().getAppVersionInput().sendKeys(Keys.CONTROL + "v");
 		String url = testRunPage.getWebElementValue(testRunPage.getTestRunSearchBlock().getAppVersionInput());
+		LOGGER.debug("Coped url is " + url);
 		String[] urlSplit = url.split("/");
 		Assert.assertEquals(urlSplit[urlSplit.length - 1], String.valueOf(testRunViewTypes.get(0).getTestRunType().getId()), "Invalid test run was opened. "
 				+ "Current url: " + url + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
@@ -183,15 +188,18 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage = (TestRunPage) testRunPage.reload();
 		SendAsEmailModalWindow sendAsEmailModalWindow = testRunPageService.clickSendAsEmailButton(0);
 		Assert.assertEquals(sendAsEmailModalWindow.getHeaderText(), "Email", "Modal is not opened");
-		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
+		pause(2);
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 5));
 		sendAsEmailModalWindow.waitUntilElementIsNotPresent(sendAsEmailModalWindow.getProgressLinear(), 2);
+		pause(0.5);
 		sendAsEmailModalWindow.clickSuggestion(0);
 		Chip chip = sendAsEmailModalWindow.getChips().get(0);
 		Assert.assertTrue(chip.isElementPresent(chip.getCloseButton(), 1), "Chip is not present");
-		Assert.assertEquals(chip.getContentText(), email, "Invalid email in the chip. Current email text is: " + chip.getContentText());
+		Assert.assertEquals(chip.getContentText(true), email, "Invalid email in the chip. Current email text is: " + chip.getContentText(true));
 		chip.clickCloseButton();
 		Assert.assertTrue(! sendAsEmailModalWindow.isElementPresent(chip.getRootElement(), 1), "Chip is present");
-		sendAsEmailModalWindow.typeRecipients(email.substring(0, 4));
+		pause(2);
+		sendAsEmailModalWindow.typeRecipients(email.substring(0, 5));
 		sendAsEmailModalWindow.clickSuggestion(0);
 		sendAsEmailModalWindow.clickSendButton();
 		testRunPage.waitUntilPageIsLoaded();
@@ -249,9 +257,8 @@ public class TestRunPageTest extends AbstractTest
 		pause(1);
 		Assert.assertEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is deleted");
 		TestRunSettingMenu testRunSettingMenu = testRunPageService.getTestRunRowByIndex(0).clickTestRunSettingMenu();
-		testRunSettingMenu.waitUntilElementToBeClickableWithBackdropMask(testRunSettingMenu.getRootElement(), 2);
 		testRunSettingMenu.clickDeleteButton();
-		alert = driver.switchTo().alert();
+		alert = testRunPage.getAlert();
 		alert.accept();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " removed");
@@ -289,14 +296,15 @@ public class TestRunPageTest extends AbstractTest
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		TestRunTypeBuilder testRunTypeBuilder = new TestRunTypeBuilder();
 		TestRunViewType testRunViewType = testRunAPIService.createTestRun(testRunTypeBuilder, 2, 0, 0, 0, 0, 0);
+		testRunPage = (TestRunPage) testRunPage.reload();
 		testRunPageService.clickMarkAsReviewedButton(0).clickMarkAsReviewedButton();
 		generateTestRunsIfNeed(0, 2);
-		testRunPage = (TestRunPage) testRunPage.reload();
-		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria() {
+		TestRunSearchCriteria sc = new TestRunSearchCriteria() {
 			{
 				setId(testRunViewType.getTestRunType().getId());
 			}
-		}).get(0);
+		};
+		TestRun testRun = testRunMapper.searchTestRuns(sc).get(0);
 		testRunPageService.search("PASSED", null, null, null, false, null, null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
@@ -309,9 +317,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.search("PASSED", null, null, "DEMO", false, null, null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
-		testRunPageService.search(null, null, null, null, true, null, null);
-		verifyTestRunInformation(testRun, 0);
-		testRunPageService.clearSearchForm();
+		verifyTestRunInformation(testRun, 2);
 		testRunPageService.search("PASSED", null, null, null, false, "chrome", null);
 		verifyTestRunInformation(testRun, 0);
 		testRunPageService.clearSearchForm();
@@ -379,6 +385,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPageService.getTestRunRowByIndex(1).checkCheckbox();
 		testRunPage.getFabButton().clickButtonTrigger();
 		testRunPage.getFabButton().clickButtonMiniByClassName("trash");
+		pause(2);
 		testRunPage.getAlert().accept();
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRuns.get(0).getTestSuite().getName(), "Test run is not deleted");
@@ -403,25 +410,10 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getChangeStatusSelect(), 1), "Change status select is not visible");
         String currentStatus = testDetailsModalWindow.getChangeStatusSelect().getText();
 		Assert.assertFalse(StringUtils.isEmptyOrWhitespaceOnly(currentStatus), "No status is displayed in select");
-		testDetailsModalWindow.getChangeStatusSelect().click();
-		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
-		List<WebElement> webElements = testDetailsModalWindow.getTestStatuses();
-		Assert.assertFalse(CollectionUtils.isEmpty(webElements), "No test statuses were loaded");
-		for (WebElement webElement : webElements){
-			if(webElement.getText().equals(currentStatus)){
-				webElement.click();
-				break;
-			}
-		}
+		testDetailsModalWindow.select(testDetailsModalWindow.getChangeStatusSelect(),  currentStatus);
 		Assert.assertTrue(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is not disabled");
-		testDetailsModalWindow.getChangeStatusSelect().click();
-		testDetailsModalWindow.waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getTestStatuses().get(0), 1);
-		for (WebElement webElement : webElements){
-			if(!webElement.getText().equals(currentStatus)){
-				webElement.click();
-				break;
-			}
-		}
+		pause(0.2);
+		testDetailsModalWindow.select(testDetailsModalWindow.getChangeStatusSelect(),  currentStatus.equals("PASSED") ? "FAILED" : "PASSED");
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getSaveButton()), "Save button is disabled");
 		testDetailsModalWindow.clickSaveButton();
 		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2));
@@ -441,7 +433,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertFalse(testDetailsModalWindow.hasDisabledAttribute(testDetailsModalWindow.getAssignIssueButton()), "Assign button is disabled");
 		testDetailsModalWindow.clickAssignIssueButton();
 		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),1), "Success alert is not present");
+		Assert.assertTrue(testDetailsModalWindow.isElementPresent(testDetailsModalWindow.getSuccessAlert(),2), "Success alert is not present");
 		testDetailsModalWindow.waitUntilElementIsNotPresent(testDetailsModalWindow.getSuccessAlert(),3);
 		Assert.assertEquals(testRow.getKnownIssueTicket(), "JIRA-2222", "Invalid known issue label text");
         Assert.assertEquals(testDetailsModalWindow.getWebElementValue(testDetailsModalWindow.getIssueInput()), "JIRA-2222", "Incorrect jira id in input");
@@ -474,6 +466,7 @@ public class TestRunPageTest extends AbstractTest
 		testDetailsModalWindow.clickIssuesTab();
 		testDetailsModalWindow.waitUntilElementIsPresent(testDetailsModalWindow.getUnassignIssueButton(),1);
 		testDetailsModalWindow.clickUnassignIssueButton();
+		pause(0.2);
 		testDetailsModalWindow.getAlert().accept();
 		testDetailsModalWindow.closeModalWindow();
 		Assert.assertFalse(testRow.isElementPresent(testRow.getBlockerLabel(), 5), "Blocker label is present");
@@ -537,6 +530,118 @@ public class TestRunPageTest extends AbstractTest
 
 	}
 
+	/*
+			Filters
+	 */
+
+	@Test(groups = {"acceptance", "testRun"})
+	public void verifyFiltersTest()
+	{
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getCreateFilterButton(), 2), "Filter create button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getSaveFilterButton(), 2), "Filter save button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getCancelFilterButton(), 2), "Filter cancel button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getDeleteFilterButton(), 2), "Filter delete button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getSearchButton(), 2), "Test runs search button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getClearButton(), 2), "Test runs clear button is present");
+
+		FilterBlock filterBlock = testRunPage.getFilterBlock();
+		filterBlock.clickManageChip();
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getCreateFilterButton(), 2), "Filter create button is not present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getSaveFilterButton(), 2), "Filter save button is present");
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getCancelFilterButton(), 2), "Filter cancel button is not present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getDeleteFilterButton(), 2), "Filter delete button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getSearchButton(), 2), "Test runs search button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getClearButton(), 2), "Test runs clear button is present");
+		Assert.assertTrue(testRunPage.hasDisabledAttribute(testRunPage.getCreateFilterButton()), "Test runs clear button is not disabled");
+
+		testRunPage.clickCancelFilterButton();
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getFilterBlock().getFilterEditorBlock().getRootElement(), 2), "Create filter block is present");
+
+		filterBlock.clickManageChip();
+		String generatedName = "test" + RandomUtils.nextInt(0, 10000);
+		filterBlock.getFilterEditorBlock().typeFilterName(generatedName);
+		filterBlock.getFilterEditorBlock().typeFilterDescription("test");
+		Assert.assertFalse(testRunPage.hasDisabledAttribute(testRunPage.getCreateFilterButton()), "Test runs clear button is not disabled");
+		filterBlock.getFilterEditorBlock().createCriterias("Job Url:Equals:testURL", "Env:Not Equals:demo");
+		testRunPage.clickCreateFilterButton();
+		testRunPage.waitUntilAlertWithTextIsPresent(5);
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Filter was created", "Filter creation success alert is not present");
+		Chip neededChip = filterBlock.getFilterCreatedChipByName(generatedName);
+		Assert.assertEquals(neededChip.getContentText(false).toLowerCase(), generatedName, "Chip has invalid text");
+
+		testRunPage.hoverOnElement(neededChip.getRootElement());
+		Assert.assertTrue(filterBlock.isElementPresent(neededChip.getSupportIcon(), 2), "Edit icon is not present");
+
+		neededChip.clickSupportIcon();
+		pause(2);
+		Assert.assertEquals(filterBlock.getWebElementValue(filterBlock.getFilterEditorBlock().getFilterNameInput()), generatedName, "Filter name is not correct");
+		Assert.assertEquals(filterBlock.getWebElementValue(filterBlock.getFilterEditorBlock().getFilterDescriptionInput()), "test", "Filter description is not correct");
+		Assert.assertEquals(filterBlock.getFilterEditorBlock().getFilterChipScope().get(0).getContentText(false), "Job Url == 'testurl'", "Invalid chip with index 0");
+		Assert.assertEquals(filterBlock.getFilterEditorBlock().getFilterChipScope().get(1).getContentText(false).toLowerCase(), "env != 'demo'", "Invalid chip with index 1");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getCreateFilterButton(), 2), "Filter create button is not present");
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getSaveFilterButton(), 2), "Filter save button is present");
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getCancelFilterButton(), 2), "Filter cancel button is not present");
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getDeleteFilterButton(), 2), "Filter delete button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getSearchButton(), 2), "Test runs search button is present");
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getTestRunSearchBlock().getClearButton(), 2), "Test runs clear button is present");
+
+		testRunPage.clickCancelFilterButton();
+		Assert.assertFalse(testRunPage.isElementPresent(testRunPage.getFilterBlock().getFilterEditorBlock().getRootElement(), 2), "Create filter block is present");
+
+		testRunPage.hoverOnElement(neededChip.getRootElement());
+		neededChip.clickSupportIcon();
+
+		generatedName = "test" + RandomUtils.nextInt(0, 10000);
+		filterBlock.getFilterEditorBlock().typeFilterName(generatedName);
+		filterBlock.getFilterEditorBlock().typeFilterDescription("test1");
+		filterBlock.getFilterEditorBlock().getFilterChipScope().get(0).clickCloseButton();
+		testRunPage.clickSaveFilterButton();
+		testRunPage.waitUntilAlertWithTextIsPresent(5);
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Filter was updated", "Incorrect success alert text");
+
+		neededChip = filterBlock.getFilterCreatedChipByName(generatedName);
+
+		testRunPage.hoverOnElement(neededChip.getRootElement());
+		neededChip.clickSupportIcon();
+		pause(0.2);
+		Assert.assertEquals(filterBlock.getWebElementValue(filterBlock.getFilterEditorBlock().getFilterNameInput()), generatedName, "Filter name is not correct");
+		Assert.assertEquals(filterBlock.getWebElementValue(filterBlock.getFilterEditorBlock().getFilterDescriptionInput()), "test1", "Filter description is not correct");
+		Assert.assertEquals(filterBlock.getFilterEditorBlock().getFilterChipScope().get(0).getContentText(false), "Env != 'DEMO'", "Invalid chip with index 0");
+		Assert.assertEquals(filterBlock.getFilterEditorBlock().getFilterChipScope().size(), 1, "Filter chip scope has incorrect chips count");
+
+		testRunPage.hoverOnElement(neededChip.getRootElement());
+		neededChip.clickSupportIcon();
+
+		pause(5);
+		testRunPage.clickDeleteButton();
+		testRunPage.getAlert().accept();
+		testRunPage.waitUntilAlertWithTextIsPresent(5);
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Filter was deleted", "Incorrect success alert text");
+
+		TestRunAPIService testRunAPIService = new TestRunAPIService();
+		testRunAPIService.createTestRuns(1, 2, 0, 0, 0, 0, 0).get(0);
+
+		generatedName = "name1" + RandomUtils.nextInt(0, 10000);
+		filterBlock.createFilter(generatedName, "desc1", "Status:Equals:Passed");
+		testRunPage.clickCreateFilterButton();
+		neededChip = filterBlock.getFilterCreatedChipByName(generatedName);
+		neededChip.getRootElement().click();
+		TestRun testRun = testRunMapper.searchTestRuns(new TestRunSearchCriteria() {
+			{
+				setStatus(Status.PASSED);
+			}
+		}).get(0);
+		verifyTestRunInformation(testRun, 0);
+
+		filterBlock.createFilter("name2", "desc2", "Job Url:Equals:test");
+		testRunPage.clickCreateFilterButton();
+		filterBlock.getFilterCreatedChipByName("name2").getRootElement().click();
+
+		testRunPage.waitUntilPageIsLoaded();
+
+		Assert.assertTrue(testRunPage.isElementPresent(testRunPage.getTestRunTable().getNoDataRow(), 5), "Filter is working incorrect");
+	}
+
 	private void verifyTestRunInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
@@ -551,7 +656,9 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunTableRow.getKnownIssuesCount(), testRun.getFailedAsKnown(), "Invalid known issues count");
 		Assert.assertEquals(testRunTableRow.getBlockersCount(), testRun.getFailedAsBlocker(), "Invalid tests blockers count");
 		Assert.assertEquals(testRunTableRow.getSkippedCount(), testRun.getSkipped(), "Invalid skipped tests count");
-		Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
+		if(testRun.getInProgress() != 0){
+			Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
+		}
 		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
 		Assert.assertTrue(testRunTableRow.getExpandTestsIcon().isDisplayed(), "Expand icon is not present on hover");
 		TestTable testTable = testRunTableRow.clickExpandTestsIcon();

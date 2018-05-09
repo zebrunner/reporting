@@ -235,7 +235,7 @@
                     if(! newValue && !oldValue) {
                         newValue = $rootScope.main.skin;
                         oldValue = $rootScope.main.skin;
-                    } else {
+                    } else if($rootScope.main) {
                         $rootScope.main.skin = newValue;
                         $rootScope.main.isDark = darkThemes.indexOf(newValue) >= 0;
                         $scope.main.theme = $rootScope.main.isDark ? 'dark' : '';
@@ -404,7 +404,7 @@
             restrict: 'E',
             template: '<span>' +
             '            <img alt="" ng-src="{{ngModel}}" ng-class="{\'imageRotateHorizontal\': rotateHorizontal}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
-            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: white" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: #777777" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
             '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
             require: 'ngModel',

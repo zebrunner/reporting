@@ -32,7 +32,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -75,6 +78,9 @@ public class TestRunService
 	
 	@Autowired
 	private TestService testService;
+
+	@Autowired
+	private FreemarkerUtil freemarkerUtil;
 	
 	@Autowired
 	private TestConfigService testConfigService;
@@ -87,6 +93,9 @@ public class TestRunService
 	
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private JobsService jobsService;
 
 	@Autowired
 	private StatisticsService statisticsService;
@@ -137,7 +146,7 @@ public class TestRunService
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(sc);
 		for(TestRun testRun: testRuns) {
 			if (!StringUtils.isEmpty(testRun.getConfigXML())) {
-				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false)) {
+				for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
 					if (!StringUtils.isEmpty(arg.getValue())) {
 						if ("browser_version".equals(arg.getKey())&&!arg.getValue().equals("*")&&!arg.getValue().equals("")&&arg.getValue()!=null) {
 							testRun.setPlatform(testRun.getPlatform() + " " + arg.getValue());
@@ -185,7 +194,43 @@ public class TestRunService
 		}
 		return jobTestRuns;
 	}
-	
+
+	@Transactional(readOnly = true)
+	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
+	{
+		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
+	{
+		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
+		if(testRun != null) {
+			Long latestTestRunId = testRun.getId();
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
+			{
+				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+				testRun.setJob(job);
+			}
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
+			{
+				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+			}
+			testRun.setCiRunId(queueTestRunParams.getCiRunId());
+			testRun.setStatus(Status.QUEUED);
+			testRun.setElapsed(null);
+			testRun.setConfigXML(null);
+			createTestRun(testRun);
+			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+			for (Test test : tests)
+			{
+				testService.createQueuedTest(test, queuedTestRun.getId());
+			}
+		}
+		return testRun;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun updateTestRun(TestRun testRun) throws ServiceException
 	{
@@ -229,7 +274,7 @@ public class TestRunService
 		
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 			{
 				if(!StringUtils.isEmpty(arg.getValue()))
 				{
@@ -261,7 +306,6 @@ public class TestRunService
 				}
 			}
 		}
-		
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
@@ -304,31 +348,50 @@ public class TestRunService
 			testRun.setStatus(IN_PROGRESS);
 			updateTestRun(testRun);
 		}
-		
 		return testRun;
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(TestRun testRun) throws ServiceException
+	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{
-		if(testRun != null && IN_PROGRESS.equals(testRun.getStatus()))
-		{
+		if (StringUtils.isEmpty(abortCause)){
+			abortCause = "Abort cause is unknown";
+		}
+		if(testRun != null){
+			if(QUEUED.equals(testRun.getStatus()))
+			{
+				testRun = markAsReviewed(testRun.getId(), abortCause);
+			}
+			if(IN_PROGRESS.equals(testRun.getStatus()))
+			{
+				List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
+				for(Test test : tests)
+				{
+					if(IN_PROGRESS.equals(test.getStatus()))
+					{
+						testService.abortTest(test, abortCause);
+					}
+				}
+				testService.updateTestRerunFlags(testRun, tests);
+			}
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
-			
-			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-			for(Test test : tests)
-			{
-				if(IN_PROGRESS.equals(test.getStatus()))
-				{
-					testService.abortTest(test);
-				}
-			}
-			testService.updateTestRerunFlags(testRun, tests);
 		}
 		return testRun;
 	}
-	
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun markAsReviewed(Long id, String comment) throws ServiceException
+	{
+		addComment(id, comment);
+		TestRun tr = getTestRunByIdFull(id);
+		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+		updateStatistics(tr.getId(), action);
+		tr.setReviewed(true);
+		tr = updateTestRun(tr);
+		return tr;
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun calculateTestRunResult(long id, boolean finishTestRun) throws ServiceException, InterruptedException
 	{
@@ -449,7 +512,7 @@ public class TestRunService
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.getFreeMarkerTemplateContent(email);
+		return freemarkerUtil.getFreeMarkerTemplateContent(email.getTemplate(), email);
 	}
 	
 	private Configuration readConfiguration(String xml) throws JAXBException
@@ -586,6 +649,10 @@ public class TestRunService
 				case IN_PROGRESS:
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
+					if(testRunStatistics.getQueued() > 0){
+						testRunStatistics.setQueued(testRunStatistics.getQueued());
+						testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
+					}
 					break;
 				case PASSED:
 					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
@@ -600,14 +667,18 @@ public class TestRunService
 					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					break;
 				case ABORTED:
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
+					if(testRunStatistics.getInProgress() > 0)
+					{
+						testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
+					}
 					break;
-				default:
-					break;
-			}
+			    default:
+			    	break;
+			    }
 		} catch (Exception e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		} finally
 		{
 			try
@@ -615,7 +686,7 @@ public class TestRunService
 				updateLocks.get(testRunId).unlock();
 			} catch (ExecutionException e)
 			{
-				LOGGER.error(e.getMessage());
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		return testRunStatistics;

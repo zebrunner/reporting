@@ -35,6 +35,7 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	private Date toDate;
 	private Status status;
 	private Boolean reviewed;
+	private FilterSearchCriteria filterSearchCriteria;
 	
 	public TestRunSearchCriteria()
 	{
@@ -169,5 +170,13 @@ public class TestRunSearchCriteria extends SearchCriteria implements DateSearchC
 	public void setReviewed(Boolean reviewed) 
 	{
 		this.reviewed = reviewed;
+	}
+
+	public FilterSearchCriteria getFilterSearchCriteria() {
+		return filterSearchCriteria;
+	}
+
+	public void setFilterSearchCriteria(FilterSearchCriteria filterSearchCriteria) {
+		this.filterSearchCriteria = filterSearchCriteria;
 	}
 }

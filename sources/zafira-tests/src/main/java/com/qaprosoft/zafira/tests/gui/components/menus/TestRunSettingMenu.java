@@ -56,6 +56,7 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickCopyLinkButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(copyLinkButton, 5);
 		copyLinkButton.click();
 	}
 
@@ -71,11 +72,13 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickMarkAsReviewedButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(markAsReviewedButton, 5);
 		markAsReviewedButton.click();
 	}
 
 	public void clickSendAsEmailButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(sendAsEmailButton, 5);
 		sendAsEmailButton.click();
 	}
 
@@ -86,6 +89,7 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickExportButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(exportButton, 5);
 		exportButton.click();
 	}
 
@@ -96,6 +100,7 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickBuildNowButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(buildNowButton, 5);
 		buildNowButton.click();
 	}
 
@@ -116,6 +121,7 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickDeleteButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(deleteButton, 5);
 		deleteButton.click();
 	}
 }

@@ -158,7 +158,7 @@ public class TestRow extends AbstractRow
 
 	public String getShowMoreLogText()
 	{
-		return getCurrentNodeText(logs.get(0));
+		return getCurrentNodeText(logs.get(0), true);
 	}
 
 	public String getShowLessLogText()
@@ -174,6 +174,7 @@ public class TestRow extends AbstractRow
 	public TestDetailsModalWindow clickOpenTestDetailsModalButton()
 	{
 		openTestDetailsModalButton.click();
+		waitUntilElementToBeClickableByBackdropMask(testDetailsModalWindow.getCloseButton(), 2);
 		return testDetailsModalWindow;
 	}
 

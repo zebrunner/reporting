@@ -23,6 +23,10 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
+import com.qaprosoft.zafira.models.dto.*;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -47,12 +51,6 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.dto.BuildParameterType;
-import com.qaprosoft.zafira.models.dto.CommentType;
-import com.qaprosoft.zafira.models.dto.EmailType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
@@ -60,11 +58,6 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.StatisticsService;
-import com.qaprosoft.zafira.services.services.TestConfigService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -74,6 +67,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
 
 @Controller
 @Api(value = "Test runs API")
@@ -88,13 +84,22 @@ public class TestRunsAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@Autowired
+	private FilterService filterService;
+
+	@Autowired
 	private TestService testService;
+
+	@Autowired
+	private JobsService jobsService;
 
 	@Autowired
 	private TestConfigService testConfigService;
 
 	@Autowired
 	private ProjectService projectService;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private JenkinsService jenkinsService;
@@ -123,6 +128,7 @@ public class TestRunsAPIController extends AbstractController
 		testRun = testRunService.startTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -142,7 +148,7 @@ public class TestRunsAPIController extends AbstractController
 		}
 		testRun.setConfigXML(tr.getConfigXML());
 		// TODO: remove that ASAP from controller
-		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML(), false))
+		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 		{
 			if ("app_version".equals(arg.getKey()))
 			{
@@ -172,30 +178,25 @@ public class TestRunsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "GET", response = TestRunType.class)
+	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
-	@RequestMapping(value = "abort", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "abort", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType abortTestRun(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId)
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
+			@RequestBody(required = false) CommentType abortCause)
 			throws ServiceException, InterruptedException
 	{
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		
-		if(testRun == null)
-		{
+		if(testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
 		
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()))
-		{
-			testRunService.abortTestRun(testRun);
-			
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+		if(Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
+			testRunService.abortTestRun(testRun, abortCause.getComment());
 			for (Test test : testService.getTestsByTestRunId(testRun.getId()))
 			{
 				if(Status.ABORTED.equals(test.getStatus()))
@@ -203,8 +204,24 @@ public class TestRunsAPIController extends AbstractController
 					websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
 				}
 			}
+			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		}
+		return mapper.map(testRun, TestRunType.class);
+	}
 
+	@ResponseStatusDetails
+	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams) throws
+			ServiceException
+	{
+		TestRun testRun = new TestRun();
+		if(jobsService.getJobByName(queuedTestRunParams.getJobName()) != null)
+		{
+			testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
+		}
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -232,9 +249,16 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestBody TestRunSearchCriteria sc)
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
 			throws ServiceException
 	{
+		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class) : null;
+		if(filterType != null)
+		{
+			sc.setFilterSearchCriteria(new FilterSearchCriteria());
+			sc.getFilterSearchCriteria().setFilterTemplate(filterService.getTemplate(filterType, TEST_RUN_TEMPLATE));
+			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
+		}
 		return testRunService.searchTestRuns(sc);
 	}
 
@@ -339,13 +363,7 @@ public class TestRunsAPIController extends AbstractController
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
 			throws ServiceException, JAXBException
 	{
-		testRunService.addComment(id, comment.getComment());
-
-		TestRun tr = testRunService.getTestRunByIdFull(id);
-		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
-		testRunService.updateStatistics(tr.getId(), action);
-		tr.setReviewed(true);
-		tr = testRunService.updateTestRun(tr);
+		TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
 	}
 
