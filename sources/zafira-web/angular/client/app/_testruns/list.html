@@ -86,12 +86,12 @@
                         <form class="form-validation no-padding" id="filterForm" name="filter_form" ng-cloak>
                             <div class="filter-text" layout="row" layout-xs="column">
                                 <div class="filter-name" layout-xs="column">
-                                    <input type="text" class="form-control" placeholder="Name" flex="none" ng-model="filter.name" required/>
+                                    <input id="filterName" type="text" class="form-control" placeholder="Name" flex="none" ng-model="filter.name" required/>
                                 </div>
                                 <div class="flex-auto" layout-xs="column">
-                                    <input type="text" class="form-control" placeholder="Description" ng-model="filter.description" required/>
+                                    <input id="filterDescription" type="text" class="form-control" placeholder="Description" ng-model="filter.description" required/>
                                 </div>
-                                <md-switch has-any-role="['ROLE_ADMIN']" ng-model="filter.publicAccess" class="md-primary" aria-label="public access">
+                                <md-switch id="filterState" has-any-role="['ROLE_ADMIN']" ng-model="filter.publicAccess" class="md-primary" aria-label="public access">
                                     <span ng-if="filter.publicAccess">Public</span>
                                     <span ng-if="! filter.publicAccess">Private</span>
                                 </md-switch>
@@ -142,7 +142,7 @@
                                 </div>
                             </div>
                             <div layout-sm="row" layout-xs="column">
-                                    <md-chips class="filter-chip" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
+                                    <md-chips class="filter-chip filter-chip-scope" ng-model="filter.subject.criterias" readonly="false" md-on-add="changeChip($chip)">
                                         <input disabled>
                                         <md-chip-template>
                                             <span>
