@@ -35,13 +35,25 @@
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
         var $window = $(window);
-        $window.scroll(function() {
+
+        $window.scroll(onScroll);
+        $window.resize(onResize);
+
+        function changeSidebarHeight() {
             var headerTop = angular.element('#header')[0].getBoundingClientRect().top;
             var headerHeight = angular.element('#header')[0].offsetHeight;
             var sidebarHeight = $window[0].innerHeight - headerHeight - headerTop;
             var element = angular.element('aside.nav-container')[0];
             element.style.height = sidebarHeight + 'px';
-        });
+        };
+
+        function onScroll() {
+            changeSidebarHeight();
+        };
+
+        function onResize() {
+            changeSidebarHeight();
+        };
 
         Array.prototype.indexOfId = function(id) {
             for (var i = 0; i < this.length; i++)
