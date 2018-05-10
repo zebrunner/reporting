@@ -170,7 +170,7 @@
 			WHERE TR.ID = #{id};
 		]]>
 	</select>
-	
+
 	<select id="getTestRunByCiRunId" resultMap="TestRunResultMap">
 		<include refid="getTestRun" />
 		<![CDATA[
@@ -436,6 +436,13 @@
 		<include refid="getTestRunFull" />
 		<![CDATA[
 			WHERE TR.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getTestRunByCiRunIdFull" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
+		<![CDATA[
+			WHERE TR.CI_RUN_ID = #{ciRunId};
 		]]>
 	</select>
 	
