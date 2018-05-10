@@ -264,29 +264,23 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
+	public Test changeTestStatus(long id, Status newStatus) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
 		if (test == null)
 		{
 			throw new TestNotFoundException();
 		}
-
-		testRunService.updateStatistics(test.getTestRunId(), MARK_AS_PASSED, test.getStatus());
-
-		test.setStatus(Status.PASSED);
-
+		testRunService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
+		test.setStatus(newStatus);
 		updateTest(test);
-
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
 		if (testCase != null)
 		{
 			testCase.setStatus(test.getStatus());
 			testCaseService.updateTestCase(testCase);
 		}
-
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-
 		return test;
 	}
 

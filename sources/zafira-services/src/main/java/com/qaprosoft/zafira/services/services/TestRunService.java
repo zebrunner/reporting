@@ -692,6 +692,69 @@ public class TestRunService
 		return testRunStatistics;
 	}
 
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId - test run id
+	 * @param newStatus - new test status
+	 * @param currentStatus - current test status
+	 * @return new statistics
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (newStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() + 1);
+				break;
+			default:
+				break;
+			}
+			switch (currentStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() - 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() - 1);
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return testRunStatistics;
+	}
+
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)
 	{
 		return updateStatistics(testRunId, status, false);
