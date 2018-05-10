@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,11 +38,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestArtifact;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
@@ -140,15 +136,16 @@ public class TestsAPIController extends AbstractController
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_TESTS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Test updateTest(@RequestBody Test test) throws ServiceException
+	public @ResponseBody Test updateTest(@RequestBody Test test) throws ServiceException, InterruptedException
 	{
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
-		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
+		Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
 
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(updatedTest.getTestRunId())));
+		websocketTemplate.convertAndSend(getTestsWebsocketPath(updatedTest.getTestRunId()), new TestPush(updatedTest));
+
+		TestRun testRun = testRunService.getTestRunById(updatedTest.getTestRunId());
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
-
-		return testService.updateTest(test);
+		return updatedTest;
 	}
 
 	@ResponseStatusDetails
