@@ -32,7 +32,7 @@
             year: year,
             layout: 'wide',                                 // String: 'boxed', 'wide'
             menu: 'horizontal',                               // String: 'horizontal', 'vertical'
-            isMenuCollapsed: true,                         // Boolean: true, false
+            isMenuCollapsed: $(window).width() > 768,                         // Boolean: true, false
             fixedHeader: false,                              // Boolean: true, false
             fixedSidebar: false,                             // Boolean: true, false
             pageTransition: pageTransitionOpts[0],          // Object: 0, 1, 2, 3 and build your own

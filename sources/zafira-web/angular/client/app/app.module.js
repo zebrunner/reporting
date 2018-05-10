@@ -34,6 +34,15 @@
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
+        var $window = $(window);
+        $window.scroll(function() {
+            var headerTop = angular.element('#header')[0].getBoundingClientRect().top;
+            var headerHeight = angular.element('#header')[0].offsetHeight;
+            var sidebarHeight = $window[0].innerHeight - headerHeight - headerTop;
+            var element = angular.element('aside.nav-container')[0];
+            element.style.height = sidebarHeight + 'px';
+        });
+
         Array.prototype.indexOfId = function(id) {
             for (var i = 0; i < this.length; i++)
                 if (this[i].id === id)
