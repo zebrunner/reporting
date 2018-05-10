@@ -99,7 +99,7 @@ public class UserPageTest extends AbstractTest
 		Assert.assertEquals(dashboardPage.getPageTitleText(), "User Performance", "Dashboard page not opened");
 	}
 
-	@Test(groups = {"acceptance", "user"})
+	@Test(groups = {"acceptance", "user"}, enabled = false)
 	public void verifyInfoTest()
 	{
 		List<User> users = userMapper.searchUsers(new UserSearchCriteria());
