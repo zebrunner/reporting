@@ -7,6 +7,8 @@
         .directive('highlightActive', highlightActive)
         .directive('toggleOffCanvas', toggleOffCanvas);
 
+    var minWidth = 768;
+
     // switch for mini style NAV, realted to 'collapseNav' directive
     function toggleNavCollapsedMin($rootScope) {
         var directive = {
@@ -23,9 +25,10 @@
 
             ele.on('click', function(e) {
                 var hasClass = app.hasClass('nav-collapsed-min');
+                var currentWidth = $(window).width();
                 if (hasClass && attrs.back == undefined) {
                     app.removeClass('nav-collapsed-min');
-                } else if(! hasClass) {
+                } else if(! hasClass && currentWidth > minWidth) {
                     app.addClass('nav-collapsed-min');
                     $rootScope.$broadcast('nav:reset');
                 }
@@ -92,12 +95,12 @@
             updateClass = function() {
                 var currentWidth;
                 currentWidth = $window.width();
-                if (currentWidth < 768) {
+                if (currentWidth < minWidth) {
                     $app.removeClass('nav-collapsed-min');
                 } else {
                     $app.addClass('nav-collapsed-min');
                 }
-                if (prevWidth < 768 && currentWidth >= 768 && $nav.hasClass('nav-horizontal')) {
+                if (prevWidth < minWidth && currentWidth >= minWidth && $nav.hasClass('nav-horizontal')) {
                     $lists.removeClass('open').find('ul').slideUp(slideTime);
                 }
                 prevWidth = currentWidth;
