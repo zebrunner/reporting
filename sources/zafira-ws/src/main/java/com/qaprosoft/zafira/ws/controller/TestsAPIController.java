@@ -142,7 +142,6 @@ public class TestsAPIController extends AbstractController
 
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(updatedTest.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(updatedTest.getTestRunId()), new TestPush(updatedTest));
-
 		TestRun testRun = testRunService.getTestRunById(updatedTest.getTestRunId());
 		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
 		return updatedTest;
