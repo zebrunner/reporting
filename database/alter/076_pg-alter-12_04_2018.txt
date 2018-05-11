@@ -18,7 +18,7 @@ DECLARE test_execution_time_sql zafira.WIDGETS.sql%TYPE;
 DECLARE test_execution_time_model zafira.WIDGETS.model%TYPE;
 
 BEGIN
-INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', FALSE, 8) RETURNING id INTO stability_dashboard_id;
+INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', TRUE, 8) RETURNING id INTO stability_dashboard_id;
 
 	average_stability_percent_sql :=
 	'set schema ''zafira'';
