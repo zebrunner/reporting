@@ -32,6 +32,8 @@ public interface TestMapper
 	
 	List<Test> getTestsByTestRunId(long testRunId);
 
+	List<Test> getTestsByTestRunCiRunId(String ciRunId);
+
 	List<Test> getTestsByTestRunIdAndStatus(@Param("testRunId") long testRunId, @Param("status") Status status);
 
 	List<Test> getTestsByWorkItemId(long workItemId);

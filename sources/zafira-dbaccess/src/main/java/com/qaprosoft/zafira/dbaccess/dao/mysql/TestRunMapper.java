@@ -37,6 +37,8 @@ public interface TestRunMapper
 	
 	TestRun getTestRunByCiRunId(String ciRunId);
 
+	TestRun getTestRunByCiRunIdFull(String ciRunId);
+
 	TestRun getLatestJobTestRunByBranch(@Param("branch") String branch, @Param("jobId") Long jobId);
 
 	TestRunStatistics getTestRunStatistics(Long id);
