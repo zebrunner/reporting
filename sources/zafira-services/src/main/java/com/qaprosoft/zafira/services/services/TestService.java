@@ -313,6 +313,12 @@ public class TestService
 	}
 
 	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunCiRunId(String testRunCiRunId) throws ServiceException
+	{
+		return testMapper.getTestsByTestRunCiRunId(testRunCiRunId);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunIdAndStatus(long testRunId, Status status) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunIdAndStatus(testRunId, status);

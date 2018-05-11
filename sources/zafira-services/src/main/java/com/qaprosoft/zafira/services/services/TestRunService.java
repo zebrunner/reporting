@@ -171,6 +171,12 @@ public class TestRunService
 	{
 		return testRunMapper.getTestRunByIdFull(id);
 	}
+
+	@Transactional(readOnly = true)
+	public TestRun getTestRunByCiRunIdFull(String ciRunId) throws ServiceException
+	{
+		return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+	}
 	
 	@Transactional(readOnly = true)
 	public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException
@@ -486,15 +492,32 @@ public class TestRunService
 		{
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	@Transactional(readOnly=true)
+	public String sendTestRunResultsNotification(final String ciRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByCiRunIdFull(ciRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by CI run ID: " + ciRunId);
+		}
+		List<Test> tests = testService.getTestsByTestRunCiRunId(ciRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
-		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
-        }
+		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);

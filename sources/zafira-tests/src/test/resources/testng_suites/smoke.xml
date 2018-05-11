@@ -1,0 +1,70 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite preserve-order="true" verbose="1" name="Zafira Smoke Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
+	
+	<test name="Login with valid credentials">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.AuthTest">
+				<methods>
+					<include name="testValidLogin" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" preserve-order="true" name="Test run tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
+				<methods>
+					<include name="verifyNavigationTest"/>
+				</methods>
+			</class>
+			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+				<methods>
+					<include name="verifyViewTableCreationTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" name="Navigation tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.NavigationTest">
+				<methods>
+					<include name="verifyNavbarFunctionalityTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" name="Test run view tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+				<methods>
+					<include name="verifyCreateTestRunViewTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" name="User tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.UserPageTest">
+				<methods>
+					<include name="verifyNavigationTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test parallel="false" name="Profile tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
+				<methods>
+					<include name="generateTokenTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>

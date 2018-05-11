@@ -340,6 +340,23 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Send test run result notification", nickname = "sendTestRunResultsNotification", code = 200, httpMethod = "POST", response = String.class)
+	@RequestMapping(value = "notification/{ciRunId}", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendTestRunResultsNotification(@PathVariable(value = "ciRunId") String ciRunId,
+														@RequestBody @Valid EmailType email,
+														@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
+														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
+			throws ServiceException, JAXBException
+	{
+		String[] recipients = !StringUtils.isEmpty(email.getRecipients())
+				? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[] {};
+		return testRunService.sendTestRunResultsNotification(ciRunId, "failures".equals(filter), showStacktrace, recipients);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", code = 200, httpMethod = "GET", response = String.class)
 	@RequestMapping(value = "{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

@@ -366,7 +366,7 @@
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
-                                                            Live logs
+                                                            Live log
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
@@ -425,8 +425,11 @@
                                                                             <md-icon class="material-icons">attachment</md-icon>
                                                                         </md-button>
                                                                         <md-menu-content>
-                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' }">
+                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' } | filter : {name: '!Video'}">
                                                                                 <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
+                                                                            </md-menu-item>
+                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : {name: 'Video'}">
+                                                                                <md-button class="artifact-button"  ng-click="showDemoDialog($event, artifact.link, testRun, test)"target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
                                                                                 <md-button class="artifact-button" ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
@@ -444,7 +447,7 @@
                                                                 </div>
 
                                                             </div>
-                                                           </td>
+                                                        </td>
                                                     </tr>
                                                     <tr name="testLoading" md-row >
 	                                                    <td md-cell colspan="4" class="text-center" data-ng-show="!testRun.tests" >
