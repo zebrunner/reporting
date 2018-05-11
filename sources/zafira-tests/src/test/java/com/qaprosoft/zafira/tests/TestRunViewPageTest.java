@@ -128,7 +128,7 @@ public class TestRunViewPageTest extends AbstractTest
 		testRunViewPage.waitUntilPageIsLoaded();
 		testRunViewPage.clickFabMenu();
 		Assert.assertTrue(testRunViewPage.isElementPresent(testRunViewPage.getFabMenuButtonByClassName("plus"), 1), "Add fab button is not present");
-		Assert.assertTrue(testRunViewPage.isElementPresent(testRunViewPage.getFabMenuButtonByClassName("undo"), 1), "Rebuild fab button is not present");
+		//Assert.assertTrue(testRunViewPage.isElementPresent(testRunViewPage.getFabMenuButtonByClassName("undo"), 1), "Rebuild fab button is not present");
 		testRunViewPage.clickOutside();
 		JobViewSettingModalWindow jobViewSettingModalWindow = testRunViewPageService.goToCreateViewTableModalWindow();
 		Assert.assertEquals(jobViewSettingModalWindow.getHeaderText(), JobViewSettingModalWindow.TITLE, "Modal window title is incorrect");
