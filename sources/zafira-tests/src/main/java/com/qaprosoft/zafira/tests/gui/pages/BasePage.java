@@ -112,7 +112,7 @@ public abstract class BasePage extends AbstractPage
 	{
 		By fabMenuButtonLocator = By.xpath(".//following-sibling::md-fab-actions//button[.//span[contains(@class, '"
 				+ classPartialText + "')]]");
-		waitUntilElementIsPresent(fabButton, fabMenuButtonLocator, 1);
+		waitUntilElementIsPresent(fabButton, fabMenuButtonLocator, 2);
 		return fabButton.findElement(fabMenuButtonLocator);
 	}
 
