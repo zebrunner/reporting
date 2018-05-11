@@ -1,5 +1,0 @@
-select check_version(80);
-
-INSERT INTO ZAFIRA.TEST_CONFIGS (PLATFORM) VALUES ('N/A');
-
-select add_version(80);

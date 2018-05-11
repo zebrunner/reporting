@@ -41,8 +41,6 @@ import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 
-import javax.annotation.PostConstruct;
-
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.*;
 
 @Service
@@ -55,8 +53,6 @@ public class TestService
 	private static final String SPACE = " ";
 
 	private static final List<String> SELENIUM_ERRORS = Arrays.asList("org.openqa.selenium.remote.UnreachableBrowserException", "org.openqa.selenium.TimeoutException", "Session");
-
-	private static TestConfig defaultTestConfig;
 
 	@Autowired
 	private TestMapper testMapper;
@@ -78,17 +74,6 @@ public class TestService
 
 	@Autowired
 	private TestArtifactService testArtifactService;
-
-	@PostConstruct
-	public void initDefaultTestConfig() {
-		try
-		{
-			defaultTestConfig = testConfigService.searchTestConfig(new TestConfig("N/A"));
-		} catch (ServiceException e)
-		{
-			LOGGER.error("Unable to get default test configuration");
-		}
-	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
@@ -144,7 +129,7 @@ public class TestService
 		test.setId(null);
 		test.setTestRunId(queuedTestRunId);
 		test.setStatus(Status.QUEUED);
-		test.setTestConfig(defaultTestConfig);
+		test.setTestConfig(null);
 		test.setNeedRerun(false);
 		testMapper.createTest(test);
 	}
