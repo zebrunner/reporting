@@ -594,16 +594,6 @@ public class TestRunService
 				case REMOVE_BLOCKER:
 					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
 					break;
-				case MARK_AS_PASSED:
-					if(status != null && status.equals(SKIPPED))
-					{
-						testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
-					} else
-					{
-						testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
-					}
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-					break;
 				case MARK_AS_REVIEWED:
 					testRunStatistics.setReviewed(true);
 					break;
