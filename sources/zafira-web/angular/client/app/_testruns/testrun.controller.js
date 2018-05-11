@@ -1612,14 +1612,19 @@
         };
 
         function autoscale(display, ratio, window) {
-	        	var width = window.innerWidth * 0.9;
-	    		var height = ratio > 1 ?  width / ratio : width * ratio;
-	    		if(height > window.innerHeight * 0.9)
-	    		{
-	    			height = window.innerHeight - 100;
-	    			width = ratio < 1 ? height / ratio : height * ratio;
-	    		}
-	    		display.autoscale(width, height, false);
+	        	var size = calculateSize(window, ratio);
+	    		display.autoscale(size.width, size.height, false);
+        };
+
+        function calculateSize(window, ratio) {
+            var width = window.innerWidth * 0.9;
+            var height = ratio > 1 ?  width / ratio : width * ratio;
+            if(height > window.innerHeight * 0.9)
+            {
+                height = window.innerHeight - 100;
+                width = ratio < 1 ? height / ratio : height * ratio;
+            }
+            return {height: height, width: width};
         };
 
         $scope.$on('$destroy', function () {
@@ -1674,10 +1679,25 @@
         };
 
         (function initController() {
-            $timeout(function () {
-                $scope.initVNCWebsocket();
-            }, 200);
-            $scope.initLogsWebsocket();
+            if(wsURL.includes('vnc')) {
+                $scope.title = 'Live video';
+                $timeout(function () {
+                    $scope.initVNCWebsocket();
+                }, 200);
+                $scope.initLogsWebsocket();
+            } else {
+                $scope.wsURL = wsURL;
+                $scope.title = 'Video';
+                $timeout(function () {
+                    var container = document.getElementsByTagName('video')[0];
+                    var containerRectangle = container.getBoundingClientRect();
+                    var ratio = containerRectangle.width / (containerRectangle.height + 20);
+                    $scope.videoWidth = calculateSize(angular.element($window)[0], ratio).width;
+                    angular.element($window).bind('resize', function() {
+                        $scope.videoWidth = calculateSize(angular.element($window)[0], ratio).width;
+                    });
+                }, 200);
+            }
         })();
     };
 

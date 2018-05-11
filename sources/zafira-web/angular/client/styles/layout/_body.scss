@@ -11,6 +11,14 @@ body {
     }
 }
 
+.video-container {
+    margin: auto;
+    height: 50%;
+    video {
+        margin: 0 auto;
+    }
+}
+
 #main-fab button.md-fab.md-fab-sm {
     background-color: lightgray;
     margin-bottom: 8px;

@@ -3,7 +3,7 @@
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2 id="modalTitle">
-                    Live demo
+                    {{ title }}
                 </h2>
                 <span flex></span>
                 <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
@@ -13,12 +13,20 @@
         </md-toolbar>
         <md-dialog-content>
             <div class="md-dialog-content" id="demo">
-                <div id="vnc"></div>
-                <div class="modal-spinner" ng-if="loading" layout="row" layout-sm="column" layout-align="space-around">
-                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                <div ng-style="{width: videoWidth}" class="video-container" ng-if="wsURL">
+                    <video ng-attr-width="{{ videoWidth }}" controls autoplay>
+                        <source ng-src="{{ wsURL }}" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
                 </div>
-                <div ng-if="logs" class="log-demo">
-                    <div class="log" ng-repeat="log in logs track by $index"><small data-ng-class="{'text-warning': 'WARN' == log.level, 'text-danger': 'ERROR' == log.level}"><b>{{log.timestamp | date : 'hh:mm:ss'}}</b> [{{log.level}}] {{log.message}}</small></div>
+                <div ng-if="! wsURL">
+                    <div id="vnc"></div>
+                    <div class="modal-spinner" ng-if="loading" layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                    <div ng-if="logs" class="log-demo">
+                        <div class="log" ng-repeat="log in logs track by $index"><small data-ng-class="{'text-warning': 'WARN' == log.level, 'text-danger': 'ERROR' == log.level}"><b>{{log.timestamp | date : 'hh:mm:ss'}}</b> [{{log.level}}] {{log.message}}</small></div>
+                    </div>
                 </div>
             </div>
         </md-dialog-content>
