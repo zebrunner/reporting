@@ -172,6 +172,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				// Already discovered run with the same CI_RUN_ID, it is re-run functionality!
 				// Reset build number for re-run to map to the latest rerun build
 				this.run.setBuildNumber(ci.getCiBuild());
+				// Reset testRun config for rerun in case of queued tests
+				this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 				// Re-register test run to reset status onto in progress
 				Response<TestRunType> response = zc.startTestRun(this.run);
 				this.run = response.getObject();
