@@ -1920,7 +1920,7 @@
         $scope.issues = [];
         $scope.tasks = [];
         $scope.currentStatus = $scope.test.status;
-        $scope.testStatuses = ['UNKNOWN', 'IN_PROGRESS', 'PASSED', 'FAILED', 'SKIPPED', 'ABORTED'];
+        $scope.testStatuses = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED'];
         $scope.ticketStatuses = ['TO DO', 'OPEN', 'NOT ASSIGNED', 'IN PROGRESS', 'FIXED', 'REOPENED', 'DUPLICATE'];
 
         $scope.selectedTabIndex = 0;

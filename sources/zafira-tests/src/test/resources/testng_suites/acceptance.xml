@@ -30,7 +30,6 @@
 					<include name="verifyTestInfoTest"/>
 					<include name="verifyTestRunSearchTest"/>
 					<include name="verifyTestAssignTicketTest"/>
-                    <include name="verifyTestMarkAsPassedTest"/>
                     <include name="verifyMarkAsKnownIssueTest"/>
 					<include name="verifyPaginationTest"/>
 					<include name="verifyFabButtonActionsTest"/>

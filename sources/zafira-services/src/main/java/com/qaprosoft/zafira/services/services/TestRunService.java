@@ -594,16 +594,6 @@ public class TestRunService
 				case REMOVE_BLOCKER:
 					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
 					break;
-				case MARK_AS_PASSED:
-					if(status != null && status.equals(SKIPPED))
-					{
-						testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
-					} else
-					{
-						testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
-					}
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-					break;
 				case MARK_AS_REVIEWED:
 					testRunStatistics.setReviewed(true);
 					break;
@@ -676,6 +666,69 @@ public class TestRunService
 			    default:
 			    	break;
 			    }
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return testRunStatistics;
+	}
+
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId - test run id
+	 * @param newStatus - new test status
+	 * @param currentStatus - current test status
+	 * @return new statistics
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (newStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() + 1);
+				break;
+			default:
+				break;
+			}
+			switch (currentStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() - 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() - 1);
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);
