@@ -32,7 +32,7 @@ public abstract class AbstractUIObject
 {
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
-	protected static final Long IMPLICITLY_TIMEOUT = 15L;
+	protected static final Long IMPLICITLY_TIMEOUT = 25L;
 	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
 	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
