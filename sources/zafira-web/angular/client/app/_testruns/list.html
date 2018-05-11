@@ -366,7 +366,7 @@
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
-                                                            Live logs
+                                                            Live log
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
@@ -432,7 +432,7 @@
                                                                                 <md-button class="artifact-button" ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
-                                                                                <md-button name="testLiveLogs" ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
+                                                                                <md-button name="testLiveLogs" ng-click="showLogsDialog(testRun, test, $event)">Live log</md-button>
                                                                             </md-menu-item>
                                                                         </md-menu-content>
                                                                     </md-menu>

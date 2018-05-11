@@ -131,7 +131,7 @@ html {
             overflow: hidden;
             min-height: 100%;
             margin-left: 0;
-            //transition: none;
+            margin-top: 0;
             transition: margin-left .25s ease-in-out;
             @media (min-width:$screen-sm) {
                 margin-left: 60px;
