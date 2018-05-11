@@ -21,7 +21,8 @@
             overflow: hidden;
             #content {
                 margin-left: 220px;
-                margin-right: -220px;
+                margin-right: -40px;
+                margin-top: $header_height * 2;
             }
         }
 
