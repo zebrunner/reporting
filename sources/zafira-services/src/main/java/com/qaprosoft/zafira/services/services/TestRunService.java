@@ -272,41 +272,9 @@ public class TestRunService
 			testRun.setCiRunId(UUID.randomUUID().toString());
 			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
 		}
-		
-		if(!StringUtils.isEmpty(testRun.getConfigXML()))
-		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-			{
-				if(!StringUtils.isEmpty(arg.getValue()))
-				{
-					if("env".equals(arg.getKey()))
-					{
-						testRun.setEnv(arg.getValue());
-					}
-					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
-					{
-						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
-								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
-						{
-							testRun.setPlatform(arg.getValue());
-						}
-					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
-							&& !arg.getValue().equals("*"))
-					{
-						testRun.setPlatform(arg.getValue());
-					}
-					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
-					{
-						testRun.setPlatform(arg.getValue() );
-					}
-					else if("app_version".equals(arg.getKey()))
-					{
-						testRun.setAppVersion(arg.getValue());
-					}
-				}
-			}
-		}
+
+		initTestRunWithXml(testRun);
+
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
@@ -351,7 +319,45 @@ public class TestRunService
 		}
 		return testRun;
 	}
-	
+
+	public void initTestRunWithXml(TestRun testRun) {
+
+		if(!StringUtils.isEmpty(testRun.getConfigXML()))
+		{
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+			{
+				if(!StringUtils.isEmpty(arg.getValue()))
+				{
+					if("env".equals(arg.getKey()))
+					{
+						testRun.setEnv(arg.getValue());
+					}
+					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
+					{
+						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
+								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
+						{
+							testRun.setPlatform(arg.getValue());
+						}
+					}
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
+							&& !arg.getValue().equals("*"))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					{
+						testRun.setPlatform(arg.getValue() );
+					}
+					else if("app_version".equals(arg.getKey()))
+					{
+						testRun.setAppVersion(arg.getValue());
+					}
+				}
+			}
+		}
+	};
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{

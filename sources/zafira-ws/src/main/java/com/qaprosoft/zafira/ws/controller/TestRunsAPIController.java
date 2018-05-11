@@ -147,17 +147,7 @@ public class TestRunsAPIController extends AbstractController
 			throw new ServiceException("Test run not found by id: " + tr.getId());
 		}
 		testRun.setConfigXML(tr.getConfigXML());
-
-		// TODO: update platform
-
-		// TODO: remove that ASAP from controller
-		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-		{
-			if ("app_version".equals(arg.getKey()))
-			{
-				testRun.setAppVersion(arg.getValue());
-			}
-		}
+		testRunService.initTestRunWithXml(testRun);
 		testRunService.updateTestRun(testRun);
 		return mapper.map(testRun, TestRunType.class);
 	}
