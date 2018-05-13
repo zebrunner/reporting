@@ -171,6 +171,12 @@ public class TestRunService
 	{
 		return testRunMapper.getTestRunByIdFull(id);
 	}
+
+	@Transactional(readOnly = true)
+	public TestRun getTestRunByCiRunIdFull(String ciRunId) throws ServiceException
+	{
+		return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+	}
 	
 	@Transactional(readOnly = true)
 	public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException
@@ -479,15 +485,32 @@ public class TestRunService
 		{
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	@Transactional(readOnly=true)
+	public String sendTestRunResultsNotification(final String ciRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByCiRunIdFull(ciRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by CI run ID: " + ciRunId);
+		}
+		List<Test> tests = testService.getTestsByTestRunCiRunId(ciRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
-		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
-        }
+		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
@@ -594,16 +617,6 @@ public class TestRunService
 				case REMOVE_BLOCKER:
 					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
 					break;
-				case MARK_AS_PASSED:
-					if(status != null && status.equals(SKIPPED))
-					{
-						testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
-					} else
-					{
-						testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
-					}
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-					break;
 				case MARK_AS_REVIEWED:
 					testRunStatistics.setReviewed(true);
 					break;
@@ -676,6 +689,69 @@ public class TestRunService
 			    default:
 			    	break;
 			    }
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return testRunStatistics;
+	}
+
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId - test run id
+	 * @param newStatus - new test status
+	 * @param currentStatus - current test status
+	 * @return new statistics
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (newStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() + 1);
+				break;
+			default:
+				break;
+			}
+			switch (currentStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() - 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() - 1);
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);

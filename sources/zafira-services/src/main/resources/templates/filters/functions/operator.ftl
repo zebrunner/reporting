@@ -15,14 +15,14 @@
             <#if ! isPre>
                 <#local result=" LIKE LOWER(\'%">
             <#else>
-                <#local result=" LOWER(">
+                <#local result=" ">
             </#if>
             <#break>
         <#case "NOT_CONTAINS">
             <#if ! isPre>
                 <#local result=" NOT LIKE LOWER(\'%">
             <#else>
-                <#local result=" LOWER(">
+                <#local result=" ">
             </#if>
             <#break>
         <#case "MORE">
@@ -81,14 +81,14 @@
             <#if ! isPre>
                 <#local result="%\')">
             <#else>
-                <#local result=")">
+                <#local result="">
             </#if>
             <#break>
         <#case "NOT_CONTAINS">
             <#if ! isPre>
                 <#local result="%\')">
             <#else>
-                <#local result=")">
+                <#local result="">
             </#if>
             <#break>
         <#case "MORE">

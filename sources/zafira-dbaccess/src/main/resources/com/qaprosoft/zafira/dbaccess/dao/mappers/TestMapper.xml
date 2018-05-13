@@ -103,6 +103,8 @@
 				T.MODIFIED_AT AS TEST_MODIFIED_AT,
 				T.CREATED_AT AS TEST_CREATED_AT,
 
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
+
 				WI.ID AS WORK_ITEM_ID,
 				WI.JIRA_ID AS WORK_ITEM_JIRA_ID,
 				WI.TYPE AS WORK_ITEM_TYPE,
@@ -149,12 +151,12 @@
 		            	TWI.TEST_ID = T.ID
 			LEFT JOIN
 				zafira.WORK_ITEMS WI
-		        ON 
-		            	WI.ID = TWI.WORK_ITEM_ID
-		        LEFT JOIN
+		    ON
+		        WI.ID = TWI.WORK_ITEM_ID
+		    LEFT JOIN
 				zafira.USERS U
-		        ON 
-		            	WI.USER_ID = U.ID
+		    ON
+		        WI.USER_ID = U.ID
 			LEFT JOIN 
 				zafira.TEST_CONFIGS TC
 			ON 
@@ -163,6 +165,10 @@
 				zafira.TEST_CASES TCS
 			ON
 				T.TEST_CASE_ID = TCS.ID
+			LEFT JOIN
+				zafira.TEST_RUNS TR
+			ON
+				T.TEST_RUN_ID = TR.ID
 			LEFT JOIN
 				zafira.USERS TCU
 			ON
@@ -196,6 +202,13 @@
 		<include refid="getTest" />
 		<![CDATA[
 			WHERE T.TEST_RUN_ID = #{testRunId};
+		]]>
+	</select>
+
+	<select id="getTestsByTestRunCiRunId" resultMap="TestResultMap">
+		<include refid="getTest" />
+		<![CDATA[
+			WHERE TR.CI_RUN_ID = #{testRunCiRunId};
 		]]>
 	</select>
 

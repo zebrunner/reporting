@@ -288,7 +288,7 @@ DECLARE nightly_failures_model zafira.WIDGETS.model%TYPE;
 BEGIN
 	-- Insert Stability dashboard data
 
-  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', FALSE, 8) RETURNING id INTO stability_dashboard_id;
+  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', TRUE, 8) RETURNING id INTO stability_dashboard_id;
 
 	average_stability_percent_sql :=
 	'set schema ''zafira'';
