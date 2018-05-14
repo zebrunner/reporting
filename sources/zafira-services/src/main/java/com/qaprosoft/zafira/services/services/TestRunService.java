@@ -419,7 +419,9 @@ public class TestRunService
 		TestRun tr = getTestRunByIdFull(id);
 		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
 		updateStatistics(tr.getId(), action);
-		tr.setReviewed(true);
+		if(!"undefined failure".equalsIgnoreCase(comment)){
+			tr.setReviewed(true);
+		}
 		tr = updateTestRun(tr);
 		return tr;
 	}
