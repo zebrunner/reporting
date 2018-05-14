@@ -55,9 +55,10 @@
             LESS: " < ",
             BEFORE: " <= ",
             AFTER: " >= ",
-            LAST_SEVEN_DAYS: " last 7 days",
-            LAST_FOURTEEN_DAYS: " last 14 days",
-            LAST_THIRTY_DAYS: " last 30 days"
+            LAST_24_HOURS: " last 24 hours",
+            LAST_7_DAYS: " last 7 days",
+            LAST_14_DAYS: " last 14 days",
+            LAST_30_DAYS: " last 30 days"
         };
 
         var CURRENT_CRITERIA = {
@@ -143,8 +144,9 @@
         };
 
         $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
-            'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
-            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0 || value.$$hashKey);});
+            'sc.environment', 'sc.platform', 'sc.reviewed', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0
+                || new Date(value) ||  value.$$hashKey || value === true);});
             $scope.searchFormIsEmpty = notEmptyValues.length == 0;
         });
 
@@ -683,6 +685,8 @@
 
             $scope.sc.page = page;
 
+            $scope.expandedTestRuns = [];
+
             if (pageSize) {
                 $scope.sc.pageSize = pageSize;
             }
@@ -1045,16 +1049,18 @@
                 });
         };
 
-        $scope.markTestAsPassed = function (id) {
-            TestService.markTestAsPassed(id).then(function(rs) {
-                if(rs.success)
-                {
-                }
-                else
-                {
-                    console.error(rs.message);
-                }
-            });
+        $scope.changeTestStatus = function (test, status) {
+            if(test.status != status && confirm('Do you really want mark test as ' + status + '?')) {
+                test.status = status;
+                TestService.updateTest(test).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success('Test was marked as ' + status);
+                    }
+                    else {
+                        console.error(rs.message);
+                    }
+                });
+            }
         };
 
         $scope.showLogsDialog = function(testRun, test, event) {
@@ -1710,9 +1716,11 @@
 		 $scope.loading = true;
 
 	     $scope.$on('$destroy', function() {
-            $scope.testLogsStomp.disconnect();
-            $scope.logs = [];
-            UtilService.websocketConnected('logs');
+             if($scope.testLogsStomp && $scope.testLogsStomp.connected) {
+                 $scope.testLogsStomp.disconnect();
+                 $scope.logs = [];
+                 UtilService.websocketConnected('logs');
+             }
 	     });
 
 	     $scope.hide = function() {

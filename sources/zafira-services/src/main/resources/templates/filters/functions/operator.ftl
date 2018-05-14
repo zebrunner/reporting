@@ -45,17 +45,22 @@
                 <#local result=" >= ">
             </#if>
             <#break>
-        <#case "LAST_SEVEN_DAYS">
+        <#case "LAST_24_HOURS">
+            <#if ! isPre>
+                <#local result=" >= date_trunc('day', CURRENT_TIMESTAMP - interval '1 day')">
+            </#if>
+            <#break>
+        <#case "LAST_7_DAYS">
             <#if ! isPre>
                 <#local result=" >= date_trunc('week', CURRENT_TIMESTAMP - interval '1 week')">
             </#if>
             <#break>
-        <#case "LAST_FOURTEEN_DAYS">
+        <#case "LAST_14_DAYS">
             <#if ! isPre>
                 <#local result=" >= date_trunc('week', CURRENT_TIMESTAMP - interval '2 week')">
             </#if>
             <#break>
-        <#case "LAST_THIRTY_DAYS">
+        <#case "LAST_30_DAYS">
             <#if ! isPre>
                 <#local result=" >= date_trunc('month', CURRENT_TIMESTAMP - interval '1 month')">
             </#if>
@@ -111,11 +116,13 @@
                 <#local result="">
             </#if>
             <#break>
-        <#case "LAST_SEVEN_DAYS">
+        <#case "LAST_24_HOURS">
             <#break>
-        <#case "LAST_FOURTEEN_DAYS">
+        <#case "LAST_7_DAYS">
             <#break>
-        <#case "LAST_THIRTY_DAYS">
+        <#case "LAST_14_DAYS">
+            <#break>
+        <#case "LAST_30_DAYS">
             <#break>
     </#switch>
     <#return result>
