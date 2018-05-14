@@ -55,9 +55,10 @@
             LESS: " < ",
             BEFORE: " <= ",
             AFTER: " >= ",
-            LAST_SEVEN_DAYS: " last 7 days",
-            LAST_FOURTEEN_DAYS: " last 14 days",
-            LAST_THIRTY_DAYS: " last 30 days"
+            LAST_24_HOURS: " last 24 hours",
+            LAST_7_DAYS: " last 7 days",
+            LAST_14_DAYS: " last 14 days",
+            LAST_30_DAYS: " last 30 days"
         };
 
         var CURRENT_CRITERIA = {
