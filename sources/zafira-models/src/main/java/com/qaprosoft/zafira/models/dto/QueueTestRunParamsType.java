@@ -21,6 +21,8 @@ public class QueueTestRunParamsType implements Serializable
 
 	private String ciParentBuild;
 
+	private String buildNumber;
+
 	public String getJobName()
 	{
 		return jobName;
@@ -79,5 +81,15 @@ public class QueueTestRunParamsType implements Serializable
 	public void setCiParentBuild(String ciParentBuild)
 	{
 		this.ciParentBuild = ciParentBuild;
+	}
+
+	public String getBuildNumber()
+	{
+		return buildNumber;
+	}
+
+	public void setBuildNumber(String buildNumber)
+	{
+		this.buildNumber = buildNumber;
 	}
 }
