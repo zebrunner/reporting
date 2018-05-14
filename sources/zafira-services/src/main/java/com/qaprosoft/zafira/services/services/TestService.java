@@ -79,7 +79,7 @@ public class TestService
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
 		// New or Queued test
-		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == null)
+		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == Status.QUEUED)
 		{
 			//This code block is executed only for the first job run
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);

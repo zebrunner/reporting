@@ -15,10 +15,27 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
+import static com.qaprosoft.zafira.models.db.Status.FAILED;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.PASSED;
+import static com.qaprosoft.zafira.models.db.Status.QUEUED;
+import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -27,15 +44,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
-import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -51,19 +59,26 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
-
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
-import static com.qaprosoft.zafira.models.db.Status.*;
-import static com.qaprosoft.zafira.services.util.DateFormatter.*;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 @Service
 public class TestRunService
@@ -223,9 +238,12 @@ public class TestRunService
 				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 			}
 			testRun.setCiRunId(queueTestRunParams.getCiRunId());
+			testRun.setEnv(queueTestRunParams.getEnv());
 			testRun.setStatus(Status.QUEUED);
 			testRun.setElapsed(null);
+			testRun.setPlatform(null);
 			testRun.setConfigXML(null);
+			testRun.setStartedAt(null);
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -267,7 +285,9 @@ public class TestRunService
 			if(existingTestRun != null)
 			{
 				existingTestRun.setBuildNumber(testRun.getBuildNumber());
+				existingTestRun.setConfigXML(testRun.getConfigXML());
 				testRun = existingTestRun;
+				//TODO: investigate if startedBy should be also copied
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
 			LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
@@ -277,41 +297,9 @@ public class TestRunService
 			testRun.setCiRunId(UUID.randomUUID().toString());
 			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
 		}
-		
-		if(!StringUtils.isEmpty(testRun.getConfigXML()))
-		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-			{
-				if(!StringUtils.isEmpty(arg.getValue()))
-				{
-					if("env".equals(arg.getKey()))
-					{
-						testRun.setEnv(arg.getValue());
-					}
-					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
-					{
-						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
-								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
-						{
-							testRun.setPlatform(arg.getValue());
-						}
-					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
-							&& !arg.getValue().equals("*"))
-					{
-						testRun.setPlatform(arg.getValue());
-					}
-					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
-					{
-						testRun.setPlatform(arg.getValue() );
-					}
-					else if("app_version".equals(arg.getKey()))
-					{
-						testRun.setAppVersion(arg.getValue());
-					}
-				}
-			}
-		}
+
+		initTestRunWithXml(testRun);
+
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
 		testRun.setElapsed(null);
@@ -356,7 +344,45 @@ public class TestRunService
 		}
 		return testRun;
 	}
-	
+
+	public void initTestRunWithXml(TestRun testRun) {
+
+		if(!StringUtils.isEmpty(testRun.getConfigXML()))
+		{
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+			{
+				if(!StringUtils.isEmpty(arg.getValue()))
+				{
+					if("env".equals(arg.getKey()))
+					{
+						testRun.setEnv(arg.getValue());
+					}
+					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
+					{
+						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
+								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
+						{
+							testRun.setPlatform(arg.getValue());
+						}
+					}
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
+							&& !arg.getValue().equals("*"))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					{
+						testRun.setPlatform(arg.getValue() );
+					}
+					else if("app_version".equals(arg.getKey()))
+					{
+						testRun.setAppVersion(arg.getValue());
+					}
+				}
+			}
+		}
+	};
+
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{

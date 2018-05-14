@@ -112,6 +112,7 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <httpcore.version>4.4.6</httpcore.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
+        <qatool-ashot-version>1.5.2</qatool-ashot-version>
     </properties>
     <modules>
         <module>zafira-conf</module>
@@ -531,15 +532,25 @@
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.codeborne</groupId>
                 <artifactId>phantomjsdriver</artifactId>
                 <version>${phantomjsdriver.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
                 <version>${selenium-java.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>cglib</groupId>
+                        <artifactId>cglib-nodep</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.amazonaws</groupId>
@@ -605,6 +616,17 @@
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>${jsr311-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.yandex.qatools.ashot</groupId>
+                <artifactId>ashot</artifactId>
+                <version>${qatool-ashot-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-all</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
