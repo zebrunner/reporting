@@ -629,6 +629,8 @@
                 $scope.testRuns[testRun.id].status = testRun.status;
                 $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
                 $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
+                $scope.testRuns[testRun.id].platform = testRun.platform;
+                $scope.testRuns[testRun.id].env = testRun.env;
             }
         };
 

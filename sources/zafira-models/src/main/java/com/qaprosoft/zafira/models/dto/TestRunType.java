@@ -31,7 +31,6 @@ public class TestRunType extends AbstractType
 	@NotNull
 	private Long testSuiteId;
 	private Status status;
-	private String platform;
 	private String scmURL;
 	private String scmBranch;
 	private String scmCommit;
@@ -142,16 +141,6 @@ public class TestRunType extends AbstractType
 	public void setStatus(Status status)
 	{
 		this.status = status;
-	}
-
-	public String getPlatform()
-	{
-		return platform;
-	}
-
-	public void setPlatform(String platform)
-	{
-		this.platform = platform;
 	}
 
 	public String getScmURL()
