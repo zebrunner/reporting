@@ -93,9 +93,6 @@ public class TestRunsAPIController extends AbstractController
 	private JobsService jobsService;
 
 	@Autowired
-	private TestConfigService testConfigService;
-
-	@Autowired
 	private ProjectService projectService;
 
 	@Autowired
