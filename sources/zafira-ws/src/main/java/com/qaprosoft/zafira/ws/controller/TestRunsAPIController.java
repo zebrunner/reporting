@@ -93,9 +93,6 @@ public class TestRunsAPIController extends AbstractController
 	private JobsService jobsService;
 
 	@Autowired
-	private TestConfigService testConfigService;
-
-	@Autowired
 	private ProjectService projectService;
 
 	@Autowired
@@ -147,15 +144,11 @@ public class TestRunsAPIController extends AbstractController
 			throw new ServiceException("Test run not found by id: " + tr.getId());
 		}
 		testRun.setConfigXML(tr.getConfigXML());
-		// TODO: remove that ASAP from controller
-		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-		{
-			if ("app_version".equals(arg.getKey()))
-			{
-				testRun.setAppVersion(arg.getValue());
-			}
-		}
+		testRunService.initTestRunWithXml(testRun);
 		testRunService.updateTestRun(testRun);
+		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
