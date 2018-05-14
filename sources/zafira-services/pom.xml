@@ -179,10 +179,10 @@
 			<artifactId>jasypt-springsecurity3</artifactId>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 		    <groupId>com.codeborne</groupId>
 		    <artifactId>phantomjsdriver</artifactId>
-		</dependency>
+		</dependency>-->
 		<dependency>
 		    <groupId>org.seleniumhq.selenium</groupId>
 		    <artifactId>selenium-java</artifactId>
@@ -243,6 +243,11 @@
 		<dependency>
 		    <groupId>in.ashwanthkumar</groupId>
 		  	<artifactId>slack-java-webhook</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>ru.yandex.qatools.ashot</groupId>
+			<artifactId>ashot</artifactId>
 		</dependency>
 
 	</dependencies>

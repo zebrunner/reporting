@@ -848,7 +848,9 @@
             }
             $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            DashboardService.SendDashboardByEmail($scope.email, ProjectProvider.getProjects()).then(function (rs) {
+            var projects = ProjectProvider.getProjects();
+            projects = projects.length ? projects : null;
+            DashboardService.SendDashboardByEmail($scope.email, projects).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Email was successfully sent!');
                 }

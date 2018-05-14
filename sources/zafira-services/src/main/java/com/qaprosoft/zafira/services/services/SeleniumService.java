@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -36,16 +33,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -62,11 +52,13 @@ public class SeleniumService
 	
 	private static final Dimension DEFAULT_SCREEN_DIMENSION = new Dimension(1920, 1080);
 	
-	private static final String MAC_PHANTOMJS = "classpath:phantomjs/phantomjs-macos";
+	private static final String MAC_CHROMEDRIVER = "classpath:chromedriver/chromedriver-macos";
 	
-	private static final String WINDOWS_PHANTOMJS = "classpath:phantomjs/phantomjs-windows.exe";
+	private static final String WINDOWS_CHROMEDRIVER = "classpath:chromedriver/chromedriver-windows.exe";
 	
-	private static final String LINUX_PHANTOMJS = "classpath:phantomjs/phantomjs-linux";
+	private static final String LINUX_CHROMEDRIVER = "classpath:chromedriver/chromedriver-linux";
+
+	private String path;
 	
 	@Autowired
 	private ResourceLoader resourceLoader;
@@ -82,18 +74,23 @@ public class SeleniumService
 		{
 			if (SystemUtils.IS_OS_MAC) 
 			{
-				is = resourceLoader.getResource(MAC_PHANTOMJS).getInputStream();
+				is = resourceLoader.getResource(MAC_CHROMEDRIVER).getInputStream();
 			} 
 			else if (SystemUtils.IS_OS_WINDOWS) 
 			{
-				is = resourceLoader.getResource(WINDOWS_PHANTOMJS).getInputStream();
+				is = resourceLoader.getResource(WINDOWS_CHROMEDRIVER).getInputStream();
 			} 
 			else 
 			{
-				is = resourceLoader.getResource(LINUX_PHANTOMJS).getInputStream();
+				is = resourceLoader.getResource(LINUX_CHROMEDRIVER).getInputStream();
 			}
 			
-			File bin = new File("./phantomjs" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+			File bin = new File("./chromedriver" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+
+			Files.deleteIfExists(bin.toPath());
+
+			System.setProperty("webdriver.chrome.driver", bin.getAbsolutePath());
+
 			FileUtils.copyInputStreamToFile(is, bin);
 			IOUtils.closeQuietly(is);
 			
@@ -101,8 +98,9 @@ public class SeleniumService
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
 			perms.add(PosixFilePermission.OWNER_READ);
 			Files.setPosixFilePermissions(bin.toPath(), perms);
-			
-			System.setProperty("phantomjs.binary.path", bin.getAbsolutePath());
+
+			path = bin.getAbsolutePath();
+
 		}
 		catch(Exception e)
 		{
@@ -128,12 +126,21 @@ public class SeleniumService
 		{
 			DesiredCapabilities caps = new DesiredCapabilities();
 			caps.setJavascriptEnabled(true);
-			caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[] {"--web-security=no", "--ignore-ssl-errors=yes"});
-	 		wd = new PhantomJSDriver(caps);
+			final ChromeOptions chromeOptions = new ChromeOptions();
+			chromeOptions.addArguments("--headless");
+			caps.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+	 		wd = new ChromeDriver(caps);
 			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
-			
+
+			// Get first url to have a domain needed
+			wd.get(urls.get(0));
+			// Set cookies
 			authorize(wd, auth, projects, domain, urls.get(0));
+			// Get needed page 'cause login page delete all cookies
+			wd.get(urls.get(0));
+			// Refresh page to enable cookies
+			wd.navigate().refresh();
 			
 			for(String url : urls)
 			{
@@ -147,19 +154,19 @@ public class SeleniumService
 					WebDriverUtil.waitForJSandJQueryToLoad(wd);
 				}
 
-				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
-				String name = screenshot.getName();
+				hideElements(wd, wd.findElement(By.id("main-fab")));
+
+				BufferedImage screenshot = WebDriverUtil.takeScreenShot(wd, wd.findElement(areaLocator));
+				File screenshotDocument = saveImage(screenshot);
+
+				String name = screenshotDocument.getName();
 
                 if(titleLocator != null)
                 {
                     name = wd.findElement(titleLocator).getAttribute("value");
                 }
 
-                if(areaLocator != null)
-				{
-					cropRegion(wd, screenshot, areaLocator);
-				}
-				attachments.add(new Attachment(name, screenshot));
+				attachments.add(new Attachment(name, screenshotDocument));
 			}
 		}
 		catch(Exception e)
@@ -172,14 +179,19 @@ public class SeleniumService
 		}
 		return attachments;
 	}
-	
-	private void cropRegion(WebDriver wd, File screenshot, By regionLocator) throws IOException
+
+	public void hideElements(WebDriver wd, WebElement... webElements)
 	{
-		BufferedImage  imagr = ImageIO.read(screenshot);
-		WebElement area = wd.findElement(regionLocator);
-		Point point = area.getLocation();
-		BufferedImage eleScreenshot= imagr.getSubimage(point.getX(), point.getY(), area.getSize().getWidth(), area.getSize().getHeight());
-		ImageIO.write(eleScreenshot, "png", screenshot);
+		JavascriptExecutor js = (JavascriptExecutor) wd;
+		Arrays.asList(webElements).forEach(we -> js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", we));
+	}
+
+	private File saveImage(final BufferedImage screenshot) throws IOException
+	{
+		String name = UUID.randomUUID().toString();
+		File screenshotDocument = File.createTempFile(name, ".png");
+		ImageIO.write(screenshot, "png", screenshotDocument);
+		return screenshotDocument;
 	}
 	
 	private String normalizeDomain(String domain)
