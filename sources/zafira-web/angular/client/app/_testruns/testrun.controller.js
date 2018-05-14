@@ -842,8 +842,7 @@
         $scope.abort = function (testRun) {
             if($scope.jenkins.enabled) {
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
-                    if(rs.success)
-                    {
+                    if(rs.success) {
                         var abortCause = {};
                         abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {

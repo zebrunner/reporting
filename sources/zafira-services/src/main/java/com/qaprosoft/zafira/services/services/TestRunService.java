@@ -19,7 +19,6 @@ import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
 import static com.qaprosoft.zafira.models.db.Status.FAILED;
 import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
 import static com.qaprosoft.zafira.models.db.Status.PASSED;
-import static com.qaprosoft.zafira.models.db.Status.QUEUED;
 import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
@@ -228,17 +227,16 @@ public class TestRunService
 		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
 		if(testRun != null) {
 			Long latestTestRunId = testRun.getId();
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
-			{
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
 				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
 				testRun.setJob(job);
 			}
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
-			{
+			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
 				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 			}
 			testRun.setCiRunId(queueTestRunParams.getCiRunId());
 			testRun.setEnv(queueTestRunParams.getEnv());
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getEnv()));
 			testRun.setStatus(Status.QUEUED);
 			testRun.setElapsed(null);
 			testRun.setPlatform(null);
@@ -247,8 +245,7 @@ public class TestRunService
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-			for (Test test : tests)
-			{
+			for (Test test : tests) {
 				testService.createQueuedTest(test, queuedTestRun.getId());
 			}
 		}
@@ -386,14 +383,7 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{
-		if (StringUtils.isEmpty(abortCause)){
-			abortCause = "Abort cause is unknown";
-		}
 		if(testRun != null){
-			if(QUEUED.equals(testRun.getStatus()))
-			{
-				testRun = markAsReviewed(testRun.getId(), abortCause);
-			}
 			if(IN_PROGRESS.equals(testRun.getStatus()))
 			{
 				List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
@@ -406,6 +396,7 @@ public class TestRunService
 				}
 				testService.updateTestRerunFlags(testRun, tests);
 			}
+			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
 		}
