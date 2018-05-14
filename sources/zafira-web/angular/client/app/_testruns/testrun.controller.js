@@ -683,6 +683,8 @@
 
             $scope.sc.page = page;
 
+            $scope.expandedTestRuns = [];
+
             if (pageSize) {
                 $scope.sc.pageSize = pageSize;
             }
