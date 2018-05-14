@@ -15,15 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
+import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+import ru.yandex.qatools.ashot.shooting.ViewportPastingDecorator;
 
 public class WebDriverUtil
 {
@@ -74,13 +78,38 @@ public class WebDriverUtil
 		return result;
 	}
 
+	public static BufferedImage takeScreenShot(final WebDriver driver, final WebElement area) {
+		ViewportPastingDecorator viewportPastingDecorator = new ViewportPastingDecorator(ShootingStrategies.scaling(2)).withScrollTimeout(900);
+		final Screenshot screenshot = new AShot()
+				.shootingStrategy(viewportPastingDecorator)
+				.coordsProvider(new WebDriverCoordsProvider())
+				.takeScreenshot(driver, area);
+		return screenshot.getImage();
+	}
+
 	public static boolean isPageLoading(final WebDriver wd)
 	{
 		boolean result;
 		try
 		{
-			Wait<WebDriver> wait = new WebDriverWait(wd, 1);
+			isPageLoadingWithAnimation(wd);
+			Wait<WebDriver> wait = new WebDriverWait(wd, 5);
 			wait.until(dr -> wd.findElement(By.id("loading-bar-spinner")).isDisplayed());
+			result = true;
+		} catch (Exception e)
+		{
+			result = false;
+		}
+		return result;
+	}
+
+	public static boolean isPageLoadingWithAnimation(final WebDriver wd)
+	{
+		boolean result;
+		try
+		{
+			Wait<WebDriver> wait = new WebDriverWait(wd, 5);
+			wait.until(dr -> wd.findElement(By.xpath("//*[@id = 'loader-container' and contains(@style, 'display: none')]")).isDisplayed());
 			result = true;
 		} catch (Exception e)
 		{
