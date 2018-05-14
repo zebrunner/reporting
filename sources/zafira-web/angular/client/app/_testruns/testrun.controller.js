@@ -633,8 +633,8 @@
                 $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
                 $scope.testRuns[testRun.id].platform = testRun.platform;
                 $scope.testRuns[testRun.id].env = testRun.env;
-                $scope.testRuns[testRun.id].env = testRun.comments;
-                $scope.testRuns[testRun.id].env = testRun.reviewed;
+                $scope.testRuns[testRun.id].comments = testRun.comments;
+                $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
             }
         };
 
