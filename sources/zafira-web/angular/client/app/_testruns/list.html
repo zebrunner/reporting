@@ -428,7 +428,7 @@
                                                                             <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' } | filter : {name: '!Video'}">
                                                                                 <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
-                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : {name: 'Video'}">
+                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : {name: 'Video'} | filter : { name : '!Live' } ">
                                                                                 <md-button class="artifact-button"  ng-click="showDemoDialog($event, artifact.link, testRun, test)"target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
