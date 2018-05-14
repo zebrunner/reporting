@@ -420,7 +420,7 @@
                                                         <td>
                                                             <div class="align-middle align-right">
                                                                 <div data-ng-if="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')">
-                                                                    <md-menu>
+                                                                    <md-menu ng-if="test.artifacts && test.artifacts.length">
                                                                         <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
                                                                             <md-icon class="material-icons">attachment</md-icon>
                                                                         </md-button>
