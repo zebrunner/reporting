@@ -270,7 +270,9 @@ public class TestRunService
 			if(existingTestRun != null)
 			{
 				existingTestRun.setBuildNumber(testRun.getBuildNumber());
+				existingTestRun.setConfigXML(testRun.getConfigXML());
 				testRun = existingTestRun;
+				//TODO: investigate if startedBy should be also copied
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
 			LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
