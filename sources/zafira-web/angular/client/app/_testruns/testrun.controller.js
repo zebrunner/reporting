@@ -143,8 +143,9 @@
         };
 
         $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
-            'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
-            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0 || value.$$hashKey);});
+            'sc.environment', 'sc.platform', 'sc.reviewed', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0
+                || new Date(value) ||  value.$$hashKey || value === true);});
             $scope.searchFormIsEmpty = notEmptyValues.length == 0;
         });
 
