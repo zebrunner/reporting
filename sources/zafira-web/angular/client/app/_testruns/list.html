@@ -395,7 +395,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                	<tr data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"  ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}">
+                                                	<tr md-swipe-left="changeTestStatus(test, 'FAILED');" md-swipe-right="changeTestStatus(test, 'PASSED');" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"  ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}">
                                                         <td>
                                                         	<b name="testName" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'black_font'">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                         	<div>

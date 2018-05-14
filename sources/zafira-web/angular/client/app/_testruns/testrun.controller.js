@@ -1044,16 +1044,18 @@
                 });
         };
 
-        $scope.markTestAsPassed = function (id) {
-            TestService.markTestAsPassed(id).then(function(rs) {
-                if(rs.success)
-                {
-                }
-                else
-                {
-                    console.error(rs.message);
-                }
-            });
+        $scope.changeTestStatus = function (test, status) {
+            if(test.status != status && confirm('Do you really want mark test as ' + status + '?')) {
+                test.status = status;
+                TestService.updateTest(test).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success('Test was marked as ' + status);
+                    }
+                    else {
+                        console.error(rs.message);
+                    }
+                });
+            }
         };
 
         $scope.showLogsDialog = function(testRun, test, event) {
