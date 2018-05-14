@@ -236,7 +236,7 @@ public class TestRunService
 			}
 			testRun.setCiRunId(queueTestRunParams.getCiRunId());
 			testRun.setEnv(queueTestRunParams.getEnv());
-			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getEnv()));
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
 			testRun.setStatus(Status.QUEUED);
 			testRun.setElapsed(null);
 			testRun.setPlatform(null);
