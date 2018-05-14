@@ -1708,9 +1708,11 @@
 		 $scope.loading = true;
 
 	     $scope.$on('$destroy', function() {
-            $scope.testLogsStomp.disconnect();
-            $scope.logs = [];
-            UtilService.websocketConnected('logs');
+             if($scope.testLogsStomp && $scope.testLogsStomp.connected) {
+                 $scope.testLogsStomp.disconnect();
+                 $scope.logs = [];
+                 UtilService.websocketConnected('logs');
+             }
 	     });
 
 	     $scope.hide = function() {
