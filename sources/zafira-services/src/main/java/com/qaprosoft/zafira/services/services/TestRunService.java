@@ -223,6 +223,7 @@ public class TestRunService
 				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 			}
 			testRun.setCiRunId(queueTestRunParams.getCiRunId());
+			testRun.setEnv(queueTestRunParams.getEnv());
 			testRun.setStatus(Status.QUEUED);
 			testRun.setElapsed(null);
 			testRun.setPlatform(null);
