@@ -631,6 +631,10 @@
                 $scope.testRuns[testRun.id].status = testRun.status;
                 $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
                 $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
+                $scope.testRuns[testRun.id].platform = testRun.platform;
+                $scope.testRuns[testRun.id].env = testRun.env;
+                $scope.testRuns[testRun.id].comments = testRun.comments;
+                $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
             }
         };
 
@@ -840,10 +844,9 @@
         $scope.abort = function (testRun) {
             if($scope.jenkins.enabled) {
                 TestRunService.abortCIJob(testRun.id).then(function (rs) {
-                    if(rs.success)
-                    {
+                    if(rs.success) {
                         var abortCause = {};
-                        abortCause.comment = "TestRun is aborted manually";
+                        abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';

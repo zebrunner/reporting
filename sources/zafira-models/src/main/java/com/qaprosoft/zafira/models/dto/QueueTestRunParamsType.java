@@ -13,11 +13,15 @@ public class QueueTestRunParamsType implements Serializable
 
 	private String branch;
 
+	private String env;
+
 	private String ciRunId;
 
 	private String ciParentUrl;
 
 	private String ciParentBuild;
+
+	private String buildNumber;
 
 	public String getJobName()
 	{
@@ -37,6 +41,16 @@ public class QueueTestRunParamsType implements Serializable
 	public void setBranch(String branch)
 	{
 		this.branch = branch;
+	}
+
+	public String getEnv()
+	{
+		return env;
+	}
+
+	public void setEnv(String env)
+	{
+		this.env = env;
 	}
 
 	public String getCiRunId()
@@ -67,5 +81,15 @@ public class QueueTestRunParamsType implements Serializable
 	public void setCiParentBuild(String ciParentBuild)
 	{
 		this.ciParentBuild = ciParentBuild;
+	}
+
+	public String getBuildNumber()
+	{
+		return buildNumber;
+	}
+
+	public void setBuildNumber(String buildNumber)
+	{
+		this.buildNumber = buildNumber;
 	}
 }
