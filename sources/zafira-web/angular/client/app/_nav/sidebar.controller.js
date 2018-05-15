@@ -3,10 +3,10 @@
 
     angular
         .module('app.sidebar')
-        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
+        .controller('SidebarController', ['$scope', '$rootScope', '$cookies', '$q', '$mdDialog', '$state', 'ViewService', 'ConfigService', 'ProjectService', 'ProjectProvider', 'UtilService', 'UserService', 'DashboardService', 'AuthService', 'SettingsService', 'UploadService', SidebarController])
 
     // **************************************************************************
-    function SidebarController($scope, $rootScope, $cookies, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
+    function SidebarController($scope, $rootScope, $cookies, $q, $mdDialog, $state, ViewService, ConfigService, ProjectService, ProjectProvider, UtilService, UserService, DashboardService, AuthService, SettingsService, UploadService) {
 
     	$scope.DashboardService = DashboardService;
 
@@ -43,35 +43,58 @@
             });
         };
 
-        $scope.loadViews = function(){
-            ViewService.getViewById(ProjectProvider.getProjectsIdQueryParam()).then(function(rs) {
-                if(rs.success)
-                {
-                    $scope.views = rs.data;
-                }
-                else
-                {
-                }
+        function getViews(){
+            return $q(function (resolve, reject) {
+                ViewService.getViewById(ProjectProvider.getProjectsIdQueryParam()).then(function(rs) {
+                    if(rs.success)
+                    {
+                        $scope.views = rs.data;
+                        resolve(rs.data);
+                    }
+                    else
+                    {
+                        reject(rs.message);
+                    }
+                });
             });
         };
 
-        $scope.loadDashboards = function () {
+        $scope.loadViews = function () {
+            getViews().then(function (response) {
+               $scope.viewsLoaded = true;
+            });
+        };
 
-            if ($scope.hasHiddenDashboardPermission() == true) {
-                DashboardService.GetDashboards().then(function (rs) {
-                    if (rs.success) {
-                        $scope.dashboards = rs.data;
-                    }
-                });
-            }
-            else {
-                var hidden = true;
-                DashboardService.GetDashboards(hidden).then(function (rs) {
-                    if (rs.success) {
-                        $scope.dashboards = rs.data;
-                    }
-                });
-            }
+        $scope.loadDashboards = function() {
+            getDashboards().then(function (response) {
+                $scope.dashboardsLoaded = true;
+            });
+        };
+
+        function getDashboards() {
+            return $q(function (resolve, reject) {
+                if ($scope.hasHiddenDashboardPermission() == true) {
+                    DashboardService.GetDashboards().then(function (rs) {
+                        if (rs.success) {
+                            $scope.dashboards = rs.data;
+                            resolve(rs.data);
+                        } else {
+                            reject(rs.message);
+                        }
+                    });
+                }
+                else {
+                    var hidden = true;
+                    DashboardService.GetDashboards(hidden).then(function (rs) {
+                        if (rs.success) {
+                            $scope.dashboards = rs.data;
+                            resolve(rs.data);
+                        } else {
+                            reject(rs.message);
+                        }
+                    });
+                }
+            });
         };
 
         $scope.selectedProjectsPresent = function () {
