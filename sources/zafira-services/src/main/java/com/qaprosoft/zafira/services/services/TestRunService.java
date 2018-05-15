@@ -241,6 +241,8 @@ public class TestRunService
 			testRun.setElapsed(null);
 			testRun.setPlatform(null);
 			testRun.setConfigXML(null);
+			testRun.setComments(null);
+			testRun.setReviewed(false);
 			testRun.setStartedAt(null);
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
@@ -384,9 +386,9 @@ public class TestRunService
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
 	{
 		if(testRun != null){
+			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 			if(IN_PROGRESS.equals(testRun.getStatus()))
 			{
-				List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 				for(Test test : tests)
 				{
 					if(IN_PROGRESS.equals(test.getStatus()))
@@ -394,8 +396,8 @@ public class TestRunService
 						testService.abortTest(test, abortCause);
 					}
 				}
-				testService.updateTestRerunFlags(testRun, tests);
 			}
+			testService.updateTestRerunFlags(testRun, tests);
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
