@@ -145,7 +145,7 @@ public class SeleniumService
 			for(String url : urls)
 			{
 				wd.get(url);
-				if(WebDriverUtil.isPageLoading(wd))
+				if(WebDriverUtil.isPageLoadingWithAnimation(wd) && WebDriverUtil.isPageLoading(wd))
 				{
 					WebDriverUtil.waitUntilPageIsLoaded(wd);
 				} else

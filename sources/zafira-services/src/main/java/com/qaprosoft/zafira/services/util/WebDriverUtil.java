@@ -31,9 +31,12 @@ import ru.yandex.qatools.ashot.shooting.ViewportPastingDecorator;
 
 public class WebDriverUtil
 {
+
+	private static final Long IMPLICITY_TIMEOUT = 30L;
+
 	public static boolean waitForJSandJQueryToLoad(final WebDriver wd)
 	{
-		WebDriverWait wait = new WebDriverWait(wd, 30);
+		WebDriverWait wait = new WebDriverWait(wd, IMPLICITY_TIMEOUT);
 		// wait for jQuery to load
 		ExpectedCondition<Boolean> jQueryLoad = new ExpectedCondition<Boolean>()
 		{
@@ -89,31 +92,29 @@ public class WebDriverUtil
 
 	public static boolean isPageLoading(final WebDriver wd)
 	{
-		boolean result;
-		try
-		{
-			isPageLoadingWithAnimation(wd);
-			Wait<WebDriver> wait = new WebDriverWait(wd, 5);
-			wait.until(dr -> wd.findElement(By.id("loading-bar-spinner")).isDisplayed());
-			result = true;
-		} catch (Exception e)
-		{
-			result = false;
-		}
-		return result;
+		return isElementPresent(wd, By.id("loading-bar-spinner"), 5);
 	}
 
 	public static boolean isPageLoadingWithAnimation(final WebDriver wd)
 	{
+		return isElementPresent(wd, By.xpath("//*[@id = 'loader-container' and contains(@style, 'display: none')]"), 5);
+	}
+
+	public static boolean isElementPresent(final WebDriver wd, final By by, final long timeoutOutInSeconds)
+	{
 		boolean result;
 		try
 		{
-			Wait<WebDriver> wait = new WebDriverWait(wd, 5);
-			wait.until(dr -> wd.findElement(By.xpath("//*[@id = 'loader-container' and contains(@style, 'display: none')]")).isDisplayed());
+			wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+			Wait<WebDriver> wait = new WebDriverWait(wd, timeoutOutInSeconds);
+			wait.until(dr -> wd.findElement(by).isDisplayed());
 			result = true;
 		} catch (Exception e)
 		{
 			result = false;
+		} finally
+		{
+			wd.manage().timeouts().implicitlyWait(IMPLICITY_TIMEOUT, TimeUnit.SECONDS);
 		}
 		return result;
 	}
