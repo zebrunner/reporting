@@ -1,5 +1,14 @@
 body {
     background: $main_container_bg;
+    overflow: hidden;
+    max-width:100%;
+    max-height:100%;
+}
+
+body > div {
+    overflow: auto;
+    display: block;
+    max-height: 100%;
 }
 
 #vnc {
@@ -155,6 +164,7 @@ md-chip:hover .show-icon-on-hover {
 
 .fixed-search-column {
     min-width: 360px;
+    min-height: 52px;
     padding: 8px 20px;
 }
 

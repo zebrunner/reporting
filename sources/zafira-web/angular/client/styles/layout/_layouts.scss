@@ -34,7 +34,7 @@ html {
 .app {
     position: relative;
     min-height: 100%; // important!
-    height: auto; // important!
+    //height: auto; // important!
 
     > .header-container {
         &.header-fixed {
@@ -83,13 +83,9 @@ html {
         > .nav-container {
             display: none;
             z-index: 100; // should be highter than top header
-            position: sticky;
-            position: -webkit-sticky;
-            position: -moz-sticky;
-            position: -ms-sticky;
-            position: -o-sticky;
+            position: fixed;
             left: 0;
-            top: 0;
+            top: $header_height;
             float: left;
             width: 220px;
             height: 100vh;

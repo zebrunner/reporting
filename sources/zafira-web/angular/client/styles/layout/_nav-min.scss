@@ -21,6 +21,10 @@
             margin-left: 60px;
         }
 
+        #content {
+            padding-top: $header_height;
+        }
+
         #nav-wrapper {
             overflow: visible !important;
         }
