@@ -241,6 +241,8 @@ public class TestRunService
 			testRun.setElapsed(null);
 			testRun.setPlatform(null);
 			testRun.setConfigXML(null);
+			testRun.setComments(null);
+			testRun.setReviewed(false);
 			testRun.setStartedAt(null);
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
