@@ -515,7 +515,9 @@ public class TestService
 				for (Test test : tests)
 				{
 
-					if ((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
+					if ((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue())
+							|| test.getStatus().equals(Status.ABORTED)
+							|| test.getStatus().equals(Status.QUEUED))
 					{
 						switch (testRun.getDriverMode())
 						{
@@ -536,7 +538,7 @@ public class TestService
 							}
 							else
 							{
-								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
+								testMapper.updateTestsNeedRerun(Collections.singletonList(test.getId()), true);
 							}
 
 							if (!StringUtils.isEmpty(test.getDependsOnMethods()))
