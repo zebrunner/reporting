@@ -87,7 +87,7 @@ public class SeleniumService
 			
 			binary = new File("./chromedriver" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
 
-			Files.deleteIfExists(binary.toPath());
+			//Files.deleteIfExists(binary.toPath());
 
 			//System.setProperty("webdriver.chrome.driver", bin.getAbsolutePath());
 
