@@ -538,7 +538,7 @@ public class TestService
 							}
 							else
 							{
-								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
+								testMapper.updateTestsNeedRerun(Collections.singletonList(test.getId()), true);
 							}
 
 							if (!StringUtils.isEmpty(test.getDependsOnMethods()))
