@@ -58,7 +58,7 @@ public class SeleniumService
 	
 	private static final String LINUX_CHROMEDRIVER = "classpath:chromedriver/chromedriver-linux";
 
-	private String path;
+	private File binary;
 	
 	@Autowired
 	private ResourceLoader resourceLoader;
@@ -85,21 +85,19 @@ public class SeleniumService
 				is = resourceLoader.getResource(LINUX_CHROMEDRIVER).getInputStream();
 			}
 			
-			File bin = new File("./chromedriver" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+			binary = new File("./chromedriver" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
 
-			Files.deleteIfExists(bin.toPath());
+			Files.deleteIfExists(binary.toPath());
 
-			System.setProperty("webdriver.chrome.driver", bin.getAbsolutePath());
+			//System.setProperty("webdriver.chrome.driver", bin.getAbsolutePath());
 
-			FileUtils.copyInputStreamToFile(is, bin);
+			FileUtils.copyInputStreamToFile(is, binary);
 			IOUtils.closeQuietly(is);
 			
 			Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
 			perms.add(PosixFilePermission.OWNER_READ);
-			Files.setPosixFilePermissions(bin.toPath(), perms);
-
-			path = bin.getAbsolutePath();
+			Files.setPosixFilePermissions(binary.toPath(), perms);
 
 		}
 		catch(Exception e)
@@ -128,6 +126,7 @@ public class SeleniumService
 			caps.setJavascriptEnabled(true);
 			final ChromeOptions chromeOptions = new ChromeOptions();
 			chromeOptions.addArguments("--headless");
+			chromeOptions.setBinary(binary);
 			caps.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 	 		wd = new ChromeDriver(caps);
 			
@@ -145,7 +144,7 @@ public class SeleniumService
 			for(String url : urls)
 			{
 				wd.get(url);
-				if(WebDriverUtil.isPageLoading(wd))
+				if(WebDriverUtil.isPageLoadingWithAnimation(wd) && WebDriverUtil.isPageLoading(wd))
 				{
 					WebDriverUtil.waitUntilPageIsLoaded(wd);
 				} else
