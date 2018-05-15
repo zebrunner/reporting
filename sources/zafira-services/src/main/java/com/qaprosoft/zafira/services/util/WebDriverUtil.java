@@ -18,16 +18,19 @@ package com.qaprosoft.zafira.services.util;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
-import ru.yandex.qatools.ashot.shooting.ViewportPastingDecorator;
 
 public class WebDriverUtil
 {
@@ -82,9 +85,8 @@ public class WebDriverUtil
 	}
 
 	public static BufferedImage takeScreenShot(final WebDriver driver, final WebElement area) {
-		ViewportPastingDecorator viewportPastingDecorator = new ViewportPastingDecorator(ShootingStrategies.scaling(2)).withScrollTimeout(900);
 		final Screenshot screenshot = new AShot()
-				.shootingStrategy(viewportPastingDecorator)
+				.shootingStrategy(ShootingStrategies.viewportPasting(900))
 				.coordsProvider(new WebDriverCoordsProvider())
 				.takeScreenshot(driver, area);
 		return screenshot.getImage();

@@ -1,5 +1,11 @@
 package com.qaprosoft.zafira.services.services;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.qaprosoft.zafira.dbaccess.dao.mysql.FilterMapper;
 import com.qaprosoft.zafira.models.db.Filter;
 import com.qaprosoft.zafira.models.dto.filter.FilterType;
@@ -7,19 +13,10 @@ import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
 import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class FilterService
 {
-
-	private static final String TEST_RUN_TEMPLATE = "/filters/test_run_search_data.ftl";
-	private static final String TEST_RUN_COUNT_TEMPLATE = "/filters/test_run_search_data.ftl";
-
 	@Autowired
 	private FilterMapper filterMapper;
 

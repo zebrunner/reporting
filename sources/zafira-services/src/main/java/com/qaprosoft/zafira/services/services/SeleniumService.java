@@ -18,25 +18,17 @@ package com.qaprosoft.zafira.services.services;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
@@ -44,11 +36,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.qaprosoft.zafira.models.db.Attachment;
@@ -62,57 +52,8 @@ public class SeleniumService
 
 	private static final Dimension DEFAULT_SCREEN_DIMENSION = new Dimension(1920, 1080);
 
-	private static final String MAC_CHROMEDRIVER = "classpath:chromedriver/chromedriver-macos";
-
-	private static final String WINDOWS_CHROMEDRIVER = "classpath:chromedriver/chromedriver-windows.exe";
-
-	private static final String LINUX_CHROMEDRIVER = "classpath:chromedriver/chromedriver-linux";
-
-	private File binary;
-
-	@Autowired
-	private ResourceLoader resourceLoader;
-
-	/**
-	 * Initializes PhantomJS binary according to OS.
-	 */
-	@PostConstruct
-	public void init()
-	{
-		InputStream is = null;
-		try
-		{
-			if (SystemUtils.IS_OS_MAC)
-			{
-				is = resourceLoader.getResource(MAC_CHROMEDRIVER).getInputStream();
-			} else if (SystemUtils.IS_OS_WINDOWS)
-			{
-				is = resourceLoader.getResource(WINDOWS_CHROMEDRIVER).getInputStream();
-			} else
-			{
-				is = resourceLoader.getResource(LINUX_CHROMEDRIVER).getInputStream();
-			}
-
-			binary = new File("./chromedriver" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
-
-			Files.deleteIfExists(binary.toPath());
-
-			FileUtils.copyInputStreamToFile(is, binary);
-			IOUtils.closeQuietly(is);
-
-			Set<PosixFilePermission> perms = new HashSet<>();
-			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			perms.add(PosixFilePermission.OWNER_READ);
-			Files.setPosixFilePermissions(binary.toPath(), perms);
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Failed to initialize PhantomJS: " + e.getMessage());
-		} finally
-		{
-			IOUtils.closeQuietly(is);
-		}
-	}
+	@Value("${zafira.selenium.url}")
+	private String seleniumURL;
 
 	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects,
 			By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
@@ -127,25 +68,11 @@ public class SeleniumService
 		WebDriver wd = null;
 		try
 		{
-			final ChromeDriverService service = new ChromeDriverService.Builder()
-					.usingDriverExecutable(binary)
-					.build();
-
-			final ChromeOptions chromeOptions = new ChromeOptions();
-			chromeOptions.addArguments("--headless");
-
-			wd = new ChromeDriver(service, chromeOptions);
+			wd = new RemoteWebDriver(new URL(seleniumURL), DesiredCapabilities.chrome());
 
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 
-			// Get first url to have a domain needed
-			wd.get(urls.get(0));
-			// Set cookies
 			authorize(wd, auth, projects, domain, urls.get(0));
-			// Get needed page 'cause login page delete all cookies
-			wd.get(urls.get(0));
-			// Refresh page to enable cookies
-			wd.navigate().refresh();
 
 			for (String url : urls)
 			{
@@ -212,7 +139,13 @@ public class SeleniumService
 	private void authorize(WebDriver wd, String auth, String projects, String domain, String url)
 			throws InterruptedException
 	{
+		// Get first url to have a domain needed
+		wd.get(url);
+		// Set cookies
 		wd.manage().addCookie(new Cookie.Builder("Access-Token", auth).domain(normalizeDomain(domain)).build());
 		wd.manage().addCookie(new Cookie.Builder("projects", projects).domain(normalizeDomain(domain)).build());
+		// Refresh page to enable cookies
+		wd.get(url);
+		wd.navigate().refresh();
 	}
 }
