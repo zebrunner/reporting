@@ -1,6 +1,9 @@
 
 
 @media (max-width: $screen-sm-max) {
+    #content {
+        padding-top: $header_height * 2;
+    }
     .on-canvas {
         #header {
             position: fixed;
@@ -22,7 +25,6 @@
             #content {
                 margin-left: 220px;
                 margin-right: -40px;
-                margin-top: $header_height * 2;
             }
         }
 
