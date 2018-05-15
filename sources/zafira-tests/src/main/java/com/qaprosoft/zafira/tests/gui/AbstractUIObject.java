@@ -249,7 +249,7 @@ public abstract class AbstractUIObject
 
 	public void clickOutside()
 	{
-		clickByCoordinates("1", "1");
+		clickByCoordinates("100", "100");
 		isBackdropNotPresent(1);
 	}
 
