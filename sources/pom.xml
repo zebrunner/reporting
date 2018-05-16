@@ -95,7 +95,6 @@
         <jersey.version>1.19.4</jersey.version>
         <genson.version>0.99</genson.version>
         <freemarker.version>2.3.23</freemarker.version>
-        <phantomjsdriver.version>1.3.0</phantomjsdriver.version>
         <selenium-java.version>2.53.0</selenium-java.version>
         <aws-java-sdk.version>1.10.30</aws-java-sdk.version>
         <commons-configuration2.version>2.1</commons-configuration2.version>
@@ -532,11 +531,6 @@
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
             </dependency>
-            <!--<dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>phantomjsdriver</artifactId>
-                <version>${phantomjsdriver.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
