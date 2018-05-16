@@ -835,6 +835,34 @@
             $scope.showRerunDialog(testRun, event);
         };
 
+        $scope.debug = function (testRun) {
+            TestRunService.getJobParameters(testRun.id).then(function(rs) {
+                if(rs.success) {
+                    var jobParameters = rs.data;
+                    if (jobParameters === '') {
+                        alertify.error("Job parameters are not loaded");
+                    } else {
+                        var jobParametersMap = {};
+                        for (var i = 0; i < jobParameters.length; i++){
+                            if (jobParameters[i].name === 'debug'){
+                                jobParameters[i].value = true;
+                            }
+                            jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
+                        }
+                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
+                            if(rs.success) {
+                                alertify.success('Debug mode is starting, debug status will appear soon');
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    }
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
         		{

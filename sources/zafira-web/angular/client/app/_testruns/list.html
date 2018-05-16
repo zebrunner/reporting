@@ -370,6 +370,11 @@
                                                             Rebuild
                                                         </md-button>
                                                     </md-menu-item>
+                                                    <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                                                        <md-button name="debug" data-ng-click="debug(testRun, $event)">
+                                                            Debug
+                                                        </md-button>
+                                                    </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
                                                             Live log
