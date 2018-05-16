@@ -27,6 +27,8 @@ ENV ZAFIRA_NEWRELIC_APP=zafira
 ENV ZAFIRA_NEWRELIC_AUDIT_MODE=false
 ENV ZAFIRA_NEWRELIC_LOG_LEVEL=info
 
+ENV ZAFIRA_SELENIUM_URL=
+
 RUN apt-get update && apt-get install zip
 
 COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/

@@ -15,6 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +26,6 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
-import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
-import com.qaprosoft.zafira.services.services.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -45,12 +44,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
+import com.qaprosoft.zafira.models.dto.CommentType;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
@@ -58,6 +64,13 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.services.FilterService;
+import com.qaprosoft.zafira.services.services.JobsService;
+import com.qaprosoft.zafira.services.services.ProjectService;
+import com.qaprosoft.zafira.services.services.StatisticsService;
+import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -67,9 +80,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
 
 @Controller
 @Api(value = "Test runs API")

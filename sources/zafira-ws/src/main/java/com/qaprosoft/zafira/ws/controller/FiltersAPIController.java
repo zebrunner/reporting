@@ -1,28 +1,35 @@
 package com.qaprosoft.zafira.ws.controller;
 
-import com.qaprosoft.zafira.models.db.Filter;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
-import com.qaprosoft.zafira.models.dto.filter.Subject;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.FilterService;
-import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.models.dto.filter.Subject;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.FilterService;
+import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "Filters API")
