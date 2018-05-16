@@ -1208,8 +1208,7 @@
                 testRun.tests = null;
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
-                if(subscription != null)
-                {
+                if(subscription != null) {
                 		subscription.unsubscribe();
                 }
                 delete $scope.subscribtions[testRun.id];
