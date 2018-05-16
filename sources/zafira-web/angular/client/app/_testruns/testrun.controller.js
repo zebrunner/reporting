@@ -835,6 +835,7 @@
             $scope.showRerunDialog(testRun, event);
         };
 
+        $scope.debugMode = false;
         $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
                 if(rs.success) {
@@ -856,6 +857,18 @@
                                 alertify.error(rs.message);
                             }
                         });
+                        $interval(function(testRun){
+                            TestRunService.getConsoleOutput(testRun.id, 10, 12).then(function(rs) {
+                                if(rs.success) {
+                                    if(rs.data.includes("dt_socket at address: 8000")){
+                                        $scope.debugMode = true;
+                                        $interval.cancel();
+                                    }
+                                } else {
+                                    alertify.error(rs.message);
+                                }
+                            });
+                        }, 500);
                     }
                 } else {
                     alertify.error(rs.message);
