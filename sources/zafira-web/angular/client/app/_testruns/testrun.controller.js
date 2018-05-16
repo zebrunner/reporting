@@ -1014,7 +1014,7 @@
             }
         };
 
-        $scope.showDemoDialog = function(event, wsURL, testRun, test) {
+        $scope.showDemoDialog = function(event, wsURL, testRun, test, isLive) {
             $mdDialog.show({
                 controller: DemoController,
                 templateUrl: 'app/_testruns/demo_modal.html',
@@ -1026,7 +1026,8 @@
                     wsURL: wsURL,
                     testRun: testRun,
                     test: test,
-                    rabbitmq: $scope.rabbitmq
+                    rabbitmq: $scope.rabbitmq,
+                    isLive: isLive
                 }
             })
                 .then(function(answer) {
@@ -1586,7 +1587,7 @@
         })();
     }
 
-    function DemoController($scope, $mdDialog, $timeout, $window, UtilService, wsURL, rabbitmq, testRun, test) {
+    function DemoController($scope, $mdDialog, $timeout, $window, UtilService, wsURL, rabbitmq, testRun, test, isLive) {
 
         var rfb;
         var display;
@@ -1688,7 +1689,7 @@
         };
 
         (function initController() {
-            if(wsURL.includes('vnc')) {
+            if(isLive) {
                 $scope.title = 'Live video';
                 $timeout(function () {
                     $scope.initVNCWebsocket();
