@@ -356,14 +356,17 @@
                 });
         };
 
-        $scope.showEmailDialog = function (event) {
+        $scope.showEmailDialog = function (event, widgetId) {
             $mdDialog.show({
                 controller: EmailController,
                 templateUrl: 'app/_dashboards/email_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose: true,
-                fullscreen: true
+                fullscreen: true,
+                locals: {
+                    widgetId: widgetId
+                }
             })
                 .then(function (answer) {
                 }, function () {
@@ -820,14 +823,29 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider) {
+    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
 
-        $scope.title = "Zafira Dashboard";
+        var EMAIL_TYPES = {
+            'DASHBOARD': {
+                title: 'Zafira Dashboard',
+                subject: 'Zafira Dashboards',
+                func: sendDashboardEmail
+            },
+            'WIDGET': {
+                title: 'Zafira Widget',
+                subject: 'Zafira widgets',
+                func: sendWidgetEmail
+            }
+        };
+
+        var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
+
+        $scope.title = EMAIL_TYPES[TYPE].title;
         $scope.subjectRequired = true;
         $scope.textRequired = true;
 
         $scope.email = {};
-        $scope.email.subject = "Zafira Dashboards";
+        $scope.email.subject = EMAIL_TYPES[TYPE].subject;
         $scope.email.text = "This is auto-generated email, please do not reply!";
         $scope.email.hostname = document.location.hostname;
         $scope.email.urls = [document.location.href];
@@ -850,6 +868,10 @@
             $scope.email.recipients = $scope.email.recipients.toString();
             var projects = ProjectProvider.getProjects();
             projects = projects && projects.length ? projects : null;
+            EMAIL_TYPES[TYPE].func(projects);
+        };
+
+        function sendDashboardEmail(projects) {
             DashboardService.SendDashboardByEmail($scope.email, projects).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Email was successfully sent!');
@@ -859,6 +881,18 @@
                 }
             });
         };
+
+        function sendWidgetEmail(projects) {
+            DashboardService.SendWidgetByEmail($scope.email, projects, widgetId).then(function (rs) {
+                if (rs.success) {
+                    alertify.success('Email was successfully sent!');
+                }
+                else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         $scope.users_all = [];
 
         $scope.usersSearchCriteria = {};
