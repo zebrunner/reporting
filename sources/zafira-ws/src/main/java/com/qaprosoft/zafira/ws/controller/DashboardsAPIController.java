@@ -202,27 +202,29 @@ public class DashboardsAPIController extends AbstractController
 		{
 			throw new BadCredentialsException("Invalid access token");
 		}
-    	
+
 		Dimension dimension = null;
 		if(!StringUtils.isEmpty(email.getDimension()))
 		{
 			String [] dimensions = email.getDimension().toLowerCase().split("x");
 			dimension = new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1]));
 		}
-		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(), 
-															 email.getHostname(), 
+		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
+															 email.getHostname(),
 															 accessToken,
 															 projects,
 															 By.id("dashboard_content"),
-															 By.id("dashboard_title"), dimension);
+															 By.id("dashboard_title"),
+															 dimension,
+															 By.id("main-fab"), By.id("header"));
 		if(attachments.size() == 0)
 		{
 			throw new ServiceException("Unable to create dashboard screenshots");
 		}
-		
+
 		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 	}
-	
+
 	@ResponseStatusDetails
     @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })

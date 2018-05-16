@@ -56,7 +56,7 @@ public class SeleniumService
 	private String seleniumURL;
 
 	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects,
-			By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
+			By areaLocator, By titleLocator, Dimension dimension, By... toHideLocators) throws ServiceException
 	{
 		List<Attachment> attachments = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class SeleniumService
 					WebDriverUtil.waitForJSandJQueryToLoad(wd);
 				}
 
-				hideElements(wd, wd.findElement(By.id("main-fab")));
+				hideElements(wd, toHideLocators);
 
 				BufferedImage screenshot = WebDriverUtil.takeScreenShot(wd, wd.findElement(areaLocator));
 				File screenshotDocument = saveImage(screenshot);
@@ -111,11 +111,19 @@ public class SeleniumService
 		return attachments;
 	}
 
-	public void hideElements(WebDriver wd, WebElement... webElements)
+	public void hideElements(WebDriver wd, By... toHideLocators)
 	{
+
 		JavascriptExecutor js = (JavascriptExecutor) wd;
-		Arrays.asList(webElements)
-				.forEach(we -> js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", we));
+		Arrays.asList(toHideLocators)
+				.forEach(toHideLocator ->
+				{
+					if(WebDriverUtil.isElementPresent(wd, toHideLocator, 2))
+					{
+						WebElement webElement = wd.findElement(toHideLocator);
+						js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", webElement);
+					}
+				});
 	}
 
 	private File saveImage(final BufferedImage screenshot) throws IOException
