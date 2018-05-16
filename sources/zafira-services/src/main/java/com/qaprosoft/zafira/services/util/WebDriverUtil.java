@@ -86,7 +86,7 @@ public class WebDriverUtil
 
 	public static BufferedImage takeScreenShot(final WebDriver driver, final WebElement area) {
 		final Screenshot screenshot = new AShot()
-				.shootingStrategy(ShootingStrategies.viewportPasting(900))
+				.shootingStrategy(ShootingStrategies.viewportPasting(1000))
 				.coordsProvider(new WebDriverCoordsProvider())
 				.takeScreenshot(driver, area);
 		return screenshot.getImage();
