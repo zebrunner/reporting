@@ -365,6 +365,9 @@
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
                 $scope.subscribtions['testRuns'] = $scope.subscribeTestRunsTopic();
+                if($scope.testRunId){
+                    $scope.subscribtions[$scope.testRunId] = $scope.subscribeTestsTopic($scope.testRunId);
+                }
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, $scope.initWebsocket);
@@ -429,8 +432,8 @@
         };
 
         $scope.checkStatisticEvent = function (event) {
-            return ($scope.testRunId && $scope.testRunId != event.testStatistic.testRunId)
-            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testStatistic.testRunId] == null)
+            return ($scope.testRunId && $scope.testRunId != event.testRunStatistics.testRunId)
+            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRunStatistics.testRunId] == null)
             || ($scope.projects)
             || !$scope.checkSearchCriteria($scope.sc);
         };
@@ -438,7 +441,7 @@
         $scope.checkSearchCriteria = function (sc) {
             var isEmpty = true;
             for (var criteria in sc) {
-                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize") {
+                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize" && criteria != "id") {
                     isEmpty = false;
                     break;
                 }
@@ -755,8 +758,6 @@
                 TestService.searchTests(testSearchCriteria).then(function (rs) {
                     if (rs.success) {
                         var data = rs.data;
-                        var inProgressTests = 0;
-                        var testRun = $scope.testRuns[testRunId];
                         for (var i = 0; i < data.results.length; i++) {
                             var test = data.results[i];
                             $scope.addTest(test);
@@ -1207,8 +1208,7 @@
                 testRun.tests = null;
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
-                if(subscription != null)
-                {
+                if(subscription != null) {
                 		subscription.unsubscribe();
                 }
                 delete $scope.subscribtions[testRun.id];
