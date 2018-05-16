@@ -365,6 +365,9 @@
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
                 $scope.subscribtions['testRuns'] = $scope.subscribeTestRunsTopic();
+                if($scope.testRunId){
+                    $scope.subscribtions[$scope.testRunId] = $scope.subscribeTestsTopic($scope.testRunId);
+                }
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, $scope.initWebsocket);
@@ -758,9 +761,6 @@
                         for (var i = 0; i < data.results.length; i++) {
                             var test = data.results[i];
                             $scope.addTest(test);
-                        }
-                        if ($scope.testRunId){
-                            $scope.subscribtions[testRunId] = $scope.subscribeTestsTopic(testRunId);
                         }
                         resolve(angular.copy(data));
                     }
