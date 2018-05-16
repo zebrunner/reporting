@@ -134,7 +134,7 @@ public class UserProfilePageTest extends AbstractTest {
         WebElement nightlyDashboard = null;
         String chosenDashboardName = null;
         String testChosenDashboardName = null;
-        jse.executeScript("arguments[0].scrollIntoView(true);", userProfilePage.getDefaultDashboardSelect());
+        jse.executeScript("arguments[0].scrollIntoView(true);", userProfilePage.getSaveUserProfileButton());
         userProfilePage.getDefaultDashboardSelect().click();
         userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getDashboardSelectValues().get(0), 1);
         List<WebElement> webElements = userProfilePage.getDashboardSelectValues();
