@@ -24,6 +24,7 @@
         service.UpdateDashboardWidgets = UpdateDashboardWidgets;
         service.DeleteDashboardWidget = DeleteDashboardWidget;
         service.SendDashboardByEmail = SendDashboardByEmail;
+        service.SendWidgetByEmail = SendWidgetByEmail;
         service.GetWidgets = GetWidgets;
         service.CreateWidget = CreateWidget;
         service.UpdateWidget = UpdateWidget;
@@ -96,7 +97,15 @@
 
         function SendDashboardByEmail(email, projects) {
         	var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
-            return $http.post(API_URL + '/api/dashboards/email?projects=' + encodeURIComponent(JSON.stringify(projects)), email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+        	var path = projects ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
+            return $http.post(API_URL + '/api/dashboards/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+        }
+
+        function SendWidgetByEmail(email, projects, widgetId) {
+            var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
+            var path = projects && projects.length ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
+            path = widgetId ? path.length ? path + '&widgetId=' + widgetId : '?widgetId=' + widgetId : '';
+            return $http.post(API_URL + '/api/widgets/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function GetWidgets() {
