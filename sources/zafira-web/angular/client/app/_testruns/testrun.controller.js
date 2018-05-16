@@ -1174,13 +1174,13 @@
                     isConnectedToJira: $rootScope.tools['JIRA'],
                     isJiraEnabled: $rootScope.jira.enabled
                 }
-            })
-                .then(function(answer) {
-                    if (answer == true) {
-                        $scope.loadTests($scope.lastTestRunOpened);
+            }).then(function() {
+                }, function(response) {
+                    if (response) {
+                        var testRun = $scope.testRuns[test.testRunId];
+                        testRun.tests[test.id] = angular.copy(response);
                     }
-                }, function() {
-                });
+            });
         };
 
         var setWorkItemIsNewStatus = function (workItems){
@@ -2504,16 +2504,12 @@
 
         /* MODAL_WINDOW functionality */
 
-        $scope.cancel = function () {
-            $scope.hide();
-        };
-
         $scope.hide = function() {
-            $mdDialog.hide();
+            $mdDialog.hide(test);
         };
 
         $scope.cancel = function() {
-            $mdDialog.cancel();
+            $mdDialog.cancel($scope.test);
         };
 
         (function initController() {
