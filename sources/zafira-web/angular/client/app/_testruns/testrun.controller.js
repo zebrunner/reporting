@@ -429,8 +429,8 @@
         };
 
         $scope.checkStatisticEvent = function (event) {
-            return ($scope.testRunId && $scope.testRunId != event.testStatistic.testRunId)
-            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testStatistic.testRunId] == null)
+            return ($scope.testRunId && $scope.testRunId != event.testRunStatistics.testRunId)
+            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRunStatistics.testRunId] == null)
             || ($scope.projects)
             || !$scope.checkSearchCriteria($scope.sc);
         };
