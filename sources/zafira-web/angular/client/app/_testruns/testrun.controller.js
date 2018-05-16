@@ -755,11 +755,12 @@
                 TestService.searchTests(testSearchCriteria).then(function (rs) {
                     if (rs.success) {
                         var data = rs.data;
-                        var inProgressTests = 0;
-                        var testRun = $scope.testRuns[testRunId];
                         for (var i = 0; i < data.results.length; i++) {
                             var test = data.results[i];
                             $scope.addTest(test);
+                        }
+                        if ($scope.testRunId){
+                            $scope.subscribtions[testRunId] = $scope.subscribeTestsTopic(testRunId);
                         }
                         resolve(angular.copy(data));
                     }
