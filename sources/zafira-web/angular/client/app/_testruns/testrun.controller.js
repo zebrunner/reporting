@@ -438,7 +438,7 @@
         $scope.checkSearchCriteria = function (sc) {
             var isEmpty = true;
             for (var criteria in sc) {
-                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize") {
+                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize" && criteria != "id") {
                     isEmpty = false;
                     break;
                 }
