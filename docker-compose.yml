@@ -26,6 +26,8 @@ services:
     restart: always
   screenshoter:
     image: selenium/standalone-chrome:latest
+    volumes:
+    - /dev/shm:/dev/shm
     restart: always
   zafira:
     image: qaprosoft/zafira:latest

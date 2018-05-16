@@ -1,15 +1,17 @@
 body {
     background: $main_container_bg;
-    overflow: hidden;
+    /*overflow: hidden;
     max-width:100%;
-    max-height:100%;
+    max-height:100%;*/
 }
+/*
 
 body > div {
     overflow: auto;
     display: block;
     max-height: 100%;
 }
+*/
 
 #vnc {
     div {

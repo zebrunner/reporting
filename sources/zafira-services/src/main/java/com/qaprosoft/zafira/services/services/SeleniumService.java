@@ -46,38 +46,37 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.WebDriverUtil;
 
 @Service
-public class SeleniumService
+public class SeleniumService 
 {
 	private Logger LOGGER = Logger.getLogger(EmailService.class);
-
+	
 	private static final Dimension DEFAULT_SCREEN_DIMENSION = new Dimension(1920, 1080);
-
+	
 	@Value("${zafira.selenium.url}")
 	private String seleniumURL;
 
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects,
-			By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
 	{
 		List<Attachment> attachments = new ArrayList<>();
-
-		if (urls == null || StringUtils.isEmpty(auth))
+		
+		if(urls == null || StringUtils.isEmpty(auth))
 		{
 			throw new ServiceException("To capture screenshot specify: urls, auth");
 		}
-
+		
 		WebDriver wd = null;
 		try
 		{
 			wd = new RemoteWebDriver(new URL(seleniumURL), DesiredCapabilities.chrome());
-
+			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 
 			authorize(wd, auth, projects, domain, urls.get(0));
-
-			for (String url : urls)
+			
+			for(String url : urls)
 			{
 				wd.get(url);
-				if (WebDriverUtil.isPageLoadingWithAnimation(wd) && WebDriverUtil.isPageLoading(wd))
+				if(WebDriverUtil.isPageLoadingWithAnimation(wd) && WebDriverUtil.isPageLoading(wd))
 				{
 					WebDriverUtil.waitUntilPageIsLoaded(wd);
 				} else
@@ -93,20 +92,21 @@ public class SeleniumService
 
 				String name = screenshotDocument.getName();
 
-				if (titleLocator != null)
-				{
-					name = wd.findElement(titleLocator).getAttribute("value");
-				}
+                if(titleLocator != null)
+                {
+                    name = wd.findElement(titleLocator).getAttribute("value");
+                }
 
 				attachments.add(new Attachment(name, screenshotDocument));
 			}
-		} catch (Exception e)
+		}
+		catch(Exception e)
 		{
 			LOGGER.error(e.getMessage());
-		} finally
+		}
+		finally
 		{
-			if (wd != null)
-				wd.quit();
+			if(wd != null) wd.quit();
 		}
 		return attachments;
 	}
@@ -114,8 +114,7 @@ public class SeleniumService
 	public void hideElements(WebDriver wd, WebElement... webElements)
 	{
 		JavascriptExecutor js = (JavascriptExecutor) wd;
-		Arrays.asList(webElements)
-				.forEach(we -> js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", we));
+		Arrays.asList(webElements).forEach(we -> js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", we));
 	}
 
 	private File saveImage(final BufferedImage screenshot) throws IOException
@@ -125,27 +124,26 @@ public class SeleniumService
 		ImageIO.write(screenshot, "png", screenshotDocument);
 		return screenshotDocument;
 	}
-
+	
 	private String normalizeDomain(String domain)
 	{
-		if (!Pattern.matches("\\d+.\\d+.\\d+.\\d+", domain) && Pattern.matches("([A-z0-9-]+\\.)+[A-z0-9]+", domain))
+		if(!Pattern.matches("\\d+.\\d+.\\d+.\\d+", domain) && Pattern.matches("([A-z0-9-]+\\.)+[A-z0-9]+", domain))
 		{
 			String[] sd = domain.split("\\.");
 			domain = "." + sd[sd.length - 2] + "." + sd[sd.length - 1];
 		}
 		return domain;
 	}
-
-	private void authorize(WebDriver wd, String auth, String projects, String domain, String url)
-			throws InterruptedException
+	
+	private void authorize(WebDriver wd, String auth, String projects, String domain, String url) throws InterruptedException
 	{
 		// Get first url to have a domain needed
 		wd.get(url);
 		// Set cookies
 		wd.manage().addCookie(new Cookie.Builder("Access-Token", auth).domain(normalizeDomain(domain)).build());
 		wd.manage().addCookie(new Cookie.Builder("projects", projects).domain(normalizeDomain(domain)).build());
-		// Refresh page to enable cookies
 		wd.get(url);
+		// Refresh page to enable cookies
 		wd.navigate().refresh();
 	}
 }

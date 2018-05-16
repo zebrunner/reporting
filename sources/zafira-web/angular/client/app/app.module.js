@@ -446,6 +446,25 @@
                 }
             }
         };
+    }]).directive('autoHeight', ['$window', function ($window) {
+        "use strict";
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var initOn = attrs.autoHeight;
+                if(initOn) {
+                    scope.$watch(initOn, function (newVal, oldVal) {
+                        if(newVal) {
+                            var el = element[0];
+                            var windowHeight = $window.innerHeight;
+                            var boundingBox = el.getBoundingClientRect();
+                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top + 'px' : boundingBox.height + 'px';
+                            el.style['overflow-y'] = 'scroll';
+                        }
+                    });
+                }
+            }
+        };
     }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
