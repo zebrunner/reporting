@@ -27,7 +27,7 @@ ENV ZAFIRA_NEWRELIC_APP=zafira
 ENV ZAFIRA_NEWRELIC_AUDIT_MODE=false
 ENV ZAFIRA_NEWRELIC_LOG_LEVEL=info
 
-ENV ZAFIRA_SELENIUM_URL=
+ENV ZAFIRA_SELENIUM_URL=http://localhost:4444/wd/hub
 
 RUN apt-get update && apt-get install zip
 
