@@ -983,8 +983,15 @@ ul.profile-image-actions {
     margin: 0 15px;
 }
 
-.ticket-list-row {
-    margin: 13px 0;
+.ticket-list {
+    &-row {
+        margin: 13px 0;
+    }
+    &-text {
+        white-space: normal;
+        overflow-wrap: break-word;
+        text-align: left;
+    }
 }
 
 .ticket-list-button {
