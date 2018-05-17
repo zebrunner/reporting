@@ -858,12 +858,17 @@
                             }
                         });
                         $interval(function(testRun){
-                            TestRunService.getConsoleOutput(testRun.id, 10, 12).then(function(rs) {
+                            TestRunService.getConsoleOutput(testRun.id, 10, 10).then(function(rs) {
                                 if(rs.success) {
-                                    if(rs.data.includes("dt_socket at address: 8000")){
-                                        $scope.debugMode = true;
-                                        $interval.cancel();
-                                    }
+                                    var map = rs.data;
+                                    var value;
+                                    Object.keys(map).forEach(function(key) {
+                                        value = map[key];
+                                        if(value.includes("dt_socket at address: 8000")){
+                                            $scope.debugMode = true;
+                                            $interval.cancel();
+                                        }
+                                    });
                                 } else {
                                     alertify.error(rs.message);
                                 }
