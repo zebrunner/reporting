@@ -857,7 +857,7 @@
                                 alertify.error(rs.message);
                             }
                         });
-                        $interval(function(testRun){
+                        $interval(function(){
                             TestRunService.getConsoleOutput(testRun.id, 10, 10).then(function(rs) {
                                 if(rs.success) {
                                     var map = rs.data;
@@ -870,6 +870,7 @@
                                         }
                                     });
                                 } else {
+                                    $interval.cancel();
                                     alertify.error(rs.message);
                                 }
                             });
