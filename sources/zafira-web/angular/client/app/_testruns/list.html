@@ -440,10 +440,10 @@
                                                                                 <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-repeat="artifact in test.artifacts | filter : {name: 'Video'} | filter : { name : '!Live' } ">
-                                                                                <md-button class="artifact-button"  ng-click="showDemoDialog($event, artifact.link, testRun, test)"target="blank" name="artifact">{{artifact.name}}</md-button>
+                                                                                <md-button class="artifact-button"  ng-click="showDemoDialog($event, artifact.link, testRun, test, false)"target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : 'Live' }" ng-if="test.status == 'IN_PROGRESS'">
-                                                                                <md-button class="artifact-button" ng-click="showDemoDialog($event, artifact.link, testRun, test)" name="artifact">{{artifact.name}}</md-button>
+                                                                                <md-button class="artifact-button" ng-click="showDemoDialog($event, artifact.link, testRun, test, true)" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                             <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
                                                                                 <md-button name="testLiveLogs" ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
@@ -456,7 +456,6 @@
                                                                         <md-icon data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'" class="material-icons">forum</md-icon>
                                                                     </md-button>
                                                                 </div>
-
                                                             </div>
                                                         </td>
                                                     </tr>

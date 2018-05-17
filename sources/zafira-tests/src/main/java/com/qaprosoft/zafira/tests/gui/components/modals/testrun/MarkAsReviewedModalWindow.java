@@ -40,6 +40,7 @@ public class MarkAsReviewedModalWindow extends AbstractModalWindow
 
 	public void clickMarkAsReviewedButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(markAsReviewedButton, 5);
 		markAsReviewedButton.click();
 		waitUntilElementIsNotPresent(commentInput, IMPLICITLY_TIMEOUT);
 	}
