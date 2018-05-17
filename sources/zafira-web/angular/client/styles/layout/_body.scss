@@ -912,8 +912,12 @@ ul.profile-image-actions {
     border: 1px rgba(0, 0, 0, 0.12) solid;
 }
 
-.comments-button {
+.auto-width {
     width: auto !important;
+}
+
+.auto-width.width-icon {
+    padding-right: 15px;
 }
 
 .tickets-font {

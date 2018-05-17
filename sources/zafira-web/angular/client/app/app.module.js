@@ -458,8 +458,8 @@
                             var el = element[0];
                             var windowHeight = $window.innerHeight;
                             var boundingBox = el.getBoundingClientRect();
-                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top + 'px' : boundingBox.height + 'px';
-                            el.style['overflow-y'] = 'scroll';
+                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height + 'px';
+                            el.style['overflow-y'] = 'auto';
                         }
                     });
                 }
