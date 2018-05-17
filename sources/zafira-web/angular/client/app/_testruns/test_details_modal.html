@@ -220,13 +220,13 @@
                                                                 <md-button id="issuesListItem" class="ticket-list-button tickets-font" ng-click="searchScopeIssue(issue)">
                                                                     <div class="col-md-12 ticket-list-row">
                                                                         <div layout layout-sm="row">
-                                                                            <div class="col-lg-2 clearfix align-middle">
+                                                                            <div class="col-lg-2 clearfix align-middle ticket-list-text">
                                                                                 <b class="settings-line">{{issue.jiraId}}</b>
                                                                             </div>
-                                                                            <div class="col-lg-6 clearfix align-middle">
+                                                                            <div class="col-lg-6 clearfix align-middle ticket-list-text">
                                                                                 {{issue.description}}
                                                                             </div>
-                                                                            <div class="col-lg-4 clearfix align-middle">
+                                                                            <div class="col-lg-4 clearfix align-middle ticket-list-text">
                                                                                 {{issue.modifiedAt | date : "medium"}}
                                                                             </div>
                                                                         </div>
