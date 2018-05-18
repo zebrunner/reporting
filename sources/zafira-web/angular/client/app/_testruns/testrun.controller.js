@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdToast', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdToast, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -835,7 +835,7 @@
             $scope.showRerunDialog(testRun, event);
         };
 
-        $scope.debugMode = false;
+        $scope.testRunInDebugMode = {};
         $scope.connectingDebug = false;
         $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
@@ -868,13 +868,10 @@
                                         Object.keys(map).forEach(function(key) {
                                             value = map[key];
                                             if(value.includes("dt_socket at address: 8000")){
-                                                $scope.debugMode = true;
+                                                $scope.testRunInDebugMode = testRun;
+                                                showDebugToast();
                                                 finishDebugConnecting();
-                                            } else {
-                                                $timeout(function(){
-                                                    alertify.error("Problems with startind debug mode occured, disabling ");
-                                                    finishDebugConnecting();
-                                                }, 60000);
+                                                $timeout.cancel(basicDebugTimeout);
                                             }
                                         });
                                     } else {
@@ -884,16 +881,50 @@
                                 });
                             }
                         }, 1000);
+
                         var finishDebugConnecting = function (){
                             $scope.connectingDebug = false;
                             $interval.cancel(debugConnectingInterval);
-                        }
+                        };
+
+                        var basicDebugTimeout = $timeout(function(){
+                            alertify.error("Problems with starting debug mode occurred, disabling");
+                            finishDebugConnecting();
+                        }, 60000);
+
+                        $timeout(function(){
+                            $scope.abort($scope.testRunInDebugMode);
+                            $scope.testRunInDebugMode = {};
+                            alertify.warning("Debug mode is disabled");
+                            finishDebugConnecting();
+                        }, 600500);
                     }
                 } else {
                     alertify.error(rs.message);
                 }
             });
         };
+
+        function showDebugToast() {
+            $mdToast.show({
+                hideDelay: 600000,
+                position: 'bottom right',
+                scope: $scope,
+                preserveScope: true,
+                controller  : function ($scope, $rootScope, $mdToast) {
+                    $scope.stopDebug = function(testRun) {
+                        if(testRun){
+                            $scope.abort(testRun);
+                        }
+                        $mdToast
+                            .hide()
+                            .then(function() {
+                            });
+                    };
+                },
+                templateUrl : 'app/_testruns/debug-mode_toast.html'
+            });
+        }
 
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
@@ -1400,6 +1431,9 @@
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
             loadPublicFilters();
+            if($scope.testRunId){
+                showDebugToast($scope.testRunId, true)
+            }
         })();
     }
 
