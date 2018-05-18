@@ -858,7 +858,7 @@
                             }
                         });
                         $interval(function(){
-                            TestRunService.getConsoleOutput(testRun.id, 10, 10).then(function(rs) {
+                            TestRunService.getConsoleOutput(testRun.id, 500, 400, true).then(function(rs) {
                                 if(rs.success) {
                                     var map = rs.data;
                                     var value;

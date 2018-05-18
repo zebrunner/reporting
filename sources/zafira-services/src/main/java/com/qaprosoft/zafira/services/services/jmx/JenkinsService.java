@@ -247,17 +247,21 @@ public class JenkinsService implements IJMXService
 		return jobParameters;
 	}
 
-	public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount)
+	public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, boolean debug, Integer stringsCount, Integer fullCount)
 	{
 		Map<Integer, String> result = new HashMap<>();
 		try
 		{
 			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
-			BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
+			BuildWithDetails buildWithDetails;
+			if(debug){
+				buildWithDetails = jobWithDetails.getLastBuild().details();
+			} else {
+				buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
+			}
 			buildWithDetails.isBuilding();
 			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
-			if (!buildWithDetails.isBuilding())
-			{
+			if (!buildWithDetails.isBuilding()) {
 				result.put(-1, buildWithDetails.getDisplayName());
 			}
 		}

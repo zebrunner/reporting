@@ -501,9 +501,9 @@ public class TestRunsAPIController extends AbstractController
 	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
 	@RequestMapping(value = "{id}/jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "id") long testRunId, @PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
+			@PathVariable(value = "fullCount") int fullCount, @RequestParam(value = "debug", required = false) boolean debug) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
-		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+ 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), debug, count, fullCount);
 	}
 }
