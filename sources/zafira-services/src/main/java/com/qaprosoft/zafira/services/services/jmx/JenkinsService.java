@@ -296,7 +296,7 @@ public class JenkinsService implements IJMXService
 		count = strings.length < count ? strings.length : count;
 		if (fullCount != zero)
 		{
-			count = strings.length != fullCount ? strings.length - fullCount : zero;
+			count = strings.length > fullCount ? strings.length - fullCount : zero;
 		}
 		logMap.put(strings.length, String.join("\n", Arrays.copyOfRange(strings, strings.length - count, strings.length)));
 		return logMap;
