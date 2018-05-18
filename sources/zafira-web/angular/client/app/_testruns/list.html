@@ -361,7 +361,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="abort" data-ng-click="abort(testRun, $event)">
+                                                        <md-button name="abort" data-ng-click="abort(testRun, false)">
                                                             Abort
                                                         </md-button>
                                                     </md-menu-item>

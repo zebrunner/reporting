@@ -417,7 +417,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
-	public void abortCIJob(@PathVariable(value = "id") long id) throws ServiceException
+	public void abortCIJob(@PathVariable(value = "id") long id, @RequestParam(value = "debug", required = false) boolean debug) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
 		if (testRun == null)
@@ -425,7 +425,7 @@ public class TestRunsAPIController extends AbstractController
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber()))
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber(), debug))
 		{
 			throw new UnableToAbortCIJobException();
 		}

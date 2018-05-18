@@ -837,7 +837,7 @@
 
         $scope.testRunInDebugMode = {};
         $scope.connectingDebug = false;
-        $scope.debug = function (testRun) {
+        $scope.debug = function (testRun, event) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
                 if(rs.success) {
                     var jobParameters = rs.data;
@@ -893,7 +893,7 @@
                         }, 60000);
 
                         $timeout(function(){
-                            $scope.abort($scope.testRunInDebugMode);
+                            $scope.abort($scope.testRunInDebugMode, true);
                             $scope.testRunInDebugMode = {};
                             alertify.warning("Debug mode is disabled");
                             finishDebugConnecting();
@@ -914,7 +914,7 @@
                 controller  : function ($scope, $rootScope, $mdToast) {
                     $scope.stopDebug = function(testRun) {
                         if(testRun){
-                            $scope.abort(testRun);
+                            $scope.abort(testRun, true);
                         }
                         $mdToast
                             .hide()
@@ -933,9 +933,9 @@
         		}
         	});
 
-        $scope.abort = function (testRun) {
+        $scope.abort = function (testRun, debug) {
             if($scope.jenkins.enabled) {
-                TestRunService.abortCIJob(testRun.id).then(function (rs) {
+                TestRunService.abortCIJob(testRun.id, debug).then(function (rs) {
                     if(rs.success) {
                         var abortCause = {};
                         abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
@@ -961,7 +961,7 @@
             if($scope.jenkins.enabled) {
                 for (var id in $scope.selectedTestRuns) {
                     if ($scope.selectedTestRuns[id].status == 'IN_PROGRESS') {
-                        $scope.abort($scope.selectedTestRuns[id]);
+                        $scope.abort($scope.selectedTestRuns[id], false);
                     }
                 }
             } else {

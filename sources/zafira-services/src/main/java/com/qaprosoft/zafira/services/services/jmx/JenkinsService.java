@@ -176,12 +176,15 @@ public class JenkinsService implements IJMXService
 		return success;
 	}
 
-	public boolean abortJob(Job ciJob, Integer buildNumber)
+	public boolean abortJob(Job ciJob, Integer buildNumber, boolean debug)
 	{
 		boolean success = false;
 		try
 		{
 			JobWithDetails job = getJobWithDetails(ciJob);
+			if(debug){
+				buildNumber = job.getLastBuild().getNumber();
+			}
 			QueueReference reference = stop(job, buildNumber);
 			success = checkReference(reference);
 			if (!checkReference(reference))
