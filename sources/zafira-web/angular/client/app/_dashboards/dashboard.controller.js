@@ -825,20 +825,23 @@
 
     function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
 
+        var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
+
+        var CURRENT_DASHBOARD_TITLE = angular.element('#dashboard_title')[0].value + ' dashboard';
+        var CURRENT_WIDGET_TITLE = TYPE == 'WIDGET' ? CURRENT_DASHBOARD_TITLE + ' - ' + angular.element('#widget-title-' + widgetId)[0].value + ' widget' : '';
+
         var EMAIL_TYPES = {
             'DASHBOARD': {
-                title: 'Zafira Dashboard',
-                subject: 'Zafira Dashboards',
+                title: CURRENT_DASHBOARD_TITLE,
+                subject: CURRENT_DASHBOARD_TITLE,
                 func: sendDashboardEmail
             },
             'WIDGET': {
-                title: 'Zafira Widget',
-                subject: 'Zafira widgets',
+                title: CURRENT_WIDGET_TITLE,
+                subject: CURRENT_WIDGET_TITLE,
                 func: sendWidgetEmail
             }
         };
-
-        var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
 
         $scope.title = EMAIL_TYPES[TYPE].title;
         $scope.subjectRequired = true;

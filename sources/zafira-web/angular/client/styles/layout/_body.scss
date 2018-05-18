@@ -150,11 +150,12 @@ tr.result:hover .expand-button {
 }
 
 .show-icon-on-hover {
-    display: none;
+    display: none !important;
 }
 
-md-chip:hover .show-icon-on-hover {
-    display: inline-block;
+md-chip:hover .show-icon-on-hover,
+.show-on-hover:hover .show-icon-on-hover{
+    display: inline-block !important;
 }
 
 .tests-loading-spinner {
@@ -917,8 +918,12 @@ ul.profile-image-actions {
     border: 1px rgba(0, 0, 0, 0.12) solid;
 }
 
-.comments-button {
+.auto-width {
     width: auto !important;
+}
+
+.auto-width.width-icon {
+    padding-right: 15px;
 }
 
 .tickets-font {
@@ -983,8 +988,15 @@ ul.profile-image-actions {
     margin: 0 15px;
 }
 
-.ticket-list-row {
-    margin: 13px 0;
+.ticket-list {
+    &-row {
+        margin: 13px 0;
+    }
+    &-text {
+        white-space: normal;
+        overflow-wrap: break-word;
+        text-align: left;
+    }
 }
 
 .ticket-list-button {

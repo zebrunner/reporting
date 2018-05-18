@@ -2315,7 +2315,7 @@
                     $scope.issueJiraIdExists = true;
                     $scope.isIssueClosed = $scope.closedStatusName.toUpperCase() === searchResultIssue.status.name.toUpperCase();
                     $scope.newIssue.description = searchResultIssue.summary;
-                    $scope.newIssue.assignee = searchResultIssue.assignee.name;
+                    $scope.newIssue.assignee = searchResultIssue.assignee ? searchResultIssue.assignee.name : '';
                     $scope.newIssue.reporter = searchResultIssue.reporter.name;
                     $scope.newIssue.status = searchResultIssue.status.name.toUpperCase();
                     if(!$scope.ticketStatuses.filter(function (status) {

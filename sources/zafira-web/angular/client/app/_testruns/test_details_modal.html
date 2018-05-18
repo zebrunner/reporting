@@ -89,7 +89,7 @@
                                                                 </div>
                                                                 <md-dialog-actions layout="row">
                                                                     <md-input-container class="md-block">
-                                                                        <md-button id="commens" class="md-icon-button comments-button"  ng-click="moveToTab(3)">
+                                                                        <md-button id="commens" class="md-icon-button auto-width"  ng-click="moveToTab(3)">
                                                                             <a class="comments-font-size" md-no-ink>Comments ({{testComments.length}})</a>
                                                                         </md-button>
                                                                         <md-button id="saveTest" class="md-raised btn-w-md md-primary" ng-disabled="currentStatus === test.status" ng-click="updateTest(test); currentStatus = test.status">
@@ -220,13 +220,13 @@
                                                                 <md-button id="issuesListItem" class="ticket-list-button tickets-font" ng-click="searchScopeIssue(issue)">
                                                                     <div class="col-md-12 ticket-list-row">
                                                                         <div layout layout-sm="row">
-                                                                            <div class="col-lg-2 clearfix align-middle">
+                                                                            <div class="col-lg-2 clearfix align-middle ticket-list-text">
                                                                                 <b class="settings-line">{{issue.jiraId}}</b>
                                                                             </div>
-                                                                            <div class="col-lg-6 clearfix align-middle">
+                                                                            <div class="col-lg-6 clearfix align-middle ticket-list-text">
                                                                                 {{issue.description}}
                                                                             </div>
-                                                                            <div class="col-lg-4 clearfix align-middle">
+                                                                            <div class="col-lg-4 clearfix align-middle ticket-list-text">
                                                                                 {{issue.modifiedAt | date : "medium"}}
                                                                             </div>
                                                                         </div>
