@@ -861,7 +861,7 @@
                         });
                         var debugConnectingInterval = $interval(function(){
                             if ($scope.connectingDebug){
-                                TestRunService.getConsoleOutput(testRun.id, 150, 10, true).then(function(rs) {
+                                TestRunService.getConsoleOutput(testRun.id, 150, 150, true).then(function(rs) {
                                     if(rs.success) {
                                         var map = rs.data;
                                         var value;
