@@ -836,6 +836,7 @@
         };
 
         $scope.debugMode = false;
+        $scope.connectingDebug = false;
         $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
                 if(rs.success) {
@@ -853,28 +854,40 @@
                         TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
+                                $scope.connectingDebug = true;
                             } else {
                                 alertify.error(rs.message);
                             }
                         });
-                        $interval(function(){
-                            TestRunService.getConsoleOutput(testRun.id, 500, 400, true).then(function(rs) {
-                                if(rs.success) {
-                                    var map = rs.data;
-                                    var value;
-                                    Object.keys(map).forEach(function(key) {
-                                        value = map[key];
-                                        if(value.includes("dt_socket at address: 8000")){
-                                            $scope.debugMode = true;
-                                            $interval.cancel();
-                                        }
-                                    });
-                                } else {
-                                    $interval.cancel();
-                                    alertify.error(rs.message);
-                                }
-                            });
-                        }, 500);
+                        var debugConnectingInterval = $interval(function(){
+                            if ($scope.connectingDebug){
+                                TestRunService.getConsoleOutput(testRun.id, 150, 10, true).then(function(rs) {
+                                    if(rs.success) {
+                                        var map = rs.data;
+                                        var value;
+                                        Object.keys(map).forEach(function(key) {
+                                            value = map[key];
+                                            if(value.includes("dt_socket at address: 8000")){
+                                                $scope.debugMode = true;
+                                                finishDebugConnecting();
+                                            } else {
+                                                $timeout(function(){
+                                                    alertify.error("Problems with startind debug mode occured, disabling ");
+                                                    finishDebugConnecting();
+                                                }, 60000);
+                                            }
+                                        });
+                                    } else {
+                                        finishDebugConnecting();
+                                        alertify.error(rs.message);
+                                    }
+                                });
+                            }
+                        }, 1000);
+                        var finishDebugConnecting = function (){
+                            $scope.connectingDebug = false;
+                            $interval.cancel(debugConnectingInterval);
+                        }
                     }
                 } else {
                     alertify.error(rs.message);
