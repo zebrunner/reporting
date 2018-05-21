@@ -945,7 +945,11 @@
                 TestRunService.abortCIJob(testRun.id, debug).then(function (rs) {
                     if(rs.success) {
                         var abortCause = {};
-                        abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
+                        if(debug){
+                            abortCause.comment = "Debug mode was disconnected";
+                        } else {
+                            abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
+                        }
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
