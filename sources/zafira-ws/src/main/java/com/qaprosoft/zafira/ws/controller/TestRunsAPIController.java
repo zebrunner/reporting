@@ -504,12 +504,19 @@ public class TestRunsAPIController extends AbstractController
 			@PathVariable(value = "fullCount") int fullCount, @RequestParam(value = "debug", required = false) boolean debug) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
-		Map<Integer, String> consoleOutput;
-//		if(debug){
-//			consoleOutput = jenkinsService.getDebugConsoleOutputHtml(testRun.getJob())
-//		} else {
-			consoleOutput = jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
-		//}
- 		return consoleOutput;
+ 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Get debug mode status", nickname = "getDebugModeStatus", code = 200, httpMethod = "GET")
+	@RequestMapping(value = "{id}/debug", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody boolean getDebugModeStatus(@PathVariable(value = "id") long testRunId) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
+		return jenkinsService.getDebugModeStatus(testRun.getJob());
+	}
+
 }

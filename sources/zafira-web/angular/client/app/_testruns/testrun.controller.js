@@ -836,7 +836,6 @@
         };
 
         $scope.debugMode = {};
-        $scope.connectDebugMode = false;
 
         $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
@@ -845,69 +844,44 @@
                     if (jobParameters === '') {
                         alertify.error("Job parameters are not loaded");
                     } else {
-                        var jobParametersMap = {};
-                        for (var i = 0; i < jobParameters.length; i++){
-                            if (jobParameters[i].name === 'debug'){
-                                jobParameters[i].value = true;
-                            }
-                            jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
-                        }
-
-                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
+                        TestRunService.buildTestRun(testRun.id, createDebugJobParametersMap(jobParameters)).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
-                                $scope.connectDebugMode = true;
+                                TestRunService.startDebug(testRun.id).then(function(rs) {
+                                    if(rs.success && rs.data) {
+                                            $scope.debugMode = testRun;
+                                            showDebugToast();
+                                            $timeout(function(){
+                                                console.log('debugmode timeout inited');
+                                                $scope.abort($scope.debugMode, true);
+                                                $scope.debugMode = {};
+                                                alertify.warning("Debug mode is disabled");
+                                            }, 600500);
+                                    } else {
+                                        alertify.error(rs.message);
+                                    }
+                                });
                             } else {
                                 alertify.error(rs.message);
                             }
                         });
-
-                        var parseLogsInterval = $interval(function(){
-                            if ($scope.connectDebugMode){
-                                TestRunService.getConsoleOutput(testRun.id, 150, 50, true).then(function(rs) {
-                                    if(rs.success) {
-                                        var map = rs.data;
-                                        var value;
-                                        Object.keys(map).forEach(function(key) {
-                                            value = map[key];
-                                            if(value.includes("dt_socket at address: 8000")){
-                                                $scope.debugMode = testRun;
-                                                showDebugToast();
-                                                stopConnectingDebug();
-                                                $timeout(function(){
-                                                    console.log('debugmode timeout inited');
-                                                    $scope.abort($scope.debugMode, true);
-                                                    $scope.debugMode = {};
-                                                    alertify.warning("Debug mode is disabled");
-                                                }, 600500);
-                                            }
-                                        });
-                                    } else {
-                                        stopConnectingDebug();
-                                        alertify.error(rs.message);
-                                    }
-                                });
-                            }
-                        }, 1700);
-
-                        var stopConnectingDebugTimeout = $timeout(function(){
-                            alertify.error("Problems with starting debug mode occurred, disabling");
-                            stopConnectingDebug();
-                        }, 60000);
-
-                        var stopConnectingDebug = function (){
-                            $scope.connectDebugMode = false;
-                            $interval.cancel(parseLogsInterval);
-                            console.log('parseLogsInterval cancelled');
-                            $timeout.cancel(stopConnectingDebugTimeout);
-                            console.log('stopConnectingDebugTimeout cancelled');
-                        };
                     }
                 } else {
                     alertify.error(rs.message);
                 }
             });
         };
+
+        function createDebugJobParametersMap(jobParameters){
+            var jobParametersMap = {};
+            for (var i = 0; i < jobParameters.length; i++){
+                if (jobParameters[i].name === 'debug'){
+                    jobParameters[i].value = true;
+                }
+                jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
+            }
+            return jobParametersMap;
+        }
 
         function showDebugToast() {
             $mdToast.show({
@@ -1435,9 +1409,6 @@
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
             loadPublicFilters();
-            if($scope.testRunId){
-                showDebugToast($scope.testRunId, true)
-            }
         })();
     }
 

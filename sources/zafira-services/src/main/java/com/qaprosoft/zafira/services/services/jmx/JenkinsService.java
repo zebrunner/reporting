@@ -268,9 +268,9 @@ public class JenkinsService implements IJMXService
 		return result;
 	}
 
-	public boolean getDebugConsoleOutputHtml(Job ciJob)
+	public boolean getDebugModeStatus(Job ciJob)
 	{
-		final boolean[] isDebugStarted = new boolean[1];
+		final boolean[] isDebugStarted = { false };
 		try
 		{
 			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
@@ -286,6 +286,7 @@ public class JenkinsService implements IJMXService
 							Matcher matcher = startDebugLine.matcher(value);
 							if(matcher.find()){
 								isDebugStarted[0] = true;
+								cancel();
 							}
 						}
 					} catch (IOException e) {
@@ -295,7 +296,7 @@ public class JenkinsService implements IJMXService
 			};
 			Timer timer = new Timer();
 			timer.scheduleAtFixedRate(task, 0, 60000);
-					} catch (IOException e) {
+		} catch (IOException e) {
 			LOGGER.error("Unable to get job details: " + e.getMessage());
 		}
 		return isDebugStarted[0];
