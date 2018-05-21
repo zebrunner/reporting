@@ -25,7 +25,7 @@
         service.getEnvironments = getEnvironments;
         service.getPlatforms = getPlatforms;
         service.getConsoleOutput = getConsoleOutput;
-        service.startDebug = startDebug;
+        service.getDebugConsoleOutput = getDebugConsoleOutput;
 
         return service;
 
@@ -98,7 +98,7 @@
             return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
 
-        function startDebug(testRunId) {
+        function getDebugConsoleOutput(testRunId) {
             return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/debug').then(UtilService.handleSuccess, UtilService.handleError('Unable to start debug'));
         }
 

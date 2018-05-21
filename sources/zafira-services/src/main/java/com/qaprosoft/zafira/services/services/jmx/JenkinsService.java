@@ -268,38 +268,25 @@ public class JenkinsService implements IJMXService
 		return result;
 	}
 
-	public boolean getDebugModeStatus(Job ciJob)
+	public Map<Integer, String> getDebugConsoleOutputHtml(Job ciJob)
 	{
-		final boolean[] isDebugStarted = { false };
+		Map<Integer, String> result = new HashMap<>();
 		try
 		{
 			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
-			BuildWithDetails buildWithDetails = jobWithDetails.getLastBuild().details();
+			BuildWithDetails buildWithDetails;
+				buildWithDetails = jobWithDetails.getLastBuild().details();
 			buildWithDetails.isBuilding();
-			TimerTask task = new TimerTask() {
-				public void run() {
-					try
-					{
-						Map<Integer, String> result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), 150, 50);
-						for (String value : result.values()) {
-							Pattern startDebugLine = Pattern.compile("address: 8000");
-							Matcher matcher = startDebugLine.matcher(value);
-							if(matcher.find()){
-								isDebugStarted[0] = true;
-								cancel();
-							}
-						}
-					} catch (IOException e) {
-						LOGGER.error("Unable to get console output text: " + e.getMessage());
-					}
-				}
-			};
-			Timer timer = new Timer();
-			timer.scheduleAtFixedRate(task, 0, 60000);
-		} catch (IOException e) {
-			LOGGER.error("Unable to get job details: " + e.getMessage());
+			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), 150, 50);
+			if (!buildWithDetails.isBuilding()) {
+				result.put(-1, buildWithDetails.getDisplayName());
+			}
 		}
-		return isDebugStarted[0];
+		catch (IOException e)
+		{
+			LOGGER.error("Unable to get console output text: " + e.getMessage());
+		}
+		return result;
 	}
 
 	private JobWithDetails getJobWithDetails(Job ciJob) throws IOException

@@ -836,6 +836,7 @@
         };
 
         $scope.debugMode = {};
+        $scope.inProgressDebugMode = false;
 
         $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
@@ -847,24 +848,52 @@
                         TestRunService.buildTestRun(testRun.id, createDebugJobParametersMap(jobParameters)).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
-                                TestRunService.startDebug(testRun.id).then(function(rs) {
-                                    if(rs.success && rs.data) {
-                                            $scope.debugMode = testRun;
-                                            showDebugToast();
-                                            $timeout(function(){
-                                                console.log('debugmode timeout inited');
-                                                $scope.abort($scope.debugMode, true);
-                                                $scope.debugMode = {};
-                                                alertify.warning("Debug mode is disabled");
-                                            }, 600500);
-                                    } else {
-                                        alertify.error(rs.message);
-                                    }
-                                });
+                                $scope.inProgressDebugMode = true;
                             } else {
                                 alertify.error(rs.message);
                             }
                         });
+
+                        var parseLogsInterval = $interval(function(){
+                            if ($scope.inProgressDebugMode){
+                                TestRunService.getDebugConsoleOutput(testRun.id).then(function(rs) {
+                                    if(rs.success) {
+                                        var map = rs.data;
+                                        var value;
+                                        Object.keys(map).forEach(function(key) {
+                                            value = map[key];
+                                            if(value.includes("dt_socket at address: 8000")){
+                                                $scope.debugMode = testRun;
+                                                showDebugToast();
+                                                stopConnectingDebug();
+                                                $timeout(function(){
+                                                    console.log('debugmode timeout inited');
+                                                    $scope.abort($scope.debugMode, true);
+                                                    $scope.debugMode = {};
+                                                    alertify.warning("Debug mode is disabled");
+                                                }, 600500);
+                                            }
+                                        });
+                                    } else {
+                                        stopConnectingDebug();
+                                        alertify.error(rs.message);
+                                    }
+                                });
+                            }
+                        }, 2000);
+
+                        var stopConnectingDebugTimeout = $timeout(function(){
+                            alertify.error("Problems with starting debug mode occurred, disabling");
+                            stopConnectingDebug();
+                        }, 60000);
+
+                        var stopConnectingDebug = function (){
+                            $scope.inProgressDebugMode = false;
+                            $interval.cancel(parseLogsInterval);
+                            console.log('parseLogsInterval cancelled');
+                            $timeout.cancel(stopConnectingDebugTimeout);
+                            console.log('stopConnectingDebugTimeout cancelled');
+                        };
                     }
                 } else {
                     alertify.error(rs.message);
