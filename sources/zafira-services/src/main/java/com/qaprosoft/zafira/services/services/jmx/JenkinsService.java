@@ -22,14 +22,12 @@ import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterC
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -250,18 +248,13 @@ public class JenkinsService implements IJMXService
 		return jobParameters;
 	}
 
-	public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, boolean debug, Integer stringsCount, Integer fullCount)
+	public Map<Integer, String> getBuildConsoleOutputHtml(Job ciJob, Integer buildNumber, Integer stringsCount, Integer fullCount)
 	{
 		Map<Integer, String> result = new HashMap<>();
 		try
 		{
 			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
-			BuildWithDetails buildWithDetails;
-			if(debug){
-				buildWithDetails = jobWithDetails.getLastBuild().details();
-			} else {
-				buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
-			}
+			BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
 			buildWithDetails.isBuilding();
 			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
 			if (!buildWithDetails.isBuilding()) {
@@ -273,6 +266,39 @@ public class JenkinsService implements IJMXService
 			LOGGER.error("Unable to get console output text: " + e.getMessage());
 		}
 		return result;
+	}
+
+	public boolean getDebugConsoleOutputHtml(Job ciJob)
+	{
+		final boolean[] isDebugStarted = new boolean[1];
+		try
+		{
+			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
+			BuildWithDetails buildWithDetails = jobWithDetails.getLastBuild().details();
+			buildWithDetails.isBuilding();
+			TimerTask task = new TimerTask() {
+				public void run() {
+					try
+					{
+						Map<Integer, String> result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), 150, 50);
+						for (String value : result.values()) {
+							Pattern startDebugLine = Pattern.compile("address: 8000");
+							Matcher matcher = startDebugLine.matcher(value);
+							if(matcher.find()){
+								isDebugStarted[0] = true;
+							}
+						}
+					} catch (IOException e) {
+						LOGGER.error("Unable to get console output text: " + e.getMessage());
+					}
+				}
+			};
+			Timer timer = new Timer();
+			timer.scheduleAtFixedRate(task, 0, 60000);
+					} catch (IOException e) {
+			LOGGER.error("Unable to get job details: " + e.getMessage());
+		}
+		return isDebugStarted[0];
 	}
 
 	private JobWithDetails getJobWithDetails(Job ciJob) throws IOException

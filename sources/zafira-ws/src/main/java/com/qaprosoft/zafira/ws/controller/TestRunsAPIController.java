@@ -504,6 +504,12 @@ public class TestRunsAPIController extends AbstractController
 			@PathVariable(value = "fullCount") int fullCount, @RequestParam(value = "debug", required = false) boolean debug) throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
- 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), debug, count, fullCount);
+		Map<Integer, String> consoleOutput;
+//		if(debug){
+//			consoleOutput = jenkinsService.getDebugConsoleOutputHtml(testRun.getJob())
+//		} else {
+			consoleOutput = jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+		//}
+ 		return consoleOutput;
 	}
 }

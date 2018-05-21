@@ -835,9 +835,10 @@
             $scope.showRerunDialog(testRun, event);
         };
 
-        $scope.testRunInDebugMode = {};
-        $scope.connectingDebug = false;
-        $scope.debug = function (testRun, event) {
+        $scope.debugMode = {};
+        $scope.connectDebugMode = false;
+
+        $scope.debug = function (testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
                 if(rs.success) {
                     var jobParameters = rs.data;
@@ -851,53 +852,56 @@
                             }
                             jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
                         }
+
                         TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
-                                $scope.connectingDebug = true;
+                                $scope.connectDebugMode = true;
                             } else {
                                 alertify.error(rs.message);
                             }
                         });
-                        var debugConnectingInterval = $interval(function(){
-                            if ($scope.connectingDebug){
-                                TestRunService.getConsoleOutput(testRun.id, 150, 30, true).then(function(rs) {
+
+                        var parseLogsInterval = $interval(function(){
+                            if ($scope.connectDebugMode){
+                                TestRunService.getConsoleOutput(testRun.id, 150, 50, true).then(function(rs) {
                                     if(rs.success) {
                                         var map = rs.data;
                                         var value;
                                         Object.keys(map).forEach(function(key) {
                                             value = map[key];
                                             if(value.includes("dt_socket at address: 8000")){
-                                                $scope.testRunInDebugMode = testRun;
+                                                $scope.debugMode = testRun;
                                                 showDebugToast();
-                                                finishDebugConnecting();
-                                                $timeout.cancel(basicDebugTimeout);
+                                                stopConnectingDebug();
+                                                $timeout(function(){
+                                                    console.log('debugmode timeout inited');
+                                                    $scope.abort($scope.debugMode, true);
+                                                    $scope.debugMode = {};
+                                                    alertify.warning("Debug mode is disabled");
+                                                }, 600500);
                                             }
                                         });
                                     } else {
-                                        finishDebugConnecting();
+                                        stopConnectingDebug();
                                         alertify.error(rs.message);
                                     }
                                 });
                             }
-                        }, 1000);
+                        }, 1700);
 
-                        var finishDebugConnecting = function (){
-                            $scope.connectingDebug = false;
-                            $interval.cancel(debugConnectingInterval);
-                        };
-
-                        var basicDebugTimeout = $timeout(function(){
+                        var stopConnectingDebugTimeout = $timeout(function(){
                             alertify.error("Problems with starting debug mode occurred, disabling");
-                            finishDebugConnecting();
+                            stopConnectingDebug();
                         }, 60000);
 
-                        $timeout(function(){
-                            $scope.abort($scope.testRunInDebugMode, true);
-                            $scope.testRunInDebugMode = {};
-                            alertify.warning("Debug mode is disabled");
-                            finishDebugConnecting();
-                        }, 600500);
+                        var stopConnectingDebug = function (){
+                            $scope.connectDebugMode = false;
+                            $interval.cancel(parseLogsInterval);
+                            console.log('parseLogsInterval cancelled');
+                            $timeout.cancel(stopConnectingDebugTimeout);
+                            console.log('stopConnectingDebugTimeout cancelled');
+                        };
                     }
                 } else {
                     alertify.error(rs.message);
@@ -911,7 +915,7 @@
                 position: 'bottom right',
                 scope: $scope,
                 preserveScope: true,
-                controller  : function ($scope, $rootScope, $mdToast) {
+                controller : function ($scope, $mdToast) {
                     $scope.stopDebug = function(testRun) {
                         if(testRun){
                             $scope.abort(testRun, true);
