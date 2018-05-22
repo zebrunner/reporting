@@ -1637,3 +1637,8 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
   -webkit-transform: none !important;
   transform: none !important;
 }
+
+.toast-width {
+    width: 260px;
+    padding-bottom: 8px;
+}

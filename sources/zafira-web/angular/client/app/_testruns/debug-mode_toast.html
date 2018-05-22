@@ -1,8 +1,9 @@
 <md-toast>
-    <span class="md-toast-text" flex>DEBUG MODE IS ON</span>
-    <br>
-    <span class="md-toast-text" flex>You have 10 minutes to connect remotely using your IDE to host:port to start debugging</span>
-    <md-button id="disable" class="md-highlight" ng-click="stopDebug(debugMode);">
-        DISCONNECT
-    </md-button>
+    <div class="toast-width">
+        <div>
+            <span class="md-toast-text" flex>DEBUG MODE IS ON</span>
+            <md-button id="disable" class="md-highlight" ng-click="stopDebug(testRunInDebugMode);">DISCONNECT</md-button>
+        </div>
+        <div class="md-toast-text" flex>You have 10 minutes to connect remotely using your IDE to host:port to start debugging</div>
+    </div>
 </md-toast>
