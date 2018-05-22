@@ -301,7 +301,6 @@ public class TestRunService
 
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
-		testRun.setElapsed(null);
 		testRun.setReviewed(false);
 		testRun.setEta(testRunMapper.getTestRunEtaByTestSuiteId(testRun.getTestSuite().getId()));
 		
