@@ -78,8 +78,8 @@
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 
-        function abortCIJob(id, debug) {
-            return $http.get(API_URL + '/api/tests/runs/' + id + '/abort', {params:{'debug': debug}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
+        function abortCIJob(id, ciRunId) {
+            return $http.post(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
         }
 
         function getJobParameters(id) {
@@ -98,8 +98,8 @@
             return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
 
-        function getDebugConsoleOutput(testRunId) {
-            return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/debug').then(UtilService.handleSuccess, UtilService.handleError('Unable to start debug'));
+        function getDebugConsoleOutput(ciRunId, count, fullCount) {
+            return $http.get(API_URL + '/api/tests/runs/' + ciRunId + '/debug/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
 
     }

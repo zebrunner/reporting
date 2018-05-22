@@ -174,15 +174,12 @@ public class JenkinsService implements IJMXService
 		return success;
 	}
 
-	public boolean abortJob(Job ciJob, Integer buildNumber, boolean debug)
+	public boolean abortJob(Job ciJob, Integer buildNumber)
 	{
 		boolean success = false;
 		try
 		{
 			JobWithDetails job = getJobWithDetails(ciJob);
-			if(debug){
-				buildNumber = job.getLastBuild().getNumber();
-			}
 			QueueReference reference = stop(job, buildNumber);
 			success = checkReference(reference);
 			if (!checkReference(reference))
@@ -257,27 +254,6 @@ public class JenkinsService implements IJMXService
 			BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
 			buildWithDetails.isBuilding();
 			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
-			if (!buildWithDetails.isBuilding()) {
-				result.put(-1, buildWithDetails.getDisplayName());
-			}
-		}
-		catch (IOException e)
-		{
-			LOGGER.error("Unable to get console output text: " + e.getMessage());
-		}
-		return result;
-	}
-
-	public Map<Integer, String> getDebugConsoleOutputHtml(Job ciJob)
-	{
-		Map<Integer, String> result = new HashMap<>();
-		try
-		{
-			JobWithDetails jobWithDetails = getJobWithDetails(ciJob);
-			BuildWithDetails buildWithDetails;
-				buildWithDetails = jobWithDetails.getLastBuild().details();
-			buildWithDetails.isBuilding();
-			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), 150, 50);
 			if (!buildWithDetails.isBuilding()) {
 				result.put(-1, buildWithDetails.getDisplayName());
 			}

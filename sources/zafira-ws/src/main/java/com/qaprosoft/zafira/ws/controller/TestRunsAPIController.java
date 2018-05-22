@@ -414,19 +414,19 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "POST")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
-	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
-	public void abortCIJob(@PathVariable(value = "id") long id, @RequestParam(value = "debug", required = false) boolean debug) throws ServiceException
+	@RequestMapping(value = "abort/ci", method = RequestMethod.POST)
+	public void abortCIJob(
+			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber(), debug))
-		{
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
 			throw new UnableToAbortCIJobException();
 		}
 	}
@@ -511,12 +511,13 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get debug mode output", nickname = "getDebugModeOutput", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "{id}/debug", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getDebugModeOutput(@PathVariable(value = "id") long testRunId) throws ServiceException
+	@ApiOperation(value = "Get console output for debug from jenkins by ci run id", nickname = "getDebugConsoleOutput", code = 200, httpMethod = "GET")
+	@RequestMapping(value = "{ciRunId}/debug/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Integer, String> getDebugModeOutput(@PathVariable(value = "ciRunId") String ciRunId, @PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
-		return jenkinsService.getDebugConsoleOutputHtml(testRun.getJob());
+		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
+		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
 }
