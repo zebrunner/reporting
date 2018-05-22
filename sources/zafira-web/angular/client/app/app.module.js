@@ -454,11 +454,12 @@
                 var initOn = attrs.autoHeight;
                 if(initOn) {
                     scope.$watch(initOn, function (newVal, oldVal) {
-                        if(newVal) {
+                        var isMin = angular.element('.nav-collapsed-min').length == 0;
+                        if(newVal && ! isMin) {
                             var el = element[0];
                             var windowHeight = $window.innerHeight;
                             var boundingBox = el.getBoundingClientRect();
-                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height + 'px';
+                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height >= 65 ? boundingBox.height + 'px' : '65px';
                             el.style['overflow-y'] = 'auto';
                         }
                     });
