@@ -463,7 +463,16 @@ public class TestRunService
 		{
 			LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
 			LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
-			testRun.setElapsed(Seconds.secondsBetween(startedAt, finishedAt).getSeconds());
+			Integer elapsed = Seconds.secondsBetween(startedAt, finishedAt).getSeconds();
+			// according to https://github.com/qaprosoft/zafira/issues/748
+			if(testRun.getElapsed() != null)
+			{
+				testRun.setElapsed(testRun.getElapsed() + elapsed);
+			} 
+			else
+			{
+				testRun.setElapsed(elapsed);
+			}
 		}
 		
 		updateTestRun(testRun);
