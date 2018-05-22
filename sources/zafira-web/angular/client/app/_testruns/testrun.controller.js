@@ -847,12 +847,12 @@
                         TestRunService.buildTestRun(testRun.id, createDebugJobParametersMap(jobParameters)).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
+                                var debugLog = '';
                                 var parseLogsInterval = $interval(function(){
                                     TestRunService.getDebugConsoleOutput(testRun.id).then(function(rs) {
                                         if(rs.success) {
                                             var map = rs.data;
                                             var value;
-                                            var debugLog = '';
                                             Object.keys(map).forEach(function(key) {
                                                 value = map[key];
                                                 if(value.includes("dt_socket at address: 8000")){
@@ -882,7 +882,7 @@
                                             alertify.error(rs.message);
                                         }
                                     });
-                                }, 2000);
+                                }, 5000);
 
                                 var connectDebugTimeout = $timeout(function(){
                                     alertify.error("Problems with starting debug mode occurred, disabling");
