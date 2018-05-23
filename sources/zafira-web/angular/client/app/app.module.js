@@ -480,13 +480,25 @@
                 if(initOn) {
                     scope.$watch(initOn, function (newVal, oldVal) {
                         var isMin = angular.element('.nav-collapsed-min').length == 0;
-                        if(newVal && ! isMin) {
-                            var el = element[0];
+                        if(newVal) {
+                            if(! isMin) {
+                                initHeight(element[0]);
+                            } else {
+                                var trigger = angular.element('*[auto-height-trigger=\'' + initOn + '\']')[0];
+                                trigger.onclick = function (event) {
+                                    setTimeout(function () {
+                                        initHeight(element[0]);
+                                    }, 500);
+                                }
+                            }
+                        }
+
+                        function initHeight(el) {
                             var windowHeight = $window.innerHeight;
                             var boundingBox = el.getBoundingClientRect();
                             el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height >= 65 ? boundingBox.height + 'px' : '65px';
                             el.style['overflow-y'] = 'auto';
-                        }
+                        };
                     });
                 }
             }
@@ -521,11 +533,11 @@
                         aValue = aValue ? String(aValue).replace(/<[^>]+>/gm, '') : '';
                         bValue = bValue ? String(bValue).replace(/<[^>]+>/gm, '') : '';
                     }
-                    
+
                     if(aValue == null || bValue == null) {
                     		return aValue == null ? -1 : 1;
                     }
-                    
+
                     return field == 'status' ? (STATUSES_ORDER[aValue] > STATUSES_ORDER[bValue] ? 1 : -1) :
                         typeof aValue == 'string' ? (aValue.toLowerCase() > bValue.toLowerCase() ? 1 : -1) : (aValue > bValue ? 1 : -1);
                 });
