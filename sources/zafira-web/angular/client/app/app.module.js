@@ -521,6 +521,11 @@
                         aValue = aValue ? String(aValue).replace(/<[^>]+>/gm, '') : '';
                         bValue = bValue ? String(bValue).replace(/<[^>]+>/gm, '') : '';
                     }
+                    
+                    if(aValue == null || bValue == null) {
+                    		return aValue == null ? -1 : 1;
+                    }
+                    
                     return field == 'status' ? (STATUSES_ORDER[aValue] > STATUSES_ORDER[bValue] ? 1 : -1) :
                         typeof aValue == 'string' ? (aValue.toLowerCase() > bValue.toLowerCase() ? 1 : -1) : (aValue > bValue ? 1 : -1);
                 });

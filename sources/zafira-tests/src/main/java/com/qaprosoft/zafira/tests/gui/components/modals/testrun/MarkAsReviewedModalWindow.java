@@ -27,10 +27,11 @@ public class MarkAsReviewedModalWindow extends AbstractModalWindow
 
 	public void typeComment(String comment)
 	{
+		pause(1);
 		commentInput.click();
 		commentInput.sendKeys(comment);
 		commentInput.click();
-		pause(0.2);
+		pause(1);
 	}
 
 	public WebElement getMarkAsReviewedButton()

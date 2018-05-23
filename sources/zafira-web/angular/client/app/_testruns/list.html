@@ -235,7 +235,7 @@
                                         </md-input-container>
                                     </th>
                                     <th md-column class="fixed-testrun-name-header">
-                                        Project
+                                        Test suite
                                     </th>
                                     <th md-column>
                                         Environment
@@ -377,7 +377,7 @@
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="liveLogs" data-ng-click="showLogsDialog(testRun, null, $event)">
-                                                            Live log
+                                                            Live logs
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
@@ -396,8 +396,8 @@
                                                 <thead md-head data-ng-hide="testRun.tests == null">
                                                     <tr md-row>
                                                         <th md-column class="row sort-new" colspan="4">
-                                                            <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
-                                                            <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
+                                                             <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
+                                                             <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
                                                        		<div name="sortOwner" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div >
                                                        		<div name="sortDevice" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div >
                                                        		<div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
@@ -410,7 +410,7 @@
                                                         <td>
                                                         	<b name="testName" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'black_font'">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                         	<div>
-                                                                <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
+                                                                <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-clock-o" aria-hidden="true"></i> {{(test.finishTime - test.startTime)/1000 | number:0}} seconds</span>
                                                                 <span name="testOwner" data-ng-if="test.owner" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-user" aria-hidden="true"></i> {{test.owner}}</span>
                                                                 <span name="secondaryOwner" data-ng-if="test.secondaryOwner" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-user" aria-hidden="true"></i> {{test.secondaryOwner}}</span>
                                                                 <span name="device" data-ng-if="test.testConfig.device" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
@@ -430,8 +430,8 @@
                                                         </td>
                                                         <td>
                                                             <div class="align-middle align-right">
-                                                                <div data-ng-if="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')">
-                                                                    <md-menu ng-if="test.artifacts && test.artifacts.length">
+                                                                <div data-ng-show="test.artifacts.length || (rabbitmq.enabled && testRun.status == 'IN_PROGRESS')">
+                                                                    <md-menu>
                                                                         <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
                                                                             <md-icon class="material-icons">attachment</md-icon>
                                                                         </md-button>
