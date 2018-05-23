@@ -339,14 +339,19 @@
                                                             Mark as reviewed
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item>
+                                                    <md-menu-item ng-if="testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="sendAsEmail" data-ng-click="sendAsEmail(testRun, $event)">
                                                             Send as email
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item>
+                                                    <md-menu-item ng-if="testRun.status != 'IN_PROGRESS' && tools['GOOGLE']">
+                                                        <md-button name="createSpreadsheet" data-ng-click="createSpreadsheet(testRun, $event)">
+                                                            Export to Google
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item ng-if="testRun.status != 'IN_PROGRESS'">
                                                         <md-button name="export" data-ng-click="export(testRun)">
-                                                            Export
+                                                            Export to HTML
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">

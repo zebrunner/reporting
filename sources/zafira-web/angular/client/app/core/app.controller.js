@@ -106,6 +106,12 @@
                             $rootScope.jenkins.url = settings["JENKINS_URL"];
                         });
                         break;
+                    case "GOOGLE":
+                        SettingsService.getSettingByTool("GOOGLE").then(function(rs) {
+                            var settings = UtilService.settingsAsMap(rs.data);
+                            $rootScope.jenkins.enabled = settings["GOOGLE_ENABLED"];
+                        });
+                        break;
                     default:
                         break;
                 }

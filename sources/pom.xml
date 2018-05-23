@@ -111,6 +111,8 @@
         <httpcore.version>4.4.6</httpcore.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <qatool-ashot-version>1.5.2</qatool-ashot-version>
+        <google-sheets-version>v4-rev523-1.23.0</google-sheets-version>
+        <google-drive-version>v3-rev118-1.18.0-rc</google-drive-version>
     </properties>
     <modules>
         <module>zafira-conf</module>
@@ -479,6 +481,16 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-sheets</artifactId>
+                <version>${google-sheets-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-drive</artifactId>
+                <version>${google-drive-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.pubnub</groupId>
