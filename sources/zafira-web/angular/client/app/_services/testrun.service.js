@@ -78,7 +78,7 @@
         }
 
         function abortCIJob(id, ciRunId) {
-            return $http.post(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
+            return $http.get(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
         }
 
         function getJobParameters(id) {

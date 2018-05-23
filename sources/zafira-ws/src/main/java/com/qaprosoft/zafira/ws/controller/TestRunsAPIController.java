@@ -414,9 +414,9 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
-	@RequestMapping(value = "abort/ci", method = RequestMethod.POST)
+	@RequestMapping(value = "abort/ci", method = RequestMethod.GET)
 	public void abortCIJob(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
