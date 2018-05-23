@@ -902,14 +902,14 @@
 
                                 var connectDebugTimeout = $timeout(function(){
                                     alertify.error("Problems with starting debug mode occurred, disabling");
-                                    stopConnectingDebug();
+                                    $scope.stopConnectingDebug();
                                 }, 60000);
 
                                 var disconnectDebugTimeout = $timeout(function(){
                                     $scope.stopDebugMode();
                                 }, 600500);
 
-                                var stopConnectingDebug = function (){
+                                $scope.stopConnectingDebug = function (){
                                     $timeout.cancel(connectDebugTimeout);
                                     $interval.cancel(parseLogsInterval);
                                 };
@@ -926,6 +926,7 @@
         };
 
         $scope.stopDebugMode = function(){
+            $scope.stopConnectingDebug();
             $scope.abort($scope.testRunInDebugMode);
             $scope.testRunInDebugMode = {};
             alertify.warning("Debug mode is disabled");
