@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
@@ -32,6 +33,7 @@ import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,8 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/widgets")
 public class WidgetsAPIController extends AbstractController
 {
+
+	private static final Logger LOGGER = Logger.getLogger(WidgetsAPIController.class);
 
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
@@ -234,24 +238,35 @@ public class WidgetsAPIController extends AbstractController
 			throw new BadCredentialsException("Invalid access token");
 		}
 
-		Dimension dimension = null;
+		String[] dimensions = new String[2];
 		if(!StringUtils.isEmpty(email.getDimension()))
 		{
-			String [] dimensions = email.getDimension().toLowerCase().split("x");
-			dimension = new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1]));
+			dimensions = email.getDimension().toLowerCase().split("x");
 		}
-		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
-				email.getHostname(),
-				accessToken,
-				projects,
-				By.id("widget-container-" + widgetId),
-				By.id("widget-title-" + widgetId),
-				dimension);
-		if(attachments.size() == 0)
-		{
-			throw new ServiceException("Unable to create widget screenshots");
-		}
+		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
 
-		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		CompletableFuture.supplyAsync(() -> {
+			String result = null;
+			try
+			{
+				List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
+						email.getHostname(),
+						accessToken,
+						projects,
+						By.id("widget-container-" + widgetId),
+						By.id("widget-title-" + widgetId),
+						dimension);
+				if(attachments.size() == 0)
+				{
+					throw new ServiceException("Unable to create widget screenshots");
+				}
+				result = emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+			} catch (ServiceException e)
+			{
+				LOGGER.error(e);
+			}
+			return result;
+		}).toCompletableFuture();
+		return null;
 	}
 }
