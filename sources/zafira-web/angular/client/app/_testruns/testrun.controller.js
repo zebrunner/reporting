@@ -944,9 +944,11 @@
                 scope: $scope,
                 preserveScope: true,
                 controller : function ($scope, $mdToast) {
-                    $scope.stopDebug = function(testRun) {
-                        if(testRun){
-                            $scope.abort(testRun);
+                    $scope.stopDebug = function() {
+                        if($scope.testRunInDebugMode){
+                            $scope.abort($scope.testRunInDebugMode);
+                            $scope.testRunInDebugMode = {};
+                            alertify.warning("Debug mode is disabled");
                         }
                         $mdToast
                             .hide()
