@@ -3,9 +3,9 @@
 
     angular
         .module('app.integrations')
-        .controller('IntegrationsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'SettingsService', IntegrationsController])
+        .controller('IntegrationsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'UploadService', 'SettingsService', IntegrationsController])
 
-    function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, SettingsService) {
+    function IntegrationsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, UploadService, SettingsService) {
 
         $scope.settingTools = [];
         $scope.enabledSettings = {};
@@ -21,6 +21,8 @@
             '_ACCESS_KEY': 4,
             '_SECRET_KEY': 5
         };
+
+        var NOT_EDITABLE_SETTINGS = ['GOOGLE_CLIENT_SECRET_ORIGIN'];
 
         $scope.saveTool = function (tool) {
            SettingsService.editSettings(tool.settings).then(function (rs) {
@@ -178,21 +180,76 @@
                         name: rsTool,
                         isConnected: $rootScope.tools[rsTool],
                         settings: settings.data.filter(function (setting) {
+                            if(NOT_EDITABLE_SETTINGS.indexOf(setting.name) >= 0) {
+                                setting.notEditable = true;
+                            }
                             return isEnabledSetting(rsTool, setting) ? false : setting.tool === rsTool;
                         }),
                         isEnabled: enabledSetting.value === 'true',
                         newSetting: {}
                     };
                     $scope.enabledSettings[enabledSetting.tool] = enabledSetting.id;
-                    currentTool.settings.sort(compareBySettingSortOrder);
-                    $scope.settingTools.push(currentTool);
-                    $scope.settingTools.sort(compareByName);
-                    $scope.settingTools.sort(compareByIsEnabled)
+                    if($scope.settingTools.indexOfName(tool) == -1) {
+                        currentTool.settings.sort(compareBySettingSortOrder);
+                        $scope.settingTools.push(currentTool);
+                        $scope.settingTools.sort(compareByName);
+                        $scope.settingTools.sort(compareByIsEnabled);
+                    } else {
+                        var index = $scope.settingTools.indexOfName(tool);
+                        SettingsService.isToolConnected(tool).then(function (rs) {
+                            if(rs.success) {
+                                currentTool.isConnected = rs.data;
+                                $rootScope.tools[tool] = rs.data;
+                            }
+                        });
+                        $scope.settingTools.splice(index, 1, currentTool);
+                    }
                 } else {
                     console.error('Failed to load settings');
                 }
             });
         };
+
+        $scope.showUploadFileDialog = function ($event) {
+            $mdDialog.show({
+                controller: FileUploadController,
+                templateUrl: 'app/_integrations/file_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                clickOutsideToClose: true,
+                fullscreen: true,
+                scope: $scope,
+                preserveScope: true
+            })
+                .then(function (tool) {
+                }, function (tool) {
+                    if (tool) {
+                        initTool(tool);
+                    }
+                });
+        };
+
+        function FileUploadController($scope, $mdDialog) {
+            $scope.uploadFile = function (multipartFile) {
+                UploadService.uploadGoogleJson(multipartFile).then(function (rs) {
+                    if(rs.success)
+                    {
+                        alertify.success("File was uploaded");
+                        $scope.cancel();
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            };
+            $scope.hide = function() {
+                $mdDialog.hide(true);
+            };
+            $scope.cancel = function() {
+                $mdDialog.cancel('GOOGLE');
+            };
+        }
 
         (function init(){
             if($rootScope.tools) {

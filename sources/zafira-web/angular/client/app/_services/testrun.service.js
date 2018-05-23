@@ -17,6 +17,7 @@
         service.createCompareMatrix = createCompareMatrix;
         service.deleteTestRun = deleteTestRun;
         service.sendTestRunResultsEmail = sendTestRunResultsEmail;
+        service.createTestRunResultsSpreadsheet = createTestRunResultsSpreadsheet;
         service.exportTestRunResultsHTML = exportTestRunResultsHTML;
         service.markTestRunAsReviewed = markTestRunAsReviewed;
         service.rerunTestRun = rerunTestRun;
@@ -59,6 +60,10 @@
 
         function sendTestRunResultsEmail(id, email, filter, showStacktrace) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/email', email, {params:{'filter': filter, 'showStacktrace': showStacktrace}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send test run results email'));
+        }
+
+        function createTestRunResultsSpreadsheet(id, recipients) {
+            return $http.post(API_URL + '/api/tests/runs/' + id + '/spreadsheet', recipients).then(UtilService.handleSuccess, UtilService.handleError('Unable to create test run spreadsheet'));
         }
 
         function exportTestRunResultsHTML(id) {

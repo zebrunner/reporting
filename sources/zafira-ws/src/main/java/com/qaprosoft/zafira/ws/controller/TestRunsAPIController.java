@@ -20,12 +20,14 @@ import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -92,6 +94,9 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private TestRunService testRunService;
+
+	@Autowired
+	private TestRunSpreadsheetService testRunSpreadsheetService;
 
 	@Autowired
 	private FilterService filterService;
@@ -339,9 +344,20 @@ public class TestRunsAPIController extends AbstractController
 			@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
 			throws ServiceException, JAXBException
 	{
-		String[] recipients = !StringUtils.isEmpty(email.getRecipients())
-				? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[] {};
+		String[] recipients = getRecipients(email.getRecipients());
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", code = 200, httpMethod = "POST", response = String.class)
+	@RequestMapping(value = "{id}/spreadsheet", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") long id, @RequestBody String recipients) throws ServiceException
+	{
+		recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
+		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
 	}
 
 	@ResponseStatusDetails
@@ -356,8 +372,7 @@ public class TestRunsAPIController extends AbstractController
 														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
 			throws ServiceException, JAXBException
 	{
-		String[] recipients = !StringUtils.isEmpty(email.getRecipients())
-				? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[] {};
+		String[] recipients = getRecipients(email.getRecipients());
 		return testRunService.sendTestRunResultsNotification(ciRunId, "failures".equals(filter), showStacktrace, recipients);
 	}
 
@@ -513,4 +528,9 @@ public class TestRunsAPIController extends AbstractController
  		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
+	private String[] getRecipients(String recipients)
+	{
+		return  !StringUtils.isEmpty(recipients) ? recipients.trim().replaceAll(",", " ")
+				.replaceAll(";", " ").replaceAll("\\[\\]", " ").split(" ") : new String[] {};
+	}
 }

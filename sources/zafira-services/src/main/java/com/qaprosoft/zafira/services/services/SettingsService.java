@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.services.services.jmx.*;
+import com.qaprosoft.zafira.services.services.jmx.google.GoogleService;
 import com.qaprosoft.zafira.services.services.jmx.ldap.LDAPService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class SettingsService
 
 	@Autowired
 	private LDAPService ldapService;
+
+	@Autowired
+	private GoogleService googleService;
 
 	@Autowired
 	private JenkinsService jenkinsService;
@@ -172,6 +176,9 @@ public class SettingsService
 		IJMXService service = null;
 		switch (tool)
 		{
+		case GOOGLE:
+			service = googleService;
+			break;
 		case LDAP:
 			service = ldapService;
 			break;

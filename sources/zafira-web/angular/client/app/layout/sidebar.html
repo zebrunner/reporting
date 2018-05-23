@@ -6,7 +6,7 @@
           </a>
         </li>
         <li>
-            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards();">
+            <a auto-height-trigger="dashboardsLoaded" md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards();">
               <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
             </a>
             <ul auto-height="dashboardsLoaded" class="auto-width width-icon">
@@ -19,7 +19,7 @@
             </ul>
         </li>
         <li>
-            <a md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews();">
+            <a auto-height-trigger="viewsLoaded" md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews();">
               <i class="material-icons">playlist_add_check</i>
               <span data-translate="TEST_RUNS"></span>
             </a>
