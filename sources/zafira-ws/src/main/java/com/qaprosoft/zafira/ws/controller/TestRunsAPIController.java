@@ -499,25 +499,18 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "{id}/jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "id") long testRunId, @PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
+	@RequestMapping(value = "jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Integer, String> getConsoleOutput(
+			@PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount,
+			@RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
+		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
+		if (testRun == null) {
+			throw new TestRunNotFoundException();
+		}
  		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
-	}
-
-	@ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get console output for debug from jenkins by ci run id", nickname = "getDebugConsoleOutput", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "{ciRunId}/debug/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getDebugModeOutput(@PathVariable(value = "ciRunId") String ciRunId, @PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
-	{
-		TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
 }

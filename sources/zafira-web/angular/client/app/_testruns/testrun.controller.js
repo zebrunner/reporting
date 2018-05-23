@@ -859,9 +859,10 @@
                         TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
+                                testRun.id = null;
                                 var debugLog = '';
                                 var parseLogsInterval = $interval(function(){
-                                    TestRunService.getDebugConsoleOutput(testRun.ciRunId, 200, 50).then(function(rs) {
+                                    TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function(rs) {
                                         if(rs.success) {
                                             var map = rs.data;
                                             var value;
@@ -869,7 +870,6 @@
                                                 value = map[key];
                                                 if(value.includes("Listening for transport dt_socket at address:")){
                                                     $scope.testRunInDebugMode = testRun;
-                                                    $scope.testRunInDebugMode.id = null;
                                                     if(debugLog === ''){
                                                         $scope.debugPort = getPortFromLog(value);
                                                         $scope.debugHost = new URL($rootScope.jenkins.url).hostname;

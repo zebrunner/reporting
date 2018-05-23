@@ -25,7 +25,6 @@
         service.getEnvironments = getEnvironments;
         service.getPlatforms = getPlatforms;
         service.getConsoleOutput = getConsoleOutput;
-        service.getDebugConsoleOutput = getDebugConsoleOutput;
 
         return service;
 
@@ -94,13 +93,8 @@
             return $http.get(API_URL + '/api/tests/runs/platforms').then(UtilService.handleSuccess, UtilService.handleError('Unable to get platforms'));
         }
 
-        function getConsoleOutput(testRunId, count, fullCount) {
-            return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
+        function getConsoleOutput(id, ciRunId, count, fullCount) {
+            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
-
-        function getDebugConsoleOutput(ciRunId, count, fullCount) {
-            return $http.get(API_URL + '/api/tests/runs/' + ciRunId + '/debug/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
-        }
-
     }
 })();
