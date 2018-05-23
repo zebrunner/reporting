@@ -34,7 +34,7 @@ public class AbortFrozenTestRunsTask
 	@Value("${zafira.batch.jobs.abortFrozenTestRuns.testRunExpirationHours}")
 	private int testRunExpirationHours;
 	
-	public void runTask() throws ServiceException
+	public void runTask() throws ServiceException, InterruptedException
 	{
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -testRunExpirationHours);

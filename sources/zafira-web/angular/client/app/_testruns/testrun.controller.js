@@ -931,8 +931,10 @@
 
         $scope.stopDebugMode = function(){
             $scope.stopConnectingDebug();
-            $scope.abort($scope.testRunInDebugMode);
-            $scope.testRunInDebugMode = {};
+            if($scope.testRunInDebugMode){
+                $scope.abort($scope.testRunInDebugMode);
+                $scope.testRunInDebugMode = {};
+            }
             alertify.warning("Debug mode is disabled");
         };
 
