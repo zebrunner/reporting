@@ -421,7 +421,7 @@ public class TestRunsAPIController extends AbstractController
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
@@ -506,7 +506,7 @@ public class TestRunsAPIController extends AbstractController
 			@RequestParam(value = "id", required = false) Long id,
 			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}

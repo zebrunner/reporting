@@ -227,13 +227,10 @@ public class TestRunService
 		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
 		if(testRun != null) {
 			Long latestTestRunId = testRun.getId();
-			Job job;
 			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
-				job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
-			} else {
-				job = jobsService.getJobById(testRun.getJob().getId());
+				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+				testRun.setJob(job);
 			}
-			testRun.setJob(job);
 			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
 				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 			}
