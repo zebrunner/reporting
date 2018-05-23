@@ -17,11 +17,13 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.*;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +68,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("api/dashboards")
 public class DashboardsAPIController extends AbstractController
 {
+
+	private static final Logger LOGGER = Logger.getLogger(DashboardsAPIController.class);
+
 	@Autowired
 	private DashboardService dashboardService;
 	
@@ -195,7 +200,8 @@ public class DashboardsAPIController extends AbstractController
 	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken,
 			@RequestParam(value = "projects", required = false, defaultValue = "") String projects,
-			@RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
+			@RequestBody @Valid DashboardEmailType email)
+			throws ServiceException, JAXBException, InterruptedException, ExecutionException
 	{
 		User user = jwtService.parseRefreshToken(accessToken);
 		if(user == null)
@@ -203,26 +209,38 @@ public class DashboardsAPIController extends AbstractController
 			throw new BadCredentialsException("Invalid access token");
 		}
 
-		Dimension dimension = null;
+		String[] dimensions = new String[2];
 		if(!StringUtils.isEmpty(email.getDimension()))
 		{
-			String [] dimensions = email.getDimension().toLowerCase().split("x");
-			dimension = new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1]));
+			dimensions = email.getDimension().toLowerCase().split("x");
 		}
-		List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
-															 email.getHostname(),
-															 accessToken,
-															 projects,
-															 By.id("dashboard_content"),
-															 By.id("dashboard_title"),
-															 dimension,
-															 By.id("main-fab"), By.id("header"));
-		if(attachments.size() == 0)
-		{
-			throw new ServiceException("Unable to create dashboard screenshots");
-		}
+		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
 
-		return emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+		CompletableFuture.supplyAsync(() -> {
+			String result = null;
+			try
+			{
+				List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
+						email.getHostname(),
+						accessToken,
+						projects,
+						By.id("dashboard_content"),
+						By.id("dashboard_title"),
+						dimension,
+						By.id("main-fab"), By.id("header"));
+				if(attachments.size() == 0)
+				{
+					throw new ServiceException("Unable to create dashboard screenshots");
+				}
+
+				result = emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+			} catch (ServiceException e)
+			{
+				LOGGER.error(e);
+			}
+			return result;
+		}).toCompletableFuture();
+		return null;
 	}
 
 	@ResponseStatusDetails
