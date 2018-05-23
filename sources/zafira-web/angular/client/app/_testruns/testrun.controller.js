@@ -835,35 +835,39 @@
             $scope.showRerunDialog(testRun, event);
         };
 
+        $scope.startDebug = function (testRun, event) {
+            $scope.testRunInDebugMode = angular.copy(testRun);
+            debug($scope.testRunInDebugMode);
+        };
+
         $scope.testRunInDebugMode = {};
         $scope.debugHost = null;
         $scope.debugPort = null;
 
-        $scope.debug = function (testRun) {
+        function debug(testRun) {
             TestRunService.getJobParameters(testRun.id).then(function(rs) {
                 if(rs.success) {
                     var jobParameters = rs.data;
                     if (jobParameters === '') {
                         alertify.error("Job parameters are not loaded");
                     } else {
-                        $scope.testRunInDebugMode = testRun;
                         var jobParametersMap = {};
                         for (var i = 0; i < jobParameters.length; i++){
                             if (jobParameters[i].name === 'debug'){
                                 jobParameters[i].value = true;
                             }
                             if (jobParameters[i].name === 'ci_run_id'){
-                                $scope.testRunInDebugMode.ciRunId = jobParameters[i].value;
+                                testRun.ciRunId = jobParameters[i].value;
                             }
                             jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
                         }
-                        TestRunService.buildTestRun($scope.testRunInDebugMode.id, jobParametersMap).then(function(rs) {
+                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
-                                $scope.testRunInDebugMode.id = null;
+                                testRun.id = null;
                                 var debugLog = '';
                                 var parseLogsInterval = $interval(function(){
-                                    TestRunService.getConsoleOutput($scope.testRunInDebugMode.id, $scope.testRunInDebugMode.ciRunId, 200, 50).then(function(rs) {
+                                    TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function(rs) {
                                         if(rs.success) {
                                             var map = rs.data;
                                             var value;
@@ -876,12 +880,6 @@
                                                         showDebugToast();
                                                     }
                                                     $timeout.cancel(connectDebugTimeout);
-
-                                                    var disconnectDebugTimeout = $timeout(function(){
-                                                        $scope.abort($scope.testRunInDebugMode);
-                                                        $scope.testRunInDebugMode = {};
-                                                        alertify.warning("Debug mode is disabled");
-                                                    }, 600500);
 
                                                     if(debugLog === ''){
                                                         debugLog = value;
@@ -907,6 +905,10 @@
                                     stopConnectingDebug();
                                 }, 60000);
 
+                                var disconnectDebugTimeout = $timeout(function(){
+                                    $scope.stopDebugMode();
+                                }, 600500);
+
                                 var stopConnectingDebug = function (){
                                     $timeout.cancel(connectDebugTimeout);
                                     $interval.cancel(parseLogsInterval);
@@ -921,6 +923,12 @@
                     alertify.error(rs.message);
                 }
             });
+        };
+
+        $scope.stopDebugMode = function(){
+            $scope.abort($scope.testRunInDebugMode);
+            $scope.testRunInDebugMode = {};
+            alertify.warning("Debug mode is disabled");
         };
 
         function getPortFromLog(log){
@@ -945,11 +953,7 @@
                 preserveScope: true,
                 controller : function ($scope, $mdToast) {
                     $scope.stopDebug = function() {
-                        if($scope.testRunInDebugMode){
-                            $scope.abort($scope.testRunInDebugMode);
-                            $scope.testRunInDebugMode = {};
-                            alertify.warning("Debug mode is disabled");
-                        }
+                        $scope.stopDebugMode();
                         $mdToast
                             .hide()
                             .then(function() {
