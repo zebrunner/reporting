@@ -846,30 +846,30 @@
                     if (jobParameters === '') {
                         alertify.error("Job parameters are not loaded");
                     } else {
+                        $scope.testRunInDebugMode = testRun;
                         var jobParametersMap = {};
                         for (var i = 0; i < jobParameters.length; i++){
                             if (jobParameters[i].name === 'debug'){
                                 jobParameters[i].value = true;
                             }
                             if (jobParameters[i].name === 'ci_run_id'){
-                                testRun.ciRunId = jobParameters[i].value;
+                                $scope.testRunInDebugMode.ciRunId = jobParameters[i].value;
                             }
                             jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
                         }
-                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
+                        TestRunService.buildTestRun($scope.testRunInDebugMode.id, jobParametersMap).then(function(rs) {
                             if(rs.success) {
                                 alertify.success('Debug mode is starting, debug status will appear soon');
-                                testRun.id = null;
+                                $scope.testRunInDebugMode.id = null;
                                 var debugLog = '';
                                 var parseLogsInterval = $interval(function(){
-                                    TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function(rs) {
+                                    TestRunService.getConsoleOutput($scope.testRunInDebugMode.id, $scope.testRunInDebugMode.ciRunId, 200, 50).then(function(rs) {
                                         if(rs.success) {
                                             var map = rs.data;
                                             var value;
                                             Object.keys(map).forEach(function(key) {
                                                 value = map[key];
                                                 if(value.includes("Listening for transport dt_socket at address:")){
-                                                    $scope.testRunInDebugMode = testRun;
                                                     if(debugLog === ''){
                                                         $scope.debugPort = getPortFromLog(value);
                                                         $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
