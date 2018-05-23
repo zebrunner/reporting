@@ -559,7 +559,7 @@ public class TestRunService
 		return freemarkerUtil.getFreeMarkerTemplateContent(email.getTemplate(), email);
 	}
 	
-	private Configuration readConfiguration(String xml) throws JAXBException
+	public Configuration readConfiguration(String xml) throws JAXBException
 	{
         Configuration configuration = new Configuration();
         if (!StringUtils.isEmpty(xml)) {
@@ -570,7 +570,7 @@ public class TestRunService
 		return configuration;
 	}
 	
-	private static int calculateSuccessRate(TestRun testRun)
+	public static int calculateSuccessRate(TestRun testRun)
 	{
 		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
 		double rate = (double) testRun.getPassed() / (double) total;

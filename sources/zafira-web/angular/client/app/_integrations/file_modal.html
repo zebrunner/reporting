@@ -1,0 +1,27 @@
+<md-dialog aria-label="Upload image" zafira-background-theme="modal">
+    <form class="form-validation" name="upload_file_form" ng-submit="uploadFile(file); UtilService.untouchForm(upload_file_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle">Upload file</h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <photo-upload id="uploadFile" ng-model="file" other-type/>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button id="upload" type="submit"
+                       class="md-raised btn-w-md md-primary"
+                       ng-disabled="upload_file_form.$invalid || ! file">
+                Upload
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -315,7 +315,7 @@
             '                        <div class="bottom-block" md-ink-ripple="grey">\n' +
             '                            <input type="file" id="fileInput" class="content-input" ng-class="{\'not-empty\': myImage}"/>\n' +
             '                            <div class="upload-zone-label">Click or drop here</div>\n' +
-            '                            <img-crop image="myImage" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
+            '                            <img-crop image="myImage" ng-if="otherType == undefined" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
             '                        </div>\n' +
             '                    </div>\n' +
             '                </div>',
@@ -324,25 +324,38 @@
             transclude: true,
             scope: {
                 ngModel: '=',
-                areaType: '@'
+                areaType: '@',
+                otherType: '@'
             },
             link: function ($scope, iElement, iAttrs, ngModel) {
                 $scope.myImage='';
                 $scope.myCroppedImage='';
                 var canRecognize = false;
 
+                var otherType = $scope.otherType != undefined;
+
                 var handleFileSelect=function(evt) {
                     var file=evt.currentTarget.files[0];
                     $scope.fileName = file.name;
                     var reader = new FileReader();
-                    reader.onload = function (evt) {
-                        $scope.imageLoading = true;
-                        $scope.$apply(function($scope){
-                            $scope.myImage=evt.target.result;
-                        });
-                        $scope.imageLoading = false;
-                    };
-                    reader.readAsDataURL(file);
+                    if(! otherType) {
+                        reader.onload = function (evt) {
+                            $scope.imageLoading = true;
+                            $scope.$apply(function ($scope) {
+                                $scope.myImage = evt.target.result;
+                            });
+                            $scope.imageLoading = false;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        reader.onload = function (evt) {
+                            $scope.$apply(function($scope){
+                                $scope.file=evt.target.result;
+                            });
+                            ngModel.$setViewValue(fileToFormData($scope.file));
+                        };
+                        reader.readAsText(file);
+                    }
                 };
 
                 $timeout(function () {
@@ -359,16 +372,28 @@
                     return new Blob([new Uint8Array(array)], {type: mimeString});
                 }
 
+                function textToBlob(data) {
+                    return new Blob([data], { type: 'application/json' });
+                }
+
                 function blobToFormData() {
                     var formData = new FormData();
                     var croppedImage = dataURItoBlob($scope.myCroppedImage);
                     formData.append("file", croppedImage, $scope.fileName);
                     return formData;
-                }
+                };
+
+                function fileToFormData(file) {
+                    var formData = new FormData();
+                    var blobFile = textToBlob(file);
+                    formData.append('file', blobFile, $scope.fileName);
+                    return formData;
+                };
 
                 $scope.onChange = function () {
-                    if(canRecognize)
+                    if(canRecognize) {
                         ngModel.$setViewValue(blobToFormData());
+                    }
                 };
 
                 $scope.onDone = function () {
