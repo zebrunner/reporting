@@ -30,7 +30,9 @@
                 <md-divider data-ng-if="views.length > 0"></md-divider>
                 <li data-toggle-nav-collapsed-min back data-ng-repeat="view in views | orderBy:'name'" style="position: relative;" class="show-on-hover">
                     <a md-button href="#!/views/{{view.id}}">{{view.name}}</a>
-                    <i style="position: absolute; right: 10px; top: 15px;" class="fa fa-edit fa-fw show-icon-on-hover" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
+                    <span style="position: absolute; right: 10px; top: 15px;" class="show-icon-on-hover">
+                        <i class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
+                    </span>
                 </li>
                 <md-divider></md-divider>
                 <li data-toggle-nav-collapsed-min back has-any-permission="['MODIFY_TEST_RUN_VIEWS']">

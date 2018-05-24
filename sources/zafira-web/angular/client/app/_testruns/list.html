@@ -366,13 +366,18 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="abort" data-ng-click="abort(testRun, $event)">
+                                                        <md-button name="abort" data-ng-click="abort(testRun, false)">
                                                             Abort
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item has-any-permission="['TEST_RUNS_CI']">
                                                         <md-button name="rebuild" data-ng-click="rerun(testRun, $event)">
                                                             Rebuild
+                                                        </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item has-any-permission="['TEST_RUNS_CI']">
+                                                        <md-button name="debug" data-ng-click="startDebug(testRun)">
+                                                            Debug
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item data-ng-hide="!rabbitmq.enabled || testRun.status != 'IN_PROGRESS'">
@@ -396,8 +401,8 @@
                                                 <thead md-head data-ng-hide="testRun.tests == null">
                                                     <tr md-row>
                                                         <th md-column class="row sort-new" colspan="4">
-                                                             <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
-                                                             <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
+                                                            <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
+                                                            <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
                                                        		<div name="sortOwner" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div >
                                                        		<div name="sortDevice" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div >
                                                        		<div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >

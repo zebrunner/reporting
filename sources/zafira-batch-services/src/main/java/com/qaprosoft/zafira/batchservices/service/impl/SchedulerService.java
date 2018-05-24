@@ -32,13 +32,13 @@ public class SchedulerService implements ISchedulerService
 	
 
 	@Override
-	public void executeAbortFrozenTestRunsTask() 
+	public void executeAbortFrozenTestRunsTask()
 	{
 		try
 		{
 			abortFrozenTestRunsTask.runTask();
 			logger.info("");		
-		} catch (ServiceException e)
+		} catch (Exception e)
 		{
 			logger.error("" + e);
 		}
