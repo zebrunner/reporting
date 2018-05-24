@@ -125,6 +125,11 @@ body > div {
     max-width: fit-content;
 }
 
+.widget-icon {
+    font-size: 22px;
+    padding: 1px;
+    color: #474a5b;
+}
 .expand-button {
     position: absolute;
     z-index: 1;
@@ -1631,4 +1636,9 @@ md-input-container:not([md-no-float]) .md-select-placeholder span:first-child {
 md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder span:first-child {
   -webkit-transform: none !important;
   transform: none !important;
+}
+
+.toast-width {
+    width: 260px;
+    padding-bottom: 8px;
 }

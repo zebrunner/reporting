@@ -383,7 +383,7 @@ public class TestRunService
 	};
 
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
+	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException, InterruptedException
 	{
 		if(testRun != null){
 			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
@@ -397,11 +397,9 @@ public class TestRunService
 					}
 				}
 			}
-			testService.updateTestRerunFlags(testRun, tests);
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
-			updateTestRun(testRun);
-		}
+			calculateTestRunResult(testRun.getId(), true);		}
 		return testRun;
 	}
 

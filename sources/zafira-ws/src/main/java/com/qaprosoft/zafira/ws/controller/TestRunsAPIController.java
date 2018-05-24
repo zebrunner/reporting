@@ -431,17 +431,17 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
-	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
-	public void abortCIJob(@PathVariable(value = "id") long id) throws ServiceException
+	@RequestMapping(value = "abort/ci", method = RequestMethod.GET)
+	public void abortCIJob(
+			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber()))
-		{
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
 			throw new UnableToAbortCIJobException();
 		}
 	}
@@ -514,12 +514,18 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "{id}/jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "id") long testRunId, @PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
+	@RequestMapping(value = "jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Integer, String> getConsoleOutput(
+			@PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount,
+			@RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
-		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+		if (testRun == null) {
+			throw new TestRunNotFoundException();
+		}
+ 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
 	private String[] getRecipients(String recipients)
