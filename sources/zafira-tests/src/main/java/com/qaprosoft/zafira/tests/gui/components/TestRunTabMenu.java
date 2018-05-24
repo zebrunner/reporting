@@ -45,7 +45,7 @@ public class TestRunTabMenu extends AbstractUIObject
 	{
 		WebElement webElement = getTestRunsViewByName(name);
 		hoverOnElement(webElement);
-		return webElement.findElement(By.xpath("./following-sibling::i[contains(@class, 'edit')]"));
+		return webElement.findElement(By.xpath("./following-sibling::*/i[contains(@class, 'edit')]"));
 	}
 
 	public CreateTestRunViewModalWindow clickTestRunViewEditIconByName(String name)
