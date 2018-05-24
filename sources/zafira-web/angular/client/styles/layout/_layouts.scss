@@ -131,6 +131,7 @@ html {
             transition: margin-left .25s ease-in-out;
             @media (min-width:$screen-sm) {
                 margin-left: 60px;
+                padding-top: 64px;
             }
         }
 
