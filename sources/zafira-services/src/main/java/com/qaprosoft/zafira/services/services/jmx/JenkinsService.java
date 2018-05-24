@@ -22,14 +22,12 @@ import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterC
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -256,8 +254,7 @@ public class JenkinsService implements IJMXService
 			BuildWithDetails buildWithDetails = jobWithDetails.getBuildByNumber(buildNumber).details();
 			buildWithDetails.isBuilding();
 			result = getLastLogStringsByCount(buildWithDetails.getConsoleOutputHtml(), stringsCount, fullCount);
-			if (!buildWithDetails.isBuilding())
-			{
+			if (!buildWithDetails.isBuilding()) {
 				result.put(-1, buildWithDetails.getDisplayName());
 			}
 		}
@@ -292,7 +289,7 @@ public class JenkinsService implements IJMXService
 		count = strings.length < count ? strings.length : count;
 		if (fullCount != zero)
 		{
-			count = strings.length != fullCount ? strings.length - fullCount : zero;
+			count = strings.length > fullCount ? strings.length - fullCount : zero;
 		}
 		logMap.put(strings.length, String.join("\n", Arrays.copyOfRange(strings, strings.length - count, strings.length)));
 		return logMap;

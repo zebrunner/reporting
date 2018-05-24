@@ -60,7 +60,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div layout layout-sm="column" class="tab-row">
-                                                                    <div class="col-lg-3" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">
+                                                                        <div class="col-lg-3" data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0">
                                                                         <span class="elment-with-label input-like-label" >Elapsed time</span>
                                                                         <span class="elment-with-label light_text"><i class="fa fa-clock-o" aria-hidden="true"></i> <timer name="testFinishTime" autostart="false" countdown="(test.finishTime - test.startTime)/1000">{{minutes}} minute{{minutesS}} {{seconds}} second{{secondsS}}</timer></span>
                                                                     </div>
