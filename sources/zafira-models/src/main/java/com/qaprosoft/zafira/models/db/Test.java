@@ -282,7 +282,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	@Override
 	public int compareTo(Test test)
 	{
-		if(Arrays.asList(Status.QUEUED, Status.ABORTED, Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
+		if(Arrays.asList(Status.ABORTED, Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
 		{
 			return -1;
 		}
