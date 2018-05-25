@@ -226,7 +226,7 @@ public class TestRunService
 			Long latestTestRunId = testRun.getId();
 			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
 				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
-				testRun.setJob(job);
+				testRun.setUpstreamJob(job);
 			}
 			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
 				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
