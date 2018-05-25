@@ -16,10 +16,7 @@
 package com.qaprosoft.zafira.services.services;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.Status.FAILED;
-import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
-import static com.qaprosoft.zafira.models.db.Status.PASSED;
-import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.models.db.Status.*;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import java.io.ByteArrayInputStream;
@@ -399,6 +396,7 @@ public class TestRunService
 			}
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
+			updateTestRun(testRun);
 			calculateTestRunResult(testRun.getId(), true);		}
 		return testRun;
 	}
@@ -423,39 +421,42 @@ public class TestRunService
 		TestRun testRun = getNotNullTestRunById(id);
 
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		
-		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
-		if(finishTestRun || !IN_PROGRESS.equals(testRun.getStatus()))
+
+		//Aborted testruns don't need status recalculation (already recalculated on abort end-point)
+		if (!ABORTED.equals(testRun.getStatus()))
 		{
-			for(Test test : tests)
+			// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
+			if ((finishTestRun || !IN_PROGRESS.equals(testRun.getStatus())))
 			{
-				if(IN_PROGRESS.equals(test.getStatus()))
+				for (Test test : tests)
 				{
-					testService.skipTest(test);
+					if (IN_PROGRESS.equals(test.getStatus()))
+					{
+						testService.skipTest(test);
+					}
 				}
-			}
-			
-			testRun.setStatus(tests.size() > 0 ? PASSED : SKIPPED);
-			testRun.setKnownIssue(false);
-			testRun.setBlocker(false);
-			for(Test test : tests)
-			{
-				if(test.isKnownIssue())
+				testRun.setStatus(tests.size() > 0 ? PASSED : SKIPPED);
+				testRun.setKnownIssue(false);
+				testRun.setBlocker(false);
+				for (Test test : tests)
 				{
-					testRun.setKnownIssue(true);
-				}
-				if(test.isBlocker())
-				{
-					testRun.setBlocker(true);
-				}
-				if(Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
-				{
-					testRun.setStatus(FAILED);
-					break;
+					if (test.isKnownIssue())
+					{
+						testRun.setKnownIssue(true);
+					}
+					if (test.isBlocker())
+					{
+						testRun.setBlocker(true);
+					}
+					if (Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (
+							test.isKnownIssue() && test.isBlocker())))
+					{
+						testRun.setStatus(FAILED);
+						break;
+					}
 				}
 			}
 		}
-		
 		if(finishTestRun && testRun.getStartedAt() != null)
 		{
 			LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
