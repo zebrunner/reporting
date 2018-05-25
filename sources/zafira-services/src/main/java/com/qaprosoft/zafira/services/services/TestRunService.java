@@ -396,6 +396,7 @@ public class TestRunService
 			}
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
+			updateTestRun(testRun);
 			calculateTestRunResult(testRun.getId(), true);		}
 		return testRun;
 	}
