@@ -221,39 +221,40 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
-		TestRun rebuildRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-		if(rebuildRun != null && ABORTED.equals(rebuildRun.getStatus())){
-			List<Test> abortedTests = testService.getTestsByTestRunId(rebuildRun.getId());
-			for (Test test: abortedTests){
-				testService.deleteTest(test);
+		TestRun testRun;
+		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+		if(existingRun == null)
+		{
+			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
+					queueTestRunParams.getJobName());
+			if (testRun != null)
+			{
+				Long latestTestRunId = testRun.getId();
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
+					Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+					testRun.setUpstreamJob(job);
+				}
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
+					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+				}
+				testRun.setEnv(queueTestRunParams.getEnv());
+				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+				testRun.setStatus(Status.QUEUED);
+				testRun.setElapsed(null);
+				testRun.setPlatform(null);
+				testRun.setConfigXML(null);
+				testRun.setComments(null);
+				testRun.setReviewed(false);
+				testRun.setStartedAt(null);
+				createTestRun(testRun);
+				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				for (Test test : tests) {
+					testService.createQueuedTest(test, queuedTestRun.getId());
+				}
 			}
-			deleteTestRun(rebuildRun);
-		}
-		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
-		if(testRun != null) {
-			Long latestTestRunId = testRun.getId();
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
-				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
-				testRun.setUpstreamJob(job);
-			}
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
-				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
-			}
-			testRun.setEnv(queueTestRunParams.getEnv());
-			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
-			testRun.setStatus(Status.QUEUED);
-			testRun.setElapsed(null);
-			testRun.setPlatform(null);
-			testRun.setConfigXML(null);
-			testRun.setComments(null);
-			testRun.setReviewed(false);
-			testRun.setStartedAt(null);
-			createTestRun(testRun);
-			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-			for (Test test : tests) {
-				testService.createQueuedTest(test, queuedTestRun.getId());
-			}
+		} else {
+			testRun = existingRun;
 		}
 		return testRun;
 	}
