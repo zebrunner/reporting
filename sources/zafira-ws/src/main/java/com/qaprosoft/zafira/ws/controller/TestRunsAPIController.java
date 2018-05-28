@@ -20,13 +20,14 @@ import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -268,6 +269,31 @@ public class TestRunsAPIController extends AbstractController
 			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
 		}
 		return testRunService.searchTestRuns(sc);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Rerun job", nickname = "getJobTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@RequestMapping(value = "rerun/job", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List <TestRun> rerunJob(
+			@RequestParam(value = "doRebuild", required = false) Boolean doRebuild,
+			@RequestBody JobSearchCriteria sc)
+			throws ServiceException
+	{
+		List <TestRun> testRuns = testRunService.getJobTestRuns(sc);
+		if(doRebuild && testRuns != null){
+			for(TestRun testRun: testRuns){
+				List <BuildParameterType> buildParameters = jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
+				Map<String, String> jobParameters = buildParameters.stream().collect(
+						Collectors.toMap(BuildParameterType::getName, BuildParameterType::getValue)
+				);
+				jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, true);
+			}
+
+		}
+		return testRuns;
 	}
 
 	@ResponseStatusDetails

@@ -411,7 +411,7 @@
 		</choose>
     </select>
 
-	<select id="searchTestRunsByJob" resultMap="TestRunResultMap">
+	<select id="getJobTestRuns" resultMap="TestRunResultMap">
 		<include refid="getTestRunFull" />
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
@@ -420,39 +420,24 @@
 			<if test="null != scmURL">
 				<![CDATA[ AND LOWER(TR.SCM_URL) LIKE LOWER(#{scmURL}) ]]>
 			</if>
-			<if test="null != testSuiteId">
-				<![CDATA[ AND TS.ID = #{testSuiteId} ]]>
+			<if test="null != env">
+				<![CDATA[ AND LOWER(TR.ENV) = LOWER(#{env}) ]]>
 			</if>
-			<if test="null != executionURL">
-				<![CDATA[ AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%')) ]]>
+			<if test="null != notExecuted">
+				<![CDATA[ TR.STATUS <> 'QUEUED' AND
+				          TR.STATUS <> 'ABORTED' AND
+                          TR.STATUS <> 'SKIPPED']]>
 			</if>
-			<if test="null != environment">
-				<![CDATA[ AND LOWER(TR.ENV) = LOWER(#{environment}) ]]>
+			<if test="null != owner">
+				<![CDATA[ AND LOWER(TEST_RUN_USER_USER_NAME) = LOWER(#{owner}) ]]>
 			</if>
 			<if test="null != platform">
 				<![CDATA[ AND LOWER(TR.PLATFORM) = LOWER(#{platform}) ]]>
 			</if>
-			<if test="null != projects">
-				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
-					<if test="null != project.id">
-						<![CDATA[ TR.PROJECT_ID = #{project.id} ]]>
-					</if>
-				</foreach>
+			<if test="null != failurePercent">
+
 			</if>
 		</trim>
-		<if test="sortOrder.toString() == 'ASC'">
-			<![CDATA[
-				ORDER BY TR.STARTED_AT ASC
-			]]>
-		</if>
-		<if test="sortOrder.toString() == 'DESC'">
-			<![CDATA[
-				ORDER BY TR.STARTED_AT DESC
-			]]>
-		</if>
-		<![CDATA[
-			LIMIT #{pageSize} OFFSET #{offset}
-		]]>
 	</select>
 
 	<select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">

@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql;
 import java.util.Date;
 import java.util.List;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.ibatis.annotations.Param;
 
@@ -54,6 +55,8 @@ public interface TestRunMapper
 	List<TestRun> getTestRunsByStatusAndStartedBefore(@Param("status") Status status, @Param("startedBefore") Date startedBefore);
 
 	List<TestRun> searchTestRuns(TestRunSearchCriteria sc);
+
+	List<TestRun> getJobTestRuns(JobSearchCriteria sc);
 	
 	Integer getTestRunsSearchCount(TestRunSearchCriteria sc);
 	

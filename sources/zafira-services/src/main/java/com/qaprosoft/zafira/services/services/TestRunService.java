@@ -40,6 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -413,6 +414,12 @@ public class TestRunService
 		}
 		tr = updateTestRun(tr);
 		return tr;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public List<TestRun> getJobTestRuns(JobSearchCriteria sc) throws ServiceException
+	{
+		return testRunMapper.getJobTestRuns(sc);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
