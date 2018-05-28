@@ -245,6 +245,12 @@ public class TestRunService
 				testRun.setConfigXML(null);
 				testRun.setComments(null);
 				testRun.setReviewed(false);
+
+				//make sure to reset below3 fields for existing run as well
+				testRun.setStatus(Status.QUEUED);
+				testRun.setStartedAt(Calendar.getInstance().getTime());
+				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+
 				createTestRun(testRun);
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -254,11 +260,11 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
-		}
-		if (testRun != null) {
+
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
 			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+			updateTestRun(testRun);
 		}
 		return testRun;
 	}
