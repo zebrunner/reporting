@@ -222,6 +222,7 @@ public class TestRunService
 	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
 		TestRun testRun;
+		// Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
 		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 		if(existingRun == null)
 		{
@@ -238,15 +239,12 @@ public class TestRunService
 					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
-				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
-				testRun.setStatus(Status.QUEUED);
 				testRun.setElapsed(null);
 				testRun.setPlatform(null);
 				testRun.setConfigXML(null);
 				testRun.setComments(null);
 				testRun.setReviewed(false);
-				testRun.setStartedAt(null);
 				createTestRun(testRun);
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -256,6 +254,11 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
+		}
+		if (testRun != null) {
+			testRun.setStatus(Status.QUEUED);
+			testRun.setStartedAt(Calendar.getInstance().getTime());
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
 		}
 		return testRun;
 	}
