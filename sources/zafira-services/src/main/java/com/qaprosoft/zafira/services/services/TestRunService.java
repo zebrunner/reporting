@@ -240,7 +240,7 @@ public class TestRunService
 			testRun.setConfigXML(null);
 			testRun.setComments(null);
 			testRun.setReviewed(false);
-			testRun.setStartedAt(null);
+			testRun.setStartedAt(Calendar.getInstance().getTime());
 			createTestRun(testRun);
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
