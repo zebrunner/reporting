@@ -223,6 +223,7 @@ public class TestRunService
 	{
 		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
 		if(testRun != null) {
+
 			Long latestTestRunId = testRun.getId();
 			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
 				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
@@ -241,7 +242,11 @@ public class TestRunService
 			testRun.setComments(null);
 			testRun.setReviewed(false);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
-			createTestRun(testRun);
+			if(testRun.getCiRunId().equals(queueTestRunParams.getCiRunId())) {
+				updateTestRun(testRun);
+			} else {
+				createTestRun(testRun);
+			}
 			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 			for (Test test : tests) {
