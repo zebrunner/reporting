@@ -241,17 +241,17 @@ public class TestRunService
 			testRun.setReviewed(false);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
 			if(testRun.getCiRunId().equals(queueTestRunParams.getCiRunId())) {
-				TestRun queuedRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-				testRun.setId(queuedRun.getId());
+				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				testRun.setId(queuedTestRun.getId());
 				updateTestRun(testRun);
 			} else {
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
 				createTestRun(testRun);
-			}
-			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-			for (Test test : tests) {
-				testService.createQueuedTest(test, queuedTestRun.getId());
+				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				for (Test test : tests) {
+					testService.createQueuedTest(test, queuedTestRun.getId());
+				}
 			}
 		}
 		return testRun;
