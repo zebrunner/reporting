@@ -241,6 +241,8 @@ public class TestRunService
 			testRun.setReviewed(false);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
 			if(testRun.getCiRunId().equals(queueTestRunParams.getCiRunId())) {
+				TestRun queuedRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				testRun.setId(queuedRun.getId());
 				updateTestRun(testRun);
 			} else {
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
