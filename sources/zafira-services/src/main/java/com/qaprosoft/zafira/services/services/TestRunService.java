@@ -221,6 +221,14 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
+		TestRun rebuildRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+		if(rebuildRun != null && ABORTED.equals(rebuildRun.getStatus())){
+			List<Test> abortedTests = testService.getTestsByTestRunId(rebuildRun.getId());
+			for (Test test: abortedTests){
+				testService.deleteTest(test);
+			}
+			deleteTestRun(rebuildRun);
+		}
 		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
 		if(testRun != null) {
 			Long latestTestRunId = testRun.getId();
@@ -239,19 +247,12 @@ public class TestRunService
 			testRun.setConfigXML(null);
 			testRun.setComments(null);
 			testRun.setReviewed(false);
-			testRun.setStartedAt(Calendar.getInstance().getTime());
-			if(testRun.getCiRunId().equals(queueTestRunParams.getCiRunId())) {
-				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-				testRun.setId(queuedTestRun.getId());
-				updateTestRun(testRun);
-			} else {
-				testRun.setCiRunId(queueTestRunParams.getCiRunId());
-				createTestRun(testRun);
-				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-				for (Test test : tests) {
-					testService.createQueuedTest(test, queuedTestRun.getId());
-				}
+			testRun.setStartedAt(null);
+			createTestRun(testRun);
+			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+			for (Test test : tests) {
+				testService.createQueuedTest(test, queuedTestRun.getId());
 			}
 		}
 		return testRun;
