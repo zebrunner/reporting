@@ -278,7 +278,7 @@ public class TestRunsAPIController extends AbstractController
 	@ApiOperation(value = "Rerun job", nickname = "getJobTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "rerun/job", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List <TestRun> rerunJob(
-			@RequestParam(value = "doRebuild", required = false) Boolean doRebuild,
+			@RequestParam(value = "doRebuild", defaultValue = "false") Boolean doRebuild,
 			@RequestBody JobSearchCriteria sc)
 			throws ServiceException
 	{

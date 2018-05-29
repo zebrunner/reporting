@@ -2,12 +2,14 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
 public class JobSearchCriteria
 {
-	private String scmURL;
+
 	private String env;
-	private Boolean notExecuted;
-	private String owner;
 	private String platform;
-	private String failurePercent;
+	private String owner;
+	private String scmURL;
+	private Boolean notExecuted;
+
+	private Integer failurePercent;
 
 	public String getScmURL()
 	{
@@ -59,12 +61,12 @@ public class JobSearchCriteria
 		this.platform = platform;
 	}
 
-	public String getFailurePercent()
+	public Integer getFailurePercent()
 	{
 		return failurePercent;
 	}
 
-	public void setFailurePercent(String failurePercent)
+	public void setFailurePercent(Integer failurePercent)
 	{
 		this.failurePercent = failurePercent;
 	}
