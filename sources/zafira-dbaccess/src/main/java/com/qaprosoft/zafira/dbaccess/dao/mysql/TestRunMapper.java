@@ -56,7 +56,7 @@ public interface TestRunMapper
 
 	List<TestRun> searchTestRuns(TestRunSearchCriteria sc);
 
-	List<TestRun> getJobTestRuns(JobSearchCriteria sc);
+	List<TestRun> getJobsTestRuns(JobSearchCriteria sc);
 	
 	Integer getTestRunsSearchCount(TestRunSearchCriteria sc);
 	

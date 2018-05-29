@@ -461,7 +461,7 @@
 		</choose>
     </select>
 
-	<select id="getJobTestRuns" resultMap="TestRunResultMap">
+	<select id="getJobsTestRuns" resultMap="TestRunResultMap">
 		<include refid="getJobTestRun" />
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != scmURL">

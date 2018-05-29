@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
@@ -275,14 +274,14 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Rerun job", nickname = "getJobTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
-	@RequestMapping(value = "rerun/job", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List <TestRun> rerunJob(
+	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List <TestRun> rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false") Boolean doRebuild,
 			@RequestBody JobSearchCriteria sc)
 			throws ServiceException
 	{
-		List <TestRun> testRuns = testRunService.getJobTestRuns(sc);
+		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		if(doRebuild && testRuns != null){
 			for(TestRun testRun: testRuns){
 				jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
