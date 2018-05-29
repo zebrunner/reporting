@@ -529,13 +529,39 @@ section.zaf-light .article-title {
     margin: 10px 0;
 }
 
+.section-header {
+  padding-left: 20px;
+}
+
+.title-container{
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+#testrun-info-title {
+  margin: 13px 0;
+  padding-left: 55px;
+  font-size: 18px;
+}
+
+.title-container span{
+  position: absolute;
+  top: 12px;
+  left: 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 /*Element backgrounds*/
 .background-white {
     background-color: #f6f6f6 !important;
 }
 
 .background-clear-white {
-    background-color: #ffffff !important;
+    background-color: #fff !important;
 }
 
 .background-gray {
@@ -721,6 +747,7 @@ input[type="file"].content-input.not-empty{
     margin-top: 10px;
     display: block;
     position: relative;
+    min-height: 100%;
     width: 800px;
     border: 2px dashed #80CBC4 !important;
     transition: opacity  0.1s linear;
@@ -1641,4 +1668,114 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 .toast-width {
     width: 260px;
     padding-bottom: 8px;
+}
+
+.tests-info-container {
+  height: 100%;
+}
+
+.test-info-section {
+  height: 100%;
+
+  .md-tab {
+    color: $medium-gray;
+    font-size: 14.5px;
+    font-weight: 500;
+    text-transform: capitalize;
+
+    &.md-active {
+      color: $coal !important;
+    }
+  }
+}
+
+.video-section {
+  background: $fog-gray;
+
+  & h4 {
+    margin: 0;
+    padding: 18px 0 15px 16px;
+    font-size: 16px;
+    color: $dark;
+  }
+
+  & md-chips-wrap {
+    padding-left: 16px;
+    padding-bottom: 11px !important;
+    box-shadow: none !important;
+
+    & md-chip {
+      width: 75px;
+      height: 24px;
+      border-radius: 12px !important;
+      background: $medium-gray;
+      color: #fff;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 14.5px;
+      font-weight: 500;
+      line-height: 24px;
+
+      &+.active {
+        background: $brand-primary;
+      }
+    }
+  }
+
+  & .video-wrapper {
+    margin: 0 16px;
+    background: $coal;
+
+    & video {
+      width: 100% !important;
+      height: auto !important;
+      padding: 10px 8px;
+    }
+  }
+
+  & ul {
+    margin: 13px 0;
+    padding-left: 33px;
+    -webkit-padding-start: 33px;
+    list-style: none;
+
+    & li {
+      padding: 8px 0;
+      color: $coal;
+      font-size: 14.5px;
+
+      & span{
+        padding-left: 25px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.table-history {
+  tr {
+    min-height: 32px;
+    text-align: left !important;
+
+    td {
+      padding: 4px 15px !important;
+      vertical-align: middle !important;
+      font-size: 12px;
+
+      &:nth-child(1),
+      &:nth-child(2) {
+        width: 80px;
+        text-align: center;
+      }
+
+      & .material-icons {
+        color: $gray-light;
+        font-size: 18px !important;
+      }
+    }
+  }
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background: $bg-gray;
 }
