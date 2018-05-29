@@ -285,15 +285,8 @@ public class TestRunsAPIController extends AbstractController
 		List <TestRun> testRuns = testRunService.getJobTestRuns(sc);
 		if(doRebuild && testRuns != null){
 			for(TestRun testRun: testRuns){
-				List <BuildParameterType> buildParameters = jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
-				if(buildParameters != null){
-					Map<String, String> jobParameters = buildParameters.stream().collect(
-							Collectors.toMap(BuildParameterType::getName, BuildParameterType::getValue)
-					);
-					jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, true);
-				}
+				jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
 			}
-
 		}
 		return testRuns;
 	}
