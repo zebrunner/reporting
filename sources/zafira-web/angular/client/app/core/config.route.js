@@ -50,6 +50,10 @@
                         url: '/tests/runs',
                         templateUrl: 'app/_testruns/list.html'
                     })
+                    .state('tests/run/info', {
+                        url: '/tests/run/info',
+                        templateUrl: 'app/_testruns/_info/list.html'
+                    })
                     .state('settings', {
                         url: '/settings',
                         templateUrl: 'app/_settings/list.html'
