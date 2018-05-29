@@ -484,7 +484,7 @@
 		</trim>
         <if test="null != failurePercent">
             <![CDATA[
-                GROUP BY TR.ID, U.ID
+                GROUP BY TR.ID, U.ID, J.ID
 				HAVING ROUND(100.0 * (SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') /
 				(SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID), 0)::integer > #{failurePercent}
 				OR ROUND(100.0 * (SELECT COUNT(*) FROM zafira.TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') /
