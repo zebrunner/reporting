@@ -61,8 +61,8 @@ public class StoredSubject
 								 {
 									 setName(Name.DATE);
 									 setOperators(Arrays.asList(Operator.EQUALS, Operator.NOT_EQUALS, Operator.BEFORE,
-											 Operator.AFTER, Operator.LAST_SEVEN_DAYS, Operator.LAST_FOURTEEN_DAYS,
-											 Operator.LAST_THIRTY_DAYS));
+											 Operator.AFTER, Operator.LAST_24_HOURS, Operator.LAST_7_DAYS, Operator.LAST_14_DAYS,
+											 Operator.LAST_30_DAYS));
 								 }
 							 }
 						 );

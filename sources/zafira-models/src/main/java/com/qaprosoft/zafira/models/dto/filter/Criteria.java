@@ -68,7 +68,7 @@ public class Criteria
 	@AssertTrue(message = "Incorrect value")
 	public boolean isValueNull()
 	{
-		return Arrays.asList(LAST_SEVEN_DAYS, LAST_FOURTEEN_DAYS, LAST_THIRTY_DAYS).contains(this.operator)
+		return Arrays.asList(LAST_24_HOURS, LAST_7_DAYS, LAST_14_DAYS, LAST_30_DAYS).contains(this.operator)
 				? value == null : value != null;
 	}
 }

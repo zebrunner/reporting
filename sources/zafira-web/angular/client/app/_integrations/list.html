@@ -38,8 +38,8 @@
                                 <div class="col-lg-11" style="padding: 0">
                                     <md-input-container class="md-block" style="margin-bottom: 0">
                                         <label name="settingNameLabel">{{ setting.name }}</label>
-                                        <input name="settingName" type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
-                                        <input name="settingName" type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled" >
+                                        <input name="settingName" type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled || setting.notEditable" >
+                                        <input name="settingName" type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled || setting.notEditable" >
                                     </md-input-container>
                                 </div>
                                 <div class="col-lg-1" style="padding: 0; margin-bottom: 0" data-ng-if="setting.name != 'SLACK_WEB_HOOK_URL'">
@@ -70,7 +70,10 @@
                        </div>
                         <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action text-right" style="border-top: none;">
                             <md-button name="add" data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
-                            <md-button name="save" ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
+                            <md-button ng-if="tool.name != 'GOOGLE'" name="save" ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
+                            <md-button ng-if="tool.name == 'GOOGLE'" ng-click="showUploadFileDialog($event);" class="md-raised btn-w-md md-primary">
+                                Upload JSON
+                            </md-button>
                         </div>
                     </div>
                 </div>

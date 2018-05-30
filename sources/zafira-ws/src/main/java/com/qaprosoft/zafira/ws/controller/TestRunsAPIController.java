@@ -15,18 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
-import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
-import com.qaprosoft.zafira.services.services.*;
+import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -45,12 +46,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
+import com.qaprosoft.zafira.models.dto.CommentType;
+import com.qaprosoft.zafira.models.dto.EmailType;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
@@ -58,6 +66,13 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
 import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.services.FilterService;
+import com.qaprosoft.zafira.services.services.JobsService;
+import com.qaprosoft.zafira.services.services.ProjectService;
+import com.qaprosoft.zafira.services.services.StatisticsService;
+import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.TestService;
+import com.qaprosoft.zafira.services.services.UserService;
 import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -67,9 +82,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
 
 @Controller
 @Api(value = "Test runs API")
@@ -84,6 +96,9 @@ public class TestRunsAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@Autowired
+	private TestRunSpreadsheetService testRunSpreadsheetService;
+
+	@Autowired
 	private FilterService filterService;
 
 	@Autowired
@@ -91,9 +106,6 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private JobsService jobsService;
-
-	@Autowired
-	private TestConfigService testConfigService;
 
 	@Autowired
 	private ProjectService projectService;
@@ -147,15 +159,11 @@ public class TestRunsAPIController extends AbstractController
 			throw new ServiceException("Test run not found by id: " + tr.getId());
 		}
 		testRun.setConfigXML(tr.getConfigXML());
-		// TODO: remove that ASAP from controller
-		for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-		{
-			if ("app_version".equals(arg.getKey()))
-			{
-				testRun.setAppVersion(arg.getValue());
-			}
-		}
+		testRunService.initTestRunWithXml(testRun);
 		testRunService.updateTestRun(testRun);
+		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
+		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -336,9 +344,36 @@ public class TestRunsAPIController extends AbstractController
 			@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
 			throws ServiceException, JAXBException
 	{
-		String[] recipients = !StringUtils.isEmpty(email.getRecipients())
-				? email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" ") : new String[] {};
+		String[] recipients = getRecipients(email.getRecipients());
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", code = 200, httpMethod = "POST", response = String.class)
+	@RequestMapping(value = "{id}/spreadsheet", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") long id, @RequestBody String recipients) throws ServiceException
+	{
+		recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
+		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Send test run result notification", nickname = "sendTestRunResultsNotification", code = 200, httpMethod = "POST", response = String.class)
+	@RequestMapping(value = "notification/{ciRunId}", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendTestRunResultsNotification(@PathVariable(value = "ciRunId") String ciRunId,
+														@RequestBody @Valid EmailType email,
+														@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
+														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
+			throws ServiceException, JAXBException
+	{
+		String[] recipients = getRecipients(email.getRecipients());
+		return testRunService.sendTestRunResultsNotification(ciRunId, "failures".equals(filter), showStacktrace, recipients);
 	}
 
 	@ResponseStatusDetails
@@ -396,17 +431,17 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
-	@RequestMapping(value = "{id}/abort", method = RequestMethod.GET)
-	public void abortCIJob(@PathVariable(value = "id") long id) throws ServiceException
+	@RequestMapping(value = "abort/ci", method = RequestMethod.GET)
+	public void abortCIJob(
+			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber()))
-		{
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
 			throw new UnableToAbortCIJobException();
 		}
 	}
@@ -479,11 +514,23 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
-	@RequestMapping(value = "{id}/jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "id") long testRunId, @PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount) throws ServiceException
+	@RequestMapping(value = "jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Integer, String> getConsoleOutput(
+			@PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount,
+			@RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunByIdFull(testRunId);
-		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+		if (testRun == null) {
+			throw new TestRunNotFoundException();
+		}
+ 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+	}
+
+	private String[] getRecipients(String recipients)
+	{
+		return  !StringUtils.isEmpty(recipients) ? recipients.trim().replaceAll(",", " ")
+				.replaceAll(";", " ").replaceAll("\\[\\]", " ").split(" ") : new String[] {};
 	}
 }

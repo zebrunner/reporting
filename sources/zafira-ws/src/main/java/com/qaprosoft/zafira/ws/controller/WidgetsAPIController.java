@@ -19,16 +19,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.DashboardEmailType;
+import com.qaprosoft.zafira.services.services.EmailService;
+import com.qaprosoft.zafira.services.services.SeleniumService;
+import com.qaprosoft.zafira.services.services.auth.JWTService;
+import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +72,8 @@ import springfox.documentation.annotations.ApiIgnore;
 public class WidgetsAPIController extends AbstractController
 {
 
+	private static final Logger LOGGER = Logger.getLogger(WidgetsAPIController.class);
+
 	@Value("${zafira.webservice.url}")
 	private String wsURL;
 
@@ -67,6 +82,15 @@ public class WidgetsAPIController extends AbstractController
 
 	@Autowired
 	private SettingsService settingsService;
+
+	@Autowired
+	private JWTService jwtService;
+
+	@Autowired
+	private SeleniumService seleniumService;
+
+	@Autowired
+	private EmailService emailService;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create widget", nickname = "createWidget", code = 200, httpMethod = "POST", response = Widget.class)
@@ -187,6 +211,7 @@ public class WidgetsAPIController extends AbstractController
 		}
 		return result;
 	}
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all widgets", nickname = "getAllWidgets", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -196,5 +221,52 @@ public class WidgetsAPIController extends AbstractController
 	public @ResponseBody List<Widget> getAllWidgets() throws ServiceException
 	{
 		return widgetService.getAllWidgets();
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Send widget by email", nickname = "sendWidgetByEmail", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Access-Token", paramType = "header") })
+	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendWidgetByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken,
+			@RequestParam(value = "projects", required = false, defaultValue = "") String projects,
+			@RequestParam(value = "widgetId", required = false, defaultValue = "") Long widgetId,
+			@RequestBody @Valid DashboardEmailType email) throws ServiceException, JAXBException
+	{
+		User user = jwtService.parseRefreshToken(accessToken);
+		if(user == null)
+		{
+			throw new BadCredentialsException("Invalid access token");
+		}
+
+		String[] dimensions = new String[2];
+		if(!StringUtils.isEmpty(email.getDimension()))
+		{
+			dimensions = email.getDimension().toLowerCase().split("x");
+		}
+		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
+
+		CompletableFuture.supplyAsync(() -> {
+			String result = null;
+			try
+			{
+				List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
+						email.getHostname(),
+						accessToken,
+						projects,
+						By.id("widget-container-" + widgetId),
+						By.id("widget-title-" + widgetId),
+						dimension);
+				if(attachments.size() == 0)
+				{
+					throw new ServiceException("Unable to create widget screenshots");
+				}
+				result = emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+			} catch (ServiceException e)
+			{
+				LOGGER.error(e);
+			}
+			return result;
+		}).toCompletableFuture();
+		return null;
 	}
 }

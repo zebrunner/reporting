@@ -1,4 +1,6 @@
 INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
+	('GOOGLE_CLIENT_SECRET_ORIGIN', '', 'GOOGLE'),
+  	('GOOGLE_ENABLED', false, 'GOOGLE'),
 	('LDAP_DN', '', 'LDAP'),
   	('LDAP_SEARCH_FILTER', '', 'LDAP'),
   	('LDAP_URL', '', 'LDAP'),
@@ -288,7 +290,7 @@ DECLARE nightly_failures_model zafira.WIDGETS.model%TYPE;
 BEGIN
 	-- Insert Stability dashboard data
 
-  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', FALSE, 8) RETURNING id INTO stability_dashboard_id;
+  INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', TRUE, 8) RETURNING id INTO stability_dashboard_id;
 
 	average_stability_percent_sql :=
 	'set schema ''zafira'';

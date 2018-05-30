@@ -79,7 +79,7 @@ public class TestService
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
 		// New or Queued test
-		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == null)
+		if ((test.getId() == null || test.getId() == 0) || test.getStatus() == Status.QUEUED)
 		{
 			//This code block is executed only for the first job run
 			TestConfig config = testConfigService.createTestConfigForTest(test, configXML);
@@ -249,29 +249,23 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Test markTestAsPassed(long id) throws ServiceException, InterruptedException
+	public Test changeTestStatus(long id, Status newStatus) throws ServiceException, InterruptedException
 	{
 		Test test = getTestById(id);
 		if (test == null)
 		{
 			throw new TestNotFoundException();
 		}
-
-		testRunService.updateStatistics(test.getTestRunId(), MARK_AS_PASSED, test.getStatus());
-
-		test.setStatus(Status.PASSED);
-
+		testRunService.updateStatistics(test.getTestRunId(), newStatus, test.getStatus());
+		test.setStatus(newStatus);
 		updateTest(test);
-
 		TestCase testCase = testCaseService.getTestCaseById(test.getTestCaseId());
 		if (testCase != null)
 		{
 			testCase.setStatus(test.getStatus());
 			testCaseService.updateTestCase(testCase);
 		}
-
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-
 		return test;
 	}
 
@@ -316,6 +310,12 @@ public class TestService
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunId(testRunId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunCiRunId(String testRunCiRunId) throws ServiceException
+	{
+		return testMapper.getTestsByTestRunCiRunId(testRunCiRunId);
 	}
 
 	@Transactional(readOnly = true)
@@ -515,7 +515,9 @@ public class TestService
 				for (Test test : tests)
 				{
 
-					if ((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue()) || test.getStatus().equals(Status.ABORTED))
+					if ((Arrays.asList(Status.FAILED, Status.SKIPPED).contains(test.getStatus()) && !test.isKnownIssue())
+							|| test.getStatus().equals(Status.ABORTED)
+							|| test.getStatus().equals(Status.QUEUED))
 					{
 						switch (testRun.getDriverMode())
 						{
@@ -536,7 +538,7 @@ public class TestService
 							}
 							else
 							{
-								testMapper.updateTestsNeedRerun(Arrays.asList(test.getId()), true);
+								testMapper.updateTestsNeedRerun(Collections.singletonList(test.getId()), true);
 							}
 
 							if (!StringUtils.isEmpty(test.getDependsOnMethods()))

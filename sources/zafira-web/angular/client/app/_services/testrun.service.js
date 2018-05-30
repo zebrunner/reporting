@@ -17,6 +17,7 @@
         service.createCompareMatrix = createCompareMatrix;
         service.deleteTestRun = deleteTestRun;
         service.sendTestRunResultsEmail = sendTestRunResultsEmail;
+        service.createTestRunResultsSpreadsheet = createTestRunResultsSpreadsheet;
         service.exportTestRunResultsHTML = exportTestRunResultsHTML;
         service.markTestRunAsReviewed = markTestRunAsReviewed;
         service.rerunTestRun = rerunTestRun;
@@ -61,6 +62,10 @@
             return $http.post(API_URL + '/api/tests/runs/' + id + '/email', email, {params:{'filter': filter, 'showStacktrace': showStacktrace}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send test run results email'));
         }
 
+        function createTestRunResultsSpreadsheet(id, recipients) {
+            return $http.post(API_URL + '/api/tests/runs/' + id + '/spreadsheet', recipients).then(UtilService.handleSuccess, UtilService.handleError('Unable to create test run spreadsheet'));
+        }
+
         function exportTestRunResultsHTML(id) {
             return $http.get(API_URL + '/api/tests/runs/' + id + '/export').then(UtilService.handleSuccess, UtilService.handleError('Unable to get test run results HTML'));
         }
@@ -77,8 +82,8 @@
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 
-        function abortCIJob(id) {
-            return $http.get(API_URL + '/api/tests/runs/' + id + '/abort').then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
+        function abortCIJob(id, ciRunId) {
+            return $http.get(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
         }
 
         function getJobParameters(id) {
@@ -93,8 +98,8 @@
             return $http.get(API_URL + '/api/tests/runs/platforms').then(UtilService.handleSuccess, UtilService.handleError('Unable to get platforms'));
         }
 
-        function getConsoleOutput(testRunId, count, fullCount) {
-            return $http.get(API_URL + '/api/tests/runs/' + testRunId + '/jobConsoleOutput/' + count + '/' + fullCount).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
+        function getConsoleOutput(id, ciRunId, count, fullCount) {
+            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
     }
 })();

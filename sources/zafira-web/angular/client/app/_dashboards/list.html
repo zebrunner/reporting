@@ -52,11 +52,15 @@
                  on-change="" on-drag-start="" on-drag-stop="" on-resize-start="" on-resize-stop="" style="margin-bottom: 20px">
                 <div class="grid-stack-item" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets track by widget.id" gridstack-item gs-item-x="widget.location.x" gs-item-y="widget.location.y"
                      gs-item-width="widget.location.width" gs-item-height="widget.location.height" on-item-added="" on-item-removed="">
-                    <div class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
-                        <div class="panel-heading">
+                    <input type="hidden" ng-attr-id="widget-title-{{ widget.id }}" value="{{::widget.title}}" />
+                    <div ng-attr-id="widget-container-{{ widget.id }}" class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
+                        <div class="panel-heading show-on-hover">
                             {{::widget.title}}
-                            <i class="material-icons pull-right" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">delete</i>
-                            <i class="material-icons pull-right" data-ng-click="showWidgetDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">edit</i>
+                            <span class="show-icon-on-hover pull-right">
+                                <i class="material-icons pull-right widget-icon" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">delete</i>
+                                <i class="material-icons pull-right widget-icon" data-ng-click="showEmailDialog($event, widget.id)">email</i>
+                                <i class="material-icons pull-right widget-icon" data-ng-click="showWidgetDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">edit</i>
+                            </span>
                         </div>
                         <div data-ng-attr-id="{{ widget.id }}" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
                             <md-progress-circular class = "progress-circular_align" md-mode="indeterminate" md-diameter="31px" ng-if="isLoading && widget.data.dataset != 0"></md-progress-circular>

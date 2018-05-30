@@ -6,10 +6,10 @@
           </a>
         </li>
         <li>
-            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards()">
+            <a auto-height-trigger="dashboardsLoaded" md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards();">
               <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
             </a>
-            <ul>
+            <ul auto-height="dashboardsLoaded" class="auto-width width-icon">
                 <li data-toggle-nav-collapsed-min back data-ng-repeat="dashboard in dashboards | orderBy:'position'">
                     <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">
                       <i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 14px;"></i>
@@ -19,18 +19,20 @@
             </ul>
         </li>
         <li>
-            <a md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews()">
+            <a auto-height-trigger="viewsLoaded" md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews();">
               <i class="material-icons">playlist_add_check</i>
               <span data-translate="TEST_RUNS"></span>
             </a>
-            <ul>
+            <ul auto-height="viewsLoaded" class="auto-width width-icon">
                 <li>
                     <a data-toggle-nav-collapsed-min back md-button aria-label="menu" href="#!/tests/runs"><i class="fa fa-circle"></i><span data-translate="SHOW_LATEST_RUNS"></span></a>
                 </li>
                 <md-divider data-ng-if="views.length > 0"></md-divider>
-                <li data-toggle-nav-collapsed-min back data-ng-repeat="view in views | orderBy:'name'" style="position: relative;">
+                <li data-toggle-nav-collapsed-min back data-ng-repeat="view in views | orderBy:'name'" style="position: relative;" class="show-on-hover">
                     <a md-button href="#!/views/{{view.id}}">{{view.name}}</a>
-                    <i style="position: absolute; right: 10px; top: 15px;" class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
+                    <span style="position: absolute; right: 10px; top: 15px;" class="show-icon-on-hover">
+                        <i class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
+                    </span>
                 </li>
                 <md-divider></md-divider>
                 <li data-toggle-nav-collapsed-min back has-any-permission="['MODIFY_TEST_RUN_VIEWS']">

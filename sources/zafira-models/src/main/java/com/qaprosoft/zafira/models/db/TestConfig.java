@@ -46,6 +46,11 @@ public class TestConfig extends AbstractEntity
 		super.setId(id);
 	}
 
+	public TestConfig(String platform)
+	{
+		this.platform = platform;
+	}
+
 	public TestConfig init(List<Argument> args)
 	{
 		for(Argument arg : args)

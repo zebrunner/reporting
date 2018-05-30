@@ -58,7 +58,7 @@
             <li>
                 <md-menu md-position-mode="left bottom">
                     <md-button id="profileMenu" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
-                        <profile-photo ng-model="currentUser.photoURL" size="35"></profile-photo>
+                        <profile-photo ng-model="currentUser.photoURL" size="36" auto-resize="false"></profile-photo>
                         <small style="margin-right: 15px;">{{currentUser.username}}</small>
                     </md-button>
                     <md-menu-content class="top-header-dropdown" width="3">

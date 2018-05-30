@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
         $scope.predicate = 'startTime';
         $scope.reverse = false;
@@ -55,9 +55,10 @@
             LESS: " < ",
             BEFORE: " <= ",
             AFTER: " >= ",
-            LAST_SEVEN_DAYS: " last 7 days",
-            LAST_FOURTEEN_DAYS: " last 14 days",
-            LAST_THIRTY_DAYS: " last 30 days"
+            LAST_24_HOURS: " last 24 hours",
+            LAST_7_DAYS: " last 7 days",
+            LAST_14_DAYS: " last 14 days",
+            LAST_30_DAYS: " last 30 days"
         };
 
         var CURRENT_CRITERIA = {
@@ -143,8 +144,9 @@
         };
 
         $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
-            'sc.environment', 'sc.platform', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
-            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0 || value.$$hashKey);});
+            'sc.environment', 'sc.platform', 'sc.reviewed', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
+            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0
+                || new Date(value) ||  value.$$hashKey || value === true);});
             $scope.searchFormIsEmpty = notEmptyValues.length == 0;
         });
 
@@ -363,6 +365,9 @@
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
                 $scope.subscribtions['testRuns'] = $scope.subscribeTestRunsTopic();
+                if($scope.testRunId){
+                    $scope.subscribtions[$scope.testRunId] = $scope.subscribeTestsTopic($scope.testRunId);
+                }
                 UtilService.websocketConnected(wsName);
             }, function () {
                 UtilService.reconnectWebsocket(wsName, $scope.initWebsocket);
@@ -427,8 +432,8 @@
         };
 
         $scope.checkStatisticEvent = function (event) {
-            return ($scope.testRunId && $scope.testRunId != event.testStatistic.testRunId)
-            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testStatistic.testRunId] == null)
+            return ($scope.testRunId && $scope.testRunId != event.testRunStatistics.testRunId)
+            || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRunStatistics.testRunId] == null)
             || ($scope.projects)
             || !$scope.checkSearchCriteria($scope.sc);
         };
@@ -436,7 +441,7 @@
         $scope.checkSearchCriteria = function (sc) {
             var isEmpty = true;
             for (var criteria in sc) {
-                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize") {
+                if ( sc.hasOwnProperty(criteria) && sc[criteria] != null && sc[criteria] != "" && criteria != "page" && criteria != "pageSize" && criteria != "id") {
                     isEmpty = false;
                     break;
                 }
@@ -629,6 +634,10 @@
                 $scope.testRuns[testRun.id].status = testRun.status;
                 $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
                 $scope.testRuns[testRun.id].elapsed = testRun.elapsed;
+                $scope.testRuns[testRun.id].platform = testRun.platform;
+                $scope.testRuns[testRun.id].env = testRun.env;
+                $scope.testRuns[testRun.id].comments = testRun.comments;
+                $scope.testRuns[testRun.id].reviewed = testRun.reviewed;
             }
         };
 
@@ -680,6 +689,8 @@
             $scope.selectAll = false;
 
             $scope.sc.page = page;
+
+            $scope.expandedTestRuns = [];
 
             if (pageSize) {
                 $scope.sc.pageSize = pageSize;
@@ -747,8 +758,6 @@
                 TestService.searchTests(testSearchCriteria).then(function (rs) {
                     if (rs.success) {
                         var data = rs.data;
-                        var inProgressTests = 0;
-                        var testRun = $scope.testRuns[testRunId];
                         for (var i = 0; i < data.results.length; i++) {
                             var test = data.results[i];
                             $scope.addTest(test);
@@ -801,6 +810,10 @@
             $scope.showEmailDialog([testRun], event);
         };
 
+        $scope.createSpreadsheet = function (testRun, event) {
+            $scope.showCreateSpreadsheetDialog([testRun], event);
+        };
+
         $scope.export = function (testRun) {
             TestRunService.exportTestRunResultsHTML(testRun.id).then(function(rs) {
                 if(rs.success)
@@ -826,6 +839,138 @@
             $scope.showRerunDialog(testRun, event);
         };
 
+        $scope.startDebug = function (testRun, event) {
+            $scope.testRunInDebugMode = angular.copy(testRun);
+            debug($scope.testRunInDebugMode);
+        };
+
+        $scope.testRunInDebugMode = {};
+        $scope.debugHost = null;
+        $scope.debugPort = null;
+
+        function debug(testRun) {
+            TestRunService.getJobParameters(testRun.id).then(function(rs) {
+                if(rs.success) {
+                    var jobParameters = rs.data;
+                    if (jobParameters === '') {
+                        alertify.error("Job parameters are not loaded");
+                    } else {
+                        var jobParametersMap = {};
+                        for (var i = 0; i < jobParameters.length; i++){
+                            if (jobParameters[i].name === 'debug'){
+                                jobParameters[i].value = true;
+                            }
+                            if (jobParameters[i].name === 'ci_run_id'){
+                                testRun.ciRunId = jobParameters[i].value;
+                            }
+                            jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
+                        }
+                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
+                            if(rs.success) {
+                                alertify.success('Debug mode is starting, debug status will appear soon');
+                                testRun.id = null;
+                                var debugLog = '';
+                                var parseLogsInterval = $interval(function(){
+                                    TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function(rs) {
+                                        if(rs.success) {
+                                            var map = rs.data;
+                                            var value;
+                                            Object.keys(map).forEach(function(key) {
+                                                value = map[key];
+                                                if(value.includes("Listening for transport dt_socket at address:")){
+                                                    if(debugLog === ''){
+                                                        $scope.debugPort = getPortFromLog(value);
+                                                        $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
+                                                        showDebugToast();
+                                                    }
+                                                    $timeout.cancel(connectDebugTimeout);
+
+                                                    if(debugLog === ''){
+                                                        debugLog = value;
+                                                    }
+
+                                                    if(debugLog !== value){
+                                                        $timeout.cancel(disconnectDebugTimeout);
+                                                        $interval.cancel(parseLogsInterval);
+                                                        closeToast();
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            stopConnectingDebug();
+                                            $timeout.cancel(connectDebugTimeout);
+                                            alertify.error(rs.message);
+                                        }
+                                    });
+                                }, 10000);
+
+                                var connectDebugTimeout = $timeout(function(){
+                                    alertify.error("Problems with starting debug mode occurred, disabling");
+                                    $scope.stopConnectingDebug();
+                                }, 60000);
+
+                                var disconnectDebugTimeout = $timeout(function(){
+                                    $scope.stopDebugMode();
+                                }, 600500);
+
+                                $scope.stopConnectingDebug = function (){
+                                    $timeout.cancel(connectDebugTimeout);
+                                    $interval.cancel(parseLogsInterval);
+                                };
+
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    }
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.stopDebugMode = function(){
+            $scope.stopConnectingDebug();
+            if($scope.testRunInDebugMode){
+                $scope.abort($scope.testRunInDebugMode);
+                $scope.testRunInDebugMode = {};
+            }
+            alertify.warning("Debug mode is disabled");
+        };
+
+        function getPortFromLog(log){
+            if(log){
+                var portLine = log.slice(log.indexOf('address:'));
+                return portLine.split(" ")[1];
+            }
+        }
+
+        function closeToast() {
+            $mdToast
+                .hide()
+                .then(function() {
+                });
+        }
+
+        function showDebugToast() {
+            $mdToast.show({
+                hideDelay: 600000,
+                position: 'bottom right',
+                scope: $scope,
+                preserveScope: true,
+                controller : function ($scope, $mdToast) {
+                    $scope.stopDebug = function() {
+                        $scope.stopDebugMode();
+                        $mdToast
+                            .hide()
+                            .then(function() {
+                            });
+                    };
+                },
+                templateUrl : 'app/_testruns/debug-mode_toast.html'
+            });
+        }
+
         $scope.$watch('selectAll', function(newValue, oldValue) {
         		for(var id in $scope.testRuns)
         		{
@@ -835,11 +980,14 @@
 
         $scope.abort = function (testRun) {
             if($scope.jenkins.enabled) {
-                TestRunService.abortCIJob(testRun.id).then(function (rs) {
-                    if(rs.success)
-                    {
+                TestRunService.abortCIJob(testRun.id, testRun.ciRunId).then(function (rs) {
+                    if(rs.success) {
                         var abortCause = {};
-                        abortCause.comment = "TestRun is aborted manually";
+                        if(testRun.id == null){
+                            abortCause.comment = "Debug mode was disconnected";
+                        } else {
+                            abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
+                        }
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
@@ -1006,7 +1154,7 @@
             }
         };
 
-        $scope.showDemoDialog = function(event, wsURL, testRun, test) {
+        $scope.showDemoDialog = function(event, wsURL, testRun, test, isLive) {
             $mdDialog.show({
                 controller: DemoController,
                 templateUrl: 'app/_testruns/demo_modal.html',
@@ -1018,7 +1166,8 @@
                     wsURL: wsURL,
                     testRun: testRun,
                     test: test,
-                    rabbitmq: $scope.rabbitmq
+                    rabbitmq: $scope.rabbitmq,
+                    isLive: isLive
                 }
             })
                 .then(function(answer) {
@@ -1043,16 +1192,18 @@
                 });
         };
 
-        $scope.markTestAsPassed = function (id) {
-            TestService.markTestAsPassed(id).then(function(rs) {
-                if(rs.success)
-                {
-                }
-                else
-                {
-                    console.error(rs.message);
-                }
-            });
+        $scope.changeTestStatus = function (test, status) {
+            if(test.status != status && confirm('Do you really want mark test as ' + status + '?')) {
+                test.status = status;
+                TestService.updateTest(test).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success('Test was marked as ' + status);
+                    }
+                    else {
+                        console.error(rs.message);
+                    }
+                });
+            }
         };
 
         $scope.showLogsDialog = function(testRun, test, event) {
@@ -1126,6 +1277,44 @@
             });
         };
 
+        $scope.showCreateSpreadsheetDialog = function(testRuns, event) {
+            $mdDialog.show({
+                controller: SpreadsheetController,
+                templateUrl: 'app/_testruns/spreadsheet_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    testRuns: testRuns
+                }
+            })
+                .then(function(answer) {
+                }, function(links) {
+                    if(links.length) {
+                        $mdToast.show({
+                            hideDelay: 0,
+                            position: 'bottom right',
+                            locals: {
+                                links: links
+                            },
+                            controller: function ($scope, $mdToast, links) {
+
+                                $scope.links = links;
+
+                                $scope.closeToast = function () {
+                                    $mdToast
+                                        .hide()
+                                        .then(function () {
+                                        });
+                                };
+                            },
+                            templateUrl: 'app/_testruns/links_toast.html'
+                        });
+                    }
+                });
+        };
+
         $scope.showCommentsDialog = function(testRun, event) {
             $mdDialog.show({
                 controller: CommentsController,
@@ -1165,13 +1354,13 @@
                     isConnectedToJira: $rootScope.tools['JIRA'],
                     isJiraEnabled: $rootScope.jira.enabled
                 }
-            })
-                .then(function(answer) {
-                    if (answer == true) {
-                        $scope.loadTests($scope.lastTestRunOpened);
+            }).then(function() {
+                }, function(response) {
+                    if (response) {
+                        var testRun = $scope.testRuns[test.testRunId];
+                        testRun.tests[test.id] = angular.copy(response);
                     }
-                }, function() {
-                });
+            });
         };
 
         var setWorkItemIsNewStatus = function (workItems){
@@ -1198,8 +1387,7 @@
                 testRun.tests = null;
                 $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                 var subscription = $scope.subscribtions[testRun.id];
-                if(subscription != null)
-                {
+                if(subscription != null) {
                 		subscription.unsubscribe();
                 }
                 delete $scope.subscribtions[testRun.id];
@@ -1497,6 +1685,103 @@
         })();
     }
 
+    function SpreadsheetController($scope, $mdDialog, $mdConstant, UserService, TestRunService, testRuns) {
+
+        $scope.recipients = [];
+        $scope.users = [];
+        $scope.keys = [$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.TAB, $mdConstant.KEY_CODE.COMMA, $mdConstant.KEY_CODE.SPACE, $mdConstant.KEY_CODE.SEMICOLON];
+
+        $scope.createSpreadsheet = function () {
+            $scope.recipients = $scope.recipients.length ? $scope.recipients.toString() : [];
+            $scope.links = [];
+
+            testRuns.forEach(function(testRun) {
+                TestRunService.createTestRunResultsSpreadsheet(testRun.id, $scope.recipients).then(function(rs) {
+                    if(rs.success)
+                    {
+                        $scope.links.push(rs.data);
+                        $scope.cancel($scope.links);
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            });
+        };
+        $scope.users_all = [];
+        var currentText;
+
+        $scope.usersSearchCriteria = {};
+        $scope.asyncContacts = [];
+        $scope.filterSelected = true;
+
+        $scope.querySearch = querySearch;
+        var stopCriteria = '########';
+        function querySearch (criteria, user) {
+            $scope.usersSearchCriteria.email = criteria;
+            currentText = criteria;
+            if(!criteria.includes(stopCriteria)) {
+                stopCriteria = '########';
+                return UserService.searchUsersWithQuery($scope.usersSearchCriteria, criteria).then(function(rs) {
+                    if(rs.success)
+                    {
+                        if (! rs.data.results.length) {
+                            stopCriteria = criteria;
+                        }
+                        return rs.data.results.filter(searchFilter(user));
+                    }
+                    else
+                    {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            return "";
+        }
+
+        function searchFilter(u) {
+            return function filterFn(user) {
+                var users = u;
+                for(var i = 0; i < users.length; i++) {
+                    if(users[i].id == user.id) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        }
+
+        $scope.checkAndTransformRecipient = function (currentUser) {
+            var user = {};
+            if (currentUser.username) {
+                user = currentUser;
+                $scope.recipients.push(currentUser.email);
+                $scope.users.push(user);
+            } else {
+                user.email = currentUser;
+                $scope.recipients.push(user.email);
+                $scope.users.push(user);
+            }
+            return user;
+        };
+        $scope.removeRecipient = function (user) {
+            var index = $scope.recipients.indexOf(user.email);
+            if (index >= 0) {
+                $scope.recipients.splice(index, 1);
+            }
+        };
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function(links) {
+            $mdDialog.cancel(links);
+        };
+        (function initController() {
+
+        })();
+    }
+
     function CommentsController($scope, $mdDialog, TestRunService, SlackService, testRun, isSlackAvailable, slackChannels) {
         $scope.title = testRun.testSuite.name;
         $scope.testRun = angular.copy(testRun);
@@ -1577,7 +1862,7 @@
         })();
     }
 
-    function DemoController($scope, $mdDialog, $timeout, $window, UtilService, wsURL, rabbitmq, testRun, test) {
+    function DemoController($scope, $mdDialog, $timeout, $window, UtilService, wsURL, rabbitmq, testRun, test, isLive) {
 
         var rfb;
         var display;
@@ -1612,14 +1897,19 @@
         };
 
         function autoscale(display, ratio, window) {
-	        	var width = window.innerWidth * 0.9;
-	    		var height = ratio > 1 ?  width / ratio : width * ratio;
-	    		if(height > window.innerHeight * 0.9)
-	    		{
-	    			height = window.innerHeight - 100;
-	    			width = ratio < 1 ? height / ratio : height * ratio;
-	    		}
-	    		display.autoscale(width, height, false);
+	        	var size = calculateSize(window, ratio);
+	    		display.autoscale(size.width, size.height, false);
+        };
+
+        function calculateSize(window, ratio) {
+            var width = window.innerWidth * 0.9;
+            var height = ratio > 1 ?  width / ratio : width * ratio;
+            if(height > window.innerHeight * 0.9)
+            {
+                height = window.innerHeight - 100;
+                width = ratio < 1 ? height / ratio : height * ratio;
+            }
+            return {height: height, width: width};
         };
 
         $scope.$on('$destroy', function () {
@@ -1674,10 +1964,25 @@
         };
 
         (function initController() {
-            $timeout(function () {
-                $scope.initVNCWebsocket();
-            }, 200);
-            $scope.initLogsWebsocket();
+            if(isLive) {
+                $scope.title = 'Live video';
+                $timeout(function () {
+                    $scope.initVNCWebsocket();
+                }, 200);
+                $scope.initLogsWebsocket();
+            } else {
+                $scope.wsURL = wsURL;
+                $scope.title = 'Video';
+                $timeout(function () {
+                    var container = document.getElementsByTagName('video')[0];
+                    var containerRectangle = container.getBoundingClientRect();
+                    var ratio = containerRectangle.width / (containerRectangle.height + 20);
+                    $scope.videoWidth = calculateSize(angular.element($window)[0], ratio).width;
+                    angular.element($window).bind('resize', function() {
+                        $scope.videoWidth = calculateSize(angular.element($window)[0], ratio).width;
+                    });
+                }, 200);
+            }
         })();
     };
 
@@ -1688,9 +1993,11 @@
 		 $scope.loading = true;
 
 	     $scope.$on('$destroy', function() {
-            $scope.testLogsStomp.disconnect();
-            $scope.logs = [];
-            UtilService.websocketConnected('logs');
+             if($scope.testLogsStomp && $scope.testLogsStomp.connected) {
+                 $scope.testLogsStomp.disconnect();
+                 $scope.logs = [];
+                 UtilService.websocketConnected('logs');
+             }
 	     });
 
 	     $scope.hide = function() {
@@ -1920,7 +2227,7 @@
         $scope.issues = [];
         $scope.tasks = [];
         $scope.currentStatus = $scope.test.status;
-        $scope.testStatuses = ['UNKNOWN', 'IN_PROGRESS', 'PASSED', 'FAILED', 'SKIPPED', 'ABORTED'];
+        $scope.testStatuses = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED'];
         $scope.ticketStatuses = ['TO DO', 'OPEN', 'NOT ASSIGNED', 'IN PROGRESS', 'FIXED', 'REOPENED', 'DUPLICATE'];
 
         $scope.selectedTabIndex = 0;
@@ -2236,7 +2543,7 @@
                     $scope.issueJiraIdExists = true;
                     $scope.isIssueClosed = $scope.closedStatusName.toUpperCase() === searchResultIssue.status.name.toUpperCase();
                     $scope.newIssue.description = searchResultIssue.summary;
-                    $scope.newIssue.assignee = searchResultIssue.assignee.name;
+                    $scope.newIssue.assignee = searchResultIssue.assignee ? searchResultIssue.assignee.name : '';
                     $scope.newIssue.reporter = searchResultIssue.reporter.name;
                     $scope.newIssue.status = searchResultIssue.status.name.toUpperCase();
                     if(!$scope.ticketStatuses.filter(function (status) {
@@ -2473,16 +2780,12 @@
 
         /* MODAL_WINDOW functionality */
 
-        $scope.cancel = function () {
-            $scope.hide();
-        };
-
         $scope.hide = function() {
-            $mdDialog.hide();
+            $mdDialog.hide(test);
         };
 
         $scope.cancel = function() {
-            $mdDialog.cancel();
+            $mdDialog.cancel($scope.test);
         };
 
         (function initController() {

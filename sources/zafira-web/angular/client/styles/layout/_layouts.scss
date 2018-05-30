@@ -34,7 +34,7 @@ html {
 .app {
     position: relative;
     min-height: 100%; // important!
-    height: auto; // important!
+    height: 100%; // important!
 
     > .header-container {
         &.header-fixed {
@@ -58,7 +58,7 @@ html {
 
     > .main-container {
         position: relative;
-        min-height: 100%; // important!
+        min-height: 100% !important; // important!
         padding-bottom: 0;
         &:before { // content container background for boxed layout
             content: " ";
@@ -83,16 +83,12 @@ html {
         > .nav-container {
             display: none;
             z-index: 100; // should be highter than top header
-            position: sticky;
-            position: -webkit-sticky;
-            position: -moz-sticky;
-            position: -ms-sticky;
-            position: -o-sticky;
+            position: fixed;
             left: 0;
-            top: 0;
+            top: $header_height;
             float: left;
             width: 220px;
-            height: 100vh;
+            height: 100%;
             transition: width .25s ease-in-out;
             // border-width: 0 1px 0 0;
             // border-style: solid;
@@ -131,10 +127,11 @@ html {
             overflow: hidden;
             min-height: 100%;
             margin-left: 0;
-            //transition: none;
+            margin-top: 0;
             transition: margin-left .25s ease-in-out;
             @media (min-width:$screen-sm) {
                 margin-left: 60px;
+                padding-top: 64px;
             }
         }
 

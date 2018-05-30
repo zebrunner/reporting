@@ -18,37 +18,27 @@ package com.qaprosoft.zafira.services.services;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.qaprosoft.zafira.models.db.Attachment;
@@ -62,59 +52,11 @@ public class SeleniumService
 	
 	private static final Dimension DEFAULT_SCREEN_DIMENSION = new Dimension(1920, 1080);
 	
-	private static final String MAC_PHANTOMJS = "classpath:phantomjs/phantomjs-macos";
-	
-	private static final String WINDOWS_PHANTOMJS = "classpath:phantomjs/phantomjs-windows.exe";
-	
-	private static final String LINUX_PHANTOMJS = "classpath:phantomjs/phantomjs-linux";
-	
-	@Autowired
-	private ResourceLoader resourceLoader;
+	@Value("${zafira.selenium.url}")
+	private String seleniumURL;
 
-     /**
-	 * Initializes PhantomJS binary according to OS.
-	 */
-	@PostConstruct
-	public void init() 
-	{
-		InputStream is = null;
-		try
-		{
-			if (SystemUtils.IS_OS_MAC) 
-			{
-				is = resourceLoader.getResource(MAC_PHANTOMJS).getInputStream();
-			} 
-			else if (SystemUtils.IS_OS_WINDOWS) 
-			{
-				is = resourceLoader.getResource(WINDOWS_PHANTOMJS).getInputStream();
-			} 
-			else 
-			{
-				is = resourceLoader.getResource(LINUX_PHANTOMJS).getInputStream();
-			}
-			
-			File bin = new File("./phantomjs" + (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
-			FileUtils.copyInputStreamToFile(is, bin);
-			IOUtils.closeQuietly(is);
-			
-			Set<PosixFilePermission> perms = new HashSet<>();
-			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			perms.add(PosixFilePermission.OWNER_READ);
-			Files.setPosixFilePermissions(bin.toPath(), perms);
-			
-			System.setProperty("phantomjs.binary.path", bin.getAbsolutePath());
-		}
-		catch(Exception e)
-		{
-			LOGGER.error("Failed to initialize PhantomJS: " + e.getMessage());
-		}
-		finally
-		{
-			IOUtils.closeQuietly(is);
-		}
-	}
-
-	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects, By areaLocator, By titleLocator, Dimension dimension) throws ServiceException
+	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects,
+			By areaLocator, By titleLocator, Dimension dimension, By... toHideLocators) throws ServiceException
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -126,19 +68,16 @@ public class SeleniumService
 		WebDriver wd = null;
 		try
 		{
-			DesiredCapabilities caps = new DesiredCapabilities();
-			caps.setJavascriptEnabled(true);
-			caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[] {"--web-security=no", "--ignore-ssl-errors=yes"});
-	 		wd = new PhantomJSDriver(caps);
+			wd = new RemoteWebDriver(new URL(seleniumURL), DesiredCapabilities.chrome());
 			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
-			
+
 			authorize(wd, auth, projects, domain, urls.get(0));
 			
 			for(String url : urls)
 			{
 				wd.get(url);
-				if(WebDriverUtil.isPageLoading(wd))
+				if(WebDriverUtil.isPageLoadingWithAnimation(wd) && WebDriverUtil.isPageLoading(wd))
 				{
 					WebDriverUtil.waitUntilPageIsLoaded(wd);
 				} else
@@ -147,19 +86,19 @@ public class SeleniumService
 					WebDriverUtil.waitForJSandJQueryToLoad(wd);
 				}
 
-				File screenshot = ((TakesScreenshot) wd).getScreenshotAs(OutputType.FILE);
-				String name = screenshot.getName();
+				hideElements(wd, toHideLocators);
+
+				BufferedImage screenshot = WebDriverUtil.takeScreenShot(wd, wd.findElement(areaLocator));
+				File screenshotDocument = saveImage(screenshot);
+
+				String name = screenshotDocument.getName();
 
                 if(titleLocator != null)
                 {
                     name = wd.findElement(titleLocator).getAttribute("value");
                 }
 
-                if(areaLocator != null)
-				{
-					cropRegion(wd, screenshot, areaLocator);
-				}
-				attachments.add(new Attachment(name, screenshot));
+				attachments.add(new Attachment(name, screenshotDocument));
 			}
 		}
 		catch(Exception e)
@@ -172,14 +111,28 @@ public class SeleniumService
 		}
 		return attachments;
 	}
-	
-	private void cropRegion(WebDriver wd, File screenshot, By regionLocator) throws IOException
+
+	public void hideElements(WebDriver wd, By... toHideLocators)
 	{
-		BufferedImage  imagr = ImageIO.read(screenshot);
-		WebElement area = wd.findElement(regionLocator);
-		Point point = area.getLocation();
-		BufferedImage eleScreenshot= imagr.getSubimage(point.getX(), point.getY(), area.getSize().getWidth(), area.getSize().getHeight());
-		ImageIO.write(eleScreenshot, "png", screenshot);
+
+		JavascriptExecutor js = (JavascriptExecutor) wd;
+		Arrays.asList(toHideLocators)
+				.forEach(toHideLocator ->
+				{
+					if(WebDriverUtil.isElementPresent(wd, toHideLocator, 2))
+					{
+						WebElement webElement = wd.findElement(toHideLocator);
+						js.executeScript("arguments[0].setAttribute('style', 'opacity:0')", webElement);
+					}
+				});
+	}
+
+	private File saveImage(final BufferedImage screenshot) throws IOException
+	{
+		String name = UUID.randomUUID().toString();
+		File screenshotDocument = File.createTempFile(name, ".png");
+		ImageIO.write(screenshot, "png", screenshotDocument);
+		return screenshotDocument;
 	}
 	
 	private String normalizeDomain(String domain)
@@ -194,7 +147,13 @@ public class SeleniumService
 	
 	private void authorize(WebDriver wd, String auth, String projects, String domain, String url) throws InterruptedException
 	{
+		// Get first url to have a domain needed
+		wd.get(url);
+		// Set cookies
 		wd.manage().addCookie(new Cookie.Builder("Access-Token", auth).domain(normalizeDomain(domain)).build());
 		wd.manage().addCookie(new Cookie.Builder("projects", projects).domain(normalizeDomain(domain)).build());
+		wd.get(url);
+		// Refresh page to enable cookies
+		wd.navigate().refresh();
 	}
 }

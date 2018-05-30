@@ -15,10 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
+import static com.qaprosoft.zafira.models.db.Status.*;
+import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -27,15 +40,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.filter.FilterType;
-import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -51,19 +55,26 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
 import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
-
-import static com.qaprosoft.zafira.models.db.Setting.SettingType.*;
-import static com.qaprosoft.zafira.models.db.Status.*;
-import static com.qaprosoft.zafira.services.util.DateFormatter.*;
+import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
 @Service
 public class TestRunService
@@ -171,6 +182,12 @@ public class TestRunService
 	{
 		return testRunMapper.getTestRunByIdFull(id);
 	}
+
+	@Transactional(readOnly = true)
+	public TestRun getTestRunByCiRunIdFull(String ciRunId) throws ServiceException
+	{
+		return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
+	}
 	
 	@Transactional(readOnly = true)
 	public List<TestRun> getTestRunsByStatusAndStartedBefore(Status status, Date startedBefore) throws ServiceException
@@ -204,29 +221,50 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
-		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
-		if(testRun != null) {
-			Long latestTestRunId = testRun.getId();
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
+		TestRun testRun;
+		// Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
+		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+		if(existingRun == null)
+		{
+			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
+					queueTestRunParams.getJobName());
+			if (testRun != null)
 			{
-				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
-				testRun.setJob(job);
+				Long latestTestRunId = testRun.getId();
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
+					Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+					testRun.setUpstreamJob(job);
+				}
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
+					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+				}
+				testRun.setEnv(queueTestRunParams.getEnv());
+				testRun.setCiRunId(queueTestRunParams.getCiRunId());
+				testRun.setElapsed(null);
+				testRun.setPlatform(null);
+				testRun.setConfigXML(null);
+				testRun.setComments(null);
+				testRun.setReviewed(false);
+
+				//make sure to reset below3 fields for existing run as well
+				testRun.setStatus(Status.QUEUED);
+				testRun.setStartedAt(Calendar.getInstance().getTime());
+				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+
+				createTestRun(testRun);
+				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				for (Test test : tests) {
+					testService.createQueuedTest(test, queuedTestRun.getId());
+				}
 			}
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
-			{
-				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
-			}
-			testRun.setCiRunId(queueTestRunParams.getCiRunId());
+		} else {
+			testRun = existingRun;
+
 			testRun.setStatus(Status.QUEUED);
-			testRun.setElapsed(null);
-			testRun.setConfigXML(null);
-			createTestRun(testRun);
-			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-			for (Test test : tests)
-			{
-				testService.createQueuedTest(test, queuedTestRun.getId());
-			}
+			testRun.setStartedAt(Calendar.getInstance().getTime());
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+			updateTestRun(testRun);
 		}
 		return testRun;
 	}
@@ -261,7 +299,9 @@ public class TestRunService
 			if(existingTestRun != null)
 			{
 				existingTestRun.setBuildNumber(testRun.getBuildNumber());
+				existingTestRun.setConfigXML(testRun.getConfigXML());
 				testRun = existingTestRun;
+				//TODO: investigate if startedBy should be also copied
 			}
 			LOGGER.info("Looking for test run with CI ID: " + testRun.getCiRunId());
 			LOGGER.info("Test run found: " + String.valueOf(existingTestRun != null));
@@ -271,44 +311,12 @@ public class TestRunService
 			testRun.setCiRunId(UUID.randomUUID().toString());
 			LOGGER.info("Generating new test run CI ID: " + testRun.getCiRunId());
 		}
-		
-		if(!StringUtils.isEmpty(testRun.getConfigXML()))
-		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
-			{
-				if(!StringUtils.isEmpty(arg.getValue()))
-				{
-					if("env".equals(arg.getKey()))
-					{
-						testRun.setEnv(arg.getValue());
-					}
-					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
-					{
-						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
-								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
-						{
-							testRun.setPlatform(arg.getValue());
-						}
-					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
-							&& !arg.getValue().equals("*"))
-					{
-						testRun.setPlatform(arg.getValue());
-					}
-					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
-					{
-						testRun.setPlatform(arg.getValue() );
-					}
-					else if("app_version".equals(arg.getKey()))
-					{
-						testRun.setAppVersion(arg.getValue());
-					}
-				}
-			}
-		}
+
+		initTestRunWithXml(testRun);
+
 		// Initialize starting time
 		testRun.setStartedAt(Calendar.getInstance().getTime());
-		testRun.setElapsed(null);
+		testRun.setReviewed(false);
 		testRun.setEta(testRunMapper.getTestRunEtaByTestSuiteId(testRun.getTestSuite().getId()));
 		
 		// New test run
@@ -350,21 +358,52 @@ public class TestRunService
 		}
 		return testRun;
 	}
-	
-	@Transactional(rollbackFor = Exception.class)
-	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException
-	{
-		if (StringUtils.isEmpty(abortCause)){
-			abortCause = "Abort cause is unknown";
-		}
-		if(testRun != null){
-			if(QUEUED.equals(testRun.getStatus()))
+
+	public void initTestRunWithXml(TestRun testRun) {
+
+		if(!StringUtils.isEmpty(testRun.getConfigXML()))
+		{
+			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 			{
-				testRun = markAsReviewed(testRun.getId(), abortCause);
+				if(!StringUtils.isEmpty(arg.getValue()))
+				{
+					if("env".equals(arg.getKey()))
+					{
+						testRun.setEnv(arg.getValue());
+					}
+					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
+					{
+						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
+								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
+						{
+							testRun.setPlatform(arg.getValue());
+						}
+					}
+					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
+							&& !arg.getValue().equals("*"))
+					{
+						testRun.setPlatform(arg.getValue());
+					}
+					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
+					{
+						testRun.setPlatform(arg.getValue() );
+					}
+					else if("app_version".equals(arg.getKey()))
+					{
+						testRun.setAppVersion(arg.getValue());
+					}
+				}
 			}
+		}
+	};
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException, InterruptedException
+	{
+		if(testRun != null){
+			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 			if(IN_PROGRESS.equals(testRun.getStatus()))
 			{
-				List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
 				for(Test test : tests)
 				{
 					if(IN_PROGRESS.equals(test.getStatus()))
@@ -372,11 +411,11 @@ public class TestRunService
 						testService.abortTest(test, abortCause);
 					}
 				}
-				testService.updateTestRerunFlags(testRun, tests);
 			}
+			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
-		}
+			calculateTestRunResult(testRun.getId(), true);		}
 		return testRun;
 	}
 
@@ -387,7 +426,9 @@ public class TestRunService
 		TestRun tr = getTestRunByIdFull(id);
 		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
 		updateStatistics(tr.getId(), action);
-		tr.setReviewed(true);
+		if(!"undefined failure".equalsIgnoreCase(comment)){
+			tr.setReviewed(true);
+		}
 		tr = updateTestRun(tr);
 		return tr;
 	}
@@ -398,44 +439,56 @@ public class TestRunService
 		TestRun testRun = getNotNullTestRunById(id);
 
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		
-		// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
-		if(finishTestRun || !IN_PROGRESS.equals(testRun.getStatus()))
+
+		//Aborted testruns don't need status recalculation (already recalculated on abort end-point)
+		if (!ABORTED.equals(testRun.getStatus()))
 		{
-			for(Test test : tests)
+			// Do not update test run status if tests are running and one clicks mark as passed or mark as known issue (https://github.com/qaprosoft/zafira/issues/34)
+			if ((finishTestRun || !IN_PROGRESS.equals(testRun.getStatus())))
 			{
-				if(IN_PROGRESS.equals(test.getStatus()))
+				for (Test test : tests)
 				{
-					testService.skipTest(test);
+					if (IN_PROGRESS.equals(test.getStatus()))
+					{
+						testService.skipTest(test);
+					}
 				}
-			}
-			
-			testRun.setStatus(tests.size() > 0 ? PASSED : SKIPPED);
-			testRun.setKnownIssue(false);
-			testRun.setBlocker(false);
-			for(Test test : tests)
-			{
-				if(test.isKnownIssue())
+				testRun.setStatus(tests.size() > 0 ? PASSED : SKIPPED);
+				testRun.setKnownIssue(false);
+				testRun.setBlocker(false);
+				for (Test test : tests)
 				{
-					testRun.setKnownIssue(true);
-				}
-				if(test.isBlocker())
-				{
-					testRun.setBlocker(true);
-				}
-				if(Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (test.isKnownIssue() && test.isBlocker())))
-				{
-					testRun.setStatus(FAILED);
-					break;
+					if (test.isKnownIssue())
+					{
+						testRun.setKnownIssue(true);
+					}
+					if (test.isBlocker())
+					{
+						testRun.setBlocker(true);
+					}
+					if (Arrays.asList(FAILED, SKIPPED).contains(test.getStatus()) && (!test.isKnownIssue() || (
+							test.isKnownIssue() && test.isBlocker())))
+					{
+						testRun.setStatus(FAILED);
+						break;
+					}
 				}
 			}
 		}
-		
 		if(finishTestRun && testRun.getStartedAt() != null)
 		{
 			LocalDateTime startedAt = new LocalDateTime(testRun.getStartedAt());
 			LocalDateTime finishedAt = new LocalDateTime(Calendar.getInstance().getTime());
-			testRun.setElapsed(Seconds.secondsBetween(startedAt, finishedAt).getSeconds());
+			Integer elapsed = Seconds.secondsBetween(startedAt, finishedAt).getSeconds();
+			// according to https://github.com/qaprosoft/zafira/issues/748
+			if(testRun.getElapsed() != null)
+			{
+				testRun.setElapsed(testRun.getElapsed() + elapsed);
+			} 
+			else
+			{
+				testRun.setElapsed(elapsed);
+			}
 		}
 		
 		updateTestRun(testRun);
@@ -479,15 +532,32 @@ public class TestRunService
 		{
 			throw new ServiceException("No test runs found by ID: " + testRunId);
 		}
+		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	@Transactional(readOnly=true)
+	public String sendTestRunResultsNotification(final String ciRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
+		TestRun testRun = getTestRunByCiRunIdFull(ciRunId);
+		if(testRun == null)
+		{
+			throw new ServiceException("No test runs found by CI run ID: " + ciRunId);
+		}
+		List<Test> tests = testService.getTestsByTestRunCiRunId(ciRunId);
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+	}
+
+	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	{
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
-		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
-        }
+		}
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setShowOnlyFailures(showOnlyFailures);
@@ -515,7 +585,7 @@ public class TestRunService
 		return freemarkerUtil.getFreeMarkerTemplateContent(email.getTemplate(), email);
 	}
 	
-	private Configuration readConfiguration(String xml) throws JAXBException
+	public Configuration readConfiguration(String xml) throws JAXBException
 	{
         Configuration configuration = new Configuration();
         if (!StringUtils.isEmpty(xml)) {
@@ -526,7 +596,7 @@ public class TestRunService
 		return configuration;
 	}
 	
-	private static int calculateSuccessRate(TestRun testRun)
+	public static int calculateSuccessRate(TestRun testRun)
 	{
 		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();
 		double rate = (double) testRun.getPassed() / (double) total;
@@ -594,16 +664,6 @@ public class TestRunService
 				case REMOVE_BLOCKER:
 					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
 					break;
-				case MARK_AS_PASSED:
-					if(status != null && status.equals(SKIPPED))
-					{
-						testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
-					} else
-					{
-						testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
-					}
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-					break;
 				case MARK_AS_REVIEWED:
 					testRunStatistics.setReviewed(true);
 					break;
@@ -668,14 +728,76 @@ public class TestRunService
 					break;
 				case ABORTED:
 					testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
-					if(testRunStatistics.getInProgress() > 0)
-					{
+					if(testRunStatistics.getInProgress() > 0) {
 						testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
 					}
 					break;
 			    default:
 			    	break;
 			    }
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		} finally
+		{
+			try
+			{
+				updateLocks.get(testRunId).unlock();
+			} catch (ExecutionException e)
+			{
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return testRunStatistics;
+	}
+
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId - test run id
+	 * @param newStatus - new test status
+	 * @param currentStatus - current test status
+	 * @return new statistics
+	 */
+	@CachePut(value = "testRunStatistics", key = "#testRunId")
+	public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus)
+	{
+		TestRunStatistics testRunStatistics = null;
+		try
+		{
+			updateLocks.get(testRunId).lock();
+			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
+			switch (newStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() + 1);
+				break;
+			default:
+				break;
+			}
+			switch (currentStatus) {
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() - 1);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() - 1);
+				break;
+			default:
+				break;
+			}
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);
