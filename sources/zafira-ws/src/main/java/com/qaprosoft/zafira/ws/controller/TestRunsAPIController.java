@@ -278,13 +278,14 @@ public class TestRunsAPIController extends AbstractController
 	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List <TestRun> rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false") Boolean doRebuild,
+			@RequestParam(value = "doRebuild", defaultValue = "true") Boolean rerunFailures,
 			@RequestBody JobSearchCriteria sc)
 			throws ServiceException
 	{
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		if(doRebuild && testRuns != null){
 			for(TestRun testRun: testRuns){
-				jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), false);
+				jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
 			}
 		}
 		return testRuns;
