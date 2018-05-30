@@ -717,7 +717,8 @@
         <result column="ENV" property="env" />
 		<result column="Started" property="startedAt" />
 		<result column="Elapsed" property="elapsed" />
-		<result column="Job" property="job.jobURL" />
+		<result column="JOB_URL" property="job.jobURL" />
+        <result column="JOB_NAME" property="job.name" />
 		<result column="PROJECT" property="project.name" />
 	</resultMap>
 
