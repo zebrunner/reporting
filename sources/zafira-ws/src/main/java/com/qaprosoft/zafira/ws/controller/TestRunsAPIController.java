@@ -31,6 +31,8 @@ import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadshe
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -124,6 +126,8 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private StatisticsService statisticsService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunsAPIController.class);
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
@@ -286,9 +290,13 @@ public class TestRunsAPIController extends AbstractController
 		if(testRuns != null){
 			if(doRebuild) {
 				for(TestRun testRun: testRuns){
-					boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-					if (!success) {
-						throw new UnableToRebuildCIJobException();
+					try {
+						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+						if (!success) {
+							throw new UnableToRebuildCIJobException();
+						}
+					} catch (UnableToRebuildCIJobException e) {
+						LOGGER.error("Problems with building job occured" + e);
 					}
 				}
 			}
