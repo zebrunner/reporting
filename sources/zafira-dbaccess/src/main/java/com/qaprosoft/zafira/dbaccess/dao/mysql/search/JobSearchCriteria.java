@@ -2,14 +2,32 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
 public class JobSearchCriteria
 {
-
-	private String env;
-	private String platform;
-	private String owner;
+	private Integer upstreamJobId;
+	private Integer upstreamJobBuildNumber;
 	private String scmURL;
 	private Boolean notExecuted;
-
+	private String owner;
 	private Integer failurePercent;
+
+	public Integer getUpstreamJobId()
+	{
+		return upstreamJobId;
+	}
+
+	public void setUpstreamJobId(Integer upstreamJobId)
+	{
+		this.upstreamJobId = upstreamJobId;
+	}
+
+	public Integer getUpstreamJobBuildNumber()
+	{
+		return upstreamJobBuildNumber;
+	}
+
+	public void setUpstreamJobBuildNumber(Integer upstreamJobBuildNumber)
+	{
+		this.upstreamJobBuildNumber = upstreamJobBuildNumber;
+	}
 
 	public String getScmURL()
 	{
@@ -19,16 +37,6 @@ public class JobSearchCriteria
 	public void setScmURL(String scmURL)
 	{
 		this.scmURL = scmURL;
-	}
-
-	public String getEnv()
-	{
-		return env;
-	}
-
-	public void setEnv(String env)
-	{
-		this.env = env;
 	}
 
 	public Boolean getNotExecuted()
@@ -49,16 +57,6 @@ public class JobSearchCriteria
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
-	}
-
-	public String getPlatform()
-	{
-		return platform;
-	}
-
-	public void setPlatform(String platform)
-	{
-		this.platform = platform;
 	}
 
 	public Integer getFailurePercent()
