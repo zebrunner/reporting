@@ -276,7 +276,7 @@ public class TestRunsAPIController extends AbstractController
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List <TestRun> rerunJobs(
+	public void rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
 			@RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
 			@RequestBody JobSearchCriteria sc)
@@ -285,10 +285,11 @@ public class TestRunsAPIController extends AbstractController
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		if(doRebuild && testRuns != null){
 			for(TestRun testRun: testRuns){
-				jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+				if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
+					throw new UnableToRebuildCIJobException();
+				}
 			}
 		}
-		return testRuns;
 	}
 
 	@ResponseStatusDetails
