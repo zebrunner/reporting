@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.Status;
@@ -310,6 +311,12 @@ public class TestService
 	public List<Test> getTestsByTestRunId(long testRunId) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunId(testRunId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunId(String testRunId) throws ServiceException
+	{
+		return testRunId.matches("\\d+") ? testMapper.getTestsByTestRunId(Long.valueOf(testRunId)) : testMapper.getTestsByTestRunCiRunId(testRunId);
 	}
 
 	@Transactional(readOnly = true)

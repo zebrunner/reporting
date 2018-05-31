@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -181,6 +182,12 @@ public class TestRunService
 	public TestRun getTestRunByIdFull(long id) throws ServiceException
 	{
 		return testRunMapper.getTestRunByIdFull(id);
+	}
+
+	@Transactional(readOnly = true)
+	public TestRun getTestRunByIdFull(String id) throws ServiceException
+	{
+		return id.matches("\\d+") ? testRunMapper.getTestRunByIdFull(Long.valueOf(id)) : getTestRunByCiRunIdFull(id);
 	}
 
 	@Transactional(readOnly = true)
@@ -525,7 +532,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final String testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -537,14 +544,14 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsNotification(final String ciRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsNotification(final String id, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByCiRunIdFull(ciRunId);
+		TestRun testRun = getTestRunByCiRunId(id);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by CI run ID: " + ciRunId);
+			throw new ServiceException("No test runs found by ID: " + id);
 		}
-		List<Test> tests = testService.getTestsByTestRunCiRunId(ciRunId);
+		List<Test> tests = testService.getTestsByTestRunId(id);
 		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 
@@ -567,17 +574,17 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly=true)
-	public String exportTestRunHTML(final Long testRunId) throws ServiceException, JAXBException
+	public String exportTestRunHTML(final String id) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByIdFull(testRunId);
+		TestRun testRun = getTestRunByIdFull(id);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by ID: " + testRunId);
+			throw new ServiceException("No test runs found by ID: " + id);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 
-		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		List<Test> tests = testService.getTestsByTestRunId(id);
 
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
