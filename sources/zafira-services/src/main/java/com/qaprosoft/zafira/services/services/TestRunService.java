@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -186,7 +187,7 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public TestRun getTestRunByIdFull(String id) throws ServiceException
 	{
-		return isCiRunId(id) ? getTestRunByCiRunIdFull(id) : testRunMapper.getTestRunByIdFull(Long.valueOf(id));
+		return id.matches("\\d+") ? testRunMapper.getTestRunByIdFull(Long.valueOf(id)) : getTestRunByCiRunIdFull(id);
 	}
 
 	@Transactional(readOnly = true)
@@ -828,18 +829,5 @@ public class TestRunService
 	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
 	{
 		return updateStatistics(testRunId, status, null);
-	}
-
-	public boolean isCiRunId(String id)
-	{
-		boolean result = false;
-		try
-		{
-			Long.valueOf(id);
-		} catch (Exception e)
-		{
-			result = true;
-		}
-		return result;
 	}
 }
