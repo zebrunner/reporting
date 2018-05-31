@@ -163,7 +163,57 @@
 				zafira.PROJECTS P ON TR.PROJECT_ID = P.ID
 		]]>
 	</sql>
-	
+
+	<sql id="getJobTestRun">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
+				TR.STATUS AS TEST_RUN_STATUS,
+				TR.SCM_URL AS TEST_RUN_SCM_URL,
+				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
+				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
+				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
+				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.BLOCKER AS TEST_RUN_BLOCKER,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
+				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT,
+				TR.ELAPSED AS TEST_RUN_ELAPSED,
+				TR.ETA AS TEST_RUN_ETA,
+				TR.COMMENTS AS TEST_RUN_COMMENTS,
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
+
+				U.ID AS TEST_RUN_USER_ID,
+				U.USERNAME AS TEST_RUN_USER_USER_NAME,
+				U.EMAIL AS TEST_RUN_USER_EMAIL,
+				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
+				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
+				U.COVER_PHOTO_URL AS TEST_RUN_USER_COVER_PHOTO_URL,
+
+                J.ID AS TEST_RUN_JOB_ID,
+                J.NAME AS TEST_RUN_JOB_NAME,
+                J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
+                J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST
+
+            FROM
+				zafira.TEST_RUNS TR
+			LEFT JOIN zafira.USERS U
+				ON TR.USER_ID = U.ID
+            LEFT JOIN zafira.JOBS J
+                ON TR.JOB_ID = J.ID
+		]]>
+	</sql>
+
 	<select id="getTestRunById" resultMap="TestRunResultMap">
 		<include refid="getTestRun" />
 		<![CDATA[
@@ -410,8 +460,41 @@
 			</otherwise>
 		</choose>
     </select>
-    
-    <select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
+
+	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
+        <![CDATA[
+				SELECT *
+				FROM
+					zafira.NIGHTLY_VIEW NV
+			]]>
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
+                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
+            ]]>
+			<if test="null != notExecuted and notExecuted">
+				<![CDATA[ AND (NV.FAILED > 0
+			              OR NV.SKIPPED > 0
+			              OR NV.ABORTED > 0
+			              OR NV.QUEUED > 0)
+                ]]>
+			</if>
+            <if test="null != scmURL">
+                <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(#{scmURL}) ]]>
+            </if>
+			<if test="null != owner">
+				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(%#{owner}%) ]]>
+			</if>
+            <if test="null != hashcode">
+                <![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.NIGHTLY_FAILURES_VIEW NFV WHERE NFV.MESSAGE_HASHCODE = #{hashcode}) ]]>
+            </if>
+            <if test="null != failurePercent">
+                <![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent}
+                ]]>
+            </if>
+        </trim>
+	</select>
+
+	<select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
 	    <![CDATA[
 	    	SELECT 
 	    		avg(ELAPSED)::int AS ETA
@@ -512,7 +595,7 @@
 			    	zafira.TEST_RUNS
 			     WHERE 
 			     	STARTED_AT >= current_date - interval '2 week'
-			     GROUP BY JOB_ID, ENV) AS MAX 
+			     GROUP BY JOB_ID, ENV) AS MAX
 			USING 
 				(JOB_ID, STARTED_AT)
 			WHERE
@@ -623,67 +706,86 @@
 		<include refid="deleteTestRun" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="NightlyViewResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="id" />
-
-		<result column="TEST_RUN_USER_ID" property="user.id" />
-		<result column="TEST_RUN_USER_USER_NAME" property="user.username" />
-		<result column="TEST_RUN_USER_EMAIL" property="user.email" />
-		<result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
-		<result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
-		<result column="TEST_RUN_USER_COVER_PHOTO_URL" property="user.photoURL" />
-
-		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
-		<result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
-		<result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
-		<result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
-
-		<result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
-		<result column="TEST_RUN_STATUS" property="status" />
-		<result column="TEST_RUN_SCM_URL" property="scmURL" />
-		<result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
-		<result column="TEST_RUN_SCM_COMMIT" property="scmCommit" />
-		<result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
-		<result column="TEST_RUN_CONFIG_XML" property="configXML" />
-		<result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />
-		<result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
-		<result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
-		<result column="TEST_RUN_STARTED_BY" property="startedBy" />
-		<result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
-		<result column="TEST_RUN_BLOCKER" property="blocker" />
-		<result column="TEST_RUN_PLATFORM" property="platform" />
-		<result column="TEST_RUN_APP_VERSION" property="appVersion" />
-		<result column="TEST_RUN_ENV" property="env" />
-		<result column="TEST_RUN_STARTED_AT" property="startedAt" />
-		<result column="TEST_RUN_ELAPSED" property="elapsed" />
-		<result column="TEST_RUN_ETA" property="eta" />
-		<result column="TEST_RUN_COMMENTS" property="comments" />
-		<result column="TEST_RUN_DRIVER_MODE" property="driverMode" />
-		<result column="TEST_RUN_REVIEWED" property="reviewed" />
-		<result column="TEST_RUN_PASSED" property="passed" />
-		<result column="TEST_RUN_FAILED" property="failed" />
-		<result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
-		<result column="TEST_RUN_FAILED_AS_BLOCKER" property="failedAsBlocker" />
-		<result column="TEST_RUN_SKIPPED" property="skipped" />
-		<result column="TEST_RUN_IN_PROGRESS" property="inProgress" />
-		<result column="TEST_RUN_QUEUED" property="queued" />
-		<result column="TEST_RUN_ABORTED" property="aborted" />
-		<result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
-		<result column="TEST_RUN_CREATED_AT" property="createdAt" />
-
-		<result column="TEST_RUN_JOB_ID" property="job.id" />
-		<result column="TEST_RUN_JOB_NAME" property="job.name" />
-		<result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
-		<result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
-
-		<result column="TEST_RUN_PROJECT_ID" property="project.id" />
-		<result column="TEST_RUN_PROJECT_NAME" property="project.name" />
-		<result column="TEST_RUN_PROJECT_DESCRIPTION" property="project.description" />
-		<result column="TEST_RUN_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
-		<result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
+		<result column="OWNER_ID" property="user.id" />
+		<result column="OWNER" property="user.username" />
+		<result column="EMAIL" property="user.email" />
+		<result column="TEST_SUITE_NAME" property="testSuite.name" />
+        <result column="TEST_RUN_ID" property="id" />
+		<result column="SCM_URL" property="scmURL" />
+		<result column="UPSTREAM_JOB_ID" property="upstreamJob.id" />
+		<result column="UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
+		<result column="JobBuild" property="buildNumber" />
+        <result column="ENV" property="env" />
+		<result column="Started" property="startedAt" />
+		<result column="Elapsed" property="elapsed" />
+		<result column="JOB_URL" property="job.jobURL" />
+        <result column="JOB_NAME" property="job.name" />
+		<result column="PROJECT" property="project.name" />
 	</resultMap>
 
-	<resultMap type="com.qaprosoft.zafira.models.dto.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
+        <id column="TEST_RUN_ID" property="id" />
+
+        <result column="TEST_RUN_USER_ID" property="user.id" />
+        <result column="TEST_RUN_USER_USER_NAME" property="user.username" />
+        <result column="TEST_RUN_USER_EMAIL" property="user.email" />
+        <result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
+        <result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
+        <result column="TEST_RUN_USER_COVER_PHOTO_URL" property="user.photoURL" />
+
+        <result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
+        <result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
+        <result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
+        <result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+
+        <result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
+        <result column="TEST_RUN_STATUS" property="status" />
+        <result column="TEST_RUN_SCM_URL" property="scmURL" />
+        <result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
+        <result column="TEST_RUN_SCM_COMMIT" property="scmCommit" />
+        <result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
+        <result column="TEST_RUN_CONFIG_XML" property="configXML" />
+        <result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />
+        <result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
+        <result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
+        <result column="TEST_RUN_STARTED_BY" property="startedBy" />
+        <result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
+        <result column="TEST_RUN_BLOCKER" property="blocker" />
+        <result column="TEST_RUN_PLATFORM" property="platform" />
+        <result column="TEST_RUN_APP_VERSION" property="appVersion" />
+        <result column="TEST_RUN_ENV" property="env" />
+        <result column="TEST_RUN_STARTED_AT" property="startedAt" />
+        <result column="TEST_RUN_ELAPSED" property="elapsed" />
+        <result column="TEST_RUN_ETA" property="eta" />
+        <result column="TEST_RUN_COMMENTS" property="comments" />
+        <result column="TEST_RUN_DRIVER_MODE" property="driverMode" />
+        <result column="TEST_RUN_REVIEWED" property="reviewed" />
+        <result column="TEST_RUN_PASSED" property="passed" />
+        <result column="TEST_RUN_FAILED" property="failed" />
+        <result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
+        <result column="TEST_RUN_FAILED_AS_BLOCKER" property="failedAsBlocker" />
+        <result column="TEST_RUN_SKIPPED" property="skipped" />
+        <result column="TEST_RUN_IN_PROGRESS" property="inProgress" />
+        <result column="TEST_RUN_QUEUED" property="queued" />
+        <result column="TEST_RUN_ABORTED" property="aborted" />
+        <result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
+        <result column="TEST_RUN_CREATED_AT" property="createdAt" />
+
+        <result column="TEST_RUN_JOB_ID" property="job.id" />
+        <result column="TEST_RUN_JOB_NAME" property="job.name" />
+        <result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
+        <result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
+
+        <result column="TEST_RUN_PROJECT_ID" property="project.id" />
+        <result column="TEST_RUN_PROJECT_NAME" property="project.name" />
+        <result column="TEST_RUN_PROJECT_DESCRIPTION" property="project.description" />
+        <result column="TEST_RUN_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+        <result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
+    </resultMap>
+
+    <resultMap type="com.qaprosoft.zafira.models.dto.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="testRunId" />
 		<result column="TEST_RUN_REVIEWED" property="reviewed" />
 		<result column="TEST_RUN_PASSED" property="passed" />
