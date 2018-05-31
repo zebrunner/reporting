@@ -12,6 +12,7 @@
         ,'app.user'
         ,'app.testcase'
         ,'app.testrun'
+        ,'app.testruninfo'
         ,'app.view'
         ,'app.settings'
         ,'app.monitors'

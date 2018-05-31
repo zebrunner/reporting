@@ -1,0 +1,93 @@
+<div class="page page-profile" ng-controller="TestRunListController">
+  <div class="row ui-section no-margin title-container">
+    <h2 id="testrun-info-title">MapMyFitness Android - Advanced Acceptance {{testRun.testSuite.name}}</h2>
+    <span><i class="material-icons">keyboard_backspace</i></span>
+  </div>
+  <div class="row no-margin tests-info-container">
+    <div class="test-info-section col-md-8 no-padding">
+      <div class="row no-margin" data-ng-controller="TabsController" ng-cloak>
+        <section class="panel panel-default">
+            <div class="panel-body no-padding">
+                <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
+                    <md-tab ng-repeat="tab in tabs"
+                            ng-disabled="tab.disabled"
+                            label="{{tab.title}}">
+                        <div class="tab{{$index%4}}">
+                            <div class="tab-content">
+                              <div class="table-responsive" ng-if="selectedIndex==0">
+                                  <table class="table-history table table-striped no-margin">
+                                      <thead>
+                                          <tr>
+                                              <th>Visuals</th>
+                                              <th>Start</th>
+                                              <th>Action</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr>
+                                              <td><i class="material-icons">insert_photo</i></td>
+                                              <td>00:00:00</td>
+                                              <td>Request path: jefbhebfcbhche</td>
+                                          </tr>
+                                          <tr>
+                                            <td><i class="material-icons">insert_photo</i></td>
+                                            <td>00:00:10</td>
+                                            <td>
+                                              [AbstractApiMethodV2.java] [20] [INFO] Base properties loaded: api/users/user.properties
+                                            </td>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                              </div>
+                              <div class="screenshots-gallery" ng-if="selectedIndex==1">
+                              </div>
+                            </div>
+                        </div>
+                    </md-tab>
+                </md-tabs>
+            </div>
+        </section>
+      </div>
+    </div>
+    <div class="video-section col-md-4 no-padding">
+      <h4>
+        Test online
+      </h4>
+      <md-chips>
+        <md-chip>Driver 1</md-chip>
+        <md-chip class="active">Driver 2</md-chip>
+      </md-chips>
+      <div class="video-wrapper">
+        <video controls>
+          <source src="{{}}" type="video/mp4">
+          <source src="{{}}" type="video/ogg">
+            Your browser does not support the video tag.
+        </video>
+      </div>
+      <ul>
+        <li>
+          Status
+          <span>In progress{{status}}</span>
+        </li>
+        <li>
+          Started
+          <span>04:31 UTC 18 Apr 2018{{started}}</span>
+        </li>
+        <li>
+          Duration
+          <span>{{duration}}</span>
+        </li>
+        <li>
+          Platform
+          <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
+          <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+          <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
+        </li>
+        <li>
+          Browser
+          <span>{{browser}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
