@@ -60,12 +60,14 @@
         };
 
         $scope.loadViews = function () {
+            $scope.viewsLoaded = false;
             getViews().then(function (response) {
                $scope.viewsLoaded = true;
             });
         };
 
         $scope.loadDashboards = function() {
+            $scope.dashboardsLoaded = false;
             getDashboards().then(function (response) {
                 $scope.dashboardsLoaded = true;
             });
