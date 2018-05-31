@@ -296,7 +296,7 @@ public class TestRunsAPIController extends AbstractController
 							throw new UnableToRebuildCIJobException();
 						}
 					} catch (UnableToRebuildCIJobException e) {
-						LOGGER.error("Problems with building job occured" + e);
+						LOGGER.error("Problems with job building occurred" + e);
 					}
 				}
 			}
