@@ -319,6 +319,7 @@ CREATE MATERIALIZED VIEW NIGHTLY_FAILURES_VIEW AS (
     '<a href="{#zafiraURL}#!/tests/runs/' || TEST_RUNS.ID || '" target="_blank">' || JOBS.NAME || '</a>' AS REPORT,
     '<a href="' || JOBS.JOB_URL || '/' || TEST_RUNS.build_number || '/eTAF_Report' || '" target="_blank">' || JOBS.NAME || '</a>' AS ETAF_REPORT,
     '<a href="' || JOBS.JOB_URL || '/' || TEST_RUNS.build_number || '/rebuild/parameterized' || '" target="_blank">Rebuild</a>' AS REBUILD,
+    TEST_RUNS.ID AS TEST_RUN_ID,
     TEST_RUNS.UPSTREAM_JOB_ID AS UPSTREAM_JOB_ID,
     TEST_RUNS.UPSTREAM_JOB_BUILD_NUMBER AS UPSTREAM_JOB_BUILD_NUMBER,
     TESTS.MESSAGE AS MESSAGE,

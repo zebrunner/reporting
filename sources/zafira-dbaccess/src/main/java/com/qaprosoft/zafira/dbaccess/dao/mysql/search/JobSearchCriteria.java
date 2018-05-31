@@ -7,6 +7,7 @@ public class JobSearchCriteria
 	private String scmURL;
 	private Boolean notExecuted;
 	private String owner;
+	private Integer hashcode;
 	private Integer failurePercent;
 
 	public Integer getUpstreamJobId()
@@ -57,6 +58,16 @@ public class JobSearchCriteria
 	public void setOwner(String owner)
 	{
 		this.owner = owner;
+	}
+
+	public Integer getHashcode()
+	{
+		return hashcode;
+	}
+
+	public void setHashcode(Integer hashcode)
+	{
+		this.hashcode = hashcode;
 	}
 
 	public Integer getFailurePercent()

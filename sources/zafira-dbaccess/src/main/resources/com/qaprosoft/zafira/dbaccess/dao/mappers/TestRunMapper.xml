@@ -484,6 +484,9 @@
 			<if test="null != owner">
 				<![CDATA[ AND LOWER(NV.OWNER) = LOWER(#{owner}) ]]>
 			</if>
+            <if test="null != hashcode">
+                <![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.NIGHTLY_FAILURES_VIEW NFV WHERE NFV.MESSAGE_HASHCODE = #{hashcode}) ]]>
+            </if>
             <if test="null != failurePercent">
                 <![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent}
                 ]]>
