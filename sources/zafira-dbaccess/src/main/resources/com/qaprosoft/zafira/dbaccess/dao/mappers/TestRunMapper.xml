@@ -482,7 +482,7 @@
                 <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(#{scmURL}) ]]>
             </if>
 			<if test="null != owner">
-				<![CDATA[ AND LOWER(NV.OWNER) = LOWER(#{owner}) ]]>
+				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(%#{owner}%) ]]>
 			</if>
             <if test="null != hashcode">
                 <![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.NIGHTLY_FAILURES_VIEW NFV WHERE NFV.MESSAGE_HASHCODE = #{hashcode}) ]]>
