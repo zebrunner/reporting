@@ -476,30 +476,60 @@
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
+
+                function isMin() {
+                    return angular.element('.nav-collapsed-min').length != 0;
+                };
+
+                var mouseOnElement = false;
+                var elementClicked = false;
+
+                var wasInit = false;
+
                 var initOn = attrs.autoHeight;
+
+                var trigger = angular.element('*[auto-height-trigger=\'' + initOn + '\']')[0];
+                trigger.onmouseenter = function () {
+                    mouseOnElement = true;
+                };
+                trigger.onmouseleave = function () {
+                    mouseOnElement = false;
+                };
+
+                trigger.onclick = function (event) {
+                    elementClicked = !elementClicked;
+                    var isMin = angular.element('.nav-collapsed-min').length != 0;
+                    if(! isMin && elementClicked && wasInit) {
+                        // timeout need to content animation complete waiting
+                        setTimeout(function () {
+                            if(elementClicked) {
+                                initHeight(element[0]);
+                            }
+                        }, 500);
+                    }
+                };
+
+                function initHeight(el) {
+                    var windowHeight = $window.innerHeight;
+                    var boundingBox = el.getBoundingClientRect();
+                    el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height >= 65 ? boundingBox.height + 'px' : '65px';
+                    el.style['overflow-y'] = 'auto';
+                };
+
                 if(initOn) {
                     scope.$watch(initOn, function (newVal, oldVal) {
-                        var isMin = angular.element('.nav-collapsed-min').length == 0;
-                        if(newVal) {
-                            if(! isMin) {
-                                initHeight(element[0]);
-                            } else {
-                                var trigger = angular.element('*[auto-height-trigger=\'' + initOn + '\']')[0];
-                                trigger.onclick = function (event) {
-                                    setTimeout(function () {
-                                        initHeight(element[0]);
-                                    }, 500);
+                        var isMin = angular.element('.nav-collapsed-min').length != 0;
+                        if (newVal) {
+                            wasInit = true;
+                            if (isMin) {
+                                if (mouseOnElement) {
+                                    initHeight(element[0]);
                                 }
                             }
                         }
 
-                        function initHeight(el) {
-                            var windowHeight = $window.innerHeight;
-                            var boundingBox = el.getBoundingClientRect();
-                            el.style['height'] = (boundingBox.top + boundingBox.height) > windowHeight ? windowHeight - boundingBox.top - 65 + 'px' : boundingBox.height >= 65 ? boundingBox.height + 'px' : '65px';
-                            el.style['overflow-y'] = 'auto';
-                        };
                     });
+
                 }
             }
         };
