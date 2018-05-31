@@ -338,7 +338,7 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Send test run result email", nickname = "sendTestRunResultsEmail", code = 200, httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value = "id") long id,
+	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value = "id") String id,
 			@RequestBody @Valid EmailType email,
 			@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
 			@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
@@ -354,7 +354,7 @@ public class TestRunsAPIController extends AbstractController
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", code = 200, httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/spreadsheet", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") long id, @RequestBody String recipients) throws ServiceException
+	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") String id, @RequestBody String recipients) throws ServiceException
 	{
 		recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
 		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
@@ -365,15 +365,15 @@ public class TestRunsAPIController extends AbstractController
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Send test run result notification", nickname = "sendTestRunResultsNotification", code = 200, httpMethod = "POST", response = String.class)
-	@RequestMapping(value = "notification/{ciRunId}", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendTestRunResultsNotification(@PathVariable(value = "ciRunId") String ciRunId,
+	@RequestMapping(value = "notification/{id}", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendTestRunResultsNotification(@PathVariable(value = "id") String id,
 														@RequestBody @Valid EmailType email,
 														@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
 														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
 			throws ServiceException, JAXBException
 	{
 		String[] recipients = getRecipients(email.getRecipients());
-		return testRunService.sendTestRunResultsNotification(ciRunId, "failures".equals(filter), showStacktrace, recipients);
+		return testRunService.sendTestRunResultsNotification(id, "failures".equals(filter), showStacktrace, recipients);
 	}
 
 	@ResponseStatusDetails
@@ -382,7 +382,7 @@ public class TestRunsAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", code = 200, httpMethod = "GET", response = String.class)
 	@RequestMapping(value = "{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String exportTestRunHTML(@PathVariable(value = "id") long id)
+	public @ResponseBody String exportTestRunHTML(@PathVariable(value = "id") String id)
 			throws ServiceException, JAXBException
 	{
 		return testRunService.exportTestRunHTML(id);

@@ -313,6 +313,13 @@ public class TestService
 	}
 
 	@Transactional(readOnly = true)
+	public List<Test> getTestsByTestRunId(String testRunId) throws ServiceException
+	{
+		return isCiRunId(testRunId) ? testMapper.getTestsByTestRunCiRunId(testRunId)
+				: testMapper.getTestsByTestRunId(Long.valueOf(testRunId));
+	}
+
+	@Transactional(readOnly = true)
 	public List<Test> getTestsByTestRunCiRunId(String testRunCiRunId) throws ServiceException
 	{
 		return testMapper.getTestsByTestRunCiRunId(testRunCiRunId);
@@ -584,5 +591,18 @@ public class TestService
 			testIds.add(test.getId());
 		}
 		return testIds;
+	}
+
+	private boolean isCiRunId(String id)
+	{
+		boolean result = false;
+		try
+		{
+			Long.valueOf(id);
+		} catch (Exception e)
+		{
+			result = true;
+		}
+		return result;
 	}
 }
