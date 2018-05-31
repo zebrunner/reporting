@@ -540,9 +540,10 @@ section.zaf-light .article-title {
 }
 
 #testrun-info-title {
-  margin: 13px 0;
-  padding-left: 55px;
+  margin: 0;
+  padding: 16px 0 13px 55px;
   font-size: 18px;
+  border-bottom: 1px solid $custom-gray;
 }
 
 .title-container span{
@@ -1670,12 +1671,22 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     padding-bottom: 8px;
 }
 
+#testrun-info-page {
+  min-height: 100%;
+  background-color: #fff !important;
+}
+
 .tests-info-container {
-  height: 100%;
+  min-height: 100%;
 }
 
 .test-info-section {
-  height: 100%;
+  min-height: 100%;
+
+  & .panel {
+    border: none !important;
+    box-shadow: none !important;
+  }
 
   .md-tab {
     color: $medium-gray;
@@ -1697,6 +1708,18 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     padding: 18px 0 15px 16px;
     font-size: 16px;
     color: $dark;
+
+    & span {
+      width: 12px;
+      height: 12px;
+      padding-top: -8px;
+
+      & img {
+        width: inherit;
+        position: relative;
+        top: -6px;
+      }
+    }
   }
 
   & md-chips-wrap {
@@ -1719,17 +1742,26 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       &+.active {
         background: $brand-primary;
       }
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
   & .video-wrapper {
     margin: 0 16px;
     background: $coal;
+    min-height: 444px;
+    position: relative;
+    top: 0;
+    left: 0;
 
     & video {
       width: 100% !important;
-      height: auto !important;
+      min-height: 100% !important;
       padding: 10px 8px;
+      position: absolute;
     }
   }
 
@@ -1771,6 +1803,10 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       & .material-icons {
         color: $gray-light;
         font-size: 18px !important;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
   }
