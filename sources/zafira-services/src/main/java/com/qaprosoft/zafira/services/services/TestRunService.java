@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -184,6 +185,12 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly = true)
+	public TestRun getTestRunByIdFull(String id) throws ServiceException
+	{
+		return id.matches("\\d+") ? testRunMapper.getTestRunByIdFull(Long.valueOf(id)) : getTestRunByCiRunIdFull(id);
+	}
+
+	@Transactional(readOnly = true)
 	public TestRun getTestRunByCiRunIdFull(String ciRunId) throws ServiceException
 	{
 		return testRunMapper.getTestRunByCiRunIdFull(ciRunId);
@@ -221,32 +228,50 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun queueTestRun(QueueTestRunParamsType queueTestRunParams, User user) throws ServiceException
 	{
-		TestRun testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(), queueTestRunParams.getJobName());
-		if(testRun != null) {
-			Long latestTestRunId = testRun.getId();
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
-				Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
-				testRun.setJob(job);
+		TestRun testRun;
+		// Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
+		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+		if(existingRun == null)
+		{
+			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
+					queueTestRunParams.getJobName());
+			if (testRun != null)
+			{
+				Long latestTestRunId = testRun.getId();
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
+					Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
+					testRun.setUpstreamJob(job);
+				}
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
+					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+				}
+				testRun.setEnv(queueTestRunParams.getEnv());
+				testRun.setCiRunId(queueTestRunParams.getCiRunId());
+				testRun.setElapsed(null);
+				testRun.setPlatform(null);
+				testRun.setConfigXML(null);
+				testRun.setComments(null);
+				testRun.setReviewed(false);
+
+				//make sure to reset below3 fields for existing run as well
+				testRun.setStatus(Status.QUEUED);
+				testRun.setStartedAt(Calendar.getInstance().getTime());
+				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+
+				createTestRun(testRun);
+				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
+				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
+				for (Test test : tests) {
+					testService.createQueuedTest(test, queuedTestRun.getId());
+				}
 			}
-			if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
-				testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
-			}
-			testRun.setCiRunId(queueTestRunParams.getCiRunId());
-			testRun.setEnv(queueTestRunParams.getEnv());
-			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+		} else {
+			testRun = existingRun;
+
 			testRun.setStatus(Status.QUEUED);
-			testRun.setElapsed(null);
-			testRun.setPlatform(null);
-			testRun.setConfigXML(null);
-			testRun.setComments(null);
-			testRun.setReviewed(false);
-			testRun.setStartedAt(null);
-			createTestRun(testRun);
-			List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
-			TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-			for (Test test : tests) {
-				testService.createQueuedTest(test, queuedTestRun.getId());
-			}
+			testRun.setStartedAt(Calendar.getInstance().getTime());
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+			updateTestRun(testRun);
 		}
 		return testRun;
 	}
@@ -507,7 +532,7 @@ public class TestRunService
 	}
 	
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsEmail(final Long testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsEmail(final String testRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
@@ -519,14 +544,14 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly=true)
-	public String sendTestRunResultsNotification(final String ciRunId, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsNotification(final String id, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByCiRunIdFull(ciRunId);
+		TestRun testRun = getTestRunByCiRunId(id);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by CI run ID: " + ciRunId);
+			throw new ServiceException("No test runs found by ID: " + id);
 		}
-		List<Test> tests = testService.getTestsByTestRunCiRunId(ciRunId);
+		List<Test> tests = testService.getTestsByTestRunId(id);
 		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 
@@ -549,17 +574,17 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly=true)
-	public String exportTestRunHTML(final Long testRunId) throws ServiceException, JAXBException
+	public String exportTestRunHTML(final String id) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByIdFull(testRunId);
+		TestRun testRun = getTestRunByIdFull(id);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by ID: " + testRunId);
+			throw new ServiceException("No test runs found by ID: " + id);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
 
-		List<Test> tests = testService.getTestsByTestRunId(testRunId);
+		List<Test> tests = testService.getTestsByTestRunId(id);
 
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));

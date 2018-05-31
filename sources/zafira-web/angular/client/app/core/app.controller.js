@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -184,6 +184,28 @@
 	        	}
 	        });
 
+            function getVersion() {
+                return $q(function (resolve, reject) {
+                    ConfigService.getConfig("version").then(function(rs) {
+                        if(rs.success)
+                        {
+                            $rootScope.version = rs.data;
+                            resolve(rs.data);
+                        } else {
+                            reject(rs.message);
+                        }
+                    });
+                });
+            };
+
+            function clearCache(version) {
+                var v = $cookies.get('version');
+                if(v !== version) {
+                    $cookies.put('version', version);
+                    $templateCache.removeAll();
+                }
+            };
+
 	        (function initController() {
 
 	        	// keep user logged in after page refresh
@@ -214,11 +236,8 @@
                     }
                 });
 
-                ConfigService.getConfig("version").then(function(rs) {
-                    if(rs.success)
-                    {
-                        $rootScope.version = rs.data;
-                    }
+                getVersion().then(function (rs) {
+                    clearCache(rs.service);
                 });
 	        })();
 	    }
