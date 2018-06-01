@@ -80,7 +80,13 @@ public class JobsService
 	{
 		return jobMapper.getJobByName(name);
 	}
-	
+
+	@Transactional(readOnly = true)
+	public Job getJobByJobURL(String url) throws ServiceException
+	{
+		return jobMapper.getJobByJobURL(url);
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public Job updateJob(Job job) throws ServiceException
 	{

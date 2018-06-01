@@ -471,13 +471,6 @@
             <![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
             ]]>
-			<if test="null != notExecuted and notExecuted">
-				<![CDATA[ AND (NV.FAILED > 0
-			              OR NV.SKIPPED > 0
-			              OR NV.ABORTED > 0
-			              OR NV.QUEUED > 0)
-                ]]>
-			</if>
             <if test="null != scmURL">
                 <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(#{scmURL}) ]]>
             </if>
