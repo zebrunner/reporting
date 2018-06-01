@@ -1,20 +1,18 @@
-<div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunListController">
+<div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
   <div class="row ui-section no-margin title-container">
-    <h2 id="testrun-info-title">MapMyFitness Android - Advanced Acceptance {{testRun.testSuite.name}}</h2>
+    <h2 id="testrun-info-title">{{ testRun.testSuite.name }}</h2>
     <span><i class="material-icons">keyboard_backspace</i></span>
   </div>
   <div class="row no-margin tests-info-container">
     <div class="test-info-section col-md-8 no-padding">
-      <div class="row no-margin" data-ng-controller="TabsController" ng-cloak>
+      <div class="row no-margin" ng-cloak>
         <section class="panel panel-default">
             <div class="panel-body no-padding">
-                <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
-                    <md-tab ng-repeat="tab in tabs"
-                            ng-disabled="tab.disabled"
-                            label="{{tab.title}}">
-                        <div class="tab{{$index%4}}">
+                <md-tabs ng-init="selectedTab" md-selected="selectedTab" md-border-bottom md-autoselect>
+                    <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" label="{{ tab.title }}" ng-click="selectedTab = $index;">
+                        <div class="tab{{ $index % 4 }}">
                             <div class="tab-content">
-                              <div class="table-responsive" ng-if="selectedIndex==0">
+                              <div class="table-responsive" ng-if="selectedTab == 0">
                                   <table class="table-history table table-striped no-margin">
                                       <thead>
                                           <tr>
@@ -70,25 +68,27 @@
       <ul>
         <li>
           Status
-          <span>In progress{{status}}</span>
+          <span>{{ test.status }}</span>
         </li>
         <li>
           Started
-          <span>04:31 UTC 18 Apr 2018{{started}}</span>
+          <span>{{ test.startTime | date: 'HH:mm Z dd MMM yyyy'}}</span>
         </li>
-        <li>
+        <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
           Duration
-          <span>{{duration}}</span>
+          <span>
+              {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+          </span>
         </li>
         <li>
           Platform
-          <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
-          <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-          <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
+            <span>Mac OS</span>
         </li>
         <li>
           Browser
-          <span>{{browser}}</span>
+            <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
+            <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+            <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
         </li>
       </ul>
     </div>

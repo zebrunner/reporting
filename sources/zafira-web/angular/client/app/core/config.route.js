@@ -50,8 +50,8 @@
                         url: '/tests/runs',
                         templateUrl: 'app/_testruns/list.html'
                     })
-                    .state('tests/run/info', {
-                        url: '/tests/run/info',
+                    .state('tests/runs/info', {
+                        url: '/tests/runs/:id/info/:testId',
                         templateUrl: 'app/_testruns/_info/list.html'
                     })
                     .state('settings', {

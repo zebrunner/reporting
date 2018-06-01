@@ -3,33 +3,55 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TabsController', ['$scope', '$log', TabsController])
+        .controller('TestRunInfoController', ['$scope', '$log', '$q', 'TestService', 'TestRunService', '$stateParams', TestRunInfoController])
 
     // **************************************************************************
-    function TabsController($scope, $log) {
-        var tabs = [
+    function TestRunInfoController($scope, $log, $q, TestService, TestRunService, $stateParams) {
+
+        $scope.testRun = {};
+        $scope.test = {};
+
+        $scope.tabs = [
             { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."},
             { title: 'Screenshots', content: "You can swipe left and right on a mobile device to change tabs."},
             { title: 'Raw logs', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
-        ],
-        selected = null,
-        previous = null;
-        $scope.tabs = tabs;
-        $scope.selectedIndex = 0;
-        $scope.$watch('selectedIndex', function(current, old){
-            previous = selected;
-            selected = tabs[current];
-            // if ( old + 1 && (old != current)) $log.debug('Goodbye ' + previous.title + '!');
-            // if ( current + 1 )                $log.debug('Hello ' + selected.title + '!');
-        });
-        $scope.addTab = function (title, view) {
-            view = view || title + " Content View";
-            tabs.push({ title: title, content: view, disabled: false});
+        ];
+
+        function getTestRun(id) {
+            return $q(function (resolve, reject) {
+                TestRunService.searchTestRuns({id: id}).then(function (rs) {
+                    if(rs.success && rs.data.results.length) {
+                        resolve(rs.data.results[0]);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
+            });
         };
-        $scope.removeTab = function (tab) {
-            var index = tabs.indexOf(tab);
-            tabs.splice(index, 1);
+
+        function getTest(testRunId) {
+            return $q(function (resolve, reject) {
+                TestService.searchTests({testRunId: testRunId}).then(function (rs) {
+                    if(rs.success && rs.data.results) {
+                        resolve(rs.data.results);
+                    } else {
+                        reject(rs.message);
+                    }
+                });
+            });
         };
+
+        (function init() {
+            getTestRun($stateParams.id).then(function (rs) {
+                getTest(rs.id).then(function (testsRs) {
+                    $scope.testRun = rs;
+                    $scope.test = testsRs.filter(function (t) {
+                        return t.id === parseInt($stateParams.testId);
+                    })[0];
+                    $scope.testRun.tests = testsRs;
+                });
+            });
+        })();
     }
 
 })();

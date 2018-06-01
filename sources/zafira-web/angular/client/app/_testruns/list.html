@@ -453,6 +453,9 @@
                                                                             <md-menu-item ng-if="rabbitmq.enabled && test.status == 'IN_PROGRESS'">
                                                                                 <md-button name="testLiveLogs" ng-click="showLogsDialog(testRun, test, $event)">Live logs</md-button>
                                                                             </md-menu-item>
+                                                                            <md-menu-item>
+                                                                                <md-button name="info" ng-href="#!/tests/runs/{{ testRun.id }}/info/{{ test.id }}">Info</md-button>
+                                                                            </md-menu-item>
                                                                         </md-menu-content>
                                                                     </md-menu>
                                                                 </div>
