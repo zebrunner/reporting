@@ -59,16 +59,16 @@
         <md-chip class="active">Driver 2</md-chip>
       </md-chips>
       <div class="video-wrapper">
-        <video controls>
-          <source src="{{}}" type="video/mp4">
-          <source src="{{}}" type="video/ogg">
+        <video ng-attr-width="{{ videoWidth }}" controls>
+          <source ng-src="{{ wsURL }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+        <div id="vnc"></div>
       </div>
       <ul>
         <li>
           Status
-          <span>{{ test.status }}</span>
+          <span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span>
         </li>
         <li>
           Started
