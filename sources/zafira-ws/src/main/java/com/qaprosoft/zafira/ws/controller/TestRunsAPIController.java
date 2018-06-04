@@ -286,7 +286,9 @@ public class TestRunsAPIController extends AbstractController
 			@RequestBody JobSearchCriteria sc)
 			throws ServiceException
 	{
-		sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
+		if(!StringUtils.isEmpty(sc.getUpstreamJobUrl())){
+			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
+		}
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		if(testRuns != null){
 			if(doRebuild) {

@@ -2,10 +2,10 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.search;
 
 public class JobSearchCriteria
 {
-	private String owner;
 	private Long upstreamJobId;
 	private String upstreamJobUrl;
 	private Integer upstreamJobBuildNumber;
+	private String owner;
 	private String scmURL;
 	private Integer hashcode;
 	private Integer failurePercent;
