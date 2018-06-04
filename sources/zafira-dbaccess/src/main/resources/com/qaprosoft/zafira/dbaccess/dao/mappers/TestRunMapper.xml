@@ -472,7 +472,7 @@
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
             ]]>
             <if test="null != scmURL">
-                <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(#{scmURL}) ]]>
+                <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
             </if>
 			<if test="null != owner">
 				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
