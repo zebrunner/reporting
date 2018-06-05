@@ -412,27 +412,27 @@
     </select>
 
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
-		    <![CDATA[
+		<![CDATA[
 				SELECT * FROM zafira.NIGHTLY_VIEW NV
 			]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-            <![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
+			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
             ]]>
-            <if test="null != scmURL">
-                <![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
-            </if>
+			<if test="null != scmURL">
+				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
+			</if>
 			<if test="null != owner">
 				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
 			</if>
 			<if test="null != hashcode">
-                <![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE = #{hashcode}) ]]>
-            </if>
-            <if test="null != failurePercent">
-                <![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent}
+				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE = #{hashcode}) ]]>
+			</if>
+			<if test="null != failurePercent">
+				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent}
                 ]]>
-            </if>
-        </trim>
+			</if>
+		</trim>
 	</select>
 
 	<select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
@@ -648,25 +648,25 @@
 	</delete>
 
 	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="NightlyViewResultMap" autoMapping="false">
-		<id column="TEST_RUN_ID" property="id" />
-		<result column="OWNER_ID" property="user.id" />
-		<result column="OWNER" property="user.username" />
-		<result column="EMAIL" property="user.email" />
-		<result column="TEST_SUITE_NAME" property="testSuite.name" />
-        <result column="TEST_RUN_ID" property="id" />
-		<result column="SCM_URL" property="scmURL" />
-		<result column="UPSTREAM_JOB_ID" property="upstreamJob.id" />
-		<result column="UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
-		<result column="JobBuild" property="buildNumber" />
-        <result column="ENV" property="env" />
-		<result column="Started" property="startedAt" />
-		<result column="Elapsed" property="elapsed" />
-		<result column="JOB_URL" property="job.jobURL" />
-        <result column="JOB_NAME" property="job.name" />
-		<result column="PROJECT" property="project.name" />
+		<id column="TEST_RUN_ID" property="id"/>
+		<result column="OWNER_ID" property="user.id"/>
+		<result column="OWNER" property="user.username"/>
+		<result column="EMAIL" property="user.email"/>
+		<result column="TEST_SUITE_NAME" property="testSuite.name"/>
+		<result column="TEST_RUN_ID" property="id"/>
+		<result column="SCM_URL" property="scmURL"/>
+		<result column="UPSTREAM_JOB_ID" property="upstreamJob.id"/>
+		<result column="UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber"/>
+		<result column="JobBuild" property="buildNumber"/>
+		<result column="ENV" property="env"/>
+		<result column="Started" property="startedAt"/>
+		<result column="Elapsed" property="elapsed"/>
+		<result column="JOB_URL" property="job.jobURL"/>
+		<result column="JOB_NAME" property="job.name"/>
+		<result column="PROJECT" property="project.name"/>
 	</resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
         <id column="TEST_RUN_ID" property="id" />
 
         <result column="TEST_RUN_USER_ID" property="user.id" />
