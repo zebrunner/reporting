@@ -312,7 +312,7 @@ public class TestRunsAPIController extends AbstractController
 						}
 					} catch (UnableToRebuildCIJobException e)
 					{
-						LOGGER.error("Problems with job building occurred" + e);
+						LOGGER.error("Problems with job building occurred", e);
 					}
 				}
 				return mapper.map(testRun, TestRunType.class);
