@@ -44,7 +44,7 @@
 	<select id="getJobByJobURL" resultMap="JobResultMap">
 		<include refid="getJob" />
 		<![CDATA[
-			WHERE J.JOB_URL = #{jobURL};
+			WHERE LOWER(J.JOB_URL) LIKE LOWER(CONCAT('%', #{jobURL}, '%'));
 		]]>
 	</select>
 
