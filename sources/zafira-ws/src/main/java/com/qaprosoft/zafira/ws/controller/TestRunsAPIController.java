@@ -290,6 +290,9 @@ public class TestRunsAPIController extends AbstractController
 		if(!StringUtils.isEmpty(sc.getUpstreamJobUrl())){
 			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
 		}
+		if(rerunFailures && sc.getFailurePercent() == null){
+            sc.setFailurePercent(0);
+        }
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		List <TestRunType> testRunTypes = new ArrayList<>();
 		if(testRuns != null) {
