@@ -412,13 +412,10 @@
     </select>
 
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
-		<![CDATA[
-				SELECT * FROM zafira.NIGHTLY_VIEW NV
-			]]>
+		<![CDATA[ SELECT * FROM zafira.NIGHTLY_VIEW NV ]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
-                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
-            ]]>
+                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}]]>
 			<if test="null != scmURL">
 				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
 			</if>
@@ -429,8 +426,7 @@
 				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE = #{hashcode}) ]]>
 			</if>
 			<if test="null != failurePercent">
-				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent}
-                ]]>
+				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
 			</if>
 		</trim>
 	</select>
