@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
@@ -280,7 +281,7 @@ public class TestRunsAPIController extends AbstractController
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer rerunJobs(
+	public @ResponseBody List<TestRunType> rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
 			@RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
 			@RequestBody JobSearchCriteria sc)
@@ -290,23 +291,26 @@ public class TestRunsAPIController extends AbstractController
 			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
 		}
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
-		if(testRuns != null){
-			if(doRebuild) {
-				for(TestRun testRun: testRuns){
-					try {
-						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-						if (!success) {
-							throw new UnableToRebuildCIJobException();
-						}
-					} catch (UnableToRebuildCIJobException e) {
-						LOGGER.error("Problems with job building occurred" + e);
-					}
-				}
-			}
-		} else {
-			testRuns = new ArrayList<>();
+		List <TestRunType> testRunTypes = new ArrayList<>();
+		if(testRuns != null && doRebuild) {
+            testRunTypes =  testRuns.stream().map(testRun -> {
+                try
+            {
+                boolean success = jenkinsService
+                        .rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+
+                if (!success)
+                {
+                    throw new UnableToRebuildCIJobException();
+                }
+            } catch (UnableToRebuildCIJobException e)
+            {
+                LOGGER.error("Problems with job building occurred" + e);
+            }
+            return mapper.map(testRun, TestRunType.class);
+            }).collect(Collectors.toList());
 		}
-		return testRuns.size();
+		return testRunTypes;
 	}
 
 	@ResponseStatusDetails
