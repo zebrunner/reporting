@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$log', '$timeout', '$window', '$q', 'TestService', 'TestRunService', '$stateParams', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $log, $timeout, $window, $q, TestService, TestRunService, $stateParams) {
+    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, TestService, TestRunService, UtilService, ArtifactService, $stateParams) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -16,6 +16,19 @@
             { title: 'Screenshots', content: "You can swipe left and right on a mobile device to change tabs."},
             { title: 'Raw logs', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
         ];
+
+        var MODES = {
+            live: {
+                name: 'live',
+                element: '.video-wrapper'
+            },
+            record: {
+                name: 'record',
+                element: 'video'
+            }
+        };
+
+        $scope.MODE = {};
 
         function getTestRun(id) {
             return $q(function (resolve, reject) {
@@ -42,60 +55,36 @@
         };
 
         var rfb;
-        var display;
-        var ratio;
+        var logsStompName;
+        var logsStomp;
+        $scope.logs = [];
 
-        $scope.loading = true;
-
-        var container  = angular.element('video')[0];
-        var containerHeightProperty = 'offsetHeight';
-        var containerWidthProperty = 'offsetWidth';
-
-        $scope.initVNCWebsocket = function(wsURL) {
-            rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
-            //rfb._viewOnly = true;
-            rfb.addEventListener("connect",  connected);
-            rfb.addEventListener("disconnect",  disconnected);
-            rfb.scaleViewport = true;
-            rfb.resizeSession = true;
-            display = rfb._display;
-            display._scale = 1;
-            angular.element($window).bind('resize', function(){
-                autoscale(display, ratio, container);
+        function followUpOnLogs(log) {
+            $scope.$apply(function () {
+                $scope.logs.push(log);
             });
         };
 
-        function connected(e) {
-            $scope.loading = false;
-            var canvas = document.getElementsByTagName("canvas")[0];
-            ratio = canvas.width / canvas.height;
-            autoscale(display, ratio, container);
-
-        };
-
-        function disconnected(e) {
-            $scope.hide();
-        };
-
-        function autoscale(display, ratio, window) {
-            var size = calculateSize(window, ratio);
-            display.autoscale(size.width, size.height, false);
-        };
-
-        function calculateSize(window, ratio) {
-            var width = window[containerWidthProperty];
-            var height = ratio > 1 ?  width / ratio : width * ratio;
-            if(height > window[containerHeightProperty])
-            {
-                height = window[containerHeightProperty] - 100;
-                width = ratio < 1 ? height / ratio : height * ratio;
+        $scope.setMode = function (modeName) {
+            $scope.MODE = MODES[modeName];
+            if ($scope.MODE.name == 'live') {
+                rfb = ArtifactService.connectVnc(angular.element($scope.MODE.element)[0], 'offsetHeight', 'offsetWidth',  $scope.wsURL);
+                var logsContainer = angular.element('#logs')[0];
+                ArtifactService.provideLogs($rootScope.rabbitmq, $scope.testRun, $scope.test, logsContainer, followUpOnLogs).then(function (data) {
+                    logsStomp = data.stomp;
+                    logsStompName = data.name;
+                });
             }
-            return {height: height, width: width};
         };
 
         $scope.$on('$destroy', function () {
             if(rfb && rfb._connected) {
                 rfb.disconnect();
+            }
+            if(logsStomp && logsStomp.connected) {
+                logsStomp.disconnect();
+                $scope.logs = [];
+                UtilService.websocketConnected(logsStompName);
             }
         });
 
@@ -110,7 +99,6 @@
                         return artifact.name.toLowerCase().includes('live demo')
                     }) : [];
                     $scope.wsURL = videoArtifacts && videoArtifacts.length ? videoArtifacts[0].link : undefined;
-                    $scope.initVNCWebsocket($scope.wsURL);
                     $scope.testRun.tests = testsRs;
                 });
             });

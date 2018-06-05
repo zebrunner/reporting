@@ -22,17 +22,10 @@
                                           </tr>
                                       </thead>
                                       <tbody>
-                                          <tr>
+                                          <tr ng-if="logs.length" ng-repeat="log in logs">
                                               <td><i class="material-icons">insert_photo</i></td>
-                                              <td>00:00:00</td>
-                                              <td>Request path: jefbhebfcbhche</td>
-                                          </tr>
-                                          <tr>
-                                            <td><i class="material-icons">insert_photo</i></td>
-                                            <td>00:00:10</td>
-                                            <td>
-                                              [AbstractApiMethodV2.java] [20] [INFO] Base properties loaded: api/users/user.properties
-                                            </td>
+                                              <td>{{ log.timestamp }}</td>
+                                              <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
                                           </tr>
                                       </tbody>
                                   </table>
@@ -55,15 +48,15 @@
         </span>
       </h4>
       <md-chips>
-        <md-chip>Driver 1</md-chip>
-        <md-chip class="active">Driver 2</md-chip>
+        <md-chip class="active">Driver 1</md-chip>
+        <md-chip>Driver 2</md-chip>
       </md-chips>
       <div class="video-wrapper">
-        <video ng-attr-width="{{ videoWidth }}" controls>
+        <video ng-if="! wsURL" ng-init="setMode('record');" ng-attr-width="{{ videoWidth }}" controls>
           <source ng-src="{{ wsURL }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div id="vnc"></div>
+        <div ng-if="wsURL" ng-init="setMode('live');" id="vnc"></div>
       </div>
       <ul>
         <li>

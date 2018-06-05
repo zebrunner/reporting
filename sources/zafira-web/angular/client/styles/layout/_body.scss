@@ -1738,7 +1738,7 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       font-weight: 500;
       line-height: 24px;
 
-      &+.active {
+      &.active {
         background: $brand-primary;
       }
 
