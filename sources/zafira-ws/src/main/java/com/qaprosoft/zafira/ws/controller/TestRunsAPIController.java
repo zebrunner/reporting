@@ -292,21 +292,20 @@ public class TestRunsAPIController extends AbstractController
 		}
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		List <TestRunType> testRunTypes = new ArrayList<>();
-		if(testRuns != null && doRebuild) {
+		if(testRuns != null) {
             testRunTypes =  testRuns.stream().map(testRun -> {
-                try
-            {
-                boolean success = jenkinsService
-                        .rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-
-                if (!success)
-                {
-                    throw new UnableToRebuildCIJobException();
+                if(doRebuild){
+                    try
+                    {
+                        boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
+                        if (!success) {
+                            throw new UnableToRebuildCIJobException();
+                        }
+                    } catch (UnableToRebuildCIJobException e)
+                    {
+                        LOGGER.error("Problems with job building occurred" + e);
+                    }
                 }
-            } catch (UnableToRebuildCIJobException e)
-            {
-                LOGGER.error("Problems with job building occurred" + e);
-            }
             return mapper.map(testRun, TestRunType.class);
             }).collect(Collectors.toList());
 		}
