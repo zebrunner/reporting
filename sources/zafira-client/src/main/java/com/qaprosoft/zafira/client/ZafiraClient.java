@@ -700,11 +700,14 @@ public class ZafiraClient
 	public JobType registerJob(String jobUrl, Long userId) 
 	{
 		// JobsService uses the same logics in createOrUpdateJobByURL method
+		String jobName;
 		if (jobUrl.charAt(jobUrl.length() - 1) == '/')
 		{
-			jobUrl = StringUtils.chop(jobUrl);
+			String jobUrlToParse = StringUtils.chop(jobUrl);
+			jobName = StringUtils.substringAfterLast(jobUrlToParse, "/");
+		} else {
+			jobName = StringUtils.substringAfterLast(jobUrl, "/");
 		}
-		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
 		String jenkinsHost = StringUtils.EMPTY;
 		if(jobUrl.contains("/view/"))
 		{
