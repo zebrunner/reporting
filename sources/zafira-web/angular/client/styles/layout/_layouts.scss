@@ -59,6 +59,7 @@ html {
     > .main-container {
         position: relative;
         min-height: 100% !important; // important!
+        padding-top: 64px;
         padding-bottom: 0;
         &:before { // content container background for boxed layout
             content: " ";
@@ -131,7 +132,6 @@ html {
             transition: margin-left .25s ease-in-out;
             @media (min-width:$screen-sm) {
                 margin-left: 60px;
-                padding-top: 64px;
             }
         }
 
