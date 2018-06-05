@@ -20,17 +20,20 @@ import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -124,6 +127,8 @@ public class TestRunsAPIController extends AbstractController
 
 	@Autowired
 	private StatisticsService statisticsService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunsAPIController.class);
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
@@ -268,6 +273,52 @@ public class TestRunsAPIController extends AbstractController
 			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
 		}
 		return testRunService.searchTestRuns(sc);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<TestRunType> rerunJobs(
+			@RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
+			@RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
+			@RequestBody JobSearchCriteria sc)
+			throws ServiceException
+	{
+		if (!StringUtils.isEmpty(sc.getUpstreamJobUrl()))
+		{
+			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
+		}
+		if (rerunFailures && sc.getFailurePercent() == null)
+		{
+			sc.setFailurePercent(0);
+		}
+		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
+		List <TestRunType> testRunTypes = new ArrayList<>();
+		if (testRuns != null)
+		{
+			testRunTypes = testRuns.stream().map(testRun -> {
+				if (doRebuild)
+				{
+					try
+					{
+						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
+								rerunFailures);
+						if (!success)
+						{
+							throw new UnableToRebuildCIJobException();
+						}
+					} catch (UnableToRebuildCIJobException e)
+					{
+						LOGGER.error("Problems with job building occurred" + e);
+					}
+				}
+				return mapper.map(testRun, TestRunType.class);
+			}).collect(Collectors.toList());
+		}
+		return testRunTypes;
 	}
 
 	@ResponseStatusDetails

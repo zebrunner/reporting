@@ -48,6 +48,10 @@ public class JobsService
 	@Transactional(rollbackFor = Exception.class)
 	public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException
 	{
+		if (jobUrl.charAt(jobUrl.length() - 1) == '/')
+		{
+			jobUrl = StringUtils.chop(jobUrl);
+		}
 		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
 		String jenkinsHost = StringUtils.EMPTY;
 		if(jobUrl.contains("/view/"))
@@ -80,7 +84,13 @@ public class JobsService
 	{
 		return jobMapper.getJobByName(name);
 	}
-	
+
+	@Transactional(readOnly = true)
+	public Job getJobByJobURL(String url) throws ServiceException
+	{
+		return jobMapper.getJobByJobURL(url);
+	}
+
 	@Transactional(rollbackFor = Exception.class)
 	public Job updateJob(Job job) throws ServiceException
 	{
