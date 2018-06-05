@@ -287,30 +287,36 @@ public class TestRunsAPIController extends AbstractController
 			@RequestBody JobSearchCriteria sc)
 			throws ServiceException
 	{
-		if(!StringUtils.isEmpty(sc.getUpstreamJobUrl())){
+		if (!StringUtils.isEmpty(sc.getUpstreamJobUrl()))
+		{
 			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
 		}
-		if(rerunFailures && sc.getFailurePercent() == null){
-            sc.setFailurePercent(0);
-        }
+		if (rerunFailures && sc.getFailurePercent() == null)
+		{
+			sc.setFailurePercent(0);
+		}
 		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
 		List <TestRunType> testRunTypes = new ArrayList<>();
-		if(testRuns != null) {
-            testRunTypes =  testRuns.stream().map(testRun -> {
-                if(doRebuild){
-                    try
-                    {
-                        boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures);
-                        if (!success) {
-                            throw new UnableToRebuildCIJobException();
-                        }
-                    } catch (UnableToRebuildCIJobException e)
-                    {
-                        LOGGER.error("Problems with job building occurred" + e);
-                    }
-                }
-            return mapper.map(testRun, TestRunType.class);
-            }).collect(Collectors.toList());
+		if (testRuns != null)
+		{
+			testRunTypes = testRuns.stream().map(testRun -> {
+				if (doRebuild)
+				{
+					try
+					{
+						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
+								rerunFailures);
+						if (!success)
+						{
+							throw new UnableToRebuildCIJobException();
+						}
+					} catch (UnableToRebuildCIJobException e)
+					{
+						LOGGER.error("Problems with job building occurred" + e);
+					}
+				}
+				return mapper.map(testRun, TestRunType.class);
+			}).collect(Collectors.toList());
 		}
 		return testRunTypes;
 	}
