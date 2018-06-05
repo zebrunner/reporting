@@ -412,7 +412,7 @@
     </select>
 
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
-            <![CDATA[
+		    <![CDATA[
 				SELECT * FROM zafira.NIGHTLY_VIEW NV
 			]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
@@ -425,7 +425,7 @@
 			<if test="null != owner">
 				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
 			</if>
-            <if test="null != hashcode">
+			<if test="null != hashcode">
                 <![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE = #{hashcode}) ]]>
             </if>
             <if test="null != failurePercent">

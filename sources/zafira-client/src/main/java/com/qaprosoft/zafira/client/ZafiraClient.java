@@ -700,7 +700,8 @@ public class ZafiraClient
 	public JobType registerJob(String jobUrl, Long userId) 
 	{
 		// JobsService uses the same logics in createOrUpdateJobByURL method
-		if(jobUrl.charAt(jobUrl.length() - 1) == '/'){
+		if (jobUrl.charAt(jobUrl.length() - 1) == '/')
+		{
 			jobUrl = StringUtils.chop(jobUrl);
 		}
 		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
