@@ -15,6 +15,7 @@
             { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."},
             { title: 'Screenshots', content: "You can swipe left and right on a mobile device to change tabs."},
             { title: 'Raw logs', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
+            { title: 'Test Info', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
         ];
 
         var MODES = {
