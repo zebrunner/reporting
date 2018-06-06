@@ -85,3 +85,12 @@
       margin-left: 0 !important;
     }
 }
+
+@media (max-width: 991px) {
+  .video-section {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}

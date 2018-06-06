@@ -748,7 +748,6 @@ input[type="file"].content-input.not-empty{
     margin-top: 10px;
     display: block;
     position: relative;
-    min-height: 100%;
     width: 800px;
     border: 2px dashed #80CBC4 !important;
     transition: opacity  0.1s linear;
@@ -1672,20 +1671,20 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 }
 
 #testrun-info-page {
-  min-height: 100%;
   background-color: #fff !important;
 }
 
-.tests-info-container {
-  min-height: 100%;
-}
-
 .test-info-section {
-  min-height: 100%;
 
   & .panel {
     border: none !important;
     box-shadow: none !important;
+  }
+
+  md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    min-height: none;
+    height: 86vh;
+    overflow: hidden;
   }
 
   .md-tab {
@@ -1701,6 +1700,11 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 }
 
 .video-section {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
   background: $fog-gray;
 
   & h4 {
@@ -1749,7 +1753,7 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
   }
 
   & .video-wrapper {
-    margin: 0 16px;
+    margin: 0 16px 16px;
     background: $coal;
     min-height: 444px;
     position: relative;
@@ -1763,7 +1767,8 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       position: absolute;
     }
   }
-
+}
+.test-info-tab {
   & ul {
     margin: 13px 0;
     padding-left: 33px;
@@ -1783,7 +1788,15 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
   }
 }
 
+.table-responsive {
+  height: 100%;
+  overflow: auto;
+}
+
 .table-history {
+  height: 100%;
+  overflow-y: auto;
+
   tr {
     min-height: 32px;
     text-align: left !important;
