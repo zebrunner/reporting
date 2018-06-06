@@ -9,6 +9,7 @@
         var service = {};
 
         service.connectVnc = connectVnc;
+        service.resize = resize;
         service.provideLogs = provideLogs;
 
         return service;
@@ -98,6 +99,12 @@
                 width = ratio < 1 ? height / ratio : height * ratio;
             }
             return {height: height, width: width};
+        };
+
+        function resize(element, rfb) {
+            container = element;
+            display = rfb._display;
+            connected();
         };
     }
 })();

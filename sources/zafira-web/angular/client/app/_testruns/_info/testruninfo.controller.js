@@ -77,6 +77,10 @@
             }
         };
 
+        $scope.onResize = function() {
+            ArtifactService.resize(angular.element($scope.MODE.element)[0], rfb);
+        };
+
         $scope.$on('$destroy', function () {
             if(rfb && rfb._connected) {
                 rfb.disconnect();

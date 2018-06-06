@@ -534,6 +534,93 @@
                 }
             }
         };
+    }]).directive('resize', ['$window', function ($window) {
+        "use strict";
+        return {
+            restrict: 'A',
+            scope: {
+                onResizeCallback: '='
+            },
+            link: function(scope, element, attrs) {
+
+                var DIRECTIONS = {
+                    top: {
+                        min: 65,
+                        func: resizeTop
+                    },
+                    bottom: {
+                        min: 0,
+                        func: resizeBottom
+                    },
+                    right: {
+                        min: 0,
+                        func: resizeRight
+                    },
+                    left: {
+                        min: 60,
+                        func: resizeLeft
+                    }
+                };
+
+                var resizeDirection = attrs.resizeDirection;
+
+                var DIRECTION = DIRECTIONS[resizeDirection];
+
+                var rightElementStart;
+                var topElementStart;
+                var bottomElementStart;
+                var leftElementStart;
+
+                setTimeout(function () {
+                    getDirectionParameters();
+                    var resizeIcon = angular.element('#' + attrs.resize)[0];
+                    resizeIcon.onmousedown = function (mousedownevent) {
+                        element[0].style.position = 'absolute';
+                        element[0].style.right = '0';
+                        $window.onmousemove = function (mouseoverevent) {
+                            DIRECTION.func.call(this, element[0], mouseoverevent);
+                            scope.onResizeCallback.call();
+                        }
+                    };
+                    $window.onmouseup = function () {
+                        $window.onmousemove = undefined;
+                    };
+                }, 2000);
+
+                function getDirectionParameters() {
+                    var elementRect = element[0].getBoundingClientRect();
+                    rightElementStart = $window.innerWidth - elementRect.right;
+                    topElementStart = elementRect.top;
+                    bottomElementStart = $window.innerHeight - elementRect.bottom;
+                    leftElementStart = elementRect.left;
+
+                };
+
+                function resizeRight(element, event) {
+                    if(event.clientX <= DIRECTION.min) {
+                        element.style.width = event.clientX - $window.innerWidth + leftElementStart + 'px';
+                    }
+                };
+
+                function resizeBottom(element, event) {
+                    if(event.clientY <= DIRECTION.min) {
+                        element.style.height = event.clientY - $window.innerHeight + topElementStart + 'px';
+                    }
+                };
+
+                function resizeTop(element, event) {
+                    if(event.clientY >= DIRECTION.min) {
+                        element.style.height = $window.innerHeight - event.clientY - bottomElementStart + 'px';
+                    }
+                };
+
+                function resizeLeft(element, event) {
+                    if(event.clientX >= DIRECTION.min) {
+                        element.style.width = $window.innerWidth - event.clientX - rightElementStart + 'px';
+                    }
+                };
+            }
+        };
     }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
