@@ -131,7 +131,7 @@ public class JenkinsService implements IJMXService
 		}
 	}
 
-	public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures)
+	public boolean rerunJob(Job ciJob, Integer buildNumber, boolean rerunFailures, boolean debug)
 	{
 		boolean success = false;
 		try
@@ -140,6 +140,10 @@ public class JenkinsService implements IJMXService
 
 			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
 			params.put("rerun_failures", Boolean.toString(rerunFailures));
+			if(debug){
+				params.replace("debug", "true");
+				params.replace("thread_count", "1");
+			}
 			QueueReference reference = job.build(params, true);
 			success = checkReference(reference);
 		}
@@ -169,7 +173,7 @@ public class JenkinsService implements IJMXService
 		}
 		else
 		{
-			success = rerunJob(ciJob, buildNumber, false);
+			success = rerunJob(ciJob, buildNumber, false, false);
 		}
 		return success;
 	}

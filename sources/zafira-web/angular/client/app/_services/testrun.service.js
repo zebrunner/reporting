@@ -74,11 +74,11 @@
             return $http.post(API_URL + '/api/tests/runs/' + id + '/markReviewed', comment).then(UtilService.handleSuccess, UtilService.handleError('Unable to mark test run as reviewed'));
         }
 
-        function rerunTestRun(id, rerunFailures) {
-            return $http.get(API_URL + '/api/tests/runs/' + id + '/rerun', {params:{'rerunFailures': rerunFailures}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to rerun test run'));
+        function rerunTestRun(id, rerunFailures, debug) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/rerun', {params:{'rerunFailures': rerunFailures, 'debug': debug}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to rerun test run'));
         }
 
-        function buildTestRun(id, jobParameters, buildWithParameters) {
+        function buildTestRun(id, jobParameters) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 

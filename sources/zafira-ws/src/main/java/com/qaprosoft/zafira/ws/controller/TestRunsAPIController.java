@@ -309,7 +309,7 @@ public class TestRunsAPIController extends AbstractController
 					try
 					{
 						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
-								rerunFailures);
+								rerunFailures, false);
 						if (!success)
 						{
 							throw new UnableToRebuildCIJobException();
@@ -465,7 +465,8 @@ public class TestRunsAPIController extends AbstractController
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/rerun", method = RequestMethod.GET)
 	public void rerunTestRun(@PathVariable(value = "id") long id,
-			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures)
+			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures,
+			@RequestParam(value = "debug", required = false, defaultValue = "false") boolean debug)
 			throws ServiceException, JAXBException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
@@ -474,7 +475,7 @@ public class TestRunsAPIController extends AbstractController
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures))
+		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures, debug))
 		{
 			throw new UnableToRebuildCIJobException();
 		}
