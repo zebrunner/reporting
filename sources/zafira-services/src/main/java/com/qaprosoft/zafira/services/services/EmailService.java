@@ -18,9 +18,11 @@ package com.qaprosoft.zafira.services.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import javax.mail.internet.MimeMessage;
 
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -56,37 +58,46 @@ public class EmailService
 	private SettingsService settingsService;
 	
 	private EmailValidator validator = EmailValidator.getInstance();
+
+	private Function<Void, Boolean> isConnected = aVoid -> settingsService.isConnected(EMAIL);
 	
-	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
+	public String sendEmail(final IEmailMessage message, final String... emails) throws IntegrationException, ServiceException
 	{
+
+		if(! settingsService.isConnected(EMAIL))
+		{
+			throw new IntegrationException("SMTP server connection is refused.");
+		}
+
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getTemplate(), message);
+		final String [] recipients = processRecipients(emails);
 
-		if(settingsService.isConnected(EMAIL)) {
+		if(recipients.length > 0)
+		{
+			MimeMessagePreparator preparator = new MimeMessagePreparator()
+			{
+				public void prepare(MimeMessage mimeMessage) throws Exception
+				{
+					boolean hasAttachments = message.getAttachments() != null;
 
-			final String[] recipients = processRecipients(emails);
-
-			if (recipients.length > 0) {
-				MimeMessagePreparator preparator = new MimeMessagePreparator() {
-					public void prepare(MimeMessage mimeMessage) throws Exception {
-						boolean hasAttachments = message.getAttachments() != null;
-
-						MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-						msg.setSubject(message.getSubject());
-						msg.setTo(recipients);
-						msg.setFrom(emailTask.getJavaMailSenderImpl().getUsername());
-						msg.setText(text, true);
-						if (hasAttachments) {
-							for (Attachment attachment : message.getAttachments()) {
-								msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-								msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
-							}
+					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+					msg.setSubject(message.getSubject());
+					msg.setTo(recipients);
+					msg.setFrom(emailTask.getJavaMailSenderImpl().getUsername());
+					msg.setText(text, true);
+					if(hasAttachments)
+					{
+						for(Attachment attachment : message.getAttachments())
+						{
+							msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
+							msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
 						}
 					}
-				};
-				Runnable task = new AsynSendEmailTask(preparator);
-				autowireizer.autowireBean(task);
-				Executors.newSingleThreadExecutor().execute(task);
-			}
+				}
+			};
+			Runnable task = new AsynSendEmailTask(preparator);
+			autowireizer.autowireBean(task);
+			Executors.newSingleThreadExecutor().execute(task);
 		}
 		return text;
 	}

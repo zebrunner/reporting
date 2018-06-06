@@ -42,6 +42,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -562,8 +563,9 @@ public class TestRunService
 		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 
-	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws JAXBException
 	{
+		String result = null;
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
@@ -577,7 +579,16 @@ public class TestRunService
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.sendEmail(email, recipients);
+		try {
+			result = emailService.sendEmail(email, recipients);
+		} catch (IntegrationException ie)
+		{
+			result = StringUtils.EMPTY;
+		}
+		catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Transactional(readOnly=true)
