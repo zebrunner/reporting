@@ -376,7 +376,7 @@
                                                         </md-button>
                                                     </md-menu-item>
                                                     <md-menu-item has-any-permission="['TEST_RUNS_CI']">
-                                                        <md-button name="debug" ng-if="testRun.status!='IN_PROGRESS'" ng-click="startDebug(testRun)">
+                                                        <md-button name="debug" ng-if="testRun.status!='PASSED'" ng-click="startDebug(testRun)">
                                                             Debug
                                                         </md-button>
                                                     </md-menu-item>
