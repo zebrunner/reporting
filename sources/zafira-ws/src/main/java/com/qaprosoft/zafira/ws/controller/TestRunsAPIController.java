@@ -289,7 +289,11 @@ public class TestRunsAPIController extends AbstractController
 	{
 		if (!StringUtils.isEmpty(sc.getUpstreamJobUrl()))
 		{
-			sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
+			sc.setUpstreamJobUrl(sc.getUpstreamJobUrl().replaceAll("/$", ""));
+			if(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()) != null)
+			{
+				sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
+			}
 		}
 		if (rerunFailures && sc.getFailurePercent() == null)
 		{
