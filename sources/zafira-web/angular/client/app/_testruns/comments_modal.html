@@ -18,7 +18,7 @@
                     <div zafira-background-theme="modal">
                         <div class="row">
                             <div class="col-lg-12">
-                                <div layout="column" ng-cloak class="md-inline-form">
+                                <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
                                     <div layout-padding>
                                         <form class="form-validation" name="comments_form" ng-submit="createUser(); UtilService.untouchForm(comments_form)" ng-cloak>
                                             <md-dialog-content>
@@ -29,7 +29,7 @@
                                                         </md-input-container>
                                                     </div>
                                             </md-dialog-content>
-                                            <md-dialog-actions layout="row">
+                                            <md-dialog-actions layout="row" class="no-padding">
                                                 <md-button id="markAsReviewed" class="md-raised btn-w-md md-primary" ng-click="markReviewed()" ng-disabled="comments_form.$invalid">
                                                     Mark as reviewed
                                                 </md-button>
@@ -44,5 +44,4 @@
             </div>
         </div>
     </div>
-
 </md-dialog>

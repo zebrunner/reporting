@@ -637,6 +637,31 @@ body md-select-menu, body md-content{
     margin: 5px 0;
 }
 
+.rebuild-modal-row {
+    padding: 8px 0;
+}
+
+.no-top-padding {
+    padding-top: 0 !important;
+}
+
+.no-horiz-padding {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.modal-header-font {
+    font-size: 20px;
+}
+
+.modal-header-font-toolbar {
+    font-size: 22px !important;
+}
+
+.comment-modal-textarea-padding {
+    padding: 15px;
+}
+
 .material-icons.material-icon-16px {
     font-size: 16px;
 }
