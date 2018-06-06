@@ -236,9 +236,9 @@
                     }
                 });
 
-                // getVersion().then(function (rs) {
-                //     clearCache(rs.service);
-                // });
+                 getVersion().then(function (rs) {
+                     //clearCache(rs.service);
+                 });
 	        })();
 	    }
 })();
