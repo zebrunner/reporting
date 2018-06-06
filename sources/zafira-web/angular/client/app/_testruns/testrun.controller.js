@@ -860,6 +860,12 @@
                             if (jobParameters[i].name === 'debug'){
                                 jobParameters[i].value = true;
                             }
+                            if (jobParameters[i].name === 'rerun_failures'){
+                                jobParameters[i].value = true;
+                            }
+                            if (jobParameters[i].name === 'thread_count'){
+                                jobParameters[i].value = 1;
+                            }
                             if (jobParameters[i].name === 'ci_run_id'){
                                 testRun.ciRunId = jobParameters[i].value;
                             }
