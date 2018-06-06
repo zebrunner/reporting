@@ -143,6 +143,8 @@ public class JenkinsService implements IJMXService
 			if(debug){
 				params.replace("debug", "true");
 				params.replace("thread_count", "1");
+			} else {
+				params.replace("debug", "false");
 			}
 			QueueReference reference = job.build(params, true);
 			success = checkReference(reference);
