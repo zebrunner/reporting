@@ -53,7 +53,8 @@ public class JobsService
 		{
 			String jobUrlToParse = StringUtils.chop(jobUrl);
 			jobName = StringUtils.substringAfterLast(jobUrlToParse, "/");
-		} else {
+		} else
+		{
 			jobName = StringUtils.substringAfterLast(jobUrl, "/");
 		}
 		String jenkinsHost = StringUtils.EMPTY;
