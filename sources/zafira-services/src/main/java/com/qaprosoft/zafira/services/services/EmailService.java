@@ -61,7 +61,7 @@ public class EmailService
 
 	private Function<Void, Boolean> isConnected = aVoid -> settingsService.isConnected(EMAIL);
 	
-	public String sendEmail(final IEmailMessage message, final String... emails) throws IntegrationException, ServiceException
+	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
 
 		if(! settingsService.isConnected(EMAIL))

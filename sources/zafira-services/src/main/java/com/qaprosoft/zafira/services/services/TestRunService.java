@@ -545,27 +545,14 @@ public class TestRunService
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by ID: " + testRunId);
+			throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
 		}
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
 		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 
-	@Transactional(readOnly=true)
-	public String sendTestRunResultsNotification(final String id, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
+	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
 	{
-		TestRun testRun = getTestRunByCiRunId(id);
-		if(testRun == null)
-		{
-			throw new ServiceException("No test runs found by ID: " + id);
-		}
-		List<Test> tests = testService.getTestsByTestRunId(id);
-		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
-	}
-
-	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws JAXBException
-	{
-		String result = null;
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
@@ -579,16 +566,7 @@ public class TestRunService
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		try {
-			result = emailService.sendEmail(email, recipients);
-		} catch (IntegrationException ie)
-		{
-			result = StringUtils.EMPTY;
-		}
-		catch (ServiceException e) {
-			e.printStackTrace();
-		}
-		return result;
+		return emailService.sendEmail(email, recipients);
 	}
 
 	@Transactional(readOnly=true)

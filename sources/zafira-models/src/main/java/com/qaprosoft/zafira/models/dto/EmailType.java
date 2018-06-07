@@ -17,11 +17,13 @@ package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @JsonInclude(Include.NON_NULL)
 public class EmailType extends AbstractType
 {
 	private static final long serialVersionUID = 3091393414410237233L;
+	@NotEmpty
 	private String recipients;
 	private String subject;
 	private String text;

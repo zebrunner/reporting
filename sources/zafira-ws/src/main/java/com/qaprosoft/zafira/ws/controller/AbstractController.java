@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.qaprosoft.zafira.services.exceptions.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,13 +40,6 @@ import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 public abstract class AbstractController
 {
@@ -220,6 +214,16 @@ public abstract class AbstractController
 		result.setError(new Error(ErrorCode.USER_NOT_FOUND));
 		return result;
     }
+
+	@ExceptionHandler(IntegrationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleIntegrationException(IntegrationException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
+		return result;
+	}
 	
 	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
 	{
