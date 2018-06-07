@@ -840,7 +840,7 @@
         };
 
         $scope.startDebug = function (testRun, event) {
-            $scope.testRunInDebugMode = testRun;
+            $scope.testRunInDebugMode = angular.copy(testRun);
             debug($scope.testRunInDebugMode);
         };
 
@@ -852,6 +852,7 @@
             TestRunService.rerunTestRun(testRun.id, true, true).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Debug mode is starting, debug status will appear soon');
+                    testRun.id = null;
                     var debugLog = '';
                     var parseLogsInterval = $interval(function () {
                         TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {

@@ -299,7 +299,7 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun startTestRun(TestRun testRun) throws ServiceException, JAXBException
+	public TestRun startTestRun(TestRun testRun) throws ServiceException
 	{
 		if(!StringUtils.isEmpty(testRun.getCiRunId()))
 		{
@@ -423,7 +423,8 @@ public class TestRunService
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
-			calculateTestRunResult(testRun.getId(), true);		}
+			calculateTestRunResult(testRun.getId(), true);
+		}
 		return testRun;
 	}
 
