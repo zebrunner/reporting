@@ -13,7 +13,7 @@
         $scope.selectedProjects = ProjectProvider.getProjects();
         $scope.version = null;
         $scope.projects = [];
-        $scope.dashboards = [];
+        $rootScope.dashboardList = [];
         $scope.views = [];
         $scope.tools = {};
 
@@ -78,7 +78,7 @@
                 if ($scope.hasHiddenDashboardPermission() == true) {
                     DashboardService.GetDashboards().then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboards = rs.data;
+                            $rootScope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
@@ -89,7 +89,7 @@
                     var hidden = true;
                     DashboardService.GetDashboards(hidden).then(function (rs) {
                         if (rs.success) {
-                            $scope.dashboards = rs.data;
+                            $rootScope.dashboardList = rs.data;
                             resolve(rs.data);
                         } else {
                             reject(rs.message);
