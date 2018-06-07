@@ -42,6 +42,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -544,21 +545,9 @@ public class TestRunService
 		TestRun testRun = getTestRunByIdFull(testRunId);
 		if(testRun == null)
 		{
-			throw new ServiceException("No test runs found by ID: " + testRunId);
+			throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
 		}
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
-	}
-
-	@Transactional(readOnly=true)
-	public String sendTestRunResultsNotification(final String id, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
-	{
-		TestRun testRun = getTestRunByCiRunId(id);
-		if(testRun == null)
-		{
-			throw new ServiceException("No test runs found by ID: " + id);
-		}
-		List<Test> tests = testService.getTestsByTestRunId(id);
 		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 

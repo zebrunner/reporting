@@ -248,10 +248,13 @@
         $scope.deleteWidget = function($event, widget){
             var confirmedDelete = confirm('Would you like to delete widget "' + widget.title + '" ?');
             if (confirmedDelete) {
-                $scope.widgets.splice($scope.widgets.indexOfId(widget), 1);
-                $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOfId(widget), 1);
                 DashboardService.DeleteWidget(widget.id).then(function (rs) {
                     if (rs.success) {
+                        $scope.widgets.splice($scope.widgets.indexOfId(widget.id), 1);
+                        if($scope.dashboard.widgets.indexOfId(widget.id) >= 0) {
+                            $scope.dashboard.widgets.splice($scope.dashboard.widgets.indexOfId(widget.id), 1);
+                        }
+                        updateWidgetsToAdd();
                         alertify.success("Widget deleted");
                     }
                     else {
@@ -310,8 +313,7 @@
                     dashboardId: $stateParams.id
                 }
             })
-                .then(function (answer) {
-                	if(answer == true) $state.reload();
+                .then(function (rs, action) {
                 }, function () {
                 });
         };
@@ -329,8 +331,23 @@
                     isNew: isNew
                 }
             })
-                .then(function (answer) {
-                	if(answer == true) $state.reload();
+                .then(function (rs) {
+                	if(rs) {
+                        switch(rs.action) {
+                            case 'CREATE':
+                                $state.go('dashboard', {id: rs.id});
+                                $rootScope.dashboardList.splice(rs.position, 0, rs);
+                                break;
+                            case 'UPDATE':
+                                rs.widgets = $scope.dashboard.widgets;
+                                $scope.dashboard = angular.copy(rs);
+                                $rootScope.dashboardList.splice(rs.position, 1, rs);
+                                break;
+                            default:
+                                break;
+                        }
+                        delete rs.action;
+                    }
                 }, function () {
                 });
         };
@@ -350,8 +367,22 @@
                     currentUserId: $scope.currentUserId
                 }
             })
-                .then(function (answer) {
-                	if(answer == true) $state.reload();
+                .then(function (rs) {
+                	if(rs) {
+                        switch(rs.action) {
+                            case 'CREATE':
+                                $scope.widgets.push(rs);
+                                updateWidgetsToAdd();
+                                break;
+                            case 'UPDATE':
+                                $scope.widgets.splice($scope.widgets.indexOfId(rs.id), 1, rs);
+                                updateWidgetsToAdd();
+                                break;
+                            default:
+                                break;
+                        }
+                        delete rs.action;
+                    }
                 }, function () {
                 });
         };
@@ -521,7 +552,7 @@
             DashboardService.AddDashboardWidget(dashboardId, widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget added");
-                	$scope.hide(true);
+                	$scope.hide(rs.data, 'CREATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -535,7 +566,7 @@
                 DashboardService.DeleteDashboardWidget(dashboardId, widget.id).then(function (rs) {
                     if (rs.success) {
                         alertify.success("Widget deleted");
-                        $scope.hide(true);
+                        $scope.hide(rs.data, 'DELETE');
                     }
                     else {
                         alertify.error(rs.message);
@@ -552,7 +583,7 @@
             }).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget updated");
-                	$scope.hide(true);
+                	$scope.hide(rs.data, 'UPDATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -560,8 +591,8 @@
             });
         };
 
-        $scope.hide = function (result) {
-            $mdDialog.hide(result);
+        $scope.hide = function (rs, action) {
+            $mdDialog.hide(rs, action);
         };
         $scope.cancel = function () {
             $mdDialog.cancel();
@@ -573,7 +604,7 @@
     function DashboardSettingsController($scope, $mdDialog, $location, DashboardService, dashboard, isNew) {
 
         $scope.isNew = isNew;
-        $scope.dashboard = dashboard;
+        $scope.dashboard = angular.copy(dashboard);
         $scope.newAttribute = {};
 
         if($scope.isNew)
@@ -585,7 +616,7 @@
             DashboardService.CreateDashboard(dashboard).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Dashboard created");
-                	$scope.hide(true);
+                	$scope.hide(rs.data, 'CREATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -598,7 +629,7 @@
             DashboardService.UpdateDashboard(dashboard).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Dashboard updated");
-                	$scope.hide(true);
+                	$scope.hide(rs.data, 'UPDATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -644,13 +675,14 @@
             });
         };
 
-        $scope.hide = function (result) {
+        $scope.hide = function (result, action) {
+            result.action = action;
             $mdDialog.hide(result);
         };
         $scope.cancel = function () {
             $mdDialog.cancel();
         };
-        (function initController() {
+        (function initController(dashboard) {
         })();
     }
 
@@ -679,7 +711,7 @@
             DashboardService.CreateWidget(widget).then(function (rs) {
                 if (rs.success) {
                 	alertify.success("Widget created");
-                	$scope.hide();
+                	$scope.hide(rs.data, 'CREATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -692,7 +724,7 @@
                 if (rs.success) {
                 	alertify.success("Widget updated");
                     $rootScope.$broadcast("$event:widgetIsUpdated");
-                	$scope.hide();
+                	$scope.hide(rs.data, 'UPDATE');
                 }
                 else {
                     alertify.error(rs.message);
@@ -811,8 +843,9 @@
             $scope.showWidget = false;
         };
 
-        $scope.hide = function () {
-            $mdDialog.hide();
+        $scope.hide = function (rs, action) {
+            rs.action = action;
+            $mdDialog.hide(rs);
         };
 
         $scope.cancel = function () {
