@@ -257,8 +257,9 @@ public class TestRunService
 				//make sure to reset below3 fields for existing run as well
 				testRun.setStatus(Status.QUEUED);
 				testRun.setStartedAt(Calendar.getInstance().getTime());
-				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
-
+				if(!queueTestRunParams.getDebug()){
+                    testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+                }
 				createTestRun(testRun);
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
