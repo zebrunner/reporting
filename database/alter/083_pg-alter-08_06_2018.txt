@@ -7,7 +7,6 @@ select check_version(83);
 
 DROP VIEW IF EXISTS NIGHTLY_FAILURES_VIEW;
 CREATE VIEW NIGHTLY_FAILURES_VIEW AS (
-set schema 'zafira';
   SELECT
     row_number() OVER () AS ID,
     PROJECTS.NAME AS PROJECT,
