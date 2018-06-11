@@ -16,7 +16,7 @@
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>
-					<include name="verifyNavigationTest"/>
+					<!--<include name="verifyNavigationTest"/>-->
 				</methods>
 			</class>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
