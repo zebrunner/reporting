@@ -30,7 +30,11 @@
         </dependency>
         <dependency>
             <groupId>com.qaprosoft</groupId>
-            <artifactId>zafira-dbaccess</artifactId>
+            <artifactId>zafira-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.qaprosoft</groupId>
+            <artifactId>zafira-conf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

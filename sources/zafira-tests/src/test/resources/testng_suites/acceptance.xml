@@ -21,7 +21,7 @@
 					<include name="verifyTestRunOpenTest"/>
 					<include name="verifyTestRunCopyLinkTest"/>
 					<include name="verifyMarkAsReviewedTest"/>
-					<!--<include name="verifySendAsEmailTest"/>-->
+					<include name="verifySendAsEmailTest"/>
 					<include name="verifyExportTest"/>
 					<include name="verifyBuildNowTest"/>
 					<include name="verifyRebuildTest"/>
@@ -88,6 +88,16 @@
 					<include name="changePreferencesTest"/>
 					<include name="changePasswordTest"/>
 					<include name="changeUserProfileInfoTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Cache tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.TestRunStatisticsCacheTest">
+				<methods>
+					<include name="verifyTestRunStatisticsCacheUpdateTest"/>
 				</methods>
 			</class>
 		</classes>

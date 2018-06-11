@@ -32,17 +32,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
+import java.util.function.Function;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -52,9 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,7 +113,7 @@ public class TestRunService
 
 	private static LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
 			.maximumSize(100000)
-			.expireAfterWrite(15, TimeUnit.SECONDS)
+			.expireAfterWrite(150, TimeUnit.MILLISECONDS)
 			.build(
 					new CacheLoader<Long, Lock>()
 					{
@@ -632,126 +629,122 @@ public class TestRunService
 	}
 
 	/**
-	 * Evict all entries from cache in several hours after start crone expression
-	 */
-	@CacheEvict(value = "testRunStatistics", allEntries = true)
-	@Scheduled(cron = "0 0 0/4 ? * * *")
-	public void cacheEvict() {
-	}
-
-	/**
-	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics.Action}
+	 * Method contains a container needed to do a work safe with Test run statistics cache thread
 	 * @param testRunId - test run id
-	 * @param status - new status
-	 * @return new statistics
+	 * @param statisticsFunction - action with cached values
+	 * @return testRunStatistics with value incremented
 	 */
-	@CachePut(value = "testRunStatistics", key = "#testRunId")
-	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action action, Status status)
+	private TestRunStatistics updateStatisticsSafe(Long testRunId, Function<TestRunStatistics, TestRunStatistics> statisticsFunction)
 	{
 		TestRunStatistics testRunStatistics = null;
+		Lock lock = null;
 		try
 		{
-			updateLocks.get(testRunId).lock();
+			lock = updateLocks.get(testRunId);
+			lock.lock();
 			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
-			switch (action)
-			{
-				case MARK_AS_KNOWN_ISSUE:
-					testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() + 1);
-					break;
-				case REMOVE_KNOWN_ISSUE:
-					testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() - 1);
-					break;
-				case MARK_AS_BLOCKER:
-					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() + 1);
-					break;
-				case REMOVE_BLOCKER:
-					testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
-					break;
-				case MARK_AS_REVIEWED:
-					testRunStatistics.setReviewed(true);
-					break;
-				case MARK_AS_NOT_REVIEWED:
-					testRunStatistics.setReviewed(false);
-					break;
-				default:
-					break;
-			}
-		} catch(Exception e)
-		{
-			LOGGER.error(e.getMessage());
-		} finally
-		{
-			try
-			{
-				updateLocks.get(testRunId).unlock();
-			} catch (ExecutionException e)
-			{
-				LOGGER.error(e.getMessage());
-			}
-		}
-		return testRunStatistics;
-	}
-
-	/**
-	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
-	 * @param testRunId - test run id 
-	 * @param status - new status
-	 * @return new statistics
-	 */
-	@CachePut(value = "testRunStatistics", key = "#testRunId")
-	public TestRunStatistics updateStatistics(Long testRunId, Status status, boolean isRerun)
-	{
-		TestRunStatistics testRunStatistics = null;
-		int increment = isRerun ? -1 : 1;
-		try
-		{
-			updateLocks.get(testRunId).lock();
-			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
-			switch (status)
-			{
-				case IN_PROGRESS:
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress());
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() + 1);
-					if(testRunStatistics.getQueued() > 0){
-						testRunStatistics.setQueued(testRunStatistics.getQueued());
-						testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
-					}
-					break;
-				case PASSED:
-					testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
-					break;
-				case FAILED:
-					testRunStatistics.setFailed(testRunStatistics.getFailed() + increment);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
-					break;
-				case SKIPPED:
-					testRunStatistics.setSkipped(testRunStatistics.getSkipped() + increment);
-					testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
-					break;
-				case ABORTED:
-					testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
-					if(testRunStatistics.getInProgress() > 0) {
-						testRunStatistics.setInProgress(testRunStatistics.getInProgress() - increment);
-					}
-					break;
-			    default:
-			    	break;
-			    }
+			testRunStatistics = statisticsFunction.apply(testRunStatistics);
+			testRunStatistics = statisticsService.setTestRunStatistic(testRunStatistics);
 		} catch (Exception e)
 		{
 			LOGGER.error(e.getMessage(), e);
 		} finally
 		{
-			try
+			if(lock != null)
 			{
-				updateLocks.get(testRunId).unlock();
-			} catch (ExecutionException e)
-			{
-				LOGGER.error(e.getMessage(), e);
+				lock.unlock();
 			}
 		}
 		return testRunStatistics;
+	}
+
+	/**
+	 * Increment value to statistics
+	 * @param testRunStatistics - cached test run statistic
+	 * @param status - test status
+	 * @param increment - integer (to increment - positive number, to decrement - negative number)
+	 * @return testRunStatistics with value incremented
+	 */
+	private TestRunStatistics updateStatistics(TestRunStatistics testRunStatistics, Status status, int increment)
+	{
+		switch (status)
+		{
+			case PASSED:
+				testRunStatistics.setPassed(testRunStatistics.getPassed() + increment);
+				break;
+			case FAILED:
+				testRunStatistics.setFailed(testRunStatistics.getFailed() + increment);
+				break;
+			case SKIPPED:
+				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + increment);
+				break;
+			case ABORTED:
+				testRunStatistics.setAborted(testRunStatistics.getAborted() + increment);
+				break;
+			case IN_PROGRESS:
+				testRunStatistics.setInProgress(testRunStatistics.getInProgress() + increment);
+				break;
+			default:
+				break;
+		}
+		return testRunStatistics;
+	}
+
+	/**
+	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics.Action}
+	 * @param testRunId - test run id
+	 * @return new statistics
+	 */
+	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action action)
+	{
+		return updateStatisticsSafe(testRunId, testRunStatistics -> {
+			switch (action)
+			{
+			case MARK_AS_KNOWN_ISSUE:
+				testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() + 1);
+				break;
+			case REMOVE_KNOWN_ISSUE:
+				testRunStatistics.setFailedAsKnown(testRunStatistics.getFailedAsKnown() - 1);
+				break;
+			case MARK_AS_BLOCKER:
+				testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() + 1);
+				break;
+			case REMOVE_BLOCKER:
+				testRunStatistics.setFailedAsBlocker(testRunStatistics.getFailedAsBlocker() - 1);
+				break;
+			case MARK_AS_REVIEWED:
+				testRunStatistics.setReviewed(true);
+				break;
+			case MARK_AS_NOT_REVIEWED:
+				testRunStatistics.setReviewed(false);
+				break;
+			default:
+				break;
+			}
+			return testRunStatistics;
+		});
+	}
+
+	/**
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
+	 * @param testRunId - test run id
+	 * @param status - new status
+	 * @return new statistics
+	 */
+	public TestRunStatistics updateStatistics(Long testRunId, Status status, boolean isRerun)
+	{
+		int increment = isRerun ? -1 : 1;
+		TestRunStatistics trs = updateStatisticsSafe(testRunId, testRunStatistics -> ! status.equals(IN_PROGRESS) && (isRerun || testRunStatistics.getInProgress() > 0)
+				? updateStatistics(testRunStatistics, IN_PROGRESS, -increment) :  testRunStatistics);
+		if(trs != null && trs.getQueued() > 0)
+		{
+			updateStatisticsSafe(testRunId, testRunStatistics -> {
+				testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
+				return testRunStatistics;
+			});
+		}
+
+		return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(testRunStatistics, status, increment));
 	}
 
 	/**
@@ -761,69 +754,14 @@ public class TestRunService
 	 * @param currentStatus - current test status
 	 * @return new statistics
 	 */
-	@CachePut(value = "testRunStatistics", key = "#testRunId")
 	public TestRunStatistics updateStatistics(Long testRunId, Status newStatus, Status currentStatus)
 	{
-		TestRunStatistics testRunStatistics = null;
-		try
-		{
-			updateLocks.get(testRunId).lock();
-			testRunStatistics = statisticsService.getTestRunStatistic(testRunId);
-			switch (newStatus) {
-			case PASSED:
-				testRunStatistics.setPassed(testRunStatistics.getPassed() + 1);
-				break;
-			case FAILED:
-				testRunStatistics.setFailed(testRunStatistics.getFailed() + 1);
-				break;
-			case SKIPPED:
-				testRunStatistics.setSkipped(testRunStatistics.getSkipped() + 1);
-				break;
-			case ABORTED:
-				testRunStatistics.setAborted(testRunStatistics.getAborted() + 1);
-				break;
-			default:
-				break;
-			}
-			switch (currentStatus) {
-			case PASSED:
-				testRunStatistics.setPassed(testRunStatistics.getPassed() - 1);
-				break;
-			case FAILED:
-				testRunStatistics.setFailed(testRunStatistics.getFailed() - 1);
-				break;
-			case SKIPPED:
-				testRunStatistics.setSkipped(testRunStatistics.getSkipped() - 1);
-				break;
-			case ABORTED:
-				testRunStatistics.setAborted(testRunStatistics.getAborted() - 1);
-				break;
-			default:
-				break;
-			}
-		} catch (Exception e)
-		{
-			LOGGER.error(e.getMessage(), e);
-		} finally
-		{
-			try
-			{
-				updateLocks.get(testRunId).unlock();
-			} catch (ExecutionException e)
-			{
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-		return testRunStatistics;
+		return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(
+				updateStatistics(testRunStatistics, currentStatus, -1), newStatus, 1));
 	}
 
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)
 	{
 		return updateStatistics(testRunId, status, false);
-	}
-
-	public TestRunStatistics updateStatistics(Long testRunId, TestRunStatistics.Action status)
-	{
-		return updateStatistics(testRunId, status, null);
 	}
 }

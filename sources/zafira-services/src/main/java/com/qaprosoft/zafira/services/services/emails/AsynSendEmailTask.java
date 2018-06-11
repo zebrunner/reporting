@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -78,7 +79,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 						getJavaMailSenderImpl().setHost(setting.getValue());
 						break;
 					case EMAIL_PORT:
-						getJavaMailSenderImpl().setPort(Integer.valueOf(setting.getValue()));
+						getJavaMailSenderImpl().setPort(StringUtils.isBlank(setting.getValue()) ? 0 : Integer.valueOf(setting.getValue()));
 						break;
 					case EMAIL_USER:
 						getJavaMailSenderImpl().setUsername(setting.getValue());
