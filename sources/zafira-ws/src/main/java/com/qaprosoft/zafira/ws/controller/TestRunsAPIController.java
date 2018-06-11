@@ -28,6 +28,7 @@ import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -65,10 +66,6 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToAbortCIJobException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
 import com.qaprosoft.zafira.services.services.FilterService;
 import com.qaprosoft.zafira.services.services.JobsService;
 import com.qaprosoft.zafira.services.services.ProjectService;
@@ -413,22 +410,6 @@ public class TestRunsAPIController extends AbstractController
 	{
 		recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
 		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
-	}
-
-	@ResponseStatusDetails
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Send test run result notification", nickname = "sendTestRunResultsNotification", code = 200, httpMethod = "POST", response = String.class)
-	@RequestMapping(value = "notification/{id}", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendTestRunResultsNotification(@PathVariable(value = "id") String id,
-														@RequestBody @Valid EmailType email,
-														@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
-														@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
-			throws ServiceException, JAXBException
-	{
-		String[] recipients = getRecipients(email.getRecipients());
-		return testRunService.sendTestRunResultsNotification(id, "failures".equals(filter), showStacktrace, recipients);
 	}
 
 	@ResponseStatusDetails

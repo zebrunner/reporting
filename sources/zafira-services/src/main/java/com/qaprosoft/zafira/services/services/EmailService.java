@@ -18,9 +18,11 @@ package com.qaprosoft.zafira.services.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import javax.mail.internet.MimeMessage;
 
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -36,6 +38,8 @@ import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
+
 @Service
 public class EmailService
 {
@@ -49,14 +53,25 @@ public class EmailService
 	
 	@Autowired
 	private AutowireCapableBeanFactory autowireizer;
+
+	@Autowired
+	private SettingsService settingsService;
 	
 	private EmailValidator validator = EmailValidator.getInstance();
+
+	private Function<Void, Boolean> isConnected = aVoid -> settingsService.isConnected(EMAIL);
 	
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{
+
+		if(! settingsService.isConnected(EMAIL))
+		{
+			throw new IntegrationException("SMTP server connection is refused.");
+		}
+
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getTemplate(), message);
 		final String [] recipients = processRecipients(emails);
-		
+
 		if(recipients.length > 0)
 		{
 			MimeMessagePreparator preparator = new MimeMessagePreparator()
@@ -64,7 +79,7 @@ public class EmailService
 				public void prepare(MimeMessage mimeMessage) throws Exception
 				{
 					boolean hasAttachments = message.getAttachments() != null;
-					
+
 					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
 					msg.setSubject(message.getSubject());
 					msg.setTo(recipients);

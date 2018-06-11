@@ -339,7 +339,7 @@
                                                             Mark as reviewed
                                                         </md-button>
                                                     </md-menu-item>
-                                                    <md-menu-item ng-if="testRun.status != 'IN_PROGRESS'">
+                                                    <md-menu-item ng-if="testRun.status != 'IN_PROGRESS' && tools['EMAIL']">
                                                         <md-button name="sendAsEmail" data-ng-click="sendAsEmail(testRun, $event)">
                                                             Send as email
                                                         </md-button>
