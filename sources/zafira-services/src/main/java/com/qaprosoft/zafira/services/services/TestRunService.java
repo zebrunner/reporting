@@ -269,10 +269,6 @@ public class TestRunService
 			testRun = existingRun;
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
-			if (!queueTestRunParams.getDebug())
-			{
-				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
-			}
             updateTestRun(testRun);
 		}
 		return testRun;

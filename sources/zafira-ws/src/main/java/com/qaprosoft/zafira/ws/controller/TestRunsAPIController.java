@@ -467,7 +467,7 @@ public class TestRunsAPIController extends AbstractController
 	public void rerunTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures,
 			@RequestParam(value = "debug", required = false, defaultValue = "false") boolean debug)
-			throws ServiceException, JAXBException
+			throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
 		if (testRun == null)
@@ -479,6 +479,10 @@ public class TestRunsAPIController extends AbstractController
 		{
 			throw new UnableToRebuildCIJobException();
 		}
+		if (debug) {
+            testRun.setBuildNumber(null);
+            testRunService.updateTestRun(testRun);
+        }
 	}
 
 	@ResponseStatusDetails
