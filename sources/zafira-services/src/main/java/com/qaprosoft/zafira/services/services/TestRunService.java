@@ -265,12 +265,13 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
-			testRun.setStatus(Status.QUEUED);
-			testRun.setStartedAt(Calendar.getInstance().getTime());
-			if(!queueTestRunParams.getDebug()){
-                testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+			if (!queueTestRunParams.getDebug())
+			{
+				testRun.setStatus(Status.QUEUED);
+				testRun.setStartedAt(Calendar.getInstance().getTime());
+				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+				updateTestRun(testRun);
             }
-			updateTestRun(testRun);
 		}
 		return testRun;
 	}

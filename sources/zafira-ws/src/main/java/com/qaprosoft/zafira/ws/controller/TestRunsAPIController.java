@@ -467,7 +467,7 @@ public class TestRunsAPIController extends AbstractController
     @ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
     @RequestMapping(value = "{id}/debug", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Integer debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
+    public @ResponseBody Integer debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
     {
         Integer build;
         TestRun testRun = testRunService.getTestRunByIdFull(id);
