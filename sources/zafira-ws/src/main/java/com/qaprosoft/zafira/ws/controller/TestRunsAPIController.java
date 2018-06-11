@@ -504,7 +504,29 @@ public class TestRunsAPIController extends AbstractController
 		}
 	}
 
-	@ResponseStatusDetails
+    @ResponseStatusDetails
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams(
+            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Abort debug", nickname = "abortDebug", code = 200, httpMethod = "GET")
+    @PreAuthorize("hasPermission('TEST_RUNS_CI')")
+    @RequestMapping(value = "abort/debug", method = RequestMethod.GET)
+    public void abortDebug(
+            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
+            @ApiParam(value = "Build number") @RequestParam(value = "buildNumber", required = false) Integer buildNumber) throws ServiceException
+    {
+        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+        if (testRun == null) {
+            throw new TestRunNotFoundException();
+        }
+
+        if (!jenkinsService.abortJob(testRun.getJob(), buildNumber)) {
+            throw new UnableToAbortCIJobException();
+        }
+    }
+
+    @ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

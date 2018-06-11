@@ -11,6 +11,7 @@
         service.searchTestRuns = searchTestRuns;
         service.abortTestRun = abortTestRun;
         service.abortCIJob = abortCIJob;
+        service.abortDebug = abortDebug;
         service.getTestRun = getTestRun;
         service.getTestRunByCiRunId = getTestRunByCiRunId;
         service.getTestRunResults = getTestRunResults;
@@ -89,6 +90,10 @@
 
         function abortCIJob(id, ciRunId) {
             return $http.get(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
+        }
+
+        function abortDebug(id, ciRunId, buildNumber) {
+            return $http.get(API_URL + '/api/tests/runs/abort/debug', {params:{'id': id, 'ciRunId': ciRunId, 'buildNumber': buildNumber}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort debug'));
         }
 
         function getJobParameters(id) {

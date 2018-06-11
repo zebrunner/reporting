@@ -845,6 +845,7 @@
         };
 
         $scope.testRunInDebugMode = {};
+        $scope.buildNumber = null;
         $scope.debugHost = null;
         $scope.debugPort = null;
 
@@ -852,11 +853,10 @@
             TestRunService.debugTestRun(testRun.id).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Debug mode is starting, debug status will appear soon');
-                    testRun.id = null;
-                    var buildNumber = rs.data;
+                    $scope.buildNumber = rs.data;
                     var debugLog = '';
                     var parseLogsInterval = $interval(function () {
-                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50, buildNumber).then(function (rs) {
+                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50, $scope.buildNumber).then(function (rs) {
                             if (rs.success) {
                                 var map = rs.data;
                                 var value;
@@ -910,7 +910,7 @@
         $scope.stopDebugMode = function(){
             $scope.stopConnectingDebug();
             if($scope.testRunInDebugMode){
-                $scope.abort($scope.testRunInDebugMode);
+                $scope.abortDebug($scope.testRunInDebugMode, $scope.buildNumber);
                 $scope.testRunInDebugMode = {};
             }
             alertify.warning("Debug mode is disabled");
@@ -961,15 +961,39 @@
                 TestRunService.abortCIJob(testRun.id, testRun.ciRunId).then(function (rs) {
                     if(rs.success) {
                         var abortCause = {};
-                        if(testRun.id == null){
-                            abortCause.comment = "Debug mode was disconnected";
-                        } else {
-                            abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
-                        }
+                        abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
                                 alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            } else {
+                alertify.error('Unable connect to jenkins');
+            }
+        };
+
+        $scope.abortDebug = function (testRun, buildNumber) {
+            if($scope.jenkins.enabled) {
+                TestRunService.abortDebug(testRun.id, testRun.ciRunId, buildNumber).then(function (rs) {
+                    if(rs.success) {
+                        var abortCause = {};
+                        abortCause.comment = "Debug mode was disconnected";
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
+                            if(rs.success){
+                                testRun.status = 'ABORTED';
+                                alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
+                                $scope.testRunInDebugMode = {};
+                                $scope.buildNumber = null;
+                                $scope.debugHost = null;
+                                $scope.debugPort = null;
                             } else {
                                 alertify.error(rs.message);
                             }
