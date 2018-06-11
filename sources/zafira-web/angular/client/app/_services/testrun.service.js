@@ -21,6 +21,7 @@
         service.exportTestRunResultsHTML = exportTestRunResultsHTML;
         service.markTestRunAsReviewed = markTestRunAsReviewed;
         service.rerunTestRun = rerunTestRun;
+        service.debugTestRun = debugTestRun;
         service.buildTestRun = buildTestRun;
         service.getJobParameters = getJobParameters;
         service.getEnvironments = getEnvironments;
@@ -74,11 +75,15 @@
             return $http.post(API_URL + '/api/tests/runs/' + id + '/markReviewed', comment).then(UtilService.handleSuccess, UtilService.handleError('Unable to mark test run as reviewed'));
         }
 
-        function rerunTestRun(id, rerunFailures, debug) {
-            return $http.get(API_URL + '/api/tests/runs/' + id + '/rerun', {params:{'rerunFailures': rerunFailures, 'debug': debug}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to rerun test run'));
+        function rerunTestRun(id, rerunFailures) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/rerun', {params:{'rerunFailures': rerunFailures}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to rerun test run'));
         }
 
-        function buildTestRun(id, jobParameters) {
+        function debugTestRun(id) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/debug').then(UtilService.handleSuccess, UtilService.handleError('Unable to start debug'));
+        }
+
+        function buildTestRun(id, jobParameters, buildWithParameters) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 
@@ -98,8 +103,8 @@
             return $http.get(API_URL + '/api/tests/runs/platforms').then(UtilService.handleSuccess, UtilService.handleError('Unable to get platforms'));
         }
 
-        function getConsoleOutput(id, ciRunId, count, fullCount) {
-            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
+        function getConsoleOutput(id, ciRunId, count, fullCount, buildNumber) {
+            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId, 'buildNumber': buildNumber}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
     }
 })();

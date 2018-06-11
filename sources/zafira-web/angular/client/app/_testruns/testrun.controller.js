@@ -849,13 +849,14 @@
         $scope.debugPort = null;
 
         function debug(testRun) {
-            TestRunService.rerunTestRun(testRun.id, true, true).then(function (rs) {
+            TestRunService.debugTestRun(testRun.id).then(function (rs) {
                 if (rs.success) {
                     alertify.success('Debug mode is starting, debug status will appear soon');
                     testRun.id = null;
+                    var buildNumber = rs.data;
                     var debugLog = '';
                     var parseLogsInterval = $interval(function () {
-                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {
+                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50, buildNumber).then(function (rs) {
                             if (rs.success) {
                                 var map = rs.data;
                                 var value;
