@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
@@ -245,7 +244,7 @@ public class WidgetsAPIController extends AbstractController
 		}
 		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
 
-		CompletableFuture.supplyAsync(() -> {
+		new Thread(() -> {
 			String result = null;
 			try
 			{
@@ -265,8 +264,7 @@ public class WidgetsAPIController extends AbstractController
 			{
 				LOGGER.error(e);
 			}
-			return result;
-		}).toCompletableFuture();
+		}).start();
 		return null;
 	}
 }
