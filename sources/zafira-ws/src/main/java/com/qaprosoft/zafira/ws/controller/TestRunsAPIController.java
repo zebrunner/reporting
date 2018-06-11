@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.exceptions.*;
+import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -69,7 +70,6 @@ import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.services.FilterService;
 import com.qaprosoft.zafira.services.services.JobsService;
 import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.StatisticsService;
 import com.qaprosoft.zafira.services.services.TestRunService;
 import com.qaprosoft.zafira.services.services.TestService;
 import com.qaprosoft.zafira.services.services.UserService;

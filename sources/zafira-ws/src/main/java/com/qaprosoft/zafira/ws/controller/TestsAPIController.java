@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,6 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.StatisticsService;
 import com.qaprosoft.zafira.services.services.TestArtifactService;
 import com.qaprosoft.zafira.services.services.TestMetricService;
 import com.qaprosoft.zafira.services.services.TestRunService;
