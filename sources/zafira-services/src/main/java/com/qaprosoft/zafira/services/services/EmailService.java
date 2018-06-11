@@ -95,7 +95,8 @@ public class EmailService
 					}
 				}
 			};
-			Runnable task = new AsynSendEmailTask(preparator);
+			emailTask.setPreparator(preparator);
+			Runnable task = emailTask;
 			autowireizer.autowireBean(task);
 			Executors.newSingleThreadExecutor().execute(task);
 		}
