@@ -21,7 +21,7 @@
 					<include name="verifyTestRunOpenTest"/>
 					<include name="verifyTestRunCopyLinkTest"/>
 					<include name="verifyMarkAsReviewedTest"/>
-					<!--<include name="verifySendAsEmailTest"/>-->
+					<include name="verifySendAsEmailTest"/>
 					<include name="verifyExportTest"/>
 					<include name="verifyBuildNowTest"/>
 					<include name="verifyRebuildTest"/>
