@@ -13,25 +13,7 @@
                         <div class="tab{{ $index % 4 }}">
                             <div class="tab-content">
                               <div class="history-tab" ng-if="selectedTab == 0">
-                                <div class="table-responsive col-md-8 offset-md-4 no-padding">
-                                    <table class="table-history table table-striped no-margin">
-                                        <thead>
-                                            <tr>
-                                                <th>Visuals</th>
-                                                <th>Start</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr ng-if="logs.length" ng-repeat="log in logs">
-                                                <td><i class="material-icons">insert_photo</i></td>
-                                                <td>{{ log.timestamp }}</td>
-                                                <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="video-section col-md-4 col-sm-12 no-padding">
+                                <div class="video-section col-md-4 col-sm-12 col-md-push-8 no-padding">
                                   <h4>
                                     Test online
                                     <span class="recording-icon">
@@ -49,6 +31,24 @@
                                     </video>
                                     <div ng-if="wsURL" ng-init="setMode('live');" id="vnc"></div>
                                   </div>
+                                </div>
+                                <div class="table-history table-responsive col-md-8 col-sm-12 no-padding">
+                                    <table class="table table-striped no-margin">
+                                        <thead>
+                                            <tr>
+                                                <th>Visuals</th>
+                                                <th>Start</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-if="logs.length" ng-repeat="log in logs">
+                                                <td><i class="material-icons">insert_photo</i></td>
+                                                <td>{{ log.timestamp }}</td>
+                                                <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                               </div>
                               <div class="screenshots-tab" ng-if="selectedTab == 1">
@@ -91,7 +91,7 @@
         </section>
       </div>
     </div>
-    <div resize="resizeIcon" resize-direction="left" on-resize-callback="onResize" class="video-section col-md-4 no-padding">
+    <!-- <div resize="resizeIcon" resize-direction="left" on-resize-callback="onResize" class="video-section col-md-4 no-padding">
         <i id="resizeIcon" style="position: absolute; top: 50%; cursor: col-resize;" class="fa fa-arrows-h"></i>
       <h4>
         Test online
@@ -136,6 +136,6 @@
             <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </div>

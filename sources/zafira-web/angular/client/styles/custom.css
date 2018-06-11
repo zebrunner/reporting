@@ -88,9 +88,24 @@
 
 @media (max-width: 991px) {
   .video-section {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
+    position: relative !important;
+  }
+
+  .test-info-section md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    height: 78vh !important;
+  }
+
+
+  .test-info-section md-tab-content {
+    min-height: 100% !important;
+    overflow: auto !important;
+  }
+
+  .table-history tbody {
+      height: 60vh !important;
+  }
+
+  .table-responsive > .table > tbody > tr > td {
+    white-space: pre-line !important;
   }
 }
