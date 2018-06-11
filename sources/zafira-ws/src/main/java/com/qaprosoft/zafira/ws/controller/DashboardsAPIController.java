@@ -216,7 +216,7 @@ public class DashboardsAPIController extends AbstractController
 		}
 		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
 
-		CompletableFuture.supplyAsync(() -> {
+		new Thread(() -> {
 			String result = null;
 			try
 			{
@@ -238,8 +238,7 @@ public class DashboardsAPIController extends AbstractController
 			{
 				LOGGER.error(e);
 			}
-			return result;
-		}).toCompletableFuture();
+		}).start();
 		return null;
 	}
 
