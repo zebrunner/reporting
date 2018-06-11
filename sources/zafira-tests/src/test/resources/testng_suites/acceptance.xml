@@ -93,4 +93,14 @@
 		</classes>
 	</test>
 
+	<test name="Cache tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.TestRunStatisticsCacheTest">
+				<methods>
+					<include name="verifyTestRunStatisticsCacheUpdateTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
 </suite>

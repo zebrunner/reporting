@@ -88,8 +88,8 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 		this.testRunIds = this.countType.equals("ONE") ? new Object[] { testRunIds[RandomUtils.nextInt(0, testRunIds.length)] } : testRunIds;
 	}
 
-	@Test(dataProvider = "getStatisticsMethods")
-	public void test(Function<Object[], TestRunStatistics> updateTestRunStatisticsFunction, Class[] paramClasses)
+	@Test(groups = {"acceptance", "cache"}, dataProvider = "getStatisticsMethods")
+	public void verifyTestRunStatisticsCacheUpdateTest(Function<Object[], TestRunStatistics> updateTestRunStatisticsFunction, Class[] paramClasses)
 	{
 		int threadCount = RandomUtils.nextInt(2, 15);
 		LOGGER.info("Update test run statistics function with updateTestRunStatistics(" + getMethodPlaceholder(paramClasses) + ")");
