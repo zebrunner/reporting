@@ -172,7 +172,7 @@ public class TestRunPageTest extends AbstractTest
 		markAsReviewedModalWindow.closeModalWindow();
 	}
 
-	@Test(groups = {"acceptance", "testRun"}, enabled = false)
+	@Test(groups = {"acceptance", "testRun"})
 	public void verifySendAsEmailTest()
 	{
 		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
