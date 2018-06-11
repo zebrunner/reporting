@@ -42,10 +42,10 @@ public class UserService
 {
 	private static final Logger LOGGER = Logger.getLogger(UserService.class);
 	
-	@Value("${zafira.admin.username}")
+	@Value("${zafira.admin.username?:}")
 	private String adminUsername;
 	
-	@Value("${zafira.admin.password}")
+	@Value("${zafira.admin.password?:}")
 	private String adminPassword;
 	
 	@Autowired
