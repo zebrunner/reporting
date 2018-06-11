@@ -460,10 +460,6 @@ public class TestRunsAPIController extends AbstractController
 		{
 			throw new UnableToRebuildCIJobException();
 		}
-		if (debug) {
-            testRun.setBuildNumber(null);
-            testRunService.updateTestRun(testRun);
-        }
 	}
 
 	@ResponseStatusDetails
