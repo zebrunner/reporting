@@ -256,6 +256,7 @@ public class TestRunService
 				testRun.setStatus(Status.QUEUED);
 				testRun.setStartedAt(Calendar.getInstance().getTime());
 				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+
 				createTestRun(testRun);
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -265,9 +266,11 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
+
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
-            updateTestRun(testRun);
+			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
+			updateTestRun(testRun);
 		}
 		return testRun;
 	}
