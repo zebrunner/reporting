@@ -1519,7 +1519,6 @@
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
             loadPublicFilters();
-            showDebugToast();
         })();
     }
 
