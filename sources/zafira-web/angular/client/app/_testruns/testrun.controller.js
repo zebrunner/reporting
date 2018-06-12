@@ -1535,9 +1535,6 @@
             var jobParametersMap = {};
             for (var i = 0; i < $scope.jobParameters.length; i++){
                 jobParametersMap[$scope.jobParameters[i].name] = $scope.jobParameters[i].value;
-                if ($scope.jobParameters[i].name === "rerun_failures"){
-                    jobParametersMap[$scope.jobParameters[i].name] = false
-                }
             }
             TestRunService.buildTestRun($scope.testRun.id, jobParametersMap).then(function(rs) {
                 if(rs.success)
@@ -1560,11 +1557,9 @@
                     $scope.jobParameters = rs.data;
                     for (var i = 0; i < $scope.jobParameters.length; i++){
                         if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
-                            if ($scope.jobParameters[i].value == 'true'){
-                                $scope.jobParameters[i].value = true;
-                            }
-                            else if ($scope.jobParameters[i].value == 'false') {
-                                $scope.jobParameters[i].value = false;
+                            $scope.jobParameters[i].value = JSON.parse($scope.jobParameters[i].value);
+                            if ($scope.jobParameters[i].name === "rerun_failures"){
+                                $scope.jobParameters[i].name = false;
                             }
                         }
                     }
