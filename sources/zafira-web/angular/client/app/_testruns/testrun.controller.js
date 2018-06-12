@@ -852,7 +852,7 @@
         function debug(testRun) {
             TestRunService.debugTestRun(testRun.id).then(function (rs) {
                 if (rs.success) {
-                    alertify.success('Debug mode is starting, debug status will appear soon');
+                    showDebugToast();
                     $scope.buildNumber = rs.data;
                     var debugLog = '';
                     var parseLogsInterval = $interval(function () {
@@ -866,7 +866,6 @@
                                         if (debugLog === '') {
                                             $scope.debugPort = getPortFromLog(value);
                                             $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
-                                            showDebugToast();
                                         }
                                         $timeout.cancel(connectDebugTimeout);
                                         if (debugLog === '') {
@@ -932,7 +931,7 @@
 
         function showDebugToast() {
             $mdToast.show({
-                hideDelay: 600000,
+                hideDelay: 640000,
                 position: 'bottom right',
                 scope: $scope,
                 preserveScope: true,
@@ -1520,6 +1519,7 @@
             $scope.loadSlackMappings();
             $scope.storeSlackAvailability();
             loadPublicFilters();
+            showDebugToast();
         })();
     }
 
