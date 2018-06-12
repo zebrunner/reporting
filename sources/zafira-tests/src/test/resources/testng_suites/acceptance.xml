@@ -93,7 +93,7 @@
 		</classes>
 	</test>
 
-	<test name="Cache tests">
+	<test parallel="false" name="Cache tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunStatisticsCacheTest">
 				<methods>
