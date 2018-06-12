@@ -1535,6 +1535,9 @@
             var jobParametersMap = {};
             for (var i = 0; i < $scope.jobParameters.length; i++){
                 jobParametersMap[$scope.jobParameters[i].name] = $scope.jobParameters[i].value;
+                if ($scope.jobParameters[i].name === "rerun_failures"){
+                    jobParametersMap[$scope.jobParameters[i].name] = false
+                }
             }
             TestRunService.buildTestRun($scope.testRun.id, jobParametersMap).then(function(rs) {
                 if(rs.success)
