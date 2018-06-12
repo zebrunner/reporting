@@ -878,7 +878,7 @@ CREATE VIEW NIGHTLY_FAILURES_VIEW AS (
     JOBS.NAME AS JOB_NAME,
     TEST_SUITES.NAME AS TEST_SUITE_NAME,
     TEST_RUNS.BUILD_NUMBER AS JOBBUILD,
-    '<a href="{#zafiraURL}#!/tests/runs/' || TEST_RUNS.ID || '" target="_blank">' || JOBS.NAME || '</a>' AS REPORT,
+    '<a href="#!/tests/runs/' || TEST_RUNS.ID || '" target="_blank">' || JOBS.NAME || '</a>' AS REPORT,
     '<a href="' || JOBS.JOB_URL || '/' || TEST_RUNS.build_number || '/eTAF_Report' || '" target="_blank">' || JOBS.NAME || '</a>' AS ETAF_REPORT,
     '<a href="' || JOBS.JOB_URL || '/' || TEST_RUNS.build_number || '/rebuild/parameterized' || '" target="_blank">Rebuild</a>' AS REBUILD,
     TEST_RUNS.ID AS TEST_RUN_ID,
