@@ -48,10 +48,7 @@ public class JobsService
 	@Transactional(rollbackFor = Exception.class)
 	public Job createOrUpdateJobByURL(String jobUrl, User user) throws ServiceException
 	{
-		if (jobUrl.charAt(jobUrl.length() - 1) == '/')
-		{
-			jobUrl = StringUtils.chop(jobUrl);
-		}
+		jobUrl = jobUrl.replaceAll("/$", "");
 		String jobName = StringUtils.substringAfterLast(jobUrl, "/");
 		String jenkinsHost = StringUtils.EMPTY;
 		if(jobUrl.contains("/view/"))

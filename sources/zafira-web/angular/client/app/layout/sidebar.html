@@ -10,7 +10,7 @@
               <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
             </a>
             <ul auto-height="dashboardsLoaded" class="auto-width width-icon">
-                <li data-toggle-nav-collapsed-min back data-ng-repeat="dashboard in dashboards | orderBy:'position'">
+                <li data-toggle-nav-collapsed-min back data-ng-repeat="dashboard in dashboardList | orderBy:'position'">
                     <a md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">
                       <i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 14px;"></i>
                       {{dashboard.title}}

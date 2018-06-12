@@ -7,6 +7,10 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
 
+	<bean id="statisticsService" class="com.qaprosoft.zafira.services.services.cache.StatisticsService">
+		<property name="cacheableService" ref="testRunMapperCacheableService"/>
+	</bean>
+
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 
 	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
@@ -14,6 +18,7 @@
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="beans">
 			<map>
+				<entry key="bean:name=asyncSendEmailTask" value-ref="asyncSendEmailTask"/>
 				<entry key="bean:name=googleService" value-ref="googleService"/>
 				<entry key="bean:name=ldapService" value-ref="ldapService"/>
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
@@ -45,6 +50,8 @@
 		  class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
+
+	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
 
 	<bean id="googleService" class="com.qaprosoft.zafira.services.services.jmx.google.GoogleService"/>
 
@@ -108,8 +115,6 @@
 			</props>
 		</property>
 	</bean>
-
-	<bean id="asynSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask" scope="prototype"/>
 
 	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
 		id="freemarkerConfiguration">

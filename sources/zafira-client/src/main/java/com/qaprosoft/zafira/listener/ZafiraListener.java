@@ -485,18 +485,25 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			{
 				emails = ZAFIRA_REPORT_EMAILS;
 			}
-			
-			String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY, ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
-			
-			if(!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
+
+			if(! StringUtils.isBlank(emails))
 			{
-				// Create report folder if not exist
-				File reportFolder = new File(String.format("%s/%s", System.getProperty("user.dir"), ZAFIRA_REPORT_FOLDER));
-				if(!reportFolder.exists()) reportFolder.mkdirs();
-				// Create report file
-				File reportFile = new File(String.format("%s/%s", ZAFIRA_REPORT_FOLDER,  ZAFIRA_REPORT));
-				reportFile.createNewFile();
-				FileUtils.writeStringToFile(reportFile, report);
+
+				String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY,
+						ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
+
+				if (!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
+				{
+					// Create report folder if not exist
+					File reportFolder = new File(
+							String.format("%s/%s", System.getProperty("user.dir"), ZAFIRA_REPORT_FOLDER));
+					if (!reportFolder.exists())
+						reportFolder.mkdirs();
+					// Create report file
+					File reportFile = new File(String.format("%s/%s", ZAFIRA_REPORT_FOLDER, ZAFIRA_REPORT));
+					reportFile.createNewFile();
+					FileUtils.writeStringToFile(reportFile, report);
+				}
 			}
 		} 
 		catch (Throwable e) 

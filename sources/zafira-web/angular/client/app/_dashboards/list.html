@@ -3,7 +3,7 @@
     <div id="dashboard_content" class="page page-dashboard">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="section-header" id="pageTitle">{{::dashboard.title}}</h2>
+                <h2 class="section-header" id="pageTitle">{{dashboard.title}}</h2>
             </div>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
@@ -38,7 +38,7 @@
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
-					<md-button data-ng-class="{'md-raised md-primary': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position'"
+					<md-button data-ng-class="{'md-raised md-primary': dashboard.active == true}" data-ng-repeat="dashboard in dashboards | orderBy:'position' track by dashboard.id"
 							   data-ng-click="switchDashboard(dashboard.id)">
 						{{dashboard.title}}
 					</md-button>
@@ -47,15 +47,15 @@
 	    </div>
 	    <br/>
 		<div class="row">
-			<input type="hidden" id="dashboard_title" value="{{::dashboard.title}}" />
+			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
             <div gridstack class="grid-stack" options="gridstackOptions"
                  on-change="" on-drag-start="" on-drag-stop="" on-resize-start="" on-resize-stop="" style="margin-bottom: 20px">
                 <div class="grid-stack-item" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets track by widget.id" gridstack-item gs-item-x="widget.location.x" gs-item-y="widget.location.y"
                      gs-item-width="widget.location.width" gs-item-height="widget.location.height" on-item-added="" on-item-removed="">
-                    <input type="hidden" ng-attr-id="widget-title-{{ widget.id }}" value="{{::widget.title}}" />
+                    <input type="hidden" ng-attr-id="widget-title-{{ widget.id }}" value="{{widget.title}}" />
                     <div ng-attr-id="widget-container-{{ widget.id }}" class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
                         <div class="panel-heading show-on-hover">
-                            {{::widget.title}}
+                            {{widget.title}}
                             <span class="show-icon-on-hover pull-right">
                                 <i class="material-icons pull-right widget-icon" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">delete</i>
                                 <i class="material-icons pull-right widget-icon" data-ng-click="showEmailDialog($event, widget.id)">email</i>
@@ -76,7 +76,7 @@
                                     <thead>
                                         <tr>
                                             <th class="pointer" data-ng-repeat="column in widget.model.columns track by $index" data-ng-click="changeSorting(widget, column)">
-                                                {{::column}}&nbsp;<i class="fa fa-sort"></i>
+                                                {{column}}&nbsp;<i class="fa fa-sort"></i>
                                             </th>
                                         </tr>
                                     </thead>
@@ -144,7 +144,7 @@
                                     </td>
                                 </tr>
 
-                                <tr md-row ng-repeat="widget in unexistWidgets | orderBy : 'title' track by widget.id">
+                                <tr md-row ng-repeat="widget in unexistWidgets | orderBy : 'title' track by $index">
                                         <td md-cell>{{widget.title}}</td>
                                         <td md-cell>{{widget.type}}</td>
                                         <td md-cell class="text-center">

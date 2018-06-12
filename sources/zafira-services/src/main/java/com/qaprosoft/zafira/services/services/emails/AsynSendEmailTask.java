@@ -19,8 +19,12 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -31,6 +35,8 @@ import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
+@ManagedResource(objectName = "bean:name=asyncSendEmailTask", description = "Email init Managed Bean",
+		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class AsynSendEmailTask implements Runnable, IJMXService
 {
 
@@ -47,13 +53,13 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	private MimeMessagePreparator preparator;
 
-	public AsynSendEmailTask() {
+	/*public AsynSendEmailTask() {
 	}
 
 	public AsynSendEmailTask(MimeMessagePreparator preparator)
 	{
 		this.preparator = preparator;
-	}
+	}*/
 
 	@Override
 	public void run()
@@ -63,6 +69,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	@Autowired
 	@PostConstruct
+	@ManagedOperation(description = "Email initialization")
 	public void init() {
 		try {
 			List<Setting> emailSettings = settingsService.getSettingsByTool(EMAIL);
@@ -78,7 +85,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 						getJavaMailSenderImpl().setHost(setting.getValue());
 						break;
 					case EMAIL_PORT:
-						getJavaMailSenderImpl().setPort(Integer.valueOf(setting.getValue()));
+						getJavaMailSenderImpl().setPort(StringUtils.isBlank(setting.getValue()) ? 0 : Integer.valueOf(setting.getValue()));
 						break;
 					case EMAIL_USER:
 						getJavaMailSenderImpl().setUsername(setting.getValue());
@@ -110,6 +117,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 		this.preparator = preparator;
 	}
 
+	@ManagedAttribute(description = "Get email server")
 	public JavaMailSenderImpl getJavaMailSenderImpl() {
 		return (JavaMailSenderImpl)this.mailSender;
 	}
