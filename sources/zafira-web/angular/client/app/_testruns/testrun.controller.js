@@ -1558,7 +1558,7 @@
                         if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
                             $scope.jobParameters[i].value = JSON.parse($scope.jobParameters[i].value);
                             if ($scope.jobParameters[i].name === "rerun_failures"){
-                                $scope.jobParameters[i].name = false;
+                                $scope.jobParameters[i].value = false;
                             }
                         }
                     }
