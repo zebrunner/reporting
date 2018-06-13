@@ -3,13 +3,16 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, TestService, TestRunService, UtilService, ArtifactService, $stateParams) {
+    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
+        $scope.drivers = [];
+
+        $scope.OFFSET = OFFSET;
 
         $scope.tabs = [
             { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."},
@@ -17,6 +20,8 @@
             { title: 'Raw logs', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
             { title: 'Test Info', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
         ];
+
+        $scope.tab = $scope.tabs[0];
 
         var MODES = {
             live: {
@@ -28,6 +33,8 @@
                 element: 'video'
             }
         };
+
+        var LIVE_DEMO_ARTIFACT_NAME = 'live demo';
 
         $scope.MODE = {};
 
@@ -78,12 +85,39 @@
             }
         };
 
+        var testsWebsocketName = 'tests';
+
+        function initTestsWebSocket() {
+            $scope.testsWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
+            $scope.testsWebsocket.debug = null;
+            $scope.testsWebsocket.connect({withCredentials: false}, function () {
+                if($scope.testsWebsocket.connected) {
+                    $scope.testsWebsocket.subscribe("/topic/testRuns/" + $scope.testRun.id + "/tests", function (data) {
+                        var test = $scope.getEventFromMessage(data.body).test;
+                        if(test.id == $scope.test.id) {
+                            $scope.test = angular.copy(test);
+                            var liveDemoArtifact = getArrayValue(getLiveDemoArtifacts(test), 0);
+                            addDriver(liveDemoArtifact);
+                            $scope.$apply();
+                        }
+                    });
+                }
+            }, function () {
+                UtilService.reconnectWebsocket(testsWebsocketName, initTestsWebSocket());
+            });
+            UtilService.websocketConnected(testsWebsocketName);
+        };
+
+        $scope.getEventFromMessage = function (message) {
+            return JSON.parse(message.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+        };
+
         $scope.onResize = function() {
             ArtifactService.resize(angular.element($scope.MODE.element)[0], rfb);
         };
 
         $scope.$on('$destroy', function () {
-            if(rfb && rfb._connected) {
+            if(rfb) {
                 rfb.disconnect();
             }
             if(logsStomp && logsStomp.connected) {
@@ -91,20 +125,43 @@
                 $scope.logs = [];
                 UtilService.websocketConnected(logsStompName);
             }
+            if($scope.testsWebsocket && $scope.testsWebsocket.connected) {
+                $scope.testsWebsocket.disconnect();
+                UtilService.websocketConnected(testsWebsocketName);
+            }
         });
+
+        function getLiveDemoArtifacts(test) {
+            return test.artifacts ? test.artifacts.filter(function (artifact) {
+                return artifact.name.toLowerCase().includes(LIVE_DEMO_ARTIFACT_NAME)
+            }) : [];
+        };
+
+        function getArrayValue(array, index) {
+            return array && array.length ? array[index] : undefined;
+        };
+
+        function addDriver(liveDemoArtifact) {
+            if(liveDemoArtifact && $scope.drivers.indexOf(liveDemoArtifact.createdAt) == -1) {
+                $scope.drivers.push(liveDemoArtifact.createdAt);
+            }
+        };
 
         (function init() {
             getTestRun($stateParams.id).then(function (rs) {
+                $scope.testRun = rs;
+                initTestsWebSocket();
                 getTest(rs.id).then(function (testsRs) {
-                    $scope.testRun = rs;
                     $scope.test = testsRs.filter(function (t) {
                         return t.id === parseInt($stateParams.testId);
                     })[0];
-                    var videoArtifacts = $scope.test.artifacts ? $scope.test.artifacts.filter(function (artifact) {
-                        return artifact.name.toLowerCase().includes('live demo')
-                    }) : [];
-                    $scope.wsURL = videoArtifacts && videoArtifacts.length ? videoArtifacts[0].link : undefined;
-                    $scope.testRun.tests = testsRs;
+                    if($scope.test.status == 'IN_PROGRESS') {
+                        var videoArtifacts = getLiveDemoArtifacts($scope.test);
+                        var videoArtifact = getArrayValue(videoArtifacts, 0);
+                        addDriver(videoArtifact);
+                        $scope.wsURL = videoArtifact ? videoArtifact.link : undefined;
+                        $scope.testRun.tests = testsRs;
+                    }
                 });
             });
         })();

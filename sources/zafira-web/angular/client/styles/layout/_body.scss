@@ -1697,27 +1697,55 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 
 #testrun-info-page {
   background-color: #fff !important;
+    height: calc(100vh - 128px);
+    @media (min-width:$screen-sm) {
+        height: calc(100vh - 64px);
+    }
+}
+
+.tests-info-container {
+    height: calc(100% - 49px);
 }
 
 .test-info-section {
+
+    height: 100%;
+
+    *[md-tabs-template] > div {
+        height: 100%;
+    }
+
+    > div, section, .tab-content, .history-tab, table {
+        height: inherit;
+        > *:not(.video-section) {
+            height: inherit;
+        }
+    }
+
+    .video-section {
+        height: 560px;
+        @media (min-width:991px) {
+            height: inherit;
+        }
+    }
 
   & .panel {
     border: none !important;
     box-shadow: none !important;
   }
 
-  md-tab-content-wrapper {
-    height: 100% !important;
-  }
-
-  md-tab-content {
-    height: 100% !important;
-    overflow: hidden !important;
-  }
-
   md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
-    height: 85.5vh;
     overflow: hidden;
+      height: inherit;
+
+      md-tab-content-wrapper {
+          height: inherit;
+      }
+
+      md-tab-content {
+          height: inherit;
+          overflow: hidden !important;
+      }
   }
 
   .md-tab {
@@ -1738,7 +1766,7 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
   right: 0;
   bottom: 0;
   height: 100%;
-  background: $fog-gray;
+    border: 1px solid $custom-gray;
 
   & h4 {
     margin: 0;
@@ -1764,16 +1792,8 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     box-shadow: none !important;
 
     & md-chip {
-      width: 75px;
-      height: 24px;
-      border-radius: 12px !important;
       background: $medium-gray;
       color: #fff;
-      text-align: center;
-      vertical-align: middle;
-      font-size: 14.5px;
-      font-weight: 500;
-      line-height: 24px;
 
       &.active {
         background: $brand-primary;
@@ -1826,13 +1846,12 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 }
 
 .table-history table {
-  height: auto;
+  height: 100%;
   overflow: auto;
 
   tbody {
     display: block;
     overflow-y: auto;
-    height: 75.8vh;
     width: 100% !important;
   }
 

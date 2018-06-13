@@ -92,7 +92,7 @@
   }
 
   .test-info-section md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
-    height: 78vh !important;
+    /*height: 78vh !important;*/
   }
 
 

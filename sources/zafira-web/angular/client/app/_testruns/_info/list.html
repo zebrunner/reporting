@@ -1,7 +1,7 @@
 <div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
   <div class="row ui-section no-margin title-container">
     <h2 id="testrun-info-title">{{ testRun.testSuite.name }}</h2>
-    <span><i class="material-icons">keyboard_backspace</i></span>
+    <span><i class="material-icons" md-ink-ripple>keyboard_backspace</i></span>
   </div>
   <div class="row no-margin tests-info-container">
     <div class="test-info-section col-md-12 no-padding">
@@ -10,19 +10,20 @@
             <div class="panel-body no-padding">
                 <md-tabs ng-init="selectedTab" md-selected="selectedTab" md-border-bottom md-autoselect>
                     <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" label="{{ tab.title }}" ng-click="selectedTab = $index;">
-                        <div class="tab{{ $index % 4 }}">
+                        <div class="tab{{ $index }}">
                             <div class="tab-content">
                               <div class="history-tab" ng-if="selectedTab == 0">
                                 <div class="video-section col-md-4 col-sm-12 col-md-push-8 no-padding">
                                   <h4>
-                                    Test online
-                                    <span class="recording-icon">
-                                        <div class="red-point" ng-class="{'flash-point': true}"></div>
+                                    Test
+                                    <span ng-if="MODE.name == 'live'">online
+                                        <span class="recording-icon">
+                                            <div class="red-point" ng-class="{'flash-point': true}"></div>
+                                        </span>
                                     </span>
                                   </h4>
                                   <md-chips>
-                                    <md-chip class="active">Driver 1</md-chip>
-                                    <md-chip>Driver 2</md-chip>
+                                    <md-chip ng-repeat="driver in drivers" class="active">{{ driver | date: 'HH:mm:ss'}}</md-chip>
                                   </md-chips>
                                   <div class="video-wrapper">
                                     <video ng-if="! wsURL" ng-init="setMode('record');" ng-attr-width="{{ videoWidth }}" controls>
@@ -41,10 +42,10 @@
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="logs">
                                             <tr ng-if="logs.length" ng-repeat="log in logs">
                                                 <td><i class="material-icons">insert_photo</i></td>
-                                                <td>{{ log.timestamp }}</td>
+                                                <td>{{ log.timestamp - test.startTime + OFFSET | date: 'HH:mm:ss'}}</td>
                                                 <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
                                             </tr>
                                         </tbody>
@@ -52,8 +53,10 @@
                                 </div>
                               </div>
                               <div class="screenshots-tab" ng-if="selectedTab == 1">
+
                               </div>
                               <div class="raw-logs-tab" ng-if="selectedTab == 2">
+
                               </div>
                               <div class="test-info-tab" ng-if="selectedTab == 3">
                                 <ul>
@@ -91,51 +94,5 @@
         </section>
       </div>
     </div>
-    <!-- <div resize="resizeIcon" resize-direction="left" on-resize-callback="onResize" class="video-section col-md-4 no-padding">
-        <i id="resizeIcon" style="position: absolute; top: 50%; cursor: col-resize;" class="fa fa-arrows-h"></i>
-      <h4>
-        Test online
-        <span class="recording-icon">
-            <div class="red-point" ng-class="{'flash-point': true}"></div>
-        </span>
-      </h4>
-      <md-chips>
-        <md-chip class="active">Driver 1</md-chip>
-        <md-chip>Driver 2</md-chip>
-      </md-chips>
-      <div class="video-wrapper">
-        <video ng-if="! wsURL" ng-init="setMode('record');" ng-attr-width="{{ videoWidth }}" controls>
-          <source ng-src="{{ wsURL }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div ng-if="wsURL" ng-init="setMode('live');" id="vnc"></div>
-      </div>
-      <ul>
-        <li>
-          Status
-          <span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span>
-        </li>
-        <li>
-          Started
-          <span>{{ test.startTime | date: 'HH:mm Z dd MMM yyyy'}}</span>
-        </li>
-        <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
-          Duration
-          <span>
-              {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
-          </span>
-        </li>
-        <li>
-          Platform
-            <span>Mac OS</span>
-        </li>
-        <li>
-          Browser
-            <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
-            <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-            <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
-        </li>
-      </ul>
-    </div> -->
   </div>
 </div>
