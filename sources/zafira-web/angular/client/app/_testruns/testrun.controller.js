@@ -911,6 +911,9 @@
             if($scope.testRunInDebugMode){
                 $scope.abortDebug($scope.testRunInDebugMode, $scope.buildNumber);
                 $scope.testRunInDebugMode = {};
+                $scope.buildNumber = null;
+                $scope.debugHost = null;
+                $scope.debugPort = null;
             }
             alertify.warning("Debug mode is disabled");
         };
@@ -989,10 +992,6 @@
                             if(rs.success){
                                 testRun.status = 'ABORTED';
                                 alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
-                                $scope.testRunInDebugMode = {};
-                                $scope.buildNumber = null;
-                                $scope.debugHost = null;
-                                $scope.debugPort = null;
                             } else {
                                 alertify.error(rs.message);
                             }
