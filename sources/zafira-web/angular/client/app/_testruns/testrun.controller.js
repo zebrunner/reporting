@@ -870,6 +870,7 @@
 
                                         disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
+                                            closeToast();
                                         }, 60*10*1000);
 
                                         if (debugLog === '') {
@@ -935,7 +936,7 @@
 
         function showDebugToast() {
             $mdToast.show({
-                hideDelay: 640000,
+                hideDelay: 1200000,
                 position: 'bottom right',
                 scope: $scope,
                 preserveScope: true,
