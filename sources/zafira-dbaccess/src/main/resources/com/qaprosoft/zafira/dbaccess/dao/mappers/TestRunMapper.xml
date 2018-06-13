@@ -423,7 +423,7 @@
 				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
 			</if>
 			<if test="null != hashcode">
-				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE = #{hashcode}) ]]>
+				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM ZAFIRA.TESTS T WHERE T.MESSAGE_HASH_CODE IN (#{hashcode})) ]]>
 			</if>
 			<if test="null != failurePercent">
 				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
