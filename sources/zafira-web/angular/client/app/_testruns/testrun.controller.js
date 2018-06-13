@@ -980,9 +980,9 @@
             }
         };
 
-        $scope.abortDebug = function (testRun, buildNumber) {
+        $scope.abortDebug = function (testRun) {
             if($scope.jenkins.enabled) {
-                TestRunService.abortDebug(testRun.id, testRun.ciRunId, buildNumber).then(function (rs) {
+                TestRunService.abortDebug(testRun.id, testRun.ciRunId).then(function (rs) {
                     if(rs.success) {
                         var abortCause = {};
                         abortCause.comment = "Debug mode was disconnected";
