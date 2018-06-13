@@ -1555,11 +1555,15 @@
                 {
                     $scope.jobParameters = rs.data;
                     for (var i = 0; i < $scope.jobParameters.length; i++){
-                        if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
+                        if ($scope.jobParameters[i].parameterClass === 'BOOLEAN'){
                             $scope.jobParameters[i].value = JSON.parse($scope.jobParameters[i].value);
                             if ($scope.jobParameters[i].name === "rerun_failures"){
                                 $scope.jobParameters[i].value = false;
                             }
+                            if ($scope.jobParameters[i].name === "debug"){
+                                $scope.jobParameters[i].value = false;
+                            }
+
                         }
                     }
                     $scope.isJobParametersLoaded = true;

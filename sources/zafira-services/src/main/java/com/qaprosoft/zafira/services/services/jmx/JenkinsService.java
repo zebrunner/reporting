@@ -131,6 +131,7 @@ public class JenkinsService implements IJMXService
 
 			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
 			params.put("rerun_failures", Boolean.toString(rerunFailures));
+			params.replace("debug", "false");
 			QueueReference reference = job.build(params, true);
 			success = checkReference(reference);
 		}
