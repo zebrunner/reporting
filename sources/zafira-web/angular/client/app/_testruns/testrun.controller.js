@@ -866,6 +866,11 @@
                                             $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
                                         }
                                         $timeout.cancel(connectDebugTimeout);
+
+                                        var disconnectDebugTimeout = $timeout(function () {
+                                            $scope.stopDebugMode();
+                                        }, 60*10*1000);
+
                                         if (debugLog === '') {
                                             debugLog = value;
                                         }
@@ -888,11 +893,7 @@
                     var connectDebugTimeout = $timeout(function () {
                         alertify.error("Problems with starting debug mode occurred, disabling");
                         $scope.stopConnectingDebug();
-                    }, 60000);
-
-                    var disconnectDebugTimeout = $timeout(function () {
-                        $scope.stopDebugMode();
-                    }, 600500);
+                    }, 60*10*1000);
 
                     $scope.stopConnectingDebug = function () {
                         $timeout.cancel(connectDebugTimeout);
