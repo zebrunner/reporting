@@ -875,6 +875,7 @@
                                             $timeout.cancel(disconnectDebugTimeout);
                                             $interval.cancel(parseLogsInterval);
                                             closeToast();
+                                            alertify.success("Tests started in debug");
                                         }
                                     }
                                 });
