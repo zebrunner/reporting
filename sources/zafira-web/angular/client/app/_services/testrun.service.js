@@ -108,8 +108,8 @@
             return $http.get(API_URL + '/api/tests/runs/platforms').then(UtilService.handleSuccess, UtilService.handleError('Unable to get platforms'));
         }
 
-        function getConsoleOutput(id, ciRunId, count, fullCount, buildNumber) {
-            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId, 'buildNumber': buildNumber}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
+        function getConsoleOutput(id, ciRunId, count, fullCount) {
+            return $http.get(API_URL + '/api/tests/runs/jobConsoleOutput/' + count + '/' + fullCount, {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to get console output'));
         }
     }
 })();

@@ -845,7 +845,6 @@
         };
 
         $scope.testRunInDebugMode = {};
-        $scope.buildNumber = null;
         $scope.debugHost = null;
         $scope.debugPort = null;
 
@@ -853,10 +852,9 @@
             TestRunService.debugTestRun(testRun.id).then(function (rs) {
                 if (rs.success) {
                     showDebugToast();
-                    $scope.buildNumber = rs.data;
                     var debugLog = '';
                     var parseLogsInterval = $interval(function () {
-                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50, $scope.buildNumber).then(function (rs) {
+                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {
                             if (rs.success) {
                                 var map = rs.data;
                                 var value;
@@ -910,9 +908,8 @@
         $scope.stopDebugMode = function(){
             $scope.stopConnectingDebug();
             if($scope.testRunInDebugMode){
-                $scope.abortDebug($scope.testRunInDebugMode, $scope.buildNumber);
+                $scope.abortDebug($scope.testRunInDebugMode);
                 $scope.testRunInDebugMode = {};
-                $scope.buildNumber = null;
                 $scope.debugHost = null;
                 $scope.debugPort = null;
             }

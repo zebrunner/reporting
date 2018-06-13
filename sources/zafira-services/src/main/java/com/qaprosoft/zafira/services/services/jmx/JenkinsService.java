@@ -142,9 +142,9 @@ public class JenkinsService implements IJMXService
 		return success;
 	}
 
-	public Integer debug(Job ciJob, Integer buildNumber)
+	public boolean debug(Job ciJob, Integer buildNumber)
 	{
-		Integer build = null;
+		boolean success = false;
 		try
 		{
 			JobWithDetails job = getJobWithDetails(ciJob);
@@ -153,15 +153,13 @@ public class JenkinsService implements IJMXService
 			params.replace("rerun_failures", "true");
 			params.replace("thread_count", "1");
 			QueueReference reference = job.build(params, true);
-			if(checkReference(reference)){
-				build = server.getBuild(server.getQueueItem(reference)).getNumber();
-			}
+			success = checkReference(reference);
 		}
 		catch (Exception e)
 		{
 			LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
 		}
-		return build;
+		return success;
 	}
 
 	public boolean buildJob(Job ciJob, Integer buildNumber, Map<String, String> jobParameters,

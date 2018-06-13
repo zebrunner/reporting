@@ -464,23 +464,21 @@ public class TestRunsAPIController extends AbstractController
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET", response = Integer.class)
+    @ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET")
     @PreAuthorize("hasPermission('TEST_RUNS_CI')")
-    @RequestMapping(value = "{id}/debug", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Integer debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
+    @RequestMapping(value = "{id}/debug", method = RequestMethod.GET)
+    public void debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
     {
-        Integer build;
         TestRun testRun = testRunService.getTestRunByIdFull(id);
         if (testRun == null)
         {
             throw new TestRunNotFoundException();
         }
-        build = jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber());
-        if (build == null)
+
+        if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber()))
         {
             throw new UnableToRebuildCIJobException();
         }
-        return build;
     }
 
     @ResponseStatusDetails
@@ -599,15 +597,13 @@ public class TestRunsAPIController extends AbstractController
 			@PathVariable(value = "count") int count,
 			@PathVariable(value = "fullCount") int fullCount,
 			@RequestParam(value = "id", required = false) Long id,
-			@RequestParam(value = "ciRunId", required = false) String ciRunId,
-            @RequestParam(value = "buildNumber", required = false) Integer buildNumber) throws ServiceException
+			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
 	{
 		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
-        Integer testRunBuildNumber = buildNumber != null ? buildNumber : testRun.getBuildNumber();
-        return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRunBuildNumber, count, fullCount);
+        return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
 	private String[] getRecipients(String recipients)
