@@ -853,6 +853,7 @@
                 if (rs.success) {
                     showDebugToast();
                     var debugLog = '';
+                    var disconnectDebugTimeout;
                     var parseLogsInterval = $interval(function () {
                         TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {
                             if (rs.success) {
@@ -867,7 +868,7 @@
                                         }
                                         $timeout.cancel(connectDebugTimeout);
 
-                                        var disconnectDebugTimeout = $timeout(function () {
+                                        disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                         }, 60*10*1000);
 
@@ -897,6 +898,7 @@
 
                     $scope.stopConnectingDebug = function () {
                         $timeout.cancel(connectDebugTimeout);
+                        $timeout.cancel(disconnectDebugTimeout);
                         $interval.cancel(parseLogsInterval);
                     };
 
