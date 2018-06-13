@@ -14,11 +14,11 @@
 
 	<test parallel="false" preserve-order="true" name="Test run tests">
 		<classes>
-			<!--<class name="com.qaprosoft.zafira.tests.TestRunPageTest">-->
-				<!--<methods>-->
-					<!--<include name="verifyNavigationTest"/>-->
-				<!--</methods>-->
-			<!--</class>-->
+			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
+				<methods>
+					<include name="verifyNavigationTest"/>
+				</methods>
+			</class>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
 					<include name="verifyViewTableCreationTest"/>
