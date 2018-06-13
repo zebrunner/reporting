@@ -265,7 +265,7 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
-			if (!queueTestRunParams.getDebug())
+			if (queueTestRunParams.getDebug() == null || !queueTestRunParams.getDebug())
 			{
 				testRun.setStatus(Status.QUEUED);
 				testRun.setStartedAt(Calendar.getInstance().getTime());
