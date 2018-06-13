@@ -11,6 +11,7 @@
         service.searchTestRuns = searchTestRuns;
         service.abortTestRun = abortTestRun;
         service.abortCIJob = abortCIJob;
+        service.abortDebug = abortDebug;
         service.getTestRun = getTestRun;
         service.getTestRunByCiRunId = getTestRunByCiRunId;
         service.getTestRunResults = getTestRunResults;
@@ -21,6 +22,7 @@
         service.exportTestRunResultsHTML = exportTestRunResultsHTML;
         service.markTestRunAsReviewed = markTestRunAsReviewed;
         service.rerunTestRun = rerunTestRun;
+        service.debugTestRun = debugTestRun;
         service.buildTestRun = buildTestRun;
         service.getJobParameters = getJobParameters;
         service.getEnvironments = getEnvironments;
@@ -78,12 +80,20 @@
             return $http.get(API_URL + '/api/tests/runs/' + id + '/rerun', {params:{'rerunFailures': rerunFailures}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to rerun test run'));
         }
 
+        function debugTestRun(id) {
+            return $http.get(API_URL + '/api/tests/runs/' + id + '/debug').then(UtilService.handleSuccess, UtilService.handleError('Unable to start debug'));
+        }
+
         function buildTestRun(id, jobParameters, buildWithParameters) {
             return $http.post(API_URL + '/api/tests/runs/' + id + '/build', jobParameters).then(UtilService.handleSuccess, UtilService.handleError('Unable to build test run'));
         }
 
         function abortCIJob(id, ciRunId) {
             return $http.get(API_URL + '/api/tests/runs/abort/ci', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort CI Job'));
+        }
+
+        function abortDebug(id, ciRunId) {
+            return $http.get(API_URL + '/api/tests/runs/abort/debug', {params:{'id': id, 'ciRunId': ciRunId}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to abort debug'));
         }
 
         function getJobParameters(id) {

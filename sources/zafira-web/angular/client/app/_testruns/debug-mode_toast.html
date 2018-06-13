@@ -1,9 +1,15 @@
 <md-toast>
     <div class="toast-width">
-        <div>
-            <span class="md-toast-text" flex>DEBUG MODE IS ON</span>
-            <md-button id="disable" class="md-highlight" ng-click="stopDebug();">DISCONNECT</md-button>
+        <div data-ng-show="debugPort">
+            <div>
+                <span class="md-toast-text" flex>DEBUG MODE IS ON</span>
+                <md-button id="disable" class="md-highlight" ng-click="stopDebug();">DISCONNECT</md-button>
+            </div>
+            <div class="md-toast-text" flex>You have 10 minutes to connect remotely using your IDE to {{debugHost}}:{{debugPort}} to start debugging</div>
         </div>
-        <div class="md-toast-text" flex>You have 10 minutes to connect remotely using your IDE to {{debugHost}}:{{debugPort}} to start debugging</div>
+        <div class="md-toast-text toast-text-padding" flex data-ng-hide="debugPort">
+            Debug mode is starting, please, <div class="jira-status">don't refresh the page.</div>
+            <md-progress-linear md-mode="indeterminate" class="toast-linear-padding"></md-progress-linear>
+        </div>
     </div>
 </md-toast>
