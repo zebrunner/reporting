@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import java.util.Date;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -31,7 +31,7 @@ public class TestArtifactType extends AbstractType
 	
 	private Long testId;
 
-	private Date expiresAt;
+	private Integer expiresInSeconds;
 
 	public TestArtifactType()
 	{
@@ -50,11 +50,11 @@ public class TestArtifactType extends AbstractType
 		this.testId = testId;
 	}
 
-	public TestArtifactType(String name, String link, Date expiresAt)
+	public TestArtifactType(String name, String link, Integer expiresInSeconds)
 	{
 		this.name = name;
 		this.link = link;
-		this.expiresAt = expiresAt;
+		this.expiresInSeconds = expiresInSeconds;
 	}
 
 	public String getName()
@@ -87,16 +87,20 @@ public class TestArtifactType extends AbstractType
 		this.testId = testId;
 	}
 
-	public Date getExpiresAt()
+	public Integer getExpiresIn() 
 	{
-		return expiresAt;
+		return expiresInSeconds;
 	}
 
-	public void setExpiresAt(Date expiresAt)
+	/**
+	 * Expiration interval after which test artifact will be removed.
+	 * @param expiresIn - interval in seconds
+	 */
+	public void setExpiresIn(Integer expiresInSeconds) 
 	{
-		this.expiresAt = expiresAt;
+		this.expiresInSeconds = expiresInSeconds;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -106,5 +110,11 @@ public class TestArtifactType extends AbstractType
 			equals = this.name == ((TestArtifactType)obj).getName();
 		}
 		return equals;
+	}
+	
+	@Override
+	public int hashCode() 
+	{
+		return Objects.hash(name, link);
 	}
 }

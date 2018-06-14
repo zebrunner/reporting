@@ -18,8 +18,8 @@
 			<a>link</a>
 			<b>link</b>
 		</field>
-		<field>
-			<a>expiresAt</a>
+		<field custom-converter="com.qaprosoft.zafira.ws.util.dozer.ExpirationDateConverter">
+			<a>expiresInSeconds</a>
 			<b>expiresAt</b>
 		</field>
 		<field>
