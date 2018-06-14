@@ -31,7 +31,7 @@ public class TestArtifactType extends AbstractType
 	
 	private Long testId;
 
-	private Integer expiresInSeconds;
+	private Integer expiresIn;
 
 	public TestArtifactType()
 	{
@@ -50,11 +50,11 @@ public class TestArtifactType extends AbstractType
 		this.testId = testId;
 	}
 
-	public TestArtifactType(String name, String link, Integer expiresInSeconds)
+	public TestArtifactType(String name, String link, Integer expiresIn)
 	{
 		this.name = name;
 		this.link = link;
-		this.expiresInSeconds = expiresInSeconds;
+		this.expiresIn = expiresIn;
 	}
 
 	public String getName()
@@ -89,16 +89,16 @@ public class TestArtifactType extends AbstractType
 
 	public Integer getExpiresIn() 
 	{
-		return expiresInSeconds;
+		return expiresIn;
 	}
 
 	/**
 	 * Expiration interval after which test artifact will be removed.
 	 * @param expiresIn - interval in seconds
 	 */
-	public void setExpiresIn(Integer expiresInSeconds) 
+	public void setExpiresIn(Integer expiresIn) 
 	{
-		this.expiresInSeconds = expiresInSeconds;
+		this.expiresIn = expiresIn;
 	}
 
 	@Override
