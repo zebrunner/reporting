@@ -849,91 +849,73 @@
         $scope.debugPort = null;
 
         function debug(testRun) {
-            TestRunService.getJobParameters(testRun.id).then(function(rs) {
-                if(rs.success) {
-                    var jobParameters = rs.data;
-                    if (jobParameters === '') {
-                        alertify.error("Job parameters are not loaded");
-                    } else {
-                        var jobParametersMap = {};
-                        for (var i = 0; i < jobParameters.length; i++){
-                            if (jobParameters[i].name === 'debug'){
-                                jobParameters[i].value = true;
-                            }
-                            if (jobParameters[i].name === 'ci_run_id'){
-                                testRun.ciRunId = jobParameters[i].value;
-                            }
-                            jobParametersMap[jobParameters[i].name] = jobParameters[i].value;
-                        }
-                        TestRunService.buildTestRun(testRun.id, jobParametersMap).then(function(rs) {
-                            if(rs.success) {
-                                alertify.success('Debug mode is starting, debug status will appear soon');
-                                testRun.id = null;
-                                var debugLog = '';
-                                var parseLogsInterval = $interval(function(){
-                                    TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function(rs) {
-                                        if(rs.success) {
-                                            var map = rs.data;
-                                            var value;
-                                            Object.keys(map).forEach(function(key) {
-                                                value = map[key];
-                                                if(value.includes("Listening for transport dt_socket at address:")){
-                                                    if(debugLog === ''){
-                                                        $scope.debugPort = getPortFromLog(value);
-                                                        $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
-                                                        showDebugToast();
-                                                    }
-                                                    $timeout.cancel(connectDebugTimeout);
-
-                                                    if(debugLog === ''){
-                                                        debugLog = value;
-                                                    }
-
-                                                    if(debugLog !== value){
-                                                        $timeout.cancel(disconnectDebugTimeout);
-                                                        $interval.cancel(parseLogsInterval);
-                                                        closeToast();
-                                                    }
-                                                }
-                                            });
-                                        } else {
-                                            stopConnectingDebug();
-                                            $timeout.cancel(connectDebugTimeout);
-                                            alertify.error(rs.message);
+            TestRunService.debugTestRun(testRun.id).then(function (rs) {
+                if (rs.success) {
+                    showDebugToast();
+                    var debugLog = '';
+                    var disconnectDebugTimeout;
+                    var parseLogsInterval = $interval(function () {
+                        TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {
+                            if (rs.success) {
+                                var map = rs.data;
+                                var value;
+                                Object.keys(map).forEach(function (key) {
+                                    value = map[key];
+                                    if (value.includes("Listening for transport dt_socket at address:")) {
+                                        if (debugLog === '') {
+                                            $scope.debugPort = getPortFromLog(value);
+                                            $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
                                         }
-                                    });
-                                }, 10000);
+                                        $timeout.cancel(connectDebugTimeout);
 
-                                var connectDebugTimeout = $timeout(function(){
-                                    alertify.error("Problems with starting debug mode occurred, disabling");
-                                    $scope.stopConnectingDebug();
-                                }, 60000);
+                                        disconnectDebugTimeout = $timeout(function () {
+                                            $scope.stopDebugMode();
+                                            closeToast();
+                                        }, 60*10*1000);
 
-                                var disconnectDebugTimeout = $timeout(function(){
-                                    $scope.stopDebugMode();
-                                }, 600500);
-
-                                $scope.stopConnectingDebug = function (){
-                                    $timeout.cancel(connectDebugTimeout);
-                                    $interval.cancel(parseLogsInterval);
-                                };
-
+                                        if (debugLog === '') {
+                                            debugLog = value;
+                                        }
+                                        if (debugLog !== value) {
+                                            $timeout.cancel(disconnectDebugTimeout);
+                                            $interval.cancel(parseLogsInterval);
+                                            closeToast();
+                                            alertify.success("Tests started in debug");
+                                        }
+                                    }
+                                });
                             } else {
+                                $scope.stopConnectingDebug();
+                                $timeout.cancel(connectDebugTimeout);
                                 alertify.error(rs.message);
                             }
                         });
-                    }
+                    }, 10000);
+
+                    var connectDebugTimeout = $timeout(function () {
+                        alertify.error("Problems with starting debug mode occurred, disabling");
+                        $scope.stopConnectingDebug();
+                    }, 60*10*1000);
+
+                    $scope.stopConnectingDebug = function () {
+                        $timeout.cancel(connectDebugTimeout);
+                        $timeout.cancel(disconnectDebugTimeout);
+                        $interval.cancel(parseLogsInterval);
+                    };
+
                 } else {
                     alertify.error(rs.message);
                 }
             });
-        };
+        }
 
         $scope.stopDebugMode = function(){
             $scope.stopConnectingDebug();
             if($scope.testRunInDebugMode){
-                $scope.abort($scope.testRunInDebugMode);
+                $scope.abortDebug($scope.testRunInDebugMode);
                 $scope.testRunInDebugMode = {};
+                $scope.debugHost = null;
+                $scope.debugPort = null;
             }
             alertify.warning("Debug mode is disabled");
         };
@@ -954,7 +936,7 @@
 
         function showDebugToast() {
             $mdToast.show({
-                hideDelay: 600000,
+                hideDelay: 1200000,
                 position: 'bottom right',
                 scope: $scope,
                 preserveScope: true,
@@ -983,11 +965,31 @@
                 TestRunService.abortCIJob(testRun.id, testRun.ciRunId).then(function (rs) {
                     if(rs.success) {
                         var abortCause = {};
-                        if(testRun.id == null){
-                            abortCause.comment = "Debug mode was disconnected";
-                        } else {
-                            abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
-                        }
+                        abortCause.comment = "Aborted by " + $rootScope.currentUser.username;
+                        TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
+                            if(rs.success){
+                                testRun.status = 'ABORTED';
+                                alertify.success("Testrun " + testRun.testSuite.name + " is aborted");
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            } else {
+                alertify.error('Unable connect to jenkins');
+            }
+        };
+
+        $scope.abortDebug = function (testRun) {
+            if($scope.jenkins.enabled) {
+                TestRunService.abortDebug(testRun.id, testRun.ciRunId).then(function (rs) {
+                    if(rs.success) {
+                        var abortCause = {};
+                        abortCause.comment = "Debug mode was disconnected";
                         TestRunService.abortTestRun(testRun.id, testRun.ciRunId, abortCause).then(function(rs) {
                             if(rs.success){
                                 testRun.status = 'ABORTED';
@@ -1554,13 +1556,15 @@
                 {
                     $scope.jobParameters = rs.data;
                     for (var i = 0; i < $scope.jobParameters.length; i++){
-                        if ($scope.jobParameters[i].parameterClass == 'BOOLEAN'){
-                            if ($scope.jobParameters[i].value == 'true'){
-                                $scope.jobParameters[i].value = true;
-                            }
-                            else if ($scope.jobParameters[i].value == 'false') {
+                        if ($scope.jobParameters[i].parameterClass === 'BOOLEAN'){
+                            $scope.jobParameters[i].value = JSON.parse($scope.jobParameters[i].value);
+                            if ($scope.jobParameters[i].name === "rerun_failures"){
                                 $scope.jobParameters[i].value = false;
                             }
+                            if ($scope.jobParameters[i].name === "debug"){
+                                $scope.jobParameters[i].value = false;
+                            }
+
                         }
                     }
                     $scope.isJobParametersLoaded = true;

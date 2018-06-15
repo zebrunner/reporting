@@ -21,14 +21,14 @@
         var containerHeightProperty = 'offsetHeight';
         var containerWidthProperty = 'offsetWidth';
 
-        function connectVnc(containerElement, heightProperty, widthProperty, wsURL) {
+        function connectVnc(containerElement, heightProperty, widthProperty, wsURL, disconnectFunc) {
             container = containerElement;
             containerHeightProperty = heightProperty;
             containerWidthProperty = widthProperty;
             rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
             //rfb._viewOnly = true;
             rfb.addEventListener("connect",  connected);
-            rfb.addEventListener("disconnect",  disconnected);
+            rfb.addEventListener("disconnect",  disconnectFunc ? disconnectFunc : disconnected);
             rfb.scaleViewport = true;
             rfb.resizeSession = true;
             display = rfb._display;
@@ -39,7 +39,7 @@
             return rfb;
         };
 
-        function provideLogs(rabbitmq, testRun, test, logsContainer, func) {
+        function provideLogs(rabbitmq, testRun, test, logsContainer, needReconnect, func) {
             return $q(function (resolve, reject) {
                 var rabbitmqWatcher = $rootScope.$watch('rabbitmq.enabled', function (newVal) {
                     if(newVal)
@@ -64,7 +64,9 @@
                             });
                             resolve({stomp: testLogsStomp, name: wsName});
                         }, function () {
-                            UtilService.reconnectWebsocket(wsName, provideLogs);
+                            if(needReconnect) {
+                                UtilService.reconnectWebsocket(wsName, provideLogs);
+                            }
                         });
                     }
                 });

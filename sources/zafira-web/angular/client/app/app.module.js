@@ -77,6 +77,15 @@
             }
             return -1;
         };
+        Array.prototype.indexOfContainsField = function(fieldName, fieldValue) {
+            for (var i = 0; i < this.length; i++) {
+                var field = this[i];
+                if (field && field[fieldName].includes(fieldValue)) {
+                    return i;
+                }
+            }
+            return -1;
+        };
         Array.prototype.equalsByField = function(arrayToCompare, fieldName) {
             if(this.length != arrayToCompare.length)
                 return false;
@@ -627,7 +636,8 @@
             'FAILED': 1,
             'SKIPPED': 2,
             'IN_PROGRESS': 3,
-            'ABORTED': 4
+            'ABORTED': 4,
+            'QUEUED': 5
         };
         return function(items, field, reverse) {
             if(field) {
