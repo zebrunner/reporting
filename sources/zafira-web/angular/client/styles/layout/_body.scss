@@ -20,6 +20,13 @@ body > div {
             cursor: crosshair !important;
         }
     }
+    .video-control {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        color: white;
+        cursor: pointer;
+    }
 }
 
 .video-container {
@@ -1697,8 +1704,8 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 
 #testrun-info-page {
   background-color: #fff !important;
-    height: calc(100vh - 128px);
-    @media (min-width:$screen-sm) {
+    height: calc(100vh);
+    @media (min-width:991px) {
         height: calc(100vh - 64px);
     }
 }
@@ -1820,6 +1827,13 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       position: absolute;
     }
   }
+   & .video-wrapper.full-screen {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
 }
 .test-info-tab {
   & ul {
@@ -1853,6 +1867,9 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     display: block;
     overflow-y: auto;
     width: 100% !important;
+      @media (max-width:991px) {
+        height: 167px !important;
+      }
   }
 
   tr {

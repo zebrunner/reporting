@@ -77,6 +77,15 @@
             }
             return -1;
         };
+        Array.prototype.indexOfContainsField = function(fieldName, fieldValue) {
+            for (var i = 0; i < this.length; i++) {
+                var field = this[i];
+                if (field && field[fieldName].includes(fieldValue)) {
+                    return i;
+                }
+            }
+            return -1;
+        };
         Array.prototype.equalsByField = function(arrayToCompare, fieldName) {
             if(this.length != arrayToCompare.length)
                 return false;
