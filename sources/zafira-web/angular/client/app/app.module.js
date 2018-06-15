@@ -636,7 +636,8 @@
             'FAILED': 1,
             'SKIPPED': 2,
             'IN_PROGRESS': 3,
-            'ABORTED': 4
+            'ABORTED': 4,
+            'QUEUED': 5
         };
         return function(items, field, reverse) {
             if(field) {

@@ -26,6 +26,7 @@ import java.util.*;
 
 import javax.annotation.PostConstruct;
 
+import com.offbytwo.jenkins.model.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +41,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.BuildWithDetails;
-import com.offbytwo.jenkins.model.ExtractHeader;
-import com.offbytwo.jenkins.model.FolderJob;
-import com.offbytwo.jenkins.model.JobWithDetails;
-import com.offbytwo.jenkins.model.QueueReference;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
@@ -135,6 +131,27 @@ public class JenkinsService implements IJMXService
 
 			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
 			params.put("rerun_failures", Boolean.toString(rerunFailures));
+			params.replace("debug", "false");
+			QueueReference reference = job.build(params, true);
+			success = checkReference(reference);
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Unable to rerun Jenkins job:  " + e.getMessage());
+		}
+		return success;
+	}
+
+	public boolean debug(Job ciJob, Integer buildNumber)
+	{
+		boolean success = false;
+		try
+		{
+			JobWithDetails job = getJobWithDetails(ciJob);
+			Map<String, String> params = job.getBuildByNumber(buildNumber).details().getParameters();
+			params.replace("debug", "true");
+			params.replace("rerun_failures", "true");
+			params.replace("thread_count", "1");
 			QueueReference reference = job.build(params, true);
 			success = checkReference(reference);
 		}

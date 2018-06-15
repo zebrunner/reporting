@@ -256,7 +256,6 @@ public class TestRunService
 				testRun.setStatus(Status.QUEUED);
 				testRun.setStartedAt(Calendar.getInstance().getTime());
 				testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
-
 				createTestRun(testRun);
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
@@ -266,7 +265,6 @@ public class TestRunService
 			}
 		} else {
 			testRun = existingRun;
-
 			testRun.setStatus(Status.QUEUED);
 			testRun.setStartedAt(Calendar.getInstance().getTime());
 			testRun.setBuildNumber(Integer.valueOf(queueTestRunParams.getBuildNumber()));
@@ -297,7 +295,7 @@ public class TestRunService
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	public TestRun startTestRun(TestRun testRun) throws ServiceException, JAXBException
+	public TestRun startTestRun(TestRun testRun) throws ServiceException
 	{
 		if(!StringUtils.isEmpty(testRun.getCiRunId()))
 		{
@@ -421,7 +419,8 @@ public class TestRunService
 			testRun = markAsReviewed(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
-			calculateTestRunResult(testRun.getId(), true);		}
+			calculateTestRunResult(testRun.getId(), true);
+		}
 		return testRun;
 	}
 

@@ -432,7 +432,7 @@ public class TestRunsAPIController extends AbstractController
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
-			throws ServiceException, JAXBException
+			throws ServiceException
 	{
 		TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
 		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
@@ -447,7 +447,7 @@ public class TestRunsAPIController extends AbstractController
 	@RequestMapping(value = "{id}/rerun", method = RequestMethod.GET)
 	public void rerunTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures)
-			throws ServiceException, JAXBException
+			throws ServiceException
 	{
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
 		if (testRun == null)
@@ -461,7 +461,27 @@ public class TestRunsAPIController extends AbstractController
 		}
 	}
 
-	@ResponseStatusDetails
+    @ResponseStatusDetails
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET")
+    @PreAuthorize("hasPermission('TEST_RUNS_CI')")
+    @RequestMapping(value = "{id}/debug", method = RequestMethod.GET)
+    public void debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
+    {
+        TestRun testRun = testRunService.getTestRunByIdFull(id);
+        if (testRun == null)
+        {
+            throw new TestRunNotFoundException();
+        }
+
+        if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber()))
+        {
+            throw new UnableToRebuildCIJobException();
+        }
+    }
+
+    @ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -482,7 +502,28 @@ public class TestRunsAPIController extends AbstractController
 		}
 	}
 
-	@ResponseStatusDetails
+    @ResponseStatusDetails
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams(
+            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @ApiOperation(value = "Abort debug", nickname = "abortDebug", code = 200, httpMethod = "GET")
+    @PreAuthorize("hasPermission('TEST_RUNS_CI')")
+    @RequestMapping(value = "abort/debug", method = RequestMethod.GET)
+    public void abortDebug(
+            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
+    {
+        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+        if (testRun == null) {
+            throw new TestRunNotFoundException();
+        }
+
+        if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
+            throw new UnableToAbortCIJobException();
+        }
+    }
+
+    @ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -561,7 +602,7 @@ public class TestRunsAPIController extends AbstractController
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
- 		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+        return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
 	private String[] getRecipients(String recipients)
