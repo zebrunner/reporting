@@ -840,8 +840,10 @@
         };
 
         $scope.startDebug = function (testRun, event) {
-            $scope.testRunInDebugMode = angular.copy(testRun);
-            debug($scope.testRunInDebugMode);
+            if(confirm('Start debugging?')) {
+                $scope.testRunInDebugMode = angular.copy(testRun);
+                debug($scope.testRunInDebugMode);
+            }
         };
 
         $scope.testRunInDebugMode = {};
