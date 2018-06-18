@@ -45,7 +45,6 @@
             if($scope.MODE.name == 'record') {
                 var videoArtifacts = getArtifactsByPartName(test, 'video', 'live');
                 if (videoArtifacts && videoArtifacts.length) {
-                    console.log('switched' + videoArtifacts);
                     $scope.drivers = $scope.drivers.concat(videoArtifacts.filter(function (value) {
                         return $scope.drivers.indexOfField('name', value.name) == -1;
                     }));
@@ -57,7 +56,6 @@
         var isLoaded = false;
         function reloadVideo() {
             var videoElements = angular.element('#videoRecord');
-            console.log('reloaded' + videoElements);
             if(videoElements && videoElements.length) {
                 videoElements[0].addEventListener('loadeddata', function() {
                     isLoaded = true;
