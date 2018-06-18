@@ -574,7 +574,7 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + id);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", wsURL));
+		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
 
 		List<Test> tests = testService.getTestsByTestRunId(id);
 
