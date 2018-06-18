@@ -153,8 +153,6 @@ public class WidgetsAPIController extends AbstractController
 	{
 		String query = sql.getSql();
 		List<Map<String, Object>> resultList;
-		String zafiraURL = StringUtils.removeEnd(wsURL, "-ws");
-
 		try {
 		if (sql.getAttributes() != null)
 		{
@@ -169,15 +167,10 @@ public class WidgetsAPIController extends AbstractController
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
-				.replaceAll("#\\{zafiraURL\\}", zafiraURL)
+				.replaceAll("#\\{zafiraURL\\}", StringUtils.removeEnd(wsURL, "-ws"))
+				.replaceAll("#\\{jenkinsURL\\}", settingsService.getSettingByName("JENKINS_URL").getValue())
 				.replaceAll("#\\{hashcode\\}", "0")
-					.replaceAll("#\\{testCaseId\\}", "0");
-
-			String param = StringUtils.substringBetween(query,"#{","}%" );
-			if(param != null && !param.equals("project") && !param.equals("dashboardName") && !param.equals("currentUserId") && !param.equals("currentUserName"))
-			{
-				query = query.replaceAll("#\\{"+param+"\\}", settingsService.getSettingByName(param).getValue());
-			}
+				.replaceAll("#\\{testCaseId\\}", "0");
 
             resultList = widgetService.executeSQL(query);
         }

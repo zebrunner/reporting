@@ -195,6 +195,9 @@ DECLARE total_last_30_days_personal_model zafira.WIDGETS.model%TYPE;
 DECLARE nightly_personal_failures_id zafira.WIDGETS.id%TYPE;
 DECLARE nightly_personal_failures_sql zafira.WIDGETS.sql%TYPE;
 DECLARE nightly_personal_failures_model zafira.WIDGETS.model%TYPE;
+DECLARE nightly_personal_cron_id zafira.WIDGETS.id%TYPE;
+DECLARE nightly_personal_cron_sql zafira.WIDGETS.sql%TYPE;
+DECLARE nightly_personal_cron_model zafira.WIDGETS.model%TYPE;
 
 	-- Declare User Performance dashboard widgets
 DECLARE personal_total_rate_id zafira.WIDGETS.id%TYPE;
@@ -886,7 +889,39 @@ STARTED::date AS "CREATED_AT"
       ]
   }';
 
-	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+  nightly_personal_cron_sql :=
+  'set schema ''zafira'';
+  SELECT
+  ''<a href="''||UPSTREAM_JOB_URL||''" target="_blank">''||UPSTREAM_JOB_NAME||''</a>'' AS "NAME",
+        OWNER as "OWNER",
+        UPSTREAM_JOB_BUILD_NUMBER as "BUILD",
+        SUM(PASSED) as "PASS",
+        SUM(FAILED) as "FAIL",
+        SUM(SKIPPED) as "SKIP",
+	      SUM(ABORTED) as "ABORTED",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="cron_rerun" class="cron_rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" class="cron_rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
+    FROM NIGHTLY_VIEW
+  WHERE OWNER_ID=''#{currentUserId}''
+  GROUP BY "OWNER", "BUILD", "NAME", UPSTREAM_JOB_ID, UPSTREAM_JOB_URL
+  ORDER BY "BUILD" DESC';
+
+  nightly_personal_cron_model :=
+  '{
+         "columns": [
+             "NAME",
+             "BUILD",
+             "OWNER",
+             "PASS",
+             "FAIL",
+             "SKIP",
+	           "ABORTED",
+             "RESTART ALL",
+             "RESTART FAILURES"
+         ]
+     }';
+
+  INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
 		('NIGHTLY DETAILS PERSONAL', 'table', nightly_details_personal_sql, nightly_details_personal_model)
 	RETURNING id INTO nightly_details_personal_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
@@ -913,8 +948,11 @@ STARTED::date AS "CREATED_AT"
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
 		('NIGHTLY - PERSONAL FAILURES', 'table', nightly_personal_failures_sql, nightly_personal_failures_model)
 	RETURNING id INTO nightly_personal_failures_id;
+  INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+  ('NIGHTLY PERSONAL (CRON)', 'table', nightly_personal_cron_sql, nightly_personal_cron_model)
+  RETURNING id INTO nightly_personal_cron_id;
 
-	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+  INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
 		(personal_dashboard_id, nightly_details_personal_id, '{"x":0,"y":28,"width":12,"height":21}');
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
 		(personal_dashboard_id, monthly_total_personal_pie_id, '{"x":8,"y":0,"width":4,"height":11}');
@@ -932,8 +970,11 @@ STARTED::date AS "CREATED_AT"
 		(personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":17,"width":12,"height":11}');
 	INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
 		(personal_dashboard_id, nightly_personal_failures_id, '{"x":0,"y":49,"width":12,"height":15}');
+  INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+  (personal_dashboard_id, nightly_personal_cron_id, '{"x":0,"y":17,"width":12,"height":8}');
 
-	-- Insert User Performance dashboard data
+
+  -- Insert User Performance dashboard data
     INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('User Performance', TRUE, 6) RETURNING id INTO user_performance_dashboard_id;
 
 	personal_total_rate_sql :=
