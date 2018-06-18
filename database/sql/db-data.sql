@@ -898,8 +898,8 @@ STARTED::date AS "CREATED_AT"
         SUM(PASSED) as "PASS",
         SUM(FAILED) as "FAIL",
         SUM(SKIPPED) as "SKIP",
-  ''<a href="http://demo.qaprosoft.com/jenkins/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
-  ''<a href="http://demo.qaprosoft.com/jenkins/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" id="rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" id="rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
     FROM NIGHTLY_VIEW
   WHERE OWNER_ID=''#{currentUserId}''
   GROUP BY "OWNER", "BUILD", "NAME", UPSTREAM_JOB_ID, UPSTREAM_JOB_URL
