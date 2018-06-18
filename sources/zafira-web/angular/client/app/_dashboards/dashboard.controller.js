@@ -63,8 +63,7 @@
                     widget.data = {};
                     widget.data.dataset = data;
                     if (widget.title.toUpperCase().includes("CRON")) {
-                        addOnClickConfirm('#rerun_failures');
-                        addOnClickConfirm('#rerun_all');
+                        addOnClickConfirm();
                     }
                     if (data.length !== 0) {
                         $scope.isLoading = false;
@@ -514,18 +513,18 @@
             $scope.resetGrid();
         });
 
-        function addOnClickConfirm(id) {
+        function addOnClickConfirm() {
             $scope.$watch(function () {
-                return angular.element(id).is(':visible')
+                return angular.element('#cron_rerun').is(':visible')
             }, function () {
-                var element = angular.element(id)[0];
-                if (element) {
-                    element.addEventListener("click", function (event) {
+                var rerunLinks = document.getElementsByClassName("cron_rerun");
+                Array.prototype.forEach.call(rerunLinks, function(link) {
+                    link.addEventListener("click", function (event) {
                         if (!confirm('Cron job rebuild will be started on Jenkins. Continue?')) {
                             event.preventDefault();
                         }
                     }, false);
-                }
+                });
             });
         }
 
