@@ -517,10 +517,18 @@
             $scope.$watch(function () {
                 return angular.element('#cron_rerun').is(':visible')
             }, function () {
-                var rerunLinks = document.getElementsByClassName("cron_rerun");
-                Array.prototype.forEach.call(rerunLinks, function(link) {
+                var rerunAllLinks = document.getElementsByClassName("cron_rerun_all");
+                Array.prototype.forEach.call(rerunAllLinks, function(link) {
                     link.addEventListener("click", function (event) {
-                        if (!confirm('Cron job rebuild will be started on Jenkins. Continue?')) {
+                        if (!confirm('Rebuild for all tests in cron job will be started. Continue?')) {
+                            event.preventDefault();
+                        }
+                    }, false);
+                });
+                var rerunFailuresLinks = document.getElementsByClassName("cron_rerun_failures");
+                Array.prototype.forEach.call(rerunFailuresLinks, function(link) {
+                    link.addEventListener("click", function (event) {
+                        if (!confirm('Rebuild for failures in cron job will be started. Continue?')) {
                             event.preventDefault();
                         }
                     }, false);
