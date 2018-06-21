@@ -250,6 +250,7 @@ public class TestRunService
 				testRun.setPlatform(null);
 				testRun.setConfigXML(null);
 				testRun.setComments(null);
+				testRun.setAppVersion(null);
 				testRun.setReviewed(false);
 
 				//make sure to reset below3 fields for existing run as well
