@@ -1,0 +1,110 @@
+<div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
+  <div class="row ui-section no-margin title-container">
+    <h2 id="testrun-info-title">{{ testRun.testSuite.name }}</h2>
+    <span><i class="material-icons" md-ink-ripple>keyboard_backspace</i></span>
+  </div>
+  <div class="row no-margin tests-info-container">
+    <div class="test-info-section col-md-12 no-padding">
+      <div class="row no-margin" ng-cloak>
+        <section class="panel panel-default no-margin">
+            <div class="panel-body no-padding">
+                <md-tabs ng-init="selectedTab = 0;" md-selected="selectedTab" md-border-bottom md-autoselect>
+                    <md-tab ng-disabled="false" label="Overview" ng-click="selectedTab = 0;">
+                        <div class="tab0">
+                            <div class="tab-content">
+                              <div class="history-tab">
+                                <div class="video-section col-md-4 col-sm-12 col-md-push-8 no-padding">
+                                  <h4>
+                                    Test
+                                    <span ng-if="MODE.name == 'live'">online
+                                        <span class="recording-icon">
+                                            <div class="red-point" ng-class="{'flash-point': true}"></div>
+                                        </span>
+                                    </span>
+                                  </h4>
+                                  <md-chips>
+                                    <md-chip ng-repeat="driver in drivers" ng-click="switchDriver($index);" ng-class="{'active': selectedDriver == $index}">Driver {{ $index + 1 }}</md-chip>
+                                  </md-chips>
+                                  <div class="video-wrapper">
+                                    <video ng-init="videoPlayerPained = true;" id="videoRecord" ng-if="MODE.name == 'record' || vncDisconnected;" ng-attr-width="{{ videoWidth }}" controls>
+                                      <source ng-src="{{ drivers[selectedDriver].link }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div ng-init="vncPained = true; vncDisconnected = false;" ng-if="MODE.name == 'live';" id="vnc">
+                                        <i ng-click="fullScreen();" class="material-icons video-control">fullscreen</i>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="table-history table-responsive col-md-8 col-sm-12 no-padding">
+                                    <table class="table table-striped no-margin">
+                                        <thead>
+                                            <tr>
+                                                <th>Visuals</th>
+                                                <th>Start</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="logs">
+                                            <tr ng-if="logs.length" ng-repeat="log in logs">
+                                                <td>
+                                                    <i ng-if="false" class="material-icons">insert_photo</i>
+                                                    <span ng-if="log.driver" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
+                                                </td>
+                                                <td>{{ log.timestamp - test.startTime + OFFSET | date: 'HH:mm:ss'}}</td>
+                                                <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </md-tab>
+                    <md-tab ng-disabled="false" label="Screenshots" ng-click="selectedTab = 1;">
+                        <div class="tab1">
+                            <div class="tab-content">
+                                <div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </md-tab>
+                    <md-tab ng-disabled="false" label="Test details" ng-click="selectedTab = 2;">
+                        <div class="tab2">
+                            <div class="test-info-tab">
+                                <ul>
+                                    <li>
+                                        Status
+                                        <span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span>
+                                    </li>
+                                    <li>
+                                        Started
+                                        <span>{{ test.startTime | date: 'HH:mm Z dd MMM yyyy'}}</span>
+                                    </li>
+                                    <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
+                                        Duration
+                                        <span>
+                                    {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+                                </span>
+                                    </li>
+                                    <li>
+                                        Platform
+                                        <span>Mac OS</span>
+                                    </li>
+                                    <li>
+                                        Browser
+                                        <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
+                                        <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+                                        <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </md-tab>
+                </md-tabs>
+            </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

@@ -20,6 +20,13 @@ body > div {
             cursor: crosshair !important;
         }
     }
+    .video-control {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        color: white;
+        cursor: pointer;
+    }
 }
 
 .video-container {
@@ -529,13 +536,40 @@ section.zaf-light .article-title {
     margin: 10px 0;
 }
 
+.section-header {
+  padding-left: 20px;
+}
+
+.title-container{
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+#testrun-info-title {
+  margin: 0;
+  padding: 16px 0 13px 55px;
+  font-size: 18px;
+  border-bottom: 1px solid $custom-gray;
+}
+
+.title-container span{
+  position: absolute;
+  top: 12px;
+  left: 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 /*Element backgrounds*/
 .background-white {
     background-color: #f6f6f6 !important;
 }
 
 .background-clear-white {
-    background-color: #ffffff !important;
+    background-color: #fff !important;
 }
 
 .background-gray {
@@ -1668,6 +1702,210 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     padding-bottom: 8px;
 }
 
+#testrun-info-page {
+  background-color: #fff !important;
+    height: calc(100vh);
+    @media (min-width:991px) {
+        height: calc(100vh - 64px);
+    }
+}
+
+.tests-info-container {
+    height: calc(100% - 49px);
+}
+
+.test-info-section {
+
+    height: 100%;
+
+    *[md-tabs-template] > div {
+        height: 100%;
+    }
+
+    > div, section, .tab-content, .history-tab, table {
+        height: inherit;
+        > *:not(.video-section) {
+            height: inherit;
+        }
+    }
+
+    .video-section {
+        height: 560px;
+        @media (min-width:991px) {
+            height: inherit;
+        }
+    }
+
+  & .panel {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    overflow: hidden;
+      height: inherit;
+
+      md-tab-content-wrapper {
+          height: inherit;
+      }
+
+      md-tab-content {
+          height: inherit;
+          overflow: hidden !important;
+      }
+  }
+
+  .md-tab {
+    color: $medium-gray;
+    font-size: 14.5px;
+    font-weight: 500;
+    text-transform: capitalize;
+
+    &.md-active {
+      color: $coal !important;
+    }
+  }
+}
+
+.video-section {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+    border: 1px solid $custom-gray;
+
+  & h4 {
+    margin: 0;
+    padding: 18px 0 15px 16px;
+    font-size: 16px;
+    color: $dark;
+
+    & span {
+      width: 12px;
+      height: 12px;
+      padding-top: -8px;
+
+      & .red-point {
+        width: inherit;
+        top: -6px;
+      }
+    }
+  }
+
+  & md-chips-wrap {
+    padding-left: 16px;
+    padding-bottom: 11px !important;
+    box-shadow: none !important;
+
+    & md-chip {
+      background: $medium-gray;
+      color: #fff;
+
+      &.active {
+        background: $brand-primary;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  & .video-wrapper {
+    margin: 0 16px 16px;
+    background: $coal;
+    min-height: 444px;
+    position: relative;
+    top: 0;
+    left: 0;
+
+    & video {
+      width: 100% !important;
+      min-height: 100% !important;
+      padding: 10px 8px;
+      position: absolute;
+    }
+  }
+   & .video-wrapper.full-screen {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+}
+.test-info-tab {
+  & ul {
+    margin: 13px 0;
+    padding-left: 33px;
+    -webkit-padding-start: 33px;
+    list-style: none;
+
+    & li {
+      padding: 8px 0;
+      color: $coal;
+      font-size: 14.5px;
+
+      & span{
+        padding-left: 25px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.table-history+.table-responsive {
+  overflow-y: auto !important;
+}
+
+.table-history table {
+  height: 100%;
+  overflow: auto;
+
+  tbody {
+    display: block;
+    overflow-y: auto;
+    width: 100% !important;
+      @media (max-width:991px) {
+        height: 167px !important;
+      }
+  }
+
+  tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    min-height: 32px;
+    text-align: left !important;
+
+    td, th {
+      padding: 4px 15px !important;
+      vertical-align: middle !important;
+      font-size: 12px;
+      word-wrap: break-word;
+
+      &:nth-child(1),
+      &:nth-child(2) {
+        width: 80px;
+        text-align: center;
+      }
+
+      & .material-icons {
+        color: $gray-light;
+        font-size: 18px !important;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background: $bg-gray;
+}
 .toast-linear-padding {
     padding-top: 6px !important;
 }

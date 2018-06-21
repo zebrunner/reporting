@@ -1919,7 +1919,7 @@
         };
 
         $scope.$on('$destroy', function () {
-            if(rfb && rfb._connected) {
+            if(rfb) {
                 rfb.disconnect();
             }
             $scope.testLogsStomp.disconnect();
