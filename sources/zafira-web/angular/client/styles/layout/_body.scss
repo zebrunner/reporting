@@ -548,7 +548,7 @@ section.zaf-light .article-title {
 
 #testrun-info-title {
   margin: 0;
-  padding: 16px 0 13px 55px;
+  padding: 16px 0 13px 23px;
   font-size: 18px;
   border-bottom: 1px solid $custom-gray;
 }
@@ -1002,6 +1002,10 @@ ul.profile-image-actions {
 }
 .issue-element-container {
     width: -webkit-fill-available !important;
+}
+
+.gray-label {
+    color: rgba(0,0,0,0.54);
 }
 
 .elment-with-label {

@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -18,47 +18,74 @@
         $scope.tab =  { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."};
 
         var LIVE_DEMO_ARTIFACT_NAME = 'live video';
-        var DEMO_ARTIFACT_NAME = 'video';
 
         var MODES = {
             live: {
                 name: 'live',
-                element: '.video-wrapper'
+                element: '.video-wrapper',
+                initFunc: initLiveMode
             },
             record: {
                 name: 'record',
-                element: 'video'
+                element: 'video',
+                initFunc: initRecordMode
             }
         };
 
-        function setMode (modeName, test) {
-            if($scope.MODE.name != modeName) {
-                $scope.MODE = MODES[modeName];
-                if ($scope.MODE.name == 'live') {
+        function postModeConstruct(test) {
+
+            switch($scope.MODE.name) {
+                case 'live':
                     provideVideo();
                     provideLogs();
-                } else if ($scope.MODE.name == 'record') {
+                    break;
+                case 'record':
+                    ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id).then(function (rs) {
+                        $scope.logs = rs.map(function (r) {
+                            return r._source;
+                        });
+                    });
                     $scope.drivers = [];
                     closeAll();
-                }
-            }
-            if($scope.MODE.name == 'record') {
-                var videoArtifacts = getArtifactsByPartName(test, 'video', 'live');
-                if (videoArtifacts && videoArtifacts.length) {
-                    $scope.drivers = $scope.drivers.concat(videoArtifacts.filter(function (value) {
-                        return $scope.drivers.indexOfField('name', value.name) == -1;
-                    }));
-                    watchUntilPainted('#videoRecord:has(source[src])', reloadVideo);
-                }
+
+                    initRecords(test);
+                    break;
+                default:
+                    break;
             }
         };
 
-        var isLoaded = false;
+        function setMode(modeName) {
+            if($scope.MODE != modeName) {
+                $scope.MODE = MODES[modeName];
+            }
+        };
+
+
+        var isLoaded;
+
+        function initRecords(test) {
+            var videoArtifacts = getArtifactsByPartName(test, 'video', 'live');
+            if (videoArtifacts && videoArtifacts.length) {
+                $scope.drivers = $scope.drivers.concat(videoArtifacts.filter(function (value) {
+                    return $scope.drivers.indexOfField('name', value.name) == -1;
+                }));
+                isLoaded = false;
+                watchUntilPainted('#videoRecord:has(source[src])', reloadVideo);
+            }
+        };
+
         function reloadVideo() {
             var videoElements = angular.element('#videoRecord');
             if(videoElements && videoElements.length) {
                 videoElements[0].addEventListener('loadeddata', function() {
                     isLoaded = true;
+                }, false);
+                videoElements[0].addEventListener('playing', function() {
+                    //console.log('on play');
+                }, false);
+                videoElements[0].addEventListener('timeupdate', function() {
+                    //console.log('timeupdate' + videoElements[0].currentTime);
                 }, false);
                 if(! isLoaded) {
                     videoElements[0].load();
@@ -89,7 +116,7 @@
 
         $scope.fullScreen = function() {
             var fullScreenClass = 'full-screen';
-            var vncContainer = angular.element('.video-wrapper')[0];
+            var vncContainer = angular.element(MODES.live.element)[0];
             var tableBlock = angular.element('.table-history')[0];
             if(vncContainer.classList.contains(fullScreenClass)) {
                 vncContainer.classList.remove(fullScreenClass);
@@ -104,17 +131,26 @@
         $scope.switchDriver = function (index) {
             if($scope.selectedDriver != index) {
                 $scope.selectedDriver = index;
-                if ($scope.MODE.name == 'live') {
+                postDriverChanged();
+            }
+        };
+
+        function postDriverChanged() {
+            switch($scope.MODE.name) {
+                case 'live':
                     closeRfbConnection();
                     provideVideo();
-                } else if ($scope.MODE.name == 'record') {
-                    isLoaded = false;
-                    reloadVideo();
-                }
+                    break;
+                case 'record':
+                    initRecords($scope.test);
+                    break;
+                default:
+                    break;
             }
         };
 
         var painterWatcher;
+
         function watchUntilPainted(elementLocator, func) {
             painterWatcher = $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function(newVal) {
                 if(newVal) {
@@ -139,30 +175,23 @@
             $scope.testsWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
+                var driversCount = 0;
                 if($scope.testsWebsocket.connected) {
-                    var closeWaitingTimeout;
                     $scope.testsWebsocket.subscribe("/topic/testRuns/" + testRun.id + "/tests", function (data) {
                         var test = $scope.getEventFromMessage(data.body).test;
                         if(test.id == $scope.test.id) {
-                            if(! $scope.vncDisconnected) {
+
+                            if(test.status == 'IN_PROGRESS') {
                                 addDrivers(getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME));
-                                $scope.$apply();
+                                driversCount = $scope.drivers.length;
                             } else {
-                                var artifacts = getArtifactsByPartName(test, 'video', 'live');
-                                if(artifacts && artifacts.length) {
-                                    setMode('record', test);
-                                    if(closeWaitingTimeout) {
-                                        $timeout.cancel(closeWaitingTimeout);
-                                    }
-                                    closeWaitingTimeout = $timeout(function () {
-                                        $scope.testsWebsocket.hasClosePermission = true;
-                                    }, 2000);
-                                } else {
-                                    addDrivers(getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME));
-                                    $scope.$apply();
-                                }
+                                setMode('record');
+                                initRecordMode(test);
+                                $scope.waitForVideoArtifacts = $scope.drivers.length != driversCount ? true : false;
                             }
                             $scope.test = angular.copy(test);
+                            $scope.$apply();
+
                         }
                     });
                 }
@@ -184,7 +213,6 @@
                     driversQueue = [];
                 }
                 $scope.logs.push(log);
-
             });
         };
 
@@ -206,7 +234,6 @@
         };
 
         function vncDisconnected() {
-            $scope.vncDisconnected = true;
         };
 
         $scope.getEventFromMessage = function (message) {
@@ -245,6 +272,7 @@
         /**************** On destroy **************/
         $scope.$on('$destroy', function () {
             closeAll();
+            closeTestsWebsocket();
         });
 
         function closeRfbConnection() {
@@ -270,10 +298,22 @@
                 logsStomp.disconnect();
                 UtilService.websocketConnected(logsStompName);
             }
-            closeTestsWebsocket();
         };
 
         /**************** Initialization **************/
+
+        function initLiveMode(test) {
+            var videoArtifacts = getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME) || [];
+            addDrivers(videoArtifacts);
+            postModeConstruct(test);
+        };
+
+        function initRecordMode(test) {
+            var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
+            addDrivers(videoArtifacts);
+            postModeConstruct(test);
+        };
+
         (function init() {
             getTestRun($stateParams.id).then(function (rs) {
                 $scope.testRun = rs;
@@ -282,13 +322,11 @@
                     $scope.test = testsRs.filter(function (t) {
                         return t.id === parseInt($stateParams.testId);
                     })[0];
-                    var videoArtifacts;
-                    if($scope.test.status == 'IN_PROGRESS') {
-                        videoArtifacts = getArtifactsByPartName($scope.test, LIVE_DEMO_ARTIFACT_NAME);
-                        addDrivers(videoArtifacts);
-                        $scope.testRun.tests = testsRs;
-                    }
-                    setMode(videoArtifacts && videoArtifacts.length ? 'live' : 'record', $scope.test);
+                    $scope.testRun.tests = testsRs;
+
+                    var videoArtifacts = getArtifactsByPartName($scope.test, LIVE_DEMO_ARTIFACT_NAME);
+                    setMode($scope.test.status == 'IN_PROGRESS' && videoArtifacts && videoArtifacts.length ? 'live' : 'record');
+                    $scope.MODE.initFunc.call(this, $scope.test);
                 });
             });
         })();

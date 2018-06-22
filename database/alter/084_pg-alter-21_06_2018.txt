@@ -1,0 +1,9 @@
+set schema 'zafira';
+
+select check_version(84);
+
+INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
+	('ELASTICSEARCH_URL', '', 'ELASTICSEARCH'),
+	('ELASTICSEARCH_ENABLED', false, 'ELASTICSEARCH');
+
+select add_version(84);

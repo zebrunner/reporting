@@ -20,6 +20,7 @@
         ,'app.certification'
         ,'app.sidebar'
         // 3rd party feature modules
+        ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
         ,'n3-line-chart'

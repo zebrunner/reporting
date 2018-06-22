@@ -1953,7 +1953,7 @@
                     }, true);
 
                     $scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-                        if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
+                        if((test != null && (testRun.ciRunId + "_" + test.id) == data.headers['correlation-id'])
                             || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
                         {
                             var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
@@ -2028,7 +2028,7 @@
                      }, true);
 
                      $scope.testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-                         if((test != null && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
+                         if((test != null && (testRun.ciRunId + "_" + test.id) == data.headers['correlation-id'])
                              || (test == null && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
                          {
                              $scope.loading = false;

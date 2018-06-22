@@ -1,7 +1,7 @@
 <div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
   <div class="row ui-section no-margin title-container">
-    <h2 id="testrun-info-title">{{ testRun.testSuite.name }}</h2>
-    <span><i class="material-icons" md-ink-ripple>keyboard_backspace</i></span>
+    <h2 id="testrun-info-title">{{ test.name }}</h2>
+    <!--<span><i class="material-icons" md-ink-ripple>keyboard_backspace</i></span>-->
   </div>
   <div class="row no-margin tests-info-container">
     <div class="test-info-section col-md-12 no-padding">
@@ -26,11 +26,11 @@
                                     <md-chip ng-repeat="driver in drivers" ng-click="switchDriver($index);" ng-class="{'active': selectedDriver == $index}">Driver {{ $index + 1 }}</md-chip>
                                   </md-chips>
                                   <div class="video-wrapper">
-                                    <video ng-init="videoPlayerPained = true;" id="videoRecord" ng-if="MODE.name == 'record' || vncDisconnected;" ng-attr-width="{{ videoWidth }}" controls>
+                                    <video ng-init="videoPlayerPained = true;" id="videoRecord" ng-if="MODE.name == 'record'" ng-attr-width="{{ videoWidth }}" controls>
                                       <source ng-src="{{ drivers[selectedDriver].link }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
-                                    <div ng-init="vncPained = true; vncDisconnected = false;" ng-if="MODE.name == 'live';" id="vnc">
+                                    <div ng-init="vncPained = true;" ng-if="MODE.name == 'live';" id="vnc">
                                         <i ng-click="fullScreen();" class="material-icons video-control">fullscreen</i>
                                     </div>
                                   </div>
@@ -48,7 +48,7 @@
                                             <tr ng-if="logs.length" ng-repeat="log in logs">
                                                 <td>
                                                     <i ng-if="false" class="material-icons">insert_photo</i>
-                                                    <span ng-if="log.driver" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
+                                                    <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
                                                 </td>
                                                 <td>{{ log.timestamp - test.startTime + OFFSET | date: 'HH:mm:ss'}}</td>
                                                 <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </md-tab>
-                    <md-tab ng-disabled="false" label="Screenshots" ng-click="selectedTab = 1;">
+                    <!--<md-tab ng-disabled="false" label="Screenshots" ng-click="selectedTab = 1;">
                         <div class="tab1">
                             <div class="tab-content">
                                 <div>
@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                         </div>
-                    </md-tab>
+                    </md-tab>-->
                     <md-tab ng-disabled="false" label="Test details" ng-click="selectedTab = 2;">
                         <div class="tab2">
                             <div class="test-info-tab">
