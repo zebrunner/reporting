@@ -20,6 +20,7 @@
 			<map>
 				<entry key="bean:name=asyncSendEmailTask" value-ref="asyncSendEmailTask"/>
 				<entry key="bean:name=googleService" value-ref="googleService"/>
+				<entry key="bean:name=elasticsearchService" value-ref="elasticsearchService"/>
 				<entry key="bean:name=ldapService" value-ref="ldapService"/>
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
@@ -52,6 +53,8 @@
 	</bean>
 
 	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
+
+	<bean id="elasticsearchService" class="com.qaprosoft.zafira.services.services.jmx.ElasticsearchService"/>
 
 	<bean id="googleService" class="com.qaprosoft.zafira.services.services.jmx.google.GoogleService"/>
 

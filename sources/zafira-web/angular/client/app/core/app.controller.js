@@ -20,6 +20,8 @@
 	        $rootScope.jenkins  = { enabled : false };
 	        $rootScope.jira     = { enabled : false };
 	        $rootScope.rabbitmq = { enabled : false };
+	        $rootScope.google = { enabled : false };
+	        $rootScope.elasticsearch = { enabled : false };
 
             $scope.setOffset = function (event) {
 	              $rootScope.currentOffset = 0;
@@ -109,7 +111,14 @@
                     case "GOOGLE":
                         SettingsService.getSettingByTool("GOOGLE").then(function(rs) {
                             var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.jenkins.enabled = settings["GOOGLE_ENABLED"];
+                            $rootScope.google.enabled = settings["GOOGLE_ENABLED"];
+                        });
+                        break;
+                    case "ELASTICSEARCH":
+                        SettingsService.getSettingByTool("ELASTICSEARCH").then(function(rs) {
+                            var settings = UtilService.settingsAsMap(rs.data);
+                            $rootScope.elasticsearch.url = settings["ELASTICSEARCH_URL"];
+                            $rootScope.elasticsearch.enabled = settings["ELASTICSEARCH_ENABLED"];
                         });
                         break;
                     default:

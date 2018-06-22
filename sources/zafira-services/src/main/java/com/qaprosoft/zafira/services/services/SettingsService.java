@@ -49,6 +49,9 @@ public class SettingsService
 	private GoogleService googleService;
 
 	@Autowired
+	private ElasticsearchService elasticsearchService;
+
+	@Autowired
 	private JenkinsService jenkinsService;
 
 	@Autowired
@@ -181,6 +184,9 @@ public class SettingsService
 			break;
 		case LDAP:
 			service = ldapService;
+			break;
+		case ELASTICSEARCH:
+			service = elasticsearchService;
 			break;
 		case JIRA:
 			service = jiraService;

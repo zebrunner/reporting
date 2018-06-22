@@ -8,24 +8,23 @@
     function ArtifactService($rootScope, $window, $q, $timeout, UtilService) {
         var service = {};
 
-        service.connectVnc = connectVnc;
-        service.resize = resize;
-        service.provideLogs = provideLogs;
-
-        return service;
-
-        var rfb;
         var display;
         var ratio;
         var container;
         var containerHeightProperty = 'offsetHeight';
         var containerWidthProperty = 'offsetWidth';
 
+        service.connectVnc = connectVnc;
+        service.resize = resize;
+        service.provideLogs = provideLogs;
+
+        return service;
+
         function connectVnc(containerElement, heightProperty, widthProperty, wsURL, disconnectFunc) {
             container = containerElement;
             containerHeightProperty = heightProperty;
             containerWidthProperty = widthProperty;
-            rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
+            var rfb = new RFB(angular.element('#vnc')[0], wsURL, { shared: true, credentials: { password: 'selenoid' } });
             //rfb._viewOnly = true;
             rfb.addEventListener("connect",  connected);
             rfb.addEventListener("disconnect",  disconnectFunc ? disconnectFunc : disconnected);
@@ -53,7 +52,7 @@
                             UtilService.websocketConnected(wsName);
 
                             testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-                                if((test && (testRun.ciRunId + "/" + test.id) == data.headers['correlation-id'])
+                                if((test && (testRun.ciRunId + "_" + test.id) == data.headers['correlation-id'])
                                     || (! test && data.headers['correlation-id'].startsWith(testRun.ciRunId))) {
                                     var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
                                     func.call(this, log);

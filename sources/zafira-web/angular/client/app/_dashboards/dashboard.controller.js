@@ -62,6 +62,9 @@
                     }
                     widget.data = {};
                     widget.data.dataset = data;
+                    if (widget.title.toUpperCase().includes("CRON")) {
+                        addOnClickConfirm();
+                    }
                     if (data.length !== 0) {
                         $scope.isLoading = false;
                     }
@@ -70,7 +73,7 @@
                     alertify.error(rs.message);
                 }
             });
-        };
+        }
 
         function getNextEmptyGridArea(defaultLocation) {
             var gridstack = angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack');
@@ -484,7 +487,7 @@
                     }
                 });
             });
-        };
+        }
 
         $scope.$watch(
             function() {
@@ -509,6 +512,29 @@
         $scope.$on('$destroy', function () {
             $scope.resetGrid();
         });
+
+        function addOnClickConfirm() {
+            $scope.$watch(function () {
+                return angular.element('#cron_rerun').is(':visible')
+            }, function () {
+                var rerunAllLinks = document.getElementsByClassName("cron_rerun_all");
+                Array.prototype.forEach.call(rerunAllLinks, function(link) {
+                    link.addEventListener("click", function (event) {
+                        if (!confirm('Rebuild for all tests in cron job will be started. Continue?')) {
+                            event.preventDefault();
+                        }
+                    }, false);
+                });
+                var rerunFailuresLinks = document.getElementsByClassName("cron_rerun_failures");
+                Array.prototype.forEach.call(rerunFailuresLinks, function(link) {
+                    link.addEventListener("click", function (event) {
+                        if (!confirm('Rebuild for failures in cron job will be started. Continue?')) {
+                            event.preventDefault();
+                        }
+                    }, false);
+                });
+            });
+        }
 
         var defaultDashboardWatcher = $scope.$watch('currentUser.defaultDashboard', function (newVal) {
             if(newVal) {
