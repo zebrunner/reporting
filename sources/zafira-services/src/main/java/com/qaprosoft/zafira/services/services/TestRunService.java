@@ -237,11 +237,13 @@ public class TestRunService
 			if (testRun != null)
 			{
 				Long latestTestRunId = testRun.getId();
-				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl())) {
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentUrl()))
+				{
 					Job job = jobsService.createOrUpdateJobByURL(queueTestRunParams.getCiParentUrl(), user);
 					testRun.setUpstreamJob(job);
 				}
-				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild())) {
+				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
+				{
 					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
@@ -250,6 +252,7 @@ public class TestRunService
 				testRun.setPlatform(null);
 				testRun.setConfigXML(null);
 				testRun.setComments(null);
+				testRun.setAppVersion(null);
 				testRun.setReviewed(false);
 
 				//make sure to reset below3 fields for existing run as well
