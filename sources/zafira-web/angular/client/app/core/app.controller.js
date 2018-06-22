@@ -15,6 +15,8 @@
                 value: SettingProvider.getCompanyLogoURl() || ''
             };
 
+            var ELASTICSEARCH_TOOL = 'ELASTICSEARCH';
+
 	        // ************** Integrations **************
 
 	        $rootScope.jenkins  = { enabled : false };
@@ -51,6 +53,21 @@
                     }
                 });
 
+                SettingsService.isToolConnected(ELASTICSEARCH_TOOL).then(function (rs) {
+                    $rootScope.elasticsearch.enabled = rs.success && rs.data;
+                    if(rs.success && rs.data) {
+                        SettingsService.getSettingByTool(ELASTICSEARCH_TOOL).then(function (settingsRs) {
+                            if(settingsRs.success) {
+                                $rootScope.elasticsearch.host = settingsRs.data.find(function (element, index, array) {
+                                    return element.value.toLowerCase() == 'host';
+                                });
+                                $rootScope.elasticsearch.port = settingsRs.data.find(function (element, index, array) {
+                                    return element.value.toLowerCase() == 'port';
+                                });
+                            }
+                        });
+                    }
+                });
 	        };
 
 	        $scope.initExtendedUserProfile = function () {
@@ -112,13 +129,6 @@
                         SettingsService.getSettingByTool("GOOGLE").then(function(rs) {
                             var settings = UtilService.settingsAsMap(rs.data);
                             $rootScope.google.enabled = settings["GOOGLE_ENABLED"];
-                        });
-                        break;
-                    case "ELASTICSEARCH":
-                        SettingsService.getSettingByTool("ELASTICSEARCH").then(function(rs) {
-                            var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.elasticsearch.url = settings["ELASTICSEARCH_URL"];
-                            $rootScope.elasticsearch.enabled = settings["ELASTICSEARCH_ENABLED"];
                         });
                         break;
                     default:
