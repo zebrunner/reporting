@@ -1,8 +1,9 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import com.qaprosoft.zafira.tests.gui.components.modals.JobViewSettingModalWindow;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.tests.gui.components.modals.JobViewSettingModalWindow;
 
 public class TestRunViewPage extends BasePage
 {

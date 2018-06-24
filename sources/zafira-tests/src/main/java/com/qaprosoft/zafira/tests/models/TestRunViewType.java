@@ -1,9 +1,9 @@
 package com.qaprosoft.zafira.tests.models;
 
+import java.util.List;
+
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
-
-import java.util.List;
 
 public class TestRunViewType
 {

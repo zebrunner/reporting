@@ -1,11 +1,12 @@
 package com.qaprosoft.zafira.tests.services.api;
 
+import java.util.Random;
+
+import org.apache.log4j.Logger;
+
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.util.Config;
-import org.apache.log4j.Logger;
-
-import java.util.Random;
 
 public abstract class AbstractAPIService
 {

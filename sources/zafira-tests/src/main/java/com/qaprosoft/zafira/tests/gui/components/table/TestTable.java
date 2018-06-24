@@ -1,12 +1,13 @@
 package com.qaprosoft.zafira.tests.gui.components.table;
 
-import com.qaprosoft.zafira.tests.gui.components.blocks.sort.TestSortBlock;
-import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
+import java.util.List;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
+import com.qaprosoft.zafira.tests.gui.components.blocks.sort.TestSortBlock;
+import com.qaprosoft.zafira.tests.gui.components.table.row.TestRow;
 
 public class TestTable extends AbstractTable
 {

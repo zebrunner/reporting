@@ -1,6 +1,12 @@
 package com.qaprosoft.zafira.tests.util.webdriver;
 
-import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,8 +19,7 @@ import org.openqa.selenium.support.pagefactory.ElementLocatorFactory;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
 import org.openqa.selenium.support.pagefactory.internal.LocatingElementHandler;
 
-import java.lang.reflect.*;
-import java.util.List;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 
 public class UIElementDecorator implements FieldDecorator
 {

@@ -1,6 +1,5 @@
 package com.qaprosoft.zafira.tests.gui.components.blocks.search;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

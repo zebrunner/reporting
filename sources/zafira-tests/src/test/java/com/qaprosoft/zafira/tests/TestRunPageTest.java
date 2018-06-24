@@ -42,10 +42,12 @@ import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.TestRunPageService;
 
+@SuppressWarnings("unused")
 public class TestRunPageTest extends AbstractTest
 {
 
 	private TestRunPageService testRunPageService;
+	
 	private TestRunPage testRunPage;
 
 	private static final String DELETE_RUNS_ALERT_TEXT = "Do you really want to delete multiple test runs?";
@@ -716,6 +718,8 @@ public class TestRunPageTest extends AbstractTest
 					break;
 				case IN_PROGRESS:
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
+					break;
+				default:
 					break;
 			}
 		});

@@ -1,14 +1,5 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.tests.services.TestRunMockCacheableService;
-import org.apache.commons.lang3.RandomUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.Assert;
-import org.testng.annotations.*;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,6 +7,20 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Factory;
+import org.testng.annotations.Test;
+
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.tests.services.TestRunMockCacheableService;
+
+@SuppressWarnings({"rawtypes", "unused"})
 public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStatistics>
 {
 
@@ -106,7 +111,7 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 	 * @param parameters - class values of function parameters
 	 * @return - built placeholder
 	 */
-	private String getMethodPlaceholder(Class... parameters)
+	private String getMethodPlaceholder(Class<?>... parameters)
 	{
 		return Arrays.stream(parameters).map(Class::getSimpleName).collect(Collectors.toList()).toString();
 	}
@@ -119,7 +124,12 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 	private void runUpdateStatisticsParallelRunnables(boolean parallel, TestRunStatistics... testRunStatistics)
 	{
 		IntStream run = parallel ? IntStream.range(0, testRunStatistics.length).parallel() : IntStream.range(0, testRunStatistics.length);
-		run.forEach(i -> runUpdateStatisticsRunnable(i, testRunStatistics[i]));
+		try {
+			run.forEach(i -> runUpdateStatisticsRunnable(i, testRunStatistics[i]));
+		}
+		finally {
+			run.close();
+		}
 	}
 
 	/**
@@ -165,7 +175,7 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 			Object[] params = new Object[paramClasses.length];
 			IntStream.range(0, paramClasses.length).forEach(i ->
 			{
-				Class clazz = paramClasses[i];
+				Class<?> clazz = paramClasses[i];
 				params[i] = getRandomClassValue(clazz, testRunIds);
 				LOGGER.info("Parameter " + i + " was generated: " + params[i] + " for class " + clazz.getSimpleName());
 			});

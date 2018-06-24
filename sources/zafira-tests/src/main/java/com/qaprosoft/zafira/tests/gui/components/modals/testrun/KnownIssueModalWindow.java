@@ -1,12 +1,13 @@
 package com.qaprosoft.zafira.tests.gui.components.modals.testrun;
 
-import com.qaprosoft.zafira.tests.gui.components.modals.AbstractModalWindow;
+import java.util.List;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
+import com.qaprosoft.zafira.tests.gui.components.modals.AbstractModalWindow;
 
 public class KnownIssueModalWindow extends AbstractModalWindow
 {

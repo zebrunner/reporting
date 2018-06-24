@@ -1,12 +1,10 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
-import com.qaprosoft.zafira.tests.gui.AbstractPage;
-import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
-import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 
 public class LoginPageService extends AbstractPageService
 {

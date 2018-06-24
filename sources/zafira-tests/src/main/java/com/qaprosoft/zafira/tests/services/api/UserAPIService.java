@@ -1,11 +1,11 @@
 package com.qaprosoft.zafira.tests.services.api;
 
-import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+
+import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
 
 public class UserAPIService extends AbstractAPIService
 {

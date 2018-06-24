@@ -1,14 +1,14 @@
 package com.qaprosoft.zafira.tests.gui.components.menus;
 
-import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
-import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
-import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
-import com.qaprosoft.zafira.tests.gui.pages.UserPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
+import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 
 public class UserSettingMenu extends AbstractMenu
 {

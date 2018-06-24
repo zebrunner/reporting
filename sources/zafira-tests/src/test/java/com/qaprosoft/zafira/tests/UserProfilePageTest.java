@@ -1,28 +1,25 @@
 package com.qaprosoft.zafira.tests;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.qaprosoft.zafira.tests.exceptions.NoDashboardsWereLoadedException;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.LoginPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage;
-import com.qaprosoft.zafira.tests.services.api.UserAPIService;
-import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
+import com.qaprosoft.zafira.tests.gui.pages.UserProfilePage.ColorSchema;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserProfilePageService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.RandomUtils;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
-import java.util.List;
-
-import static com.qaprosoft.zafira.tests.gui.pages.UserProfilePage.ColorSchema;
 
 public class UserProfilePageTest extends AbstractTest {
 

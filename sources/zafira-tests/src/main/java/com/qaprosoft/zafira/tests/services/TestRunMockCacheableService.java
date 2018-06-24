@@ -1,14 +1,15 @@
 package com.qaprosoft.zafira.tests.services;
 
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.services.cache.ICacheableService;
-import org.apache.commons.lang3.RandomUtils;
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.stereotype.Component;
+
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.services.cache.ICacheableService;
 
 @Component(value = "testRunMockCacheableService")
 public class TestRunMockCacheableService implements ICacheableService<Long, TestRunStatistics>

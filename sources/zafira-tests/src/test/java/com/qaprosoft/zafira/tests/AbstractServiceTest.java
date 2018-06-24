@@ -58,9 +58,9 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 		TEST_RUN_STATISTICS("testRunStatistics", TestRunStatistics.class);
 
 		private String name;
-		private Class clazz;
+		private Class<?> clazz;
 
-		CacheType(String name, Class clazz)
+		CacheType(String name, Class<?> clazz)
 		{
 			this.name = name;
 			this.clazz = clazz;
@@ -71,7 +71,7 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 			return name;
 		}
 
-		public Class getClazz()
+		public Class<?> getClazz()
 		{
 			return clazz;
 		}
@@ -82,8 +82,7 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 		return clazz.cast(cache.get(key, clazz));
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Object getRandomClassValue(Class clazz, Object... availableValues)
+	protected Object getRandomClassValue(Class<?> clazz, Object... availableValues)
 	{
 		Object result = null;
 		if(clazz.isAssignableFrom(Long.class))

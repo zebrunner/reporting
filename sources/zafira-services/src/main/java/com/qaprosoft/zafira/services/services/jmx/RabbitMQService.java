@@ -15,20 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.jmx;
 
-import com.offbytwo.jenkins.JenkinsServer;
-import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.services.services.SettingsService;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
-import javax.annotation.PostConstruct;
-import java.util.List;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.services.SettingsService;
 
 @ManagedResource(objectName="bean:name=rabbitMQService", description="RabbitMQ init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,

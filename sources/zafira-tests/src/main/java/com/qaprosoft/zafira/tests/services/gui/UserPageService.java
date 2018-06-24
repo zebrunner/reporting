@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
-import com.qaprosoft.zafira.models.db.User;
+import org.openqa.selenium.WebDriver;
+
 import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
@@ -8,9 +9,6 @@ import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.row.UserTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class UserPageService extends AbstractPageService
 {

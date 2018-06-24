@@ -1,7 +1,10 @@
 package com.qaprosoft.zafira.tests.exceptions;
 
 public class NoColorSchemaIsChosenException extends RuntimeException {
-    public NoColorSchemaIsChosenException() {
+
+	private static final long serialVersionUID = -302039893494696852L;
+
+	public NoColorSchemaIsChosenException() {
         super();
     }
 
