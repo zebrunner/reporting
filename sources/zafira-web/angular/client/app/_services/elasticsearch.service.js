@@ -9,11 +9,16 @@
 
         var instance;
 
-        $rootScope.$on('event:elasticsearch-toolsInitialized', function (event, data) {
-            if(data.url) {
-                instance = getInstance(data.url.value);
-            } else {
-                alertify.error('Cannot initialize elasticsearch host and port');
+        SettingsService.getSettingByTool('ELASTICSEARCH').then(function (settingsRs) {
+            if(settingsRs.success) {
+                var url = settingsRs.data.find(function (element, index, array) {
+                    return element.name.toLowerCase() == 'url';
+                });
+                if(url) {
+                    instance = getInstance(url.value);
+                } else {
+                    alertify.error('Cannot initialize elasticsearch host and port');
+                }
             }
         });
 
@@ -32,7 +37,7 @@
                     resolve(! error);
                 });
             });
-        }
+        };
 
         function search(index, query, page, size) {
             return $q(function (resolve, reject) {
@@ -55,21 +60,19 @@
                     resolve(rs);
                 });
             });
-        }
+        };
 
         function elasticsearch(params) {
             return $q(function (resolve, reject) {
-                waitUntilInstanceInitialized(function () {
-                    instance.search(params, function (err, res) {
-                        if(err) {
-                            reject(err);
-                        } else {
-                            resolve(res.hits.hits);
-                        }
-                    });
+                instance.search(params, function (err, res) {
+                    if(err) {
+                        reject(err);
+                    } else {
+                        resolve(res.hits.hits);
+                    }
                 });
             });
-        }
+        };
 
         function getInstance(url) {
             instance = instance || esFactory({
@@ -79,15 +82,6 @@
                 }
             });
             return instance;
-        }
-
-        function waitUntilInstanceInitialized(func) {
-            var elasticsearchWatcher = $rootScope.$watchGroup(['elasticsearch.url'], function (newVal) {
-                if(newVal[0] && newVal[1]) {
-                    func.call();
-                    elasticsearchWatcher();
-                }
-            });
         };
     }
 })();

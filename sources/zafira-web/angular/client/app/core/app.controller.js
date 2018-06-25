@@ -15,15 +15,12 @@
                 value: SettingProvider.getCompanyLogoURl() || ''
             };
 
-            var ELASTICSEARCH_TOOL = 'ELASTICSEARCH';
-
 	        // ************** Integrations **************
 
 	        $rootScope.jenkins  = { enabled : false };
 	        $rootScope.jira     = { enabled : false };
 	        $rootScope.rabbitmq = { enabled : false };
 	        $rootScope.google = { enabled : false };
-	        $rootScope.elasticsearch = { enabled : false };
 
             $scope.setOffset = function (event) {
 	              $rootScope.currentOffset = 0;
@@ -49,20 +46,6 @@
                                     $rootScope.$broadcast("event:settings-toolsInitialized", tool);
                                 }
                             });
-                        });
-                    }
-                });
-
-                SettingsService.isToolConnected(ELASTICSEARCH_TOOL).then(function (rs) {
-                    $rootScope.elasticsearch.enabled = rs.success && rs.data;
-                    if(rs.success && rs.data) {
-                        SettingsService.getSettingByTool(ELASTICSEARCH_TOOL).then(function (settingsRs) {
-                            if(settingsRs.success) {
-                                $rootScope.elasticsearch.url = settingsRs.data.find(function (element, index, array) {
-                                    return element.name.toLowerCase() == 'url';
-                                });
-                                $rootScope.$broadcast("event:elasticsearch-toolsInitialized", $rootScope.elasticsearch);
-                            }
                         });
                     }
                 });
