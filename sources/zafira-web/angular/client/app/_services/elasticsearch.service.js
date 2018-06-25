@@ -78,7 +78,7 @@
                     {
                         host: host,
                         auth: port,
-                        protocol: $location.protocol(),
+                        protocol: 'http',
                         port: 9200
                     }
                 ]
