@@ -58,11 +58,8 @@
                     if(rs.success && rs.data) {
                         SettingsService.getSettingByTool(ELASTICSEARCH_TOOL).then(function (settingsRs) {
                             if(settingsRs.success) {
-                                $rootScope.elasticsearch.host = settingsRs.data.find(function (element, index, array) {
-                                    return element.name.toLowerCase() == 'host';
-                                });
-                                $rootScope.elasticsearch.port = settingsRs.data.find(function (element, index, array) {
-                                    return element.name.toLowerCase() == 'port';
+                                $rootScope.elasticsearch.url = settingsRs.data.find(function (element, index, array) {
+                                    return element.name.toLowerCase() == 'url';
                                 });
                                 $rootScope.$broadcast("event:elasticsearch-toolsInitialized", $rootScope.elasticsearch);
                             }
