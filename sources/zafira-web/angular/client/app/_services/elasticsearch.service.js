@@ -10,8 +10,8 @@
         var instance;
 
         $rootScope.$on('event:elasticsearch-toolsInitialized', function (event, data) {
-            if(data.host && data.port) {
-                instance = getInstance(data.host.value, data.port.value);
+            if(data.url) {
+                instance = getInstance(data.url.value);
             } else {
                 alertify.error('Cannot initialize elasticsearch host and port');
             }
@@ -71,23 +71,18 @@
             });
         }
 
-        function getInstance(host, port) {
+        function getInstance(url) {
             instance = instance || esFactory({
-                //host: host + ':' + port
-                host: [
-                    {
-                        host: host,
-                        auth: port,
-                        protocol: 'http',
-                        port: 9200
-                    }
-                ]
+                host: url,
+                ssl: {
+                    rejectUnauthorized: false
+                }
             });
             return instance;
         }
 
         function waitUntilInstanceInitialized(func) {
-            var elasticsearchWatcher = $rootScope.$watchGroup(['elasticsearch.host', 'elasticsearch.port'], function (newVal) {
+            var elasticsearchWatcher = $rootScope.$watchGroup(['elasticsearch.url'], function (newVal) {
                 if(newVal[0] && newVal[1]) {
                     func.call();
                     elasticsearchWatcher();
