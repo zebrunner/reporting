@@ -411,8 +411,12 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                	<tr md-swipe-left="changeTestStatus(test, 'FAILED');" md-swipe-right="changeTestStatus(test, 'PASSED');" data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"  ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}">
-                                                        <td>
+                                                <tr md-swipe-left="changeTestStatus(test, 'FAILED');"
+                                                    md-swipe-right="changeTestStatus(test, 'PASSED');"
+                                                    data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"
+                                                    ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}"
+                                                    data-ng-hide="testRun.status == 'IN_PROGRESS' && test.status == 'QUEUED'">
+                                                <td>
                                                         	<b name="testName" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'black_font'">{{test.name}} <span data-ng-if="test.blocker" class="badge ng-binding bug-label-bg">BLOCKER</span></b>
                                                         	<div>
                                                                 <span data-ng-if="test.finishTime && (test.finishTime - test.startTime)/1000 > 0 && test.status != 'QUEUED'" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-clock-o" aria-hidden="true"></i> {{(test.finishTime - test.startTime)/1000 | number:0}} seconds</span>
