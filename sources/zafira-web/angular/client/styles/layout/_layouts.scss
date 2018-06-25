@@ -26,7 +26,7 @@
 html {
     position: relative;
     min-height: 100%; // important!
-    height: auto; // important!
+    height: 100%; // important!
     background: none; // important!, fix angular-material css cause sidebar background to break bug
 }
 
@@ -34,7 +34,7 @@ html {
 .app {
     position: relative;
     min-height: 100%; // important!
-    height: 100%; // important!
+    height: auto; // important!
 
     > .header-container {
         &.header-fixed {
