@@ -226,11 +226,15 @@
         };
 
         function provideVideo() {
-            var wsUrl = $scope.drivers[$scope.selectedDriver].link;
-            watchUntilPainted('#vnc', function () {
-                rfb = ArtifactService.connectVnc(angular.element($scope.MODE.element)[0], 'offsetHeight', 'offsetWidth', wsUrl, vncDisconnected);
+            var driversWatcher = $scope.$watchCollection('drivers', function (newVal) {
+                if(newVal && newVal.length) {
+                    var wsUrl = $scope.drivers[$scope.selectedDriver].link;
+                    watchUntilPainted('#vnc', function () {
+                        rfb = ArtifactService.connectVnc(angular.element($scope.MODE.element)[0], 'offsetHeight', 'offsetWidth', wsUrl, vncDisconnected);
+                    });
+                    driversWatcher();
+                }
             });
-            return wsUrl;
         };
 
         function vncDisconnected() {
@@ -324,8 +328,9 @@
                     })[0];
                     $scope.testRun.tests = testsRs;
 
-                    var videoArtifacts = getArtifactsByPartName($scope.test, LIVE_DEMO_ARTIFACT_NAME);
-                    setMode($scope.test.status == 'IN_PROGRESS' && videoArtifacts && videoArtifacts.length ? 'live' : 'record');
+                    //var videoArtifacts = getArtifactsByPartName($scope.test, LIVE_DEMO_ARTIFACT_NAME);
+                    //setMode($scope.test.status == 'IN_PROGRESS' && videoArtifacts && videoArtifacts.length ? 'live' : 'record');
+                    setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
                     $scope.MODE.initFunc.call(this, $scope.test);
                 });
             });

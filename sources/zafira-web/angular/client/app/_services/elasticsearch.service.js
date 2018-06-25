@@ -7,22 +7,22 @@
 
     function ElasticsearchService($q, esFactory, SettingsService, $rootScope) {
 
-        var instance = getInstance();
+        var instance;
+
+        $rootScope.$on('event:elasticsearch-toolsInitialized', function (event, data) {
+            if(data.host && data.port) {
+                instance = getInstance(data.host.value, data.port.value);
+            } else {
+                alertify.error('Cannot initialize elasticsearch host and port');
+            }
+        });
 
         var service = {};
 
-        service.getInstance = getInstance;
         service.ping = ping;
         service.search = search;
 
         return service;
-
-        function getInstance() {
-            instance = instance || esFactory({
-                host: $rootScope.elasticsearch.host + ':' + $rootScope.elasticsearch.port
-            });
-            return instance;
-        }
 
         function ping() {
             return $q(function (resolve, reject) {
@@ -59,14 +59,32 @@
 
         function elasticsearch(params) {
             return $q(function (resolve, reject) {
-                instance.search(params, function (err, res) {
-                    if(err) {
-                        reject(err);
-                    } else {
-                        resolve(res.hits.hits);
-                    }
+                waitUntilInstanceInitialized(function () {
+                    instance.search(params, function (err, res) {
+                        if(err) {
+                            reject(err);
+                        } else {
+                            resolve(res.hits.hits);
+                        }
+                    });
                 });
             });
         }
+
+        function getInstance(host, port) {
+            instance = instance || esFactory({
+                host: host + ':' + port
+            });
+            return instance;
+        }
+
+        function waitUntilInstanceInitialized(func) {
+            var elasticsearchWatcher = $rootScope.$watchGroup(['elasticsearch.host', 'elasticsearch.port'], function (newVal) {
+                if(newVal[0] && newVal[1]) {
+                    func.call();
+                    elasticsearchWatcher();
+                }
+            });
+        };
     }
 })();

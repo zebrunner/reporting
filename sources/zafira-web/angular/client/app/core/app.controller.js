@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, SettingProvider) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'ElasticsearchService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -59,11 +59,12 @@
                         SettingsService.getSettingByTool(ELASTICSEARCH_TOOL).then(function (settingsRs) {
                             if(settingsRs.success) {
                                 $rootScope.elasticsearch.host = settingsRs.data.find(function (element, index, array) {
-                                    return element.value.toLowerCase() == 'host';
+                                    return element.name.toLowerCase() == 'host';
                                 });
                                 $rootScope.elasticsearch.port = settingsRs.data.find(function (element, index, array) {
-                                    return element.value.toLowerCase() == 'port';
+                                    return element.name.toLowerCase() == 'port';
                                 });
+                                $rootScope.$broadcast("event:elasticsearch-toolsInitialized", $rootScope.elasticsearch);
                             }
                         });
                     }
