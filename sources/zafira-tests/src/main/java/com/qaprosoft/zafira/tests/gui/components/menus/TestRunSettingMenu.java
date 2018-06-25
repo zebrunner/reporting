@@ -1,7 +1,5 @@
 package com.qaprosoft.zafira.tests.gui.components.menus;
 
-import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

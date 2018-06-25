@@ -1,11 +1,9 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
-import com.qaprosoft.zafira.tests.util.Config;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
+
+import com.qaprosoft.zafira.tests.util.Config;
 
 public abstract class AbstractPageService
 {

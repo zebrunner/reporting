@@ -1,14 +1,15 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
-import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 
 public class ProjectFilterMenu extends AbstractUIObject
 {

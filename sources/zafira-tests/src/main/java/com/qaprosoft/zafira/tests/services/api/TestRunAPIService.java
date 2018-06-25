@@ -1,15 +1,15 @@
 package com.qaprosoft.zafira.tests.services.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
 import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 public class TestRunAPIService extends AbstractAPIService
 {

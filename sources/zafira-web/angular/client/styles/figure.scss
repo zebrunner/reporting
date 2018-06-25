@@ -1,0 +1,28 @@
+.red-point {
+    display: inline-block;
+    border: 6px solid rgba(226 ,43 ,53, 0.25);
+    border-radius: 50%;
+    position: relative;
+    top: 0;
+    left: 0;
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        background-color: #e22b35;
+        height: 4px;
+        width: 4px;
+        border-radius: 50%;
+        top: -2px;
+        left: -2px;
+    }
+    &.flash-point:after {
+        animation: flashing 2s ease infinite;
+    }
+}
+
+@keyframes flashing {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
+}

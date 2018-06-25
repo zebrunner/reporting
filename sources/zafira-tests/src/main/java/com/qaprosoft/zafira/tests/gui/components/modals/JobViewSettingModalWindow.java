@@ -1,13 +1,14 @@
 package com.qaprosoft.zafira.tests.gui.components.modals;
 
-import com.qaprosoft.zafira.tests.gui.components.modals.view.JobViewSettingModalWindowFilterBox;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.qaprosoft.zafira.tests.gui.components.modals.view.JobViewSettingModalWindowFilterBox;
 
 public class JobViewSettingModalWindow extends AbstractModalWindow
 {

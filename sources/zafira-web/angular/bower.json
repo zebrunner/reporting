@@ -31,7 +31,8 @@
     "lodash": "^4.17.4",
     "gridstack-angular": "^0.5.0",
     "md-date-range-picker": "^0.7.2",
-    "ng-img-crop": "ngImgCrop#^0.3.2"
+    "ng-img-crop": "ngImgCrop#^0.3.2",
+    "elasticsearch": "^15.0.0"
   },
   "devDependencies": {
     "bootstrap-sass-official": "~3.3.0"

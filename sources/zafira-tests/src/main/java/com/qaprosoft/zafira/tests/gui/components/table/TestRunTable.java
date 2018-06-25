@@ -1,12 +1,13 @@
 package com.qaprosoft.zafira.tests.gui.components.table;
 
-import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
+import java.util.List;
+
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import java.util.List;
+import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 
 public class TestRunTable extends AbstractTable
 {

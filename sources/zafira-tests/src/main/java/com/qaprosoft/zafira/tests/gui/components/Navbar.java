@@ -1,12 +1,17 @@
 package com.qaprosoft.zafira.tests.gui.components;
 
-import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
-import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
-import com.qaprosoft.zafira.tests.gui.pages.*;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
+import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
+import com.qaprosoft.zafira.tests.gui.pages.MonitorPage;
+import com.qaprosoft.zafira.tests.gui.pages.TestCasePage;
+import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
+import com.qaprosoft.zafira.tests.gui.pages.TestRunViewPage;
+import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 
 public class Navbar extends AbstractUIObject
 {

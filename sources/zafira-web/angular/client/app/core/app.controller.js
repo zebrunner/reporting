@@ -15,11 +15,15 @@
                 value: SettingProvider.getCompanyLogoURl() || ''
             };
 
+            var ELASTICSEARCH_TOOL = 'ELASTICSEARCH';
+
 	        // ************** Integrations **************
 
 	        $rootScope.jenkins  = { enabled : false };
 	        $rootScope.jira     = { enabled : false };
 	        $rootScope.rabbitmq = { enabled : false };
+	        $rootScope.google = { enabled : false };
+	        $rootScope.elasticsearch = { enabled : false };
 
             $scope.setOffset = function (event) {
 	              $rootScope.currentOffset = 0;
@@ -49,6 +53,21 @@
                     }
                 });
 
+                SettingsService.isToolConnected(ELASTICSEARCH_TOOL).then(function (rs) {
+                    $rootScope.elasticsearch.enabled = rs.success && rs.data;
+                    if(rs.success && rs.data) {
+                        SettingsService.getSettingByTool(ELASTICSEARCH_TOOL).then(function (settingsRs) {
+                            if(settingsRs.success) {
+                                $rootScope.elasticsearch.host = settingsRs.data.find(function (element, index, array) {
+                                    return element.value.toLowerCase() == 'host';
+                                });
+                                $rootScope.elasticsearch.port = settingsRs.data.find(function (element, index, array) {
+                                    return element.value.toLowerCase() == 'port';
+                                });
+                            }
+                        });
+                    }
+                });
 	        };
 
 	        $scope.initExtendedUserProfile = function () {
@@ -109,7 +128,7 @@
                     case "GOOGLE":
                         SettingsService.getSettingByTool("GOOGLE").then(function(rs) {
                             var settings = UtilService.settingsAsMap(rs.data);
-                            $rootScope.jenkins.enabled = settings["GOOGLE_ENABLED"];
+                            $rootScope.google.enabled = settings["GOOGLE_ENABLED"];
                         });
                         break;
                     default:

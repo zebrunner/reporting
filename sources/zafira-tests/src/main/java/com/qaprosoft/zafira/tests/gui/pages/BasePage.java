@@ -1,17 +1,18 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
-import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import com.qaprosoft.zafira.tests.gui.components.Header;
-import com.qaprosoft.zafira.tests.gui.components.Navbar;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
-import java.util.List;
+import com.qaprosoft.zafira.tests.gui.AbstractPage;
+import com.qaprosoft.zafira.tests.gui.components.Header;
+import com.qaprosoft.zafira.tests.gui.components.Navbar;
 
 public abstract class BasePage extends AbstractPage
 {

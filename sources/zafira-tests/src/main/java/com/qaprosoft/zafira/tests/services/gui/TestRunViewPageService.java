@@ -1,9 +1,10 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import org.openqa.selenium.WebDriver;
+
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.JobViewSettingModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunViewPage;
-import org.openqa.selenium.WebDriver;
 
 public class TestRunViewPageService extends AbstractPageService
 {

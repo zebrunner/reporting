@@ -1,14 +1,14 @@
 package com.qaprosoft.zafira.tests.services.api.builders;
 
-import com.qaprosoft.zafira.client.ZafiraClient;
-import com.qaprosoft.zafira.models.dto.*;
-import com.qaprosoft.zafira.tests.services.api.AuthAPIService;
-import com.qaprosoft.zafira.tests.util.Config;
+import java.util.Random;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 
-import java.nio.charset.Charset;
-import java.util.Random;
+import com.qaprosoft.zafira.client.ZafiraClient;
+import com.qaprosoft.zafira.models.dto.AbstractType;
+import com.qaprosoft.zafira.tests.services.api.AuthAPIService;
+import com.qaprosoft.zafira.tests.util.Config;
 
 public abstract class AbstractTypeBuilder<T extends AbstractType> implements IModelBuilder<T>
 {

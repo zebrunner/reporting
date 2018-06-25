@@ -1,5 +1,7 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
+import org.openqa.selenium.WebDriver;
+
 import com.qaprosoft.zafira.tests.gui.components.blocks.search.TestRunSearchBlock;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.BuildNowModalWindow;
@@ -9,8 +11,6 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModal
 import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import com.qaprosoft.zafira.tests.gui.components.table.row.TestRunTableRow;
 import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
-import com.qaprosoft.zafira.tests.gui.pages.TestRunPage;
-import org.openqa.selenium.WebDriver;
 
 public class TestRunPageService extends AbstractPageService
 {

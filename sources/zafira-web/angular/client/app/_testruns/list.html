@@ -465,6 +465,11 @@
                                                                         <md-icon data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'" class="material-icons">forum</md-icon>
                                                                     </md-button>
                                                                 </div>
+                                                                <div>
+                                                                    <md-button class="md-icon-button" target="_blank" ng-href="#!/tests/runs/{{ testRun.id }}/info/{{ test.id }}" ng-if="elasticsearch.enabled && ((test.status == 'IN_PROGRESS' && test.artifacts.indexOfContainsField('name', 'Live video') >= 0) || test.artifacts.indexOfContainsField('name', 'Video') >= 0)">
+                                                                        <md-icon class="material-icons">remove_red_eye</md-icon>
+                                                                    </md-button>
+                                                                </div>
                                                             </div>
                                                         </td>
                                                     </tr>

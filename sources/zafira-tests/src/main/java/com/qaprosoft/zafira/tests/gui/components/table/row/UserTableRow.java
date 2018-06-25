@@ -1,10 +1,11 @@
 package com.qaprosoft.zafira.tests.gui.components.table.row;
 
-import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 
 public class UserTableRow extends AbstractRow
 {

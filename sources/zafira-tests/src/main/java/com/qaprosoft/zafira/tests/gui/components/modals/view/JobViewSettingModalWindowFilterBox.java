@@ -1,10 +1,11 @@
 package com.qaprosoft.zafira.tests.gui.components.modals.view;
 
-import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.tests.gui.AbstractUIObject;
 
 public class JobViewSettingModalWindowFilterBox extends AbstractUIObject
 {

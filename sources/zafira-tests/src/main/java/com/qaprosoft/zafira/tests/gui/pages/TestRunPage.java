@@ -1,5 +1,9 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
 import com.qaprosoft.zafira.tests.gui.components.FabButton;
 import com.qaprosoft.zafira.tests.gui.components.FilterBlock;
 import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
@@ -9,9 +13,6 @@ import com.qaprosoft.zafira.tests.gui.components.modals.testrun.MarkAsReviewedMo
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.RebuildModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.SendAsEmailModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.TestRunTable;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class TestRunPage extends BasePage
 {

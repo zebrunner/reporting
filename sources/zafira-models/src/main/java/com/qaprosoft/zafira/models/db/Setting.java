@@ -90,7 +90,7 @@ public class Setting extends AbstractEntity
 
 	public enum Tool
 	{
-		GOOGLE, JIRA, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP, CRYPTO, RABBITMQ
+		GOOGLE, JIRA, ELASTICSEARCH, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP, CRYPTO, RABBITMQ
 	}
 
 	public boolean isValueForEncrypting()

@@ -1,13 +1,14 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.FindBy;
+
 import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
 import com.qaprosoft.zafira.tests.gui.components.blocks.search.UserSearchBlock;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateGroupModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateUserModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.table.UserTable;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.FindBy;
 
 public class UserPage extends BasePage
 {

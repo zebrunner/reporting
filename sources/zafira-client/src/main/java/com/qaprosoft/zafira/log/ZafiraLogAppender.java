@@ -542,7 +542,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		{
 			this.loggingEvent = loggingEvent;
 			TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
-			this.correlationId = test != null ? routingKey + "/" + String.valueOf(test.getId()) : routingKey;
+			this.correlationId = test != null ? routingKey + "_" + String.valueOf(test.getId()) : routingKey;
 		}
 
 		/**

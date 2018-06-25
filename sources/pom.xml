@@ -113,6 +113,7 @@
         <qatool-ashot-version>1.5.2</qatool-ashot-version>
         <google-sheets-version>v4-rev523-1.23.0</google-sheets-version>
         <google-drive-version>v3-rev118-1.18.0-rc</google-drive-version>
+        <elasticsearch-version>6.3.0</elasticsearch-version>
     </properties>
     <modules>
         <module>zafira-conf</module>
@@ -632,6 +633,11 @@
                         <artifactId>hamcrest-all</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

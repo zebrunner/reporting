@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,9 @@ public class SettingsService
 
 	@Autowired
 	private GoogleService googleService;
+
+	@Autowired
+	private ElasticsearchService elasticsearchService;
 
 	@Autowired
 	private JenkinsService jenkinsService;
@@ -90,7 +94,17 @@ public class SettingsService
 	@Transactional(readOnly = true)
 	public List<Setting> getSettingsByTool(Tool tool) throws ServiceException
 	{
-		return settingsMapper.getSettingsByTool(tool);
+		List<Setting> result;
+		switch (tool)
+		{
+			case ELASTICSEARCH:
+				result = elasticsearchService.getSettings();
+				break;
+			default:
+				result = settingsMapper.getSettingsByTool(tool);
+				break;
+		}
+		return result;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -181,6 +195,9 @@ public class SettingsService
 			break;
 		case LDAP:
 			service = ldapService;
+			break;
+		case ELASTICSEARCH:
+			service = elasticsearchService;
 			break;
 		case JIRA:
 			service = jiraService;

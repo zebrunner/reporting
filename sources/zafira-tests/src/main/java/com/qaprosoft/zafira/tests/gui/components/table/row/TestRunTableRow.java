@@ -1,12 +1,13 @@
 package com.qaprosoft.zafira.tests.gui.components.table.row;
 
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
-import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
+import com.qaprosoft.zafira.tests.gui.components.table.TestTable;
 
 public class TestRunTableRow extends AbstractRow
 {

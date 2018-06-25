@@ -1,7 +1,8 @@
 package com.qaprosoft.zafira.tests.services.gui;
 
-import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 import org.openqa.selenium.WebDriver;
+
+import com.qaprosoft.zafira.tests.gui.pages.DashboardPage;
 
 public class DashboardPageService extends AbstractPageService
 {
