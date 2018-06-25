@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('ElasticsearchService', ['$q', 'esFactory', 'SettingsService', '$rootScope', ElasticsearchService])
+        .factory('ElasticsearchService', ['$q', 'esFactory', '$location', 'SettingsService', '$rootScope', ElasticsearchService])
 
-    function ElasticsearchService($q, esFactory, SettingsService, $rootScope) {
+    function ElasticsearchService($q, esFactory, $location, SettingsService, $rootScope) {
 
         var instance;
 
@@ -73,7 +73,15 @@
 
         function getInstance(host, port) {
             instance = instance || esFactory({
-                host: host + ':' + port
+                //host: host + ':' + port
+                host: [
+                    {
+                        host: host,
+                        auth: port,
+                        protocol: $location.protocol(),
+                        port: 9200
+                    }
+                ]
             });
             return instance;
         }
