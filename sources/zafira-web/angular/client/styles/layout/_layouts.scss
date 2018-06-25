@@ -26,7 +26,7 @@
 html {
     position: relative;
     min-height: 100%; // important!
-    height: 100%; // important!
+    height: auto; // important!
     background: none; // important!, fix angular-material css cause sidebar background to break bug
 }
 
@@ -58,7 +58,7 @@ html {
 
     > .main-container {
         position: relative;
-        min-height: 100% !important; // important!
+        min-height: 100%; // important!
         padding-bottom: 0;
         &:before { // content container background for boxed layout
             content: " ";
