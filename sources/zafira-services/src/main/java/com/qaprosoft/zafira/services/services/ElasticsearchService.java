@@ -22,11 +22,8 @@ public class ElasticsearchService implements IJMXService
 
 	private RestClient client;
 
-	@Value("${zafira.elasticsearch.host}")
-	private String host;
-
-	@Value("${zafira.elasticsearch.port}")
-	private String port;
+	@Value("${zafira.elasticsearch.url}")
+	private String url;
 
 	@Override
 	@PostConstruct
@@ -34,9 +31,9 @@ public class ElasticsearchService implements IJMXService
 	{
 		try
 		{
-			if (! StringUtils.isBlank(host) && ! StringUtils.isBlank(port))
+			if (! StringUtils.isBlank(url))
 			{
-				this.client = RestClient.builder(new HttpHost(host, Integer.valueOf(port))).build();
+				this.client = RestClient.builder(HttpHost.create(url)).build();
 			}
 		} catch (Exception e)
 		{
@@ -66,16 +63,8 @@ public class ElasticsearchService implements IJMXService
 				{
 					private static final long serialVersionUID = 6585486041064259383L;
 					{
-						setName("Host");
-						setValue(host);
-					}
-				});
-				add(new Setting()
-				{
-					private static final long serialVersionUID = -7889117639518182523L;
-					{
-						setName("Port");
-						setValue(port);
+						setName("URL");
+						setValue(url);
 					}
 				});
 			}

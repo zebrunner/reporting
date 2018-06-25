@@ -3,26 +3,26 @@
 
     angular
         .module('app.services')
-        .factory('ElasticsearchService', ['$q', 'esFactory', 'SettingsService', '$rootScope', ElasticsearchService])
+        .factory('ElasticsearchService', ['$q', 'esFactory', '$location', 'SettingsService', '$rootScope', ElasticsearchService])
 
-    function ElasticsearchService($q, esFactory, SettingsService, $rootScope) {
+    function ElasticsearchService($q, esFactory, $location, SettingsService, $rootScope) {
 
-        var instance = getInstance();
+        var instance;
+
+        $rootScope.$on('event:elasticsearch-toolsInitialized', function (event, data) {
+            if(data.url) {
+                instance = getInstance(data.url.value);
+            } else {
+                alertify.error('Cannot initialize elasticsearch host and port');
+            }
+        });
 
         var service = {};
 
-        service.getInstance = getInstance;
         service.ping = ping;
         service.search = search;
 
         return service;
-
-        function getInstance() {
-            instance = instance || esFactory({
-                host: $rootScope.elasticsearch.host + ':' + $rootScope.elasticsearch.port
-            });
-            return instance;
-        }
 
         function ping() {
             return $q(function (resolve, reject) {
@@ -59,14 +59,35 @@
 
         function elasticsearch(params) {
             return $q(function (resolve, reject) {
-                instance.search(params, function (err, res) {
-                    if(err) {
-                        reject(err);
-                    } else {
-                        resolve(res.hits.hits);
-                    }
+                waitUntilInstanceInitialized(function () {
+                    instance.search(params, function (err, res) {
+                        if(err) {
+                            reject(err);
+                        } else {
+                            resolve(res.hits.hits);
+                        }
+                    });
                 });
             });
         }
+
+        function getInstance(url) {
+            instance = instance || esFactory({
+                host: url,
+                ssl: {
+                    rejectUnauthorized: false
+                }
+            });
+            return instance;
+        }
+
+        function waitUntilInstanceInitialized(func) {
+            var elasticsearchWatcher = $rootScope.$watchGroup(['elasticsearch.url'], function (newVal) {
+                if(newVal[0] && newVal[1]) {
+                    func.call();
+                    elasticsearchWatcher();
+                }
+            });
+        };
     }
 })();
