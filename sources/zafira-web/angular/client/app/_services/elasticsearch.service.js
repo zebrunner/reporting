@@ -9,19 +9,6 @@
 
         var instance;
 
-        SettingsService.getSettingByTool('ELASTICSEARCH').then(function (settingsRs) {
-            if(settingsRs.success) {
-                var url = settingsRs.data.find(function (element, index, array) {
-                    return element.name.toLowerCase() == 'url';
-                });
-                if(url) {
-                    instance = getInstance(url.value);
-                } else {
-                    alertify.error('Cannot initialize elasticsearch host and port');
-                }
-            }
-        });
-
         var service = {};
 
         service.ping = ping;
@@ -31,10 +18,12 @@
 
         function ping() {
             return $q(function (resolve, reject) {
-                instance.ping({
-                    requestTimeout: 30000
-                }, function (error) {
-                    resolve(! error);
+                getInstance().then(function (esInstance) {
+                    esInstance.ping({
+                        requestTimeout: 30000
+                    }, function (error) {
+                        resolve(! error);
+                    });
                 });
             });
         };
@@ -64,24 +53,57 @@
 
         function elasticsearch(params) {
             return $q(function (resolve, reject) {
-                instance.search(params, function (err, res) {
-                    if(err) {
-                        reject(err);
-                    } else {
-                        resolve(res.hits.hits);
+                getInstance().then(function (esInstance) {
+                    esInstance.search(params, function (err, res) {
+                            if(err) {
+                                reject(err);
+                            } else {
+                                resolve(res.hits.hits);
+                            }
+                        });
+                })
+            });
+        };
+
+        function getInstance() {
+            return $q(function (resolve, reject) {
+                if(instance) {
+                    resolve(instance);
+                } else {
+                    prepareData().then(function (rs) {
+                        resolve(rs);
+                    }, function (rs) {
+                        alertify.error(rs);
+                        reject();
+                    });
+                }
+            });
+        };
+
+        function prepareData() {
+            return $q(function (resolve, reject) {
+                SettingsService.getSettingByTool('ELASTICSEARCH').then(function (settingsRs) {
+                    if(settingsRs.success) {
+                        var url = settingsRs.data.find(function (element, index, array) {
+                            return element.name.toLowerCase() == 'url';
+                        });
+                        if(url) {
+                            resolve(createInstance(url.value));
+                        } else {
+                            reject({errorMessage: 'Cannot initialize elasticsearch url'});
+                        }
                     }
                 });
             });
         };
 
-        function getInstance(url) {
-            instance = instance || esFactory({
+        function createInstance(url) {
+            return esFactory({
                 host: url,
                 ssl: {
                     rejectUnauthorized: false
                 }
             });
-            return instance;
         };
     }
 })();
