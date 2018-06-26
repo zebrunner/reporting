@@ -12,6 +12,7 @@
         $scope.test = {};
         $scope.drivers = [];
         var driversQueue = [];
+        var driversCount = 0;
         $scope.selectedDriver = 0;
         $scope.OFFSET = OFFSET;
         $scope.MODE = {};
@@ -221,7 +222,6 @@
             $scope.testsWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
-                var driversCount = 0;
                 if($scope.testsWebsocket.connected) {
                     $scope.testsWebsocket.subscribe("/topic/testRuns/" + testRun.id + "/tests", function (data) {
                         var test = $scope.getEventFromMessage(data.body).test;
@@ -364,6 +364,7 @@
         function initRecordMode(test) {
             var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
             addDrivers(videoArtifacts);
+            driversCount = $scope.drivers.length;
             postModeConstruct(test);
         };
 
@@ -377,8 +378,6 @@
                     })[0];
                     $scope.testRun.tests = testsRs;
 
-                    //var videoArtifacts = getArtifactsByPartName($scope.test, LIVE_DEMO_ARTIFACT_NAME);
-                    //setMode($scope.test.status == 'IN_PROGRESS' && videoArtifacts && videoArtifacts.length ? 'live' : 'record');
                     setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
                     $scope.MODE.initFunc.call(this, $scope.test);
                 });
