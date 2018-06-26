@@ -358,13 +358,13 @@
         function initLiveMode(test) {
             var videoArtifacts = getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME) || [];
             addDrivers(videoArtifacts);
+            driversCount = $scope.drivers.length;
             postModeConstruct(test);
         };
 
         function initRecordMode(test) {
             var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
             addDrivers(videoArtifacts);
-            driversCount = $scope.drivers.length;
             postModeConstruct(test);
         };
 
