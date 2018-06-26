@@ -745,7 +745,6 @@ public class TestRunService
 				return testRunStatistics;
 			});
 		}
-
 		return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(testRunStatistics, status, increment));
 	}
 
