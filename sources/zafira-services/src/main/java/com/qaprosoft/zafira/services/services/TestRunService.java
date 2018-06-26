@@ -738,14 +738,13 @@ public class TestRunService
 		int increment = isRerun ? -1 : 1;
 		TestRunStatistics trs = updateStatisticsSafe(testRunId, testRunStatistics -> ! status.equals(IN_PROGRESS) && (isRerun || testRunStatistics.getInProgress() > 0)
 				? updateStatistics(testRunStatistics, IN_PROGRESS, -increment) :  testRunStatistics);
-		if(trs != null && trs.getQueued() > 0)
+		if (trs != null && trs.getQueued() > 0 && status.equals(IN_PROGRESS))
 		{
 			updateStatisticsSafe(testRunId, testRunStatistics -> {
 				testRunStatistics.setQueued(testRunStatistics.getQueued() - 1);
 				return testRunStatistics;
 			});
 		}
-
 		return updateStatisticsSafe(testRunId, testRunStatistics -> updateStatistics(testRunStatistics, status, increment));
 	}
 
