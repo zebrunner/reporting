@@ -13,6 +13,7 @@
 
         service.ping = ping;
         service.search = search;
+        service.count = count;
 
         return service;
 
@@ -28,40 +29,73 @@
             });
         };
 
-        function search(index, query, page, size) {
-            return $q(function (resolve, reject) {
-                var searchParams = {
-                    index: index,
-                    from: page && size ? (page - 1) * size : undefined,
-                    size: size,
-                    q: query,
-                    body: {
+        function doAction(action, func, index, page, size, fromTime, query) {
+            var from = page && size ? (page - 1) * size : undefined;
+            var body = {};
+            switch(action) {
+                case 'SEARCH':
+                    body = {
                         sort: [
                             {
                                 timestamp: {
                                     order: "asc"
                                 }
                             }
-                        ]
-                    }
-                };
-                elasticsearch(searchParams).then(function (rs) {
-                    resolve(rs);
-                });
-            });
+                        ],
+                        size: size,
+                        from: from
+                    };
+                case 'COUNT':
+                    body.query = {
+                        range : {
+                            "timestamp" : {
+                                gte : fromTime
+                            }
+                        }
+                    };
+                    break;
+                default:
+                    break;
+            }
+            var params = {
+                index: index,
+                from: from,
+                size: size,
+                q: query,
+                body: body
+            };
+            func(params);
         };
 
-        function elasticsearch(params) {
+        function search(index, page, size, fromTime, query) {
             return $q(function (resolve, reject) {
-                getInstance().then(function (esInstance) {
-                    esInstance.search(params, function (err, res) {
-                            if(err) {
+                doAction('SEARCH', function (params) {
+                    getInstance().then(function (esInstance) {
+                        esInstance.search(params, function (err, res) {
+                            if (err) {
                                 reject(err);
                             } else {
                                 resolve(res.hits.hits);
                             }
                         });
-                })
+                    });
+                }, index, page, size, fromTime, query);
+            });
+        };
+
+        function count(index, fromTime, query) {
+            return $q(function (resolve, reject) {
+                doAction('COUNT', function (params) {
+                    getInstance().then(function (esInstance) {
+                        esInstance.count(params, function (err, res) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(res.count);
+                            }
+                        });
+                    });
+                }, index, null, null, fromTime, query);
             });
         };
 
