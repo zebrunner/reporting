@@ -31,7 +31,7 @@
                                                                     <div class="col-lg-7">
                                                                         <span class="elment-with-label input-like-label">Test name</span>
                                                                         <span class="elment-with-label test-name">{{test.name}}</span>
-                                                                        <span class="badge ng-binding bug-label-bg" data-ng-if="test.blocker">BLOCKER</span>
+                                                                        <span class="badge ng-binding bug-label-bg blocker-margin" data-ng-if="test.blocker">BLOCKER</span>
                                                                     </div>
                                                                     <div class="col-lg-3 align-middle" >
                                                                         <md-select ng-model="test.status" class="no-margin issue-element-container" placeholder="Status" ng-if="changeStatusIsVisible">
