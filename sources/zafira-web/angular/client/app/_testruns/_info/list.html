@@ -61,28 +61,6 @@
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                            <!--<ul>
-                                                <li>
-                                                    Status
-                                                    <span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span>
-                                                </li>
-                                                <li>
-                                                    Started
-                                                    <span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span>
-                                                </li>
-                                                <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
-                                                    Duration
-                                                    <span>
-                                                        {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
-                                                    </span>
-                                                </li>
-                                                <li>
-                                                    Browser
-                                                    <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
-                                                    <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-                                                    <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
-                                                </li>
-                                            </ul>-->
                                         </div>
                                     </div>
                                 </div>
@@ -96,13 +74,15 @@
                                             </tr>
                                         </thead>
                                         <tbody id="logs">
-                                            <tr ng-if="logs.length" ng-repeat="log in logs">
+                                            <tr ng-if="logs.length" ng-repeat="log in logs" ng-show="! videoMode || videoMode == 'LOADED' || (videoMode != 'LOADED' && currentTime >= log.videoTimestamp)">
                                                 <td>
                                                     <i ng-if="false" class="material-icons">insert_photo</i>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
                                                 </td>
-                                                <td>{{ log.timestamp - test.startTime + OFFSET | date: 'HH:mm:ss'}}</td>
-                                                <td>[{{ log.threadName }}] [{{ log.level}}] {{ log.message }}</td>
+                                                <td>{{ log.timestamp | date: 'HH:mm:ss'}}</td>
+                                                <td>[{{ log.threadName }}] [{{ log.level}}]
+                                                    <span><show-more class="log_message" name="logMessage" element-id="log.timestamp" text="log.message" limit="255" ></show-more></span>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

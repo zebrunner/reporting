@@ -80,6 +80,10 @@ body > div {
     background: #ffffff;
 }
 
+#logs .log_message {
+    display: inline-block;
+}
+
 .result_error {
     padding: 8px;
     margin: 5px 0;

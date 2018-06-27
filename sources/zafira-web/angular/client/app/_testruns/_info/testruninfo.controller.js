@@ -13,6 +13,7 @@
         $scope.drivers = [];
         var driversQueue = [];
         var driversCount = 0;
+        $scope.elasticsearchDataLoaded = false;
         $scope.selectedDriver = 0;
         $scope.OFFSET = OFFSET;
         $scope.MODE = {};
@@ -58,19 +59,10 @@
             }
         };
 
-        var fullLogs = [];
-
-        function getLogsFromElasticsearch() {
+        function getLogsFromElasticsearch(page, size) {
             return $q(function (resolve, reject) {
-                ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id).then(function (rs) {
-                    var logsToAdd = rs.filter(function (r) {
-                        return fullLogs.indexOfField('_id', r._id) == -1;
-                    });
-                    fullLogs = fullLogs.concat(logsToAdd);
-                    /*$scope.logs = fullLogs.map(function (r) {
-                        return r._source;
-                    });*/
-                    resolve(logsToAdd.map(function (r) {
+                ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id, page, size, $scope.test.startTime).then(function (rs) {
+                    resolve(rs.map(function (r) {
                         return r._source;
                     }));
                 });
@@ -79,18 +71,23 @@
 
         function tryToGetLogsFromElasticsearch() {
             $scope.logs = [];
-            var prevLogSize = 0;
-            var attempt = 2;
-            var logsInterval = $interval(function () {
-                getLogsFromElasticsearch().then(function (rs) {
-                    $scope.logs = $scope.logs.concat(rs);
-                    if(prevLogSize = fullLogs.length || attempt == 0) {
-                        $interval.cancel(logsInterval);
-                    }
-                    attempt --;
-                    prevLogSize = fullLogs.length;
-                });
-            }, 2000);
+            var page = 1;
+            var size = 5;
+            ElasticsearchService.count($scope.testRun.ciRunId + '_' + $scope.test.id, $scope.test.startTime).then(function (count) {
+                collectElasticsearchLogs(page, size, count);
+            });
+        };
+
+        function collectElasticsearchLogs(page, size, count) {
+            getLogsFromElasticsearch(page, size).then(function (hits) {
+                $scope.logs = $scope.logs.concat(hits);
+                if(page * size <= count) {
+                    page ++;
+                    collectElasticsearchLogs(page, size, count);
+                } else {
+                    $scope.elasticsearchDataLoaded = true;
+                }
+            });
         };
 
         function initRecords(test) {
@@ -104,34 +101,88 @@
             }
         };
 
+        $scope.videoMode;
+        var track;
+
         function reloadVideo(e) {
             var videoElements = angular.element(e);
-            var sourceElements = angular.element(e + ' source');
+            reloadVideoOnError(videoElements[0]);
+            if(videoElements && videoElements.length) {
+                videoElements[0].addEventListener("loadedmetadata", onMetadataLoaded, false);
+                videoElements[0].addEventListener('loadeddata', onDataLoaded, false);
+                videoElements[0].addEventListener('timeupdate', onTimeUpdate, false);
+                videoElements[0].addEventListener('webkitfullscreenchange', onFullScreenChange, false);
+                videoElements[0].addEventListener('mozfullscreenchange', onFullScreenChange, false);
+                videoElements[0].addEventListener('fullscreenchange', onFullScreenChange, false);
 
+                videoElements[0].addEventListener('playing', function() {
+                    $scope.videoMode = 'PLAYING';
+                }, false);
+                videoElements[0].addEventListener('play', function() {
+                    $scope.videoMode = 'PLAYING';
+                }, false);
+                videoElements[0].addEventListener('pause', function() {
+                    $scope.videoMode = 'PAUSE';
+                }, false);
+                videoElements[0].addEventListener('loadstart', function() {
+                }, false);
+            }
+            loadVideo(videoElements[0], 200);
+        };
+
+        function reloadVideoOnError(videoElement) {
+            var sourceElement = videoElement.getElementsByTagName('source')[0];
             var attempt = 5;
-            sourceElements[0].addEventListener('error', function(e) {
+            sourceElement.addEventListener('error', function(e) {
                 if(attempt > 0) {
-                    loadVideo(videoElements[0], 5000);
-                    console.log(attempt)
+                    loadVideo(videoElement, 5000);
                 }
                 attempt --;
             }, false);
-            if(videoElements && videoElements.length) {
-                videoElements[0].addEventListener('loadeddata', function() {
-                    //console.log('loaded');
-                }, false);
-                videoElements[0].addEventListener('playing', function() {
-                    //console.log('on play');
-                }, false);
-                videoElements[0].addEventListener('timeupdate', function() {
-                    //console.log('timeupdate' + videoElements[0].currentTime);
-                }, false);
-                videoElements[0].addEventListener('loadstart', function() {
-                    //console.log('loadstart');
-                }, false);
-            }
+        };
 
-            loadVideo(videoElements[0], 200);
+        function onMetadataLoaded(ev) {
+            track = this.addTextTrack("captions", "English", "en");
+            track.mode = 'hidden';
+        };
+
+        function onTimeUpdate(ev) {
+            $scope.currentTime = ev.target.currentTime;
+        };
+
+        function onDataLoaded(ev) {
+            $scope.videoMode = 'LOADED';
+            var videoElement = ev.target;
+            var elasticsearchDataWatcher = $scope.$watch('elasticsearchDataLoaded', function (isLoaded) {
+                if(isLoaded) {
+                    var videoDuration = videoElement.duration;
+                    var errorTime = getLogsStartErrorTime(videoDuration, $scope.logs);
+                    $scope.logs.forEach(function (log, index) {
+                        var currentLogTime = log.timestamp - $scope.logs[0].timestamp + errorTime;
+                        log.videoTimestamp = currentLogTime / 1000;
+                    });
+                    addSubtitles(track, videoDuration);
+                    elasticsearchDataWatcher();
+                }
+            });
+        };
+
+        function onFullScreenChange(ev) {
+            track.mode = track.mode == 'showing' ? 'hidden' : 'showing';
+        };
+
+        function addSubtitles(track, videoDuration) {
+            if(track && ! track.cues.length) {
+                $scope.logs.forEach(function (log, index) {
+                    var finishTime = index != $scope.logs.length - 1 ? $scope.logs[index + 1].videoTimestamp : videoDuration;
+                    track.addCue(new VTTCue(log.videoTimestamp, finishTime, log.message));
+                });
+            }
+        };
+
+        function getLogsStartErrorTime(duration, logs) {
+            var logsDuration = logs[logs.length - 1].timestamp - logs[0].timestamp;
+            return duration * 1000 - logsDuration;
         };
 
         function loadVideo(videoElement, timeout) {
