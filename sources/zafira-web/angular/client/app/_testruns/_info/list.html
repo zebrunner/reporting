@@ -1,6 +1,11 @@
 <div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
   <div class="row ui-section no-margin title-container">
-    <h2 id="testrun-info-title">{{ test.name }}</h2>
+    <h2 id="testrun-info-title">
+        {{ test.name }}
+        <span class="recording-icon" ng-if="MODE.name == 'live'">
+            <div class="red-point" ng-class="{'flash-point': true}"></div>
+        </span>
+    </h2>
     <!--<span><i class="material-icons" md-ink-ripple>keyboard_backspace</i></span>-->
   </div>
   <div class="row no-margin tests-info-container">
@@ -14,26 +19,72 @@
                             <div class="tab-content">
                               <div class="history-tab">
                                 <div class="video-section col-md-4 col-sm-12 col-md-push-8 no-padding">
-                                  <h4>
-                                    Test
-                                    <span ng-if="MODE.name == 'live'">online
-                                        <span class="recording-icon">
-                                            <div class="red-point" ng-class="{'flash-point': true}"></div>
-                                        </span>
-                                    </span>
-                                  </h4>
                                   <md-chips>
                                     <md-chip ng-repeat="driver in drivers" ng-click="switchDriver($index);" ng-class="{'active': selectedDriver == $index}">Driver {{ $index + 1 }}</md-chip>
                                   </md-chips>
-                                  <div class="video-wrapper">
-                                    <video ng-init="videoPlayerPained = true;" id="videoRecord" ng-if="MODE.name == 'record'" ng-attr-width="{{ videoWidth }}" controls>
-                                      <source ng-src="{{ drivers[selectedDriver].link }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                    <div ng-init="vncPained = true;" ng-if="MODE.name == 'live';" id="vnc">
-                                        <i ng-click="fullScreen();" class="material-icons video-control">fullscreen</i>
+                                    <div>
+                                      <div class="video-wrapper">
+                                        <video preload="auto" ng-init="videoPlayerPained = true;" id="videoRecord" ng-if="MODE.name == 'record'" ng-attr-width="{{ videoWidth }}" controls>
+                                          <source ng-src="{{ drivers[selectedDriver].link }}" src="" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        <div ng-init="vncPained = true;" ng-if="MODE.name == 'live';" id="vnc">
+                                            <i ng-click="fullScreen();" class="material-icons video-control">fullscreen</i>
+                                        </div>
+                                      </div>
+                                        <div class="test-info-tab">
+                                            <table>
+                                                <tbody>
+                                                <tr>
+                                                    <td>Status</td>
+                                                    <td><span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Started</td>
+                                                    <td><span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span></td>
+                                                </tr>
+                                                <tr ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
+                                                    <td>Duration</td>
+                                                    <td>
+                                                        <span>
+                                                            {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Platform</td>
+                                                    <td>
+                                                        <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
+                                                        <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+                                                        <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <!--<ul>
+                                                <li>
+                                                    Status
+                                                    <span style="text-transform: capitalize;">{{ test.status.split('_').join(' ').toLowerCase() }}</span>
+                                                </li>
+                                                <li>
+                                                    Started
+                                                    <span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span>
+                                                </li>
+                                                <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
+                                                    Duration
+                                                    <span>
+                                                        {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    Browser
+                                                    <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
+                                                    <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
+                                                    <span data-ng-if="testRun.browserVersion">{{ testRun.browserVersion }}</span>
+                                                </li>
+                                            </ul>-->
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
                                 <div class="table-history table-responsive col-md-8 col-sm-12 no-padding">
                                     <table class="table table-striped no-margin">
@@ -69,7 +120,7 @@
                             </div>
                         </div>
                     </md-tab>-->
-                    <md-tab ng-disabled="false" label="Test details" ng-click="selectedTab = 2;">
+                    <!--<md-tab ng-disabled="false" label="Test details" ng-click="selectedTab = 2;">
                         <div class="tab2">
                             <div class="test-info-tab">
                                 <ul>
@@ -84,8 +135,8 @@
                                     <li ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
                                         Duration
                                         <span>
-                                    {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
-                                </span>
+                                            {{(test.finishTime - test.startTime) / 1000 | number: 0}} seconds
+                                        </span>
                                     </li>
                                     <li>
                                         Platform
@@ -100,7 +151,7 @@
                                 </ul>
                             </div>
                         </div>
-                    </md-tab>
+                    </md-tab>-->
                 </md-tabs>
             </div>
         </section>

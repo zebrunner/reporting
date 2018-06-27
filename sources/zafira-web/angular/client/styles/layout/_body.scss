@@ -553,16 +553,6 @@ section.zaf-light .article-title {
   border-bottom: 1px solid $custom-gray;
 }
 
-.title-container span{
-  position: absolute;
-  top: 12px;
-  left: 20px;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
 /*Element backgrounds*/
 .background-white {
     background-color: #f6f6f6 !important;
@@ -1827,6 +1817,8 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     position: relative;
     top: 0;
     left: 0;
+      display: flex;
+      height: calc(100% / 2);
 
     & video {
       width: 100% !important;
@@ -1844,19 +1836,23 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     }
 }
 .test-info-tab {
-  & ul {
-    margin: 13px 0;
+    position: relative;
+    bottom: 0;
+    @media (max-width:991px) {
+        display: none;
+    }
+  & table {
+    margin: 16px 16px;
     padding-left: 33px;
     -webkit-padding-start: 33px;
     list-style: none;
 
-    & li {
-      padding: 8px 0;
+    & td {
+      padding: 8px 8px 8px 0;
       color: $coal;
       font-size: 14.5px;
 
       & span{
-        padding-left: 25px;
         font-weight: 500;
       }
     }
