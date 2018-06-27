@@ -243,9 +243,6 @@ DECLARE monthly_total_percent_model zafira.WIDGETS.model%TYPE;
 DECLARE test_results_30_id zafira.WIDGETS.id%TYPE;
 DECLARE test_results_30_sql zafira.WIDGETS.sql%TYPE;
 DECLARE test_results_30_model zafira.WIDGETS.model%TYPE;
-DECLARE monthly_jira_tickets_id zafira.WIDGETS.id%TYPE;
-DECLARE monthly_jira_tickets_sql zafira.WIDGETS.sql%TYPE;
-DECLARE monthly_jira_tickets_model zafira.WIDGETS.model%TYPE;
 DECLARE monthly_platform_details_id zafira.WIDGETS.id%TYPE;
 DECLARE monthly_platform_details_sql zafira.WIDGETS.sql%TYPE;
 DECLARE monthly_platform_details_model zafira.WIDGETS.model%TYPE;
@@ -748,7 +745,7 @@ STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
     AND OWNER_ID = ''#{currentUserId}''
-    AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
+    AND STARTED >= current_date  - interval ''30 day''
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
@@ -1368,7 +1365,7 @@ STARTED::date AS "CREATED_AT"
     SELECT
         SUM(TOTAL_HOURS) AS "ACTUAL",
         ROUND(SUM(TOTAL_HOURS)/extract(day from current_date)
-        * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day'')) AS "ETA",
+        * extract(day from date_trunc(''month'', current_date) + interval ''1 month'' - interval ''1 day'')) AS "ETA",
         date_trunc(''month'', current_date) AS "CREATED_AT"
     FROM MONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
@@ -1629,7 +1626,7 @@ STARTED::date AS "CREATED_AT"
         STARTED::date AS "CREATED_AT"
     FROM BIMONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND STARTED >= date_trunc(''day'', current_date  - interval ''30 day'')
+    AND STARTED >= current_date  - interval ''30 day''
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
@@ -1742,29 +1739,6 @@ STARTED::date AS "CREATED_AT"
         }
       }
     }';
-
-	monthly_jira_tickets_sql :=
-	'set schema ''zafira'';
-    SELECT
-        PROJECTS.NAME AS "PROJECT",
-        COUNT(DISTINCT WORK_ITEMS.JIRA_ID) AS "COUNT"
-    FROM TEST_WORK_ITEMS
-        INNER JOIN WORK_ITEMS ON TEST_WORK_ITEMS.WORK_ITEM_ID = WORK_ITEMS.ID
-        INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
-        INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-    WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
-    AND TEST_WORK_ITEMS.CREATED_AT > date_trunc(''month'', current_date  - interval ''1 month'')
-    GROUP BY "PROJECT"
-    ORDER BY "COUNT" DESC;';
-
-	monthly_jira_tickets_model :=
-    '{
-        "columns":[
-           "PROJECT",
-           "COUNT"
-        ]
-     }';
 
 	monthly_platform_details_sql :=
     'set schema ''zafira'';
@@ -1936,7 +1910,7 @@ STARTED::date AS "CREATED_AT"
         STARTED::date AS "CREATED_AT"
     FROM MONTHLY_VIEW
     WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND STARTED >= date_trunc(''day'', current_date  - interval ''7 day'')
+    AND STARTED >= current_date  - interval ''7 day''
     GROUP BY "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
