@@ -65,7 +65,7 @@
                                     </div>
                                 </div>
                                 <div class="table-history table-responsive col-md-8 col-sm-12 no-padding">
-                                    <table class="table table-striped no-margin">
+                                    <table table-loupe="{{ currentLog.id }}" table-loupe-trigger="{{ videoMode == 'PLAYING' }}" class="table table-striped no-margin">
                                         <thead>
                                             <tr>
                                                 <th>Visuals</th>
@@ -74,7 +74,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="logs">
-                                            <tr ng-if="logs.length" ng-repeat="log in logs" ng-show="! videoMode || videoMode == 'LOADED' || (videoMode != 'LOADED' && currentTime >= log.videoTimestamp)">
+                                            <tr ng-if="logs.length" ng-repeat="log in logs">
                                                 <td>
                                                     <i ng-if="false" class="material-icons">insert_photo</i>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>

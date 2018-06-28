@@ -114,6 +114,7 @@
                 videoElements[0].addEventListener('webkitfullscreenchange', onFullScreenChange, false);
                 videoElements[0].addEventListener('mozfullscreenchange', onFullScreenChange, false);
                 videoElements[0].addEventListener('fullscreenchange', onFullScreenChange, false);
+                videoElements[0].addEventListener('ratechange', onRateChange, false);
 
                 videoElements[0].addEventListener('playing', function() {
                     $scope.videoMode = 'PLAYING';
@@ -147,7 +148,11 @@
         };
 
         function onTimeUpdate(ev) {
+            var activeTrack = track && track.activeCues && track.activeCues.length ? track.activeCues[0] : null;
             $scope.currentTime = ev.target.currentTime;
+            if(activeTrack) {
+                $scope.currentLog = {id: activeTrack.id, message: activeTrack.text};
+            }
         };
 
         function onDataLoaded(ev) {
@@ -171,11 +176,16 @@
             track.mode = track.mode == 'showing' ? 'hidden' : 'showing';
         };
 
+        function onRateChange(ev) {
+        };
+
         function addSubtitles(track, videoDuration) {
             if(track && ! track.cues.length) {
                 $scope.logs.forEach(function (log, index) {
                     var finishTime = index != $scope.logs.length - 1 ? $scope.logs[index + 1].videoTimestamp : videoDuration;
-                    track.addCue(new VTTCue(log.videoTimestamp, finishTime, log.message));
+                    var vttCue = new VTTCue(log.videoTimestamp, finishTime, log.message);
+                    vttCue.id = index;
+                    track.addCue(vttCue);
                 });
             }
         };

@@ -631,6 +631,46 @@
                 };
             }
         };
+    }]).directive('tableLoupe', [function () {
+        "use strict";
+        return {
+            restrict: 'A',
+            scope: {
+                tableLoupe: '@',
+                tableLoupeTrigger: '@'
+            },
+            link: function(scope, element, attrs) {
+
+                var currentLoupeElement;
+
+                scope.$watch('tableLoupe', function (newVal, oldValue) {
+                    if(newVal) {
+                        if(newVal != oldValue) {
+                            if(currentLoupeElement) {
+                                currentLoupeElement.removeClass('table-loupe-target');
+                            }
+                            currentLoupeElement = doAction(newVal);
+                        }
+                    }
+                });
+
+                scope.$watch('tableLoupeTrigger', function (newVal, oldValue) {
+                    if(newVal) {
+                        if(newVal == 'true') {
+                            element.addClass('table-loupe');
+                        } else {
+                            element.removeClass('table-loupe');
+                        }
+                    }
+                });
+
+                function doAction(index) {
+                    var logRowElement = angular.element(element.find('tr')[index]);
+                    logRowElement.addClass('table-loupe-target');
+                    return logRowElement;
+                };
+            }
+        };
     }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,

@@ -1926,3 +1926,26 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 .toast-text-padding {
     padding: 8px !important;
 }
+
+
+/***************************
+****************************
+* Test table loupe styles **
+****************************
+***************************/
+
+table.table-loupe {
+    tbody {
+        tr {
+            &.table-loupe-target {
+                //background: radial-gradient(#f9f9f9, #f9f9f9, #d2d2d2) !important;
+                td {
+                    //padding-left: 0 !important;
+                    //padding-right: 0 !important;
+                    //font-size: 18px;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}
