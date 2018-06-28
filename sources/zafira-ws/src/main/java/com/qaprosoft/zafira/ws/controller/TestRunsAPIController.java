@@ -404,7 +404,7 @@ public class TestRunsAPIController extends AbstractController
 					recipients);
 		} catch (IntegrationException e)
 		{
-			LOGGER.info(e.getMessage());
+			LOGGER.info("Unable to send result email: " + e);
 		}
 		return emailContent;
 	}
