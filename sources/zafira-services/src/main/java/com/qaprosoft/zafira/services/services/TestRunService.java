@@ -567,12 +567,14 @@ public class TestRunService
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
         String emailContent = null;
-        try {
-            emailContent = emailService.sendEmail(email, recipients);
-        } catch (IntegrationException e) {
-            LOGGER.error("Unable to send results email " + e);
-        }
-        return emailContent;
+		try
+		{
+			emailContent = emailService.sendEmail(email, recipients);
+		} catch (IntegrationException e)
+		{
+			LOGGER.error("Unable to send results email " + e);
+		}
+		return emailContent;
 	}
 
 	@Transactional(readOnly=true)
