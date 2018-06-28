@@ -41,6 +41,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -547,7 +548,13 @@ public class TestRunService
 			throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
 		}
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+		String emailContent = null;
+		try {
+            emailContent = sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
+        } catch (IntegrationException e) {
+		    LOGGER.error("Unable to send results email " + e);
+        }
+		return emailContent;
 	}
 
 	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException

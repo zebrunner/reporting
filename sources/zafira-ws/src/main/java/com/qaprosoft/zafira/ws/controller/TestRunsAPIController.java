@@ -397,16 +397,7 @@ public class TestRunsAPIController extends AbstractController
 			throws ServiceException, JAXBException
 	{
 		String[] recipients = getRecipients(email.getRecipients());
-		String emailContent = null;
-		try
-		{
-			emailContent = testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace,
-					recipients);
-		} catch (IntegrationException e)
-		{
-			LOGGER.info("Unable to send result email: " + e);
-		}
-		return emailContent;
+		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
 	}
 
 	@ResponseStatusDetails
