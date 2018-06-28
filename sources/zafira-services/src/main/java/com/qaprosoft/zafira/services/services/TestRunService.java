@@ -566,7 +566,7 @@ public class TestRunService
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-        String emailContent = null;
+		String emailContent = null;
 		try
 		{
 			emailContent = emailService.sendEmail(email, recipients);
