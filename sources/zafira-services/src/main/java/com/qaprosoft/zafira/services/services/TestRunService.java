@@ -548,13 +548,7 @@ public class TestRunService
 			throw new TestRunNotFoundException("No test runs found by ID: " + testRunId);
 		}
 		List<Test> tests = testService.getTestsByTestRunId(testRunId);
-		String emailContent = null;
-		try {
-            emailContent = sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
-        } catch (IntegrationException e) {
-		    LOGGER.error("Unable to send results email " + e);
-        }
-		return emailContent;
+		return sendTestRunResultsNotification(testRun, tests, showOnlyFailures, showStacktrace, recipients);
 	}
 
 	public String sendTestRunResultsNotification(final TestRun testRun, final List<Test> tests, boolean showOnlyFailures, boolean showStacktrace, final String ... recipients) throws ServiceException, JAXBException
@@ -572,7 +566,13 @@ public class TestRunService
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.sendEmail(email, recipients);
+        String emailContent = null;
+        try {
+            emailContent = emailService.sendEmail(email, recipients);
+        } catch (IntegrationException e) {
+            LOGGER.error("Unable to send results email " + e);
+        }
+        return emailContent;
 	}
 
 	@Transactional(readOnly=true)
