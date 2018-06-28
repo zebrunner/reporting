@@ -263,7 +263,9 @@ public class TestRunService
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 				for (Test test : tests) {
-					testService.createQueuedTest(test, queuedTestRun.getId());
+					if (test.getStatus() != Status.QUEUED) {
+						testService.createQueuedTest(test, queuedTestRun.getId());
+					}
 				}
 			}
 		} else {
