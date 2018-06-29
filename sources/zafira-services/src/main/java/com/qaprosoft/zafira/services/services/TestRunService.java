@@ -41,6 +41,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -263,7 +264,9 @@ public class TestRunService
 				List<Test> tests = testService.getTestsByTestRunId(latestTestRunId);
 				TestRun queuedTestRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
 				for (Test test : tests) {
-					testService.createQueuedTest(test, queuedTestRun.getId());
+					if (test.getStatus() != Status.QUEUED) {
+						testService.createQueuedTest(test, queuedTestRun.getId());
+					}
 				}
 			}
 		} else {
@@ -555,7 +558,6 @@ public class TestRunService
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
 		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
-
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
@@ -565,7 +567,15 @@ public class TestRunService
 		email.setShowOnlyFailures(showOnlyFailures);
 		email.setShowStacktrace(showStacktrace);
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return emailService.sendEmail(email, recipients);
+		String emailContent = null;
+		try
+		{
+			emailContent = emailService.sendEmail(email, recipients);
+		} catch (IntegrationException e)
+		{
+			LOGGER.error("Unable to send results email " + e);
+		}
+		return emailContent;
 	}
 
 	@Transactional(readOnly=true)
