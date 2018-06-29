@@ -101,7 +101,7 @@
             }
         };
 
-        $scope.videoMode;
+        $scope.videoMode = {mode: 'NONE'};
         var track;
 
         function reloadVideo(e) {
@@ -117,13 +117,13 @@
                 videoElements[0].addEventListener('ratechange', onRateChange, false);
 
                 videoElements[0].addEventListener('playing', function() {
-                    $scope.videoMode = 'PLAYING';
+                    $scope.videoMode.mode = 'PLAYING';
                 }, false);
                 videoElements[0].addEventListener('play', function() {
-                    $scope.videoMode = 'PLAYING';
+                    $scope.videoMode.mode = 'PLAYING';
                 }, false);
                 videoElements[0].addEventListener('pause', function() {
-                    $scope.videoMode = 'PAUSE';
+                    $scope.videoMode.mode = 'PAUSE';
                 }, false);
                 videoElements[0].addEventListener('loadstart', function() {
                 }, false);
@@ -156,7 +156,7 @@
         };
 
         function onDataLoaded(ev) {
-            $scope.videoMode = 'LOADED';
+            $scope.videoMode.mode = 'LOADED';
             var videoElement = ev.target;
             var elasticsearchDataWatcher = $scope.$watch('elasticsearchDataLoaded', function (isLoaded) {
                 if(isLoaded) {
