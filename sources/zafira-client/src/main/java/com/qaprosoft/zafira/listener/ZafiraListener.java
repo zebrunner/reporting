@@ -97,11 +97,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private String 	ZAFIRA_URL = null;
 	private String 	ZAFIRA_ACCESS_TOKEN = null;
 	private String 	ZAFIRA_PROJECT = null;
-	private String 	ZAFIRA_REPORT_EMAILS = null;
-	private String 	ZAFIRA_REPORT_FOLDER = null;
 	private boolean ZAFIRA_RERUN_FAILURES = false;
-	private boolean ZAFIRA_REPORT_SHOW_STACKTRACE = true;
-	private boolean ZAFIRA_REPORT_SHOW_FAILURES_ONLY = false;
 	private String 	ZAFIRA_CONFIGURATOR = null;
 	
 	private String JIRA_SUITE_ID = null;
@@ -478,34 +474,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			// Reset configuration to store for example updated at run-time app_version etc
 			this.run.setConfigXML(convertToXML(configurator.getConfiguration()));
 			zc.registerTestRunResults(this.run);
-			
-			// Allow to override email from configurator
-			String emails = configurator.getReportEmails();
-			if(StringUtils.isEmpty(emails))
-			{
-				emails = ZAFIRA_REPORT_EMAILS;
-			}
-
-			if(! StringUtils.isBlank(emails))
-			{
-
-				String report = zc.sendTestRunReport(this.run.getId(), emails, ZAFIRA_REPORT_SHOW_FAILURES_ONLY,
-						ZAFIRA_REPORT_SHOW_STACKTRACE).getObject();
-
-				if (!StringUtils.isEmpty(ZAFIRA_REPORT_FOLDER) && !StringUtils.isEmpty(report))
-				{
-					// Create report folder if not exist
-					File reportFolder = new File(
-							String.format("%s/%s", System.getProperty("user.dir"), ZAFIRA_REPORT_FOLDER));
-					if (!reportFolder.exists())
-						reportFolder.mkdirs();
-					// Create report file
-					File reportFile = new File(String.format("%s/%s", ZAFIRA_REPORT_FOLDER, ZAFIRA_REPORT));
-					reportFile.createNewFile();
-					FileUtils.writeStringToFile(reportFile, report);
-				}
-			}
-		} 
+		}
 		catch (Throwable e) 
 		{
 			LOGGER.error("Unable to finish test run correctly", e);
@@ -628,13 +597,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			ZAFIRA_URL = config.getString("zafira_service_url", StringUtils.EMPTY);
 			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token", StringUtils.EMPTY);
 			ZAFIRA_PROJECT = config.getString("zafira_project", StringUtils.EMPTY);
-			ZAFIRA_REPORT_EMAILS = config.getString("zafira_report_emails", "").trim().replaceAll(" ", ",").replaceAll(";", ",");
-			ZAFIRA_REPORT_FOLDER = config.getString("zafira_report_folder", null);
-			ZAFIRA_REPORT_FOLDER = StringUtils.removeStart(ZAFIRA_REPORT_FOLDER, "/");
-			ZAFIRA_REPORT_FOLDER = StringUtils.removeEnd(ZAFIRA_REPORT_FOLDER, "/");
 			ZAFIRA_RERUN_FAILURES = config.getBoolean("zafira_rerun_failures", false);
-			ZAFIRA_REPORT_SHOW_STACKTRACE = config.getBoolean("zafira_report_show_stacktrace", true);
-			ZAFIRA_REPORT_SHOW_FAILURES_ONLY = config.getBoolean("zafira_report_failures_only", false);
 			ZAFIRA_CONFIGURATOR = config.getString("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator");
 			
 			if(ZAFIRA_ENABLED)
@@ -696,7 +659,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	/**
 	 * Generated full test failures stack trace taking into account test skip reasons.
 	 * 
-	 * @param ITestResult result
+	 * @param result result
 	 * @return full error stack trace
 	 */
 	private String getFullStackTrace(ITestResult result) 

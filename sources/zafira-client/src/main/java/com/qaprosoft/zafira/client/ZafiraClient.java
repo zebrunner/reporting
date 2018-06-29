@@ -323,27 +323,6 @@ public class ZafiraClient
 		return response;
 	}
 	
-	public Response<String> sendTestRunReport(long id, String recipients, boolean showOnlyFailures, boolean showStacktrace)
-	{
-		Response<String> response = new Response<String>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id, showOnlyFailures ? "failures" : "all", showStacktrace ? "true" : "false"));
-			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.TEXT_HTML_TYPE).post(ClientResponse.class, new EmailType(recipients));
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(String.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to send test run report", e);
-		}
-		return response;
-	}
-	
 	public Response<TestRunType> getTestRunByCiRunId(String ciRunId)
 	{
 		Response<TestRunType> response = new Response<TestRunType>(0, null);

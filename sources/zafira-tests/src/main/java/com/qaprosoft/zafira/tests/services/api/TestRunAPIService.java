@@ -78,7 +78,6 @@ public class TestRunAPIService extends AbstractAPIService
 		{
 			testRunType = ZAFIRA_CLIENT.updateTestRun(testRunType).getObject();
 			testRunType = ZAFIRA_CLIENT.finishTestRun(testRunType.getId()).getObject();
-			ZAFIRA_CLIENT.sendTestRunReport(testRunType.getId(), USER.getEmail(), false, false);
 		}
 		return testRunType;
 	}
