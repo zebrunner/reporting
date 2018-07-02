@@ -631,13 +631,13 @@
                 };
             }
         };
-    }]).directive('tableLoupe', [function () {
+    }]).directive('tableLoupe', function () {
         "use strict";
         return {
             restrict: 'A',
             scope: {
-                tableLoupe: '@',
-                tableLoupeTrigger: '@'
+                tableLoupe: '=',
+                tableLoupeTrigger: '='
             },
             link: function(scope, element, attrs) {
 
@@ -656,22 +656,20 @@
 
                 scope.$watch('tableLoupeTrigger', function (newVal, oldValue) {
                     if(newVal) {
-                        if(newVal == 'true') {
                             element.addClass('table-loupe');
-                        } else {
-                            element.removeClass('table-loupe');
-                        }
+                    } else {
+                        element.removeClass('table-loupe');
                     }
                 });
 
                 function doAction(index) {
-                    var logRowElement = angular.element(element.find('tr')[index]);
+                    var logRowElement = angular.element(element.find('tbody tr')[index]);
                     logRowElement.addClass('table-loupe-target');
                     return logRowElement;
                 };
             }
         };
-    }]).filter('orderObjectBy', ['$sce', function($sce) {
+    }).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,
