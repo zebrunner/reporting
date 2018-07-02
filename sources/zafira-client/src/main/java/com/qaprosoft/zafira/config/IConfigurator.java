@@ -55,5 +55,4 @@ public interface IConfigurator
 	
 	Map<String, Long> getTestMetrics(ITestResult test);
 	
-	String getReportEmails();
 }
