@@ -157,7 +157,9 @@
             var activeTrack = track && track.activeCues && track.activeCues.length ? track.activeCues[0] : null;
             $scope.currentTime = ev.target.currentTime;
             if(activeTrack) {
-                $scope.currentLog = {id: activeTrack.id, message: activeTrack.text};
+                $scope.$apply(function () {
+                    $scope.currentLog = {id: activeTrack.id, message: activeTrack.text};
+                });
             }
         };
 
