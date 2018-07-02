@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
@@ -73,7 +72,6 @@ public class ZafiraClient
 	private static final String TEST_RUNS_RESULTS_PATH = "/api/tests/runs/%d/results";
 	private static final String TEST_RUNS_ABORT_PATH = "/api/tests/runs/abort?id=%d";
 	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
-	private static final String TEST_RUN_EMAIL_PATH = "/api/tests/runs/%d/email?filter=%s&showStacktrace=%s";
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 
 	private String serviceURL;
