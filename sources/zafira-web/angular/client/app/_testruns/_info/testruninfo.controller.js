@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$interval', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $timeout, $interval, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -101,7 +101,7 @@
             }
         };
 
-        $scope.videoMode = {mode: 'NONE'};
+        $scope.videoMode = {mode: "UNKNOWN"};
         var track;
 
         function reloadVideo(e) {
@@ -117,13 +117,19 @@
                 videoElements[0].addEventListener('ratechange', onRateChange, false);
 
                 videoElements[0].addEventListener('playing', function() {
-                    $scope.videoMode.mode = 'PLAYING';
+                    $scope.$apply(function () {
+                        $scope.videoMode.mode = "PLAYING";
+                    });
                 }, false);
                 videoElements[0].addEventListener('play', function() {
-                    $scope.videoMode.mode = 'PLAYING';
+                    $scope.$apply(function () {
+                        $scope.videoMode.mode = "PLAYING";
+                    });
                 }, false);
                 videoElements[0].addEventListener('pause', function() {
-                    $scope.videoMode.mode = 'PAUSE';
+                    $scope.$apply(function () {
+                        $scope.videoMode.mode = "PAUSE";
+                    });
                 }, false);
                 videoElements[0].addEventListener('loadstart', function() {
                 }, false);
@@ -156,7 +162,9 @@
         };
 
         function onDataLoaded(ev) {
-            $scope.videoMode.mode = 'LOADED';
+            $scope.$apply(function () {
+                $scope.videoMode.mode = "LOADED";
+            });
             var videoElement = ev.target;
             var elasticsearchDataWatcher = $scope.$watch('elasticsearchDataLoaded', function (isLoaded) {
                 if(isLoaded) {
