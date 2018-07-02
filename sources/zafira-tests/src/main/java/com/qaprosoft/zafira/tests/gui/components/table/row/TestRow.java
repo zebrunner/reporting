@@ -38,7 +38,7 @@ public class TestRow extends AbstractRow
 	@FindBy(xpath = ".//*[@name = 'errorMsg']/*")
 	private List<WebElement> logs;
 
-	@FindBy(xpath = "./td[4]//button[contains(md-icon, 'forum')]")
+	@FindBy(xpath = "./td[4]//button[contains(md-icon, 'bug_report')]")
 	private WebElement openTestDetailsModalButton;
 
 	@FindBy(xpath = "./td[3]//a[contains(@class, 'bug-label-bg')]")
