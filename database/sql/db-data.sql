@@ -565,7 +565,7 @@ BEGIN
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-		('NIGHTLY DETAILS', 'table', error_message_sql, error_message_model)
+		('ERROR MESSAGE', 'table', error_message_sql, error_message_model)
 	RETURNING id INTO error_message_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
 		('DETAILED FAILURES REPORT', 'table', detailed_failures_report_sql, detailed_failures_report_model)
