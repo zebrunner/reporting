@@ -1,0 +1,5 @@
+select check_version(86);
+
+CREATE UNIQUE INDEX WIDGETS_TITLE_TYPE_UINDEX ON ZAFIRA.WIDGETS (TITLE, TYPE);
+
+select add_version(86);
