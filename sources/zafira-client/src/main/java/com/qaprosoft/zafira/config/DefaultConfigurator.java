@@ -104,9 +104,4 @@ public class DefaultConfigurator implements IConfigurator
 		return new HashSet<>();
 	}
 
-	@Override
-	public String getReportEmails() 
-	{
-		return "";
-	}
 }
