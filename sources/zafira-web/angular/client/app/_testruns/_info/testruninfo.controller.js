@@ -236,11 +236,10 @@
             }
         };
 
-        $scope.selectedLogRow;
+        $scope.selectedLogRow = -1;
 
         $scope.selectLogRow = function(ev, index) {
             var hash = ev.currentTarget.attributes.id.value;
-            $scope.selectedLogRow = index;
             $location.hash(hash);
         };
 
@@ -250,7 +249,7 @@
         };
 
         $scope.copyLogPermalink = function() {
-            $scope.copyToClipboard($location.$$absUrlZ);
+            $scope.copyToClipboard($location.$$absUrl);
         };
 
         $scope.copyToClipboard = function(message) {
@@ -276,13 +275,14 @@
             var selectedLogRowClass = 'selected-log-row';
             if(newVal && oldVal) {
                 if (newVal == oldVal) {
-                    watchUntilPainted('#' + oldVal, function () {
-                        angular.element('#' + oldVal).addClass(selectedLogRowClass);
+                    watchUntilPainted('#' + newVal, function () {
+                        angular.element('#' + newVal).addClass(selectedLogRowClass);
                     });
                 } else {
                     angular.element('#' + newVal).addClass(selectedLogRowClass);
                     angular.element('#' + oldVal).removeClass(selectedLogRowClass);
                 }
+                $scope.selectedLogRow = newVal.split('log-')[1];
             }
         });
 
