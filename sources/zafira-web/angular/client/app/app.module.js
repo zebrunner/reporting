@@ -32,7 +32,8 @@
         ,'ngImgCrop'
         ,'ngMaterialDateRangePicker'
     ])
-    .config(['$httpProvider', function($httpProvider) {
+    .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
+        $anchorScrollProvider.disableAutoScrolling();
         $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
