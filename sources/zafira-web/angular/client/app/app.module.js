@@ -662,8 +662,16 @@
                     }
                 });
 
+                var tableBody = element[0].getElementsByTagName('tbody')[0];
+
                 function doAction(index) {
                     var logRowElement = angular.element(element.find('tbody tr')[index]);
+                    var logRowElementRect = logRowElement[0].getBoundingClientRect();
+                    var elementRect = tableBody.getBoundingClientRect();
+                    var containerMiddlePoint = elementRect.height / 2;
+                    if(logRowElementRect.top > (elementRect.top + containerMiddlePoint) || (logRowElementRect.top - containerMiddlePoint) < tableBody.scrollTop) {
+                        tableBody.scrollTop = logRowElement[0].offsetTop - containerMiddlePoint;
+                    }
                     logRowElement.addClass('table-loupe-target');
                     return logRowElement;
                 };

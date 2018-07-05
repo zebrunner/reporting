@@ -232,16 +232,20 @@
             }
         };
 
-        $scope.fullScreen = function() {
+        $scope.fullScreen = function(minimizeOnly) {
             var fullScreenClass = 'full-screen';
             var vncContainer = angular.element(MODES.live.element)[0];
-            var tableBlock = angular.element('.table-history')[0];
+            var hideArray = ['.table-history', '.test-info-tab'];
             if(vncContainer.classList.contains(fullScreenClass)) {
                 vncContainer.classList.remove(fullScreenClass);
-                tableBlock.style.display = 'block';
-            } else {
+                hideArray.forEach(function (value) {
+                    angular.element(value)[0].style.display = 'block';
+                });
+            } else if(! minimizeOnly) {
                 vncContainer.classList.add(fullScreenClass);
-                tableBlock.style.display = 'none';
+                hideArray.forEach(function (value) {
+                    angular.element(value)[0].style.display = 'none';
+                });
             }
             $scope.onResize();
         };
@@ -302,6 +306,7 @@
                                 addDrivers(getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME));
                                 driversCount = $scope.drivers.length;
                             } else {
+                                $scope.fullScreen(true);
                                 setMode('record');
                                 var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
                                 if(videoArtifacts.length == driversCount) {
