@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $log, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -86,6 +86,10 @@
                     collectElasticsearchLogs(page, size, count);
                 } else {
                     $scope.elasticsearchDataLoaded = true;
+                    var hash = $location.hash();
+                    if(hash) {
+                        $anchorScroll();
+                    }
                 }
             });
         };
@@ -231,6 +235,25 @@
                 driversQueue.push(liveDemoArtifact);
             }
         };
+
+        $scope.selectLogRow = function(ev) {
+            var hash = ev.currentTarget.attributes.id.value;
+            $location.hash(hash);
+        };
+
+        $scope.$watch(function () {
+            return $location.hash()
+        }, function (newVal, oldVal) {
+            var selectedLogRowClass = 'selected-log-row';
+            if(newVal == oldVal) {
+                watchUntilPainted('#' + oldVal, function () {
+                    angular.element('#' + oldVal).addClass(selectedLogRowClass);
+                });
+            } else {
+                angular.element('#' + newVal).addClass(selectedLogRowClass);
+                angular.element('#' + oldVal).removeClass(selectedLogRowClass);
+            }
+        });
 
         $scope.fullScreen = function(minimizeOnly) {
             var fullScreenClass = 'full-screen';
