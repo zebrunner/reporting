@@ -74,7 +74,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="logs">
-                                            <tr ng-if="logs.length" ng-repeat="log in logs">
+                                            <tr ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-click="selectLogRow($event);" ng-repeat="log in logs">
                                                 <td>
                                                     <i ng-if="false" class="material-icons">insert_photo</i>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
