@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -236,22 +236,53 @@
             }
         };
 
-        $scope.selectLogRow = function(ev) {
+        $scope.selectedLogRow;
+
+        $scope.selectLogRow = function(ev, index) {
             var hash = ev.currentTarget.attributes.id.value;
+            $scope.selectedLogRow = index;
             $location.hash(hash);
+        };
+
+        $scope.copyLogLine = function(log) {
+            var message = $filter('date')(new Date(log.timestamp), 'HH:mm:ss') + ' [' + log.threadName + '] ' + '[' + log.level + '] ' + log.message;
+            $scope.copyToClipboard(message);
+        };
+
+        $scope.copyLogPermalink = function() {
+            $scope.copyToClipboard($location.$$absUrlZ);
+        };
+
+        $scope.copyToClipboard = function(message) {
+            var node = document.createElement('pre');
+            node.textContent = message;
+            document.body.appendChild(node);
+
+            var selection = getSelection();
+            selection.removeAllRanges();
+
+            var range = document.createRange();
+            range.selectNodeContents(node);
+            selection.addRange(range);
+
+            document.execCommand('copy');
+            selection.removeAllRanges();
+            document.body.removeChild(node);
         };
 
         $scope.$watch(function () {
             return $location.hash()
         }, function (newVal, oldVal) {
             var selectedLogRowClass = 'selected-log-row';
-            if(newVal == oldVal) {
-                watchUntilPainted('#' + oldVal, function () {
-                    angular.element('#' + oldVal).addClass(selectedLogRowClass);
-                });
-            } else {
-                angular.element('#' + newVal).addClass(selectedLogRowClass);
-                angular.element('#' + oldVal).removeClass(selectedLogRowClass);
+            if(newVal && oldVal) {
+                if (newVal == oldVal) {
+                    watchUntilPainted('#' + oldVal, function () {
+                        angular.element('#' + oldVal).addClass(selectedLogRowClass);
+                    });
+                } else {
+                    angular.element('#' + newVal).addClass(selectedLogRowClass);
+                    angular.element('#' + oldVal).removeClass(selectedLogRowClass);
+                }
             }
         });
 

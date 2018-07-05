@@ -1954,3 +1954,17 @@ table.table-loupe {
 .selected-log-row {
     background-color: #ffffe5 !important;
 }
+
+td.settings-cell {
+    width: 20px;
+    button {
+        padding-right: 0 !important;
+        margin: 0 !important;
+        height: 20px !important;
+        width: 20px !important;
+        md-icon {
+            margin: 0;
+            float: right;
+        }
+    }
+}
