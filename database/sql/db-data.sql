@@ -39,7 +39,7 @@ INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
 	('RABBITMQ_WS', 'http://demo.qaprosoft.com/stomp', 'RABBITMQ'),
 	('RABBITMQ_ENABLED', true, 'RABBITMQ'),
 	('COMPANY_LOGO_URL', null, null),
-	('LAST_ALTER_VERSION', '0', null);
+	('LAST_ALTER_VERSION', '86', null);
 
 INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION) VALUES ('UNKNOWN', '');
 
@@ -565,7 +565,7 @@ BEGIN
     }';
 
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-		('NIGHTLY DETAILS', 'table', error_message_sql, error_message_model)
+		('ERROR MESSAGE', 'table', error_message_sql, error_message_model)
 	RETURNING id INTO error_message_id;
 	INSERT INTO zafira.WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
 		('DETAILED FAILURES REPORT', 'table', detailed_failures_report_sql, detailed_failures_report_model)

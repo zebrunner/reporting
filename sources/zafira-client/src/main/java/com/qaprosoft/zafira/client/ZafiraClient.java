@@ -30,7 +30,6 @@ import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.EmailType;
 import com.qaprosoft.zafira.models.dto.JobType;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
@@ -73,7 +72,6 @@ public class ZafiraClient
 	private static final String TEST_RUNS_RESULTS_PATH = "/api/tests/runs/%d/results";
 	private static final String TEST_RUNS_ABORT_PATH = "/api/tests/runs/abort?id=%d";
 	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
-	private static final String TEST_RUN_EMAIL_PATH = "/api/tests/runs/%d/email?filter=%s&showStacktrace=%s";
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 
 	private String serviceURL;
@@ -319,27 +317,6 @@ public class ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to find test run by id", e);
-		}
-		return response;
-	}
-	
-	public Response<String> sendTestRunReport(long id, String recipients, boolean showOnlyFailures, boolean showStacktrace)
-	{
-		Response<String> response = new Response<String>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_EMAIL_PATH, id, showOnlyFailures ? "failures" : "all", showStacktrace ? "true" : "false"));
-			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.TEXT_HTML_TYPE).post(ClientResponse.class, new EmailType(recipients));
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(String.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to send test run report", e);
 		}
 		return response;
 	}
