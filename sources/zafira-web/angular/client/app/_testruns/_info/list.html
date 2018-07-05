@@ -71,10 +71,11 @@
                                                 <th>Visuals</th>
                                                 <th>Start</th>
                                                 <th>Action</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody id="logs">
-                                            <tr ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-click="selectLogRow($event);" ng-repeat="log in logs">
+                                            <tr ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-click="selectLogRow($event, $index);" ng-repeat="log in logs">
                                                 <td>
                                                     <i ng-if="false" class="material-icons">insert_photo</i>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
@@ -82,6 +83,25 @@
                                                 <td>{{ log.timestamp | date: 'HH:mm:ss'}}</td>
                                                 <td>[{{ log.threadName }}] [{{ log.level}}]
                                                     <span><show-more class="log_message" name="logMessage" element-id="log.timestamp" text="log.message" limit="255" ></show-more></span>
+                                                </td>
+                                                <td class="settings-cell" style="padding: 0 !important;" ng-if="selectedLogRow == $index">
+                                                    <md-menu class="pull-right">
+                                                        <md-button name="logsSetting" aria-label="Logs settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
+                                                            <md-icon class="material-icons">more_vert</md-icon>
+                                                        </md-button>
+                                                        <md-menu-content width="2" class="fixed-md-menu-content">
+                                                            <md-menu-item>
+                                                                <md-button name="copyLine" ng-click="copyLogLine(log);">
+                                                                    Copy line
+                                                                </md-button>
+                                                            </md-menu-item>
+                                                            <md-menu-item>
+                                                                <md-button name="copyPermalink" ng-click="copyLogPermalink();">
+                                                                    Copy permalink
+                                                                </md-button>
+                                                            </md-menu-item>
+                                                        </md-menu-content>
+                                                    </md-menu>
                                                 </td>
                                             </tr>
                                         </tbody>
