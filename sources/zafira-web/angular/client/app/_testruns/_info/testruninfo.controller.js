@@ -295,13 +295,14 @@
                 hideArray.forEach(function (value) {
                     angular.element(value)[0].style.display = 'block';
                 });
+                $scope.onResize();
             } else if(! minimizeOnly) {
                 vncContainer.classList.add(fullScreenClass);
                 hideArray.forEach(function (value) {
                     angular.element(value)[0].style.display = 'none';
                 });
+                $scope.onResize();
             }
-            $scope.onResize();
         };
 
         $scope.switchDriver = function (index) {
