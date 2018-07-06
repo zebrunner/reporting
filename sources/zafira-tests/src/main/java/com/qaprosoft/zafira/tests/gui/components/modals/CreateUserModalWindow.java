@@ -87,6 +87,7 @@ public class CreateUserModalWindow extends AbstractModalWindow
 	public void clickDeleteButton()
 	{
 		deleteButton.click();
+		LOGGER.info("Delete button was clicked");
 	}
 
 	public WebElement getFirstNameInput()
