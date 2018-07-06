@@ -20,6 +20,7 @@
         ,'app.certification'
         ,'app.sidebar'
         // 3rd party feature modules
+        ,'ngImgCrop'
         ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
@@ -29,7 +30,6 @@
         ,'chieffancypants.loadingBar'
         ,'textAngular'
         ,'gridstack-angular'
-        ,'ngImgCrop'
         ,'ngMaterialDateRangePicker'
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
@@ -327,7 +327,7 @@
             '                        <div class="bottom-block" md-ink-ripple="grey">\n' +
             '                            <input type="file" id="fileInput" class="content-input" ng-class="{\'not-empty\': myImage}"/>\n' +
             '                            <div class="upload-zone-label">Click or drop here</div>\n' +
-            '                            <img-crop image="myImage" ng-if="otherType == undefined" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
+            '                            <img-crop image="myImage" ng-show="otherType == undefined" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
             '                        </div>\n' +
             '                    </div>\n' +
             '                </div>',
@@ -340,8 +340,8 @@
                 otherType: '@'
             },
             link: function ($scope, iElement, iAttrs, ngModel) {
-                $scope.myImage='';
-                $scope.myCroppedImage='';
+                $scope.myImage = '';
+                $scope.myCroppedImage = '';
                 var canRecognize = false;
 
                 var otherType = $scope.otherType != undefined;
@@ -353,8 +353,8 @@
                     if(! otherType) {
                         reader.onload = function (evt) {
                             $scope.imageLoading = true;
-                            $scope.$apply(function ($scope) {
-                                $scope.myImage = evt.target.result;
+                            $scope.$apply(function($scope){
+                                $scope.myImage=evt.target.result;
                             });
                             $scope.imageLoading = false;
                         };
@@ -402,7 +402,7 @@
                     return formData;
                 };
 
-                $scope.onChange = function () {
+                $scope.onChange = function (event) {
                     if(canRecognize) {
                         ngModel.$setViewValue(blobToFormData());
                     }
