@@ -92,12 +92,14 @@
         };
 
         function calculateSize(window, ratio) {
-            var width = window[containerWidthProperty];
-            var height = ratio > 1 ?  width / ratio : width * ratio;
-            if(height > window[containerHeightProperty])
-            {
+            var height;
+            var width;
+            if(ratio > 1) {
+                width = window[containerWidthProperty];
+                height = width / ratio;
+            } else {
                 height = window[containerHeightProperty];
-                width = ratio < 1 ? height / ratio : height * ratio;
+                width = height * ratio;
             }
             return {height: height, width: width};
         };
