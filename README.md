@@ -8,24 +8,32 @@ Zafira is Java-based web application that accumulates test automation results an
 ## Features
 
 #### Configurable dashboards based on [D3JS](https://d3js.org/)
-![Alt text](docs/img/demo-dashboards.png "Dashboards")
+![Alt text](docs/img/feature_dashboards.png "Dashboards")
+
+#### Test runs management
+![Alt text](docs/img/feature_testruns.png "Test runs management")
 
 #### Real-time test results
-![Alt text](docs/img/demo-testruns.png "Test runs")
+![Alt text](docs/img/feature_testrun_results.png "Test results")
+
+#### Comparison of test runs
+![Alt text](docs/img/feature_testruns_comparison.png "Test runs comparison")
+
+#### Live streaming and video recording of test sessions
+![Alt text](docs/img/feature_live_streaming.png "Live streaming")
+
+#### Test issues tracking
+![Alt text](docs/img/feature_test_issues.png "Test issues tracking")
 
 #### Integrations with multiple services
-![Alt text](docs/img/demo-integrations.png "Integrations")
+![Alt text](docs/img/feature_integrations.png "Integrations")
 
 ## Installation steps
 
 #### Simple set with Docker
 
 1. Install [Docker](https://docs.docker.com/engine/installation/) ([Engine](https://docs.docker.com/engine/installation/), [Compose](https://docs.docker.com/compose/install/))
-2. Download [Example of compose descriptor](https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml) and [Example of integrations](https://raw.githubusercontent.com/qaprosoft/zafira/master/integrations.env) to any folder
-
-  ```Shell
-  $ curl https://raw.githubusercontent.com/qaprosoft/zafira/master/docker-compose.yml -o docker-compose.yml
-  $ curl https://raw.githubusercontent.com/qaprosoft/zafira/master/integrations.env -o integrations.env
+2. Clone current repo and navigate to the repo root on your local machine
   ```
 3. Deploy Zafira using `docker-compose` within the same folder
 
@@ -45,7 +53,7 @@ To start Zafira in daemon mode, add '-d' argument:
 
 ## Integration
 
-Regardles of Zafira client language you have yo generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
+Regardless of Zafira client language you have to generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
 
 ![Alt text](docs/img/generate-token.png "Generate token")
 
