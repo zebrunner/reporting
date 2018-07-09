@@ -410,6 +410,9 @@ BEGIN
             "x": {
                 "key": "TESTED_AT",
                 "type": "date"
+            },
+            "y": {
+                "min": "0"
             }
         }
     }';
