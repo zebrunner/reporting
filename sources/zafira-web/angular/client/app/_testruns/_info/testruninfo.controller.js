@@ -443,7 +443,7 @@
 
         function getTest(testRunId) {
             return $q(function (resolve, reject) {
-                TestService.searchTests({testRunId: testRunId}).then(function (rs) {
+                TestService.searchTests({testRunId: testRunId, page: 1, pageSize: 100000}).then(function (rs) {
                     if(rs.success && rs.data.results) {
                         resolve(rs.data.results);
                     } else {
