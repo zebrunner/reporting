@@ -18,6 +18,8 @@
 
             <zafira.admin.username/>
             <zafira.admin.password/>
+            
+            <zafira.elasticsearch.url></zafira.elasticsearch.url>
 
             <zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
             <zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
