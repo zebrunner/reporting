@@ -6,3 +6,5 @@ pages:
     - About: about.md
 theme:
   name: 'material'
+repo_url: https://github.com/qaprosoft/zafira
+repo_name: Github
