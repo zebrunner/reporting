@@ -38,16 +38,16 @@ services:
      - ./config/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
      - ./esdata:/var/lib/elasticsearch
     ports:
-     - "5601:5601"
-     - "9200:9200"
-     - "5044:5044"
+     - 5601:5601
+     - 9200:9200
+     - 5044:5044
     depends_on:
      - "rabbitmq"
     restart: always
   zafira:
     image: qaprosoft/zafira:latest
     ports:
-     - "8080:8080"
+     - 8080:8080
     env_file:
      - integrations.env
     environment:
