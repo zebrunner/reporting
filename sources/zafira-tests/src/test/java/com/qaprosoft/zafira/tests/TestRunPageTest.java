@@ -113,6 +113,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage = (TestRunPage) testRunPage.reload();
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
+		testRunSettingMenu.waitUntilElementToBeClickableByBackdropMask(testRunSettingMenu.getOpenButton(), 2);
 		testRunSettingMenu.clickOpenButton();
 		testRunSettingMenu.switchToWindow();
 		testRunPage.waitUntilPageIsLoaded();
