@@ -5,7 +5,7 @@ The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). Y
 
 Verify Docker Engine setup:
 
- ```
+```
 $ docker version
 
 Client:
@@ -25,7 +25,7 @@ $ docker-compose version
  
 docker-compose version 1.21.2, build a133471
 docker-py version: 3.3.0
- ```
+```
  
  #### Zafira startup using Docker
 <p align="center">
