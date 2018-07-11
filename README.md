@@ -3,6 +3,10 @@
 
 Zafira is central automation reporting system that is build on the top of Java Spring Framework. It dramatically increases the transparany of test automation results and provides better undestanding of product quality. Qaprosoft team is developing Zafira based on more then 10-years expertise in quality assurance and we strongly believe that your QA/Dev engineers and managers will love it!
 
+<p align="center">
+  <img src="./docs/img/space.png">
+</p>
+
 #### Primary features
 * Real-time test results tracking via websockets
 * VNC streaming and video recording of test sessions
@@ -12,10 +16,6 @@ Zafira is central automation reporting system that is build on the top of Java S
 * Integration with Hipchat and Slack
 * Ability to compose automation reports and send via email
 
-<p align="center">
-  <img src="./docs/img/space.png">
-</p>
-
 Zafira was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zafira client into you own automation tool. We are activly developing clients for different languages and frameworks but still looking for active community to provide better support. 
 
 #### Languages and frameworks supported
@@ -23,11 +23,6 @@ Zafira was initially designed to track automation progress of the tests written 
 * [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
 * [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
 * [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
-
-
-Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes.
-
-![Integration](docs/img/integration.png)
 
 ## Features
 
