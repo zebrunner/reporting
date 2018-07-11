@@ -4,8 +4,10 @@
 Zafira is central automation reporting system that is build on the top of Java Spring Framework. It dramatically increases the transparany of test automation results and provides better undestanding of product quality. Qaprosoft team is developing Zafira based on more then 10-years expertise in quality assurance and we strongly believe that your QA/Dev engineers and managers will love it!
 
 <p align="center">
-  <img src="./docs/img/space.png">
+  <img width="600px" height="600px" src="./docs/img/space.png">
 </p>
+
+Zafira was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zafira client into you own automation tool. We are activly developing clients for different languages and frameworks but still looking for active community to provide better support. 
 
 #### Primary features
 * Real-time test results tracking via websockets
@@ -16,36 +18,44 @@ Zafira is central automation reporting system that is build on the top of Java S
 * Integration with Hipchat and Slack
 * Ability to compose automation reports and send via email
 
-Zafira was initially designed to track automation progress of the tests written using [Carina automation framework](https://github.com/qaprosoft/carina/) but you are capable to integrate Zafira client into you own automation tool. We are activly developing clients for different languages and frameworks but still looking for active community to provide better support. 
+<table>
+  </tr>
+    <td>
+      <b>Configurable dashboards</b>
+      <img src="./docs/img/feature_dashboards.png">
+    </td>
+    <td>
+      <b>Integrations with multiple services</b>
+      <img src="./docs/img/feature_integrations.png">
+    </td>
+  </tr>
+  </tr>
+    <td>
+      <b>Real-time test results</b>
+      <img src="./docs/img/feature_testrun_results.png">
+    </td>
+    <td>
+      <b>Live streaming and video recording</b>
+      <img src="./docs/img/feature_live_streaming.png">
+    </td>
+  </tr>
+  </tr>
+    <td>
+      <b>Comparison of test runs</b>
+      <img src="./docs/img/feature_testruns_comparison.png">
+    </td>
+    <td>
+      <b>Test issues tracking</b>
+      <img src="./docs/img/feature_test_issues.png">
+    </td>
+  </tr>
+</table>
 
 #### Languages and frameworks supported
 * [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
 * [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
 * [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
 * [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
-
-## Features
-
-#### Configurable dashboards based on [D3JS](https://d3js.org/)
-![Alt text](docs/img/feature_dashboards.png "Dashboards")
-
-#### Test runs management
-![Alt text](docs/img/feature_testruns.png "Test runs management")
-
-#### Real-time test results
-![Alt text](docs/img/feature_testrun_results.png "Test results")
-
-#### Comparison of test runs
-![Alt text](docs/img/feature_testruns_comparison.png "Test runs comparison")
-
-#### Live streaming and video recording of test sessions
-![Alt text](docs/img/feature_live_streaming.png "Live streaming")
-
-#### Test issues tracking
-![Alt text](docs/img/feature_test_issues.png "Test issues tracking")
-
-#### Integrations with multiple services
-![Alt text](docs/img/feature_integrations.png "Integrations")
 
 ## Installation steps
 
@@ -76,8 +86,12 @@ Regardless of Zafira client language you have to generate **zafira_access_token*
 
 ![Alt text](docs/img/generate-token.png "Generate token")
 
+## Documentation
+* [User manual](http://qaprosoft.github.io/zafira)
+* [Demo project](https://github.com/qaprosoft/carina-demo)
 
-
+## Code formatter
+We propose to use our configured [**Java code formatter for Eclipse**](https://github.com/qaprosoft/carina/blob/master/carina_formatter.xml). To use same formatter in IntelliJ IDEA you should install and configure [**Eclipse Code Formatter**](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter).
 
 ## License
 Code - [Apache Software License v2.0](http://www.apache.org/licenses/LICENSE-2.0)
