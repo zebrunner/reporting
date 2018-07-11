@@ -17,6 +17,7 @@ Server:
   Version:      18.05.0-ce
   ...
 ```
+
 Verify Docker Compose setup:
 
 ```
