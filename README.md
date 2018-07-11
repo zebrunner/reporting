@@ -66,11 +66,12 @@ Zafira was initially designed to track automation progress of the tests written 
   ```
 3. Deploy Zafira using `docker-compose` within the same folder
 
-  ```Shell
+  ```
   $ docker-compose up
   ```
 To start Zafira in daemon mode, add '-d' argument:
-  ```Shell
+
+  ```
   $ docker-compose up -d
   ```  
 4. Open in your browser IP address of deployed enviroment at port `8080`
