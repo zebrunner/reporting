@@ -4,6 +4,7 @@
 The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). You will find all the details for installation of [Docker Engine](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) in oficial documentation. Docker allows to install Zafira on Linux, Mac or Windows. 
 
 Verify Docker Engine setup:
+
  ```
 $ docker version
 
@@ -17,6 +18,7 @@ Server:
   ...
 ```
 Verify Docker Compose setup:
+
 ```
 $ docker-compose version
  
