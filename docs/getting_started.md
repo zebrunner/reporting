@@ -27,7 +27,6 @@ docker-py version: 3.3.0
  ```
  
  #### Zafira startup using Docker
-
 <p align="center">
   <img width="650px" height="550px" src="img/docker.png">
 </p>
