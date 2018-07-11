@@ -1,5 +1,6 @@
 ![Alt text](img/zafira.png "Zafira Logo")
 
+#### Introduction
 Zafira is central automation reporting system that is build on the top of Java Spring Framework. It dramatically increases the transparany of test automation results and provides better undestanding of product quality. Qaprosoft team is developing Zafira based on more then 10-years expertise in quality assurance and we strongly believe that your QA/Dev engineers and managers will love it!
 
 <p align="center">
