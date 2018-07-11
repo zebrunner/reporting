@@ -63,7 +63,6 @@ Zafira was initially designed to track automation progress of the tests written 
 
 1. Install [Docker](https://docs.docker.com/engine/installation/) ([Engine](https://docs.docker.com/engine/installation/), [Compose](https://docs.docker.com/compose/install/))
 2. Clone current repo and navigate to the repo root on your local machine
-  ```
 3. Deploy Zafira using `docker-compose` within the same folder
 
   ```
@@ -77,7 +76,7 @@ To start Zafira in daemon mode, add '-d' argument:
 4. Open in your browser IP address of deployed enviroment at port `8080`
 
   ```
-  $ http://localhost:8080/zafira
+  http://localhost:8080/zafira
   ```
 5. Use next login/pass for access: `qpsdemo/qpsdemo`.
 
