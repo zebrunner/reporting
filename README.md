@@ -1,4 +1,4 @@
-![Alt text](./docs/img/zafira_logo.png "Zafira Logo")
+![Alt text](./docs/img/zafira.png "Zafira Logo")
 ==================
 
 Zafira is Java-based web application that accumulates test automation results and increases the transparency of QA automation process. [D3JS](https://d3js.org)-based widgets with high flexibility of configuration allows to represent test results in different ways according to your companies processes.
