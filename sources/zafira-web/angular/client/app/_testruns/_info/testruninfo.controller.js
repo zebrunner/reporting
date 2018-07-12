@@ -215,6 +215,11 @@
             }, timeout);
         };
 
+        $scope.getVideoState = function (log) {
+            var videoElement = angular.element('#videoRecord');
+            videoElement[0].currentTime = log.videoTimestamp;
+        };
+
         function getArtifactsByPartName(test, partName, exclusion) {
             return test.artifacts ? test.artifacts.filter(function (artifact) {
                 return artifact.name.toLowerCase().includes(partName) && ! artifact.name.toLowerCase().includes(exclusion);
