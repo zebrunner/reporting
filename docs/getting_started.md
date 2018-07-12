@@ -8,6 +8,7 @@ The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). Y
 </p>
 
 Before running Zafira, verify that following ports are not binded:
+
 * 8080  (Tomcat)
 * 5433  (PostgresDB)
 * 15672 (RabbitMQ)
