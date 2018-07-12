@@ -17,23 +17,23 @@ The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). Y
 </p>
  
 #### Startup in Docker
-1. Clone Zafira repo:
+* Clone Zafira repo:
 ```
 $ git clone git@github.com:qaprosoft/zafira.git
 ```
 
-2. If you are planning to access Zafira remotely you will need to modify **docker-compose.yml** specifying appropriate IP address of your host:
+* If you are planning to access Zafira remotely you will need to modify **docker-compose.yml** specifying appropriate IP address of your host:
 ```
 environment:
   - ZAFIRA_URL=http://localhost:8080
 ```
 
-3. Start Zafira:
+* Start Zafira:
 ```
 $ docker-compose up -d
 ```
 
-4. Verify deployment by running:
+* Verify deployment by running:
 ```
 $ docker ps
 
@@ -45,12 +45,12 @@ a207d5718996        sebp/elk:630                        "/usr/local/bin/star…"
 e8a2d32590ed        qaprosoft/postgres:9.6              "docker-entrypoint.s…"
 ```
 
-5. Open Zafira in your browser:
+* Open Zafira in your browser:
 ```
 http://localhost:8080/zafira
 ```
 
-6. Use default credentials to login:
+* Use default credentials to login:
 ```
 qpsdemo/qpsdemo
 ```
