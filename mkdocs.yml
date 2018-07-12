@@ -2,8 +2,14 @@ site_name: Zafira
 pages:
     - Overview: index.md
     - Getting started: getting_started.md
+    - Client setup: client_setup.md
+    - Integrations: integrations.md
+    - Profile: profile.md
+    - Dashboards: dashboards.md
+    - Test runs: test_runs.md
+    - User management: user_management.md
     - Release notes: releases.md
-    - About: about.md
+
 theme:
   name: 'material'
 repo_url: https://github.com/qaprosoft/zafira
