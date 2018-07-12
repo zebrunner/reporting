@@ -12,7 +12,7 @@ The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). Y
 * 9200  (ELK)
 * 5044  (ELK)
  <p align="center">
-  <img width="650px" height="550px" src="img/docker.png">
+  <img width="650px" height="550px" src="./img/docker.png">
 </p>
  
 #### Zafira startup using Docker
