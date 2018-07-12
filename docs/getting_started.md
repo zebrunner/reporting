@@ -16,7 +16,7 @@ The easiest way to deploy Zafira it to use [Docker](https://docs.docker.com/). Y
   <img width="650px" height="550px" src="../img/docker.png">
 </p>
  
-#### Zafira startup using Docker
+#### Startup in Docker
 1. Clone Zafira repo:
 ```
 $ git clone git@github.com:qaprosoft/zafira.git
