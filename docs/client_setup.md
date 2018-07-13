@@ -1,7 +1,7 @@
 # Client setup 
 
 #### Access token
-Zafira provides REST API to track test automation results (Swagger is avaible by http://localhost:8080/zafira-ws/swagger-ui.html). You have diffent options of integration of your test client. Carina automation framework has integration with Zafira under the hood. Regardless of integration flow you selected, first of all you will need access token generated. Navigate to **Username** > **Profile** in top navigation menu:
+Zafira provides REST API to track test automation results (use [Swagger](http://localhost:8080/zafira-ws/swagger-ui.html) to learn API). You have diffent options of integration of your test client. [Carina automation framework](https://github.com/qaprosoft/carina) has integration with Zafira under the hood. Regardless of integration flow you selected, first of all you will need access token generated. Navigate to **Username** > **Profile** in top navigation menu:
 
 <p align="center">
   <img src="../img/menu_profile.png">
@@ -46,6 +46,7 @@ zafira_report_emails=
 zafira_configurator=com.qaprosoft.carina.core.foundation.report.ZafiraConfigurator
 ```
 Verify following properties:
+
 * zafira_enabled=true
 * zafira_service_url=<valid_zafira_url>
 
