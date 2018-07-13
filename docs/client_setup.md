@@ -56,6 +56,39 @@ By default **zafira_project=UNKNOWN** but using admin user you are capable to cr
   <img src="../img/flow_uml.png">
 </p>
 
+#### Integration with TestNG
+If you are implementing your own TestNG-based automation project you can easily setup integration with Zafira using [TestNG listener](https://github.com/qaprosoft/zafira/blob/master/sources/zafira-client/src/main/java/com/qaprosoft/zafira/listener/ZafiraListener.java).
+* Add Zafira client as Maven dependency:
+
+```
+<dependency>
+    <groupId>com.qaprosoft</groupId>
+    <artifactId>zafira-client</artifactId>
+    <version>latest</version>
+</dependency>
+```
+
+* Create [zafira.properties](https://github.com/qaprosoft/carina-demo/blob/master/src/main/resources/zafira.properties) and place in resource folder, update configuration
+* Include com.qaprosoft.zafira.listener.ZafiraListener as TestNG listener:
+```
+<suite>
+    [...]
+      <listeners>
+        <listener class-name="com.qaprosoft.zafira.listener.ZafiraListener"/>
+      </listeners>
+    [...]
+</suite>
+```
+
+or
+
+```
+@Listeners({ZafiraListener.class})
+public class LoginTest {
+[...]
+}
+```
+
 #### Languages and frameworks supported
 * [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
 * [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
