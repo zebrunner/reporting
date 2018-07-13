@@ -252,8 +252,8 @@
         }
 
         (function init(){
-            if($rootScope.tools) {
-                for(var key in $scope.tools) {
+            if($rootScope.tools && Object.size($rootScope.tools)) {
+                for(var key in $rootScope.tools) {
                     initTool(key);
                 }
             }

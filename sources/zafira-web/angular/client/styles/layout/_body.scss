@@ -1301,7 +1301,18 @@ button#resetFilter {
 
 div.manage-chip {
     position: relative;
-
+    & md-chip {
+        width: 118px;
+        margin: 0 2px 0 0;
+        background-color: $dark !important;
+        color: #fff !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        line-height: 2.3;
+        &:hover{
+            background-color: $coal !important;
+        }
+    }
     div {
         background: #fff;
         position: absolute;
@@ -1316,22 +1327,8 @@ div.manage-chip {
             top: 2px;
             left: 2px;
             font-size: 12px;
+            color: rgba(0,0,0,0.87);
         }
-    }
-    & md-chip {
-        width: 118px;
-        margin: 0 2px 0 0;
-        background-color: $dark !important;
-        color: #fff !important;
-        font-weight: bold;
-        text-transform: uppercase;
-        line-height: 2.3;
-        &:hover{
-            background-color: $coal !important;
-        }
-    }
-    md-icon {
-        color: rgba(0,0,0,0.87);
     }
 }
 

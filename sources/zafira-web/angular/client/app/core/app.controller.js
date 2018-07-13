@@ -38,7 +38,6 @@
                     {
                         $rootScope.tools = {};
                         rs.data.forEach(function(tool) {
-                            $rootScope.tools[tool] = false;
                             SettingsService.isToolConnected(tool).then(function(rs) {
                                 if(rs.success)
                                 {
