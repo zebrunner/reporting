@@ -34,7 +34,7 @@ All HTTP calls that requires authorization context should contain haeder:
 Authorizarion: Bearer <auth_token>
 ```
 
-#### Integration with test frameworks
+#### Integration with Carina
 The easiest option to use Zafira with test automation is Carina framework. Carina tracks automation results under the hood, all you need to do is setting up of correct access token in [zafira.properties](https://github.com/qaprosoft/carina-demo/blob/master/src/main/resources/zafira.properties) file.
 ```
 zafira_enabled=true
@@ -48,10 +48,16 @@ zafira_configurator=com.qaprosoft.carina.core.foundation.report.ZafiraConfigurat
 Verify following properties:
 
 * zafira_enabled=true
-* zafira_service_url=<valid_zafira_url>
+* zafira_service_url=YOUR_ZAFIRA_URL
 
 By default **zafira_project=UNKNOWN** but using admin user you are capable to create multiple projects via Zafira UI (Top menu > Project > Create). When new project created you may override **zafira_project** property and track resutls in appropriate context.
 
 <p align="center">
   <img src="../img/flow_uml.png">
 </p>
+
+#### Languages and frameworks supported
+* [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
+* [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
+* [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
+* [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
