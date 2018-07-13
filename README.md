@@ -51,12 +51,6 @@ Zafira was initially designed to track automation progress of the tests written 
   </tr>
 </table>
 
-#### Languages and frameworks supported
-* [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
-* [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
-* [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
-* [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
-
 ## Installation steps
 
 #### Simple set with Docker
@@ -85,6 +79,12 @@ To start Zafira in daemon mode, add '-d' argument:
 Regardless of Zafira client language you have to generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
 
 ![Alt text](docs/img/access_token.png "Access token")
+
+#### Languages and frameworks supported
+* [Java - TestNG guide](https://github.com/qaprosoft/zafira-testng)
+* [Ruby - Cucumber](https://github.com/qaprosoft/zafira-ruby#cucumber-usage)
+* [Ruby - RSpec](https://github.com/qaprosoft/zafira-ruby#rspec-usage)
+* [C# - NUnit](https://github.com/qaprosoft/zafira-nunit)
 
 ## Documentation
 * [User manual](http://qaprosoft.github.io/zafira)
