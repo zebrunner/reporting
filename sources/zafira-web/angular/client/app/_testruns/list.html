@@ -60,11 +60,13 @@
                         <div layout="row" ng-init="filterBlockExpand = true;" ng-show="filterBlockExpand">
                             <div class="manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
                                 <md-chips class="filter-chip">
-                                    <md-chip>add filter</md-chip>
+                                    <md-chip>
+                                        add filter
+                                        <div>
+                                            <md-icon class="material-icons">add</md-icon>
+                                        </div>
+                                    </md-chip>
                                 </md-chips>
-                                <div class="md-primary createFilterChip">
-                                    <md-icon class="material-icons">add</md-icon>
-                                </div>
                             </div>
                             <md-chips class="filter-chip" ng-model="filters" md-removable="false" readonly="true">
                                 <input disabled>
