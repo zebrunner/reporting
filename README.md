@@ -84,7 +84,7 @@ To start Zafira in daemon mode, add '-d' argument:
 
 Regardless of Zafira client language you have to generate **zafira_access_token** first, to do that navigate to **Username** > **My profile** in top menu and generate new access token.
 
-![Alt text](docs/img/access-token.png "Access token")
+![Alt text](docs/img/access_token.png "Access token")
 
 ## Documentation
 * [User manual](http://qaprosoft.github.io/zafira)
