@@ -29,13 +29,13 @@ Response:
 }
 ```
 
-All HTTP calls that requires authorization context should contain haeder:
+All HTTP calls that requires authorization context should contain header:
 ```
 Authorizarion: Bearer <auth_token>
 ```
 
 #### Integration with Carina
-The easiest option to use Zafira with test automation is Carina framework. Carina tracks automation results under the hood, all you need to do is setting up of correct access token in [zafira.properties](https://github.com/qaprosoft/carina-demo/blob/master/src/main/resources/zafira.properties) file.
+Carina automation framework tacks test results in Zafira by default, all you need is valid access token in [zafira.properties](https://github.com/qaprosoft/carina-demo/blob/master/src/main/resources/zafira.properties) file.
 ```
 zafira_enabled=true
 zafira_service_url=http://localhost:8080/zafira-ws
@@ -58,6 +58,7 @@ By default **zafira_project=UNKNOWN** but using admin user you are capable to cr
 
 #### Integration with TestNG
 If you are implementing your own TestNG-based automation project you can easily setup integration with Zafira using [TestNG listener](https://github.com/qaprosoft/zafira/blob/master/sources/zafira-client/src/main/java/com/qaprosoft/zafira/listener/ZafiraListener.java).
+
 * Add Zafira client as Maven dependency:
 
 ```
