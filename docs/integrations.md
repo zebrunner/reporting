@@ -24,7 +24,7 @@ Zafira uses integration with Amazon S3 service to store user profile photos and 
 * Press save and refresh the page, green light indicates correct integration status
 
 <p>
-  <img style="border: 1px solid grey;" width="210px" height="310px" src="../img/int_amazon.png">
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_amazon.png">
 </p>
 
 
@@ -36,8 +36,8 @@ Zafira provides functionality for sending test results, widgets and dashboards v
 * Specify valid Gmail credentials 
 * Press save and refresh the page, green light indicates correct integration status
 
-<p align="center">
-  <img style="border: 1px solid grey;"  width="210px" height="310px" src="../img/int_gmail.png">
+<p>
+  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_gmail.png">
 </p>
 
 #### Jenkins
@@ -47,20 +47,20 @@ Jenkins integration is used for triggering new builds and collecting test jobs c
 * Paste Jenkins URL, username and token to Zafira
 * Press save and refresh the page, green light indicates correct integration status
 
-<p align="center">
-  <img style="border: 1px solid grey;"  width="420px" height="620px" src="../img/int_jenkins.png">
+<p>
+  <img style="border: 1px solid grey;"  width="280px" height="420px" src="../img/int_jenkins.png">
 </p>
 
 #### Jira
 Jira integration allows to track known issues status for failed test cases. When you assign known issue to 
 
 
-<p align="center">
-  <img style="border: 1px solid grey;" width="420px" height="620px" src="../img/int_jira.png">
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_jira.png">
 </p>
 
 #### LDAP
 
-<p align="center">
-  <img style="border: 1px solid grey;" width="420px" height="620px" src="../img/int_ldap.png">
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_ldap.png">
 </p>
