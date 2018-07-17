@@ -9,15 +9,15 @@ Zafira uses integration with Amazon S3 service for storage of user profile photo
 * Generate new access/secret keys
 * Navigate to **Username > Integrations** in Zafira top navigation menu
 
-<p align="center" width="420px" height="620px">
+<p align="center">
   <img src="../img/menu_profile.png">
 </p>
 
 * Turn on Amazon integration and provide access/secret keys and name of the bucket you created
 * Press save and refresh the page, green light indicates correct integration
 
-<p align="center" width="420px" height="620px">
-  <img src="../img/int_amazon.png">
+<p align="center">
+  <img style="border: 1px solid grey;" width="420px" height="620px" src="../img/int_amazon.png">
 </p>
 
 
@@ -30,24 +30,24 @@ Zafira provides functionality for sending test results, widgets and dashboards v
 * Press save and refresh the page, green light indicates correct integration
 
 <p align="center" width="420px" height="620px">
-  <img src="../img/int_gmail.png">
+  <img style="border: 1px solid grey;" src="../img/int_gmail.png">
 </p>
 
 #### Jenkins
 Jenkins integration is used for triggering new builds and collecting test jobs configuration during the startup. Also Zafira provides remote debug with Jenkins integration enabled.
 
 <p align="center" width="420px" height="620px">
-  <img src="../img/int_jenkins.png">
+  <img style="border: 1px solid grey;" src="../img/int_jenkins.png">
 </p>
 
 #### Jira
 
 <p align="center" width="420px" height="620px">
-  <img src="../img/int_jira.png">
+  <img style="border: 1px solid grey;" src="../img/int_jira.png">
 </p>
 
 #### LDAP
 
 <p align="center" width="420px" height="620px">
-  <img src="../img/int_ldap.png">
+  <img style="border: 1px solid grey;" src="../img/int_ldap.png">
 </p>
