@@ -85,7 +85,7 @@ html {
             z-index: 100; // should be highter than top header
             position: fixed;
             left: 0;
-            top: $header_height;
+            top: $header_height + 1px;
             float: left;
             width: 220px;
             height: 100%;

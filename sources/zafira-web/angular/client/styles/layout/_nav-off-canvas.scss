@@ -15,7 +15,7 @@
         #nav-container {
             display: block;
             position: fixed;
-            top: $header_height * 2;
+            top: $header_height * 2 + 1px;
             bottom: 0;
             float: none;
         }
