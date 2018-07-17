@@ -5,7 +5,7 @@ Zafira uses integration with Amazon S3 service for storage of user profile photo
 
 * Create new S3 bucket in region you prefer 
 * Create new IAM user with **Programmatic access**
-* Grant AmazonS3FullAccess for new user (read [detailed guide](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/))
+* Grant read/write permissions for new user (read [detailed guide](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/))
 * Generate new access/secret keys
 * Navigate to **Username > Integrations** in Zafira top navigation menu
 
