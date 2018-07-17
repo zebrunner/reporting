@@ -42,6 +42,7 @@ Zafira provides functionality for sending test results, widgets and dashboards v
 
 #### Jenkins
 Jenkins integration is used for triggering new builds and collecting test jobs configuration during the startup. Also Zafira provides remote debug with Jenkins integration enabled. For Jenkins integration follow the next steps:
+
 * Create user with READ,RUN access for jobs
 * Generate access token (read [instruction](https://support.cloudbees.com/hc/en-us/articles/115003090592-How-to-re-generate-my-Jenkins-user-token))
 * Paste Jenkins URL, username and token to Zafira
@@ -52,8 +53,11 @@ Jenkins integration is used for triggering new builds and collecting test jobs c
 </p>
 
 #### Jira
-Jira integration allows to track known issues status for failed test cases. When you assign known issue to 
+Jira integration allows to track known issues status for failed test cases. When you assign known issue to contstantly failing test cases you may specify appropriate Jira ticket. In Jira integrationg is inabled, Zafira will check current ticket status and track failure as known issus if ticket opened and as unknown if it is closed, so you will never loose regression bugs.
 
+* Paste Jira URL, username and password to Zafira
+* List set of statuses that indicates that ticket is closed
+* Press save and refresh the page, green light indicates correct integration status
 
 <p>
   <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_jira.png">
