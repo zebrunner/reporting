@@ -15,13 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.services.services.jmx.*;
-import com.qaprosoft.zafira.services.services.jmx.google.GoogleService;
-import com.qaprosoft.zafira.services.services.jmx.ldap.LDAPService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +29,16 @@ import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.jmx.HipchatService;
+import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.jmx.RabbitMQService;
+import com.qaprosoft.zafira.services.services.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.jmx.google.GoogleService;
+import com.qaprosoft.zafira.services.services.jmx.ldap.LDAPService;
 
 @Service
 public class SettingsService

@@ -15,15 +15,19 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
 
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
-import net.rcarz.jiraclient.Issue;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,12 +42,21 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestArtifact;
+import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
+import com.qaprosoft.zafira.services.services.jmx.JiraService;
 
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.*;
+import net.rcarz.jiraclient.Issue;
 
 @Service
 public class TestService

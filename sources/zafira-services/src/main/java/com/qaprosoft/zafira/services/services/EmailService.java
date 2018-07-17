@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
+import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -22,7 +24,6 @@ import java.util.function.Function;
 
 import javax.mail.internet.MimeMessage;
 
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -33,12 +34,11 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.emails.IEmailMessage;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @Service
 public class EmailService
