@@ -422,7 +422,7 @@ public class TestRunService
 					}
 				}
 			}
-			testRun = markAsReviewed(testRun.getId(), abortCause);
+			addComment(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
 			calculateTestRunResult(testRun.getId(), true);
