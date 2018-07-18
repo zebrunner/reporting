@@ -435,12 +435,12 @@ public class TestRunService
 	{
 		addComment(id, comment);
 		TestRun tr = getTestRunByIdFull(id);
-		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
-		updateStatistics(tr.getId(), action);
 		if(!"undefined failure".equalsIgnoreCase(comment)){
 			tr.setReviewed(true);
 		}
 		tr = updateTestRun(tr);
+		TestRunStatistics.Action action = tr.isReviewed() ? TestRunStatistics.Action.MARK_AS_REVIEWED : TestRunStatistics.Action.MARK_AS_NOT_REVIEWED;
+		updateStatistics(tr.getId(), action);
 		return tr;
 	}
 
