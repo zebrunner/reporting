@@ -64,7 +64,15 @@ Jira integration allows to track known issues status for failed test cases. When
 </p>
 
 #### LDAP
+Zafira supports LDAP authentication, in this case on first success login via LDAP Zafira will register user details in own database. Admin will be able to manage user permissions for every new user came via LDAP. 
+
+* Use configuration below as a reference for your LDAP connection setup
+* Press save and refresh the page, green light indicates correct integration status
 
 <p>
   <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_ldap.png">
 </p>
+
+
+#### SLACK
+Zafira is capable to post automation results into specific Slack channels for better visibility.
