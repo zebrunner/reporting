@@ -76,3 +76,17 @@ Zafira supports LDAP authentication, in this case on first success login via LDA
 
 #### SLACK
 Zafira is capable to post automation results into specific Slack channels for better visibility.
+If integration is set up right after test run is finished notification with run details will be sent into appropriate channel. Such  Slack notification contains base information on test run and also includes links to this run in Zafira and Jenkins.
+After user marks some run as reviewed and Slack integration is configured for executed Jenkins job user will be proposed to send to Slack notification about reviewed run.
+In order to setup Slack integration follow the next steps:
+
+* Generate Slack web hook url and add it as parameter SLACK_WEB_HOOK_URL into SLACK block at Zafira integrations page
+* For each Jenkins job you need integration for add parameters in Zafira using next pattern: **SLACK_NOTIF_CHANNEL_real_channel_name=JENKINS_JOB_1;JENKINS_JOB_2** where
+  * real_channel_name - name of Slack channel to post notifications to
+  * JENKINS_JOB_1 and JENKINS_JOB_2 - names of Jenkins jobs
+* You may add as many integration as you need. For each new Slack channel create new parameter in SLACK section in Zafira
+* Press save and refresh the page, green light indicates correct integration status
+
+<p>
+  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_slack.png">
+</p>
