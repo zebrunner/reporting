@@ -88,5 +88,5 @@ In order to setup Slack integration follow the next steps:
 * Press save and refresh the page, green light indicates correct integration status
 
 <p>
-  <img style="border: 1px solid grey;" width="280px" height="420px" src="../img/int_slack.png">
+  <img style="border: 1px solid grey;" width="574px" height="236px" src="../img/int_slack.png">
 </p>
