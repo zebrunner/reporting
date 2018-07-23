@@ -18,8 +18,9 @@ public class TestRunTabMenu extends AbstractUIObject
 {
 
 	private static final String SHOW_RUNS_BUTTON_TEXT = "Show latest runs";
+	private static final String CREATE_VIEW_BUTTON_TEXT = "Create view +";
 
-	@FindBy(xpath = ".//a[text() = 'Create view +']")
+	@FindBy(xpath = ".//a[text() = '" + CREATE_VIEW_BUTTON_TEXT + "']")
 	private WebElement createViewButton;
 
 	@FindBy(xpath = "//md-dialog")
@@ -33,8 +34,17 @@ public class TestRunTabMenu extends AbstractUIObject
 	public List<String> getTestRunsViews()
 	{
 		return context.findElements(By.tagName("a")).stream()
-				.filter(webElement -> ! webElement.getText().equals(SHOW_RUNS_BUTTON_TEXT))
+				.filter(webElement -> ! webElement.getText().equals(SHOW_RUNS_BUTTON_TEXT) && ! webElement.getText().equals(CREATE_VIEW_BUTTON_TEXT))
 				.map(WebElement::getText).collect(Collectors.toList());
+	}
+
+	public String getTestRunsViewsAsString() {
+		StringBuilder result = new StringBuilder();
+		for(String viewName : getTestRunsViews()) {
+			result.append(viewName);
+			result.append("; ");
+		}
+		return result.toString();
 	}
 
 	public WebElement getTestRunsViewByName(String name)
