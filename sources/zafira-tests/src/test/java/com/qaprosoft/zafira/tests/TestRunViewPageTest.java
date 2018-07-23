@@ -63,6 +63,8 @@ public class TestRunViewPageTest extends AbstractTest
 		createTestRunViewModalWindow.clearAllInputs();
 		createTestRunViewModalWindow.selectProject(PROJECT_NAME);
 		Assert.assertTrue(createTestRunViewModalWindow.hasDisabledAttribute(createTestRunViewModalWindow.getCreateButton()), "Create button is enabled");
+		createTestRunViewModalWindow.getNameInput().click();
+		pause(2);
 		createTestRunViewModalWindow.typeName(testRunViewName);
 		LOGGER.info("Typed name: " + testRunViewName + ", found " + createTestRunViewModalWindow.getWebElementValue(createTestRunViewModalWindow.getNameInput()));
 		pause(0.2);
