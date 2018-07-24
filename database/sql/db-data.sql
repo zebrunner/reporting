@@ -900,8 +900,8 @@ STARTED::date AS "CREATED_AT"
         SUM(FAILED) as "FAIL",
         SUM(SKIPPED) as "SKIP",
 	      SUM(ABORTED) as "ABORTED",
-  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="cron_rerun" class="cron_rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
-  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&upstream_job_id=''||UPSTREAM_JOB_ID||''&upstream_job_build_number=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" class="cron_rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="cron_rerun" class="cron_rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" class="cron_rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
     FROM NIGHTLY_VIEW
   WHERE OWNER_ID=''#{currentUserId}''
   GROUP BY "OWNER", "BUILD", "NAME", UPSTREAM_JOB_ID, UPSTREAM_JOB_URL
