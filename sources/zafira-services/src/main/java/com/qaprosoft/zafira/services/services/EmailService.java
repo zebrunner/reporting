@@ -25,6 +25,7 @@ import java.util.function.Function;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,11 @@ public class EmailService
 					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
 					msg.setSubject(message.getSubject());
 					msg.setTo(recipients);
-					msg.setFrom(emailTask.getJavaMailSenderImpl().getUsername());
+					if(! StringUtils.isBlank(emailTask.getFromAddress())) {
+						msg.setFrom(emailTask.getFromAddress(), emailTask.getJavaMailSenderImpl().getUsername());
+					} else {
+						msg.setFrom(emailTask.getJavaMailSenderImpl().getUsername());
+					}
 					msg.setText(text, true);
 					if(hasAttachments)
 					{

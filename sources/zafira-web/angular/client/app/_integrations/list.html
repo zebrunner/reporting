@@ -37,7 +37,7 @@
                             <div data-ng-if="tool.isEnabled" class="row col-lg-12" ng-repeat="setting in tool.settings">
                                 <div class="col-lg-11" style="padding: 0">
                                     <md-input-container class="md-block" style="margin-bottom: 0">
-                                        <label name="settingNameLabel">{{ setting.name }}</label>
+                                        <label name="settingNameLabel">{{ setting.name.split(tool.name + '_')[1] }}</label>
                                         <input name="settingName" type="text" ng-if="!setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled || setting.notEditable" >
                                         <input name="settingName" type="password" ng-if="setting.valueForEncrypting" ng-model="setting.value" ng-disabled="!tool.isEnabled || setting.notEditable" >
                                     </md-input-container>

@@ -45,6 +45,8 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 	@Autowired
 	private JavaMailSender mailSender;
 
+	private String fromAddress;
+
 	@Autowired
 	private SettingsService settingsService;
 
@@ -90,6 +92,9 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 					case EMAIL_USER:
 						getJavaMailSenderImpl().setUsername(setting.getValue());
 						break;
+					case EMAIL_FROM_ADDRESS:
+						this.fromAddress = setting.getValue();
+						break;
 					case EMAIL_PASSWORD:
 						getJavaMailSenderImpl().setPassword(setting.getValue());
 						break;
@@ -119,6 +124,11 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	@ManagedAttribute(description = "Get email server")
 	public JavaMailSenderImpl getJavaMailSenderImpl() {
-		return (JavaMailSenderImpl)this.mailSender;
+		return (JavaMailSenderImpl) this.mailSender;
+	}
+
+	public String getFromAddress()
+	{
+		return fromAddress;
 	}
 }
