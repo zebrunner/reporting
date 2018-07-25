@@ -4,62 +4,70 @@ services:
   db:
     image: qaprosoft/postgres:9.6
     volumes:
-     - ./database/:/docker-entrypoint-initdb.d
+      - ./database/:/docker-entrypoint-initdb.d
     ports:
-     - 5433:5432
+      - 5433:5432
     env_file:
-     - integrations.env
+      - integrations.env
     environment:
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     restart: always
   rabbitmq:
     image: qaprosoft/rabbitmq:latest
     ports:
-     - 15672:15672
-     - 15674:15674
-     - 5672:5672
+      - 15672:15672
+      - 15674:15674
+      - 5672:5672
     volumes:
-     - ./config/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./config/definitions.json:/etc/rabbitmq/definitions.json:ro
     environment:
-     - RABBITMQ_DEFAULT_USER=qpsdemo
-     - RABBITMQ_DEFAULT_PASS=qpsdemo
+      - RABBITMQ_DEFAULT_USER=qpsdemo
+      - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
   screenshoter:
     image: selenium/standalone-chrome:latest
     volumes:
-    - /dev/shm:/dev/shm
+      - /dev/shm:/dev/shm
     restart: always
-  elk:
-    image: sebp/elk:630
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
     volumes:
-     - ./config/logstash.conf:/etc/logstash/conf.d/logstash.conf
-     - ./config/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
-     - ./esdata:/var/lib/elasticsearch
+      - ./esdata:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    environment:
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
-     - 5601:5601
-     - 9200:9200
-     - 5044:5044
-    depends_on:
-     - "rabbitmq"
+      - 9200:9200
     restart: always
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.3.1
+    volumes:
+      - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    restart: always
+    depends_on:
+      - elasticsearch
   zafira:
     image: qaprosoft/zafira:latest
     ports:
-     - 9000:8080
+      - 9000:8080
     env_file:
-     - integrations.env
+      - integrations.env
     environment:
-     - ZAFIRA_URL=http://ci.qaprosoft.com:9000
-     - ZAFIRA_USER=qpsdemo
-     - ZAFIRA_PASS=qpsdemo
-     - ZAFIRA_JDBC_URL=jdbc:postgresql://db:5432/postgres
-     - ZAFIRA_JDBC_USER=postgres
-     - ZAFIRA_JDBC_PASS=postgres
-     - ZAFIRA_SELENIUM_URL=http://screenshoter:4444/wd/hub
-     - ZAFIRA_ELASTICSEARCH_URL=http://localhost:9200
+      - ZAFIRA_URL=http://ci.qaprosoft.com:9000
+      - ZAFIRA_USER=qpsdemo
+      - ZAFIRA_PASS=qpsdemo
+      - ZAFIRA_JDBC_URL=jdbc:postgresql://db:5432/postgres
+      - ZAFIRA_JDBC_USER=postgres
+      - ZAFIRA_JDBC_PASS=postgres
+      - ZAFIRA_SELENIUM_URL=http://screenshoter:4444/wd/hub
+      - ZAFIRA_ELASTICSEARCH_URL=http://localhost:9200
     depends_on:
-     - "db"
-     - "rabbitmq"
-     - "screenshoter"
+      - "db"
+      - "rabbitmq"
+      - "screenshoter"
     restart: always
