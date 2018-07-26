@@ -49,5 +49,5 @@ In **Change password** area user can update current password. Password must cont
 In **Access token** area token required for Zafira integration can be generated and copied .
 
 <p align="center">
-  <img src="../img/my_profile_access_tocken.png">
+  <img src="../img/my_profile_access_token.png">
 </p>
