@@ -32,7 +32,11 @@
     "gridstack-angular": "^0.5.0",
     "md-date-range-picker": "^0.7.2",
     "ng-img-crop": "ngImgCrop#^0.3.2",
-    "elasticsearch": "^15.0.0"
+    "elasticsearch": "^15.0.0",
+    "angular-super-gallery": "^1.4.1",
+    "angular-touch": "^1.7.2",
+    "bootstrap": "^3.3.7",
+    "screenfull": "^3.3.2"
   },
   "devDependencies": {
     "bootstrap-sass-official": "~3.3.0"

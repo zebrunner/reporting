@@ -1936,11 +1936,7 @@ table.table-loupe {
     tbody {
         tr {
             &.table-loupe-target {
-                //background: radial-gradient(#f9f9f9, #f9f9f9, #d2d2d2) !important;
                 td {
-                    //padding-left: 0 !important;
-                    //padding-right: 0 !important;
-                    //font-size: 18px;
                     font-weight: bold;
                 }
             }
@@ -1963,5 +1959,59 @@ td.settings-cell {
             margin: 0;
             float: right;
         }
+    }
+}
+
+.gallery-modal {
+    &.full-modal {
+        height: 100vh;
+        .asg-thumbnail {
+            display: none;
+        }
+        .asg-modal .images {
+            height: 100% !important;
+        }
+        .image-log {
+            bottom: 0;
+            line-height: 2;
+        }
+    }
+    .caption.top {
+        display: none;
+    }
+    .image-log {
+        position: absolute;
+        width: 100%;
+        bottom: 64px;
+        z-index: 100000;
+        color: white;
+        text-align: center;
+        background-color: black;
+        opacity: 0.65;
+        font-size: 20px;
+    }
+
+    .asg-thumbnail {
+        z-index: 100000 !important;
+        position: absolute;
+        bottom: 0;
+        overflow: auto;
+        width: 100%;
+    }
+
+    span.buttons {
+        width: 100%;
+        text-align: center;
+        & > span:nth-child(2), & > span:nth-child(3) {
+            float: right;
+        }
+    }
+
+    .asg-modal .images {
+        height: 85%;
+    }
+
+    .asg-image {
+        height: 75vh !important;
     }
 }

@@ -77,8 +77,8 @@
                                         <tbody id="logs">
                                             <tr ng-dblclick="getVideoState(log);" ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-click="selectLogRow($event, $index);" ng-repeat="log in logs">
                                                 <td>
-                                                    <i ng-if="false" class="material-icons">insert_photo</i>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
+                                                    <div ng-if="log.blobLog"><img ng-click="showGalleryDialog($event, log.blobLog);" style="max-width: 66%;" ng-src="data:image/png;base64,{{log.blobLog.blob}}" alt="image"/></div>
                                                 </td>
                                                 <td>{{ log.timestamp | date: 'HH:mm:ss'}}</td>
                                                 <td>[{{ log.threadName }}] [{{ log.level}}]
