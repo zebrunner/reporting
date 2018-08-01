@@ -101,10 +101,11 @@ public class JSONLayout extends Layout
 	 */
 	protected void writeBasic(JSONObject json, LoggingEvent event) throws JSONException
 	{
+		boolean isImageLog = ZafiraLogAppender.isImageLog(event);
 		json.put("threadName", event.getThreadName());
 		json.put("level", event.getLevel().toString());
 		json.put("timestamp", System.currentTimeMillis());
-		json.put("message", event.getMessage());
+		json.put(isImageLog ? "blob" : "message", isImageLog ? ZafiraLogAppender.getBase64String(event) : event.getMessage());
 		json.put("logger", event.getLoggerName());
 	}
 
