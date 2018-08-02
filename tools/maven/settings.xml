@@ -20,6 +20,9 @@
             <zafira.admin.password/>
             
             <zafira.elasticsearch.url></zafira.elasticsearch.url>
+            
+            <zafira.redis.host></zafira.redis.host>
+            <zafira.redis.port></zafira.redis.port>
 
             <zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
             <zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>
