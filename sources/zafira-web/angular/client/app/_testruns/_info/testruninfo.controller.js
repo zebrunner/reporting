@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$mdDialog', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $mdDialog, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -45,7 +45,9 @@
                     $scope.selectedDriver = 0;
                     initRecords(test);
                     closeAll();
-                    tryToGetLogsFromElasticsearch();
+                    tryToGetLogsFromElasticsearch().then(function (rs) {
+
+                    });
                     break;
                 default:
                     break;
@@ -61,7 +63,7 @@
 
         function getLogsFromElasticsearch(page, size) {
             return $q(function (resolve, reject) {
-                ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id, page, size, $scope.test.startTime).then(function (rs) {
+                ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id + "*", page, size, $scope.test.startTime).then(function (rs) {
                     resolve(rs.map(function (r) {
                         return r._source;
                     }));
@@ -70,27 +72,46 @@
         };
 
         function tryToGetLogsFromElasticsearch() {
-            $scope.logs = [];
-            var page = 1;
-            var size = 5;
-            ElasticsearchService.count($scope.testRun.ciRunId + '_' + $scope.test.id, $scope.test.startTime).then(function (count) {
-                collectElasticsearchLogs(page, size, count);
+            return $q(function (resolve, reject) {
+                $scope.logs = [];
+                var page = 1;
+                var size = 5;
+                ElasticsearchService.count($scope.testRun.ciRunId + '_' + $scope.test.id + "*", $scope.test.startTime).then(function (count) {
+                    collectElasticsearchLogs(page, size, count, resolve);
+                });
             });
         };
 
-        function collectElasticsearchLogs(page, size, count) {
+        function collectElasticsearchLogs(page, size, count, resolveFunc) {
             getLogsFromElasticsearch(page, size).then(function (hits) {
-                $scope.logs = $scope.logs.concat(hits);
+                hits.forEach(function (hit) {
+                    if(! hit.blob) {
+                        $scope.logs.push(hit);
+                    } else {
+                        $scope.logs[$scope.logs.length - 1].blobLog = hit;
+                    }
+                });
                 if(page * size <= count) {
                     page ++;
-                    collectElasticsearchLogs(page, size, count);
+                    collectElasticsearchLogs(page, size, count, resolveFunc);
                 } else {
+                    collectTrumbs($scope.logs);
                     $scope.elasticsearchDataLoaded = true;
+                    resolveFunc.call(this, true);
                     var hash = $location.hash();
                     if(hash) {
                         $anchorScroll();
                     }
                 }
+            });
+        };
+
+        function collectTrumbs(logs) {
+            $scope.trumbs = logs.filter(function (log) {
+                return log.blobLog;
+            }).map(function (log) {
+                log.blobLog.message = log.message;
+                return log.blobLog;
             });
         };
 
@@ -350,6 +371,26 @@
             return 0;
         }
 
+        $scope.showGalleryDialog = function (event, log) {
+            $mdDialog.show({
+                controller: GalleryController,
+                templateUrl: 'app/_testruns/_info/gallery_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+                    log: log,
+                    ciRunId: $scope.testRun.ciRunId,
+                    test: $scope.test,
+                    trumbs: $scope.trumbs
+                }
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+
         /**************** Websockets **************/
         var testsWebsocketName = 'tests';
 
@@ -397,7 +438,11 @@
                     log.driver = driversQueue.pop();
                     driversQueue = [];
                 }
-                $scope.logs.push(log);
+                if(! log.blob) {
+                    $scope.logs.push(log);
+                } else {
+                    $scope.logs[$scope.logs.length - 1].blobLog = log;
+                }
             });
         };
 
@@ -518,6 +563,164 @@
                     $scope.MODE.initFunc.call(this, $scope.test);
                 });
             });
+        })();
+    }
+
+    function GalleryController($scope, $rootScope, $mdDialog, $location, $q, ElasticsearchService, log, ciRunId, test, trumbs) {
+
+        $scope.thumbs = trumbs;
+
+        var currentHash = $location.hash();
+        var index = trumbs.indexOfField('correlation-id', log['correlation-id']);
+
+        $scope.showModal = true;
+        $scope.galleryOptions = {
+            hashUrl: true,
+            baseUrl: "data:image/png;base64,",
+            fields: {
+                source: {
+                        modal: 'link',
+                        image: 'medium',
+                        panel: 'thumbnail'
+                },
+                description: 'description'
+            },
+            loadingImage: null,
+            theme: 'darkblue',
+            thumbnail: {
+                height: 60,
+                index: true
+            },
+            modal: {
+                header: {
+                    enabled: true,
+                    buttons: ['', 'index', 'prevNo', 'nextNo', 'pinNo', 'sizeNo', 'transitionNo', 'thumbsNo', 'fullscreen', 'helpNo', 'closeNo']
+                },
+                thumbnail: {
+                    height: 77,
+                    index: true
+                },
+                help: false,
+                size: 'contain',
+                transition: 'no'
+            },
+            panel: {
+                hover: {
+                    select: true
+                },
+                item: {
+                    class: 'col-md-4 thumbnail',
+                    index: true
+                }
+            },
+            image: {
+                size: 'contain',
+                transition: 'no',
+                height: 320,
+                arrows: {
+                    preload: true
+                }
+            }
+        };
+
+        $scope.galleryItems = [];
+
+        function addGalleryItem(thumbLog, index) {
+            var log = $scope.galleryItems[index];
+            thumbLog['correlation-id'] = ! thumbLog['correlation-id'] ? log['correlation-id'] : thumbLog['correlation-id'];
+            if(index != -1) {
+                    $scope.viewImage(thumbLog).then(function (rs) {
+                        $scope.galleryItems.splice(index, 1, {
+                            link: $scope.image,
+                            thumbnail: thumbLog.blob,
+                            medium: $scope.image
+                        });
+                        log.isFilled = true;
+                        $rootScope.$broadcast('ASG-gallery-edit', {
+                            id: 'screenshot_gallery',
+                            refresh: true,
+                            options: $scope.galleryOptions
+                        });
+                });
+            }
+        };
+
+        $rootScope.$on('ASG-change-image-screenshot_gallery', function (event, data) {
+            var index = data.index;
+            var item = $scope.galleryItems[index];
+            $scope.currentLog = $scope.thumbs[index].message;
+            if(data.file.description && item && ! item.isFilled) {
+                addGalleryItem({'correlation-id': data.file.description}, index);
+            }
+        });
+
+        $scope.$watch(function () {
+            return screenfull.isFullscreen;
+        }, function (newVal, oldVal) {
+            var modal = angular.element('.gallery-modal');
+            if(newVal) {
+                modal.addClass('full-modal');
+            } else {
+                modal.removeClass('full-modal');
+            }
+        });
+
+        function initThumbs() {
+            $scope.thumbs.forEach(function (thumb) {
+                $scope.galleryItems.push({link: thumb.blob, thumbnail: thumb.blob, medium: thumb.blob, description: thumb['correlation-id'], isFilled: false});
+            });
+        };
+
+        function getLogsFromResponse(rs) {
+            return rs.map(function (r) {
+                return r._source;
+            });
+        };
+
+        function getBase64String(index) {
+            return $q(function (resolve, reject) {
+                ElasticsearchService.isExists(index).then(function (isExists) {
+                    if(isExists) {
+                        ElasticsearchService.search(index).then(function (indexes) {
+                            resolve(/*'data:image/png;base64,' + */getLogsFromResponse(indexes)[0].blob);
+                        });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        };
+
+        $scope.viewImage = function (log) {
+            return $q(function (resolve, reject) {
+                var index = buildIndex(log);
+                $scope.isLoaded = false;
+                getBase64String(index).then(function (base64String) {
+                    $scope.isLoaded = true;
+                    $scope.image = base64String;
+                    resolve(true);
+                });
+            });
+        };
+
+        function buildIndex(log) {
+            return 'blob_' + ciRunId + '_' + test.id + "_" + log['correlation-id'].split(ciRunId + '_' + test.id + '_')[1];
+        };
+
+        $scope.$on('$destroy', function () {
+            $location.hash(currentHash);
+        });
+
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        (function initController() {
+            $location.hash('asg-screenshot_gallery-' + index);
+            initThumbs();
         })();
     }
 

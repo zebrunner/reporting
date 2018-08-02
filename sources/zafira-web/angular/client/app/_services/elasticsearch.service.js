@@ -14,6 +14,7 @@
         service.ping = ping;
         service.search = search;
         service.count = count;
+        service.isExists = isExists;
 
         return service;
 
@@ -52,6 +53,11 @@
                                 gte : fromTime
                             }
                         }
+                    };
+                    break;
+                case 'EXISTS':
+                    body = {
+                        index: index
                     };
                     break;
                 default:
@@ -96,6 +102,22 @@
                         });
                     });
                 }, index, null, null, fromTime, query);
+            });
+        };
+
+        function isExists(index) {
+            return $q(function (resolve, reject) {
+                doAction('EXISTS', function (params) {
+                    getInstance().then(function (esInstance) {
+                        esInstance.indices.exists(params.body, function (err, res) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(res);
+                            }
+                        });
+                    });
+                }, index, null, null, null, null);
             });
         };
 

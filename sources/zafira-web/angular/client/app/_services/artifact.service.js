@@ -52,7 +52,7 @@
                             UtilService.websocketConnected(wsName);
 
                             testLogsStomp.subscribe("/exchange/logs/" + testRun.ciRunId, function (data) {
-                                if((test && (testRun.ciRunId + "_" + test.id) == data.headers['correlation-id'])
+                                if((test && (testRun.ciRunId + "_" + test.id) == data.headers['correlation-id'] || (data.headers['correlation-id'].includes(testRun.ciRunId + "_" + test.id + '_') && data.headers['correlation-id'].startsWith(testRun.ciRunId)))
                                     || (! test && data.headers['correlation-id'].startsWith(testRun.ciRunId))) {
                                     var log = JSON.parse(data.body.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
                                     func.call(this, log);
