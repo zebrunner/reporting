@@ -54,8 +54,12 @@ body > div {
 
 #main-fab {
     position: fixed;
-    right: 90px;
-    bottom: 70px;
+    @media (min-width: $screen-sm) {
+        right: 90px;
+        bottom: 70px;
+    }
+    right: 9px;
+    bottom: 25px;
 }
 
 .result {
