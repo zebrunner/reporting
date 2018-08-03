@@ -547,6 +547,7 @@ section.zaf-light .article-title {
 
 .section-header {
   padding-left: 20px;
+  white-space: nowrap;
 }
 
 .title-container{
@@ -1365,15 +1366,16 @@ md-chip md-chip-template.bg-primary {
     height: 32px;
 }
 
+.page md-card{
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
 .search-filter-body{
   width: 100%;
 
     & md-card, & form{
     width: 100%;
-    }
-    & md-card{
-      margin-top: 0;
-      margin-bottom: 8px;
     }
     & .panel-body{
       padding: 16px;
@@ -1927,6 +1929,11 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 
 .toast-text-padding {
     padding: 8px !important;
+}
+
+.control-buttons {
+    width: 100%;
+    margin: auto;
 }
 
 
