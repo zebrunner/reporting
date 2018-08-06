@@ -1,16 +1,21 @@
 <div class="page page-profile" ng-controller="UserListController">
 
     <div class="row ui-section">
-        <div class="col-lg-12">
-        	<h2 id="pageTitle" class="section-header">Users
-        		<small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
-        		<button id="search" class="md-button md-ink-ripple pull-right" type="button" ng-click="search();">
-	                   <b>Search</b>
-	            </button>
-        		<button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
-	                   <b>Clear</b>
-	            </button>
-        	</h2>
+        <div layout="row" layout-xs="column" class="col-lg-12">
+            <div>
+                <h2 id="pageTitle" class="section-header">
+                    Users
+                    <small id="itemsCount" data-ng-if="sr">({{sr.totalResults}})</small>
+                </h2>
+            </div>
+            <div class="control-buttons">
+                <button id="search" class="md-button md-primary md-ink-ripple pull-right" type="button" ng-click="search();">
+                    <b>Search</b>
+                </button>
+                <button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+                    <b>Clear</b>
+                </button>
+            </div>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_USERS', 'MODIFY_USER_GROUPS']">
             <md-fab-trigger>

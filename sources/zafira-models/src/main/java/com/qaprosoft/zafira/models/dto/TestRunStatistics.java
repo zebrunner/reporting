@@ -15,8 +15,12 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-public class TestRunStatistics
+import java.io.Serializable;
+
+public class TestRunStatistics implements Serializable
 {
+	private static final long serialVersionUID = -1915862891525912222L;
+
 	public enum Action
 	{
 		MARK_AS_KNOWN_ISSUE, REMOVE_KNOWN_ISSUE,  MARK_AS_BLOCKER, REMOVE_BLOCKER, MARK_AS_REVIEWED, MARK_AS_NOT_REVIEWED;

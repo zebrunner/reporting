@@ -57,7 +57,7 @@
                 <div id="filter" class="md-row">
                     <div ng-class="{'disable-layer': ! searchFormIsEmpty}"></div>
                     <div class="panel-body no-padding-t">
-                        <div layout="row" ng-init="filterBlockExpand = true;" ng-show="filterBlockExpand">
+                        <div layout="row" layout-xs="column" ng-init="filterBlockExpand = true;" ng-show="filterBlockExpand">
                             <div class="manage-chip" ng-init="addFilterExpanded = false;" ng-click="clearAndOpenFilterBlock(true); addFilterExpanded = true">
                                 <md-chips class="filter-chip">
                                     <md-chip>

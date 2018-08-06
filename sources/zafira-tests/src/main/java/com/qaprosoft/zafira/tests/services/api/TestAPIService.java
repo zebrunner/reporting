@@ -28,7 +28,7 @@ public class TestAPIService extends AbstractAPIService
 		List<TestType> testTypes = new ArrayList<>();
 		if (testCount > 0)
 		{
-			IntStream.iterate(0, i -> i++).limit(testCount).forEach(index -> {
+			IntStream.range(0, testCount).forEach(index -> {
 				TestTypeBuilder testTypeBuilder = new TestTypeBuilder(testRunTypeBuilder, this.testType);
 				testTypes.add(createTest(testTypeBuilder, finishStatus, failedMessageLenght));
 			});
