@@ -119,11 +119,14 @@ body > div {
   font-size: 12px !important;
 }
 
-.searchable.select {
+md-input-container.searchable.select {
     margin-top: 0px;
     margin-left: 8px;
     padding-top: 0px;
     padding-bottom: 6px;
+}
+
+md-input-container.searchable.select {
     font-size: 12px;
     width: 144px;
 }
@@ -1371,6 +1374,11 @@ md-chip md-chip-template.bg-primary {
     margin-bottom: 8px;
 }
 
+#search .form-control {
+    height: 36px;
+    border-color: $custom-gray !important;
+}
+
 .search-filter-body{
   width: 100%;
 
@@ -1387,11 +1395,6 @@ md-chip md-chip-template.bg-primary {
         margin-top: 0;
         margin-bottom: 16px;
       }
-    }
-
-    & .form-control {
-        height: 36px;
-        border-color: $custom-gray !important;
     }
 
     & md-select {
@@ -1546,7 +1549,7 @@ div[aria-selected='true'] span.ng-binding {
       }
 }
 
-#search .searchable.select, .date-picker-container:not(.no-padding){
+#search md-input-container.searchable.select, .date-picker-container:not(.no-padding){
   margin-left: 8px !important;
 }
 
@@ -1588,9 +1591,12 @@ div[aria-selected='true'] span.ng-binding {
     padding: 0 !important;
 }
 
-#search-container .form-control{
-    padding-right: 236px;
+#search .form-control:not(.inner-input), .block-control {
     margin-right: 8px;
+}
+
+#search-container .form-control {
+    padding-right: 236px;
 }
 
 .quadro-btn {
