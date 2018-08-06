@@ -1,3 +1,4 @@
+set schema 'zafira';
 select check_version(88);
 
 UPDATE zafira.widgets set sql =
