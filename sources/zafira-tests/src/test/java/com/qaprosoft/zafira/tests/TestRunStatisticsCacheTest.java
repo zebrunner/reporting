@@ -86,8 +86,6 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 	@BeforeMethod
 	public void setup()
 	{
-		LOGGER.info("Test was started with count type: " + countType + " and run type: " + runType);
-
 		Assert.assertNotNull(getCache(), "Test run statistics cache does not exist");
 		Object[] testRunIds = cacheableService.getStatistics().entrySet().stream().map(Map.Entry::getKey).toArray();
 		this.testRunIds = this.countType.equals("ONE") ? new Object[] { testRunIds[RandomUtils.nextInt(0, testRunIds.length)] } : testRunIds;
@@ -96,6 +94,8 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 	@Test(groups = {"acceptance", "cache"}, dataProvider = "getStatisticsMethods")
 	public void verifyTestRunStatisticsCacheUpdateTest(Function<Object[], TestRunStatistics> updateTestRunStatisticsFunction, Class[] paramClasses)
 	{
+
+		LOGGER.info("Test was started with count type: " + countType + " and run type: " + runType);
 		int threadCount = RandomUtils.nextInt(2, 15);
 		LOGGER.info("Update test run statistics function with updateTestRunStatistics(" + getMethodPlaceholder(paramClasses) + ")");
 		LOGGER.info("Available values of test run id are: " + Arrays.toString(testRunIds));

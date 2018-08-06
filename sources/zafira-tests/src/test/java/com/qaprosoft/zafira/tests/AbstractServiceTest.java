@@ -8,9 +8,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
-import org.springframework.cache.support.SimpleCacheManager;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
 
@@ -25,7 +27,7 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 	protected static final Logger LOGGER = Logger.getLogger(AbstractServiceTest.class);
 
 	@Autowired
-	private SimpleCacheManager cacheManager;
+	private CacheManager cacheManager;
 
 	private CacheType cacheType;
 
@@ -82,6 +84,13 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 		return clazz.cast(cache.get(key, clazz));
 	}
 
+	/*@Cacheable(value = "testRunStatistics", key = "#testRunId")
+	@Transactional(readOnly = true)
+	public TestRunStatistics getCachedValue(Long testRunId)
+	{
+		return null;
+	}*/
+
 	protected Object getRandomClassValue(Class<?> clazz, Object... availableValues)
 	{
 		Object result = null;
@@ -102,11 +111,6 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 		return result;
 	}
 
-	public SimpleCacheManager getCacheManager()
-	{
-		return cacheManager;
-	}
-
 	public Cache getCache()
 	{
 		return cache;
@@ -120,5 +124,17 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 	public CacheType getCacheType()
 	{
 		return cacheType;
+	}
+
+	public void pause(double timeout)
+	{
+		try
+		{
+			LOGGER.info("Wait for a " + timeout + " seconds");
+			Thread.sleep(new Double(timeout * 1000).intValue());
+		} catch (InterruptedException e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 }
