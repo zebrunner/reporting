@@ -125,7 +125,8 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 	{
 		IntStream run = parallel ? IntStream.range(0, testRunStatistics.length).parallel() : IntStream.range(0, testRunStatistics.length);
 		try {
-			run.forEach(i -> runUpdateStatisticsRunnable(i, testRunStatistics[i]));
+			//run.forEach(i -> runUpdateStatisticsRunnable(i, testRunStatistics[i]));
+			runUpdateStatisticsRunnable(0, testRunStatistics[testRunStatistics.length - 1]);
 		}
 		finally {
 			run.close();
