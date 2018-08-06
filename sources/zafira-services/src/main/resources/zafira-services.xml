@@ -150,6 +150,16 @@
 
 	<bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
 		<constructor-arg name="redisOperations" ref="redisTemplate"/>
+		<property name="cacheNames">
+			<list>
+				<value>projects</value>
+				<value>users</value>
+				<value>testCases</value>
+				<value>environments</value>
+				<value>testRunStatistics</value>
+				<value>groups</value>
+			</list>
+		</property>
 	</bean>
 
 	<bean id="amazonConfig" class="com.amazonaws.ClientConfiguration">
