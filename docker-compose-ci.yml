@@ -25,6 +25,11 @@ services:
       - RABBITMQ_DEFAULT_USER=qpsdemo
       - RABBITMQ_DEFAULT_PASS=qpsdemo
     restart: always
+  redis:
+    image: redis:4.0.11
+    ports:
+      - 6379:6379
+    restart: always
   screenshoter:
     image: selenium/standalone-chrome:latest
     volumes:
@@ -66,8 +71,11 @@ services:
       - ZAFIRA_JDBC_PASS=postgres
       - ZAFIRA_SELENIUM_URL=http://screenshoter:4444/wd/hub
       - ZAFIRA_ELASTICSEARCH_URL=http://localhost:9200
+      - ZAFIRA_REDIS_HOST=redis
+      - ZAFIRA_REDIS_PORT=6379
     depends_on:
       - "db"
       - "rabbitmq"
+      - "redis"
       - "screenshoter"
     restart: always

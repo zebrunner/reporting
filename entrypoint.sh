@@ -56,5 +56,8 @@ echo zafira.ldap.manager.user=$ZAFIRA_LDAP_USER >> $CATALINA_HOME/conf/catalina.
 echo zafira.ldap.manager.password=$ZAFIRA_LDAP_PASSWORD >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.selenium.url=$ZAFIRA_SELENIUM_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.elasticsearch.url=$ZAFIRA_ELASTICSEARCH_URL >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.redis.host=$ZAFIRA_REDIS_HOST >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.redis.port=$ZAFIRA_REDIS_PORT >> $CATALINA_HOME/conf/catalina.properties
+
 
 catalina.sh run
