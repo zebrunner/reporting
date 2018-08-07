@@ -43,7 +43,7 @@ In **Preferences** area Zafira system settings are available:
 In **Change password** area user can update current password. Password must contain not less than 6 characters.
 
 <p align="center">
-  <img src="../img/my_profile_change_photo.png">
+  <img src="../img/my_profile_change_password.png">
 </p>
 
 In **Access token** area token required for Zafira integration can be generated and copied .
