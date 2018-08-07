@@ -289,7 +289,7 @@
 						   AND TR.STATUS = #{status}
 						]]>
 					</if>
-					<if test="null == status">
+					<if test="null == status and null == id">
 						<![CDATA[
 						   AND TR.STATUS <> 'QUEUED'
 						]]>
