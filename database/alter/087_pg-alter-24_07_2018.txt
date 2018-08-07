@@ -1,3 +1,4 @@
+set schema 'zafira';
 select check_version(87);
 
 INSERT INTO zafira.SETTINGS (NAME, VALUE, TOOL) VALUES
