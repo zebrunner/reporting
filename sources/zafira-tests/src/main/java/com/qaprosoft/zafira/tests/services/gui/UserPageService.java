@@ -88,6 +88,11 @@ public class UserPageService extends AbstractPageService
 		return userPage;
 	}
 
+	public UserPage search(long id)
+	{
+		return search(String.valueOf(id), "", "", "");
+	}
+
 	public UserPage clearSearchForm()
 	{
 		userPage.getUserSearchBlock().clickClearButton();

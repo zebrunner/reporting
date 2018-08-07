@@ -119,8 +119,9 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getTestRunTable().getTestRunTableRows().size(), 1, "Invalid page was opened");
 		String[] urlSplit = driver.getCurrentUrl().split("/");
-		Assert.assertEquals(urlSplit[urlSplit.length - 1], String.valueOf(testRunViewTypes.get(0).getTestRunType().getId()), "Invalid test run was opened. "
-				+ "Current url: " + driver.getCurrentUrl() + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
+		String testRunId = String.valueOf(testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId());
+		Assert.assertEquals(urlSplit[urlSplit.length - 1], testRunId, "Invalid test run was opened. "
+				+ "Current url: " + driver.getCurrentUrl() + ", but test run id: " + testRunId);
 	}
 
 	@Test(groups = {"acceptance", "testRun"})
@@ -730,7 +731,8 @@ public class TestRunPageTest extends AbstractTest
 	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
-		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
+		LOGGER.info("Current count is " + currentCount);
+		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 10,
 				2, 2, 0, 2, 2, 101);
 	}
 
