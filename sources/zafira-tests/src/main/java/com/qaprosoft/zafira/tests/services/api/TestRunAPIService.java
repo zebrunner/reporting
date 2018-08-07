@@ -67,6 +67,7 @@ public class TestRunAPIService extends AbstractAPIService
 		List<TestRunViewType> result = new ArrayList<>();
 		IntStream.range(0, count).forEach(index -> {
 			result.add(createTestRun(new TestRunTypeBuilder(), passedCount, failedCount, inProgressCount, skippedCount, abortedCount, failedMessageLength));
+			LOGGER.info("Test run id is " + result.get(index).getTestRunType().getId());
 		});
 		return result;
 	}
