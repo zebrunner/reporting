@@ -6,7 +6,7 @@ Navigate to **Username > My profile** in top navigation menu to customize your Z
   <img src="../img/my_profile_menu.png">
 </p>
 
-On hover on round area near your first name settings icon appears, click it and upload or change existing picture of your profile.
+On hover on round area near your first name 'settings' icon appears, click it and change existing picture of your profile or upload a new one.
 
 <p align="center">
   <img src="../img/my_profile_change_photo.png">
