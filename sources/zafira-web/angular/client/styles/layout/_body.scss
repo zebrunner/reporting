@@ -1973,56 +1973,50 @@ td.settings-cell {
     }
 }
 
+@keyframes showLog {
+    from {height: 20px}
+    to {height: auto}
+}
+@keyframes hideLog {
+    from {height: auto}
+    to {height: 20px}
+}
+
 .gallery-modal {
-    &.full-modal {
-        height: 100vh;
-        .asg-thumbnail {
-            display: none;
-        }
-        .asg-modal .images {
-            height: 100% !important;
-        }
-        .image-log {
-            bottom: 0;
-            line-height: 2;
+    max-height: 100vh !important;
+    max-width: 100vw !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    box-shadow: none;
+    .gallery-container {
+        &_gallery-image {
+            max-height: 100vh;
+            max-width: 100vw;
+            &_log {
+                &_show {
+                    animation: showLog 200ms linear forwards alternate;
+                }
+                animation: hideLog 200ms linear forwards alternate;
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+               //min-height: 45px;
+                margin: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                height: auto;
+                line-height: 20px;
+            }
         }
     }
-    .caption.top {
-        display: none;
-    }
-    .image-log {
-        position: absolute;
-        width: 100%;
-        bottom: 64px;
-        z-index: 100000;
+}
+
+.gallery-container_close-button {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    md-icon {
         color: white;
-        text-align: center;
-        background-color: black;
-        opacity: 0.65;
-        font-size: 20px;
-    }
-
-    .asg-thumbnail {
-        z-index: 100000 !important;
-        position: absolute;
-        bottom: 0;
-        overflow: auto;
-        width: 100%;
-    }
-
-    span.buttons {
-        width: 100%;
-        text-align: center;
-        & > span:nth-child(2), & > span:nth-child(3) {
-            float: right;
-        }
-    }
-
-    .asg-modal .images {
-        height: 85%;
-    }
-
-    .asg-image {
-        height: 75vh !important;
     }
 }
