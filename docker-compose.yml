@@ -58,7 +58,7 @@ services:
     depends_on:
       - elasticsearch
   zafira:
-    image: qaprosoft/zafira:rabbitmq
+    image: qaprosoft/zafira:latest
     ports:
       - 8080:8080
     env_file:
