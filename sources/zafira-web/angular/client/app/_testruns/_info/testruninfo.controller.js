@@ -573,56 +573,6 @@
         var currentHash = $location.hash();
         var index = trumbs.indexOfField('correlation-id', log['correlation-id']);
 
-        $scope.showModal = true;
-        $scope.galleryOptions = {
-            hashUrl: true,
-            baseUrl: "data:image/png;base64,",
-            fields: {
-                source: {
-                        modal: 'link',
-                        image: 'medium',
-                        panel: 'thumbnail'
-                },
-                description: 'description'
-            },
-            loadingImage: null,
-            theme: 'darkblue',
-            thumbnail: {
-                height: 60,
-                index: true
-            },
-            modal: {
-                header: {
-                    enabled: true,
-                    buttons: ['', 'index', 'prevNo', 'nextNo', 'pinNo', 'sizeNo', 'transitionNo', 'thumbsNo', 'fullscreen', 'helpNo', 'closeNo']
-                },
-                thumbnail: {
-                    height: 77,
-                    index: true
-                },
-                help: false,
-                size: 'contain',
-                transition: 'no'
-            },
-            panel: {
-                hover: {
-                    select: true
-                },
-                item: {
-                    class: 'col-md-4 thumbnail',
-                    index: true
-                }
-            },
-            image: {
-                size: 'contain',
-                transition: 'no',
-                height: 320,
-                arrows: {
-                    preload: true
-                }
-            }
-        };
-
         $scope.galleryItems = [];
 
         function addGalleryItem(thumbLog, index) {
@@ -636,34 +586,9 @@
                             medium: $scope.image
                         });
                         log.isFilled = true;
-                        $rootScope.$broadcast('ASG-gallery-edit', {
-                            id: 'screenshot_gallery',
-                            refresh: true,
-                            options: $scope.galleryOptions
-                        });
                 });
             }
         };
-
-        $rootScope.$on('ASG-change-image-screenshot_gallery', function (event, data) {
-            var index = data.index;
-            var item = $scope.galleryItems[index];
-            $scope.currentLog = $scope.thumbs[index].message;
-            if(data.file.description && item && ! item.isFilled) {
-                addGalleryItem({'correlation-id': data.file.description}, index);
-            }
-        });
-
-        $scope.$watch(function () {
-            return screenfull.isFullscreen;
-        }, function (newVal, oldVal) {
-            var modal = angular.element('.gallery-modal');
-            if(newVal) {
-                modal.addClass('full-modal');
-            } else {
-                modal.removeClass('full-modal');
-            }
-        });
 
         function initThumbs() {
             $scope.thumbs.forEach(function (thumb) {
@@ -682,7 +607,7 @@
                 ElasticsearchService.isExists(index).then(function (isExists) {
                     if(isExists) {
                         ElasticsearchService.search(index).then(function (indexes) {
-                            resolve(/*'data:image/png;base64,' + */getLogsFromResponse(indexes)[0].blob);
+                            resolve(buildBase64String(getLogsFromResponse(indexes)[0].blob));
                         });
                     } else {
                         reject();
@@ -698,9 +623,20 @@
                 getBase64String(index).then(function (base64String) {
                     $scope.isLoaded = true;
                     $scope.image = base64String;
+                    $scope.currentLog = log.message;
                     resolve(true);
                 });
             });
+        };
+
+        $scope.showHideLog = function (event, isFocus) {
+            var showGalleryLogClassname = 'gallery-container_gallery-image_log_show';
+            var element = angular.element(event.target);
+            if(! isFocus) {
+                element.removeClass(showGalleryLogClassname);
+            } else if(isFocus) {
+                element.addClass(showGalleryLogClassname);
+            }
         };
 
         function buildIndex(log) {
@@ -711,6 +647,10 @@
             $location.hash(currentHash);
         });
 
+        function buildBase64String(base64String) {
+            return 'data:image/png;base64,' + base64String;
+        };
+
         $scope.hide = function() {
             $mdDialog.hide();
         };
@@ -719,7 +659,7 @@
         };
 
         (function initController() {
-            $location.hash('asg-screenshot_gallery-' + index);
+            $scope.viewImage(log);
             initThumbs();
         })();
     }

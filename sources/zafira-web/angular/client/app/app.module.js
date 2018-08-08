@@ -20,7 +20,6 @@
         ,'app.certification'
         ,'app.sidebar'
         // 3rd party feature modules
-        ,'angularSuperGallery'
         ,'ngImgCrop'
         ,'elasticsearch'
         ,'md.data.table'
