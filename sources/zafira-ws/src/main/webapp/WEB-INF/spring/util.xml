@@ -4,19 +4,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<array>
-				<value>classpath:environment.properties</value>
-			</array>
-		</property>
-		<property name="systemPropertiesModeName">
-			<value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
-		</property>
-	</bean>
-
-	<util:properties id="environmentProperties" location="classpath:environment.properties" />
-
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

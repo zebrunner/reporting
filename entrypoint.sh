@@ -58,6 +58,9 @@ echo zafira.selenium.url=$ZAFIRA_SELENIUM_URL >> $CATALINA_HOME/conf/catalina.pr
 echo zafira.elasticsearch.url=$ZAFIRA_ELASTICSEARCH_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.redis.host=$ZAFIRA_REDIS_HOST >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.redis.port=$ZAFIRA_REDIS_PORT >> $CATALINA_HOME/conf/catalina.properties
-
+echo zafira.rabbitmq.host=$ZAFIRA_RABBITMQ_HOST >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.rabbitmq.port=$ZAFIRA_RABBITMQ_PORT >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.rabbitmq.user=$ZAFIRA_RABBITMQ_USER >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.rabbitmq.pass=$ZAFIRA_RABBITMQ_PASS >> $CATALINA_HOME/conf/catalina.properties
 
 catalina.sh run

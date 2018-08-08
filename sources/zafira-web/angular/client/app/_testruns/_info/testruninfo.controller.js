@@ -399,7 +399,7 @@
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
                 if($scope.testsWebsocket.connected) {
-                    $scope.testsWebsocket.subscribe("/topic/testRuns/" + testRun.id + "/tests", function (data) {
+                    $scope.testsWebsocket.subscribe("/topic/testRuns." + testRun.id + ".tests", function (data) {
                         var test = $scope.getEventFromMessage(data.body).test;
                         if(test.id == $scope.test.id) {
 

@@ -58,7 +58,7 @@ services:
     depends_on:
       - elasticsearch
   zafira:
-    image: qaprosoft/zafira:latest
+    image: qaprosoft/zafira:rabbitmq
     ports:
       - 8080:8080
     env_file:
@@ -74,6 +74,10 @@ services:
       - ZAFIRA_ELASTICSEARCH_URL=http://localhost:9200
       - ZAFIRA_REDIS_HOST=redis
       - ZAFIRA_REDIS_PORT=6379
+      - ZAFIRA_RABBITMQ_HOST=rabbitmq
+      - ZAFIRA_RABBITMQ_PORT=61613
+      - ZAFIRA_RABBITMQ_USER=qpsdemo
+      - ZAFIRA_RABBITMQ_PASS=qpsdemo
     depends_on:
       - "db"
       - "rabbitmq"

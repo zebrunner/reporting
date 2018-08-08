@@ -9,6 +9,19 @@
                            http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
 	<context:annotation-config />
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>classpath:environment.properties</value>
+			</array>
+		</property>
+		<property name="systemPropertiesModeName">
+			<value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+		</property>
+	</bean>
+
+	<util:properties id="environmentProperties" location="classpath:environment.properties" />
 
 	<import resource="spring/util.xml" />
 	<import resource="spring/mvc.xml" />
@@ -18,11 +31,20 @@
 	<import resource="classpath:zafira-dbaccess.xml" />
 	<import resource="classpath:zafira-services.xml" />
 
-	<websocket:message-broker application-destination-prefix="/websocket">
+	<!--websocket:message-broker application-destination-prefix="/websocket">
 		<websocket:stomp-endpoint path="/websockets" allowed-origins="*">
 			<websocket:sockjs />
 		</websocket:stomp-endpoint>
 		<websocket:simple-broker prefix="/topic" />
+	</websocket:message-broker-->
+
+	<websocket:message-broker>
+		<websocket:stomp-endpoint path="/websockets" allowed-origins="*">
+			<websocket:sockjs />
+		</websocket:stomp-endpoint>
+		<websocket:stomp-broker-relay prefix="/topic" relay-host="${zafira.rabbitmq.host}" relay-port="${zafira.rabbitmq.port}" 
+			client-login="${zafira.rabbitmq.user}" client-passcode="${zafira.rabbitmq.pass}"
+			system-login="${zafira.rabbitmq.user}" system-passcode="${zafira.rabbitmq.pass}" />
 	</websocket:message-broker>
 	
 </beans>

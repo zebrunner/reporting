@@ -114,6 +114,8 @@
         <qatool-ashot-version>1.5.2</qatool-ashot-version>
         <google-sheets-version>v4-rev523-1.23.0</google-sheets-version>
         <google-drive-version>v3-rev118-1.18.0-rc</google-drive-version>
+        <reactor.version>2.0.8.RELEASE</reactor.version>
+        <netty-all.version>4.1.28.Final</netty-all.version>
     </properties>
     <modules>
         <module>zafira-conf</module>
@@ -638,6 +640,21 @@
                         <artifactId>hamcrest-all</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-net</artifactId>
+                <version>${reactor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>${reactor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty-all.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

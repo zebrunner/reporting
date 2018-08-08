@@ -412,7 +412,7 @@
 
         $scope.subscribeTestsTopic = function (testRunId) {
             if($scope.zafiraWebsocket.connected) {
-                return $scope.zafiraWebsocket.subscribe("/topic/testRuns/" + testRunId + "/tests", function (data) {
+                return $scope.zafiraWebsocket.subscribe("/topic/testRuns." + testRunId + ".tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
                     $scope.addTest(event.test);
                     $scope.$apply();

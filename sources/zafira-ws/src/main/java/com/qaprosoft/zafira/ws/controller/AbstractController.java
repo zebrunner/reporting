@@ -45,7 +45,7 @@ public abstract class AbstractController
 {
 	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/testRuns";
 	
-	private static final String TESTS_WEBSOCKET_PATH = "/topic/testRuns/%s/tests";
+	private static final String TESTS_WEBSOCKET_PATH = "/topic/testRuns.%s.tests";
 	
 	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/statistics";
 
