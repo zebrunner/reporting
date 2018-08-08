@@ -93,7 +93,7 @@ public abstract class BasePage extends AbstractPage
 	{
 		String text;
 		waitUntilPageIsLoaded();
-		if(isElementPresent(pageItemsCount, 2))
+		if(isElementPresent(pageItemsCount, 5))
 		{
 			try
 			{

@@ -128,6 +128,7 @@ public class UserPageTest extends AbstractTest
 		userPage.waitUntilPageIsLoaded(10);
 		userType.setId(userMapper.getUserByUserName(userType.getUsername()).getId());
 		Assert.assertEquals(userPageService.getUserTableRowsCount(), 20, "Count of user menu buttons is not 20");
+		userPageService.search(userType.getId());
 		verifyUsersTableByRowIndex(userType, 0);
 
 		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
@@ -137,6 +138,7 @@ public class UserPageTest extends AbstractTest
 		userType.setEmail("newEmail@test.com");
 		createUserModalWindow.clearAllInputs();
 		createUserModalWindow.updateUser(userType);
+		userPageService.search(userType.getId());
 		verifyUsersTableByRowIndex(userType, 0);
 
 		userPage.getHeader().logOut();
@@ -147,6 +149,7 @@ public class UserPageTest extends AbstractTest
 		dashboardPage.waitUntilPageIsLoaded();
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded();
+		userPageService.search(userType.getId());
 		verifyUsersTableByRowIndex(userType, 0);
 
 		ChangePasswordModalWindow changePasswordModalWindow = userPageService.goToChangePasswordModalWindow(0);
@@ -173,6 +176,7 @@ public class UserPageTest extends AbstractTest
 		userPage = dashboardPage.getNavbar().clickUsersTab();
 		userPage.waitUntilPageIsLoaded();
 
+		userPageService.search(userType.getId());
 		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		createUserModalWindow.waitUntilElementToBeClickable(createUserModalWindow.getDeleteButton(), 2);
 		createUserModalWindow.clickDeleteButton();

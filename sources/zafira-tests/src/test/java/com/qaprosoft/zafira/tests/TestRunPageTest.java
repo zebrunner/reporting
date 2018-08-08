@@ -119,8 +119,9 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(testRunPage.getTestRunTable().getTestRunTableRows().size(), 1, "Invalid page was opened");
 		String[] urlSplit = driver.getCurrentUrl().split("/");
-		Assert.assertEquals(urlSplit[urlSplit.length - 1], String.valueOf(testRunViewTypes.get(0).getTestRunType().getId()), "Invalid test run was opened. "
-				+ "Current url: " + driver.getCurrentUrl() + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
+		String testRunId = String.valueOf(testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId());
+		Assert.assertEquals(urlSplit[urlSplit.length - 1], testRunId, "Invalid test run was opened. "
+				+ "Current url: " + driver.getCurrentUrl() + ", but test run id: " + testRunId);
 	}
 
 	@Test(groups = {"acceptance", "testRun"})
@@ -131,12 +132,14 @@ public class TestRunPageTest extends AbstractTest
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(0);
 		TestRunSettingMenu testRunSettingMenu = testRunTableRow.clickTestRunSettingMenu();
 		testRunSettingMenu.clickCopyLinkButton();
+		testRunPage.getTestRunSearchBlock().getAppVersionInput().click();
 		testRunPage.getTestRunSearchBlock().getAppVersionInput().sendKeys(Keys.CONTROL + "v");
 		String url = testRunPage.getWebElementValue(testRunPage.getTestRunSearchBlock().getAppVersionInput());
-		LOGGER.debug("Coped url is " + url);
+		LOGGER.info("Coped url is " + url);
 		String[] urlSplit = url.split("/");
-		Assert.assertEquals(urlSplit[urlSplit.length - 1], String.valueOf(testRunViewTypes.get(0).getTestRunType().getId()), "Invalid test run was opened. "
-				+ "Current url: " + url + ", but test run id: " + testRunViewTypes.get(0).getTestRunType().getId());
+		String testRunId = String.valueOf(testRunViewTypes.get(testRunViewTypes.size() - 1).getTestRunType().getId());
+		Assert.assertEquals(urlSplit[urlSplit.length - 1], testRunId, "Invalid test run was opened. "
+				+ "Current url: " + url + ", but test run id: " + testRunId);
 	}
 
 	@Test(groups = {"acceptance", "testRun"})
@@ -246,7 +249,8 @@ public class TestRunPageTest extends AbstractTest
 	@Test(groups = {"acceptance", "testRun"})
 	public void verifyDeleteTest()
 	{
-		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25);
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(testRunPage.getPageItemsCount(), 25, 2);
+		int neededIndex = testRunViewTypes.size() - 1;
 		testRunPage = (TestRunPage) testRunPage.reload();
 		String testRunName = testRunPageService.getTestRunRowByIndex(0).getTestRunNameText();
 		testRunPageService.getTestRunRowByIndex(0).clickTestRunSettingMenu().clickDeleteButton();
@@ -261,7 +265,8 @@ public class TestRunPageTest extends AbstractTest
 		alert = testRunPage.getAlert();
 		alert.accept();
 		testRunPage.waitUntilPageIsLoaded();
-		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunViewTypes.get(0).getTestRunType().getId() + " removed");
+		long testRunId = testRunViewTypes.get(neededIndex).getTestRunType().getId();
+		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Test run #" + testRunId + " removed");
 		Assert.assertNotEquals(testRunPageService.getTestRunRowByIndex(0).getTestRunNameText(), testRunName, "Test run is not deleted");
 	}
 
@@ -728,9 +733,15 @@ public class TestRunPageTest extends AbstractTest
 
 	private List<TestRunViewType> generateTestRunsIfNeed(Integer searchCount, int count)
 	{
+		return generateTestRunsIfNeed(searchCount, count, 10);
+	}
+
+	private List<TestRunViewType> generateTestRunsIfNeed(Integer searchCount, int count, int additionalIncrement)
+	{
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
 		int currentCount = searchCount == null ? testRunPage.getPageItemsCount() : searchCount;
-		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : 1,
+		LOGGER.info("Current count is " + currentCount);
+		return testRunAPIService.createTestRuns(currentCount < count ? count - currentCount : additionalIncrement,
 				2, 2, 0, 2, 2, 101);
 	}
 

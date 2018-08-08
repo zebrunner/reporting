@@ -44,6 +44,8 @@ public class TestRunSettingMenu extends AbstractMenu
 
 	public void clickOpenButton()
 	{
+		waitUntilElementToBeClickableWithBackdropMask(openButton, 5);
+		pause(2);
 		openButton.click();
 	}
 
