@@ -75,16 +75,16 @@
                                             </tr>
                                         </thead>
                                         <tbody id="logs">
-                                            <tr ng-dblclick="getVideoState(log);" ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-click="selectLogRow($event, $index);" ng-repeat="log in logs">
+                                            <tr ng-dblclick="getVideoState(log);" ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-repeat="log in logs">
                                                 <td>
                                                     <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
                                                     <div ng-if="log.blobLog"><img ng-click="showGalleryDialog($event, log.blobLog);" style="max-width: 66%;" ng-src="data:image/png;base64,{{log.blobLog.blob}}" alt="image"/></div>
                                                 </td>
-                                                <td>{{ log.timestamp | date: 'HH:mm:ss'}}</td>
-                                                <td>[{{ log.threadName }}] [{{ log.level}}]
+                                                <td ng-click="selectLogRow($event, $index);">{{ log.timestamp | date: 'HH:mm:ss'}}</td>
+                                                <td ng-click="selectLogRow($event, $index);">[{{ log.threadName }}] [{{ log.level}}]
                                                     <span><show-more class="log_message" name="logMessage" element-id="log.timestamp" text="log.message" limit="255" ></show-more></span>
                                                 </td>
-                                                <td class="settings-cell" style="padding: 0 !important;" ng-if="selectedLogRow == $index">
+                                                <td ng-click="selectLogRow($event, $index);" class="settings-cell" style="padding: 0 !important;" ng-if="selectedLogRow == $index">
                                                     <md-menu class="pull-right">
                                                         <md-button name="logsSetting" aria-label="Logs settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                             <md-icon class="material-icons">more_vert</md-icon>
