@@ -374,11 +374,7 @@ public class TestRunService
 			testRun.setConfig(config);
 			testRun.setEnv(config.getEnv());
 			testRun.setAppVersion(config.getAppVersion());
-			if ("api".equalsIgnoreCase(config.getPlatform()))
-			{
-				testRun.setPlatform(config.getPlatform());
-			}
-			else if (!StringUtils.isEmpty(config.getBrowser()))
+            if (!StringUtils.isEmpty(config.getBrowser()))
 			{
 				testRun.setPlatform(config.getBrowser());
 			}
