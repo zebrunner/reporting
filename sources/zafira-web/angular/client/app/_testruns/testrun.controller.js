@@ -725,7 +725,11 @@
 
                     for (var i = 0; i < data.results.length; i++) {
                         var testRun = data.results[i];
-                        testRun.browserVersion = splitPlatform(data.results[i].platform);
+                        var browserVersion = splitPlatform(data.results[i].platform);
+                        if(!browserVersion && data.results[i].config) {
+                            browserVersion = data.results[i].config.browserVersion
+                        }
+                        testRun.browserVersion = browserVersion;
                         testRun.tests = null;
                         $scope.addTestRun(testRun);
                     }
