@@ -365,10 +365,13 @@ public class TestRunService
 		return testRun;
 	}
 
-	public void initTestRunWithXml(TestRun testRun) {
+	public void initTestRunWithXml(TestRun testRun) throws ServiceException
+	{
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
 			TestConfig config = new TestConfig().init(testConfigService.readConfigArgs(testRun.getConfigXML()));
+			testConfigService.createTestConfig(config);
+			testRun.setConfig(config);
 			testRun.setEnv(config.getEnv());
 			testRun.setAppVersion(config.getAppVersion());
 			if ("api".equalsIgnoreCase(config.getPlatform()))

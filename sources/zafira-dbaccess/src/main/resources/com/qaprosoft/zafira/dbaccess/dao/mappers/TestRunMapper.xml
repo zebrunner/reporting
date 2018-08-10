@@ -5,7 +5,7 @@
 
 	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, 
+			INSERT INTO zafira.TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, CONFIG_ID,
 			]]>
 			<if test="null != project and null != project.id">	
 				PROJECT_ID, 
@@ -26,6 +26,7 @@
 				#{upstreamJob.id},
 				#{upstreamJobBuildNumber},
 				#{buildNumber},
+				#{config.id},
 		]]>
 		<if test="null != project and null != project.id">
             <![CDATA[
@@ -135,7 +136,21 @@
 				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
 				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
 				U.COVER_PHOTO_URL AS TEST_RUN_USER_COVER_PHOTO_URL,
-				
+
+				C.ID AS TEST_RUN_CONFIG_ID,
+				C.URL AS TEST_RUN_CONFIG_URL,
+				C.ENV AS TEST_RUN_CONFIG_ENV,
+				C.PLATFORM AS TEST_RUN_CONFIG_PLATFORM,
+				C.PLATFORM_VERSION AS TEST_RUN_CONFIG_PLATFORM_VERSION,
+				C.BROWSER AS TEST_RUN_CONFIG_BROWSER,
+				C.BROWSER_VERSION AS TEST_RUN_CONFIG_BROWSER_VERSION,
+				C.APP_VERSION AS TEST_RUN_CONFIG_APP_VERSION,
+				C.LOCALE AS TEST_RUN_CONFIG_LOCALE,
+				C.LANGUAGE AS TEST_RUN_CONFIG_LANGUAGE,
+				C.DEVICE AS TEST_RUN_CONFIG_DEVICE,
+				C.MODIFIED_AT AS TEST_RUN_CONFIG_MODIFIED_AT,
+				C.CREATED_AT AS TEST_RUN_CONFIG_CREATED_AT,
+
 				TS.ID AS TEST_RUN_TEST_SUITE_ID,
 				TS.NAME AS TEST_RUN_TEST_SUITE_NAME,
 				TS.FILE_NAME AS TEST_RUN_TEST_SUITE_FILE_NAME,
@@ -155,6 +170,8 @@
 				zafira.TEST_RUNS TR
 			LEFT JOIN zafira.USERS U
 				ON TR.USER_ID = U.ID
+			LEFT JOIN zafira.TEST_CONFIGS C
+				ON TR.CONFIG_ID = C.ID
 			LEFT JOIN zafira.JOBS J
 				ON TR.JOB_ID = J.ID
 			LEFT JOIN zafira.TEST_SUITES TS
@@ -604,6 +621,7 @@
 			    UPSTREAM_JOB_ID = #{upstreamJob.id},
 			    UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber},
 			    BUILD_NUMBER = #{buildNumber},
+			    CONFIG_ID = #{config.id},
 			]]>	    
 			<if test="null != project and null != project.id">
 	            <![CDATA[
@@ -672,7 +690,21 @@
         <result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
         <result column="TEST_RUN_USER_COVER_PHOTO_URL" property="user.photoURL" />
 
-        <result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
+		<result column="TEST_RUN_CONFIG_ID" property="config.id" />
+		<result column="TEST_RUN_CONFIG_URL" property="config.url" />
+		<result column="TEST_RUN_CONFIG_ENV" property="config.env" />
+		<result column="TEST_RUN_CONFIG_PLATFORM" property="config.platform" />
+		<result column="TEST_RUN_CONFIG_PLATFORM_VERSION" property="config.platformVersion" />
+		<result column="TEST_RUN_CONFIG_BROWSER" property="config.browser" />
+		<result column="TEST_RUN_CONFIG_BROWSER_VERSION" property="config.browserVersion" />
+		<result column="TEST_RUN_CONFIG_APP_VERSION" property="config.appVersion" />
+		<result column="TEST_RUN_CONFIG_LOCALE" property="config.locale" />
+		<result column="TEST_RUN_CONFIG_LANGUAGE" property="config.language" />
+		<result column="TEST_RUN_CONFIG_DEVICE" property="config.device" />
+		<result column="TEST_RUN_CONFIG_MODIFIED_AT" property="config.modifiedAt" />
+		<result column="TEST_RUN_CONFIG_CREATED_AT" property="config.createdAt" />
+
+		<result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
         <result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
         <result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
         <result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
