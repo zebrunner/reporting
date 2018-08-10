@@ -72,6 +72,8 @@ services:
       - ZAFIRA_JDBC_PASS=postgres
       - ZAFIRA_SELENIUM_URL=http://screenshoter:4444/wd/hub
       - ZAFIRA_ELASTICSEARCH_URL=http://localhost:9200
+      - ZAFIRA_ELASTICSEARCH_USER=
+      - ZAFIRA_ELASTICSEARCH_PASS=
       - ZAFIRA_REDIS_HOST=redis
       - ZAFIRA_REDIS_PORT=6379
       - ZAFIRA_RABBITMQ_HOST=rabbitmq

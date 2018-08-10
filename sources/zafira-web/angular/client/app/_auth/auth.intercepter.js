@@ -6,6 +6,7 @@ angular
   .factory('AuthIntercepter', ['$rootScope', '$state','httpBuffer', function($rootScope, $state, httpBuffer) {
 
 	 return {
+
       /**
        * Call this function to indicate that authentication was successful and trigger a
        * retry of all deferred requests.
@@ -40,8 +41,17 @@ angular
    * and broadcasts 'event:auth-loginRequired'.
    */
   .config(['$httpProvider', function($httpProvider) {
-    $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', function($rootScope, $q, httpBuffer) {
+    $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', 'API_URL', function($rootScope, $q, httpBuffer, API_URL) {
       return {
+          request: function (config) {
+
+              var globals = $rootScope.globals;
+              if(config.url.includes(API_URL) && globals && globals.auth) {
+                  config.headers['Authorization'] = globals.auth.type + " " + globals.auth.accessToken;
+              }
+
+              return config;
+          },
         responseError: function(rejection) {
             var location = window.location.href;
         	if(!location.endsWith('signin'))
@@ -83,11 +93,11 @@ angular
         deferred.reject(response);
       }
       $http = $http || $injector.get('$http');
-      if($rootScope.globals && $rootScope.globals.auth)
+      /*if($rootScope.globals && $rootScope.globals.auth)
       {
     	  var auth = $rootScope.globals.auth;
     	  config.headers.Authorization = auth.type + " " + auth.accessToken;
-      }
+      }*/
       $http(config).then(successCallback, errorCallback);
     }
 
