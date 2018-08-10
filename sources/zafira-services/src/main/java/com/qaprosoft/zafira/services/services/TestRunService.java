@@ -374,7 +374,7 @@ public class TestRunService
 			testRun.setConfig(config);
 			testRun.setEnv(config.getEnv());
 			testRun.setAppVersion(config.getAppVersion());
-            if (!StringUtils.isEmpty(config.getBrowser()))
+            if (!StringUtils.isEmpty(config.getBrowser()) && !config.getBrowser().equals("*"))
 			{
 				testRun.setPlatform(config.getBrowser());
 			}
