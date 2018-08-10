@@ -726,7 +726,7 @@
                     for (var i = 0; i < data.results.length; i++) {
                         var testRun = data.results[i];
                         var browserVersion = splitPlatform(data.results[i].platform);
-                        if(!browserVersion && data.results[i].config) {
+                        if(!browserVersion && data.results[i].config && data.results[i].config.browserVersion !== '*') {
                             browserVersion = data.results[i].config.browserVersion
                         }
                         testRun.browserVersion = browserVersion;
