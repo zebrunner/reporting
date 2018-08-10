@@ -4,9 +4,6 @@ select check_version(91);
 ALTER TABLE zafira.test_runs ADD config_id int NULL;
 ALTER TABLE zafira.test_runs
 ADD CONSTRAINT test_runs_test_configs_id_fk
-FOREIGN KEY (config_id) REFERENCES zafira.test_configs (id) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ADD CONSTRAINT test_runs_test_configs_id_fk
     FOREIGN KEY (CONFIG_ID)
     REFERENCES TEST_CONFIGS (ID)
     ON DELETE NO ACTION
