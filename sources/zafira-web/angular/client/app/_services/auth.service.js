@@ -44,7 +44,7 @@
             $rootScope.globals = {
                 "auth": auth
             };
-            $http.defaults.headers.common['Authorization'] = auth.type + " " + auth.accessToken;
+            //$http.defaults.headers.common['Authorization'] = auth.type + " " + auth.accessToken;
             $cookies.putObject('globals', $rootScope.globals);
         }
 
@@ -53,7 +53,7 @@
             $rootScope.globals = {};
             $cookies.remove('globals');
             $cookies.remove('Access-Token');
-            $http.defaults.headers.common.Authorization = null;
+            //$http.defaults.headers.common.Authorization = null;
         }
 
         function IsLoggedIn() {

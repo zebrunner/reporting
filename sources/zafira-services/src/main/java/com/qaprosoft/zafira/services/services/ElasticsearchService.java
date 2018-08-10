@@ -15,6 +15,12 @@ public class ElasticsearchService implements IJMXService
 	@Value("${zafira.elasticsearch.url}")
 	private String url;
 
+	@Value("${zafira.elasticsearch.user}")
+	private String user;
+
+	@Value("${zafira.elasticsearch.pass}")
+	private String password;
+
 	@Override
 	public void init()
 	{
@@ -34,10 +40,26 @@ public class ElasticsearchService implements IJMXService
 			{
 				add(new Setting()
 				{
-					private static final long serialVersionUID = 6585486041064259383L;
+					private static final long serialVersionUID = 658548604106441383L;
 					{
 						setName("URL");
 						setValue(url);
+					}
+				});
+				add(new Setting()
+				{
+					private static final long serialVersionUID = 6585486043214259383L;
+					{
+						setName("user");
+						setValue(user);
+					}
+				});
+				add(new Setting()
+				{
+					private static final long serialVersionUID = 6585486425564259383L;
+					{
+						setName("password");
+						setValue(password);
 					}
 				});
 			}

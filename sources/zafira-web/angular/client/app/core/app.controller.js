@@ -216,7 +216,7 @@
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
 	            if ($rootScope.globals.auth)
 	            {
-	            	$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
+	            	//$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
                     $scope.initSession();
                     $scope.initExtendedUserProfile().then(function (rs) {
                         if(['dashboards'].indexOf($state.current.name) >= 0) {

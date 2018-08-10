@@ -20,6 +20,8 @@
             <zafira.admin.password/>
 
             <zafira.elasticsearch.url></zafira.elasticsearch.url>
+            <zafira.elasticsearch.user></zafira.elasticsearch.user>
+            <zafira.elasticsearch.pass></zafira.elasticsearch.pass>
 
             <zafira.redis.host>localhost</zafira.redis.host>
             <zafira.redis.port>6379</zafira.redis.port>

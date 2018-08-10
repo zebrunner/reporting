@@ -143,8 +143,14 @@
                         var url = settingsRs.data.find(function (element, index, array) {
                             return element.name.toLowerCase() == 'url';
                         });
+                        var user = settingsRs.data.find(function (element, index, array) {
+                            return element.name.toLowerCase() == 'user';
+                        });
+                        var password = settingsRs.data.find(function (element, index, array) {
+                            return element.name.toLowerCase() == 'password';
+                        });
                         if(url) {
-                            resolve(createInstance(url.value));
+                            resolve(createInstance(url.value, user.value, password.value));
                         } else {
                             reject({errorMessage: 'Cannot initialize elasticsearch url'});
                         }
@@ -153,9 +159,19 @@
             });
         };
 
-        function createInstance(url) {
+        function createInstance(url, user, password) {
+            var protocol = url.split('://')[0];
+            var host = url.split('://')[1].split(':')[0];
+            var port = url.split(':')[2].match('\\d+')[0];
             return esFactory({
-                host: url,
+                host:[
+                    {
+                        protocol: protocol,
+                        host: host,
+                        port: port,
+                        auth: user && password ? user + ':' + password : undefined
+                    }
+                ],
                 ssl: {
                     rejectUnauthorized: false
                 }
