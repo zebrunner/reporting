@@ -93,11 +93,11 @@ angular
         deferred.reject(response);
       }
       $http = $http || $injector.get('$http');
-      if($rootScope.globals && $rootScope.globals.auth)
+      /*if($rootScope.globals && $rootScope.globals.auth)
       {
     	  var auth = $rootScope.globals.auth;
     	  config.headers.Authorization = auth.type + " " + auth.accessToken;
-      }
+      }*/
       $http(config).then(successCallback, errorCallback);
     }
 
