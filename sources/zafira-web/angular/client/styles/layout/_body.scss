@@ -87,6 +87,8 @@ body > div {
 
 #logs .log_message {
     display: inline-block;
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .result_error {
