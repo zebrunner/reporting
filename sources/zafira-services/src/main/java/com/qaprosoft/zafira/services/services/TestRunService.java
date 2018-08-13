@@ -423,6 +423,7 @@ public class TestRunService
 				}
 			}
 			addComment(testRun.getId(), abortCause);
+			testRun = getTestRunByIdFull(testRun.getId());
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
 			calculateTestRunResult(testRun.getId(), true);
