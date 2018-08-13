@@ -110,7 +110,6 @@
         function tryToGetLogsHistoryFromElasticsearch(logGetter) {
             return $q(function (resolve, reject) {
                 ElasticsearchService.count(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, $scope.test.startTime).then(function (count) {
-                    console.log(count);
                     if(logGetter.accessFunc ? logGetter.accessFunc.call(this, count) : true) {
                         var size = logGetter.getSizeFunc.call(this, count);
                         collectElasticsearchLogs(logGetter.from, logGetter.pageCount, size, count, resolve);
