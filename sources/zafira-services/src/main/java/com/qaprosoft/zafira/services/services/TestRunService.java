@@ -399,8 +399,7 @@ public class TestRunService
 					}
 				}
 			}
-			addComment(testRun.getId(), abortCause);
-			testRun = getTestRunByIdFull(testRun.getId());
+			testRun = addComment(testRun.getId(), abortCause);
 			testRun.setStatus(Status.ABORTED);
 			updateTestRun(testRun);
 			calculateTestRunResult(testRun.getId(), true);
@@ -411,8 +410,7 @@ public class TestRunService
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun markAsReviewed(Long id, String comment) throws ServiceException
 	{
-		addComment(id, comment);
-		TestRun tr = getTestRunByIdFull(id);
+		TestRun tr = addComment(id, comment);
 		if(!"undefined failure".equalsIgnoreCase(comment)){
 			tr.setReviewed(true);
 		}
@@ -594,7 +592,7 @@ public class TestRunService
 	}
 	
 	@Transactional
-	public void addComment(long id, String comment) throws ServiceException
+	public TestRun addComment(long id, String comment) throws ServiceException
 	{
 		TestRun testRun = getTestRunById(id);
 		if(testRun == null)
@@ -603,6 +601,7 @@ public class TestRunService
 		}
 		testRun.setComments(comment);
 		updateTestRun(testRun);
+		return testRunMapper.getTestRunByIdFull(id);
 	}
 
 	@Transactional(readOnly = true)
