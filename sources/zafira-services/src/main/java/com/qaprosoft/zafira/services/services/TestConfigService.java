@@ -95,6 +95,31 @@ public class TestConfigService
 		
 		return config;
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestConfig createTestConfigForTestRun(long id) throws ServiceException
+	{
+		TestRun testRun = testRunService.getTestRunById(id);
+		if(testRun == null)
+		{
+			throw new ServiceException("Test run not found!");
+		}
+
+		List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
+
+		TestConfig config = new TestConfig().init(testRunConfig);
+
+		TestConfig existingTestConfig = searchTestConfig(config);
+		if(existingTestConfig != null)
+		{
+			config = existingTestConfig;
+		}
+		else
+		{
+			createTestConfig(config);
+		}
+		return config;
+	}
 	
 	@Transactional(readOnly = true)
 	public TestConfig getTestConfigById(long id) throws ServiceException
