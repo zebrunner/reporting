@@ -97,15 +97,9 @@ public class TestConfigService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public TestConfig createTestConfigForTestRun(long id) throws ServiceException
+	public TestConfig createTestConfigForTestRun(String configXML) throws ServiceException
 	{
-		TestRun testRun = testRunService.getTestRunById(id);
-		if(testRun == null)
-		{
-			throw new ServiceException("Test run not found!");
-		}
-
-		List<Argument> testRunConfig = readConfigArgs(testRun.getConfigXML());
+		List<Argument> testRunConfig = readConfigArgs(configXML);
 
 		TestConfig config = new TestConfig().init(testRunConfig);
 

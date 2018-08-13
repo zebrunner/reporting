@@ -369,7 +369,7 @@ public class TestRunService
 	{
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getId());
+			TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
 			testRun.setConfig(config);
 			testRun.setEnv(config.getEnv());
 			testRun.setAppVersion(config.getAppVersion());
