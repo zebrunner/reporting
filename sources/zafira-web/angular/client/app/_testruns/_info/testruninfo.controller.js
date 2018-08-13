@@ -3,14 +3,15 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$mdDialog', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $mdDialog, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
         $scope.drivers = [];
+        $scope.trumbs = [];
         var driversQueue = [];
         var driversCount = 0;
         $scope.elasticsearchDataLoaded = false;
@@ -19,34 +20,69 @@
         $scope.MODE = {};
         $scope.tab =  { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."};
 
+        var from = 0;
+
+        var page = 1;
+        var size = 5;
+
         var LIVE_DEMO_ARTIFACT_NAME = 'live video';
+        var SEARCH_CRITERIA = '';
+        var ELASTICSEARCH_INDEX = '';
 
         var MODES = {
             live: {
                 name: 'live',
                 element: '.video-wrapper',
-                initFunc: initLiveMode
+                initFunc: initLiveMode,
+                logGetter: {
+                    from: 0,
+                    pageCount: null,
+                    getSizeFunc: function (count) {
+                        return count - MODES.live.logGetter.from;
+                    },
+                    accessFunc: function (count) {
+                        return count > MODES.live.logGetter.from;
+                    }
+                }
+
             },
             record: {
                 name: 'record',
                 element: 'video',
-                initFunc: initRecordMode
+                initFunc: initRecordMode,
+                logGetter: {
+                    from: null,
+                    pageCount: page,
+                    getSizeFunc: function (count) {
+                        return count;
+                    },
+                    accessFunc: null
+                }
             }
         };
 
-        function postModeConstruct(test) {
+        var LIVE_LOGS_INTERVAL_NAME = 'liveLogsFromElasticsearch';
 
+        function postModeConstruct(test) {
+            var logGetter = MODES[$scope.MODE.name].logGetter;
             switch($scope.MODE.name) {
                 case 'live':
                     provideVideo();
-                    provideLogs();
+                    $scope.logs = [];
+                    tryToGetLogsLiveFromElasticsearch(logGetter, LIVE_LOGS_INTERVAL_NAME);
                     break;
                 case 'record':
                     $scope.selectedDriver = 0;
                     initRecords(test);
                     closeAll();
-                    tryToGetLogsFromElasticsearch().then(function (rs) {
 
+                    $scope.logs = [];
+                    tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
+                        $timeout(function () {
+                            logGetter.pageCount = null;
+                            logGetter.from = $scope.logs.length;
+                            tryToGetLogsHistoryFromElasticsearch(logGetter);
+                        }, 5000);
                     });
                     break;
                 default:
@@ -61,9 +97,9 @@
             }
         };
 
-        function getLogsFromElasticsearch(page, size) {
+        function getLogsFromElasticsearch(from, page, size) {
             return $q(function (resolve, reject) {
-                ElasticsearchService.search($scope.testRun.ciRunId + '_' + $scope.test.id + "*", page, size, $scope.test.startTime).then(function (rs) {
+                ElasticsearchService.search(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, from, page, size, $scope.test.startTime).then(function (rs) {
                     resolve(rs.map(function (r) {
                         return r._source;
                     }));
@@ -71,33 +107,55 @@
             });
         };
 
-        function tryToGetLogsFromElasticsearch() {
+        function tryToGetLogsHistoryFromElasticsearch(logGetter) {
             return $q(function (resolve, reject) {
-                $scope.logs = [];
-                var page = 1;
-                var size = 5;
-                ElasticsearchService.count($scope.testRun.ciRunId + '_' + $scope.test.id + "*", $scope.test.startTime).then(function (count) {
-                    collectElasticsearchLogs(page, size, count, resolve);
+                ElasticsearchService.count(ELASTICSEARCH_INDEX, SEARCH_CRITERIA, $scope.test.startTime).then(function (count) {
+                    console.log(count);
+                    if(logGetter.accessFunc ? logGetter.accessFunc.call(this, count) : true) {
+                        var size = logGetter.getSizeFunc.call(this, count);
+                        collectElasticsearchLogs(logGetter.from, logGetter.pageCount, size, count, resolve);
+                    }
                 });
             });
         };
 
-        function collectElasticsearchLogs(page, size, count, resolveFunc) {
-            getLogsFromElasticsearch(page, size).then(function (hits) {
-                hits.forEach(function (hit) {
-                    if(! hit.blob) {
-                        $scope.logs.push(hit);
-                    } else {
-                        $scope.logs[$scope.logs.length - 1].blobLog = hit;
-                    }
+        function tryToGetLogsLiveFromElasticsearch(logGetter, logIntervalName) {
+            return $q(function (resolve, reject) {
+                pseudoLiveDoAction(logIntervalName, 5000, function () {
+                    getLogsLiveFromElasticsearch(logGetter);
                 });
-                if(page * size <= count) {
+            });
+        };
+
+        function getLogsLiveFromElasticsearch(logGetter) {
+            tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (count) {
+                MODES.live.logGetter.from = count;
+            });
+        };
+
+        var liveIntervals = {};
+
+        function pseudoLiveDoAction(intervalName, intervalMillis, func) {
+            func.call();
+            liveIntervals[intervalName] = $interval(function() {func.call()}, intervalMillis);
+        };
+
+        function pseudoLiveCloseAction(intervalName) {
+            $interval.cancel(liveIntervals[intervalName]);
+        };
+
+        function collectElasticsearchLogs(from, page, size, count, resolveFunc) {
+
+            getLogsFromElasticsearch(from, page, size).then(function (hits) {
+                hits.forEach(function (hit) {
+                    followUpOnLogs(hit);
+                });
+                if(! from && from != 0 && (page * size <= count)) {
                     page ++;
-                    collectElasticsearchLogs(page, size, count, resolveFunc);
+                    collectElasticsearchLogs(from, page, size, count, resolveFunc);
                 } else {
-                    collectTrumbs($scope.logs);
                     $scope.elasticsearchDataLoaded = true;
-                    resolveFunc.call(this, true);
+                    resolveFunc.call(this, count);
                     var hash = $location.hash();
                     if(hash) {
                         $anchorScroll();
@@ -265,7 +323,7 @@
         $scope.selectedLogRow = -1;
 
         $scope.selectLogRow = function(ev, index) {
-            var hash = ev.currentTarget.attributes.id.value;
+            var hash = ev.currentTarget.parentNode.attributes.id.value;
             $location.hash(hash);
         };
 
@@ -407,6 +465,7 @@
                                 addDrivers(getArtifactsByPartName(test, LIVE_DEMO_ARTIFACT_NAME));
                                 driversCount = $scope.drivers.length;
                             } else {
+                                pseudoLiveCloseAction(LIVE_LOGS_INTERVAL_NAME);
                                 $scope.fullScreen(true);
                                 setMode('record');
                                 var videoArtifacts = getArtifactsByPartName(test, 'video', 'live') || [];
@@ -433,17 +492,26 @@
         $scope.logs = [];
 
         function followUpOnLogs(log) {
-            $scope.$apply(function () {
-                if(driversQueue.length) {
-                    log.driver = driversQueue.pop();
-                    driversQueue = [];
-                }
-                if(! log.blob) {
-                    $scope.logs.push(log);
-                } else {
-                    $scope.logs[$scope.logs.length - 1].blobLog = log;
-                }
-            });
+            if(! $scope.$$phase) {
+                $scope.$applyAsync(function () {
+                    setLog(log);
+                });
+            } else {
+                setLog(log);
+            }
+        };
+
+        function setLog(log) {
+            if ($scope.MODE.name == 'live' && driversQueue.length) {
+                log.driver = driversQueue.pop();
+                driversQueue = [];
+            }
+            if (!log.blob) {
+                $scope.logs.push(log);
+            } else {
+                $scope.trumbs.push(log);
+                $scope.logs[$scope.logs.length - 1].blobLog = log;
+            }
         };
 
         function provideLogs() {
@@ -549,6 +617,12 @@
             postModeConstruct(test);
         };
 
+        function buildIndex() {
+            var startTime = 'logs-' + $filter('date')($scope.test.startTime, 'yyyy.MM.dd');
+            var finishTime = $scope.test.finishTime ? 'logs-' + $filter('date')($scope.test.finishTime, 'yyyy.MM.dd') : 'logs-' + $filter('date')(Date.now(), 'yyyy.MM.dd');
+            return startTime == finishTime ? startTime : startTime + ',' + finishTime;
+        };
+
         (function init() {
             getTestRun($stateParams.id).then(function (rs) {
                 $scope.testRun = rs;
@@ -558,6 +632,8 @@
                         return t.id === parseInt($stateParams.testId);
                     })[0];
                     $scope.testRun.tests = testsRs;
+                    SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.id};
+                    ELASTICSEARCH_INDEX = buildIndex();
 
                     setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
                     $scope.MODE.initFunc.call(this, $scope.test);
@@ -566,12 +642,12 @@
         })();
     }
 
-    function GalleryController($scope, $rootScope, $mdDialog, $location, $q, ElasticsearchService, log, ciRunId, test, trumbs) {
+    function GalleryController($scope, $rootScope, $mdDialog, $location, $q, ElasticsearchService, log, index, ciRunId, test, trumbs) {
 
         $scope.thumbs = trumbs;
 
         var currentHash = $location.hash();
-        var index = trumbs.indexOfField('correlation-id', log['correlation-id']);
+        //var index = trumbs.indexOfField('correlation-id', log['correlation-id']);
 
         $scope.galleryItems = [];
 
@@ -604,9 +680,9 @@
 
         function getBase64String(index) {
             return $q(function (resolve, reject) {
-                ElasticsearchService.isExists(index).then(function (isExists) {
+                ElasticsearchService.isExists(index, log['correlation-id']).then(function (isExists) {
                     if(isExists) {
-                        ElasticsearchService.search(index).then(function (indexes) {
+                        ElasticsearchService.search(index, log['correlation-id']).then(function (indexes) {
                             resolve(buildBase64String(getLogsFromResponse(indexes)[0].blob));
                         });
                     } else {

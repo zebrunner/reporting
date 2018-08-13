@@ -30,15 +30,14 @@
             });
         };
 
-        function doAction(action, func, index, page, size, fromTime, query) {
-            var from = page && size ? (page - 1) * size : undefined;
+        function doAction(action, func, index, searchField, from, size, fromTime, query) {
             var body = {};
             switch(action) {
                 case 'SEARCH':
                     body = {
                         sort: [
                             {
-                                timestamp: {
+                                '@timestamp': {
                                     order: "asc"
                                 }
                             }
@@ -48,16 +47,28 @@
                     };
                 case 'COUNT':
                     body.query = {
-                        range : {
-                            "timestamp" : {
-                                gte : fromTime
-                            }
+                        bool: {
+                            must: [
+                                {
+                                    term: searchField
+                                },
+                                {
+                                    range: {
+                                        timestamp:{
+                                            gte:fromTime
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     };
                     break;
                 case 'EXISTS':
                     body = {
-                        index: index
+                        index: index,
+                        query: {
+                            term : searchField
+                        }
                     };
                     break;
                 default:
@@ -73,7 +84,7 @@
             func(params);
         };
 
-        function search(index, page, size, fromTime, query) {
+        function search(index, searchField, from, page, size, fromTime, query) {
             return $q(function (resolve, reject) {
                 doAction('SEARCH', function (params) {
                     getInstance().then(function (esInstance) {
@@ -85,11 +96,11 @@
                             }
                         });
                     });
-                }, index, page, size, fromTime, query);
+                }, index, searchField, from || from == 0 ? from : page && size ? Math.round((page - 1) * size) : undefined, size, fromTime, query);
             });
         };
 
-        function count(index, fromTime, query) {
+        function count(index, searchField, fromTime, query) {
             return $q(function (resolve, reject) {
                 doAction('COUNT', function (params) {
                     getInstance().then(function (esInstance) {
@@ -101,11 +112,11 @@
                             }
                         });
                     });
-                }, index, null, null, fromTime, query);
+                }, index, searchField, null, null, fromTime, query);
             });
         };
 
-        function isExists(index) {
+        function isExists(index, searchField) {
             return $q(function (resolve, reject) {
                 doAction('EXISTS', function (params) {
                     getInstance().then(function (esInstance) {
@@ -117,7 +128,7 @@
                             }
                         });
                     });
-                }, index, null, null, null, null);
+                }, index, searchField, null, null, null, null);
             });
         };
 
@@ -129,7 +140,7 @@
                     prepareData().then(function (rs) {
                         resolve(rs);
                     }, function (rs) {
-                        alertify.error(rs);
+                        alertify.error(rs.errorMessage);
                         reject();
                     });
                 }
@@ -149,8 +160,8 @@
                         var password = settingsRs.data.find(function (element, index, array) {
                             return element.name.toLowerCase() == 'password';
                         });
-                        if(url) {
-                            resolve(createInstance(url.value, user.value, password.value));
+                        if(url && url.value) {
+                            resolve(createInstance(url.value, user, password));
                         } else {
                             reject({errorMessage: 'Cannot initialize elasticsearch url'});
                         }
@@ -169,7 +180,7 @@
                         protocol: protocol,
                         host: host,
                         port: port,
-                        auth: user && password ? user + ':' + password : undefined
+                        auth: user && user.value && password && password.value ? user.value + ':' + password.value : undefined
                     }
                 ],
                 ssl: {
