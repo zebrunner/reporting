@@ -54,7 +54,7 @@
                                 },
                                 {
                                     range: {
-                                        timestamp:{
+                                        '@timestamp':{
                                             gte:fromTime
                                         }
                                     }
