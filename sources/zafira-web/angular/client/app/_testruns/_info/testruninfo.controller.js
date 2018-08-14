@@ -150,7 +150,7 @@
                 hits.forEach(function (hit) {
                     followUpOnLogs(hit);
                 });
-                if(! from && from != 0 && (page * size <= count)) {
+                if(! from && from != 0 && (page * size < count)) {
                     page ++;
                     collectElasticsearchLogs(from, page, size, count, resolveFunc);
                 } else {
