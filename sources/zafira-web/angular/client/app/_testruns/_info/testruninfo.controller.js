@@ -28,6 +28,7 @@
         var LIVE_DEMO_ARTIFACT_NAME = 'live video';
         var SEARCH_CRITERIA = '';
         var ELASTICSEARCH_INDEX = '';
+        var UTC = 'UTC';
 
         var MODES = {
             live: {
@@ -617,8 +618,8 @@
         };
 
         function buildIndex() {
-            var startTime = 'logs-' + $filter('date')($scope.test.startTime, 'yyyy.MM.dd');
-            var finishTime = $scope.test.finishTime ? 'logs-' + $filter('date')($scope.test.finishTime, 'yyyy.MM.dd') : 'logs-' + $filter('date')(Date.now(), 'yyyy.MM.dd');
+            var startTime = 'logs-' + $filter('date')($scope.test.startTime, 'yyyy.MM.dd', UTC);
+            var finishTime = $scope.test.finishTime ? 'logs-' + $filter('date')($scope.test.finishTime, 'yyyy.MM.dd', UTC) : 'logs-' + $filter('date')(new Date().getTime(), 'yyyy.MM.dd', UTC);
             return startTime == finishTime ? startTime : startTime + ',' + finishTime;
         };
 
