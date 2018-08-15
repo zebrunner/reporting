@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.listener;
 
-import java.io.File;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,7 +39,6 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.MergeCombiner;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -86,7 +84,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraListener.class);
 	
 	private static final String ZAFIRA_PROPERTIES = "zafira.properties";
-	private static final String ZAFIRA_REPORT = "zafira-report.html";
 	
 	private static final String ANONYMOUS = "anonymous";
 	

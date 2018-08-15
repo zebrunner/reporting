@@ -1,7 +1,10 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import java.util.Arrays;
+import java.util.Random;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.log4j.Logger;
@@ -9,16 +12,13 @@ import org.apache.log4j.PropertyConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.transaction.annotation.Transactional;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Random;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 
 @ContextConfiguration("classpath:services-test.xml")
 public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests

@@ -45,7 +45,8 @@ public class MonitorMapperTest extends AbstractTestNGSpringContextTests {
     private static final boolean ENABLED = false;
 
     private static final Monitor MONITOR = new Monitor() {
-        {
+		private static final long serialVersionUID = 1L;
+		{
             setName("n1" + KeyGenerator.getKey());
             setUrl("https://www.onliner.by/");
             setExpectedCode(KeyGenerator.getKey());
