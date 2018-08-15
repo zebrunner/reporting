@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.batchservices.service.ISchedulerService;
 import com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 public class SchedulerService implements ISchedulerService
 {
