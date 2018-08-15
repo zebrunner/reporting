@@ -41,6 +41,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import org.apache.commons.io.IOUtils;
@@ -62,11 +63,6 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Job;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
@@ -369,43 +365,24 @@ public class TestRunService
 		return testRun;
 	}
 
-	public void initTestRunWithXml(TestRun testRun) {
-
+	public void initTestRunWithXml(TestRun testRun) throws ServiceException
+	{
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+			TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
+			testRun.setConfig(config);
+			testRun.setEnv(config.getEnv());
+			testRun.setAppVersion(config.getAppVersion());
+            if (!StringUtils.isEmpty(config.getBrowser()) && !config.getBrowser().equals("*"))
 			{
-				if(!StringUtils.isEmpty(arg.getValue()))
-				{
-					if("env".equals(arg.getKey()))
-					{
-						testRun.setEnv(arg.getValue());
-					}
-					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
-					{
-						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
-								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
-						{
-							testRun.setPlatform(arg.getValue());
-						}
-					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
-							&& !arg.getValue().equals("*"))
-					{
-						testRun.setPlatform(arg.getValue());
-					}
-					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
-					{
-						testRun.setPlatform(arg.getValue() );
-					}
-					else if("app_version".equals(arg.getKey()))
-					{
-						testRun.setAppVersion(arg.getValue());
-					}
-				}
+				testRun.setPlatform(config.getBrowser());
+			}
+			else
+			{
+				testRun.setPlatform(config.getPlatform());
 			}
 		}
-	};
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException, InterruptedException
