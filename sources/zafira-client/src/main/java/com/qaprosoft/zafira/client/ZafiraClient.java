@@ -15,13 +15,28 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.client;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.ws.rs.core.MediaType;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicSessionCredentials;
+import com.amazonaws.internal.SdkBufferedInputStream;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.internal.Mimetypes;
+import com.amazonaws.services.s3.model.*;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +88,16 @@ public class ZafiraClient
 	private static final String TEST_RUNS_ABORT_PATH = "/api/tests/runs/abort?id=%d";
 	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
+	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/creds/amazon";
 
 	private String serviceURL;
 	private Client client;
 	private String authToken;
 	private String project;
+
+	private ExecutorService executorService;
+	private AmazonS3 amazonClient;
+	private SessionCredentials amazonS3SessionCredentials;
 	
 	public ZafiraClient(String serviceURL)
 	{
@@ -85,6 +105,7 @@ public class ZafiraClient
 		this.client = Client.create();
 		this.client.setConnectTimeout(CONNECT_TIMEOUT);
 		this.client.setReadTimeout(READ_TIMEOUT);
+		this.executorService = Executors.newFixedThreadPool(50);
 	}
 	
 	public void setAuthToken(String authToken) 
@@ -933,6 +954,97 @@ public class ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to authorize user", e);
+		}
+		return response;
+	}
+
+	/**
+	 * Uploads file to Amazon S3 used integration data from server
+	 * @param file - any file to upload
+	 * @param keyPrefix - bucket folder name where file will be stored
+	 * @return url of the file in string format
+	 * @throws Exception throws when there are any issues with a Amazon S3 connection
+	 */
+	public String uploadFile(File file, String keyPrefix) throws Exception
+	{
+		String filePath;
+		if(this.amazonClient != null)
+		{
+			String fileName = RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getName());
+			String key = keyPrefix + fileName;
+			filePath = this.amazonClient.getUrl(this.amazonS3SessionCredentials.getBucket(), null).toExternalForm() + key;
+
+			this.executorService.submit(() -> {
+				try (SdkBufferedInputStream stream = new SdkBufferedInputStream(new FileInputStream(file), (int) (file.length() + 100))) {
+					String type = Mimetypes.getInstance().getMimetype(file.getName());
+
+					ObjectMetadata metadata = new ObjectMetadata();
+					metadata.setContentType(type);
+					metadata.setContentLength(file.length());
+
+					PutObjectRequest putRequest = new PutObjectRequest(this.amazonS3SessionCredentials.getBucket(), key, stream, metadata);
+					this.amazonClient.putObject(putRequest);
+					this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, CannedAccessControlList.PublicRead);
+
+				} catch (Exception e)
+				{
+					LOGGER.error("Can't save file to Amazon S3", e);
+				}
+			});
+		} else
+		{
+			throw new Exception("Can't save file to Amazon S3. Verify your credentials or bucket name");
+		}
+
+		return filePath;
+	}
+
+	/**
+	 * Registers Amazon S3 client
+	 * @throws Exception throws if credentials are invalid or bucket is not exist
+	 */
+	protected void initAmazonS3Client() throws Exception
+	{
+		this.amazonS3SessionCredentials = getAmazonSessionCredentials().getObject();
+		if(this.amazonS3SessionCredentials != null)
+		{
+			try
+			{
+				this.amazonClient = AmazonS3ClientBuilder.standard()
+						.withCredentials(new AWSStaticCredentialsProvider(new BasicSessionCredentials(this.amazonS3SessionCredentials.getAccessKeyId(), this.amazonS3SessionCredentials.getSecretAccessKey(), this.amazonS3SessionCredentials.getSessionToken())))
+						.withRegion(Regions.fromName(this.amazonS3SessionCredentials.getRegion())).build();
+				if(! this.amazonClient.doesBucketExistV2(this.amazonS3SessionCredentials.getBucket()))
+				{
+					throw new Exception(String.format("Amazon S3 bucket with name '%s' doesn't exist.", this.amazonS3SessionCredentials.getBucket()));
+				}
+			} catch (Exception e)
+			{
+				throw new Exception("Amazon integration is invalid. Verify your credentials or region.", e);
+			}
+		}
+	}
+
+	/**
+	 * Gets Amazon S3 temporary credentials
+	 * @return Amazon S3 temporary credentials
+	 */
+	private Response<SessionCredentials> getAmazonSessionCredentials()
+	{
+		Response<SessionCredentials> response = new Response<>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + AMAZON_SESSION_CREDENTIALS_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(SessionCredentials.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to get AWS session credentials", e);
 		}
 		return response;
 	}
