@@ -2045,6 +2045,11 @@ td.settings-cell {
         right: 5px;
     }
 
+    &_fullscreen-button {
+        top: 5px;
+        right: 49px;
+    }
+
     &_right-button {
         top: 50%;
         right: 5px;
@@ -2054,4 +2059,14 @@ td.settings-cell {
         top: 50%;
         left: 5px;
     }
+
+    &_gallery-tooltip {
+        z-index: 1000000 !important;
+        background-color: white !important;
+        color: black !important;
+    }
+}
+
+.md-panel-outer-wrapper {
+    z-index: 1041 !important;
 }

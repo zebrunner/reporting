@@ -9,6 +9,11 @@
 <div ng-if="galleryLoaded" class="gallery-container-controls">
     <md-button id="close" class="md-icon-button gallery-container-controls_close-button" ng-click="cancel()">
         <md-icon aria-label="Close dialog">close</md-icon>
+        <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'ESC' to exist dialog</md-tooltip>
+    </md-button>
+    <md-button id="fullscreen" class="md-icon-button gallery-container-controls_fullscreen-button" ng-click="fullscreen()">
+        <md-icon aria-label="Close dialog">fullscreen</md-icon>
+        <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'F' to start fullscreen</md-tooltip>
     </md-button>
     <md-button ng-show="image.rightNeed" id="right" class="md-icon-button gallery-container-controls_right-button" data-ng-click="right(true)">
         <md-icon aria-label="Close dialog">chevron_right</md-icon>

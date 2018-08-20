@@ -413,6 +413,7 @@
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: false,
+                /*escapeToClose: false,*/
                 locals: {
                     url: url,
                     ciRunId: $scope.testRun.ciRunId,
@@ -704,7 +705,9 @@
             var LEFT = 37,
                 UP = 38,
                 RIGHT = 39,
-                DOWN = 40;
+                DOWN = 40,
+                ESC = 27,
+                F_KEY = 70;
 
             switch (keyCodeNumber) {
                 case LEFT:
@@ -717,6 +720,11 @@
                     break;
                 case DOWN:
                     break;
+                case ESC:
+                    break;
+                case F_KEY:
+                    $scope.fullscreen();
+                    break;
                 default:
                     break;
             }
@@ -728,10 +736,31 @@
 
             keyAction(keycode);
 
-            return false;
+            return true;
         }
 
         document.onkeydown = checkKeycode;
+
+        $scope.fullscreen = function() {
+            if (!document.fullscreenElement &&    // alternative standard method
+                !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+            } else {
+                if (document.cancelFullScreen) {
+                    document.cancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                }
+            }
+        };
 
         function getImage() {
             return $scope.thumbs[thumbIndex];
@@ -750,7 +779,7 @@
         $scope.right = function(forceAction) {
             if(forceAction || $scope.thumbs[thumbIndex].rightNeed) {
                 thumbIndex++;
-                setImage()
+                setImage();
             }
         };
 
