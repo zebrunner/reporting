@@ -26,7 +26,7 @@ public class Setting extends AbstractEntity
 {
 	private static final long serialVersionUID = -6809215085336377266L;
 
-	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD", "EMAIL_PASSWORD", "AMAZON_SECRET_KEY", "HIPCHAT_ACCESS_TOKEN", "LDAP_MANAGER_PASSWORD");
+	private static final List<String> TO_ENCRYPT = Arrays.asList("JIRA_PASSWORD", "JENKINS_API_TOKEN_OR_PASSWORD", "EMAIL_PASSWORD", "AMAZON_SECRET_KEY", "HIPCHAT_ACCESS_TOKEN", "LDAP_MANAGER_PASSWORD", "RABBITMQ_PASSWORD");
 
 	private String name;
 	private String value;
