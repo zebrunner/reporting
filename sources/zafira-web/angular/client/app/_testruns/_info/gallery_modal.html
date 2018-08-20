@@ -1,14 +1,24 @@
 <md-dialog class="gallery-modal" aria-label="Demo" zafira-background-theme="modal">
     <md-dialog-content>
-        <div ng-if="isLoaded" class="gallery-container">
-            <img class="gallery-container_gallery-image" ng-src="{{ image }}"/>
-            <div ng-mouseenter="showHideLog($event, true);"  ng-mouseleave="showHideLog($event, false);" class="gallery-container_gallery-image_log">{{ currentLog }}</div>
-        </div>
-        <div ng-if="! isLoaded" style="display: flex; align-items: center;" layout="row" layout-sm="column" layout-align="space-around">
-            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        <div ng-init="galleryLoaded = true;" class="gallery-container">
+            <img class="gallery-container_gallery-image" ng-src="{{ image.trumb.message }}"/>
+            <div ng-mouseenter="showHideLog($event, true);"  ng-mouseleave="showHideLog($event, false);" class="gallery-container_gallery-image_log">{{ image.log.message }}</div>
         </div>
     </md-dialog-content>
 </md-dialog>
-<md-button id="close" class="md-icon-button gallery-container_close-button" data-ng-click="cancel()">
-    <md-icon aria-label="Close dialog">close</md-icon>
-</md-button>
+<div ng-if="galleryLoaded" class="gallery-container-controls">
+    <md-button id="close" class="md-icon-button gallery-container-controls_close-button" ng-click="cancel()">
+        <md-icon aria-label="Close dialog">close</md-icon>
+        <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'ESC' to exist dialog</md-tooltip>
+    </md-button>
+    <md-button id="fullscreen" class="md-icon-button gallery-container-controls_fullscreen-button" ng-click="fullscreen()">
+        <md-icon aria-label="Close dialog">fullscreen</md-icon>
+        <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'F' to start fullscreen</md-tooltip>
+    </md-button>
+    <md-button ng-show="image.rightNeed" id="right" class="md-icon-button gallery-container-controls_right-button" data-ng-click="right(true)">
+        <md-icon aria-label="Close dialog">chevron_right</md-icon>
+    </md-button>
+    <md-button ng-show="image.leftNeed" id="left" class="md-icon-button gallery-container-controls_left-button" data-ng-click="left(true)">
+        <md-icon aria-label="Close dialog">chevron_left</md-icon>
+    </md-button>
+</div>

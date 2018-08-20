@@ -65,6 +65,8 @@ public enum ZafiraSingleton {
 				if (auth.getStatus() == 200) {
 					zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
 					this.running = true;
+
+					this.zc.initAmazonS3Client();
 				}
 			}
 		} catch (Exception e) {
