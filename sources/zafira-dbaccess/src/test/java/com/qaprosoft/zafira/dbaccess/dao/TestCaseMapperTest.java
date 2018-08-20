@@ -47,10 +47,10 @@ public class TestCaseMapperTest extends AbstractTestNGSpringContextTests
 			user1.setId(1L);
 			
 			User user2 = new User();
-			user2.setId(5L);
+			user2.setId(2L);
 			
 			Project project = new Project();
-			project.setId(2L);
+			project.setId(1L);
 			
 			setPrimaryOwner(user1);
 			setSecondaryOwner(user2);

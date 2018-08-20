@@ -6,7 +6,7 @@
     <insert id="createFilter" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 
-			INSERT INTO zafira.FILTERS (NAME, DESCRIPTION, SUBJECT, PUBLIC_ACCESS, USER_ID)
+			INSERT INTO FILTERS (NAME, DESCRIPTION, SUBJECT, PUBLIC_ACCESS, USER_ID)
 			VALUES (
 				#{name},
 				#{description},
@@ -20,7 +20,7 @@
     <sql id="deleteFilter">
         <![CDATA[
 
-			DELETE FROM zafira.FILTERS
+			DELETE FROM FILTERS
 			WHERE ID = #{id}
 
         ]]>
@@ -34,7 +34,7 @@
         <![CDATA[
 
 			UPDATE
-			    zafira.FILTERS
+			    FILTERS
 			SET
                 NAME = #{name},
                 DESCRIPTION = #{description},
@@ -59,7 +59,7 @@
 				F.CREATED_AT AS FILTER_CREATED_AT,
 				F.MODIFIED_AT AS _MODIFIED_AT
 			FROM
-				zafira.FILTERS F
+				FILTERS F
 
         ]]>
     </sql>
@@ -95,7 +95,7 @@
 			SELECT
 				COUNT(*)
 			FROM
-				zafira.FILTERS
+				FILTERS
         ]]>
     </sql>
 

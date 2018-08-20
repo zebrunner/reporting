@@ -6,7 +6,7 @@
     <insert id="createView" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
           INSERT
-          INTO zafira.VIEWS (NAME, PROJECT_ID)
+          INTO VIEWS (NAME, PROJECT_ID)
           VALUES (
             #{name},
             #{project.id}
@@ -27,9 +27,9 @@
 	          V.MODIFIED_AT AS VIEW_MODIFIED_AT,
 	          V.CREATED_AT AS VIEW_CREATED_AT
           FROM
-	          zafira.VIEWS V
+	          VIEWS V
 	      LEFT JOIN
-	          zafira.PROJECTS P
+	          PROJECTS P
 	      ON
           	V.PROJECT_ID = P.ID
         ]]>
@@ -55,7 +55,7 @@
     <update id="updateView">
         <![CDATA[
           UPDATE
-         	 zafira.VIEWS
+         	 VIEWS
           SET
           	 NAME = #{name},
           	 PROJECT_ID = #{project.id}
@@ -67,7 +67,7 @@
     <delete id="deleteViewById">
         <![CDATA[
           DELETE
-          FROM zafira.VIEWS
+          FROM VIEWS
           WHERE
           ID = #{id}
         ]]>

@@ -52,7 +52,7 @@
             $rootScope.currentUser = null;
             $rootScope.globals = {};
             $cookies.remove('globals');
-            $cookies.remove('Access-Token');
+//            $cookies.remove('Access-Token');
             //$http.defaults.headers.common.Authorization = null;
         }
 

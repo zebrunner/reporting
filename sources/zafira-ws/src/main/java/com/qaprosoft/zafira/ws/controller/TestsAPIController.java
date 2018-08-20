@@ -105,7 +105,7 @@ public class TestsAPIController extends AbstractController
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
 		Test test = testService.startTest(mapper.map(t, Test.class), t.getWorkItems(), t.getConfigXML());
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
@@ -124,7 +124,7 @@ public class TestsAPIController extends AbstractController
 		Test test = testService.finishTest(mapper.map(t, Test.class), t.getConfigXML());
 		testService.deleteQueuedTest(test);
 		testMetricService.createTestMetrics(t.getId(), t.getTestMetrics());
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 		return mapper.map(test, TestType.class);
 	}
@@ -140,10 +140,10 @@ public class TestsAPIController extends AbstractController
 	{
 		Test updatedTest = testService.changeTestStatus(test.getId(), test.getStatus());
 
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(updatedTest.getTestRunId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(updatedTest.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(updatedTest.getTestRunId()), new TestPush(updatedTest));
 		TestRun testRun = testRunService.getTestRunById(updatedTest.getTestRunId());
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
+		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
 		return updatedTest;
 	}
 
@@ -221,11 +221,11 @@ public class TestsAPIController extends AbstractController
 		}
 		Test test = testService.getTestById(id);
 
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 		websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 		
 		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
+		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
 
 		return workItem;
 	}
@@ -260,11 +260,11 @@ public class TestsAPIController extends AbstractController
 			testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_KNOWN_ISSUE);
 			if (test.isBlocker())
 				testRunService.updateStatistics(test.getTestRunId(), TestRunStatistics.Action.REMOVE_BLOCKER);
-			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH,
+			websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
 					new TestRunStatisticPush(statisticsService.getTestRunStatistic(test.getTestRunId())));
 			websocketTemplate.convertAndSend(getTestsWebsocketPath(test.getTestRunId()), new TestPush(test));
 			TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRun));
+			websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRun));
 		}
 		testService.deleteTestWorkItemByWorkItemIdAndTest(workItemId, test);
 	}

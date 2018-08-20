@@ -11,6 +11,7 @@
 		<property name="password" value="${zafira.db.jdbc.password}" />
 		<property name="maxPoolSize" value="${zafira.db.c3p0.maxPoolSize}" />
 		<property name="idleConnectionTestPeriod" value="${zafira.db.c3p0.idleConnectionTestPeriod}" />
+		<property name="connectionCustomizerClassName" value="com.qaprosoft.zafira.dbaccess.utils.TenanancyConnectionCustomizer" />
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

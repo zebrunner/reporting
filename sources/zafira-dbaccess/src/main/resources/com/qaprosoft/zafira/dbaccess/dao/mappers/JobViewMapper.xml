@@ -6,7 +6,7 @@
     <insert id="createJobView" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
           INSERT
-         	 INTO zafira.JOB_VIEWS (VIEW_ID, JOB_ID, ENV, SIZE, POSITION)
+         	 INTO JOB_VIEWS (VIEW_ID, JOB_ID, ENV, SIZE, POSITION)
           VALUES (
             #{viewId},
             #{job.id},
@@ -34,9 +34,9 @@
 			  J.MODIFIED_AT AS JOB_MODIFIED_AT,
 			  J.CREATED_AT AS JOB_CREATED_AT
           FROM
-	          zafira.JOB_VIEWS JV
+	          JOB_VIEWS JV
 	      LEFT JOIN
-	          zafira.JOBS J
+	          JOBS J
 	      ON
           	JV.JOB_ID = J.ID
         ]]>
@@ -76,7 +76,7 @@
     <delete id="deleteJobViewById">
         <![CDATA[
           DELETE
-          	FROM zafira.JOB_VIEWS
+          	FROM JOB_VIEWS
           WHERE
           	ID = #{id}
         ]]>
@@ -85,7 +85,7 @@
     <delete id="deleteJobViewsByViewIdAndEnv">
         <![CDATA[
           DELETE
-          	FROM zafira.JOB_VIEWS
+          	FROM JOB_VIEWS
           WHERE
           	VIEW_ID = #{viewId} AND ENV = #{env}
         ]]>

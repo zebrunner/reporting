@@ -13,48 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.dbaccess.utils;
+package com.qaprosoft.zafira.models.dto.auth;
 
-import java.util.List;
+import java.io.Serializable;
 
-import com.qaprosoft.zafira.models.db.Attribute;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-/**
- * SQLAdapter wraps SQL query and parametarizes it with attributes.
- * 
- * @author akhursevich
- */
-public class SQLAdapter
-{
-	private String sql;
-	private List<Attribute> attributes;
-	
-	public SQLAdapter()
-	{
+@JsonInclude(Include.NON_NULL)
+public class TenantType implements Serializable {
+	private static final long serialVersionUID = 8220711984153406216L;
+
+	private String tenant;
+
+	public TenantType() {
 	}
 
-	public SQLAdapter(String sql)
-	{
-		this.sql = sql;
+	public TenantType(String tenant) {
+		this.tenant = tenant;
 	}
 
-	public String getSql()
-	{
-		return sql;
+	public String getTenant() {
+		return tenant;
 	}
 
-	public void setSql(String sql)
-	{
-		this.sql = sql;
-	}
-
-	public List<Attribute> getAttributes()
-	{
-		return attributes;
-	}
-
-	public void setAttributes(List<Attribute> attributes)
-	{
-		this.attributes = attributes;
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
 	}
 }

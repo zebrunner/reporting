@@ -5,7 +5,7 @@
 
 	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
+			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
 			VALUES (#{name},
 					#{value},
                     #{isEncrypted},
@@ -24,7 +24,7 @@
 				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
 				S.CREATED_AT AS SETTING_CREATED_AT
 			FROM
-				zafira.SETTINGS S
+				SETTINGS S
 		]]>
 	</sql>
 
@@ -90,7 +90,7 @@
 				DISTINCT
 				S.TOOL
 			FROM
-			zafira.SETTINGS S
+			SETTINGS S
 			WHERE
 				S.TOOL IS NOT NULL
 			ORDER BY
@@ -103,7 +103,7 @@
 	<update id="updateSetting">
 		<![CDATA[
 			UPDATE
-			    zafira.SETTINGS
+			    SETTINGS
 			SET
 		]]>
 			<if test = "value != null">
@@ -134,7 +134,7 @@
 
 	<sql id="deleteSetting">
 		<![CDATA[
-			DELETE FROM zafira.SETTINGS
+			DELETE FROM SETTINGS
 			WHERE ID = #{id}
 		]]>
 	</sql>

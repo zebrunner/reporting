@@ -50,6 +50,16 @@
 		<filter-name>corsFilter</filter-name>
 		<filter-class>com.qaprosoft.zafira.ws.security.filter.CORSFilter</filter-class>
 	</filter>
+	
+	<filter>
+		<filter-name>tenancyFilter</filter-name>
+		<filter-class>com.qaprosoft.zafira.ws.security.filter.TenancyFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>tenancyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>corsFilter</filter-name>

@@ -6,7 +6,7 @@
     <insert id="createMonitor" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
 
-			INSERT INTO zafira.MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENV, COMMENT, TAG, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
+			INSERT INTO MONITORS (NAME, URL, HTTP_METHOD, REQUEST_BODY, ENV, COMMENT, TAG, NOTIFICATIONS_ENABLED, MONITOR_ENABLED, CRON_EXPRESSION,
 			EXPECTED_CODE, RECIPIENTS, TYPE)
 			VALUES (
 				#{name},
@@ -30,7 +30,7 @@
     <insert id="createMonitorStatus" useGeneratedKeys="true" keyProperty="monitorStatus.id">
         <![CDATA[
 
-			INSERT INTO zafira.MONITOR_STATUSES (MONITOR_ID, SUCCESS)
+			INSERT INTO MONITOR_STATUSES (MONITOR_ID, SUCCESS)
 			VALUES (
 				#{monitorId},
 				#{monitorStatus.success}
@@ -42,7 +42,7 @@
     <sql id="deleteMonitor">
         <![CDATA[
 
-			DELETE FROM zafira.MONITORS
+			DELETE FROM MONITORS
 			WHERE ID = #{id}
 
         ]]>
@@ -60,7 +60,7 @@
         <![CDATA[
 
 			UPDATE
-			    zafira.MONITORS
+			    MONITORS
 			SET
                 NAME = #{name},
                 URL = #{url},
@@ -104,7 +104,7 @@
 				M.CREATED_AT AS MONITOR_CREATED_AT,
 				M.MODIFIED_AT AS MONITOR_MODIFIED_AT
 			FROM
-				zafira.MONITORS M
+				MONITORS M
 
         ]]>
     </sql>
@@ -118,7 +118,7 @@
 				MS.CREATED_AT AS MONITOR_STATUS_CREATED_AT,
 				MS.MODIFIED_AT AS MONITOR_STATUS_MODIFIED_AT
 			FROM
-				zafira.MONITOR_STATUSES MS
+				MONITOR_STATUSES MS
 
         ]]>
     </sql>
@@ -172,7 +172,7 @@
 		SELECT
 			COUNT(*)
 		FROM
-			zafira.MONITORS M
+			MONITORS M
 		]]>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
             <if test="null != name">
@@ -236,7 +236,7 @@
 			SELECT
 				COUNT(*)
 			FROM
-				zafira.MONITORS M
+				MONITORS M
         ]]>
     </sql>
 

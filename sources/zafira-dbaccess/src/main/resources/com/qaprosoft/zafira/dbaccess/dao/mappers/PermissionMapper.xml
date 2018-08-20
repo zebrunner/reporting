@@ -4,7 +4,7 @@
 <mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.PermissionMapper">
     <insert id="createPermission"  useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-          INSERT INTO zafira.PERMISSIONS(NAME, BLOCK)
+          INSERT INTO PERMISSIONS(NAME, BLOCK)
           VALUES (
             #{name},
             #{block}
@@ -21,7 +21,7 @@
 				P.MODIFIED_AT AS PERMISSION_MODIFIED_AT,
 				P.CREATED_AT AS PERMISSION_CREATED_AT
 			FROM
-				zafira.PERMISSIONS P
+				PERMISSIONS P
 		]]>
     </sql>
 
@@ -46,7 +46,7 @@
     <update id="updatePermission">
         <![CDATA[
 			UPDATE
-			    zafira.PERMISSIONS
+			    PERMISSIONS
 		]]>
         <set>
             <if test="null != name">
@@ -68,7 +68,7 @@
 
     <sql id="deletePermission">
         <![CDATA[
-			DELETE FROM zafira.PERMISSIONS
+			DELETE FROM PERMISSIONS
 		]]>
     </sql>
 

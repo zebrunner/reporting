@@ -15,46 +15,18 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
-import java.util.List;
+import java.sql.Connection;
 
-import com.qaprosoft.zafira.models.db.Attribute;
+import com.mchange.v2.c3p0.AbstractConnectionCustomizer;
 
 /**
- * SQLAdapter wraps SQL query and parametarizes it with attributes.
+ * TenanancyConnectionCustomizer - initializes DB schema according to tenant.
  * 
  * @author akhursevich
  */
-public class SQLAdapter
-{
-	private String sql;
-	private List<Attribute> attributes;
-	
-	public SQLAdapter()
-	{
-	}
+public class TenanancyConnectionCustomizer extends AbstractConnectionCustomizer {
 
-	public SQLAdapter(String sql)
-	{
-		this.sql = sql;
-	}
-
-	public String getSql()
-	{
-		return sql;
-	}
-
-	public void setSql(String sql)
-	{
-		this.sql = sql;
-	}
-
-	public List<Attribute> getAttributes()
-	{
-		return attributes;
-	}
-
-	public void setAttributes(List<Attribute> attributes)
-	{
-		this.attributes = attributes;
+	public void onAcquire(Connection c, String parentDataSourceIdentityToken) throws Exception {
+		c.setSchema(TenancyContext.getTenantName());
 	}
 }

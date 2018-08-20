@@ -39,12 +39,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
@@ -81,6 +83,15 @@ public class AuthAPIController extends AbstractController
 	private String adminUsername;
 	
 	@ResponseStatusDetails
+	@ApiOperation(value = "Get current tenant", nickname = "getTenant", code = 200, httpMethod = "GET", response = String.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value="tenant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TenantType getTenant()
+	{
+		return new TenantType(TenancyContext.getTenantName());
+	}
+	
+	@ResponseStatusDetails
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value="login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -95,10 +106,13 @@ public class AuthAPIController extends AbstractController
 
 			User user = userService.getUserByUsername(credentials.getUsername());
 			
+			final String tenant = TenancyContext.getTenantName();
+			
 			authToken = new AuthTokenType("Bearer", 
-					jwtService.generateAuthToken(user), 
-					jwtService.generateRefreshToken(user), 
-					jwtService.getExpiration());
+					jwtService.generateAuthToken(user, tenant), 
+					jwtService.generateRefreshToken(user, tenant), 
+					jwtService.getExpiration(),
+					tenant);
 			
 			userService.updateLastLoginDate(user.getId());
 		}
@@ -145,10 +159,13 @@ public class AuthAPIController extends AbstractController
 				throw new InvalidCredentialsException();
 			}
 			
+			final String tenant = TenancyContext.getTenantName();
+			
 			authToken = new AuthTokenType("Bearer", 
-					jwtService.generateAuthToken(user), 
-					jwtService.generateRefreshToken(user), 
-					jwtService.getExpiration());
+					jwtService.generateAuthToken(user, tenant), 
+					jwtService.generateRefreshToken(user, tenant), 
+					jwtService.getExpiration(),
+					TenancyContext.getTenantName());
 			
 			userService.updateLastLoginDate(user.getId());
 		}
@@ -166,7 +183,7 @@ public class AuthAPIController extends AbstractController
 	@RequestMapping(value="access", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AccessTokenType accessToken() throws ServiceException
 	{	
-		String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()));
+		String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()), TenancyContext.getTenantName());
 		return new AccessTokenType(token);
 	}
 }

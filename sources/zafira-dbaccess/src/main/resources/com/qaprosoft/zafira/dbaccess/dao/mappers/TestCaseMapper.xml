@@ -5,7 +5,7 @@
 
 	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CASES (PRIMARY_OWNER_ID, SECONDARY_OWNER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
+			INSERT INTO TEST_CASES (PRIMARY_OWNER_ID, SECONDARY_OWNER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
 		
 		]]>
 		<if test="null != status">	
@@ -59,9 +59,9 @@
 				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
 				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
-				zafira.TEST_CASES TC
+				TEST_CASES TC
 			LEFT JOIN
-				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
+				PROJECTS P ON TC.PROJECT_ID = P.ID
 		]]>
 	</sql>
 	
@@ -110,17 +110,17 @@
 				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
 				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
 			FROM
-				zafira.TEST_CASES TC
+				TEST_CASES TC
 			LEFT JOIN 
-				zafira.USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
+				USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
 			LEFT JOIN 
-				zafira.USERS SU ON SU.ID = TC.SECONDARY_OWNER_ID
+				USERS SU ON SU.ID = TC.SECONDARY_OWNER_ID
 			LEFT JOIN 
-			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			    TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
 			LEFT JOIN
-				zafira.PROJECTS P ON TC.PROJECT_ID = P.ID
+				PROJECTS P ON TC.PROJECT_ID = P.ID
 			LEFT JOIN
-			    zafira.TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
+			    TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
 		]]>
 	</sql>
 
@@ -134,7 +134,7 @@
 	<select id="getTestCasesByUsername" resultMap="TestCaseResultMap">
 		<include refid="getTestCase" />
 		<![CDATA[
-			INNER JOIN zafira.USERS PU
+			INNER JOIN USERS PU
 			ON PU.ID = TC.PRIMARY_OWNER_ID
 			WHERE PU.USERNAME = #{username};
 		]]>
@@ -227,13 +227,13 @@
             SELECT
                 COUNT(*)
             FROM
-				zafira.TEST_CASES TC
+				TEST_CASES TC
 			LEFT JOIN 
-				zafira.USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
+				USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
 			LEFT JOIN 
-			    zafira.TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			    TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
 			LEFT JOIN
-			    zafira.TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
+			    TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
         ]]>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
@@ -298,7 +298,7 @@
 	<update id="updateTestCase">
 		<![CDATA[
 			UPDATE
-			    zafira.TEST_CASES
+			    TEST_CASES
 		]]>
 			<set>
 				<if test="0 != primaryOwner.id">
@@ -350,7 +350,7 @@
 
 	<sql id="deleteTestCase">
 		<![CDATA[
-			DELETE FROM zafira.TEST_CASES
+			DELETE FROM TEST_CASES
 			WHERE ID = #{id}
 		]]>
 	</sql>

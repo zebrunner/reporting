@@ -5,7 +5,7 @@
 
 	<insert id="createUserPreference" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.USER_PREFERENCES (NAME, VALUE, USER_ID)
+			INSERT INTO USER_PREFERENCES (NAME, VALUE, USER_ID)
 			VALUES (
 				#{name},
 			    #{value},
@@ -16,7 +16,7 @@
 
 	<insert id="createUserPreferences">
 		<![CDATA[
- 			INSERT INTO zafira.USER_PREFERENCES (NAME, VALUE, USER_ID) VALUES
+ 			INSERT INTO USER_PREFERENCES (NAME, VALUE, USER_ID) VALUES
  		]]>
 		<foreach item="userPreference" index="index" collection="userPreferences" open="" separator="," close=";">
 			<![CDATA[
@@ -39,7 +39,7 @@
 				UP.MODIFIED_AT AS USER_PREFERENCE_MODIFIED_AT,
 				UP.CREATED_AT AS USER_PREFERENCE_CREATED_AT
 			FROM
-				zafira.USER_PREFERENCES UP
+				USER_PREFERENCES UP
 		]]>
 	</sql>
 	
@@ -60,7 +60,7 @@
 	<select id="getDefaultUserPreferences" resultMap="UserPreferenceResultMap">
 		<include refid="getUserPreference" />
 		<![CDATA[
-            WHERE UP.USER_ID = (SELECT U.ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous');
+            WHERE UP.USER_ID = (SELECT U.ID FROM USERS U WHERE U.USERNAME = 'anonymous');
         ]]>
 	</select>
 
@@ -76,16 +76,16 @@
 			SELECT
 			UP.VALUE
 		    FROM
-			zafira.USER_PREFERENCES UP
+			USER_PREFERENCES UP
 			WHERE
-				UP.USER_ID = (SELECT U.ID FROM zafira.USERS U WHERE U.USERNAME = 'anonymous') AND UP.NAME = #{name}
+				UP.USER_ID = (SELECT U.ID FROM USERS U WHERE U.USERNAME = 'anonymous') AND UP.NAME = #{name}
 		]]>
 	</select>
 
 	<update id="updateUserPreference">
 		<![CDATA[
 			UPDATE
-			    zafira.USER_PREFERENCES
+			    USER_PREFERENCES
 		]]>
 			<set>
 				<if test="null != name">
@@ -114,7 +114,7 @@
 		<foreach item="userPreference" index="index" collection="userPreferences" separator=";">
 			<![CDATA[
 		    UPDATE
-		    	zafira.USER_PREFERENCES
+		    	USER_PREFERENCES
 	        ]]>
 			<set>
 				<if test="null != userPreference.value">
@@ -134,7 +134,7 @@
 
 	<sql id="deleteUserPreference">
 		<![CDATA[
-			DELETE FROM zafira.USER_PREFERENCES
+			DELETE FROM USER_PREFERENCES
 		]]>
 	</sql>
 

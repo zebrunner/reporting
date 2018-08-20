@@ -5,7 +5,7 @@
 
 	<insert id="createTestMetric" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_METRICS (OPERATION, ELAPSED, TEST_ID)
+			INSERT INTO TEST_METRICS (OPERATION, ELAPSED, TEST_ID)
 			VALUES (
 				#{operation},
 				#{elapsed},
@@ -24,7 +24,7 @@
 				TM.MODIFIED_AT AS TEST_METRIC_MODIFIED_AT,
 				TM.CREATED_AT AS TEST_METRIC_CREATED_AT
 			FROM
-				zafira.TEST_METRICS TM
+				TEST_METRICS TM
 		]]>
 	</sql>
 
@@ -40,13 +40,13 @@
 			SELECT
 				DISTINCT(TR.ENV)
 			FROM
-			  zafira.TEST_RUNS TR
+			  TEST_RUNS TR
 			INNER JOIN
-			  zafira.TESTS T
+			  TESTS T
 			ON
 			  T.TEST_RUN_ID = TR.ID
 			INNER JOIN
-			  zafira.TEST_METRICS TM
+			  TEST_METRICS TM
 			ON
 			  T.TEST_RUN_ID = TR.ID
 			WHERE
@@ -64,13 +64,13 @@
 			  TM.MODIFIED_AT AS TEST_METRIC_MODIFIED_AT,
 			  TM.CREATED_AT AS TEST_METRIC_CREATED_AT
 			FROM
-			  zafira.TEST_METRICS TM
+			  TEST_METRICS TM
 			INNER JOIN
-			  zafira.TESTS T
+			  TESTS T
 			ON
 			  TM.TEST_ID = T.ID
 			INNER JOIN
-			  zafira.TEST_RUNS TR
+			  TEST_RUNS TR
 			ON
 			  T.TEST_RUN_ID = TR.ID
 			WHERE
@@ -82,7 +82,7 @@
 	
 	<sql id="deleteTestMetric">
 		<![CDATA[
-			DELETE FROM zafira.TEST_METRICS
+			DELETE FROM TEST_METRICS
 			WHERE ID = #{id}
 		]]>
 	</sql>

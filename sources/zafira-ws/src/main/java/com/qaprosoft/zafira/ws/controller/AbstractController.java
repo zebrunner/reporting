@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.qaprosoft.zafira.services.exceptions.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
@@ -40,21 +40,39 @@ import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
+import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
+import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 public abstract class AbstractController
 {
-	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/testRuns";
+	protected static final String TEST_RUNS_WEBSOCKET_PATH = "/topic/%s.testRuns";
 	
-	private static final String TESTS_WEBSOCKET_PATH = "/topic/testRuns.%s.tests";
+	private static final String TESTS_WEBSOCKET_PATH = "/topic/%s.testRuns.%s.tests";
 	
-	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/statistics";
+	protected static final String STATISTICS_WEBSOCKET_PATH = "/topic/%s.statistics";
 
 	@Resource(name = "messageSource")
 	protected MessageSource messageSource;
+	
+	protected String getStatisticsWebsocketPath()
+	{
+		return String.format(STATISTICS_WEBSOCKET_PATH, TenancyContext.getTenantName());
+	}
+	
+	protected String getTestRunsWebsocketPath()
+	{
+		return String.format(TEST_RUNS_WEBSOCKET_PATH, TenancyContext.getTenantName());
+	}
 
 	protected String getTestsWebsocketPath(Long testRunId)
 	{
-		return String.format(TESTS_WEBSOCKET_PATH, testRunId);
+		return String.format(TESTS_WEBSOCKET_PATH, TenancyContext.getTenantName(), testRunId);
 	}
 	
 	protected JwtUserType getPrincipal()

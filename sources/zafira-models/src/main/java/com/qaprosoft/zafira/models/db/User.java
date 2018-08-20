@@ -40,6 +40,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private List<Group> groups = new ArrayList<>();
 	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
+	private String tenant;
 
 	public User()
 	{
@@ -176,6 +177,14 @@ public class User extends AbstractEntity implements Comparable<User>
 	public void setLastLogin(Date lastLogin)
 	{
 		this.lastLogin = lastLogin;
+	}
+	
+	public String getTenant() {
+		return tenant;
+	}
+
+	public void setTenant(String tenant) {
+		this.tenant = tenant;
 	}
 
 	@Override

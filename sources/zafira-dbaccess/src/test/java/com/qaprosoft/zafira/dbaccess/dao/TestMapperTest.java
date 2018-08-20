@@ -64,7 +64,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 			setStatus(Status.PASSED);
 			setTestArgs("<xml>");
 			setTestCaseId(1L);
-			setTestRunId(3L);
+			setTestRunId(1L);
 			setTestGroup("g1");
 			setMessage("Hm....");
 			setStartTime(new Date());

@@ -58,7 +58,6 @@ public class RabbitMQService implements IJMXService
 	{
 		String host = null;
 		String port = null;
-		String ws = null;
 		String username = null;
 		String password = null;
 
@@ -78,9 +77,6 @@ public class RabbitMQService implements IJMXService
 				case RABBITMQ_PORT:
 					port = setting.getValue();
 					break;
-				case RABBITMQ_WS:
-					ws = setting.getValue();
-					break;
 				case RABBITMQ_USER:
 					username = setting.getValue();
 					break;
@@ -91,7 +87,7 @@ public class RabbitMQService implements IJMXService
 					break;
 				}
 			}
-			init(host, port, ws, username, password);
+			init(host, port, username, password);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
 		}
@@ -101,10 +97,9 @@ public class RabbitMQService implements IJMXService
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "host", description = "RabbitMQ host"),
 			@ManagedOperationParameter(name = "port", description = "RabbitMQ port"),
-			@ManagedOperationParameter(name = "ws", description = "RabbitMQ ws"),
 			@ManagedOperationParameter(name = "username", description = "RabbitMQ username"),
 			@ManagedOperationParameter(name = "password", description = "RabbitMQ password")})
-	public void init(String host, String port, String ws, String username, String password){
+	public void init(String host, String port, String username, String password){
 		try
 		{
 			if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))

@@ -11,15 +11,16 @@
 			</array>
 		</property>
 	</bean>
-
+	
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="${db.jdbc.driverClass}" />
 		<property name="jdbcUrl" value="${db.jdbc.url}" />
 		<property name="user" value="${db.jdbc.user}" />
 		<property name="password" value="${db.jdbc.password}" />
 		<property name="maxPoolSize" value="${db.c3p0.maxPoolSize}" />
+		<property name="connectionCustomizerClassName" value="com.qaprosoft.zafira.dbaccess.utils.TenanancyConnectionCustomizer" />
 	</bean>
-
+	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -29,6 +30,7 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/**/*.xml" />
+		<property name="configLocation" value="classpath:/com/qaprosoft/zafira/dbaccess/dao/config/mybatis-config.xml" />
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

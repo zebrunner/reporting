@@ -11,7 +11,7 @@
 	
 	<insert id="createWidget" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.WIDGETS (TITLE, SQL, MODEL, TYPE, REFRESHABLE)
+			INSERT INTO WIDGETS (TITLE, SQL, MODEL, TYPE, REFRESHABLE)
 			VALUES (
 				#{title},
 				#{sql},
@@ -34,7 +34,7 @@
 				W.MODIFIED_AT AS WIDGET_MODIFIED_AT,
 				W.CREATED_AT AS WIDGET_CREATED_AT
 			FROM
-				zafira.WIDGETS W
+				WIDGETS W
 		]]>
 	</sql>
 	
@@ -52,7 +52,7 @@
 	<update id="updateWidget">
 		<![CDATA[
 			UPDATE
-			    zafira.WIDGETS
+			    WIDGETS
 		]]>
 			<set>
 				<if test="null != title">
@@ -89,7 +89,7 @@
 	
 	<sql id="deleteWidget">
 		<![CDATA[
-			DELETE FROM zafira.WIDGETS
+			DELETE FROM WIDGETS
 		]]>
 	</sql>
 

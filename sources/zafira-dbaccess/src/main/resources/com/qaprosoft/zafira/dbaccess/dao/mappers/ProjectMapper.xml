@@ -5,7 +5,7 @@
 
 	<insert id="createProject" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.PROJECTS (NAME, DESCRIPTION)
+			INSERT INTO PROJECTS (NAME, DESCRIPTION)
 			VALUES (#{name},
 					#{description});
 		]]>
@@ -20,7 +20,7 @@
 				P.MODIFIED_AT AS PROJECT_MODIFIED_AT,
 				P.CREATED_AT AS PROJECT_CREATED_AT
 			FROM
-				zafira.PROJECTS P
+				PROJECTS P
 		]]>
 	</sql>
 	
@@ -48,7 +48,7 @@
 	<update id="updateProject">
 		<![CDATA[
 			UPDATE
-			    zafira.PROJECTS
+			    PROJECTS
 			SET
 			    NAME = #{name},
 			    DESCRIPTION = #{description}
@@ -59,7 +59,7 @@
 
 	<sql id="deleteProject">
 		<![CDATA[
-			DELETE FROM zafira.PROJECTS
+			DELETE FROM PROJECTS
 			WHERE ID = #{id}
 		]]>
 	</sql>

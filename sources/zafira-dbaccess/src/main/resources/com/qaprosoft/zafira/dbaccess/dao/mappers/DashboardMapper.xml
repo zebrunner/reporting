@@ -5,7 +5,7 @@
 	
 	 <insert id="createDashboard" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-			INSERT INTO zafira.DASHBOARDS (TITLE, HIDDEN, POSITION)
+			INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION)
 			VALUES (
 				#{title},
 				#{hidden},
@@ -38,17 +38,17 @@
 				DA.KEY AS DASHBOARD_ATTRIBUTE_KEY,
 				DA.VALUE AS DASHBOARD_ATTRIBUTE_VALUE
 			FROM
-				zafira.DASHBOARDS D
+				DASHBOARDS D
             LEFT JOIN
-                zafira.DASHBOARDS_WIDGETS DW
+                DASHBOARDS_WIDGETS DW
             ON
                 D.ID = DW.DASHBOARD_ID
             LEFT JOIN
-                zafira.WIDGETS W
+                WIDGETS W
             ON
                 DW.WIDGET_ID = W.ID
             LEFT JOIN
-                zafira.DASHBOARD_ATTRIBUTES DA
+                DASHBOARD_ATTRIBUTES DA
             ON
                 D.ID = DA.DASHBOARD_ID
 		]]>
@@ -87,7 +87,7 @@
         <include refid="getDashboard" />
         <![CDATA[
             WHERE
-                D.TITLE = (SELECT UP.VALUE FROM zafira.USER_PREFERENCES UP WHERE UP.NAME = 'DEFAULT_DASHBOARD'
+                D.TITLE = (SELECT UP.VALUE FROM USER_PREFERENCES UP WHERE UP.NAME = 'DEFAULT_DASHBOARD'
                 AND UP.USER_ID = #{userId})
 		]]>
     </select>
@@ -95,7 +95,7 @@
 	<update id="updateDashboard">
 		<![CDATA[
 			UPDATE
-			    zafira.DASHBOARDS
+			    DASHBOARDS
 			SET
 				TITLE = #{title},
                 HIDDEN = #{hidden},
@@ -107,7 +107,7 @@
 	
 	<sql id="deleteDashboard">
 		<![CDATA[
-			DELETE FROM zafira.DASHBOARDS
+			DELETE FROM DASHBOARDS
 		]]>
 	</sql>
 
@@ -135,7 +135,7 @@
     
     <insert id="addDashboardWidget" useGeneratedKeys="true">
         <![CDATA[
-            INSERT INTO zafira.DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, SIZE, POSITION, LOCATION)
+            INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, SIZE, POSITION, LOCATION)
             VALUES (
                 #{dashboardId},
                 #{widget.id},
@@ -149,15 +149,15 @@
     <delete id="deleteDashboardWidget">
         DELETE 
         FROM 
-        	zafira.DASHBOARDS_WIDGETS
+        	DASHBOARDS_WIDGETS
        	WHERE 
-       		ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widgetId})
+       		ID = (SELECT ID FROM DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widgetId})
     </delete>
     
     <update id="updateDashboardWidget">
         <![CDATA[
             UPDATE
-              zafira.DASHBOARDS_WIDGETS
+              DASHBOARDS_WIDGETS
         ]]>
         <set>
             <if test="null != widget.size">
@@ -177,13 +177,13 @@
             </if>
         </set>
         <![CDATA[
-            WHERE ID = (SELECT ID FROM zafira.DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widget.id})
+            WHERE ID = (SELECT ID FROM DASHBOARDS_WIDGETS WHERE DASHBOARD_ID = #{dashboardId} AND WIDGET_ID = #{widget.id})
         ]]>
     </update>
 
     <insert id="createDashboardAttribute" useGeneratedKeys="true" keyProperty="attribute.id">
         <![CDATA[
-			INSERT INTO zafira.DASHBOARD_ATTRIBUTES (KEY, VALUE, DASHBOARD_ID)
+			INSERT INTO DASHBOARD_ATTRIBUTES (KEY, VALUE, DASHBOARD_ID)
 			VALUES (
 				#{attribute.key},
 				#{attribute.value},
@@ -199,9 +199,9 @@
 				DA.KEY AS DASHBOARD_ATTRIBUTE_KEY,
 				DA.VALUE AS DASHBOARD_ATTRIBUTE_VALUE
 			FROM
-				zafira.DASHBOARD_ATTRIBUTES DA
+				DASHBOARD_ATTRIBUTES DA
             LEFT JOIN
-                zafira.DASHBOARDS D
+                DASHBOARDS D
             ON
                 DA.DASHBOARD_ID = D.ID
 		]]>
@@ -226,7 +226,7 @@
     <delete id="deleteDashboardAttributeById">
         DELETE
         FROM
-        zafira.DASHBOARD_ATTRIBUTES
+        DASHBOARD_ATTRIBUTES
         WHERE
         ID = #{id}
     </delete>
@@ -234,7 +234,7 @@
     <update id="updateAttribute">
         <![CDATA[
             UPDATE
-              zafira.DASHBOARD_ATTRIBUTES
+              DASHBOARD_ATTRIBUTES
         ]]>
         <set>
             <if test="null != key">

@@ -15,46 +15,23 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
-import java.util.List;
-
-import com.qaprosoft.zafira.models.db.Attribute;
-
 /**
- * SQLAdapter wraps SQL query and parametarizes it with attributes.
+ * TenancyContext - stores client tenant ID.
  * 
  * @author akhursevich
  */
-public class SQLAdapter
-{
-	private String sql;
-	private List<Attribute> attributes;
+public class TenancyContext {
+
+	private static final String DEFAULT_TENANT = "zafira";
 	
-	public SQLAdapter()
-	{
-	}
+	private static ThreadLocal<String> tenant = new ThreadLocal<>();
 
-	public SQLAdapter(String sql)
-	{
-		this.sql = sql;
-	}
+    public static void setTenantName(String tenantName) {
+        tenant.set(tenantName != null ? tenantName.toLowerCase() : null);
+    }
 
-	public String getSql()
-	{
-		return sql;
-	}
-
-	public void setSql(String sql)
-	{
-		this.sql = sql;
-	}
-
-	public List<Attribute> getAttributes()
-	{
-		return attributes;
-	}
-
-	public void setAttributes(List<Attribute> attributes)
-	{
-		this.attributes = attributes;
-	}
+    public static String getTenantName() {
+    		String tenantName = tenant.get();
+        return tenantName != null ? tenantName : DEFAULT_TENANT;
+    }
 }

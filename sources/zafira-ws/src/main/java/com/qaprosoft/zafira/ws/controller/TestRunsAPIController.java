@@ -141,8 +141,8 @@ public class TestRunsAPIController extends AbstractController
 		testRun.setProject(projectService.getProjectByName(project));
 		testRun = testRunService.startTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -164,8 +164,8 @@ public class TestRunsAPIController extends AbstractController
 		testRunService.initTestRunWithXml(testRun);
 		testRunService.updateTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
@@ -181,8 +181,8 @@ public class TestRunsAPIController extends AbstractController
 	{
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
-		websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunFull));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
+		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
 		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
 	}
@@ -211,11 +211,11 @@ public class TestRunsAPIController extends AbstractController
 			{
 				if(Status.ABORTED.equals(test.getStatus()))
 				{
-					websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestPush(test));
+					websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestPush(test));
 				}
 			}
-			websocketTemplate.convertAndSend(TEST_RUNS_WEBSOCKET_PATH, new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-			websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+			websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
@@ -435,7 +435,7 @@ public class TestRunsAPIController extends AbstractController
 			throws ServiceException
 	{
 		TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
-		websocketTemplate.convertAndSend(STATISTICS_WEBSOCKET_PATH, new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
 	}
 
 	@ResponseStatusDetails

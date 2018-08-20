@@ -5,7 +5,7 @@
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL, COVER_PHOTO_URL)
+			INSERT INTO USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL, COVER_PHOTO_URL)
 			VALUES (
 				#{username},
 				#{password},
@@ -43,25 +43,25 @@
 				UP.MODIFIED_AT AS USER_PREFERENCE_MODIFIED_AT,
 				UP.CREATED_AT AS USER_PREFERENCE_CREATED_AT
 			FROM
-				zafira.USERS U
+				USERS U
 			LEFT JOIN
-				zafira.USER_GROUPS UG
+				USER_GROUPS UG
 			ON
 				U.ID = UG.USER_ID
 			LEFT JOIN
-				zafira.GROUPS G
+				GROUPS G
 			ON
 				UG.GROUP_ID = G.ID
 			LEFT JOIN
-				zafira.USER_PREFERENCES UP
+				USER_PREFERENCES UP
 			ON
 				UP.USER_ID = U.ID
 			LEFT JOIN
-				zafira.GROUP_PERMISSIONS GP
+				GROUP_PERMISSIONS GP
 			ON
 				GP.group_id = G.ID
 			LEFT JOIN
-				zafira.PERMISSIONS P
+				PERMISSIONS P
 			ON
 				GP.PERMISSION_ID = P.ID
 		]]>
@@ -95,7 +95,7 @@
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT
 			FROM
-				zafira.USERS U
+				USERS U
 		]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
@@ -145,7 +145,7 @@
 		SELECT 
 			COUNT(*) 
 		FROM 
-			zafira.USERS U
+			USERS U
 		]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != id">
@@ -194,7 +194,7 @@
 	<update id="updateUser">
 		<![CDATA[
 			UPDATE
-			    zafira.USERS
+			    USERS
 		]]>
 			<set>
 				<if test="null != firstName">
@@ -242,7 +242,7 @@
 	<update id="updateLastLoginDate">
 		<![CDATA[
 			UPDATE
-			    zafira.USERS
+			    USERS
 			SET
 				LAST_LOGIN = CURRENT_TIMESTAMP
 			WHERE
@@ -252,7 +252,7 @@
 
 	<sql id="deleteUser">
 		<![CDATA[
-			DELETE FROM zafira.USERS
+			DELETE FROM USERS
 			WHERE ID = #{id}
 		]]>
 	</sql>
@@ -282,7 +282,7 @@
 
 	<insert id="addUserToGroup">
 		<![CDATA[
-			INSERT INTO zafira.USER_GROUPS (USER_ID, GROUP_ID)
+			INSERT INTO USER_GROUPS (USER_ID, GROUP_ID)
 			VALUES (
 				#{userId},
 				#{groupId}
@@ -293,9 +293,9 @@
 	<delete id="deleteUserFromGroup">
 		DELETE
 		FROM
-			zafira.USER_GROUPS
+			USER_GROUPS
 		WHERE
-			ID = (SELECT ID FROM zafira.USER_GROUPS WHERE USER_ID = #{userId} AND GROUP_ID = #{groupId})
+			ID = (SELECT ID FROM USER_GROUPS WHERE USER_ID = #{userId} AND GROUP_ID = #{groupId})
 	</delete>
 
 </mapper>

@@ -18,7 +18,7 @@ services:
     image: qaprosoft/rabbitmq:latest
     ports:
       - 15672:15672
-      - 15674:15674
+      - 61613:61613
       - 5672:5672
     volumes:
       - ./config/definitions.json:/etc/rabbitmq/definitions.json:ro
@@ -61,7 +61,7 @@ services:
   zafira:
     image: qaprosoft/zafira:latest
     ports:
-      - 8080:8080
+      - 8088:8080
     env_file:
      - integrations.env
     environment:
@@ -77,10 +77,12 @@ services:
       - ZAFIRA_ELASTICSEARCH_PASS=
       - ZAFIRA_REDIS_HOST=redis
       - ZAFIRA_REDIS_PORT=6379
-      - ZAFIRA_RABBITMQ_HOST=rabbitmq
-      - ZAFIRA_RABBITMQ_PORT=61613
+      - ZAFIRA_RABBITMQ_HOST=localhost
+      - ZAFIRA_RABBITMQ_PORT=5672
       - ZAFIRA_RABBITMQ_USER=qpsdemo
       - ZAFIRA_RABBITMQ_PASS=qpsdemo
+      - ZAFIRA_RABBITMQ_STOMP_HOST=rabbitmq
+      - ZAFIRA_RABBITMQ_STOMP_PORT=61613
     depends_on:
       - "db"
       - "rabbitmq"

@@ -4,7 +4,7 @@
 <mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper">
     <insert id="createGroup"  useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
-          INSERT INTO zafira.GROUPS(NAME, ROLE)
+          INSERT INTO GROUPS(NAME, ROLE)
           VALUES (
             #{name},
             #{role}
@@ -15,7 +15,7 @@
     <insert id="addPermissionsToGroup">
         <if test="null != permissions and permissions.size() > 0">
             <![CDATA[
-              INSERT INTO zafira.GROUP_PERMISSIONS(GROUP_ID, PERMISSION_ID)
+              INSERT INTO GROUP_PERMISSIONS(GROUP_ID, PERMISSION_ID)
               VALUES
             ]]>
               <foreach item="permission" index="index" collection="permissions" open="" separator="," close=";">
@@ -53,21 +53,21 @@
 				P.MODIFIED_AT AS PERMISSION_MODIFIED_AT,
 				P.CREATED_AT AS PERMISSION_CREATED_AT
 			FROM
-				zafira.GROUPS G
+				GROUPS G
 			LEFT JOIN
-				zafira.USER_GROUPS UG
+				USER_GROUPS UG
 			ON
 				G.ID = UG.GROUP_ID
 			LEFT JOIN
-				zafira.USERS U
+				USERS U
 			ON
 				UG.USER_ID = U.ID
             LEFT JOIN
-                zafira.GROUP_PERMISSIONS GP
+                GROUP_PERMISSIONS GP
             ON
                 GP.GROUP_ID = G.ID
             LEFT JOIN
-                zafira.PERMISSIONS P
+                PERMISSIONS P
             ON
                 P.ID = GP.PERMISSION_ID
 		]]>
@@ -78,7 +78,7 @@
 			SELECT
 				COUNT(*)
 			FROM
-				zafira.GROUPS G
+				GROUPS G
 		]]>
     </sql>
 
@@ -107,7 +107,7 @@
 				G.MODIFIED_AT AS GROUP_MODIFIED_AT,
 				G.CREATED_AT AS GROUP_CREATED_AT
 			FROM
-				zafira.GROUPS G
+				GROUPS G
 			WHERE 
 				G.ROLE = #{role}
 			ORDER BY ID ASC
@@ -118,7 +118,7 @@
     <update id="updateGroup">
         <![CDATA[
 			UPDATE
-			    zafira.GROUPS
+			    GROUPS
 		]]>
         <set>
             <if test="null != name">
@@ -140,7 +140,7 @@
 
     <sql id="deleteGroup">
         <![CDATA[
-			DELETE FROM zafira.GROUPS
+			DELETE FROM GROUPS
 		]]>
     </sql>
 
@@ -153,7 +153,7 @@
 
     <delete id="deletePermissionFromGroup">
         <![CDATA[
-            DELETE FROM zafira.GROUP_PERMISSIONS
+            DELETE FROM GROUP_PERMISSIONS
 			    WHERE GROUP_ID = #{groupId} AND PERMISSION_ID = #{permissionId}
 		]]>
     </delete>

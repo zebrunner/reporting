@@ -64,5 +64,7 @@ echo zafira.rabbitmq.host=$ZAFIRA_RABBITMQ_HOST >> $CATALINA_HOME/conf/catalina.
 echo zafira.rabbitmq.port=$ZAFIRA_RABBITMQ_PORT >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.rabbitmq.user=$ZAFIRA_RABBITMQ_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.rabbitmq.pass=$ZAFIRA_RABBITMQ_PASS >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.rabbitmq.stomp.host=$ZAFIRA_RABBITMQ_STOMP_HOST >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.rabbitmq.stomp.port=$ZAFIRA_RABBITMQ_STOMP_PORT >> $CATALINA_HOME/conf/catalina.properties
 
 catalina.sh run

@@ -5,7 +5,7 @@
 
 	<insert id="createTestSuite" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_SUITES (USER_ID, NAME, FILE_NAME, DESCRIPTION)
+			INSERT INTO TEST_SUITES (USER_ID, NAME, FILE_NAME, DESCRIPTION)
 			VALUES (
 				#{user.id},
 			    #{name},
@@ -26,7 +26,7 @@
 				TS.MODIFIED_AT AS TEST_SUITE_MODIFIED_AT,
 				TS.CREATED_AT AS TEST_SUITE_CREATED_AT
 			FROM
-				zafira.TEST_SUITES TS
+				TEST_SUITES TS
 		]]>
 	</sql>
 
@@ -54,7 +54,7 @@
 	<update id="updateTestSuite">
 		<![CDATA[
 			UPDATE
-			    zafira.TEST_SUITES
+			    TEST_SUITES
 		]]>
 			<set>
 				<if test="0 != user.id">
@@ -86,7 +86,7 @@
 
 	<sql id="deleteTestSuite">
 		<![CDATA[
-			DELETE FROM zafira.TEST_SUITES
+			DELETE FROM TEST_SUITES
 			WHERE ID = #{id}
 		]]>
 	</sql>

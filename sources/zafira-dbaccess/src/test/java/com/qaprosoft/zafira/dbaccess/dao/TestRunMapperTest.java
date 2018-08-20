@@ -63,7 +63,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			project.setId(1L);
 			
 			WorkItem workItem = new WorkItem();
-			workItem.setId(13L);
+			workItem.setId(1L);
 			
 			TestSuite testSuite = new TestSuite();
 			testSuite.setId(1L);
@@ -87,6 +87,7 @@ public class TestRunMapperTest extends AbstractTestNGSpringContextTests
 			setBlocker(true);
 			setPlatform("p1");
 			setEnv("e1");
+			setDriverMode(DriverMode.METHOD_MODE);
 		}
 	};
 

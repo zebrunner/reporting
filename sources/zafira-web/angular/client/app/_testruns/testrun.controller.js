@@ -11,6 +11,8 @@
     // **************************************************************************
     function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
+    		const TENANT = $rootScope.globals.auth.tenant;
+    	
         $scope.predicate = 'startTime';
         $scope.reverse = false;
 
@@ -360,7 +362,7 @@
 
         $scope.initWebsocket = function () {
             var wsName = 'zafira';
-            $scope.zafiraWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
+            $scope.zafiraWebsocket = Stomp.over(new SockJS(API_URL + "/api/websockets"));
             $scope.zafiraWebsocket.debug = null;
             $scope.zafiraWebsocket.connect({withCredentials: false}, function () {
                 $scope.subscribtions['statistics'] = $scope.subscribeStatisticsTopic();
@@ -375,7 +377,7 @@
         };
 
         $scope.subscribeStatisticsTopic = function () {
-            return $scope.zafiraWebsocket.subscribe("/topic/statistics", function (data) {
+            return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".statistics", function (data) {
                 var event = $scope.getEventFromMessage(data.body);
                 if($scope.checkStatisticEvent(event)) {
                     return;
@@ -397,7 +399,7 @@
         };
 
         $scope.subscribeTestRunsTopic = function () {
-            return $scope.zafiraWebsocket.subscribe("/topic/testRuns", function (data) {
+            return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".testRuns", function (data) {
                 var event = $scope.getEventFromMessage(data.body);
                 if (($scope.testRunId && $scope.testRunId != event.testRun.id)
                     || ($scope.showRealTimeEvents == false && $scope.testRuns[event.testRun.id] == null)
@@ -412,7 +414,7 @@
 
         $scope.subscribeTestsTopic = function (testRunId) {
             if($scope.zafiraWebsocket.connected) {
-                return $scope.zafiraWebsocket.subscribe("/topic/testRuns." + testRunId + ".tests", function (data) {
+                return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRunId + ".tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
                     $scope.addTest(event.test);
                     $scope.$apply();

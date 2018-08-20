@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, MESSAGE_HASH_CODE, START_TIME, FINISH_TIME, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS)
+			INSERT INTO TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, MESSAGE_HASH_CODE, START_TIME, FINISH_TIME, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS)
 			VALUES (
 				#{name},
 			    #{status},
@@ -29,7 +29,7 @@
 	
 	<insert id="createTestWorkItem" useGeneratedKeys="true">
 		<![CDATA[
-			INSERT INTO zafira.TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID)
+			INSERT INTO TEST_WORK_ITEMS (TEST_ID, WORK_ITEM_ID)
 			VALUES (
 				#{test.id},
 			    #{workItem.id}
@@ -39,7 +39,7 @@
 
 	<delete id="deleteTestByTestRunIdAndNameAndStatus">
 		<![CDATA[
-		    DELETE FROM zafira.TESTS
+		    DELETE FROM TESTS
 			WHERE
 				TEST_RUN_ID = #{testRunId}
 				AND
@@ -51,7 +51,7 @@
 
 	<delete id="deleteTestWorkItemByWorkItemIdAndTestId">
 		<![CDATA[
-			DELETE FROM zafira.TEST_WORK_ITEMS
+			DELETE FROM TEST_WORK_ITEMS
 			WHERE
 			WORK_ITEM_ID = #{workItemId}
 			AND
@@ -61,18 +61,18 @@
 
 	<delete id="deleteTestWorkItemByTestIdAndWorkItemType">
 		<![CDATA[
-			DELETE FROM zafira.TEST_WORK_ITEMS
+			DELETE FROM TEST_WORK_ITEMS
 			WHERE
 			TEST_ID = #{testId}
 			AND
 			WORK_ITEM_ID IN
-			(SELECT WI.ID FROM zafira.WORK_ITEMS WI INNER JOIN zafira.TEST_WORK_ITEMS TWI ON WI.ID = TWI.WORK_ITEM_ID WHERE WI.TYPE = #{type})
+			(SELECT WI.ID FROM WORK_ITEMS WI INNER JOIN TEST_WORK_ITEMS TWI ON WI.ID = TWI.WORK_ITEM_ID WHERE WI.TYPE = #{type})
 		]]>
 	</delete>
 
 	<delete id="deleteTestWorkItemByTestId">
 		<![CDATA[
-			DELETE FROM zafira.TEST_WORK_ITEMS
+			DELETE FROM TEST_WORK_ITEMS
 			WHERE
 			TEST_ID = #{testId}
 		]]>
@@ -144,41 +144,41 @@
 		        TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
 		        TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
 		        FROM
-				zafira.TESTS T
+				TESTS T
 			LEFT JOIN
-				zafira.TEST_WORK_ITEMS TWI
+				TEST_WORK_ITEMS TWI
 		        ON 
 		            	TWI.TEST_ID = T.ID
 			LEFT JOIN
-				zafira.WORK_ITEMS WI
+				WORK_ITEMS WI
 		    ON
 		        WI.ID = TWI.WORK_ITEM_ID
 		    LEFT JOIN
-				zafira.USERS U
+				USERS U
 		    ON
 		        WI.USER_ID = U.ID
 			LEFT JOIN 
-				zafira.TEST_CONFIGS TC
+				TEST_CONFIGS TC
 			ON 
 				T.TEST_CONFIG_ID = TC.ID
 			LEFT JOIN
-				zafira.TEST_CASES TCS
+				TEST_CASES TCS
 			ON
 				T.TEST_CASE_ID = TCS.ID
 			LEFT JOIN
-				zafira.TEST_RUNS TR
+				TEST_RUNS TR
 			ON
 				T.TEST_RUN_ID = TR.ID
 			LEFT JOIN
-				zafira.USERS TCU
+				USERS TCU
 			ON
 				TCS.PRIMARY_OWNER_ID = TCU.ID
 			LEFT JOIN
-				zafira.USERS SO
+				USERS SO
 			ON
 				TCS.SECONDARY_OWNER_ID = SO.ID
 	        LEFT JOIN
-		        zafira.TEST_ARTIFACTS TA
+		        TEST_ARTIFACTS TA
 	      	ON
 		        TA.TEST_ID = T.ID
         ]]>
@@ -268,7 +268,7 @@
             SELECT
                 COUNT(*)
             FROM
-                zafira.TESTS T
+                TESTS T
         ]]>
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="null != testRunIds and testRunIds.size > 0">
@@ -295,7 +295,7 @@
 	<update id="updateTest">
 		<![CDATA[
 			UPDATE
-			    zafira.TESTS
+			    TESTS
 			SET
 				NAME = #{name},
 				STATUS = #{status},
@@ -327,7 +327,7 @@
 	<update id="updateTestsNeedRerun">
 		<![CDATA[
 			UPDATE
-			    zafira.TESTS
+			    TESTS
 			SET
 				NEED_RERUN = #{rerun}
 			WHERE 
@@ -347,7 +347,7 @@
 
 	<sql id="deleteTest">
 		<![CDATA[
-			DELETE FROM zafira.TESTS
+			DELETE FROM TESTS
 			WHERE ID = #{id}
 		]]>
 	</sql>

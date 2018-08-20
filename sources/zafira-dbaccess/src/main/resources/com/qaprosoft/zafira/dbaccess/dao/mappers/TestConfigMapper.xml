@@ -5,7 +5,7 @@
 
 	<insert id="createTestConfig" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.TEST_CONFIGS (URL, ENV, PLATFORM, PLATFORM_VERSION, BROWSER, BROWSER_VERSION, APP_VERSION, LOCALE, LANGUAGE, DEVICE)
+			INSERT INTO TEST_CONFIGS (URL, ENV, PLATFORM, PLATFORM_VERSION, BROWSER, BROWSER_VERSION, APP_VERSION, LOCALE, LANGUAGE, DEVICE)
 			VALUES (
 				#{url},
 			    #{env},
@@ -40,7 +40,7 @@
 				TC.MODIFIED_AT AS TEST_CONFIG_MODIFIED_AT,
 				TC.CREATED_AT AS TEST_CONFIG_CREATED_AT
 			FROM
-				zafira.TEST_CONFIGS TC
+				TEST_CONFIGS TC
 		]]>
 	</sql>
 
@@ -183,7 +183,7 @@
 	<update id="updateTestConfig">
 		<![CDATA[
 			UPDATE
-			    zafira.TEST_CONFIGS
+			    TEST_CONFIGS
 			SET
 				URL = #{url}, 
 				ENV = #{env}, 
@@ -202,7 +202,7 @@
 	
 	<sql id="deleteTestConfig">
 		<![CDATA[
-			DELETE FROM zafira.TEST_CONFIGS
+			DELETE FROM TEST_CONFIGS
 			WHERE ID = #{id}
 		]]>
 	</sql>

@@ -88,7 +88,6 @@
                             $rootScope.rabbitmq.enabled = settings["RABBITMQ_ENABLED"];
                             $rootScope.rabbitmq.user = settings["RABBITMQ_USER"];
                             $rootScope.rabbitmq.pass = settings["RABBITMQ_PASSWORD"];
-                            $rootScope.rabbitmq.ws = settings["RABBITMQ_WS"];
                         });
                         break;
                     case "JIRA":
@@ -140,7 +139,7 @@
 	        });
 
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
-	        	AuthService.SetCredentials(auth);
+	        		AuthService.SetCredentials(auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
                     var bufferedRequests = httpBuffer.getBuffer();
@@ -208,10 +207,10 @@
 	        (function initController() {
 
 	        	// keep user logged in after page refresh
-	            var authorization = $cookies.get('Access-Token');
-                if(authorization) {
-                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
-                }
+//	              var authorization = $cookies.get('Access-Token');
+//                if(authorization) {
+//                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
+//                }
 
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
 	            if ($rootScope.globals.auth)

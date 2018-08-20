@@ -5,7 +5,7 @@
 
 	<insert id="createWorkItem" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO zafira.WORK_ITEMS (JIRA_ID, HASH_CODE, 
+			INSERT INTO WORK_ITEMS (JIRA_ID, HASH_CODE, 
 		]]>
 		<if test="type != user">	
 			TYPE, 
@@ -60,9 +60,9 @@
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
 				U.CREATED_AT AS USER_CREATED_AT
 			FROM
-				zafira.WORK_ITEMS WI
+				WORK_ITEMS WI
 			LEFT JOIN 
-				zafira.USERS U
+				USERS U
 			ON
 				WI.USER_ID = U.ID
 		]]>
@@ -107,7 +107,7 @@
 	<update id="updateWorkItem">
 		<![CDATA[
 			UPDATE
-			    zafira.WORK_ITEMS
+			    WORK_ITEMS
 			SET
 				JIRA_ID = #{jiraId},
 				HASH_CODE = #{hashCode},
@@ -131,7 +131,7 @@
 
 	<sql id="deleteWorkItem">
 		<![CDATA[
-			DELETE FROM zafira.WORK_ITEMS
+			DELETE FROM WORK_ITEMS
 			WHERE ID = #{id}
 		]]>
 	</sql>
@@ -148,15 +148,15 @@
 		<![CDATA[
 			DELETE
 			FROM 
-				zafira.TEST_WORK_ITEMS
+				TEST_WORK_ITEMS
 			WHERE 
 				ID IN (
 			SELECT 
 				TWI.ID 
 			FROM 
-				zafira.TEST_WORK_ITEMS TWI 
+				TEST_WORK_ITEMS TWI 
 			INNER JOIN 
-				zafira.WORK_ITEMS WI 
+				WORK_ITEMS WI 
 			ON 
 				WI.ID = TWI.WORK_ITEM_ID
 			WHERE TWI.TEST_ID = #{id} AND WI.TYPE = 'BUG'); 
