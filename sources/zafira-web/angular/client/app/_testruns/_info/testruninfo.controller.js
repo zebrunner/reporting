@@ -737,7 +737,7 @@
             keyAction(keycode);
 
             return true;
-        }
+        };
 
         document.onkeydown = checkKeycode;
 
