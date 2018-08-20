@@ -69,11 +69,32 @@
             }
             return size;
         };
+        String.prototype.copyToClipboard = function() {
+            var node = document.createElement('pre');
+            node.textContent = this;
+            document.body.appendChild(node);
+
+            var selection = getSelection();
+            selection.removeAllRanges();
+
+            var range = document.createRange();
+            range.selectNodeContents(node);
+            selection.addRange(range);
+
+            document.execCommand('copy');
+            selection.removeAllRanges();
+            document.body.removeChild(node);
+        };
 
         Array.prototype.indexOfField = function(fieldName, fieldValue) {
+            var path = fieldName.split('.');
+            fieldName = path[path.length - 1];
             for (var i = 0; i < this.length; i++) {
-                var field = this[i];
-                if (field && field[fieldName] === fieldValue) {
+                var item = this[i];
+                for (var j = 0; j < path.length - 1; j++) {
+                    item = item[path[j]];
+                }
+                if (item && item[fieldName] === fieldValue) {
                     return i;
                 }
             }
