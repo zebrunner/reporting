@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.models.db.Tenancy;
 import java.util.List;
 
 public interface TenancyMapper {
+
     void createTenancy(Tenancy tenancy);
 
     Tenancy getTenancyById(Long id);
