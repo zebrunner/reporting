@@ -117,12 +117,11 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 
 	@ManagedAttribute(description = "Get email server")
 	public JavaMailSenderImpl getJavaMailSenderImpl() {
-		//return (JavaMailSenderImpl) (getType(EMAIL)).getJavaMailSender();
-		return (JavaMailSenderImpl) getType(EMAIL).getJavaMailSender();
+		return getType(EMAIL) != null ? (JavaMailSenderImpl) getType(EMAIL).getJavaMailSender() : null;
 	}
 
 	public String getFromAddress()
 	{
-		return (getType(EMAIL)).getFromAddress();
+		return getType(EMAIL) != null ? getType(EMAIL).getFromAddress() : null;
 	}
 }
