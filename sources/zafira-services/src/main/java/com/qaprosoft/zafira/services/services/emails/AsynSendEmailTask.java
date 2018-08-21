@@ -100,7 +100,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 		}
 	}
 
-	@Autowired
+	@Override
 	public boolean isConnected()
 	{
 		try {
