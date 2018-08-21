@@ -21,9 +21,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.services.services.jmx.models.RabbitMQType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -38,7 +38,7 @@ import com.qaprosoft.zafira.services.services.SettingsService;
 @ManagedResource(objectName="bean:name=rabbitMQService", description="RabbitMQ init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
 		persistLocation="foo", persistName="bar")
-public class RabbitMQService implements IJMXService
+public class RabbitMQService implements IJMXService<RabbitMQType>
 {
 	private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
 
@@ -47,10 +47,6 @@ public class RabbitMQService implements IJMXService
 
 	@Autowired
 	private CryptoService cryptoService;
-
-	private CachingConnectionFactory cachingConnectionFactory;
-
-	private Connection connection;
 
 	@Override
 	@PostConstruct
@@ -104,10 +100,7 @@ public class RabbitMQService implements IJMXService
 		{
 			if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
-				this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
-				this.cachingConnectionFactory.setUsername(username);
-				this.cachingConnectionFactory.setPassword(password);
-				this.connection = this.cachingConnectionFactory.createConnection();
+				putType(RABBITMQ, new RabbitMQType(host, port, username, password));
 			}
 		} catch (Exception e)
 		{
@@ -124,6 +117,6 @@ public class RabbitMQService implements IJMXService
 	@ManagedAttribute(description = "Get rabbitMQ connection")
 	public Connection getConnection()
 	{
-		return this.connection;
+		return getType(RABBITMQ) != null ? getType(RABBITMQ).getConnection() : null;
 	}
 }

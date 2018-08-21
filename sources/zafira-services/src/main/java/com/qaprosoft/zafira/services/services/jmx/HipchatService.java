@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
-import io.evanwong.oss.hipchat.v2.HipChatClient;
+import com.qaprosoft.zafira.services.services.jmx.models.HipchatType;
 import io.evanwong.oss.hipchat.v2.commons.NoContent;
 import io.evanwong.oss.hipchat.v2.oauth.Session;
 import io.evanwong.oss.hipchat.v2.rooms.MessageFormat;
@@ -35,7 +35,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.HIPCHAT;
 
 @ManagedResource(objectName = "bean:name=hipchatService", description = "Hipchat init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class HipchatService implements IJMXService
+public class HipchatService implements IJMXService<HipchatType>
 {
 	private static final Logger LOGGER = Logger.getLogger(HipchatService.class);
 
@@ -44,8 +44,6 @@ public class HipchatService implements IJMXService
 
 	@Autowired
 	private CryptoService cryptoService;
-
-	private HipChatClient hipchatClient;
 
 	@Override
 	@PostConstruct
@@ -84,7 +82,7 @@ public class HipchatService implements IJMXService
 		{
 			if (!StringUtils.isEmpty(accessToken))
 			{
-				this.hipchatClient = new HipChatClient(accessToken);
+				putType(HIPCHAT, new HipchatType(accessToken));
 			}
 		} catch (Exception e)
 		{
@@ -97,7 +95,7 @@ public class HipchatService implements IJMXService
 		Session session = null;
 		try
 		{
-			session = getHipchatClient().prepareGetSessionRequestBuilder().build().execute().get();
+			session = getHipchatType().getHipchatClient().prepareGetSessionRequestBuilder().build().execute().get();
 		} catch (InterruptedException | ExecutionException e)
 		{
 			LOGGER.error(e);
@@ -110,7 +108,7 @@ public class HipchatService implements IJMXService
 		UserItem userItem = null;
 		try
 		{
-			userItem = getHipchatClient().prepareViewUserRequestBuilder(idOrEmail).build().execute().get();
+			userItem = getHipchatType().getHipchatClient().prepareViewUserRequestBuilder(idOrEmail).build().execute().get();
 		} catch (InterruptedException | ExecutionException e)
 		{
 			LOGGER.error(e);
@@ -123,7 +121,7 @@ public class HipchatService implements IJMXService
 		NoContent noContent = null;
 		try
 		{
-			noContent = getHipchatClient().preparePrivateMessageUserRequestBuilder(userIdOrEmail, text)
+			noContent = getHipchatType().getHipchatClient().preparePrivateMessageUserRequestBuilder(userIdOrEmail, text)
 					.setMessageFormat(messageFormat).build().execute().get();
 		} catch (InterruptedException | ExecutionException e)
 		{
@@ -137,7 +135,7 @@ public class HipchatService implements IJMXService
 		NoContent noContent = null;
 		try
 		{
-			noContent = getHipchatClient().prepareSendRoomMessageRequestBuilder(userIdOrName, text).build().execute().get();
+			noContent = getHipchatType().getHipchatClient().prepareSendRoomMessageRequestBuilder(userIdOrName, text).build().execute().get();
 		} catch (InterruptedException | ExecutionException e)
 		{
 			LOGGER.error(e);
@@ -150,7 +148,7 @@ public class HipchatService implements IJMXService
 		NoContent noContent = null;
 		try
 		{
-			noContent = getHipchatClient().prepareSendRoomNotificationRequestBuilder(userIdOrName, text)
+			noContent = getHipchatType().getHipchatClient().prepareSendRoomNotificationRequestBuilder(userIdOrName, text)
 					.setMessageFormat(messageFormat)
 					.build().execute().get();
 		} catch (InterruptedException | ExecutionException e)
@@ -164,16 +162,16 @@ public class HipchatService implements IJMXService
 	{
 		try
 		{
-			return getHipchatClient().prepareGetSessionRequestBuilder().build().execute().get() != null;
+			return getHipchatType().getHipchatClient().prepareGetSessionRequestBuilder().build().execute().get() != null;
 		} catch (Exception e)
 		{
 			return false;
 		}
 	}
 
-	@ManagedAttribute(description = "Get hipchat client")
-	public HipChatClient getHipchatClient()
+	@ManagedAttribute(description = "Get current hipchat entity")
+	public HipchatType getHipchatType()
 	{
-		return this.hipchatClient;
+		return getType(HIPCHAT);
 	}
 }

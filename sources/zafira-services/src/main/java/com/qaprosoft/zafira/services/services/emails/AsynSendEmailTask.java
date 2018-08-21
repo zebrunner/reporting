@@ -19,13 +19,13 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.models.EmailType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
@@ -37,15 +37,10 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @ManagedResource(objectName = "bean:name=asyncSendEmailTask", description = "Email init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AsynSendEmailTask implements Runnable, IJMXService
+public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 {
 
 	private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
-
-	@Autowired
-	private JavaMailSender mailSender;
-
-	private String fromAddress;
 
 	@Autowired
 	private SettingsService settingsService;
@@ -55,24 +50,21 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	private MimeMessagePreparator preparator;
 
-	/*public AsynSendEmailTask() {
-	}
-
-	public AsynSendEmailTask(MimeMessagePreparator preparator)
-	{
-		this.preparator = preparator;
-	}*/
-
 	@Override
 	public void run()
 	{
-		mailSender.send(preparator);
+		getJavaMailSenderImpl().send(preparator);
 	}
 
 	@Autowired
 	@PostConstruct
 	@ManagedOperation(description = "Email initialization")
 	public void init() {
+		String host = null;
+		int port = 0;
+		String user = null;
+		String fromAddress = null;
+		String password = null;
 		try {
 			List<Setting> emailSettings = settingsService.getSettingsByTool(EMAIL);
 			for (Setting setting : emailSettings)
@@ -84,23 +76,24 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 				switch (Setting.SettingType.valueOf(setting.getName()))
 				{
 					case EMAIL_HOST:
-						getJavaMailSenderImpl().setHost(setting.getValue());
+						host = setting.getValue();
 						break;
 					case EMAIL_PORT:
-						getJavaMailSenderImpl().setPort(StringUtils.isBlank(setting.getValue()) ? 0 : Integer.valueOf(setting.getValue()));
+						port = StringUtils.isBlank(setting.getValue()) ? 0 : Integer.valueOf(setting.getValue());
 						break;
 					case EMAIL_USER:
-						getJavaMailSenderImpl().setUsername(setting.getValue());
+						user = setting.getValue();
 						break;
 					case EMAIL_FROM_ADDRESS:
-						this.fromAddress = setting.getValue();
+						fromAddress = setting.getValue();
 						break;
 					case EMAIL_PASSWORD:
-						getJavaMailSenderImpl().setPassword(setting.getValue());
+						password = setting.getValue();
 						break;
 					default:
 						break;
 				}
+				putType(EMAIL, new EmailType(host, port, user, fromAddress, password));
 			}
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
@@ -124,11 +117,12 @@ public class AsynSendEmailTask implements Runnable, IJMXService
 
 	@ManagedAttribute(description = "Get email server")
 	public JavaMailSenderImpl getJavaMailSenderImpl() {
-		return (JavaMailSenderImpl) this.mailSender;
+		//return (JavaMailSenderImpl) (getType(EMAIL)).getJavaMailSender();
+		return (JavaMailSenderImpl) getType(EMAIL).getJavaMailSender();
 	}
 
 	public String getFromAddress()
 	{
-		return fromAddress;
+		return (getType(EMAIL)).getFromAddress();
 	}
 }

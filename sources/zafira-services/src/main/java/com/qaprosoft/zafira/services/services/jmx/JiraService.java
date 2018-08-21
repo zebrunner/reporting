@@ -22,11 +22,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.services.services.jmx.models.JiraType;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -39,20 +36,15 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
 
-import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 
 
 @ManagedResource(objectName="bean:name=jiraService", description="Jira init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
-public class JiraService implements IJMXService
+public class JiraService implements IJMXService<JiraType>
 {
 	private static final Logger LOGGER = Logger.getLogger(JiraService.class);
-
-	private BasicCredentials credentials;
-	
-	private JiraClient jiraClient;
 
     @Autowired
     private SettingsService settingsService;
@@ -107,11 +99,7 @@ public class JiraService implements IJMXService
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
 			{
-				this.credentials = new BasicCredentials(username, password);
-				this.jiraClient = new JiraClient(url, credentials);
-				final HttpParams httpParams = new BasicHttpParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				((DefaultHttpClient)getJiraClient().getRestClient().getHttpClient()).setParams(httpParams);
+				putType(JIRA, new JiraType(url, username, password));
 		}
 		} catch (Exception e)
 		{
@@ -165,6 +153,6 @@ public class JiraService implements IJMXService
 
 	@ManagedAttribute(description="Get jira client")
 	public JiraClient getJiraClient() {
-		return jiraClient;
+		return getType(JIRA) != null ? getType(JIRA).getJiraClient() : null;
 	}
 }

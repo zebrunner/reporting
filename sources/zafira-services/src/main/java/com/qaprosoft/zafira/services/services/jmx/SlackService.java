@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.services.services.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
+
+import com.qaprosoft.zafira.services.services.jmx.models.SlackType;
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
 import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
@@ -50,7 +52,7 @@ import com.qaprosoft.zafira.services.services.emails.TestRunResultsEmail;
 @ManagedResource(objectName="bean:name=slackService", description="Slack init Managed Bean",
 		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200,
 		persistLocation="foo", persistName="bar")
-public class SlackService implements IJMXService
+public class SlackService implements IJMXService<SlackType>
 {
 
 	private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
@@ -72,8 +74,6 @@ public class SlackService implements IJMXService
 	
 	@Value("${zafira.slack.author}")
 	private String author;
-
-	private Slack slack;
 
 	@Autowired
 	private JenkinsService jenkinsService;
@@ -98,8 +98,8 @@ public class SlackService implements IJMXService
 	@Override
 	public boolean isConnected() {
 		try {
-			if(slack != null) {
-				slack.push(new SlackMessage(StringUtils.EMPTY));
+			if(getSlack() != null) {
+				getSlack().push(new SlackMessage(StringUtils.EMPTY));
 			} else {
 				return false;
 			}
@@ -119,11 +119,8 @@ public class SlackService implements IJMXService
 		String wH = getWebhook();
 		if (wH != null)
 		{
-			slack = null;
 			try {
-				slack = new Slack(wH);
-				slack = slack.displayName(author);
-				slack = slack.icon(picPath);
+				putType(Setting.Tool.SLACK, new SlackType(wH, author, picPath));
 			} catch(IllegalArgumentException e) {
 				LOGGER.info("Webhook url is not provided");
 			}
@@ -135,7 +132,7 @@ public class SlackService implements IJMXService
 		String channel = getChannelMapping(tr);
 		if (channel != null)
 		{
-			slack = slack.sendToChannel(channel);
+			getType(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
 			String elapsed = countElapsedInSMH(tr.getElapsed());
 			String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
@@ -151,7 +148,7 @@ public class SlackService implements IJMXService
 					.color(determineColor(tr))
 					.addField(new Field("Test Results", msgRes, false))
 					.fallback(mainMsg + "\n" + msgRes);
-			slack.push(attachment);
+			getSlack().push(attachment);
 		}
 	}
 
@@ -168,7 +165,7 @@ public class SlackService implements IJMXService
 		String channel = getChannelMapping(tr);
 		if (channel != null)
 		{
-			slack = slack.sendToChannel(channel);
+			getType(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
 			String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
 			String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
@@ -187,7 +184,7 @@ public class SlackService implements IJMXService
 			{
 				attachment.addField(new Field("Comments", tr.getComments(), false));
 			}
-			slack.push(attachment);
+			getSlack().push(attachment);
 			return true;
 		}
 		return false;
@@ -297,6 +294,6 @@ public class SlackService implements IJMXService
 
 	@ManagedAttribute(description="Get Slack current instance")
 	public Slack getSlack() {
-		return slack;
+		return getType(Setting.Tool.SLACK) != null ? getType(Setting.Tool.SLACK).getSlack() : null;
 	}
 }
