@@ -21,7 +21,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.CRYPTO;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -53,7 +52,6 @@ public class CryptoService implements IJMXService<CryptoType> {
     private SettingsService settingsService;
 
     @Override
-    @PostConstruct
     public void init() {
 
         String type = null;

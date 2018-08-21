@@ -12,12 +12,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.mysql.jdbc.StringUtils;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.WorkItem;

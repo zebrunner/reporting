@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
 import com.qaprosoft.zafira.models.db.Widget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

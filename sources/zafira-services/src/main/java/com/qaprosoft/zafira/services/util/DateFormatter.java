@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.util;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.DateSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.DateSearchCriteria;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

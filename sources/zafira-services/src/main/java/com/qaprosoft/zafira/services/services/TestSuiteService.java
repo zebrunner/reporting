@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestSuiteMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestSuiteMapper;
 import com.qaprosoft.zafira.models.db.TestSuite;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 

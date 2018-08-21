@@ -27,6 +27,6 @@ import com.mchange.v2.c3p0.AbstractConnectionCustomizer;
 public class TenanancyConnectionCustomizer extends AbstractConnectionCustomizer {
 
 	public void onAcquire(Connection c, String parentDataSourceIdentityToken) throws Exception {
-		c.setSchema(TenancyContext.getTenantName());
+		c.setSchema(parentDataSourceIdentityToken.equals("management") ? "management" : TenancyContext.getTenantName());
 	}
 }

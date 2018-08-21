@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
 import com.qaprosoft.zafira.models.db.Attribute;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;

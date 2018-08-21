@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +68,6 @@ public class JenkinsService implements IJMXService<JenkinsType> {
     private CryptoService cryptoService;
 
     @Override
-    @PostConstruct
     public void init() {
         String url = null;
         String username = null;

@@ -19,8 +19,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.connection.Connection;
@@ -46,7 +44,6 @@ public class RabbitMQService implements IJMXService<RabbitMQType> {
     private CryptoService cryptoService;
 
     @Override
-    @PostConstruct
     public void init() {
         String host = null;
         String port = null;

@@ -26,9 +26,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;

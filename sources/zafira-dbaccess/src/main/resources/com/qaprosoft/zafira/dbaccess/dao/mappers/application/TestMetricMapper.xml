@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMetricMapper">
+
+	<insert id="createTestMetric" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO TEST_METRICS (OPERATION, ELAPSED, TEST_ID)
+			VALUES (
+				#{operation},
+				#{elapsed},
+			    #{testId}
+			)
+		]]>
+	</insert>
+
+	<sql id="getTestMetric">
+		<![CDATA[
+			SELECT
+				TM.ID AS TEST_METRIC_ID,
+				TM.OPERATION AS TEST_METRIC_OPERATION,
+				TM.ELAPSED AS TEST_METRIC_ELAPSED,
+				TM.TEST_ID AS TEST_METRIC_TEST_ID,
+				TM.MODIFIED_AT AS TEST_METRIC_MODIFIED_AT,
+				TM.CREATED_AT AS TEST_METRIC_CREATED_AT
+			FROM
+				TEST_METRICS TM
+		]]>
+	</sql>
+
+	<select id="getTestMetricById" resultMap="TestMetricResultMap">
+		<include refid="getTestMetric" />
+		<![CDATA[
+			WHERE TM.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getEnvsByTestCaseId" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+				DISTINCT(TR.ENV)
+			FROM
+			  TEST_RUNS TR
+			INNER JOIN
+			  TESTS T
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			INNER JOIN
+			  TEST_METRICS TM
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			WHERE
+			  T.TEST_CASE_ID = #{testCaseId};
+		]]>
+	</select>
+
+	<select id="getTestMetricsByTestCaseIdAndEnv" resultMap="TestMetricResultMap">
+		<![CDATA[
+			SELECT
+			  TM.ID AS TEST_METRIC_ID,
+			  TM.OPERATION AS TEST_METRIC_OPERATION,
+			  TM.ELAPSED AS TEST_METRIC_ELAPSED,
+			  TM.TEST_ID AS TEST_METRIC_TEST_ID,
+			  TM.MODIFIED_AT AS TEST_METRIC_MODIFIED_AT,
+			  TM.CREATED_AT AS TEST_METRIC_CREATED_AT
+			FROM
+			  TEST_METRICS TM
+			INNER JOIN
+			  TESTS T
+			ON
+			  TM.TEST_ID = T.ID
+			INNER JOIN
+			  TEST_RUNS TR
+			ON
+			  T.TEST_RUN_ID = TR.ID
+			WHERE
+			  T.TEST_CASE_ID = #{testCaseId}
+		  	AND
+			  TR.ENV = #{env};
+		]]>
+	</select>
+	
+	<sql id="deleteTestMetric">
+		<![CDATA[
+			DELETE FROM TEST_METRICS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteTestMetricById">
+		<include refid="deleteTestMetric" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.TestMetric" id="TestMetricResultMap" autoMapping="false">
+		<id column="TEST_METRIC_ID" property="id" />
+		<result column="TEST_METRIC_OPERATION" property="operation" />
+		<result column="TEST_METRIC_ELAPSED" property="elapsed" />
+		<result column="TEST_METRIC_TEST_ID" property="testId" />
+		<result column="TEST_METRIC_MODIFIED_AT" property="modifiedAt" />
+		<result column="TEST_METRIC_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

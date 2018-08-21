@@ -13,6 +13,8 @@
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 
+	<bean id="jmxTenancyStorage" class="com.qaprosoft.zafira.services.services.jmx.JMXTenancyStorage" depends-on="exporter"/>
+
 	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
 
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">

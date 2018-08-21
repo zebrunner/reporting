@@ -32,8 +32,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.models.dto.TestCaseType;

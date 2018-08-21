@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserPreferenceMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserPreferenceMapper;
 import com.qaprosoft.zafira.models.db.UserPreference;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;

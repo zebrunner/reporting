@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.jobs;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
 import com.qaprosoft.zafira.models.db.Monitor;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;

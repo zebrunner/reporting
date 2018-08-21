@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;

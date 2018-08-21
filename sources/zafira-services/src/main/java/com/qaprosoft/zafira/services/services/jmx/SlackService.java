@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -82,7 +80,6 @@ public class SlackService implements IJMXService<SlackType> {
     private CryptoService cryptoService;
 
     @Override
-    @PostConstruct
     public void init() {
         try {
             init(author, image);

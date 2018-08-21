@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestCaseMapper">
+
+	<insert id="createTestCase" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO TEST_CASES (PRIMARY_OWNER_ID, SECONDARY_OWNER_ID, TEST_SUITE_ID, TEST_CLASS, TEST_METHOD, 
+		
+		]]>
+		<if test="null != status">	
+			STATUS, 
+		</if>
+		<if test="null != project and null != project.id">	
+			PROJECT_ID, 
+		</if>
+		<![CDATA[	
+			INFO)
+			VALUES (
+				#{primaryOwner.id},
+				#{secondaryOwner.id},
+			    #{testSuiteId},
+				#{testClass},
+				#{testMethod},
+		]]>
+		<if test="null != status">
+            <![CDATA[
+				#{status},
+			]]>
+		</if>
+		<if test="null != project and null != project.id">
+            <![CDATA[
+				#{project.id},
+			]]>
+		</if>
+		<![CDATA[
+				#{info}
+			)
+		]]>
+	</insert>
+
+	<sql id="getTestCase">
+		<![CDATA[
+			SELECT
+				TC.ID AS TEST_CASE_ID,
+				TC.PRIMARY_OWNER_ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				TC.SECONDARY_OWNER_ID AS TEST_CASE_SECONDARY_OWNER_ID,
+				TC.TEST_SUITE_ID AS TEST_CASE_TEST_SUITE_ID,
+				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
+				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
+				TC.INFO AS TEST_CASE_INFO,
+				TC.STATUS AS TEST_CASE_STATUS,
+				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
+				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
+
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
+			FROM
+				TEST_CASES TC
+			LEFT JOIN
+				PROJECTS P ON TC.PROJECT_ID = P.ID
+		]]>
+	</sql>
+	
+	<sql id="getTestCaseFull">
+		<![CDATA[
+			SELECT
+				TC.ID AS TEST_CASE_ID,
+				TC.PRIMARY_OWNER_ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				TC.SECONDARY_OWNER_ID AS TEST_SECONDARY_OWNER_ID,
+				TC.TEST_SUITE_ID AS TEST_CASE_TEST_SUITE_ID,
+				TC.TEST_CLASS AS TEST_CASE_TEST_CLASS,
+				TC.TEST_METHOD AS TEST_CASE_TEST_METHOD,
+				TC.INFO AS TEST_CASE_INFO,
+				TCHV.STABILITY AS TEST_CASE_STABILITY,
+				TC.MODIFIED_AT AS TEST_CASE_MODIFIED_AT,
+				TC.CREATED_AT AS TEST_CASE_CREATED_AT,
+				TC.STATUS AS TEST_CASE_STATUS,
+				
+				PU.ID AS TEST_CASE_PRIMARY_OWNER_ID,
+				PU.USERNAME AS TEST_CASE_PRIMARY_OWNER_USERNAME,
+				PU.FIRST_NAME AS TEST_CASE_PRIMARY_OWNER_FIRST_NAME,
+				PU.LAST_NAME AS TEST_CASE_PRIMARY_OWNER_LAST_NAME,
+				PU.EMAIL AS TEST_CASE_PRIMARY_OWNER_EMAIL,
+				PU.MODIFIED_AT AS TEST_CASE_PRIMARY_OWNER_MODIFIED_AT,
+				PU.CREATED_AT AS TEST_CASE_PRIMARY_OWNER_CREATED_AT,
+				
+				SU.ID AS TEST_CASE_SECONDARY_OWNER_ID,
+				SU.USERNAME AS TEST_CASE_SECONDARY_OWNER_USERNAME,
+				SU.FIRST_NAME AS TEST_CASE_SECONDARY_OWNER_FIRST_NAME,
+				SU.LAST_NAME AS TEST_CASE_SECONDARY_OWNER_LAST_NAME,
+				SU.EMAIL AS TEST_CASE_SECONDARY_OWNER_EMAIL,
+				SU.MODIFIED_AT AS TEST_CASE_SECONDARY_OWNER_MODIFIED_AT,
+				SU.CREATED_AT AS TEST_CASE_SECONDARY_OWNER_CREATED_AT,
+				
+				TS.ID AS TEST_CASE_TEST_SUITE_ID,
+				TS.USER_ID AS TEST_CASE_TEST_SUITE_USER_ID,
+				TS.NAME AS TEST_CASE_TEST_SUITE_NAME,
+				TS.FILE_NAME AS TEST_CASE_TEST_SUITE_FILE_NAME,
+				TS.DESCRIPTION AS TEST_CASE_TEST_SUITE_DESCRIPTION,
+				TS.MODIFIED_AT AS TEST_CASE_TEST_SUITE_MODIFIED_AT,
+				TS.CREATED_AT AS TEST_CASE_TEST_SUITE_CREATED_AT,
+				
+				P.ID AS TEST_CASE_PROJECT_ID,
+				P.NAME AS TEST_CASE_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_CASE_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_CASE_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_CASE_PROJECT_CREATED_AT
+			FROM
+				TEST_CASES TC
+			LEFT JOIN 
+				USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
+			LEFT JOIN 
+				USERS SU ON SU.ID = TC.SECONDARY_OWNER_ID
+			LEFT JOIN 
+			    TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			LEFT JOIN
+				PROJECTS P ON TC.PROJECT_ID = P.ID
+			LEFT JOIN
+			    TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
+		]]>
+	</sql>
+
+	<select id="getTestCaseById" resultMap="TestCaseResultMap">
+		<include refid="getTestCase" />
+		<![CDATA[
+			WHERE TC.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getTestCasesByUsername" resultMap="TestCaseResultMap">
+		<include refid="getTestCase" />
+		<![CDATA[
+			INNER JOIN USERS PU
+			ON PU.ID = TC.PRIMARY_OWNER_ID
+			WHERE PU.USERNAME = #{username};
+		]]>
+	</select>
+
+	<select id="getTestCaseByClassAndMethod" resultMap="TestCaseResultMap">
+		<include refid="getTestCase" />
+		<![CDATA[
+			WHERE TC.TEST_CLASS = #{testClass} AND TC.TEST_METHOD = #{testMethod};
+		]]>
+	</select>
+	
+	<select id="searchTestCases" resultMap="TestCaseResultMap">
+		<include refid="getTestCaseFull" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="null != id">
+	            <![CDATA[
+	               AND TC.ID = #{id}
+	            ]]>
+			</if>
+			<if test="null != ids">
+	            <![CDATA[
+	               AND TC.ID IN
+	            ]]>
+	            <foreach item="id" index="index" collection="ids"
+					open="(" separator="," close=")">
+					#{id}
+				</foreach>
+			</if>
+			<if test="null != testClass">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_CLASS) LIKE LOWER(CONCAT('%', #{testClass}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testMethod">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_METHOD) LIKE LOWER(CONCAT('%', #{testMethod}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteName">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuiteName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteFile">
+	            <![CDATA[
+	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
+	            ]]>
+			</if>
+			<if test="null != username">
+	            <![CDATA[
+	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
+	            ]]>
+			</if>
+			<!--TODO: investigate how it influences to testcase-->
+			<!--<if test="null == date and null == fromDate and null == toDate">
+				<![CDATA[
+	               AND (TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL)
+	            ]]>
+			</if>-->
+			<if test="null != date and null == fromDate and null == toDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date = #{date}::date
+	            ]]>
+			</if>
+			<if test="null == date and null != fromDate and null != toDate">
+				<![CDATA[
+				   AND TC.CREATED_AT::date <= #{toDate}::date
+				   AND TC.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+            <if test="null != projects">
+				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+					<if test="null != project.id">
+						<![CDATA[
+								TC.PROJECT_ID = #{project.id}
+						]]>
+					</if>
+				</foreach>
+			</if>
+        </trim>
+		<![CDATA[
+			ORDER BY TC.CREATED_AT DESC
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+	</select>
+	
+	<select id="getTestCasesSearchCount" resultType="java.lang.Integer">
+	    <![CDATA[
+            SELECT
+                COUNT(*)
+            FROM
+				TEST_CASES TC
+			LEFT JOIN 
+				USERS PU ON PU.ID = TC.PRIMARY_OWNER_ID
+			LEFT JOIN 
+			    TEST_SUITES TS ON TS.ID = TC.TEST_SUITE_ID
+			LEFT JOIN
+			    TEST_CASE_HEALTH_VIEW TCHV ON TC.ID = TCHV.TEST_CASE_ID
+        ]]>
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="null != id">
+	            <![CDATA[
+	               AND TC.ID = #{id}
+	            ]]>
+			</if>
+			<if test="null != testClass">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_CLASS) LIKE LOWER(CONCAT('%', #{testClass}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testMethod">
+	            <![CDATA[
+	               AND LOWER(TC.TEST_METHOD) LIKE LOWER(CONCAT('%', #{testMethod}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteName">
+	            <![CDATA[
+	               AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuiteName}, '%'))
+	            ]]>
+			</if>
+			<if test="null != testSuiteFile">
+	            <![CDATA[
+	               AND LOWER(TS.FILE_NAME) LIKE LOWER(CONCAT('%', #{testSuiteFile}, '%'))
+	            ]]>
+			</if>
+			<if test="null != username">
+	            <![CDATA[
+	               AND LOWER(PU.USERNAME) LIKE LOWER(CONCAT('%', #{username}, '%'))
+	            ]]>
+			</if>
+			<!--TODO: investigate how it influences to testcase-->
+			<!--<if test="null == date and null == fromDate and null == toDate">
+				<![CDATA[
+	               AND (TCHV.TESTED_AT = date_trunc('month', current_date) OR TCHV.STABILITY IS NULL)
+	            ]]>
+			</if>-->
+			<if test="null != date and null == fromDate and null == toDate">
+				<![CDATA[
+	               AND TC.CREATED_AT::date = #{date}::date
+	            ]]>
+			</if>
+			<if test="null == date and null != fromDate and null != toDate">
+				<![CDATA[
+				   AND TC.CREATED_AT::date <= #{toDate}::date
+				   AND TC.CREATED_AT::date >= #{fromDate}::date
+	            ]]>
+			</if>
+			<if test="null != projects">
+				<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+					<if test="null != project.id">
+						<![CDATA[
+								TC.PROJECT_ID = #{project.id}
+						]]>
+					</if>
+				</foreach>
+			</if>
+		</trim>
+    </select>
+
+	<update id="updateTestCase">
+		<![CDATA[
+			UPDATE
+			    TEST_CASES
+		]]>
+			<set>
+				<if test="0 != primaryOwner.id">
+		            <![CDATA[
+		               PRIMARY_OWNER_ID = #{primaryOwner.id},
+		            ]]>
+				</if>
+				<if test="0 != secondaryOwner.id">
+		            <![CDATA[
+		               SECONDARY_OWNER_ID = #{secondaryOwner.id},
+		            ]]>
+				</if>
+				<if test="null != testSuiteId">
+		            <![CDATA[
+		               TEST_SUITE_ID = #{testSuiteId},
+		            ]]>
+				</if>
+				<if test="null != testClass">
+		            <![CDATA[
+		               TEST_CLASS = #{testClass},
+		            ]]>
+				</if>
+				<if test="null != testMethod">
+		            <![CDATA[
+		               TEST_METHOD = #{testMethod},	
+		            ]]>
+				</if>
+				<if test="null != info">
+		            <![CDATA[
+		               INFO = #{info},
+		            ]]>
+				</if>
+				<if test="null != project and null != project.id">
+		            <![CDATA[
+		               PROJECT_ID = #{project.id},
+		            ]]>
+				</if>
+				<if test="null != status">
+		            <![CDATA[
+		               STATUS = #{status}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[	    
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteTestCase">
+		<![CDATA[
+			DELETE FROM TEST_CASES
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteTestCase">
+		<include refid="deleteTestCase" />
+	</delete>
+
+	<delete id="deleteTestCaseById">
+		<include refid="deleteTestCase" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.TestCase" id="TestCaseResultMap" autoMapping="false">
+		<id column="TEST_CASE_ID" property="id" />
+		<result column="TEST_CASE_PRIMARY_OWNER_ID" property="primaryOwner.id" />
+		<result column="TEST_CASE_SECONDARY_OWNER_ID" property="secondaryOwner.id" />
+		<result column="TEST_CASE_TEST_SUITE_ID" property="testSuiteId" />
+		<result column="TEST_CASE_TEST_CLASS" property="testClass" />
+		<result column="TEST_CASE_TEST_METHOD" property="testMethod" />
+		<result column="TEST_CASE_INFO" property="info" />
+		<result column="TEST_CASE_STATUS" property="status" />
+		<result column="TEST_CASE_STABILITY" property="stability" />
+		<result column="TEST_CASE_MODIFIED_AT" property="modifiedAt" />
+		<result column="TEST_CASE_CREATED_AT" property="createdAt" />
+		
+		<result column="TEST_CASE_TEST_SUITE_ID" property="testSuite.id" />
+		<result column="TEST_CASE_TEST_SUITE_NAME" property="testSuite.name" />
+		<result column="TEST_CASE_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
+		<result column="TEST_CASE_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+		<result column="TEST_CASE_TEST_SUITE_MODIFIED_AT" property="testSuite.modifiedAt" />
+		<result column="TEST_CASE_TEST_SUITE_CREATED_AT" property="testSuite.createdAt" />
+		
+		<result column="TEST_CASE_PRIMARY_OWNER_ID" property="primaryOwner.id" />
+		<result column="TEST_CASE_PRIMARY_OWNER_USERNAME" property="primaryOwner.username" />
+		<result column="TEST_CASE_PRIMARY_OWNER_FIRST_NAME" property="primaryOwner.firstName" />
+		<result column="TEST_CASE_PRIMARY_OWNER_LAST_NAME" property="primaryOwner.lastName" />
+		<result column="TEST_CASE_PRIMARY_OWNER_EMAIL" property="primaryOwner.email" />
+		<result column="TEST_CASE_PRIMARY_OWNER_MODIFIED_AT" property="primaryOwner.modifiedAt" />
+		<result column="TEST_CASE_PRIMARY_OWNER_CREATED_AT" property="primaryOwner.createdAt" />
+		
+		<result column="TEST_CASE_SECONDARY_OWNER_ID" property="secondaryOwner.id" />
+		<result column="TEST_CASE_SECONDARY_OWNER_USERNAME" property="secondaryOwner.username" />
+		<result column="TEST_CASE_SECONDARY_OWNER_FIRST_NAME" property="secondaryOwner.firstName" />
+		<result column="TEST_CASE_SECONDARY_OWNER_LAST_NAME" property="secondaryOwner.lastName" />
+		<result column="TEST_CASE_SECONDARY_OWNER_EMAIL" property="secondaryOwner.email" />
+		<result column="TEST_CASE_SECONDARY_OWNER_MODIFIED_AT" property="secondaryOwner.modifiedAt" />
+		<result column="TEST_CASE_SECONDARY_OWNER_CREATED_AT" property="secondaryOwner.createdAt" />
+		
+		<result column="TEST_CASE_PROJECT_ID" property="project.id" />
+		<result column="TEST_CASE_PROJECT_NAME" property="project.name" />
+		<result column="TEST_CASE_PROJECT_DESCRIPTION" property="project.description" />
+		<result column="TEST_CASE_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+		<result column="TEST_CASE_PROJECT_CREATED_AT" property="project.createdAt" />
+	</resultMap>
+
+</mapper>

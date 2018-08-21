@@ -29,7 +29,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.models.db.Status;

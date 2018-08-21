@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper">
+
+	<insert id="createWorkItem" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO WORK_ITEMS (JIRA_ID, HASH_CODE, 
+		]]>
+		<if test="type != user">	
+			TYPE, 
+		</if>	
+		<if test="null != user">	
+			USER_ID, 
+		</if>
+		<if test="null != blocker">
+			BLOCKER,
+		</if>
+		<![CDATA[
+		DESCRIPTION, TEST_CASE_ID)
+			VALUES (
+				#{jiraId},
+				#{hashCode},
+		]]>
+		<if test="null != type">
+			#{type},
+		</if>	
+		<if test="null != user">
+			#{user.id},
+		</if>
+		<if test="null != blocker">
+			#{blocker},
+		</if>
+		<![CDATA[
+				#{description}, #{testCaseId}
+			)
+		]]>
+	</insert>
+
+	<sql id="getWorkItem">
+		<![CDATA[
+			SELECT distinct
+				WI.ID AS WORK_ITEM_ID,
+				WI.JIRA_ID AS WORK_ITEM_JIRA_ID,
+				WI.TYPE AS WORK_ITEM_TYPE,
+				WI.HASH_CODE AS WORK_ITEM_HASH_CODE,
+				WI.DESCRIPTION AS WORK_ITEM_DESCRIPTION,
+				WI.BLOCKER AS WORK_ITEM_BLOCKER,
+				WI.TEST_CASE_ID AS WORK_ITEM_TEST_CASE_ID,
+				WI.MODIFIED_AT AS WORK_ITEM_MODIFIED_AT,
+				WI.CREATED_AT AS WORK_ITEM_CREATED_AT,
+				
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				U.PASSWORD AS USER_PASSWORD,
+				U.FIRST_NAME AS USER_FIRST_NAME,
+				U.LAST_NAME AS USER_LAST_NAME,
+				U.EMAIL AS USER_EMAIL,
+				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
+				U.MODIFIED_AT AS USER_MODIFIED_AT,
+				U.CREATED_AT AS USER_CREATED_AT
+			FROM
+				WORK_ITEMS WI
+			LEFT JOIN 
+				USERS U
+			ON
+				WI.USER_ID = U.ID
+		]]>
+	</sql>
+
+	<select id="getWorkItemById" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE WI.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="getWorkItemsByTestCaseIdAndType" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE WI.TEST_CASE_ID = #{testCaseId} AND WI.TYPE = #{type};
+		]]>
+	</select>
+
+	<select id="getWorkItemByJiraIdAndType" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE 
+				WI.JIRA_ID = #{jiraId} AND WI.TYPE = #{type}
+			ORDER BY 
+				WI.ID DESC
+			LIMIT 1; 
+		]]>
+	</select>
+	
+	<select id="getWorkItemByTestCaseIdAndHashCode" resultMap="WorkItemResultMap">
+		<include refid="getWorkItem" />
+		<![CDATA[
+			WHERE 
+				WI.TEST_CASE_ID = #{testCaseId} AND WI.HASH_CODE = #{hashCode}
+			ORDER BY 
+				WI.ID DESC
+			LIMIT 1;
+		]]>
+	</select>
+
+	<update id="updateWorkItem">
+		<![CDATA[
+			UPDATE
+			    WORK_ITEMS
+			SET
+				JIRA_ID = #{jiraId},
+				HASH_CODE = #{hashCode},
+		]]>	
+		<if test="null != type">
+				TYPE = #{type},
+		</if>
+		<if test="null != user">
+				USER_ID = #{user.id},
+		</if>
+		<if test="null != blocker">
+				BLOCKER = #{blocker},
+		</if>
+		<![CDATA[
+				DESCRIPTION = #{description},
+				TEST_CASE_ID = #{testCaseId}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteWorkItem">
+		<![CDATA[
+			DELETE FROM WORK_ITEMS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+	
+	<delete id="deleteWorkItem">
+		<include refid="deleteWorkItem" />
+	</delete>
+
+	<delete id="deleteWorkItemById">
+		<include refid="deleteWorkItem" />
+	</delete>
+	
+	<delete id="deleteKnownIssuesByTestId">
+		<![CDATA[
+			DELETE
+			FROM 
+				TEST_WORK_ITEMS
+			WHERE 
+				ID IN (
+			SELECT 
+				TWI.ID 
+			FROM 
+				TEST_WORK_ITEMS TWI 
+			INNER JOIN 
+				WORK_ITEMS WI 
+			ON 
+				WI.ID = TWI.WORK_ITEM_ID
+			WHERE TWI.TEST_ID = #{id} AND WI.TYPE = 'BUG'); 
+		]]>
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.WorkItem" id="WorkItemResultMap" autoMapping="false">
+		<id column="WORK_ITEM_ID" property="id" />
+		<result column="WORK_ITEM_JIRA_ID" property="jiraId" />
+		<result column="WORK_ITEM_TYPE" property="type" />
+		<result column="WORK_ITEM_HASH_CODE" property="hashCode" />
+		<result column="WORK_ITEM_DESCRIPTION" property="description" />
+		<result column="WORK_ITEM_BLOCKER" property="blocker"/>
+		<result column="WORK_ITEM_TEST_CASE_ID" property="testCaseId" />
+		<result column="WORK_ITEM_MODIFIED_AT" property="modifiedAt" />
+		<result column="WORK_ITEM_CREATED_AT" property="createdAt" />
+					
+		<association property="user" javaType="com.qaprosoft.zafira.models.db.User" 
+					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper.UserResultMap" />
+	</resultMap>
+
+</mapper>

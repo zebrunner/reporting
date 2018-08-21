@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestConfigMapper">
+
+	<insert id="createTestConfig" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO TEST_CONFIGS (URL, ENV, PLATFORM, PLATFORM_VERSION, BROWSER, BROWSER_VERSION, APP_VERSION, LOCALE, LANGUAGE, DEVICE)
+			VALUES (
+				#{url},
+			    #{env},
+			    #{platform},
+			    #{platformVersion},
+			    #{browser},
+			    #{browserVersion},
+			    #{appVersion},
+			    #{locale},
+			    #{language},
+			    #{device}
+			)
+		]]>
+	</insert>
+	
+	
+
+	<sql id="getTestConfig">
+		<![CDATA[
+			SELECT
+				TC.ID AS TEST_CONFIG_ID,
+				TC.URL AS TEST_CONFIG_URL,
+				TC.ENV AS TEST_CONFIG_ENV,
+				TC.PLATFORM AS TEST_CONFIG_PLATFORM,
+				TC.PLATFORM_VERSION AS TEST_CONFIG_PLATFORM_VERSION,
+				TC.BROWSER AS TEST_CONFIG_BROWSER,
+				TC.BROWSER_VERSION AS TEST_CONFIG_BROWSER_VERSION,
+				TC.APP_VERSION AS TEST_CONFIG_APP_VERSION,
+				TC.LOCALE AS TEST_CONFIG_LOCALE,
+				TC.LANGUAGE AS TEST_CONFIG_LANGUAGE,
+				TC.DEVICE AS TEST_CONFIG_DEVICE,
+				TC.MODIFIED_AT AS TEST_CONFIG_MODIFIED_AT,
+				TC.CREATED_AT AS TEST_CONFIG_CREATED_AT
+			FROM
+				TEST_CONFIGS TC
+		]]>
+	</sql>
+
+	<select id="getTestConfigById" resultMap="TestConfigResultMap">
+		<include refid="getTestConfig" />
+		<![CDATA[
+			WHERE TC.ID = #{id};
+		]]>
+	</select>
+	
+	<select id="searchTestConfig" resultMap="TestConfigResultMap">
+		<include refid="getTestConfig" />
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <choose>
+                <when test="testConfig.url == null">
+                    <![CDATA[
+	                    TC.URL IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    TC.URL = #{testConfig.url}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.env == null">
+                    <![CDATA[
+	                    AND TC.ENV IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.ENV = #{testConfig.env}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.platform == null">
+                    <![CDATA[
+	                    AND TC.PLATFORM IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.PLATFORM = #{testConfig.platform}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.platformVersion == null">
+                    <![CDATA[
+	                    AND TC.PLATFORM_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.PLATFORM_VERSION = #{testConfig.platformVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.browser == null">
+                    <![CDATA[
+	                    AND TC.BROWSER IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.BROWSER = #{testConfig.browser}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.browserVersion == null">
+                    <![CDATA[
+	                    AND TC.BROWSER_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.BROWSER_VERSION = #{testConfig.browserVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.appVersion == null">
+                    <![CDATA[
+	                    AND TC.APP_VERSION IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.APP_VERSION = #{testConfig.appVersion}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.locale == null">
+                    <![CDATA[
+	                    AND TC.LOCALE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.LOCALE = #{testConfig.locale}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.language == null">
+                    <![CDATA[
+	                    AND TC.LANGUAGE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.LANGUAGE = #{testConfig.language}
+	                ]]>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="testConfig.device == null">
+                    <![CDATA[
+	                    AND TC.DEVICE IS NULL
+	                ]]>
+                </when>
+                <otherwise>
+                    <![CDATA[
+	                    AND TC.DEVICE = #{testConfig.device}
+	                ]]>
+                </otherwise>
+            </choose>
+		</trim>
+		 <![CDATA[
+              LIMIT 1
+           ]]>
+	</select>
+
+	<update id="updateTestConfig">
+		<![CDATA[
+			UPDATE
+			    TEST_CONFIGS
+			SET
+				URL = #{url}, 
+				ENV = #{env}, 
+				PLATFORM = #{platform}, 
+				PLATFORM_VERSION = #{platformVersion}, 
+				BROWSER = #{browser}, 
+				BROWSER_VERSION = #{browserVersion}, 
+				APP_VERSION = #{appVersion}, 
+				LOCALE = #{locale}, 
+				LANGUAGE = #{language},
+				DEVICE = #{device}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+	
+	<sql id="deleteTestConfig">
+		<![CDATA[
+			DELETE FROM TEST_CONFIGS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteTestConfigById">
+		<include refid="deleteTestConfig" />
+	</delete>
+	
+	<resultMap type="com.qaprosoft.zafira.models.db.TestConfig" id="TestConfigResultMap" autoMapping="false">
+		<id column="TEST_CONFIG_ID" property="id" />
+		<result column="TEST_CONFIG_URL" property="url" />
+		<result column="TEST_CONFIG_ENV" property="env" />
+		<result column="TEST_CONFIG_PLATFORM" property="platform" />
+		<result column="TEST_CONFIG_PLATFORM_VERSION" property="platformVersion" />
+		<result column="TEST_CONFIG_BROWSER" property="browser" />
+		<result column="TEST_CONFIG_BROWSER_VERSION" property="browserVersion" />
+		<result column="TEST_CONFIG_APP_VERSION" property="appVersion" />
+		<result column="TEST_CONFIG_LOCALE" property="locale" />
+		<result column="TEST_CONFIG_LANGUAGE" property="language" />
+		<result column="TEST_CONFIG_DEVICE" property="device" />
+		<result column="TEST_CONFIG_MODIFIED_AT" property="modifiedAt" />
+		<result column="TEST_CONFIG_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

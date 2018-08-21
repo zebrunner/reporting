@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.GroupMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;

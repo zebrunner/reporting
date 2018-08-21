@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.MonitorMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.MonitorSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;

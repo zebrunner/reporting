@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper">
+
+	<insert id="createJob" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO JOBS (USER_ID, NAME, JOB_URL, JENKINS_HOST)
+			VALUES (
+				#{user.id},
+			    #{name},
+				#{jobURL},
+				#{jenkinsHost}
+			)
+		]]>
+	</insert>
+
+	<sql id="getJob">
+		<![CDATA[
+			SELECT
+				J.ID AS JOB_ID,
+				J.USER_ID AS JOB_USER_ID,
+				J.NAME AS JOB_NAME,
+				J.JOB_URL AS JOB_JOB_URL,
+				J.JENKINS_HOST AS JOB_JENKINS_HOST,
+				J.MODIFIED_AT AS JOB_MODIFIED_AT,
+				J.CREATED_AT AS JOB_CREATED_AT
+			FROM
+				JOBS J
+		]]>
+	</sql>
+	
+	<select id="getAllJobs" resultMap="JobResultMap">
+		<include refid="getJob" />
+	</select>
+
+	<select id="getJobById" resultMap="JobResultMap">
+		<include refid="getJob" />
+		<![CDATA[
+			WHERE J.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getJobByJobURL" resultMap="JobResultMap">
+		<include refid="getJob" />
+		<![CDATA[
+			WHERE J.JOB_URL = #{jobURL};
+		]]>
+	</select>
+
+	<select id="getJobByName" resultMap="JobResultMap">
+		<include refid="getJob" />
+		<![CDATA[
+			WHERE J.NAME = #{name};
+		]]>
+	</select>
+
+	<update id="updateJob">
+		<![CDATA[
+			UPDATE
+			    JOBS
+		]]>
+			<set>
+				<if test="0 != user.id">
+		            <![CDATA[
+		               USER_ID = #{user.id},
+		            ]]>
+				</if>
+				<if test="null != name">
+		            <![CDATA[
+		               NAME = #{name},
+		            ]]>
+				</if>
+				<if test="null != jobURL">
+		            <![CDATA[
+		               JOB_URL = #{jobURL},
+		            ]]>
+				</if>
+				<if test="null != jenkinsHost">
+		            <![CDATA[
+		               JENKINS_HOST = #{jenkinsHost}
+		            ]]>
+				</if>
+			</set>
+		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteJob">
+		<![CDATA[
+			DELETE FROM JOBS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteJob">
+		<include refid="deleteJob" />
+	</delete>
+
+	<delete id="deleteJobById">
+		<include refid="deleteJob" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.Job" id="JobResultMap" autoMapping="false">
+		<id column="JOB_ID" property="id" />
+		<result column="JOB_USER_ID" property="user.id" />
+		<result column="JOB_NAME" property="name" />
+		<result column="JOB_JOB_URL" property="jobURL" />
+		<result column="JOB_JENKINS_HOST" property="jenkinsHost" />
+		<result column="JOB_MODIFIED_AT" property="modifiedAt" />
+		<result column="JOB_CREATED_AT" property="createdAt" />
+	</resultMap>
+
+</mapper>

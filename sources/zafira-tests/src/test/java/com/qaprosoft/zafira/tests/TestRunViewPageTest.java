@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.JobMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper;
 import com.qaprosoft.zafira.tests.gui.components.TestRunTabMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.CreateTestRunViewModalWindow;
 import com.qaprosoft.zafira.tests.gui.components.modals.JobViewSettingModalWindow;

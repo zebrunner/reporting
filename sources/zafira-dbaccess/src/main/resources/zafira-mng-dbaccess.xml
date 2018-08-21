@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<bean id="managementDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${zafira.db.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${zafira.db.jdbc.url}" />
+		<property name="user" value="${zafira.db.jdbc.user}" />
+		<property name="password" value="${zafira.db.jdbc.password}" />
+		<property name="maxPoolSize" value="${zafira.db.c3p0.maxPoolSize}" />
+		<property name="idleConnectionTestPeriod" value="${zafira.db.c3p0.idleConnectionTestPeriod}" />
+		<property name="identityToken" value="management"/>
+		<property name="connectionCustomizerClassName" value="com.qaprosoft.zafira.dbaccess.utils.TenanancyConnectionCustomizer" />
+	</bean>
+
+	<bean id="managementTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="managementDataSource" />
+	</bean>
+
+	<bean id="managementSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" name="managementSqlSessionFactory">
+		<property name="dataSource" ref="managementDataSource" />
+		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/management/**/*.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.qaprosoft.zafira.dbaccess.dao.mysql.management" />
+		<property name="sqlSessionFactoryBeanName" value="managementSqlSessionFactory"/>
+	</bean>
+
+</beans>

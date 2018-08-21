@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper">
+
+	<insert id="createTestRun" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO TEST_RUNS (CI_RUN_ID, USER_ID, TEST_SUITE_ID, STATUS, SCM_URL, SCM_BRANCH, SCM_COMMIT, CONFIG_XML, WORK_ITEM_ID, JOB_ID, UPSTREAM_JOB_ID, UPSTREAM_JOB_BUILD_NUMBER, BUILD_NUMBER, 
+			]]>
+			<if test="null != project and null != project.id">	
+				PROJECT_ID, 
+			</if>
+			<![CDATA[
+			STARTED_BY, KNOWN_ISSUE, BLOCKER, PLATFORM, APP_VERSION, ENV, STARTED_AT, ELAPSED, ETA, COMMENTS, DRIVER_MODE)
+			VALUES (
+				#{ciRunId},
+				#{user.id},
+			    #{testSuite.id},
+				#{status},
+				#{scmURL},
+				#{scmBranch},
+				#{scmCommit},
+				#{configXML},
+				#{workItem.id},
+				#{job.id},
+				#{upstreamJob.id},
+				#{upstreamJobBuildNumber},
+				#{buildNumber},
+		]]>
+		<if test="null != project and null != project.id">
+            <![CDATA[
+				#{project.id},
+			]]>
+		</if>
+		<![CDATA[
+				#{startedBy},
+				#{knownIssue},
+				#{blocker},
+				#{platform},
+				#{appVersion},
+				#{env},
+				#{startedAt},
+				#{elapsed},
+				#{eta},
+				#{comments},
+				#{driverMode}
+			)
+		]]>
+	</insert>
+	
+	<sql id="getTestRun">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
+				TR.USER_ID AS TEST_RUN_USER_ID,
+				TR.TEST_SUITE_ID AS TEST_RUN_TEST_SUITE_ID,
+				TR.STATUS AS TEST_RUN_STATUS,
+				TR.SCM_URL AS TEST_RUN_SCM_URL,
+				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
+				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
+				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
+				TR.JOB_ID AS TEST_RUN_JOB_ID,
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
+				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.BLOCKER AS TEST_RUN_BLOCKER,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
+				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
+				TR.ELAPSED AS TEST_RUN_ELAPSED, 
+				TR.ETA AS TEST_RUN_ETA,
+				TR.COMMENTS AS TEST_RUN_COMMENTS, 
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
+				
+				P.ID AS TEST_RUN_PROJECT_ID,
+				P.NAME AS TEST_RUN_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_RUN_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_RUN_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_RUN_PROJECT_CREATED_AT
+			FROM
+				TEST_RUNS TR
+			LEFT JOIN
+				PROJECTS P ON TR.PROJECT_ID = P.ID
+		]]>
+	</sql>
+	
+	<sql id="getTestRunFull">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
+				TR.STATUS AS TEST_RUN_STATUS,
+				TR.SCM_URL AS TEST_RUN_SCM_URL,
+				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
+				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
+				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
+				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.BLOCKER AS TEST_RUN_BLOCKER,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
+				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
+				TR.ELAPSED AS TEST_RUN_ELAPSED, 
+				TR.ETA AS TEST_RUN_ETA, 
+				TR.COMMENTS AS TEST_RUN_COMMENTS,
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.KNOWN_ISSUE = TRUE) AS TEST_RUN_FAILED_AS_KNOWN,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.BLOCKER = TRUE) AS TEST_RUN_FAILED_AS_BLOCKER,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'IN_PROGRESS') AS TEST_RUN_IN_PROGRESS,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'ABORTED') AS TEST_RUN_ABORTED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'QUEUED') AS TEST_RUN_QUEUED,
+				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
+				
+				U.ID AS TEST_RUN_USER_ID,
+				U.USERNAME AS TEST_RUN_USER_USER_NAME,
+				U.EMAIL AS TEST_RUN_USER_EMAIL,
+				U.FIRST_NAME AS TEST_RUN_USER_FIRST_NAME,
+				U.LAST_NAME AS TEST_RUN_USER_LAST_NAME,
+				U.COVER_PHOTO_URL AS TEST_RUN_USER_COVER_PHOTO_URL,
+				
+				TS.ID AS TEST_RUN_TEST_SUITE_ID,
+				TS.NAME AS TEST_RUN_TEST_SUITE_NAME,
+				TS.FILE_NAME AS TEST_RUN_TEST_SUITE_FILE_NAME,
+				TS.DESCRIPTION AS TEST_RUN_TEST_SUITE_DESCRIPTION,
+				
+				J.ID AS TEST_RUN_JOB_ID,
+				J.NAME AS TEST_RUN_JOB_NAME,
+				J.JOB_URL AS TEST_RUN_JOB_JOB_URL,
+				J.JENKINS_HOST AS TEST_RUN_JOB_JENKINS_HOST,
+				
+				P.ID AS TEST_RUN_PROJECT_ID,
+				P.NAME AS TEST_RUN_PROJECT_NAME,
+				P.DESCRIPTION AS TEST_RUN_PROJECT_DESCRIPTION,
+				P.MODIFIED_AT AS TEST_RUN_PROJECT_MODIFIED_AT,
+				P.CREATED_AT AS TEST_RUN_PROJECT_CREATED_AT
+			FROM
+				TEST_RUNS TR
+			LEFT JOIN USERS U
+				ON TR.USER_ID = U.ID
+			LEFT JOIN JOBS J
+				ON TR.JOB_ID = J.ID
+			LEFT JOIN TEST_SUITES TS
+				ON TR.TEST_SUITE_ID = TS.ID
+			LEFT JOIN
+				PROJECTS P ON TR.PROJECT_ID = P.ID
+		]]>
+	</sql>
+
+	<select id="getTestRunById" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getTestRunByCiRunId" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.CI_RUN_ID = #{ciRunId};
+		]]>
+	</select>
+
+	<sql id="getTestRunStatistic">
+		<![CDATA[
+			SELECT
+				TR.ID AS TEST_RUN_ID,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.KNOWN_ISSUE = TRUE) AS TEST_RUN_FAILED_AS_KNOWN,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED' AND T.BLOCKER = TRUE) AS TEST_RUN_FAILED_AS_BLOCKER,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'QUEUED') AS TEST_RUN_QUEUED
+			FROM
+				TEST_RUNS TR
+		]]>
+	</sql>
+
+	<select id="getTestRunStatistics" resultMap="TestRunStatisticResultMap">
+		<include refid="getTestRunStatistic"/>
+		<![CDATA[
+			WHERE
+				TR.ID = #{id}
+		]]>
+	</select>
+	
+	<select id="getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.UPSTREAM_JOB_ID = #{jobId} AND TR.UPSTREAM_JOB_BUILD_NUMBER = #{buildNumber};
+		]]>
+	</select>
+
+	<sql id="filterTemplate">
+		${filterSearchCriteria.filterTemplate}
+	</sql>
+
+	<sql id="filterSearchCountTemplate">
+		${filterSearchCriteria.filterSearchCountTemplate}
+	</sql>
+	
+	<select id="searchTestRuns" resultMap="TestRunResultMap">
+		<choose>
+			<when test="null != filterSearchCriteria">
+				<include refid="filterTemplate"/>
+			</when>
+			<otherwise>
+				<include refid="getTestRunFull" />
+				<trim prefix="WHERE" prefixOverrides="AND |OR ">
+					<if test="null != id">
+						<![CDATA[
+						   AND TR.ID = #{id}
+						]]>
+					</if>
+					<if test="null != testSuite">
+						<![CDATA[
+						   AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+						]]>
+					</if>
+					<if test="null != testSuiteId">
+						<![CDATA[
+						   AND TS.ID = #{testSuiteId}
+						]]>
+					</if>
+					<if test="null != executionURL">
+						<![CDATA[
+						   AND LOWER(CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER)) LIKE LOWER(CONCAT('%', #{executionURL}, '%'))
+						]]>
+					</if>
+					<if test="null != environment">
+						<![CDATA[
+						   AND LOWER(TR.ENV) = LOWER(#{environment})
+						]]>
+					</if>
+					<if test="null != platform">
+						<![CDATA[
+						   AND LOWER(TR.PLATFORM) = LOWER(#{platform})
+						]]>
+					</if>
+					<if test="null != appVersion">
+						<![CDATA[
+						   AND LOWER(TR.APP_VERSION) LIKE LOWER(CONCAT('%', #{appVersion}, '%'))
+						]]>
+					</if>
+					<if test="null != date">
+						<![CDATA[
+						   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+						]]>
+					</if>
+					<if test="null != fromDate">
+						<![CDATA[
+						   AND TR.STARTED_AT::date >= #{fromDate}::date
+						]]>
+					</if>
+					<if test="null != toDate">
+						<![CDATA[
+						   AND TR.STARTED_AT::date <= #{toDate}::date
+						]]>
+					</if>
+					<if test="null != projects">
+						<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+							<if test="null != project.id">
+								<![CDATA[
+										TR.PROJECT_ID = #{project.id}
+								]]>
+							</if>
+						</foreach>
+					</if>
+					<if test="null != status">
+						<![CDATA[
+						   AND TR.STATUS = #{status}
+						]]>
+					</if>
+					<if test="null == status and null == id">
+						<![CDATA[
+						   AND TR.STATUS <> 'QUEUED'
+						]]>
+					</if>
+					<if test="null != reviewed">
+						<![CDATA[
+						   AND TR.REVIEWED = #{reviewed}
+						]]>
+					</if>
+				</trim>
+			</otherwise>
+		</choose>
+		<if test="sortOrder.toString() == 'ASC'">
+			<![CDATA[
+				ORDER BY TR.STARTED_AT ASC
+			]]>
+		</if>
+		<if test="sortOrder.toString() == 'DESC'">
+			<![CDATA[
+				ORDER BY TR.STARTED_AT DESC
+			]]>
+		</if>
+		<![CDATA[
+			LIMIT #{pageSize} OFFSET #{offset}
+		]]>
+	</select>
+	
+	<select id="getTestRunsSearchCount" resultType="java.lang.Integer">
+		<choose>
+			<when test="null != filterSearchCriteria">
+				<include refid="filterSearchCountTemplate"/>
+			</when>
+			<otherwise>
+			<![CDATA[
+				SELECT
+					COUNT(*)
+				FROM
+					TEST_RUNS TR
+				LEFT JOIN USERS U
+					ON TR.USER_ID = U.ID
+				LEFT JOIN JOBS J
+					ON TR.JOB_ID = J.ID
+				LEFT JOIN TEST_SUITES TS
+					ON TR.TEST_SUITE_ID = TS.ID
+			]]>
+			<trim prefix="WHERE" prefixOverrides="AND |OR ">
+				<if test="null != id">
+					<![CDATA[
+					   AND TR.ID = #{id}
+					]]>
+				</if>
+				<if test="null != testSuite">
+					<![CDATA[
+					   AND LOWER(TS.NAME) LIKE LOWER(CONCAT('%', #{testSuite}, '%'))
+					]]>
+				</if>
+				<if test="null != testSuiteId">
+					<![CDATA[
+					   AND TS.ID = #{testSuiteId}
+					]]>
+				</if>
+				<if test="null != executionURL">
+					<![CDATA[
+					   AND CONCAT(J.JOB_URL, '/', TR.BUILD_NUMBER) LIKE CONCAT('%', #{executionURL}, '%')
+					]]>
+				</if>
+				<if test="null != environment">
+					<![CDATA[
+					   AND TR.ENV = #{environment}
+					]]>
+				</if>
+				<if test="null != platform">
+					<![CDATA[
+					   AND LOWER(TR.PLATFORM) = #{platform}
+					]]>
+				</if>
+				<if test="null != appVersion">
+					<![CDATA[
+					   AND TR.APP_VERSION LIKE CONCAT('%', #{appVersion}, '%')
+					]]>
+				</if>
+				<if test="null != date">
+					<![CDATA[
+					   AND TR.STARTED_AT BETWEEN #{date}::timestamp AND #{date}::timestamp + '24:00:00'::interval
+
+					]]>
+				</if>
+				<if test="null != fromDate">
+					<![CDATA[
+					   AND TR.STARTED_AT::date >= #{fromDate}::date
+					]]>
+				</if>
+				<if test="null != toDate">
+					<![CDATA[
+					   AND TR.STARTED_AT::date <= #{toDate}::date
+					]]>
+				</if>
+				<if test="null != projects">
+					<foreach item="project" index="index" collection="projects" open="AND (" separator=" OR " close=")">
+						<if test="null != project.id">
+							<![CDATA[
+									TR.PROJECT_ID = #{project.id}
+							]]>
+						</if>
+					</foreach>
+				</if>
+				<if test="null != status">
+					<![CDATA[
+					   AND TR.STATUS = #{status}
+					]]>
+				</if>
+				<if test="null != reviewed">
+					<![CDATA[
+					   AND TR.REVIEWED = #{reviewed}
+					]]>
+				</if>
+			</trim>
+			</otherwise>
+		</choose>
+    </select>
+
+	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
+		<![CDATA[ SELECT * FROM NIGHTLY_VIEW NV ]]>
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
+                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}]]>
+			<if test="null != scmURL">
+				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
+			</if>
+			<if test="null != owner">
+				<![CDATA[ AND LOWER(NV.OWNER) LIKE LOWER(CONCAT('%', #{owner}, '%'))]]>
+			</if>
+			<if test="null != hashcode">
+				<![CDATA[ AND NV.TEST_RUN_ID IN (SELECT TEST_RUN_ID FROM TESTS T WHERE T.MESSAGE_HASH_CODE IN (#{hashcode})) ]]>
+			</if>
+			<if test="null != failurePercent">
+				<![CDATA[ AND (100.0 * (NV.FAILED + NV.SKIPPED + NV.ABORTED + NV.QUEUED)/NV.TOTAL)::integer > #{failurePercent} ]]>
+			</if>
+		</trim>
+	</select>
+
+	<select id="getTestRunEtaByTestSuiteId" resultType="java.lang.Integer">
+	    <![CDATA[
+	    	SELECT 
+	    		avg(ELAPSED)::int AS ETA
+			FROM (
+			 SELECT 
+			 	TR.ELAPSED AS ELAPSED, 
+			 	row_number() OVER (ORDER BY TR.ELAPSED) AS hi, 
+			 	count(*) OVER () + 1 - row_number() OVER (ORDER BY TR.ELAPSED) AS lo
+			 FROM 
+			 	TEST_RUNS TR
+			 WHERE 
+			 	TR.TEST_SUITE_ID = #{testSuiteId} AND TR.ELAPSED IS NOT NULL
+			 ORDER BY TR.STARTED_AT DESC
+			 	LIMIT 50 OFFSET 0
+			) qs
+			WHERE hi IN (lo-1,lo,lo+1);
+	    			
+	    ]]>
+	</select>
+	
+	<select id="getTestRunByIdFull" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
+		<![CDATA[
+			WHERE TR.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getTestRunByCiRunIdFull" resultMap="TestRunResultMap">
+		<include refid="getTestRunFull" />
+		<![CDATA[
+			WHERE TR.CI_RUN_ID = #{ciRunId};
+		]]>
+	</select>
+	
+	<select id="getTestRunsForRerun" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE 
+				TR.TEST_SUITE_ID = #{testSuiteId} AND
+				TR.JOB_ID = #{jobId} AND
+				TR.UPSTREAM_JOB_ID = #{upstreamJobId} AND
+				TR.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamBuildNumber} 
+		]]>
+		<if test="uniqueArgs != null and uniqueArgs.size > 0">
+            <foreach item="arg" index="index" collection="uniqueArgs" open="AND " separator=" AND " close=";">
+				<![CDATA[CONFIG_XML LIKE CONCAT('%<key>', #{arg.key}, '</key><value>', #{arg.value}, '</value>%')]]>
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getTestRunsByStatusAndStartedBefore" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE TR.STATUS = #{status} AND TR.CREATED_AT < #{startedBefore}
+		]]>
+	</select>
+	
+	<select id="getLatestJobTestRuns" resultMap="TestRunResultMap">
+		<![CDATA[
+			SELECT 
+				TR.ID AS TEST_RUN_ID,
+				TR.CI_RUN_ID AS TEST_RUN_CI_RUN_ID,
+				TR.USER_ID AS TEST_RUN_USER_ID,
+				TR.TEST_SUITE_ID AS TEST_RUN_TEST_SUITE_ID,
+				TR.STATUS AS TEST_RUN_STATUS,
+				TR.SCM_URL AS TEST_RUN_SCM_URL,
+				TR.SCM_BRANCH AS TEST_RUN_SCM_BRANCH,
+				TR.SCM_COMMIT AS TEST_RUN_SCM_COMMIT,
+				TR.CONFIG_XML AS TEST_RUN_CONFIG_XML,
+				TR.WORK_ITEM_ID AS TEST_RUN_WORK_ITEM_ID,
+				TR.JOB_ID AS TEST_RUN_JOB_ID,
+				TR.UPSTREAM_JOB_ID AS TEST_RUN_UPSTREAM_JOB_ID,
+				TR.UPSTREAM_JOB_BUILD_NUMBER AS TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER,
+				TR.BUILD_NUMBER AS TEST_RUN_BUILD_NUMBER,
+				TR.STARTED_BY AS TEST_RUN_STARTED_BY,
+				TR.KNOWN_ISSUE AS TEST_RUN_KNOWN_ISSUE,
+				TR.BLOCKER AS TEST_RUN_BLOCKER,
+				TR.PLATFORM AS TEST_RUN_PLATFORM,
+				TR.APP_VERSION AS TEST_RUN_APP_VERSION,
+				TR.ENV AS TEST_RUN_ENV,
+				TR.STARTED_AT AS TEST_RUN_STARTED_AT, 
+				TR.ELAPSED AS TEST_RUN_ELAPSED, 
+				TR.ETA AS TEST_RUN_ETA,
+				TR.COMMENTS AS TEST_RUN_COMMENTS, 
+				TR.DRIVER_MODE AS TEST_RUN_DRIVER_MODE,
+				TR.REVIEWED AS TEST_RUN_REVIEWED,
+				TR.MODIFIED_AT AS TEST_RUN_MODIFIED_AT,
+				TR.CREATED_AT AS TEST_RUN_CREATED_AT,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'PASSED') AS TEST_RUN_PASSED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'FAILED') AS TEST_RUN_FAILED,
+				(SELECT COUNT(*) FROM TESTS T WHERE T.TEST_RUN_ID = TR.ID AND T.STATUS = 'SKIPPED') AS TEST_RUN_SKIPPED
+			FROM 
+				TEST_RUNS TR
+			INNER JOIN 
+				(SELECT 
+					JOB_ID, MAX(STARTED_AT) AS STARTED_AT
+			     FROM 
+			    	TEST_RUNS
+			     WHERE 
+			     	STARTED_AT >= current_date - interval '2 week'
+			     GROUP BY JOB_ID, ENV) AS MAX
+			USING 
+				(JOB_ID, STARTED_AT)
+			WHERE
+				TR.ENV = #{env} AND TR.JOB_ID IN
+		]]>
+		<foreach item="jobId" index="index" collection="jobIds" open="("
+			separator="," close=")">
+			#{jobId}
+		</foreach>
+	</select>
+
+	<select id="getLatestJobTestRunByBranch" resultMap="TestRunResultMap">
+		<include refid="getTestRun" />
+		<![CDATA[
+			WHERE
+				STARTED_AT >= current_date - interval '4 week' AND
+				TR.STATUS <> 'IN_PROGRESS' AND
+				TR.STATUS <> 'ABORTED' AND
+				TR.SCM_BRANCH = #{branch} AND
+				TR.JOB_ID = #{jobId}
+			ORDER BY TR.STARTED_AT DESC
+			LIMIT 1
+		]]>
+	</select>
+
+	<select id="getEnvironments" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			DISTINCT
+			UPPER(TR.ENV)
+			FROM
+			TEST_RUNS TR
+			ORDER BY
+				UPPER(TR.ENV)
+			ASC
+			LIMIT 10000
+		]]>
+	</select>
+
+	<select id="getPlatforms" resultType="java.lang.String">
+		<![CDATA[
+			SELECT
+			DISTINCT
+			LOWER(TR.PLATFORM)
+			FROM
+			TEST_RUNS TR
+			ORDER BY
+				LOWER(TR.PLATFORM)
+			ASC
+			LIMIT 10000
+		]]>
+	</select>
+
+	<update id="updateTestRun">
+		<![CDATA[
+			UPDATE
+			    TEST_RUNS
+			SET
+				CI_RUN_ID = #{ciRunId},
+				USER_ID = #{user.id},
+				TEST_SUITE_ID = #{testSuite.id},
+				STATUS = #{status},
+			    SCM_URL = #{scmURL},
+			    SCM_BRANCH = #{scmBranch},
+			    SCM_COMMIT = #{scmCommit},
+			    WORK_ITEM_ID = #{workItem.id},
+			    CONFIG_XML = #{configXML},
+			    JOB_ID = #{job.id},
+			    UPSTREAM_JOB_ID = #{upstreamJob.id},
+			    UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber},
+			    BUILD_NUMBER = #{buildNumber},
+			]]>	    
+			<if test="null != project and null != project.id">
+	            <![CDATA[
+	               PROJECT_ID = #{project.id},
+	            ]]>
+			</if>
+			<![CDATA[
+			    STARTED_BY = #{startedBy},
+			    KNOWN_ISSUE = #{knownIssue},
+			    BLOCKER = #{blocker},
+			    PLATFORM = #{platform},
+			    APP_VERSION = #{appVersion},
+			    ENV = #{env},
+			    STARTED_AT = #{startedAt},
+				ELAPSED = #{elapsed},
+				ETA = #{eta},
+				COMMENTS = #{comments},
+				DRIVER_MODE = #{driverMode},
+				REVIEWED = #{reviewed}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteTestRun">
+		<![CDATA[
+			DELETE FROM TEST_RUNS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteTestRun">
+		<include refid="deleteTestRun" />
+	</delete>
+
+	<delete id="deleteTestRunById">
+		<include refid="deleteTestRun" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="NightlyViewResultMap" autoMapping="false">
+		<id column="TEST_RUN_ID" property="id"/>
+		<result column="OWNER_ID" property="user.id"/>
+		<result column="OWNER" property="user.username"/>
+		<result column="EMAIL" property="user.email"/>
+		<result column="TEST_SUITE_NAME" property="testSuite.name"/>
+		<result column="TEST_RUN_ID" property="id"/>
+		<result column="SCM_URL" property="scmURL"/>
+		<result column="UPSTREAM_JOB_ID" property="upstreamJob.id"/>
+		<result column="UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber"/>
+		<result column="JobBuild" property="buildNumber"/>
+		<result column="ENV" property="env"/>
+		<result column="Started" property="startedAt"/>
+		<result column="Elapsed" property="elapsed"/>
+		<result column="JOB_URL" property="job.jobURL"/>
+		<result column="JOB_NAME" property="job.name"/>
+		<result column="PROJECT" property="project.name"/>
+	</resultMap>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.TestRun" id="TestRunResultMap" autoMapping="false">
+        <id column="TEST_RUN_ID" property="id" />
+
+        <result column="TEST_RUN_USER_ID" property="user.id" />
+        <result column="TEST_RUN_USER_USER_NAME" property="user.username" />
+        <result column="TEST_RUN_USER_EMAIL" property="user.email" />
+        <result column="TEST_RUN_USER_FIRST_NAME" property="user.firstName" />
+        <result column="TEST_RUN_USER_LAST_NAME" property="user.lastName" />
+        <result column="TEST_RUN_USER_COVER_PHOTO_URL" property="user.photoURL" />
+
+        <result column="TEST_RUN_TEST_SUITE_ID" property="testSuite.id" />
+        <result column="TEST_RUN_TEST_SUITE_NAME" property="testSuite.name" />
+        <result column="TEST_RUN_TEST_SUITE_FILE_NAME" property="testSuite.fileName" />
+        <result column="TEST_RUN_TEST_SUITE_DESCRIPTION" property="testSuite.description" />
+
+        <result column="TEST_RUN_CI_RUN_ID" property="ciRunId" />
+        <result column="TEST_RUN_STATUS" property="status" />
+        <result column="TEST_RUN_SCM_URL" property="scmURL" />
+        <result column="TEST_RUN_SCM_BRANCH" property="scmBranch" />
+        <result column="TEST_RUN_SCM_COMMIT" property="scmCommit" />
+        <result column="TEST_RUN_WORK_ITEM_ID" property="workItem.id" />
+        <result column="TEST_RUN_CONFIG_XML" property="configXML" />
+        <result column="TEST_RUN_UPSTREAM_JOB_ID" property="upstreamJob.id" />
+        <result column="TEST_RUN_UPSTREAM_JOB_BUILD_NUMBER" property="upstreamJobBuildNumber" />
+        <result column="TEST_RUN_BUILD_NUMBER" property="buildNumber" />
+        <result column="TEST_RUN_STARTED_BY" property="startedBy" />
+        <result column="TEST_RUN_KNOWN_ISSUE" property="knownIssue" />
+        <result column="TEST_RUN_BLOCKER" property="blocker" />
+        <result column="TEST_RUN_PLATFORM" property="platform" />
+        <result column="TEST_RUN_APP_VERSION" property="appVersion" />
+        <result column="TEST_RUN_ENV" property="env" />
+        <result column="TEST_RUN_STARTED_AT" property="startedAt" />
+        <result column="TEST_RUN_ELAPSED" property="elapsed" />
+        <result column="TEST_RUN_ETA" property="eta" />
+        <result column="TEST_RUN_COMMENTS" property="comments" />
+        <result column="TEST_RUN_DRIVER_MODE" property="driverMode" />
+        <result column="TEST_RUN_REVIEWED" property="reviewed" />
+        <result column="TEST_RUN_PASSED" property="passed" />
+        <result column="TEST_RUN_FAILED" property="failed" />
+        <result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
+        <result column="TEST_RUN_FAILED_AS_BLOCKER" property="failedAsBlocker" />
+        <result column="TEST_RUN_SKIPPED" property="skipped" />
+        <result column="TEST_RUN_IN_PROGRESS" property="inProgress" />
+        <result column="TEST_RUN_QUEUED" property="queued" />
+        <result column="TEST_RUN_ABORTED" property="aborted" />
+        <result column="TEST_RUN_MODIFIED_AT" property="modifiedAt" />
+        <result column="TEST_RUN_CREATED_AT" property="createdAt" />
+
+        <result column="TEST_RUN_JOB_ID" property="job.id" />
+        <result column="TEST_RUN_JOB_NAME" property="job.name" />
+        <result column="TEST_RUN_JOB_JOB_URL" property="job.jobURL" />
+        <result column="TEST_RUN_JOB_JENKINS_HOST" property="job.jenkinsHost" />
+
+        <result column="TEST_RUN_PROJECT_ID" property="project.id" />
+        <result column="TEST_RUN_PROJECT_NAME" property="project.name" />
+        <result column="TEST_RUN_PROJECT_DESCRIPTION" property="project.description" />
+        <result column="TEST_RUN_PROJECT_MODIFIED_AT" property="project.modifiedAt" />
+        <result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
+    </resultMap>
+
+    <resultMap type="com.qaprosoft.zafira.models.dto.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
+		<id column="TEST_RUN_ID" property="testRunId" />
+		<result column="TEST_RUN_REVIEWED" property="reviewed" />
+		<result column="TEST_RUN_PASSED" property="passed" />
+		<result column="TEST_RUN_FAILED" property="failed" />
+		<result column="TEST_RUN_FAILED_AS_KNOWN" property="failedAsKnown" />
+		<result column="TEST_RUN_FAILED_AS_BLOCKER" property="failedAsBlocker" />
+		<result column="TEST_RUN_SKIPPED" property="skipped" />
+		<result column="TEST_RUN_QUEUED" property="queued" />
+	</resultMap>
+
+</mapper>

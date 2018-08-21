@@ -28,8 +28,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestConfig;

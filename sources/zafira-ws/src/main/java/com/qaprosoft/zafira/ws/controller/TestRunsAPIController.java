@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.JobSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
@@ -51,9 +51,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.FilterSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestRun;

@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -55,7 +54,6 @@ public class GoogleService implements IJMXService<GoogleType>
 	private SettingsService settingsService;
 
 	@Override
-	@PostConstruct
 	@ManagedOperation(description = "Google initialization")
 	public void init()
 	{

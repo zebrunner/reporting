@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -77,7 +75,6 @@ public class AmazonService implements IJMXService<AmazonType> {
     private ClientConfiguration clientConfiguration;
 
     @Override
-    @PostConstruct
     public void init() {
         String accessKey = null;
         String privateKey = null;

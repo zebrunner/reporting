@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper">
+
+	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
+			VALUES (#{name},
+					#{value},
+                    #{isEncrypted},
+                    #{tool})
+		]]>
+	</insert>
+
+	<sql id="getSetting">
+		<![CDATA[
+			SELECT
+				S.ID AS SETTING_ID,
+				S.NAME AS SETTING_NAME,
+				S.VALUE AS SETTING_VALUE,
+                S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
+                S.TOOL AS SETTING_TOOL,
+				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
+				S.CREATED_AT AS SETTING_CREATED_AT
+			FROM
+				SETTINGS S
+		]]>
+	</sql>
+
+    <select id="getAllSettings" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <![CDATA[
+			ORDER BY S.NAME;
+		]]>
+    </select>
+
+	<select id="getSettingsByIntegration" resultMap="SettingResultMap">
+        <include refid="getSetting" />
+        <if test = "isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL IS NOT NULL
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
+        <if test = "!isIntegrationTool">
+            <![CDATA[
+                    WHERE S.TOOL IS NULL
+                    ORDER BY S.NAME;
+            ]]>
+        </if>
+	</select>
+
+
+
+	<select id="getSettingById" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getSettingsByTool" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.TOOL = #{tool}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
+	<select id="getSettingsByEncrypted" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.IS_ENCRYPTED = #{isEncrypted}
+			ORDER BY S.NAME ASC;
+		]]>
+	</select>
+
+
+	<select id="getSettingByName" resultMap="SettingResultMap">
+		<include refid="getSetting" />
+		<![CDATA[
+			WHERE S.NAME = #{name};
+		]]>
+	</select>
+
+	<select id="getTools" resultType="com.qaprosoft.zafira.models.db.Setting$Tool">
+		<![CDATA[
+			SELECT
+				DISTINCT
+				S.TOOL
+			FROM
+			SETTINGS S
+			WHERE
+				S.TOOL IS NOT NULL
+			ORDER BY
+				S.TOOL
+			ASC
+			LIMIT 10000
+		]]>
+	</select>
+
+	<update id="updateSetting">
+		<![CDATA[
+			UPDATE
+			    SETTINGS
+			SET
+		]]>
+			<if test = "value != null">
+				<![CDATA[
+						VALUE = #{value},
+					]]>
+			</if>
+			<if test = "isEncrypted != null">
+				<![CDATA[
+						IS_ENCRYPTED = #{isEncrypted},
+					]]>
+			</if>
+			<if test = "tool != null">
+				<![CDATA[
+						TOOL = #{tool},
+					]]>
+			</if>
+			<if test = "name != null">
+				<![CDATA[
+							NAME = #{name}
+					]]>
+			</if>
+		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<sql id="deleteSetting">
+		<![CDATA[
+			DELETE FROM SETTINGS
+			WHERE ID = #{id}
+		]]>
+	</sql>
+
+	<delete id="deleteSetting">
+		<include refid="deleteSetting" />
+	</delete>
+
+	<delete id="deleteSettingById">
+		<include refid="deleteSetting" />
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.Setting" id="SettingResultMap" autoMapping="false">
+		<id column="SETTING_ID" property="id" />
+		<result column="SETTING_NAME" property="name" />
+		<result column="SETTING_VALUE" property="value" />
+		<result column="SETTING_MODIFIED_AT" property="modifiedAt" />
+		<result column="SETTING_CREATED_AT" property="createdAt" />
+        <result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
+        <result column="SETTING_TOOL" property="tool" />
+	</resultMap>
+
+</mapper>

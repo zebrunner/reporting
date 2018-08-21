@@ -38,10 +38,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.TestMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.SearchResult;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.TestSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
 import com.qaprosoft.zafira.models.db.TestArtifact;

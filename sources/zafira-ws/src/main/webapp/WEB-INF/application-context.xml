@@ -28,7 +28,8 @@
 	<import resource="spring/jmx.xml" />
 
 	<import resource="classpath:zafira-models.xml" />
-	<import resource="classpath:zafira-dbaccess.xml" />
+	<import resource="classpath:zafira-app-dbaccess.xml" />
+	<import resource="classpath:zafira-mng-dbaccess.xml" />
 	<import resource="classpath:zafira-services.xml" />
 
 	<!--websocket:message-broker application-destination-prefix="/websocket">

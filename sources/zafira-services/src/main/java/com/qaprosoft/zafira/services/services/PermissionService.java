@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.PermissionMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper;
 import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

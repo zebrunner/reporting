@@ -24,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.ProjectMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper;
 import com.qaprosoft.zafira.models.db.Project;
 
 @Test

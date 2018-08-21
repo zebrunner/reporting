@@ -32,8 +32,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.DashboardMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.WidgetMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
 import com.qaprosoft.zafira.models.db.Dashboard;
 import com.qaprosoft.zafira.models.db.Widget;
 

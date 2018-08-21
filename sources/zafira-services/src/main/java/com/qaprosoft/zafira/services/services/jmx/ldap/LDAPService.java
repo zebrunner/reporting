@@ -28,7 +28,6 @@ import org.springframework.jmx.export.annotation.*;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
@@ -49,7 +48,6 @@ public class LDAPService implements IJMXService<LDAPType> {
     private CryptoService cryptoService;
 
     @Override
-    @PostConstruct
     public void init() {
 
         String dn = null;

@@ -20,8 +20,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.HIPCHAT;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,6 @@ public class HipchatService implements IJMXService<HipchatType> {
     private CryptoService cryptoService;
 
     @Override
-    @PostConstruct
     public void init() {
         String accessToken = null;
 

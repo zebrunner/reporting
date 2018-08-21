@@ -15,21 +15,41 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.jmx;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.stereotype.Component;
-
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.TenancyService;
 import com.qaprosoft.zafira.services.services.jmx.models.AbstractType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class JMXTenancyStorage {
 
+    @Autowired
+    private TenancyService tenancyService;
+
+    @Autowired
+    private SettingsService settingsService;
+
     private static Map<Setting.Tool, Map<String, ? extends AbstractType>> tenancyEntity = new ConcurrentHashMap<>();
 
-    @SuppressWarnings("all")
+    @PostConstruct
+    public void init() {
+        tenancyService.iterateItems(tenancy -> {
+            Arrays.stream(Setting.Tool.values()).forEach(tool -> {
+                settingsService.getServiceByTool(tool).init();
+            });
+        });
+    }
+
+    @SuppressWarnings("unchecked")
     public synchronized static <T extends AbstractType> void putType(Setting.Tool tool, T t) {
         if (tenancyEntity.get(tool) == null) {
             Map<String, T> typeMap = new ConcurrentHashMap<>();
@@ -40,9 +60,11 @@ public class JMXTenancyStorage {
         }
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public static <T> T getType(Setting.Tool tool) {
         Map<String, ? extends AbstractType> clientMap = tenancyEntity.get(tool);
         return clientMap == null ? null : (T) tenancyEntity.get(tool).get(TenancyContext.getTenantName());
     }
+
+
 }

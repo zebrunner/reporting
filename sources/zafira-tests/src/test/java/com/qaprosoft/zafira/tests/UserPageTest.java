@@ -1,7 +1,7 @@
 package com.qaprosoft.zafira.tests;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.UserMapper;
-import com.qaprosoft.zafira.dbaccess.dao.mysql.search.UserSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
