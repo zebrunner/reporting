@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.jmx;
 
+import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.services.jmx.models.AbstractType;
-
-import static com.qaprosoft.zafira.models.db.Setting.Tool;
 
 public interface IJMXService<T extends AbstractType> {
 
     void init();
+
     boolean isConnected();
 
-    default T getType(Tool tool)
-    {
-        return JMXTenancyStorage.<T>getType(tool);
+    default T getType(Tool tool) {
+        return JMXTenancyStorage.<T> getType(tool);
     }
 
-    default void putType(Tool tool, T t)
-    {
-        JMXTenancyStorage.<T>putType(tool, t);
+    default void putType(Tool tool, T t) {
+        JMXTenancyStorage.<T> putType(tool, t);
     }
 }

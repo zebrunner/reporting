@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.qaprosoft.zafira.services.services.jmx.models.JiraType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +34,14 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.models.JiraType;
 
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 
-
-@ManagedResource(objectName="bean:name=jiraService", description="Jira init Managed Bean",
-		currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
-public class JiraService implements IJMXService<JiraType>
-{
-	private static final Logger LOGGER = Logger.getLogger(JiraService.class);
+@ManagedResource(objectName = "bean:name=jiraService", description = "Jira init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
+public class JiraService implements IJMXService<JiraType> {
+    private static final Logger LOGGER = Logger.getLogger(JiraService.class);
 
     @Autowired
     private SettingsService settingsService;
@@ -53,106 +50,93 @@ public class JiraService implements IJMXService<JiraType>
     private CryptoService cryptoService;
 
     @Override
-	@PostConstruct
-	public void init() {
+    @PostConstruct
+    public void init() {
 
         String url = null;
         String username = null;
         String password = null;
 
         try {
-			List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA);
-			for (Setting setting : jiraSettings)
-			{
-					if(setting.isEncrypted())
-					{
-						setting.setValue(cryptoService.decrypt(setting.getValue()));
-					}
-					switch (Setting.SettingType.valueOf(setting.getName()))
-					{
-						case JIRA_URL:
-							url = setting.getValue();
-							break;
-						case JIRA_USER:
-							username = setting.getValue();
-							break;
-						case JIRA_PASSWORD:
-							password = setting.getValue();
-							break;
-						default:
-							break;
-					}
-			}
-			init(url, username, password);
-		} catch(Exception e) {
-        	LOGGER.error("Setting does not exist", e);
-		}
-	}
+            List<Setting> jiraSettings = settingsService.getSettingsByTool(JIRA);
+            for (Setting setting : jiraSettings) {
+                if (setting.isEncrypted()) {
+                    setting.setValue(cryptoService.decrypt(setting.getValue()));
+                }
+                switch (Setting.SettingType.valueOf(setting.getName())) {
+                case JIRA_URL:
+                    url = setting.getValue();
+                    break;
+                case JIRA_USER:
+                    username = setting.getValue();
+                    break;
+                case JIRA_PASSWORD:
+                    password = setting.getValue();
+                    break;
+                default:
+                    break;
+                }
+            }
+            init(url, username, password);
+        } catch (Exception e) {
+            LOGGER.error("Setting does not exist", e);
+        }
+    }
 
-	@ManagedOperation(description="Change Jira initialization")
-	@ManagedOperationParameters({
-			@ManagedOperationParameter(name = "url", description = "Jira url"),
-			@ManagedOperationParameter(name = "username", description = "Jira username"),
-			@ManagedOperationParameter(name = "password", description = "Jira password")})
-	public void init(String url, String username, String password){
-		try
-		{
-			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password))
-			{
-				putType(JIRA, new JiraType(url, username, password));
-		}
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
-		}
-	}
+    @ManagedOperation(description = "Change Jira initialization")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name = "url", description = "Jira url"),
+            @ManagedOperationParameter(name = "username", description = "Jira username"),
+            @ManagedOperationParameter(name = "password", description = "Jira password") })
+    public void init(String url, String username, String password) {
+        try {
+            if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+                putType(JIRA, new JiraType(url, username, password));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
+        }
+    }
 
-	@Override
-	public boolean isConnected()
-	{
-		boolean connected = false;
-		try
-		{
-			connected = getJiraClient() != null && getJiraClient().getProjects() != null;
-		}
-		catch(Exception e)
-		{
-			LOGGER.error("Unable to connect to JIRA", e);
-		}
-		return connected;
-	}
+    @Override
+    public boolean isConnected() {
+        boolean connected = false;
+        try {
+            connected = getJiraClient() != null && getJiraClient().getProjects() != null;
+        } catch (Exception e) {
+            LOGGER.error("Unable to connect to JIRA", e);
+        }
+        return connected;
+    }
 
-	public Issue getIssue(String ticket)
-	{
-		Issue issue = null;
-		try
-		{
-			issue = getJiraClient().getIssue(ticket);
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to find Jira issue: " + ticket, e);
-		}
-		return issue;
-	}
+    public Issue getIssue(String ticket) {
+        Issue issue = null;
+        try {
+            issue = getJiraClient().getIssue(ticket);
+        } catch (Exception e) {
+            LOGGER.error("Unable to find Jira issue: " + ticket, e);
+        }
+        return issue;
+    }
 
-	public boolean isIssueClosed(String ticket) throws ServiceException {
-		Issue issue = getIssue(ticket);
-		return isIssueClosed(issue);
-	}
+    public boolean isIssueClosed(String ticket) throws ServiceException {
+        Issue issue = getIssue(ticket);
+        return isIssueClosed(issue);
+    }
 
-	public boolean isIssueClosed(Issue issue) throws ServiceException {
-		boolean isIssueClosed = false;
-		String[] closeStatuses = settingsService.getSettingValue(JIRA_CLOSED_STATUS).split(";");
-		for(String closeStatus: closeStatuses) {
-			if(issue.getStatus().getName().equalsIgnoreCase(closeStatus)) {
-				isIssueClosed = true;
-			}
-		}
-		return isIssueClosed;
-	}
+    public boolean isIssueClosed(Issue issue) throws ServiceException {
+        boolean isIssueClosed = false;
+        String[] closeStatuses = settingsService.getSettingValue(JIRA_CLOSED_STATUS).split(";");
+        for (String closeStatus : closeStatuses) {
+            if (issue.getStatus().getName().equalsIgnoreCase(closeStatus)) {
+                isIssueClosed = true;
+            }
+        }
+        return isIssueClosed;
+    }
 
-	@ManagedAttribute(description="Get jira client")
-	public JiraClient getJiraClient() {
-		return getType(JIRA) != null ? getType(JIRA).getJiraClient() : null;
-	}
+    @ManagedAttribute(description = "Get jira client")
+    public JiraClient getJiraClient() {
+        return getType(JIRA) != null ? getType(JIRA).getJiraClient() : null;
+    }
 }
