@@ -21,10 +21,12 @@ import java.util.stream.Collectors;
 import com.qaprosoft.zafira.services.services.jmx.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.SettingsMapper;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
@@ -32,6 +34,8 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask;
 import com.qaprosoft.zafira.services.services.jmx.google.GoogleService;
 import com.qaprosoft.zafira.services.services.jmx.ldap.LDAPService;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 
 @Service
 public class SettingsService
@@ -71,6 +75,11 @@ public class SettingsService
 
 	@Autowired
 	private RabbitMQService rabbitMQService;
+	
+	@Autowired
+    private SimpMessagingTemplate websocketTemplate;
+	
+	protected static final String SETTINGS_WEBSOCKET_PATH = "/topic/settings";
 
 	@Transactional(readOnly = true)
 	public Setting getSettingByName(String name) throws ServiceException
@@ -167,7 +176,7 @@ public class SettingsService
 			setting.setValue(decValue);
 		}
 		cryptoService.generateKey();
-		reinstantiateTool(Tool.CRYPTO);
+		notifyToolReinitiated(Tool.CRYPTO, TenancyContext.getTenantName());
 		for (Setting setting : settings)
 		{
 			String encValue = cryptoService.encrypt(setting.getValue());
@@ -176,13 +185,25 @@ public class SettingsService
 		}
 	}
 
-	public void reinstantiateTool(Tool tool)
+	/**
+	 * Sends message to broker to notify about changed integration.
+	 * @param tool that was re-initiated
+	 * @param tenant whose integration was updated
+	 */
+	public void notifyToolReinitiated(Tool tool, String tenant)
 	{
-		if (getServiceByTool(tool) != null)
-		{
-			getServiceByTool(tool).init();
-		}
+		websocketTemplate.convertAndSend(SETTINGS_WEBSOCKET_PATH, new ReinitMessage(tool, tenant));
 	}
+	
+	@MessageMapping(SETTINGS_WEBSOCKET_PATH)
+    private void onToolReinit(Message<ReinitMessage> message) {
+	    ReinitMessage payload = message.getPayload();
+	    if (getServiceByTool(payload.getTool()) != null)
+        {
+	        TenancyContext.setTenantName(payload.getTenancy());
+            getServiceByTool(payload.getTool()).init();
+        }
+    }
 
 	public IJMXService getServiceByTool(Tool tool)
 	{
@@ -227,5 +248,37 @@ public class SettingsService
 		}
 		return service;
 	}
+	
+	/**
+	 * ReinitMessage - websocket message sent to re-init integration tool.
+	 * 
+	 * @author akhursevich
+	 */
+	private class ReinitMessage {
+	    
+	    private Tool tool;
+	    
+	    private String tenancy;
+	    
+        public ReinitMessage(Tool tool, String tenancy) {
+            this.tool = tool;
+            this.tenancy = tenancy;
+        }
 
+        public Tool getTool() {
+            return tool;
+        }
+
+        public void setTool(Tool tool) {
+            this.tool = tool;
+        }
+
+        public String getTenancy() {
+            return tenancy;
+        }
+
+        public void setTenancy(String tenancy) {
+            this.tenancy = tenancy;
+        }
+	}
 }

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
@@ -214,7 +215,7 @@ public class SettingsAPIController extends AbstractController
 			}
             settingsService.updateSetting(setting);
 		}
-        settingsService.reinstantiateTool(tool);
+        settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
