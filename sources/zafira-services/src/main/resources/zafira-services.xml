@@ -106,7 +106,7 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	<!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="javaMailProperties">
 			<props>
@@ -114,7 +114,7 @@
        	      	<prop key="mail.smtp.starttls.enable">true</prop>
 			</props>
 		</property>
-	</bean>
+	</bean>-->
 
 	<bean class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
 		id="freemarkerConfiguration">

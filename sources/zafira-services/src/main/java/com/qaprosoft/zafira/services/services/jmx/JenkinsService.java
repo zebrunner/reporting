@@ -21,12 +21,12 @@ import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterC
 import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
 
 import com.offbytwo.jenkins.model.*;
+import com.qaprosoft.zafira.services.services.jmx.models.JenkinsType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +47,11 @@ import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.SettingsService;
 
 @ManagedResource(objectName = "bean:name=jenkinsService", description = "Jenkins init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
-public class JenkinsService implements IJMXService
+public class JenkinsService implements IJMXService<JenkinsType>
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
 	private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
-
-	private JenkinsServer server;
 
 	@Autowired
 	private SettingsService settingsService;
@@ -113,7 +111,7 @@ public class JenkinsService implements IJMXService
 		{
 			if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken))
 			{
-				this.server = new JenkinsServer(new URI(url), username, passwordOrApiToken);
+				putType(JENKINS, new JenkinsType(url, username, passwordOrApiToken));
 			}
 		}
 		catch (Exception e)
@@ -283,12 +281,12 @@ public class JenkinsService implements IJMXService
 		if (ciJob.getJobURL().matches(FOLDER_REGEX))
 		{
 			String folderName = ciJob.getJobURL().split("/job/")[1];
-			Optional<FolderJob> folder = server.getFolderJob(server.getJob(folderName));
-			job = server.getJob(folder.get(), ciJob.getName());
+			Optional<FolderJob> folder = getServer().getFolderJob(getServer().getJob(folderName));
+			job = getServer().getJob(folder.get(), ciJob.getName());
 		}
 		else
 		{
-			job = server.getJob(ciJob.getName());
+			job = getServer().getJob(ciJob.getName());
 		}
 		return job;
 	}
@@ -346,12 +344,12 @@ public class JenkinsService implements IJMXService
 	@Override
 	public boolean isConnected()
 	{
-		return this.server != null && this.server.isRunning();
+		return getServer() != null && getServer().isRunning();
 	}
 
 	@ManagedAttribute(description = "Get jenkins server")
 	public JenkinsServer getServer()
 	{
-		return server;
+		return getType(JENKINS) != null ? getType(JENKINS).getJenkinsServer() : null;
 	}
 }

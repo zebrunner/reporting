@@ -5,6 +5,7 @@ import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.jmx.google.auth.GoogleDriveAuthService;
 import com.qaprosoft.zafira.services.services.jmx.google.auth.GoogleSheetsAuthService;
+import com.qaprosoft.zafira.services.services.jmx.models.GoogleType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -18,7 +19,7 @@ import java.nio.file.Files;
 
 @ManagedResource(objectName = "bean:name=googleService", description = "Google init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class GoogleService implements IJMXService
+public class GoogleService implements IJMXService<GoogleType>
 {
 
 	private static final Logger LOGGER = Logger.getLogger(GoogleService.class);

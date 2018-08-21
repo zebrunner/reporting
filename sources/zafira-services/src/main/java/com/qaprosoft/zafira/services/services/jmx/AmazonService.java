@@ -24,14 +24,10 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.amazonaws.auth.*;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
-import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.*;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
+import com.qaprosoft.zafira.services.services.jmx.models.AmazonType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -47,7 +43,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.internal.SdkBufferedInputStream;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
@@ -57,7 +52,7 @@ import com.qaprosoft.zafira.services.services.SettingsService;
 
 @ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AmazonService implements IJMXService
+public class AmazonService implements IJMXService<AmazonType>
 {
 
 	private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
@@ -65,14 +60,6 @@ public class AmazonService implements IJMXService
 	public static final String COMMENT_KEY = "comment";
 
 	private static final String FILE_PATH_SEPARATOR = "/";
-
-	private AmazonS3 s3Client;
-
-	private AWSSecurityTokenService securityTokenService;
-
-	private BasicAWSCredentials awsCredentials;
-
-	private String s3Bucket;
 
 	@Autowired
 	private SettingsService settingsService;
@@ -138,16 +125,7 @@ public class AmazonService implements IJMXService
 		{
 			if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region) && !StringUtils.isBlank(bucket))
 			{
-				this.s3Bucket = bucket;
-				this.awsCredentials = new BasicAWSCredentials(accessKey, privateKey);
-				this.s3Client = AmazonS3ClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-						.withRegion(Regions.fromName(region))
-						.withClientConfiguration(clientConfiguration).build();
-				this.securityTokenService = AWSSecurityTokenServiceClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-						.withRegion(Regions.fromName(region))
-						.withClientConfiguration(clientConfiguration).build();
+				putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration));
 			}
 		} catch (Exception e)
 		{
@@ -160,8 +138,8 @@ public class AmazonService implements IJMXService
 	{
 		try
 		{
-			return this.s3Client.doesBucketExistV2(this.s3Bucket);
-		} 
+			return getAmazonType().getAmazonS3().doesBucketExistV2(getAmazonType().getS3Bucket());
+		}
 		catch (Exception e)
 		{
 			return false;
@@ -170,21 +148,21 @@ public class AmazonService implements IJMXService
 
 	public List<S3ObjectSummary> listFiles(String filePrefix)
 	{
-		ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(s3Bucket).withPrefix(filePrefix);
-		return getS3Client().listObjects(listObjectRequest).getObjectSummaries();
+		ListObjectsRequest listObjectRequest = new ListObjectsRequest().withBucketName(getAmazonType().getS3Bucket()).withPrefix(filePrefix);
+		return getAmazonType().getAmazonS3().listObjects(listObjectRequest).getObjectSummaries();
 	}
 
 	public String getComment(String key)
 	{
-		return getS3Client().getObjectMetadata(s3Bucket, key).getUserMetaDataOf(COMMENT_KEY);
+		return getAmazonType().getAmazonS3().getObjectMetadata(getAmazonType().getS3Bucket(), key).getUserMetaDataOf(COMMENT_KEY);
 	}
 
 	public String getPublicLink(S3ObjectSummary objectSummary)
 	{
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(s3Bucket,
+		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(),
 				objectSummary.getKey());
 		generatePresignedUrlRequest.setMethod(HttpMethod.GET);
-		return getS3Client().generatePresignedUrl(generatePresignedUrlRequest).toString();
+		return getAmazonType().getAmazonS3().generatePresignedUrl(generatePresignedUrlRequest).toString();
 	}
 
 	public String saveFile(final FileUploadType file, long principalId) throws ServiceException
@@ -200,25 +178,25 @@ public class AmazonService implements IJMXService
 			metadata.setContentType(type);
 			metadata.setContentLength(file.getFile().getSize());
 
-			PutObjectRequest putRequest = new PutObjectRequest(this.s3Bucket, key, stream, metadata);
-			s3Client.putObject(putRequest);
-			s3Client.setObjectAcl(this.s3Bucket, key, CannedAccessControlList.PublicRead);
+			PutObjectRequest putRequest = new PutObjectRequest(getAmazonType().getS3Bucket(), key, stream, metadata);
+			getAmazonType().getAmazonS3().putObject(putRequest);
+			getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key, CannedAccessControlList.PublicRead);
 
-			request = new GeneratePresignedUrlRequest(this.s3Bucket, key);
+			request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key);
 
 		} catch (IOException e) {
 			throw new AWSException("Can't save file to Amazone", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
-		return s3Client.generatePresignedUrl(request).toString().split("\\?")[0];
+		return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString().split("\\?")[0];
 	}
 
 	public void removeFile(final String linkToFile) throws ServiceException
 	{
 		try
 		{
-			s3Client.deleteObject(new DeleteObjectRequest(this.s3Bucket, new URL(linkToFile).getPath().substring(1)));
+			getAmazonType().getAmazonS3().deleteObject(new DeleteObjectRequest(getAmazonType().getS3Bucket(), new URL(linkToFile).getPath().substring(1)));
 		} catch (MalformedURLException e)
 		{
 			throw new ServiceException(e);
@@ -248,16 +226,16 @@ public class AmazonService implements IJMXService
 	private SessionCredentials getTemporarySessionCredentials(int expiresIn)
 	{
 		SessionCredentials result = null;
-		if(securityTokenService != null)
+		if(getAmazonType().getAwsSecurityTokenService() != null)
 		{
 			GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
 			GetSessionTokenResult getSessionTokenResult;
 			getSessionTokenRequest.setDurationSeconds(expiresIn);
 			try
 			{
-				getSessionTokenResult = securityTokenService.getSessionToken(getSessionTokenRequest);
+				getSessionTokenResult = getAmazonType().getAwsSecurityTokenService().getSessionToken(getSessionTokenRequest);
 				Credentials credentials = getSessionTokenResult.getCredentials();
-				result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken(), this.s3Client.getRegionName(), this.s3Bucket);
+				result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken(), getAmazonType().getAmazonS3().getRegionName(), getAmazonType().getS3Bucket());
 			} catch (Exception e)
 			{
 				LOGGER.error("Credentials for Security Token Service are invalid.", e);
@@ -266,9 +244,9 @@ public class AmazonService implements IJMXService
 		return result;
 	}
 
-	@ManagedAttribute(description = "Get amazon client")
-	public AmazonS3 getS3Client()
+	@ManagedAttribute(description = "Get current amazon entity")
+	public AmazonType getAmazonType()
 	{
-		return s3Client;
+		return getType(AMAZON);
 	}
 }

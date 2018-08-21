@@ -15,8 +15,22 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.jmx;
 
-public interface IJMXService {
+import com.qaprosoft.zafira.services.services.jmx.models.AbstractType;
+
+import static com.qaprosoft.zafira.models.db.Setting.Tool;
+
+public interface IJMXService<T extends AbstractType> {
 
     void init();
     boolean isConnected();
+
+    default T getType(Tool tool)
+    {
+        return JMXTenancyStorage.<T>getType(tool);
+    }
+
+    default void putType(Tool tool, T t)
+    {
+        JMXTenancyStorage.<T>putType(tool, t);
+    }
 }

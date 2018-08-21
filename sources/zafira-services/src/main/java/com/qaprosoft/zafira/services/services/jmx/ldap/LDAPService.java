@@ -4,14 +4,14 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.SettingsService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.jmx.models.LDAPType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -20,7 +20,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
 @ManagedResource(objectName="bean:name=ldapService", description="Ldap init Managed Bean",
         currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
-public class LDAPService implements IJMXService {
+public class LDAPService implements IJMXService<LDAPType> {
 
     private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
 
@@ -32,11 +32,6 @@ public class LDAPService implements IJMXService {
 
     @Autowired
     private CryptoService cryptoService;
-
-    private LdapContextSource ldapContextSource;
-    private BindAuthenticator bindAuthenticator;
-    private FilterBasedLdapUserSearch filterBasedLdapUserSearch;
-    private LdapAuthenticationProvider ldapAuthenticationProvider;
 
     @Override
     @PostConstruct
@@ -93,17 +88,7 @@ public class LDAPService implements IJMXService {
     public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword){
         try
         {
-            this.ldapContextSource = new LdapContextSource();
-            this.ldapContextSource.setUrl(url);
-            this.ldapContextSource.setUserDn(managerUser);
-            this.ldapContextSource.setPassword(managerPassword);
-            this.ldapContextSource.afterPropertiesSet();
-            this.filterBasedLdapUserSearch = new FilterBasedLdapUserSearch(dn, searchFilter, ldapContextSource);
-            this.filterBasedLdapUserSearch.setSearchSubtree(true);
-            this.bindAuthenticator = new BindAuthenticator(this.ldapContextSource);
-            this.bindAuthenticator.setUserSearch(this.filterBasedLdapUserSearch);
-            this.ldapAuthenticationProvider = new LdapAuthenticationProvider(this.bindAuthenticator);
-            this.ldapAuthenticationProvider.setUserDetailsContextMapper(this.ldapUserDetailsContextMapper);
+            putType(LDAP, new LDAPType(dn, searchFilter, url, managerUser, managerPassword, this.ldapUserDetailsContextMapper));
         } catch (Exception e)
         {
             LOGGER.error("Unable to initialize Ldap integration: " + e.getMessage());
@@ -115,7 +100,7 @@ public class LDAPService implements IJMXService {
         boolean result = false;
         try
         {
-            getLdapContextSource().getContext(this.ldapContextSource.getUserDn(), this.ldapContextSource.getPassword());
+            getLdapContextSource().getContext(getLdapContextSource().getUserDn(), getLdapContextSource().getPassword());
             result = true;
         } catch(Exception e)
         {
@@ -125,15 +110,21 @@ public class LDAPService implements IJMXService {
     }
 
     @ManagedAttribute(description="Get ldap context source")
-    @Bean
     public LdapContextSource getLdapContextSource()
     {
-        return this.ldapContextSource;
+        return getType().getLdapContextSource();
     }
 
     @ManagedAttribute(description="Get ldap authentication provider")
     @Bean
-    public LdapAuthenticationProvider getLdapAuthenticationProvider() {
-        return this.ldapAuthenticationProvider;
+    @Scope(value = "prototype")
+    public LdapAuthenticationProvider getLdapAuthenticationProvider()
+    {
+        return getType() != null ? getType().getLdapAuthenticationProvider() : null;
+    }
+
+    public LDAPType getType()
+    {
+        return getType(LDAP);
     }
 }
