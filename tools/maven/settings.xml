@@ -27,9 +27,11 @@
             <zafira.redis.port>6379</zafira.redis.port>
 
             <zafira.rabbitmq.host>localhost</zafira.rabbitmq.host>
-            <zafira.rabbitmq.port>61613</zafira.rabbitmq.port>
+            <zafira.rabbitmq.port>5672</zafira.rabbitmq.port>
             <zafira.rabbitmq.user>guest</zafira.rabbitmq.user>
             <zafira.rabbitmq.pass>guest</zafira.rabbitmq.pass>
+            <zafira.rabbitmq.stomp.host>rabbitmq</zafira.rabbitmq.stomp.host>
+            <zafira.rabbitmq.stomp.port>61613</zafira.rabbitmq.stomp.port>
 
             <zafira.db.jdbc.driverClass>org.postgresql.Driver</zafira.db.jdbc.driverClass>
             <zafira.db.jdbc.url>jdbc:postgresql://{host}:{port}/postgres</zafira.db.jdbc.url>

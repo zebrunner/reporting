@@ -6,7 +6,8 @@ import com.qaprosoft.zafira.models.dto.filter.Subject;
 
 public class Filter extends AbstractEntity
 {
-
+	private static final long serialVersionUID = 5052981349343947449L;
+	
 	private String name;
 	private String description;
 	private String subject;

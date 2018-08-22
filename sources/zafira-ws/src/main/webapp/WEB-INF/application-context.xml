@@ -42,7 +42,7 @@
 		<websocket:stomp-endpoint path="/websockets" allowed-origins="*">
 			<websocket:sockjs />
 		</websocket:stomp-endpoint>
-		<websocket:stomp-broker-relay prefix="/topic" relay-host="${zafira.rabbitmq.host}" relay-port="${zafira.rabbitmq.port}" 
+		<websocket:stomp-broker-relay prefix="/topic" relay-host="${zafira.rabbitmq.stomp.host}" relay-port="${zafira.rabbitmq.stomp.port}" 
 			client-login="${zafira.rabbitmq.user}" client-passcode="${zafira.rabbitmq.pass}"
 			system-login="${zafira.rabbitmq.user}" system-passcode="${zafira.rabbitmq.pass}" />
 	</websocket:message-broker>

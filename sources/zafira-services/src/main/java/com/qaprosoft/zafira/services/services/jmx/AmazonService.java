@@ -24,6 +24,14 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.amazonaws.auth.*;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.*;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -38,18 +46,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
@@ -68,6 +67,8 @@ public class AmazonService implements IJMXService
 	private static final String FILE_PATH_SEPARATOR = "/";
 
 	private AmazonS3 s3Client;
+
+	private AWSSecurityTokenService securityTokenService;
 
 	private BasicAWSCredentials awsCredentials;
 
@@ -88,6 +89,7 @@ public class AmazonService implements IJMXService
 	{
 		String accessKey = null;
 		String privateKey = null;
+		String region = null;
 		String bucket = null;
 
 		try
@@ -107,6 +109,9 @@ public class AmazonService implements IJMXService
 				case AMAZON_SECRET_KEY:
 					privateKey = setting.getValue();
 					break;
+				case AMAZON_REGION:
+					region = setting.getValue();
+					break;
 				case AMAZON_BUCKET:
 					bucket = setting.getValue();
 					break;
@@ -114,7 +119,7 @@ public class AmazonService implements IJMXService
 					break;
 				}
 			}
-			init(accessKey, privateKey, bucket);
+			init(accessKey, privateKey, region, bucket);
 		} catch (Exception e)
 		{
 			LOGGER.error("Setting does not exist", e);
@@ -125,16 +130,24 @@ public class AmazonService implements IJMXService
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
 			@ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
+			@ManagedOperationParameter(name = "region", description = "Amazon region"),
 			@ManagedOperationParameter(name = "bucket", description = "Amazon bucket")})
-	public void init(String accessKey, String privateKey, String bucket)
+	public void init(String accessKey, String privateKey, String region, String bucket)
 	{
 		try
 		{
-			if (!StringUtils.isEmpty(accessKey) && !StringUtils.isEmpty(privateKey) && !StringUtils.isEmpty(bucket))
+			if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region) && !StringUtils.isBlank(bucket))
 			{
 				this.s3Bucket = bucket;
 				this.awsCredentials = new BasicAWSCredentials(accessKey, privateKey);
-				this.s3Client = new AmazonS3Client(this.awsCredentials, this.clientConfiguration);
+				this.s3Client = AmazonS3ClientBuilder.standard()
+						.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
+						.withRegion(Regions.fromName(region))
+						.withClientConfiguration(clientConfiguration).build();
+				this.securityTokenService = AWSSecurityTokenServiceClientBuilder.standard()
+						.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
+						.withRegion(Regions.fromName(region))
+						.withClientConfiguration(clientConfiguration).build();
 			}
 		} catch (Exception e)
 		{
@@ -147,7 +160,7 @@ public class AmazonService implements IJMXService
 	{
 		try
 		{
-			return this.s3Client.doesBucketExist(this.s3Bucket);
+			return this.s3Client.doesBucketExistV2(this.s3Bucket);
 		} 
 		catch (Exception e)
 		{
@@ -216,6 +229,41 @@ public class AmazonService implements IJMXService
 	{
 		return file.getType().name() + FILE_PATH_SEPARATOR + principalId + FILE_PATH_SEPARATOR +
 				RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getFile().getOriginalFilename());
+	}
+
+	/**
+	 * Generates temporary credentials for external clients (expires in 12 hours)
+	 * @return {@link SessionCredentials} object
+	 */
+	public SessionCredentials getTemporarySessionCredentials()
+	{
+		int expiresIn = 43200;
+		return getTemporarySessionCredentials(expiresIn);
+	}
+
+	/**
+	 * Generates temporary credentials for external clients
+	 * @return {@link SessionCredentials} object
+	 */
+	private SessionCredentials getTemporarySessionCredentials(int expiresIn)
+	{
+		SessionCredentials result = null;
+		if(securityTokenService != null)
+		{
+			GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
+			GetSessionTokenResult getSessionTokenResult;
+			getSessionTokenRequest.setDurationSeconds(expiresIn);
+			try
+			{
+				getSessionTokenResult = securityTokenService.getSessionToken(getSessionTokenRequest);
+				Credentials credentials = getSessionTokenResult.getCredentials();
+				result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(), credentials.getSessionToken(), this.s3Client.getRegionName(), this.s3Bucket);
+			} catch (Exception e)
+			{
+				LOGGER.error("Credentials for Security Token Service are invalid.", e);
+			}
+		}
+		return result;
 	}
 
 	@ManagedAttribute(description = "Get amazon client")

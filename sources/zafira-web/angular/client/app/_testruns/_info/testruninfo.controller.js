@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
         $scope.testRun = {};
         $scope.test = {};
@@ -78,11 +78,13 @@
                     closeAll();
 
                     $scope.logs = [];
+                    $scope.trumbs = [];
                     tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
                         $timeout(function () {
                             logGetter.pageCount = null;
-                            logGetter.from = $scope.logs.length;
+                            logGetter.from = $scope.logs.length + $scope.trumbs.length;
                             tryToGetLogsHistoryFromElasticsearch(logGetter);
+
                         }, 5000);
                     });
                     break;
@@ -150,7 +152,7 @@
                 hits.forEach(function (hit) {
                     followUpOnLogs(hit);
                 });
-                if(! from && from != 0 && (page * size <= count)) {
+                if(! from && from != 0 && (page * size < count)) {
                     page ++;
                     collectElasticsearchLogs(from, page, size, count, resolveFunc);
                 } else {
@@ -161,15 +163,6 @@
                         $anchorScroll();
                     }
                 }
-            });
-        };
-
-        function collectTrumbs(logs) {
-            $scope.trumbs = logs.filter(function (log) {
-                return log.blobLog;
-            }).map(function (log) {
-                log.blobLog.message = log.message;
-                return log.blobLog;
             });
         };
 
@@ -329,28 +322,11 @@
 
         $scope.copyLogLine = function(log) {
             var message = $filter('date')(new Date(log.timestamp), 'HH:mm:ss') + ' [' + log.threadName + '] ' + '[' + log.level + '] ' + log.message;
-            $scope.copyToClipboard(message);
+            message.copyToClipboard();
         };
 
         $scope.copyLogPermalink = function() {
-            $scope.copyToClipboard($location.$$absUrl);
-        };
-
-        $scope.copyToClipboard = function(message) {
-            var node = document.createElement('pre');
-            node.textContent = message;
-            document.body.appendChild(node);
-
-            var selection = getSelection();
-            selection.removeAllRanges();
-
-            var range = document.createRange();
-            range.selectNodeContents(node);
-            selection.addRange(range);
-
-            document.execCommand('copy');
-            selection.removeAllRanges();
-            document.body.removeChild(node);
+            $location.$$absUrl.copyToClipboard();
         };
 
         $scope.$watch(function () {
@@ -429,16 +405,17 @@
             return 0;
         }
 
-        $scope.showGalleryDialog = function (event, log) {
+        $scope.showGalleryDialog = function (event, url) {
             $mdDialog.show({
                 controller: GalleryController,
                 templateUrl: 'app/_testruns/_info/gallery_modal.html',
                 parent: angular.element(document.body),
                 targetEvent: event,
                 clickOutsideToClose:true,
-                fullscreen: true,
+                fullscreen: false,
+                /*escapeToClose: false,*/
                 locals: {
-                    log: log,
+                    url: url,
                     ciRunId: $scope.testRun.ciRunId,
                     test: $scope.test,
                     trumbs: $scope.trumbs
@@ -501,26 +478,69 @@
             }
         };
 
+        var imagesInProgressCount = 0;
+
         function setLog(log) {
             if ($scope.MODE.name == 'live' && driversQueue.length) {
                 log.driver = driversQueue.pop();
                 driversQueue = [];
             }
-            if (!log.blob) {
+            if (! isS3ImageUrl(log.message)) {
                 $scope.logs.push(log);
             } else {
-                $scope.trumbs.push(log);
-                $scope.logs[$scope.logs.length - 1].blobLog = log;
+                var appenToLog = $scope.logs[$scope.logs.length - 1];
+                $scope.trumbs.push({'log': appenToLog, trumb: log});
+                appenToLog.blobLog = log;
+                imagesInProgressCount ++;
+                waitForAllImages(appenToLog);
             }
         };
 
-        function provideLogs() {
-            var logsContainer = angular.element('#logs')[0];
-            ArtifactService.provideLogs($rootScope.rabbitmq, $scope.testRun, $scope.test, logsContainer, false, followUpOnLogs).then(function (data) {
-                logsStomp = data.stomp;
-                logsStompName = data.name;
+        var unrecognizedImages = [];
+
+        function waitForAllImages(log) {
+            isImageExists(log.blobLog.message).then(function (isExists) {
+                imagesInProgressCount --;
+                log.isImageExists = isExists;
+                if(! isExists) {
+                    unrecognizedImages.push(log);
+                }
             });
-            return logsStomp
+        };
+
+        var intervalName = 'areImagesExistAction';
+
+        pseudoLiveDoAction(intervalName, 5000, function () {
+            unrecognizedImages.forEach(function (unrecognizedImage, index) {
+                isImageExists(unrecognizedImage.blobLog.message).then(function (isExists) {
+                    if(isExists) {
+                        unrecognizedImage.isImageExists = isExists;
+                        unrecognizedImages.splice(index, 1);
+                    }
+                });
+            });
+            if(! unrecognizedImages.length && ! imagesInProgressCount && $scope.MODE.name == 'record' && $scope.elasticsearchDataLoaded) {
+                pseudoLiveCloseAction(intervalName);
+            }
+        });
+
+        function isImageExists(url) {
+            var deferred = $q.defer();
+
+            var image = new Image();
+            image.onerror = function() {
+                deferred.resolve(false);
+            };
+            image.onload = function() {
+                deferred.resolve(true);
+            };
+            image.src = url;
+
+            return deferred.promise;
+        };
+
+        function isS3ImageUrl(message) {
+            return message.match('http.*://.+\\.s3\\..+\\.png') != null;
         };
 
         function provideVideo() {
@@ -642,68 +662,34 @@
         })();
     }
 
-    function GalleryController($scope, $rootScope, $mdDialog, $location, $q, ElasticsearchService, log, index, ciRunId, test, trumbs) {
+    function GalleryController($scope, $mdDialog, $q, url, ciRunId, test, trumbs) {
 
         $scope.thumbs = trumbs;
 
-        var currentHash = $location.hash();
-        //var index = trumbs.indexOfField('correlation-id', log['correlation-id']);
+        $scope.thumbs.forEach(function (thumb, index) {
+            thumb.rightNeed = rightArrowNeed(index);
+            thumb.leftNeed = leftArrowNeed(index);
+        });
 
-        $scope.galleryItems = [];
-
-        function addGalleryItem(thumbLog, index) {
-            var log = $scope.galleryItems[index];
-            thumbLog['correlation-id'] = ! thumbLog['correlation-id'] ? log['correlation-id'] : thumbLog['correlation-id'];
-            if(index != -1) {
-                    $scope.viewImage(thumbLog).then(function (rs) {
-                        $scope.galleryItems.splice(index, 1, {
-                            link: $scope.image,
-                            thumbnail: thumbLog.blob,
-                            medium: $scope.image
-                        });
-                        log.isFilled = true;
-                });
-            }
+        function rightArrowNeed(index) {
+            return index < $scope.thumbs.length - 1 && $scope.thumbs[index + 1].log.isImageExists;
         };
 
-        function initThumbs() {
+        function leftArrowNeed(index) {
+            return index > 0 && $scope.thumbs[index - 1].log.isImageExists;
+        };
+
+        var thumbIndex = trumbs.indexOfField('trumb.message', url);
+
+        $scope.image = getImage();
+
+        //$scope.galleryItems = [];
+
+        /*function initThumbs() {
             $scope.thumbs.forEach(function (thumb) {
                 $scope.galleryItems.push({link: thumb.blob, thumbnail: thumb.blob, medium: thumb.blob, description: thumb['correlation-id'], isFilled: false});
             });
-        };
-
-        function getLogsFromResponse(rs) {
-            return rs.map(function (r) {
-                return r._source;
-            });
-        };
-
-        function getBase64String(index) {
-            return $q(function (resolve, reject) {
-                ElasticsearchService.isExists(index, log['correlation-id']).then(function (isExists) {
-                    if(isExists) {
-                        ElasticsearchService.search(index, log['correlation-id']).then(function (indexes) {
-                            resolve(buildBase64String(getLogsFromResponse(indexes)[0].blob));
-                        });
-                    } else {
-                        reject();
-                    }
-                });
-            });
-        };
-
-        $scope.viewImage = function (log) {
-            return $q(function (resolve, reject) {
-                var index = buildIndex(log);
-                $scope.isLoaded = false;
-                getBase64String(index).then(function (base64String) {
-                    $scope.isLoaded = true;
-                    $scope.image = base64String;
-                    $scope.currentLog = log.message;
-                    resolve(true);
-                });
-            });
-        };
+        };*/
 
         $scope.showHideLog = function (event, isFocus) {
             var showGalleryLogClassname = 'gallery-container_gallery-image_log_show';
@@ -715,28 +701,105 @@
             }
         };
 
-        function buildIndex(log) {
-            return 'blob_' + ciRunId + '_' + test.id + "_" + log['correlation-id'].split(ciRunId + '_' + test.id + '_')[1];
+        function keyAction(keyCodeNumber) {
+            var LEFT = 37,
+                UP = 38,
+                RIGHT = 39,
+                DOWN = 40,
+                ESC = 27,
+                F_KEY = 70;
+
+            switch (keyCodeNumber) {
+                case LEFT:
+                    $scope.left();
+                    break;
+                case UP:
+                    break;
+                case RIGHT:
+                    $scope.right();
+                    break;
+                case DOWN:
+                    break;
+                case ESC:
+                    break;
+                case F_KEY:
+                    $scope.fullscreen();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        function checkKeycode(event) {
+            var keyDownEvent = event || window.event,
+                keycode = (keyDownEvent.which) ? keyDownEvent.which : keyDownEvent.keyCode;
+
+            keyAction(keycode);
+
+            return true;
         };
 
-        $scope.$on('$destroy', function () {
-            $location.hash(currentHash);
-        });
+        document.onkeydown = checkKeycode;
 
-        function buildBase64String(base64String) {
-            return 'data:image/png;base64,' + base64String;
+        $scope.fullscreen = function() {
+            if (!document.fullscreenElement &&    // alternative standard method
+                !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+            } else {
+                if (document.cancelFullScreen) {
+                    document.cancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                }
+            }
+        };
+
+        function getImage() {
+            return $scope.thumbs[thumbIndex];
+        };
+
+        function setImage() {
+            if(! $scope.$$phase) {
+                $scope.$applyAsync(function () {
+                    $scope.image = getImage();
+                });
+            } else {
+                $scope.image = getImage();
+            }
+        };
+
+        $scope.right = function(forceAction) {
+            if(forceAction || $scope.thumbs[thumbIndex].rightNeed) {
+                thumbIndex++;
+                setImage();
+            }
+        };
+
+        $scope.left = function(forceAction) {
+            if(forceAction || $scope.thumbs[thumbIndex].leftNeed) {
+                thumbIndex--;
+                setImage();
+            }
         };
 
         $scope.hide = function() {
             $mdDialog.hide();
         };
         $scope.cancel = function() {
+            $scope.galleryLoaded = false;
             $mdDialog.cancel();
         };
 
         (function initController() {
-            $scope.viewImage(log);
-            initThumbs();
+            //initThumbs();
         })();
     }
 

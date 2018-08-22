@@ -1,5 +1,5 @@
 {
-    "index_patterns" : ["*"],
+    "index_patterns" : ["logs-*"],
     "mappings" : {
         "doc" : {
             "properties" : {

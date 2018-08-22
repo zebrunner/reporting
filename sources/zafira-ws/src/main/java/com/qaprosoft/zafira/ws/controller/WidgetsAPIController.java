@@ -238,7 +238,6 @@ public class WidgetsAPIController extends AbstractController
 		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
 
 		new Thread(() -> {
-			String result = null;
 			try
 			{
 				List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
@@ -252,7 +251,7 @@ public class WidgetsAPIController extends AbstractController
 				{
 					throw new ServiceException("Unable to create widget screenshots");
 				}
-				result = emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
+				emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 			} catch (ServiceException e)
 			{
 				LOGGER.error(e);

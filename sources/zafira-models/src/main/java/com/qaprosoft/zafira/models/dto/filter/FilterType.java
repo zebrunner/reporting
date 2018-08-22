@@ -9,7 +9,8 @@ import java.io.IOException;
 
 public class FilterType extends AbstractEntity
 {
-
+	private static final long serialVersionUID = -2497558955789794119L;
+			
 	@NotNull(message = "Name required")
 	private String name;
 	private String description;
