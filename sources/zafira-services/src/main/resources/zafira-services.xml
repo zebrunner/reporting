@@ -2,10 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:task="http://www.springframework.org/schema/task" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
 	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
 
 	<bean id="statisticsService" class="com.qaprosoft.zafira.services.services.cache.StatisticsService">
 		<property name="cacheableService" ref="testRunMapperCacheableService"/>
@@ -175,5 +177,37 @@
 		<constructor-arg index="1" value="${zafira.jwt.authTokenExp}"  />
 		<constructor-arg index="2" value="${zafira.jwt.refreshTokenExp}"  />
 	</bean>
-
+	
+	<!-- RabbitMQ message broker -->
+	<rabbit:annotation-driven  />
+	
+	<!-- TODO: replace zafira.rabbitmq.stomp.host -->
+	<rabbit:connection-factory id="rabbitConnectionFactory"  
+	                           host="${zafira.rabbitmq.stomp.host}" 
+	                           port="${zafira.rabbitmq.port}" 
+	                           username="${zafira.rabbitmq.user}" 
+	                           password="${zafira.rabbitmq.pass}"
+	                           virtual-host="${zafira.rabbitmq.vhost}"
+	                           cache-mode="CHANNEL" />
+	                           
+	<rabbit:admin id="rabbitAdmin" connection-factory="rabbitConnectionFactory" />
+	
+	<rabbit:queue id="settingsQueue" name="settings" durable="false" auto-declare="true" auto-delete="true" />
+	
+	<rabbit:topic-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
+	    <rabbit:bindings>
+	        <rabbit:binding pattern="settings" queue="settingsQueue"/>
+	    </rabbit:bindings>
+	</rabbit:topic-exchange>
+	
+	<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+	
+	<rabbit:template exchange="eventsTopicExchange" id="eventsTemplate" connection-factory="rabbitConnectionFactory" message-converter="jsonMessageConverter" />
+	
+    <bean id="rabbitListenerContainerFactory" class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
+	    <property name="connectionFactory" ref="rabbitConnectionFactory"/>
+	    <property name="concurrentConsumers" value="1"/>
+	    <property name="maxConcurrentConsumers" value="20"/>
+	</bean>
+    
 </beans>

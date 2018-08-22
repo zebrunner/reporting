@@ -61,7 +61,7 @@ services:
   zafira:
     image: qaprosoft/zafira:latest
     ports:
-      - 8088:8080
+      - 8080:8080
     env_file:
      - integrations.env
     environment:

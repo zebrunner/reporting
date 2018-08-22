@@ -38,14 +38,6 @@
             <zafira.db.jdbc.user>{user}</zafira.db.jdbc.user>
             <zafira.db.jdbc.password>{password}</zafira.db.jdbc.password>
             <zafira.db.c3p0.maxPoolSize>100</zafira.db.c3p0.maxPoolSize>
-
-            <zafira.ldap.protocol>ldap</zafira.ldap.protocol>
-            <zafira.ldap.server>localhost</zafira.ldap.server>
-            <zafira.ldap.port>636</zafira.ldap.port>
-            <zafira.ldap.dn/>
-            <zafira.ldap.search_filter>sAMAccountName</zafira.ldap.search_filter>
-            <zafira.ldap.manager.user/>
-            <zafira.ldap.manager.password/>
         </properties>
     </profile>
 </profiles>
