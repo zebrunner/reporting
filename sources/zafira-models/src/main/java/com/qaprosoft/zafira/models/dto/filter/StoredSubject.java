@@ -15,7 +15,9 @@ public class StoredSubject
 			setName(Name.TEST_RUN);
 			setCriterias(new ArrayList<Criteria>()
 				 {
-					 {
+					private static final long serialVersionUID = -3470218714244856071L;
+
+					{
 						add(new Criteria()
 							{
 								{
@@ -82,6 +84,8 @@ public class StoredSubject
 
 	private List<Subject> subjects = new ArrayList<Subject>()
 	{
+		private static final long serialVersionUID = 3499422182444939573L;
+
 		{
 			add(testRunSubject);
 		}

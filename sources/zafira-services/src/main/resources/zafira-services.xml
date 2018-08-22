@@ -165,7 +165,7 @@
 
 	<bean id="amazonConfig" class="com.amazonaws.ClientConfiguration">
 		<property name="maxConnections" value="100" />
-		<property name="protocol" value="HTTP" />
+		<property name="protocol" value="HTTPS" />
 	</bean>
 
 	<bean id="jwtService" class="com.qaprosoft.zafira.services.services.auth.JWTService">

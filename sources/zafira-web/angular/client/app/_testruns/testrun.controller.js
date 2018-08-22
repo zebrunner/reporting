@@ -787,22 +787,10 @@
         };
 
         $scope.copyLink = function (testRun) {
-            var node = document.createElement('pre');
             var path = $location.$$path.split('/' + $stateParams.id)[0];
             var url = $location.$$absUrl.split(path)[0] + path;
-            node.textContent = url + "/" + testRun.id;
-            document.body.appendChild(node);
-
-            var selection = getSelection();
-            selection.removeAllRanges();
-
-            var range = document.createRange();
-            range.selectNodeContents(node);
-            selection.addRange(range);
-
-            document.execCommand('copy');
-            selection.removeAllRanges();
-            document.body.removeChild(node);
+            var link = url + "/" + testRun.id;
+            link.copyToClipboard();
         };
 
         $scope.markAsReviewed = function (testRun) {

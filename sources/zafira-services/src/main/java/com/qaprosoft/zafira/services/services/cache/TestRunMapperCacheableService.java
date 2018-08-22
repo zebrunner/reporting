@@ -10,6 +10,8 @@ import java.util.function.Function;
 @Component(value = "testRunMapperCacheableService")
 public class TestRunMapperCacheableService implements ICacheableService<Long, TestRunStatistics>
 {
+	private static final long serialVersionUID = 4700339467519700561L;
+	
 	@Autowired
 	private TestRunMapper testRunMapper;
 

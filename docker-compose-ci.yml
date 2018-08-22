@@ -75,10 +75,12 @@ services:
       - ZAFIRA_ELASTICSEARCH_PASS=
       - ZAFIRA_REDIS_HOST=redis
       - ZAFIRA_REDIS_PORT=6379
-      - ZAFIRA_RABBITMQ_HOST=rabbitmq
-      - ZAFIRA_RABBITMQ_PORT=61613
+      - ZAFIRA_RABBITMQ_HOST=localhost
+      - ZAFIRA_RABBITMQ_PORT=5672
       - ZAFIRA_RABBITMQ_USER=qpsdemo
       - ZAFIRA_RABBITMQ_PASS=qpsdemo
+      - ZAFIRA_RABBITMQ_STOMP_HOST=rabbitmq
+      - ZAFIRA_RABBITMQ_STOMP_PORT=61613
     depends_on:
       - "db"
       - "rabbitmq"

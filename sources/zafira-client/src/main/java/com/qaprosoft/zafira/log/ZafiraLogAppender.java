@@ -24,10 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -50,19 +47,12 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-import static com.rabbitmq.client.impl.recovery.RecordedQueue.EMPTY_STRING;
-
 /**
  * @author akhursevich
  */
 public class ZafiraLogAppender extends AppenderSkeleton
 {
 	private static final String ZAFIRA_PROPERTIES = "zafira.properties";
-
-	private static final Pattern IMAGE_LOG = Pattern.compile("#(L|S)#.+@.+");
-	private static final Pattern SCREEN_SIZE = Pattern.compile("(?<=#).");
-	private static final Pattern SCREEN_CORRELATION_ID = Pattern.compile("(?<=.#).+(?=@)");
-	private static final Pattern BASE_64 = Pattern.compile("(?<=@).+");
 
 	private ConnectionFactory factory = new ConnectionFactory();
 	private Connection connection = null;
@@ -553,26 +543,6 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			this.loggingEvent = loggingEvent;
 			TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
 			this.correlationId = test != null ? routingKey + "_" + String.valueOf(test.getId()) : routingKey;
-			String correlationIdPrefix = EMPTY_STRING;
-			String correlationIdPostfix = EMPTY_STRING;
-			if(isImageLog(this.loggingEvent))
-			{
-				String base64String = getBase64String(this.loggingEvent);
-				if(Base64.isBase64(base64String))
-				{
-					String screenSize = getScreenSize(this.loggingEvent);
-					String screenCorrelationId = getScreenCorrelationId(this.loggingEvent);
-					if(screenSize != null && screenCorrelationId != null)
-					{
-						if(screenSize.equals("L"))
-						{
-							correlationIdPrefix = "blob_";
-						}
-						correlationIdPostfix = "_" + screenCorrelationId;
-					}
-				}
-			}
-			this.correlationId = correlationIdPrefix + this.correlationId + correlationIdPostfix;
 		}
 
 		/**
@@ -599,35 +569,4 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			return loggingEvent;
 		}
 	}
-
-	private static Matcher getLoggingEventMapper(Pattern pattern, LoggingEvent loggingEvent)
-	{
-		return pattern.matcher(loggingEvent.getMessage().toString());
-	}
-
-	private static String getScreenSize(LoggingEvent loggingEvent)
-	{
-		return getFromLogBy(SCREEN_SIZE, loggingEvent);
-	}
-
-	private static String getScreenCorrelationId(LoggingEvent loggingEvent)
-	{
-		return getFromLogBy(SCREEN_CORRELATION_ID, loggingEvent);
-	}
-
-	private static String getFromLogBy(Pattern pattern, LoggingEvent loggingEvent)
-	{
-		Matcher matcher = getLoggingEventMapper(pattern, loggingEvent);
-		return matcher.find() ? matcher.group() : null;
-	}
-
-    protected static boolean isImageLog(LoggingEvent loggingEvent)
-    {
-        return getLoggingEventMapper(IMAGE_LOG, loggingEvent).find();
-    }
-
-    protected static String getBase64String(LoggingEvent loggingEvent)
-    {
-        return getFromLogBy(BASE_64, loggingEvent);
-    }
 }

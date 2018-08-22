@@ -20,7 +20,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 
 import javax.mail.internet.MimeMessage;
 
@@ -60,7 +59,7 @@ public class EmailService
 	
 	private EmailValidator validator = EmailValidator.getInstance();
 
-	private Function<Void, Boolean> isConnected = aVoid -> settingsService.isConnected(EMAIL);
+//	private Function<Void, Boolean> isConnected = aVoid -> settingsService.isConnected(EMAIL);
 	
 	public String sendEmail(final IEmailMessage message, final String... emails) throws ServiceException
 	{

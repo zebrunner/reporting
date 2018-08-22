@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.ws.controller;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("api/settings")
 public class SettingsAPIController extends AbstractController
 {
+
+	@Autowired
+	private AmazonService amazonService;
 
 	@Autowired
 	private SettingsService settingsService;
@@ -214,6 +219,15 @@ public class SettingsAPIController extends AbstractController
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
         return connectedTool;
+	}
+
+	@ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", code = 200, httpMethod = "GET", response = SessionCredentials.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+	@RequestMapping(value = "creds/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
+	{
+		return amazonService.getTemporarySessionCredentials();
 	}
 
 	@ResponseStatusDetails
