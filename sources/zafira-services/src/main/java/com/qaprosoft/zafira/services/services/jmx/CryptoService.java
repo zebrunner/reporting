@@ -77,15 +77,17 @@ public class CryptoService implements IJMXService<CryptoType> {
                 }
             }
 
+            putType(CRYPTO, new CryptoType(type, size, key, this.salt));
+
             String dbKey = settingsService.getSettingByType(KEY).getValue();
-            if (StringUtils.isEmpty(dbKey)) {
+            if (StringUtils.isBlank(dbKey)) {
                 generateKey();
                 key = settingsService.getSettingByType(KEY).getValue();
             } else {
                 key = dbKey;
             }
 
-            initCryptoTool(type, size, key);
+            initCryptoTool(key);
 
         } catch (Exception e) {
             LOGGER.error(e);
@@ -94,13 +96,11 @@ public class CryptoService implements IJMXService<CryptoType> {
 
     @ManagedOperation(description = "Change Crypto initialization")
     @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "type", description = "Crypto type"),
-            @ManagedOperationParameter(name = "size", description = "Crypto size"),
             @ManagedOperationParameter(name = "key", description = "Crypto key") })
-    public void initCryptoTool(String type, int size, String key) {
+    public void initCryptoTool(String key) {
         try {
-            if (!StringUtils.isEmpty(key) && !StringUtils.isEmpty(salt)) {
-                putType(CRYPTO, new CryptoType(type, size, key, this.salt));
+            if (!StringUtils.isEmpty(key)) {
+                getCryptoType().setKey(key);
             } else {
                 throw new EncryptorInitializationException();
             }

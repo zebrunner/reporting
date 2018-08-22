@@ -21,7 +21,7 @@ public class CryptoType extends AbstractType
 {
 
     private String type;
-    private int size = 0;
+    private int size;
     private String key;
     private String salt;
     private BasicTextEncryptor basicTextEncryptor;
