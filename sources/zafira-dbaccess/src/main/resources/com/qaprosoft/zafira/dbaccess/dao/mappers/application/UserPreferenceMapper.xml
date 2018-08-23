@@ -152,7 +152,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.UserPreference" id="UserPreferenceResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.application.UserPreference" id="UserPreferenceResultMap" autoMapping="false">
 		<id column="USER_PREFERENCE_ID" property="id" />
 		<result column="USER_PREFERENCE_NAME" property="name" />
 		<result column="USER_PREFERENCE_VALUE" property="value" />

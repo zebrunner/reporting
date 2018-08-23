@@ -38,7 +38,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 

@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.tests;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.gui.components.menus.UserSettingMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.ChangePasswordModalWindow;

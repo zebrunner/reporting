@@ -91,7 +91,7 @@
         ]]>
     </delete>
 
-    <resultMap id="JobViewResultMap" type="com.qaprosoft.zafira.models.db.JobView" autoMapping="false">
+    <resultMap id="JobViewResultMap" type="com.qaprosoft.zafira.models.db.application.JobView" autoMapping="false">
         <id property="id" column="JOB_VIEW_ID"/>
         <result property="env" column="JOB_VIEW_ENV"/>
         <result property="position" column="JOB_VIEW_POSITION"/>

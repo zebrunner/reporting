@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.services.services.cache.StatisticsService;
+import com.qaprosoft.zafira.models.db.application.*;
+import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.db.application.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.models.dto.TestType;
@@ -47,12 +47,12 @@ import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.TestArtifactService;
-import com.qaprosoft.zafira.services.services.TestMetricService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.WorkItemService;
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.TestArtifactService;
+import com.qaprosoft.zafira.services.services.application.TestMetricService;
+import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.services.application.TestService;
+import com.qaprosoft.zafira.services.services.application.WorkItemService;
+import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

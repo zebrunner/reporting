@@ -4,7 +4,7 @@
 
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.user.UserType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.User</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.application.User</class-b>
 
 		<field>
 			<a>id</a>

@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
-import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.application.Job;
 
 @JsonInclude(Include.NON_NULL)
 public class JobViewType extends AbstractEntity

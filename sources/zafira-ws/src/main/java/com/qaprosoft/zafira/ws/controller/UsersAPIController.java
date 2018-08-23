@@ -21,8 +21,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.services.services.DashboardService;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.DashboardService;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +41,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.application.UserPreference;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.UserPreferenceService;
-import com.qaprosoft.zafira.services.services.UserService;
+import com.qaprosoft.zafira.services.services.application.UserPreferenceService;
+import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

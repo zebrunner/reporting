@@ -39,11 +39,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.application.Monitor;
 import com.qaprosoft.zafira.models.dto.monitor.MonitorType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.MonitorService;
+import com.qaprosoft.zafira.services.services.application.MonitorService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

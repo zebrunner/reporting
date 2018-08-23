@@ -25,10 +25,10 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestCaseMapper;
-import com.qaprosoft.zafira.models.db.Project;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestCase;
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.application.Project;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.TestCase;
+import com.qaprosoft.zafira.models.db.application.User;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

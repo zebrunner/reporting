@@ -158,19 +158,19 @@
 		]]>
     </delete>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.Group" id="GroupResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.application.Group" id="GroupResultMap" autoMapping="false">
         <id column="GROUP_ID" property="id" />
         <result column="GROUP_NAME" property="name" />
         <result column="GROUP_ROLE" property="role" />
 
         <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
         <result column="GROUP_CREATED_AT" property="createdAt" />
-        <collection property="users" ofType="com.qaprosoft.zafira.models.db.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.UserResultMap"/>
-        <collection property="permissions" javaType="java.util.Set" ofType="com.qaprosoft.zafira.models.db.Permission"
+        <collection property="users" ofType="com.qaprosoft.zafira.models.db.application.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper.UserResultMap"/>
+        <collection property="permissions" javaType="java.util.Set" ofType="com.qaprosoft.zafira.models.db.application.Permission"
                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper.PermissionResultMap"/>
     </resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.application.User" id="UserResultMap" autoMapping="false">
         <id column="USER_ID" property="id" />
         <result column="USER_USERNAME" property="username" />
         <result column="USER_PASSWORD" property="password" />

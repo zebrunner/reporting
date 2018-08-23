@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
-import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.application.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;

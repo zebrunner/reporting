@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.application.Status;
 
 @JsonInclude(Include.NON_NULL)
 public class TestType extends AbstractType

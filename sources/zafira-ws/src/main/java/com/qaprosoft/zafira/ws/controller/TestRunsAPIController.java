@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
-import static com.qaprosoft.zafira.services.services.FilterService.Template.TEST_RUN_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_COUNT_TEMPLATE;
+import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_TEMPLATE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.exceptions.*;
-import com.qaprosoft.zafira.services.services.cache.StatisticsService;
-import com.qaprosoft.zafira.services.services.jmx.google.models.TestRunSpreadsheetService;
+import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
+import com.qaprosoft.zafira.services.services.application.jmx.google.models.TestRunSpreadsheetService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -54,9 +54,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.FilterSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.Test;
+import com.qaprosoft.zafira.models.db.application.TestRun;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.models.dto.CommentType;
 import com.qaprosoft.zafira.models.dto.EmailType;
@@ -67,14 +67,14 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.services.FilterService;
-import com.qaprosoft.zafira.services.services.JobsService;
-import com.qaprosoft.zafira.services.services.ProjectService;
-import com.qaprosoft.zafira.services.services.TestRunService;
-import com.qaprosoft.zafira.services.services.TestService;
-import com.qaprosoft.zafira.services.services.UserService;
-import com.qaprosoft.zafira.services.services.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.application.FilterService;
+import com.qaprosoft.zafira.services.services.application.JobsService;
+import com.qaprosoft.zafira.services.services.application.ProjectService;
+import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.services.application.TestService;
+import com.qaprosoft.zafira.services.services.application.UserService;
+import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;

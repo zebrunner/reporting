@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.models.db.WorkItem;
-import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.db.application.WorkItem;
+import com.qaprosoft.zafira.models.db.application.WorkItem.Type;
 
 public interface WorkItemMapper
 {

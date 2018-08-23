@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.ws.controller;
 
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
-import com.qaprosoft.zafira.services.services.jmx.google.GoogleService;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

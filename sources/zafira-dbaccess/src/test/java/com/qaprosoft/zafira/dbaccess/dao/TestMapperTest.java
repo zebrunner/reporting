@@ -30,9 +30,9 @@ import org.testng.Assert;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.Test;
+import com.qaprosoft.zafira.models.db.application.TestConfig;
 
 @org.testng.annotations.Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

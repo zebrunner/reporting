@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push;
 
-import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.application.Test;
 
 public class TestPush extends AbstractPush {
 

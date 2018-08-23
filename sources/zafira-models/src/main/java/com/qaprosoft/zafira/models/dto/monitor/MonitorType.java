@@ -25,7 +25,7 @@ import org.quartz.CronExpression;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
-import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.application.Monitor;
 
 @JsonInclude(Include.NON_NULL)
 public class MonitorType extends AbstractEntity

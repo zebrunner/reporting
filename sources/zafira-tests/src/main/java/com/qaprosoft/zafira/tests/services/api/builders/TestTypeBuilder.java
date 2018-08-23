@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
-import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.application.Status;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
 import com.qaprosoft.zafira.models.dto.TestType;

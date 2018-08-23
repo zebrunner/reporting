@@ -17,13 +17,13 @@ package com.qaprosoft.zafira.models.dto.user;
 
 import java.util.*;
 
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.application.UserPreference;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.db.application.Group.Role;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 
 @JsonInclude(Include.NON_NULL)
