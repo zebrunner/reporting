@@ -45,6 +45,8 @@ public class RabbitMQType extends AbstractType
                     LOGGER.error(e.getMessage(), e);
                 }
             }
+            @Override public void onClose(Connection connection) {
+            }
         });
     }
 
