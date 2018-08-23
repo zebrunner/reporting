@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.cache;
 
 import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;

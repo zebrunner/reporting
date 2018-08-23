@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.application.user.UserType;
 import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 
 public class CreateUserModalWindow extends AbstractModalWindow

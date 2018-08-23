@@ -64,14 +64,14 @@ import com.qaprosoft.zafira.config.IConfigurator;
 import com.qaprosoft.zafira.models.db.application.Status;
 import com.qaprosoft.zafira.models.db.application.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.application.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.JobType;
-import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.application.JobType;
+import com.qaprosoft.zafira.models.dto.application.TestCaseType;
+import com.qaprosoft.zafira.models.dto.application.TestRunType;
+import com.qaprosoft.zafira.models.dto.application.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.application.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.application.config.ConfigurationType;
+import com.qaprosoft.zafira.models.dto.application.user.UserType;
 
 /**
  * TestNG listener that provides integration with Zafira reporting web-service.

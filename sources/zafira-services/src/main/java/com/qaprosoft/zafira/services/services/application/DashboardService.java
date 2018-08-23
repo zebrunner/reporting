@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.models.dto.user.UserType;
+import com.qaprosoft.zafira.models.dto.application.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -69,8 +69,8 @@ import com.qaprosoft.zafira.models.db.application.TestRun;
 import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.db.application.config.Argument;
 import com.qaprosoft.zafira.models.db.application.config.Configuration;
-import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.application.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
@@ -703,7 +703,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics.Action}
+	 * Update statistic by {@link TestRunStatistics.Action}
 	 * @param testRunId - test run id
 	 * @return new statistics
 	 */

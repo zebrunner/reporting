@@ -38,7 +38,7 @@ import org.testng.internal.TestResult;
 import org.testng.xml.XmlSuite;
 
 import com.qaprosoft.zafira.config.IConfigurator;
-import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.application.TestType;
 
 public class ExcludeTestsForRerun
 {

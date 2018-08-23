@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.GroupMapper">
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper">
     <insert id="createGroup"  useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
           INSERT INTO GROUPS(NAME, ROLE)
@@ -164,9 +164,9 @@
 
         <result column="GROUP_MODIFIED_AT" property="modifiedAt" />
         <result column="GROUP_CREATED_AT" property="createdAt" />
-        <collection property="users" ofType="com.qaprosoft.zafira.models.db.management.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.GroupMapper.UserResultMap"/>
+        <collection property="users" ofType="com.qaprosoft.zafira.models.db.management.User" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper.UserResultMap"/>
         <collection property="permissions" javaType="java.util.Set" ofType="com.qaprosoft.zafira.models.db.management.Permission"
-                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.PermissionMapper.PermissionResultMap"/>
+                    resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngPermissionMapper.PermissionResultMap"/>
     </resultMap>
 
     <resultMap type="com.qaprosoft.zafira.models.db.management.User" id="UserResultMap" autoMapping="false">

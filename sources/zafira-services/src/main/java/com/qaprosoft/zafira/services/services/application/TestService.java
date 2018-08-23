@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
-import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.MARK_AS_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
+import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.REMOVE_BLOCKER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,7 @@ import com.qaprosoft.zafira.models.db.application.TestRun;
 import com.qaprosoft.zafira.models.db.application.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.application.WorkItem;
 import com.qaprosoft.zafira.models.db.application.WorkItem.Type;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;

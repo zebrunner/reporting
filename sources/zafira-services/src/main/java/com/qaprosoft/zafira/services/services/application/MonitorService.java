@@ -20,7 +20,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchC
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.models.db.application.Monitor;
 import com.qaprosoft.zafira.models.db.application.MonitorStatus;
-import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
+import com.qaprosoft.zafira.models.dto.application.monitor.MonitorCheckType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jobs.MonitorEmailNotificationTask;
 import com.qaprosoft.zafira.services.services.application.jobs.MonitorJobService;

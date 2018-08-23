@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.models.dto.application.TestCaseType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.application.TestCase</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>testClass</a>
+			<b>testClass</b>
+		</field>
+		<field>
+			<a>testMethod</a>
+			<b>testMethod</b>
+		</field>
+		<field>
+			<a>info</a>
+			<b>info</b>
+		</field>
+		<field>
+			<a>testSuiteId</a>
+			<b>testSuiteId</b>
+		</field>
+		<field>
+			<a>primaryOwnerId</a>
+			<b>primaryOwner.id</b>
+		</field>
+		<field>
+			<a>secondaryOwnerId</a>
+			<b>secondaryOwner.id</b>
+		</field>
+		<field>
+			<a>project</a>
+			<b>project</b>
+		</field>
+	</mapping>
+</mappings>

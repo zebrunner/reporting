@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.UserMapper">
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngUserMapper">
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
@@ -154,7 +154,7 @@
 		<result column="USER_LAST_LOGIN" property="lastLogin" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
-		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.application.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.GroupMapper.GroupResultMap"/>
+		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.application.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper.GroupResultMap"/>
 	</resultMap>
 
 	<insert id="addUserToGroup">

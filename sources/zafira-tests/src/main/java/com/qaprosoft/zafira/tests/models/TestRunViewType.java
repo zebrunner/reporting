@@ -2,8 +2,8 @@ package com.qaprosoft.zafira.tests.models;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestType;
+import com.qaprosoft.zafira.models.dto.application.TestRunType;
+import com.qaprosoft.zafira.models.dto.application.TestType;
 
 public class TestRunViewType
 {

@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;

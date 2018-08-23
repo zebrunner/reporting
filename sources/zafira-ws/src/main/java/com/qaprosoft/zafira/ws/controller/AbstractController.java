@@ -106,6 +106,10 @@ public abstract class AbstractController
 				.anyMatch(permission -> permission.equalsIgnoreCase(name.name()));
 	}
 
+	protected boolean isNumber(String stringValue) {
+		return stringValue.matches("\\d+");
+	}
+
 	protected boolean isAuthenticated() {
 		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
 	}

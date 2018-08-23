@@ -7,9 +7,9 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
 import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.dto.JobType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.application.JobType;
+import com.qaprosoft.zafira.models.dto.application.TestRunType;
+import com.qaprosoft.zafira.models.dto.application.TestSuiteType;
 
 public class TestRunTypeBuilder extends AbstractTypeBuilder<TestRunType>
 {

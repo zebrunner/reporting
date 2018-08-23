@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.models.dto.application.TestType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.application.Test</class-b>
+
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>status</a>
+			<b>status</b>
+		</field>
+		<field>
+			<a>testArgs</a>
+			<b>testArgs</b>
+		</field>
+		<field>
+			<a>testRunId</a>
+			<b>testRunId</b>
+		</field>
+		<field>
+			<a>testCaseId</a>
+			<b>testCaseId</b>
+		</field>
+		<field>
+			<a>testGroup</a>
+			<b>testGroup</b>
+		</field>
+		<field>
+			<a>message</a>
+			<b>message</b>
+		</field>
+		<field>
+			<a>messageHashCode</a>
+			<b>messageHashCode</b>
+		</field>
+		<field>
+			<a>startTime</a>
+			<b>startTime</b>
+		</field>
+		<field>
+			<a>finishTime</a>
+			<b>finishTime</b>
+		</field>
+		
+		<field>
+			<a>retry</a>
+			<b>retry</b>
+		</field>
+		<field>
+			<a>knownIssue</a>
+			<b>knownIssue</b>
+		</field>
+		<field>
+			<a>blocker</a>
+			<b>blocker</b>
+		</field>
+		<field>
+			<a>needRerun</a>
+			<b>needRerun</b>
+		</field>
+		<field>
+			<a>dependsOnMethods</a>
+			<b>dependsOnMethods</b>
+		</field>
+		<field-exclude> 
+		  	<a>workItems</a> 
+		  	<b>workItems</b> 
+		</field-exclude>
+		<field>
+			<a>testClass</a>
+			<b>testClass</b>
+		</field>  
+		<field>
+			<a>artifacts</a>
+			<b>artifacts</b>
+		</field>
+	</mapping>
+</mappings>

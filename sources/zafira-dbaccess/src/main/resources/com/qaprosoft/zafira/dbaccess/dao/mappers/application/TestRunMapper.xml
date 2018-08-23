@@ -722,7 +722,7 @@
         <result column="TEST_RUN_PROJECT_CREATED_AT" property="project.createdAt" />
     </resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.dto.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.dto.application.TestRunStatistics" id="TestRunStatisticResultMap" autoMapping="false">
 		<id column="TEST_RUN_ID" property="testRunId" />
 		<result column="TEST_RUN_REVIEWED" property="reviewed" />
 		<result column="TEST_RUN_PASSED" property="passed" />

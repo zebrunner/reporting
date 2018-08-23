@@ -3,7 +3,7 @@ package com.qaprosoft.zafira.models.db.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
-import com.qaprosoft.zafira.models.dto.filter.Subject;
+import com.qaprosoft.zafira.models.dto.application.filter.Subject;
 
 public class Filter extends AbstractEntity
 {

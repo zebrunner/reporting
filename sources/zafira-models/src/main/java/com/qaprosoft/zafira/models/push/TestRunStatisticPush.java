@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.push;
 
-import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
 
 public class TestRunStatisticPush extends AbstractPush
 {
