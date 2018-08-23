@@ -106,8 +106,8 @@
         <jjwt.version>0.7.0</jjwt.version>
         <slack-java-webhook.version>0.0.7</slack-java-webhook.version>
         <carina.version>5.25.0-SNAPSHOT</carina.version>
-        <amqp-client.version>5.0.0</amqp-client.version>
-        <amqp-spring-core>2.0.1.RELEASE</amqp-spring-core>
+        <amqp-client.version>4.1.0</amqp-client.version>
+        <amqp-spring-core>1.7.5.RELEASE</amqp-spring-core>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <httpcore.version>4.4.6</httpcore.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
