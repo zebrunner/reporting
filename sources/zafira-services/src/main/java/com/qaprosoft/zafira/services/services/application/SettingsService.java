@@ -199,6 +199,7 @@ public class SettingsService {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public IJMXService getServiceByTool(Tool tool) {
         IJMXService service = null;
         switch (tool) {

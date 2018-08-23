@@ -10,15 +10,18 @@
 		<property name="maxPoolSize" value="${zafira.db.c3p0.maxPoolSize}" />
 		<property name="idleConnectionTestPeriod" value="${zafira.db.c3p0.idleConnectionTestPeriod}" />
 		<property name="identityToken" value="management"/>
-		<property name="connectionCustomizerClassName" value="com.qaprosoft.zafira.dbaccess.utils.TenanancyConnectionCustomizer" />
+	</bean>
+
+	<bean id="tenancyMngDSWrapper" class="com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper">
+		<constructor-arg index="0" ref="managementDataSource" />
 	</bean>
 
 	<bean id="managementTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="managementDataSource" />
+		<property name="dataSource" value="#{tenancyMngDSWrapper.getDataSource()}" />
 	</bean>
 
 	<bean id="managementSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" name="managementSqlSessionFactory">
-		<property name="dataSource" ref="managementDataSource" />
+		<property name="dataSource" value="#{tenancyMngDSWrapper.getDataSource()}" />
 		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/management/**/*.xml" />
 	</bean>
 

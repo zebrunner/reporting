@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.qaprosoft.zafira.models.dto.application.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
@@ -217,6 +218,8 @@ public class SettingsAPIController extends AbstractController
             settingsService.updateSetting(setting);
 		}
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
+        // TODO: find better solution
+        TimeUnit.SECONDS.sleep(3);
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
