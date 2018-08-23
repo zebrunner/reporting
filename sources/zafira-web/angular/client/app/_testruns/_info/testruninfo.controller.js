@@ -430,7 +430,7 @@
         var testsWebsocketName = 'tests';
 
         function initTestsWebSocket(testRun) {
-            $scope.testsWebsocket = Stomp.over(new SockJS(API_URL + "/websockets"));
+            $scope.testsWebsocket = Stomp.over(new SockJS(API_URL + "/api/websockets"));
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
                 if($scope.testsWebsocket.connected) {

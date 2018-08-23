@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 @Service
 public class TenancyService {
 
-    private static final String MANAGEMENT_SCHEMA = "management";
-
     @Autowired
     private TenancyMapper tenancyMapper;
 

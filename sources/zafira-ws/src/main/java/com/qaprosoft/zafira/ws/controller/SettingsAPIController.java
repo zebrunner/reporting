@@ -16,9 +16,8 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,8 +37,10 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.SettingsService;
+import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.jmx.CryptoService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
@@ -216,7 +217,9 @@ public class SettingsAPIController extends AbstractController
             settingsService.updateSetting(setting);
 		}
         settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
-		connectedTool.setName(tool.name());
+        // TODO: find better solution to wait for reinit
+        TimeUnit.SECONDS.sleep(3);
+        connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
         return connectedTool;

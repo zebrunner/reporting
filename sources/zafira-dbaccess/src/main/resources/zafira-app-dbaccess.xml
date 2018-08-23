@@ -4,24 +4,27 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+	<bean id="appDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="${zafira.db.jdbc.driverClass}" />
 		<property name="jdbcUrl" value="${zafira.db.jdbc.url}" />
 		<property name="user" value="${zafira.db.jdbc.user}" />
 		<property name="password" value="${zafira.db.jdbc.password}" />
 		<property name="maxPoolSize" value="${zafira.db.c3p0.maxPoolSize}" />
 		<property name="idleConnectionTestPeriod" value="${zafira.db.c3p0.idleConnectionTestPeriod}" />
-		<property name="connectionCustomizerClassName" value="com.qaprosoft.zafira.dbaccess.utils.TenanancyConnectionCustomizer" />
+	</bean>
+	
+	<bean id="tenancyAppDSWrapper" class="com.qaprosoft.zafira.dbaccess.utils.TenancyDataSourceWrapper">
+		<constructor-arg index="0" ref="appDataSource" />
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" value="#{tenancyAppDSWrapper.getDataSource()}" />
 	</bean>
 
 	<tx:annotation-driven />
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" name="applicationSqlSessionFactory">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" value="#{tenancyAppDSWrapper.getDataSource()}" />
 		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/application/**/*.xml" />
 	</bean>
 
