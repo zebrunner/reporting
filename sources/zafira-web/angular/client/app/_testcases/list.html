@@ -1,6 +1,6 @@
 <div class="page page-profile" ng-controller="TestCaseListController">
-    <div class="row ui-section no-margin">
-        <div class="fixed-search-column col-md-12 no-padding" layout="row" layout-xs="column" class="col-lg-12">
+    <div class="row ui-section">
+        <div layout="row" layout-xs="column" class="col-lg-12" style="min-width: 320px;">
             <div>
                 <h2 id="pageTitle" class="section-header">
                     Test cases
@@ -8,44 +8,15 @@
                 </h2>
             </div>
             <div class="control-buttons">
-                <button id="apply" class="md-button md-primary md-ink-ripple pull-right" type="button" ng-click="search();">
+                <button id="search" class="md-button md-primary md-ink-ripple pull-right" type="button" ng-click="search();">
                     <b>Search</b>
                 </button>
                 <button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
                     <b>Clear</b>
                 </button>
             </div>
-            <!--<h2 id="pageTitle" class="section-header pull-left">Test runs
-                <small id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
-            </h2>
-            <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
-                <b>RESET</b>
-            </button>
-            <button ng-if="matchMode(['SEARCH']);" id="applySearch" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="search();">
-                <b>APPLY</b>
-            </button>
-            <button ng-if="matchMode(['CREATE'])" id="createFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="createFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>CREATE</b>
-            </button>
-            <button ng-if="matchMode(['UPDATE'])" id="updateFilter" class="md-button md-raised md-primary md-ink-ripple pull-right" type="button" data-ng-click="updateFilter();" data-ng-disabled="filter_form.$invalid">
-                <b>SAVE</b>
-            </button>
-            <button ng-if="matchMode(['CREATE', 'UPDATE'])" id="resetFilter" class="md-button md-default md-ink-ripple pull-right" type="button" data-ng-click="clearAndOpenFilterBlock(false);">
-                <b>CANCEL</b>
-            </button>
-            <button ng-if="matchMode(['UPDATE'])" id="deleteFilter" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" data-ng-really-message="Do you really want to delete the filter?" data-ng-really-click="deleteFilter(filter.id);">
-                <b>DELETE</b>
-            </button>-->
         </div>
-        <div class="search-filter-body col-md-12 no-padding">
-            <md-card md-table zafira-background-theme="table" class="no-margin-h _md">
-                <search fast-model="fastModel" search-models="searchModels" ng-model="sc">
-                </search>
-            </md-card>
-        </div>
-    </div>
-    <div class="row ui-section no-margin">
-        <div class="col-md-12 no-padding">
+        <div class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
                     <md-table-container>
@@ -54,30 +25,40 @@
                                 <thead md-head>
                                 <tr md-row>
                                     <th md-column>
-                                        ID
+                                        <md-input-container class="searchable">
+                                            <input id="searchId" type="number" ng-model="sc.id" name="id" placeholder="ID"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column>
-                                        Test class
+                                        <md-input-container class="searchable">
+                                            <input id="searchTestClass" type="text" ng-model="sc.testClass" name="testClass" placeholder="Test class"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column>
-                                        Test method
+                                        <md-input-container class="searchable">
+                                            <input id="searchTestMethod" type="text" ng-model="sc.testMethod" name="testMethod" placeholder="Test method"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column>
-                                        Test suite
+                                        <md-input-container class="searchable">
+                                            <input id="searchTestSuiteFile" type="text" ng-model="sc.testSuiteFile" name="testSuiteFile" placeholder="Test suite"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column>
-                                        Username
+                                        <md-input-container class="searchable">
+                                            <input id="searchOwner" type="text" ng-model="sc.username" name="username" placeholder="Owner"/>
+                                        </md-input-container>
                                     </th>
                                     <th md-column class="no-padding">
                                         <span>Stability (%)</span>
                                     </th>
-                                    <th md-column class="no-padding">
-                                        Date
-                                        <!--<span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
+                                    <th md-column
+                                        class="no-padding">
+                                        <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Date</span>
                                         <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
-                                        <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>-->
+                                        <md-button id="searchCalendar" ng-click="pick($event, true)"><i class="material-icons md-18">today</i></md-button>
                                     </th>
-                                    <th md-column></th>
+                                    <th ng-if="sr.results && sr.results.length" md-column></th>
                                 </tr>
                                 <md-button type="submit" class="hide">Search</md-button>
                                 </thead>
