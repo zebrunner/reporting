@@ -19,6 +19,7 @@ import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCr
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.services.services.management.MngTenancyService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -36,7 +37,6 @@ import com.qaprosoft.zafira.models.db.application.Group.Role;
 import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
-import com.qaprosoft.zafira.services.services.management.TenancyService;
 
 @Service
 public class UserService {
@@ -61,7 +61,7 @@ public class UserService {
     private UserPreferenceService userPreferenceService;
 
     @Autowired
-    private TenancyService tenancyService;
+    private MngTenancyService tenancyService;
 
     @PostConstruct
     public void init() {
