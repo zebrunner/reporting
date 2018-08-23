@@ -171,22 +171,31 @@
         };
 
         function createInstance(url, user, password) {
-            var protocol = url.split('://')[0];
-            var host = url.split('://')[1].split(':')[0];
-            var port = url.split(':')[2].match('\\d+')[0];
-            return esFactory({
-                host:[
-                    {
-                        protocol: protocol,
-                        host: host,
-                        port: port,
-                        auth: user && user.value && password && password.value ? user.value + ':' + password.value : undefined
+        		if (user && user.value && password && password.value) {
+        		    var protocol = url.split('://')[0];
+                var host = url.split('://')[1].split(':')[0];
+                var port = url.split(':')[2].match('\\d+')[0];
+                return esFactory({
+                    host:[
+                        {
+                            protocol: protocol,
+                            host: host,
+                            port: port,
+                            auth: user.value + ':' + password.value
+                        }
+                    ],
+                    ssl: {
+                        rejectUnauthorized: false
                     }
-                ],
-                ssl: {
-                    rejectUnauthorized: false
-                }
-            });
+                });
+        		} else {
+        			return esFactory({
+                    host: url,
+                    ssl: {
+                        rejectUnauthorized: false
+                    }
+                });
+        		}
         };
     }
 })();
