@@ -115,6 +115,9 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 	@Override
 	public boolean isConnected()
 	{
+		if(getJavaMailSenderImpl() == null) {
+			return false;
+		}
 		try {
 			getJavaMailSenderImpl().testConnection();
 			return true;
