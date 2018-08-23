@@ -17,19 +17,39 @@ package com.qaprosoft.zafira.services.services.jmx.models;
 
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionListener;
+
+import java.util.concurrent.CompletableFuture;
 
 public class RabbitMQType extends AbstractType
 {
 
     private CachingConnectionFactory cachingConnectionFactory;
     private Connection connection;
+    private CompletableFuture<Connection> connectionCompletableFuture;
 
     public RabbitMQType(String host, String port, String username, String password)
     {
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);
         this.cachingConnectionFactory.setPassword(password);
-        this.connection = this.cachingConnectionFactory.createConnection();
+        this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            this.connection = this.cachingConnectionFactory.createConnection();
+            return this.connection;
+        });
+        this.cachingConnectionFactory.addConnectionListener(new ConnectionListener() {
+            @Override public void onCreate(Connection connection) {
+                try {
+                    connectionCompletableFuture.complete(connection);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        });
+    }
+
+    public CompletableFuture getConnectionCompletableFuture() {
+        return CompletableFuture.allOf(this.connectionCompletableFuture);
     }
 
     public CachingConnectionFactory getCachingConnectionFactory()

@@ -106,7 +106,7 @@ public class DashboardsAPIController extends AbstractController
 		}
 		else
 		{
-			dashboards = dashboardService.getDashboardsByHidden(false);;
+			dashboards = dashboardService.getDashboardsByHidden(false);
 		}
 
 		return dashboards;

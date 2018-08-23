@@ -23,13 +23,10 @@ import com.qaprosoft.zafira.services.services.jmx.models.EmailType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.annotation.*;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import java.util.List;
 
@@ -57,8 +54,6 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 	}
 
 	@Autowired
-	@PostConstruct
-	@ManagedOperation(description = "Email initialization")
 	public void init() {
 		String host = null;
 		int port = 0;
@@ -93,10 +88,27 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType>
 					default:
 						break;
 				}
-				putType(EMAIL, new EmailType(host, port, user, fromAddress, password));
 			}
+			init(host, port, user, fromAddress, password);
 		} catch(Exception e) {
 			LOGGER.error("Setting does not exist", e);
+		}
+	}
+
+	@ManagedOperation(description = "Change SMTP initialization")
+	@ManagedOperationParameters({
+			@ManagedOperationParameter(name = "host", description = "SMTP host"),
+			@ManagedOperationParameter(name = "port", description = "SMTP port"),
+			@ManagedOperationParameter(name = "user", description = "SMTP user"),
+			@ManagedOperationParameter(name = "fromAddress", description = "SMTP from address"),
+			@ManagedOperationParameter(name = "password", description = "SMTP password") })
+	public void init(String host, int port, String user, String fromAddress, String password) {
+		try {
+			if (! StringUtils.isBlank(host) && ! StringUtils.isBlank(user) && ! StringUtils.isBlank(password) && port != 0) {
+				putType(EMAIL, new EmailType(host, port, user, fromAddress, password));
+			}
+		} catch (Exception e) {
+			LOGGER.error("Unable to initialize SMTP integration: " + e.getMessage());
 		}
 	}
 

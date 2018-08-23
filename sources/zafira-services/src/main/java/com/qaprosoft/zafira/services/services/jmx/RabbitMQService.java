@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.services.services.jmx;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.RABBITMQ;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -90,6 +91,7 @@ public class RabbitMQService implements IJMXService<RabbitMQType> {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
                 putType(RABBITMQ, new RabbitMQType(host, port, username, password));
+                getType(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
