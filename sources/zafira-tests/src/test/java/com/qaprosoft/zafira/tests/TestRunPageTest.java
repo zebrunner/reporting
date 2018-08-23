@@ -18,9 +18,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.TestRun;
+import com.qaprosoft.zafira.models.db.application.WorkItem;
 import com.qaprosoft.zafira.tests.gui.components.Chip;
 import com.qaprosoft.zafira.tests.gui.components.FilterBlock;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestRunSettingMenu;
@@ -680,7 +680,7 @@ public class TestRunPageTest extends AbstractTest
 	private void verifyTestRunTestInformation(TestRun testRun, int index)
 	{
 		TestRunTableRow testRunTableRow = testRunPageService.getTestRunRowByIndex(index);
-		List<com.qaprosoft.zafira.models.db.Test> tests = testMapper.searchTests(new TestSearchCriteria() {
+		List<com.qaprosoft.zafira.models.db.application.Test> tests = testMapper.searchTests(new TestSearchCriteria() {
 			{
 				setTestRunId(testRun.getId());
 			}
@@ -691,7 +691,7 @@ public class TestRunPageTest extends AbstractTest
 		testRunPage.waitUntilPageIsLoaded();
 		Assert.assertEquals(tests.size(), testRunTableRow.getTestTable().getTestRows().size(), "Invalid tests count visible");
 		IntStream.iterate(0, i -> i++).limit(testTable.getTestRows().size()).forEach(i -> {
-			com.qaprosoft.zafira.models.db.Test currentTest = tests.get(i);
+			com.qaprosoft.zafira.models.db.application.Test currentTest = tests.get(i);
 			TestRow currentTestRow = testTable.getTestRows().get(i);
 			Status status = currentTestRow.getStatus();
 			Assert.assertEquals(currentTest.getStatus(), status, "Incorrect test status visible");

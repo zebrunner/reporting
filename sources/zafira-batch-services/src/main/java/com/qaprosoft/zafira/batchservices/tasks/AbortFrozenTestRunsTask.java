@@ -20,10 +20,10 @@ import java.util.Calendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.application.TestRunService;
 
 //TODO: remove AbortFrozenTestRunsTask class
 public class AbortFrozenTestRunsTask 

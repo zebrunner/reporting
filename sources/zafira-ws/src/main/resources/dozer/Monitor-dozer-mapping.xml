@@ -4,7 +4,7 @@
 
     <mapping type="bi-directional" wildcard="false">
         <class-a>com.qaprosoft.zafira.models.dto.monitor.MonitorType</class-a>
-        <class-b>com.qaprosoft.zafira.models.db.Monitor</class-b>
+        <class-b>com.qaprosoft.zafira.models.db.application.Monitor</class-b>
 
         <field>
             <a>id</a>

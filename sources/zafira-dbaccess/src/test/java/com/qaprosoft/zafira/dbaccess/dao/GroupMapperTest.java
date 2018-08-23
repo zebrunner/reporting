@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
-import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.application.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;

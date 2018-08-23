@@ -15,9 +15,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
-import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.application.Status;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
-import com.qaprosoft.zafira.services.services.TestRunService;
+import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.tests.services.TestRunMockCacheableService;
 
 @SuppressWarnings({"rawtypes", "unused"})

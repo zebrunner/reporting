@@ -19,9 +19,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.db.TestRun.Initiator;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.db.application.TestRun.Initiator;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRunType extends AbstractType

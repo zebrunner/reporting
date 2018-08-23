@@ -9,13 +9,13 @@
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
 		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
 
-	<bean id="statisticsService" class="com.qaprosoft.zafira.services.services.cache.StatisticsService">
+	<bean id="statisticsService" class="com.qaprosoft.zafira.services.services.application.cache.StatisticsService">
 		<property name="cacheableService" ref="testRunMapperCacheableService"/>
 	</bean>
 
 	<context:component-scan base-package="com.qaprosoft.zafira.services" />
 
-	<bean id="jmxTenancyStorage" class="com.qaprosoft.zafira.services.services.jmx.JMXTenancyStorage" depends-on="exporter"/>
+	<bean id="jmxTenancyStorage" class="com.qaprosoft.zafira.services.services.application.jmx.JMXTenancyStorage" depends-on="exporter"/>
 
 	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
 
@@ -55,27 +55,27 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
-	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.emails.AsynSendEmailTask"/>
+	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask"/>
 
-	<bean id="googleService" class="com.qaprosoft.zafira.services.services.jmx.google.GoogleService"/>
+	<bean id="googleService" class="com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService"/>
 
-	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.jmx.ldap.LDAPService"/>
+	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService"/>
 
-	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.jmx.JiraService"/>
+	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.application.jmx.JiraService"/>
 
-	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.jmx.JenkinsService"/>
+	<bean id="jenkinsService" class="com.qaprosoft.zafira.services.services.application.jmx.JenkinsService"/>
 
-	<bean id="slackService" class="com.qaprosoft.zafira.services.services.jmx.SlackService"/>
+	<bean id="slackService" class="com.qaprosoft.zafira.services.services.application.jmx.SlackService"/>
 
-	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.jmx.AmazonService"/>
+	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.AmazonService"/>
 
-	<bean id="hipchatService" class="com.qaprosoft.zafira.services.services.jmx.HipchatService"/>
+	<bean id="hipchatService" class="com.qaprosoft.zafira.services.services.application.jmx.HipchatService"/>
 
-	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.jmx.CryptoService">
+	<bean id="cryptoService" class="com.qaprosoft.zafira.services.services.application.jmx.CryptoService">
 		<property name="salt" value="${zafira.crypto_salt}" />
 	</bean>
 	
-	<bean id="rabbitMQService" class="com.qaprosoft.zafira.services.services.jmx.RabbitMQService"/>
+	<bean id="rabbitMQService" class="com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService"/>
 
 	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
 

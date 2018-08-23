@@ -245,7 +245,7 @@
     </select>
 
 
-    <resultMap type="com.qaprosoft.zafira.models.db.Monitor" id="MonitorResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.application.Monitor" id="MonitorResultMap" autoMapping="false">
         <id column="MONITOR_ID" property="id"/>
         <result column="MONITOR_NAME" property="name"/>
         <result column="MONITOR_URL" property="url"/>
@@ -265,7 +265,7 @@
         <result column="MONITOR_CREATED_AT" property="createdAt"/>
     </resultMap>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.MonitorStatus" id="MonitorStatusResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.application.MonitorStatus" id="MonitorStatusResultMap" autoMapping="false">
         <id column="MONITOR_STATUS_ID" property="id"/>
         <result column="MONITOR_STATUS_SUCCESS" property="success"/>
         <result column="MONITOR_STATUS_MODIFIED_AT" property="modifiedAt"/>

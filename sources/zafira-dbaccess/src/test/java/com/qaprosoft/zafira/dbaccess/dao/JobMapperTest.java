@@ -26,8 +26,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper;
-import com.qaprosoft.zafira.models.db.Job;
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.application.Job;
+import com.qaprosoft.zafira.models.db.application.User;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

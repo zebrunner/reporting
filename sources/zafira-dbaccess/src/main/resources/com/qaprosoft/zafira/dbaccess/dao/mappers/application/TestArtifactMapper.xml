@@ -104,7 +104,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.TestArtifact" id="TestArtifactResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.application.TestArtifact" id="TestArtifactResultMap" autoMapping="false">
 		<id column="TEST_ARTIFACT_ID" property="id" />
 		<result column="TEST_ARTIFACT_NAME" property="name" />
 		<result column="TEST_ARTIFACT_LINK" property="link" />

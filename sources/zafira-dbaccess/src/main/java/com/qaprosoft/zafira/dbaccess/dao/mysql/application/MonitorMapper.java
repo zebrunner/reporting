@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
-import com.qaprosoft.zafira.models.db.Monitor;
-import com.qaprosoft.zafira.models.db.MonitorStatus;
+import com.qaprosoft.zafira.models.db.application.Monitor;
+import com.qaprosoft.zafira.models.db.application.MonitorStatus;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

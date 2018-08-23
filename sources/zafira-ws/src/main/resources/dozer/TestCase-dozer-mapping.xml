@@ -4,7 +4,7 @@
 
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.TestCaseType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.TestCase</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.application.TestCase</class-b>
 
 		<field>
 			<a>id</a>

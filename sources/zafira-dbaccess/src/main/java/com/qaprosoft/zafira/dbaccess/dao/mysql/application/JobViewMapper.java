@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.qaprosoft.zafira.models.db.JobView;
+import com.qaprosoft.zafira.models.db.application.JobView;
 
 public interface JobViewMapper 
 {

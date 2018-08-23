@@ -25,8 +25,8 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ViewMapper;
 import com.qaprosoft.zafira.dbaccess.utils.Sort;
-import com.qaprosoft.zafira.models.db.Project;
-import com.qaprosoft.zafira.models.db.View;
+import com.qaprosoft.zafira.models.db.application.Project;
+import com.qaprosoft.zafira.models.db.application.View;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

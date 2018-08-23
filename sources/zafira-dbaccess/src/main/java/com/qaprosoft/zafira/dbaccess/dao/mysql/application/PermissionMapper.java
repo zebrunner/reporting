@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import com.qaprosoft.zafira.models.db.Permission;
+import com.qaprosoft.zafira.models.db.application.Permission;
 
 import java.util.List;
 

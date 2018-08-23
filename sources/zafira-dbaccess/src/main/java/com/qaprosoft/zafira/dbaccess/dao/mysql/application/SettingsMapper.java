@@ -17,9 +17,9 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.application.Setting;
 import org.apache.ibatis.annotations.Param;
-import static com.qaprosoft.zafira.models.db.Setting.*;
+import static com.qaprosoft.zafira.models.db.application.Setting.*;
 
 public interface SettingsMapper
 {

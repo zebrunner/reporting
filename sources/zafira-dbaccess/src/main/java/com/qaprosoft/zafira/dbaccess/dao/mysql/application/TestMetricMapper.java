@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import com.qaprosoft.zafira.models.db.TestMetric;
+import com.qaprosoft.zafira.models.db.application.TestMetric;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

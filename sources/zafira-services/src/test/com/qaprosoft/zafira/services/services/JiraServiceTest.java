@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services;
 
 
-import com.qaprosoft.zafira.services.services.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
 import org.junit.Test;
 
 /**

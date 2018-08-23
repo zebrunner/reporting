@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.services.services.GroupService;
+import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.services.services.application.GroupService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

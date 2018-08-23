@@ -25,7 +25,7 @@ import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
 import com.qaprosoft.zafira.dbaccess.utils.Sort;
-import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.application.Attribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper;
-import com.qaprosoft.zafira.models.db.Dashboard;
-import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.models.db.application.Dashboard;
+import com.qaprosoft.zafira.models.db.application.Widget;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

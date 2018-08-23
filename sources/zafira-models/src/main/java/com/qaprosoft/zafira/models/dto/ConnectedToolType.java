@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.application.Setting;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@
 
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.JobType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.Job</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.application.Job</class-b>
 
 		<field>
 			<a>id</a>
@@ -30,7 +30,7 @@
 	
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.ViewType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.View</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.application.View</class-b>
 
 		<field>
 			<a>id</a>
@@ -48,7 +48,7 @@
 	
 	<mapping type="bi-directional" wildcard="false">
 		<class-a>com.qaprosoft.zafira.models.dto.JobViewType</class-a>
-		<class-b>com.qaprosoft.zafira.models.db.JobView</class-b>
+		<class-b>com.qaprosoft.zafira.models.db.application.JobView</class-b>
 
 		<field>
 			<a>id</a>

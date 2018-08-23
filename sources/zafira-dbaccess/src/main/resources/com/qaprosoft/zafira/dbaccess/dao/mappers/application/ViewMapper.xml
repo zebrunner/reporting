@@ -73,7 +73,7 @@
         ]]>
     </delete>
 
-    <resultMap id="ViewResultMap" type="com.qaprosoft.zafira.models.db.View" autoMapping="false">
+    <resultMap id="ViewResultMap" type="com.qaprosoft.zafira.models.db.application.View" autoMapping="false">
         <id property="id" column="VIEW_ID"/>
         <result property="name" column="VIEW_NAME"/>
         <result column="VIEW_MODIFIED_AT" property="modifiedAt" />

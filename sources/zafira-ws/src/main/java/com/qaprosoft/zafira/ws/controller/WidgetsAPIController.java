@@ -23,13 +23,13 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.application.Attachment;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.dto.DashboardEmailType;
-import com.qaprosoft.zafira.services.services.EmailService;
-import com.qaprosoft.zafira.services.services.SeleniumService;
+import com.qaprosoft.zafira.services.services.application.EmailService;
+import com.qaprosoft.zafira.services.services.application.SeleniumService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
-import com.qaprosoft.zafira.services.services.emails.DashboardEmail;
+import com.qaprosoft.zafira.services.services.application.emails.DashboardEmail;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,11 +53,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
-import com.qaprosoft.zafira.models.db.Attribute;
-import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.models.db.application.Attribute;
+import com.qaprosoft.zafira.models.db.application.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.WidgetService;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.WidgetService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.ApiImplicitParam;

@@ -17,7 +17,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
 
-import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.application.Status;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 
 @ContextConfiguration("classpath:services-test.xml")

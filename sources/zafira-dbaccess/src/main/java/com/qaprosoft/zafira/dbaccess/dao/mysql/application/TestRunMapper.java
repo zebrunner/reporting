@@ -23,9 +23,9 @@ import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.application.TestRun;
+import com.qaprosoft.zafira.models.db.application.config.Argument;
 
 
 public interface TestRunMapper

@@ -10,7 +10,7 @@
 
     <context:component-scan base-package="com.qaprosoft.zafira.tests.services" />
 
-    <bean id="statisticsService" class="com.qaprosoft.zafira.services.services.cache.StatisticsService">
+    <bean id="statisticsService" class="com.qaprosoft.zafira.services.services.application.cache.StatisticsService">
         <property name="cacheableService" ref="testRunMockCacheableService"/>
     </bean>
 

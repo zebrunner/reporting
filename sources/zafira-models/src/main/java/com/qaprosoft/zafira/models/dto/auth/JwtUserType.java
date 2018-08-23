@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.application.Group;
 
 /**
  * All user information handled by the JWT token

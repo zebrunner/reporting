@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.application.Project;
 
 public interface ProjectMapper
 {

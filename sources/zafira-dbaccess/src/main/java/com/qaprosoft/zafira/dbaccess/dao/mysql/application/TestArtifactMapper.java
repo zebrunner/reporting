@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.TestArtifact;
+import com.qaprosoft.zafira.models.db.application.TestArtifact;
 import org.apache.ibatis.annotations.Param;
 
 public interface TestArtifactMapper
