@@ -79,5 +79,7 @@
 		<!--  security:intercept-url pattern="/api/websockets/**" access="isAuthenticated()" /-->
 
 	</security:http>
+	
+	<bean id="tenancyFilter" class="com.qaprosoft.zafira.ws.security.filter.TenancyFilter" />
 
 </beans>

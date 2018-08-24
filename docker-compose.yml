@@ -65,7 +65,7 @@ services:
     env_file:
      - integrations.env
     environment:
-      - ZAFIRA_URL=http://smule.qps.com:8080
+      - ZAFIRA_URL=http://localhost:8080
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
       - ZAFIRA_JDBC_URL=jdbc:postgresql://db:5432/postgres
@@ -83,6 +83,7 @@ services:
       - ZAFIRA_RABBITMQ_PASS=qpsdemo
       - ZAFIRA_RABBITMQ_STOMP_HOST=rabbitmq
       - ZAFIRA_RABBITMQ_STOMP_PORT=61613
+      - ZAFIRA_MULTITENANT=false
     depends_on:
       - "db"
       - "rabbitmq"
