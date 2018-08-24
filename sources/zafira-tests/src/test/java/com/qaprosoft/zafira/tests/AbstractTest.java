@@ -32,7 +32,7 @@ import org.testng.annotations.BeforeMethod;
 
 import com.qaprosoft.zafira.tests.util.Config;
 
-@ContextConfiguration("classpath:dbaccess-test.xml")
+@ContextConfiguration({"classpath:dbaccess-app-test.xml", "classpath:dbaccess-mng-test.xml"})
 public class AbstractTest extends AbstractTestNGSpringContextTests
 {
 	protected Logger LOGGER = Logger.getLogger(AbstractTest.class);
