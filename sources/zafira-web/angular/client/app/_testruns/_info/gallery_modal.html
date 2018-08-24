@@ -4,6 +4,11 @@
             <img class="gallery-container_gallery-image" ng-src="{{ image.trumb.message }}"/>
             <div ng-mouseenter="showHideLog($event, true);"  ng-mouseleave="showHideLog($event, false);" class="gallery-container_gallery-image_log">{{ image.log.message }}</div>
         </div>
+       <!-- <div class="gallery-modal_thumbnail-container">
+            <div class="gallery-modal_thumbnail-container_element" ng-repeat="thumb in thumbs">
+                <img class="gallery-modal_thumbnail-container_element_image" ng-src="{{ thumb.trumb.message }}">
+            </div>
+        </div>-->
     </md-dialog-content>
 </md-dialog>
 <div ng-if="galleryLoaded" class="gallery-container-controls">
