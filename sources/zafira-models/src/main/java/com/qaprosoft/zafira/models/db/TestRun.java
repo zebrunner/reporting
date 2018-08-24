@@ -66,6 +66,7 @@ public class TestRun extends AbstractEntity
 	private Integer eta;
 	private String comments;
 	private DriverMode driverMode;
+	private TestConfig config;
 
 	private Integer passed;
 	private Integer failed;
@@ -407,6 +408,16 @@ public class TestRun extends AbstractEntity
 	public void setDriverMode(DriverMode driverMode)
 	{
 		this.driverMode = driverMode;
+	}
+
+	public TestConfig getConfig()
+	{
+		return config;
+	}
+
+	public void setConfig(TestConfig config)
+	{
+		this.config = config;
 	}
 
 	public Integer getCountdown()
