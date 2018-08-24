@@ -32,7 +32,7 @@
 	<tx:annotation-driven />
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="#{tenancyDataSourceWrapper.getDataSource()}" />
+		<property name="dataSource" value="#{tenancyDataSourceWrapper.getDataSource()}" />
 		<property name="mapperLocations" value="classpath*:/com/qaprosoft/zafira/dbaccess/dao/mappers/**/*.xml" />
 	</bean>
 
