@@ -21,11 +21,15 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.google.common.net.InternetDomainName;
+import com.mchange.v2.lang.StringUtils;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 
 /**
@@ -33,22 +37,35 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
  * 
  * @author akhursevich
  */
+@Component
 public class TenancyFilter extends GenericFilterBean {
 
 	private static final Logger LOGGER = Logger.getLogger(TenancyFilter.class);
-	
+
+	@Value("${zafira.multitenant}")
+	private boolean isMultitenant;
+
 	@Override
 	public void doFilter(ServletRequest rq, ServletResponse rs, FilterChain chain)
 			throws IOException, ServletException {
-		try {
-			InternetDomainName domain = InternetDomainName.from(rq.getServerName().replaceFirst("www.", ""));
-			if(!domain.isTopPrivateDomain()) {
-				String topDomain = domain.topPrivateDomain().toString();
-				String subDomain = domain.toString().replaceAll("." + topDomain, "");
-				TenancyContext.setTenantName(subDomain);
+		if (isMultitenant) {
+			try {
+				// API clients without Origin
+				String host = rq.getServerName();
+				// Web clients has Origin header
+				String origin = ((HttpServletRequest) rq).getHeader("Origin");
+				if (StringUtils.nonEmptyString(origin)) {
+					host = origin.split("//")[1].split(":")[0];
+				}
+				InternetDomainName domain = InternetDomainName.from(host.replaceFirst("www.", ""));
+				if (!domain.isTopPrivateDomain()) {
+					String topDomain = domain.topPrivateDomain().toString();
+					String subDomain = domain.toString().replaceAll("." + topDomain, "");
+					TenancyContext.setTenantName(subDomain);
+				}
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
 			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
 		}
 		chain.doFilter(rq, rs);
 	}

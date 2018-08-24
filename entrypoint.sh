@@ -40,6 +40,7 @@ fi
 # Run Tomcat
 echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.multitenant=$ZAFIRA_MULTITENANT >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.url=$ZAFIRA_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.webservice.url=$ZAFIRA_URL/zafira-ws >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.admin.username=$ZAFIRA_USER >> $CATALINA_HOME/conf/catalina.properties
@@ -66,5 +67,7 @@ echo zafira.rabbitmq.user=$ZAFIRA_RABBITMQ_USER >> $CATALINA_HOME/conf/catalina.
 echo zafira.rabbitmq.pass=$ZAFIRA_RABBITMQ_PASS >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.rabbitmq.stomp.host=$ZAFIRA_RABBITMQ_STOMP_HOST >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.rabbitmq.stomp.port=$ZAFIRA_RABBITMQ_STOMP_PORT >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.jwt.secret=$ZAFIRA_JWT_TOKEN >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.crypto_salt=$ZAFIRA_CRYPTO_SALT >> $CATALINA_HOME/conf/catalina.properties
 
 catalina.sh run

@@ -65,59 +65,52 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Auth API")
 @CrossOrigin
 @RequestMapping("api/auth")
-public class AuthAPIController extends AbstractController
-{
+public class AuthAPIController extends AbstractController {
 	@Autowired
 	private JWTService jwtService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
-    private AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private Mapper mapper;
-	
+
 	@Value("${zafira.admin.username}")
 	private String adminUsername;
-	
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get current tenant", nickname = "getTenant", code = 200, httpMethod = "GET", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="tenant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TenantType getTenant()
-	{
+	@RequestMapping(value = "tenant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TenantType getTenant() {
 		return new TenantType(TenancyContext.getTenantName());
 	}
-	
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials) throws BadCredentialsException
-	{
+	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials)
+			throws BadCredentialsException {
 		AuthTokenType authToken = null;
-		try
-		{
-			Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
-			
+		try {
+			Authentication authentication = this.authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
+
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			User user = userService.getUserByUsername(credentials.getUsername());
-			
+
 			final String tenant = TenancyContext.getTenantName();
-			
-			authToken = new AuthTokenType("Bearer", 
-					jwtService.generateAuthToken(user, tenant), 
-					jwtService.generateRefreshToken(user, tenant), 
-					jwtService.getExpiration(),
-					tenant);
-			
+
+			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
+					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
+
 			userService.updateLastLoginDate(user.getId());
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new BadCredentialsException(e.getMessage());
 		}
 		return authToken;
@@ -126,64 +119,61 @@ public class AuthAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void register(@Valid @RequestBody UserType userType)
-			throws BadCredentialsException, ServiceException
-	{
+	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void register(@Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
 		List<Group.Role> roles = new ArrayList<>();
 		roles.add(Group.Role.ROLE_USER);
 		userType.setRoles(roles);
 		userService.createOrUpdateUser(mapper.map(userType, User.class));
 	}
-	
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value="refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken) throws BadCredentialsException, ForbiddenOperationException
-	{
+	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken)
+			throws BadCredentialsException, ForbiddenOperationException {
 		AuthTokenType authToken = null;
-		try
-		{
+		try {
 			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
-			
+
 			User user = userService.getUserById(jwtUser.getId());
-			if(user == null)
-			{
+			if (user == null) {
 				throw new UserNotFoundException();
 			}
-			
+
+			if (!TenancyContext.getTenantName().equals(jwtUser.getTenant())) {
+				throw new InvalidCredentialsException("Invalid tenant");
+			}
+
 			// TODO: Do not verify password for demo user as far as it breaks demo JWT token
-			if(!StringUtils.equals(adminUsername, user.getUsername()) && !StringUtils.equals(user.getPassword(), jwtUser.getPassword()))
-			{
+			if (!StringUtils.equals(adminUsername, user.getUsername())
+					&& !StringUtils.equals(user.getPassword(), jwtUser.getPassword())) {
 				throw new InvalidCredentialsException();
 			}
-			
+
 			final String tenant = TenancyContext.getTenantName();
-			
-			authToken = new AuthTokenType("Bearer", 
-					jwtService.generateAuthToken(user, tenant), 
-					jwtService.generateRefreshToken(user, tenant), 
-					jwtService.getExpiration(),
+
+			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
+					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(),
 					TenancyContext.getTenantName());
-			
+
 			userService.updateLastLoginDate(user.getId());
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new ForbiddenOperationException(e);
-		}	
-		
+		}
+
 		return authToken;
 	}
-	
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Generates access token", nickname = "accessToken", code = 200, httpMethod = "GET", response = AuthTokenType.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value="access", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AccessTokenType accessToken() throws ServiceException
-	{	
-		String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()), TenancyContext.getTenantName());
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "access", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AccessTokenType accessToken() throws ServiceException {
+		String token = jwtService.generateAccessToken(userService.getNotNullUserById(getPrincipalId()),
+				TenancyContext.getTenantName());
 		return new AccessTokenType(token);
 	}
 }

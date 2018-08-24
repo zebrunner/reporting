@@ -81,6 +81,7 @@ services:
       - ZAFIRA_RABBITMQ_PASS=qpsdemo
       - ZAFIRA_RABBITMQ_STOMP_HOST=rabbitmq
       - ZAFIRA_RABBITMQ_STOMP_PORT=61613
+      - ZAFIRA_MULTITENANT=false
     depends_on:
       - "db"
       - "rabbitmq"
