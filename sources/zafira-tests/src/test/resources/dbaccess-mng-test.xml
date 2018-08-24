@@ -12,12 +12,11 @@
 	</bean>
 
 	<bean id="managementDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="${zafira.db.jdbc.driverClass}" />
-		<property name="jdbcUrl" value="${zafira.db.jdbc.url}" />
-		<property name="user" value="${zafira.db.jdbc.user}" />
-		<property name="password" value="${zafira.db.jdbc.password}" />
-		<property name="maxPoolSize" value="${zafira.db.c3p0.maxPoolSize}" />
-		<property name="idleConnectionTestPeriod" value="${zafira.db.c3p0.idleConnectionTestPeriod}" />
+		<property name="driverClass" value="${db.jdbc.driverClass}" />
+		<property name="jdbcUrl" value="${db.jdbc.url}" />
+		<property name="user" value="${db.jdbc.user}" />
+		<property name="password" value="${db.jdbc.password}" />
+		<property name="maxPoolSize" value="${db.c3p0.maxPoolSize}" />
 		<property name="identityToken" value="management"/>
 	</bean>
 
