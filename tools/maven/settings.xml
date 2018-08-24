@@ -9,6 +9,8 @@
             <activeByDefault>true</activeByDefault>
         </activation>
         <properties>
+            <zafira.multitenant>false</zafira.multitenant>
+
             <zafira.service.version>1.0</zafira.service.version>
             <zafira.client.version>1.0</zafira.client.version>
 
