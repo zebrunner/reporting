@@ -86,7 +86,7 @@
 		]]>
     </delete>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.management.Permission" id="PermissionResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.application.Permission" id="PermissionResultMap" autoMapping="false">
         <id column="PERMISSION_ID" property="id" />
         <result column="PERMISSION_NAME" property="name" />
         <result column="PERMISSION_BLOCK" property="block" />

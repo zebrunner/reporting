@@ -4,7 +4,7 @@
 
     <mapping type="bi-directional" wildcard="false">
         <class-a>com.qaprosoft.zafira.models.dto.management.GroupType</class-a>
-        <class-b>com.qaprosoft.zafira.models.db.management.Group</class-b>
+        <class-b>com.qaprosoft.zafira.models.db.application.Group</class-b>
 
         <field>
             <a>id</a>

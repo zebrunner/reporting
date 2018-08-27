@@ -4,7 +4,7 @@
 
     <mapping type="bi-directional" wildcard="false">
         <class-a>com.qaprosoft.zafira.models.dto.management.PermissionType</class-a>
-        <class-b>com.qaprosoft.zafira.models.db.management.Permission</class-b>
+        <class-b>com.qaprosoft.zafira.models.db.application.Permission</class-b>
 
         <field>
             <a>id</a>

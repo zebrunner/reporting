@@ -15,11 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.management;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.db.application.UserPreference;
-import com.qaprosoft.zafira.models.db.management.Group;
-import com.qaprosoft.zafira.models.db.management.Permission;
+import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.application.Permission;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
@@ -42,7 +42,6 @@ public class UserType extends AbstractType
 	private String photoURL;
 	private List<Group.Role> roles = new ArrayList<>();
 	private Set<Permission> permissions = new HashSet<>();
-	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
 
 	public UserType() 
@@ -148,6 +147,7 @@ public class UserType extends AbstractType
 	}
 
 	@AssertTrue(message = "Email confirmation not matching")
+	@JsonIgnore
 	public boolean isEmailConfirmationValid() {
 		return this.email == null || new EmailValidator().isValid(this.email, null);
 	}

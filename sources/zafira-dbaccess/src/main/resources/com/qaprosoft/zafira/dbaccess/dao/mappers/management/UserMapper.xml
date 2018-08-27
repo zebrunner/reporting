@@ -143,7 +143,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.management.User" id="UserResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.application.User" id="UserResultMap" autoMapping="false">
 		<id column="USER_ID" property="id" />
 		<result column="USER_USERNAME" property="username" />
 		<result column="USER_PASSWORD" property="password" />

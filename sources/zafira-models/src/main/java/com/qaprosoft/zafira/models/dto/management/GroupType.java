@@ -1,8 +1,8 @@
 package com.qaprosoft.zafira.models.dto.management;
 
-import com.qaprosoft.zafira.models.db.management.Group;
-import com.qaprosoft.zafira.models.db.management.Permission;
-import com.qaprosoft.zafira.models.db.management.User;
+import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 import org.hibernate.validator.constraints.NotEmpty;
 

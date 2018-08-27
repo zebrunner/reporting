@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.db.management.User;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.models.dto.application.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.management.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
