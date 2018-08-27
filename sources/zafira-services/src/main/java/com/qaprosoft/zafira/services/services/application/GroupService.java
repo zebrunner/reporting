@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.db.application.Permission;
 import org.apache.log4j.Logger;
@@ -97,7 +98,7 @@ public class GroupService
 	}
 
 	public static List<Role> getRoles() {
-		return Arrays.asList(Role.values());
+		return Arrays.stream(Role.values()).filter(role -> ! Arrays.asList(Group.getIgnoredRoles()).contains(role)).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

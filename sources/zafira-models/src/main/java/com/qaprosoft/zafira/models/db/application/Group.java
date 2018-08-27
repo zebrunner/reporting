@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class Group extends AbstractEntity
 {
 	private static final long serialVersionUID = -1122566583572312653L;
+	private static final Role[] IGNORED_ROLES = {Role.ROLE_SUPERADMIN};
 
 	private String name;
 	private Role role;
@@ -95,5 +96,9 @@ public class Group extends AbstractEntity
 	public boolean hasPermissions()
 	{
 		return this.permissions != null && this.permissions.size() > 0;
+	}
+
+	public static Role[] getIgnoredRoles() {
+		return IGNORED_ROLES;
 	}
 }
