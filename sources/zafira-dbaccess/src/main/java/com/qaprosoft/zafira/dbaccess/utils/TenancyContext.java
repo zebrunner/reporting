@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
+import com.qaprosoft.zafira.models.db.management.Tenancy;
+
 /**
  * TenancyContext - stores client tenant ID.
  * 
@@ -22,8 +24,6 @@ package com.qaprosoft.zafira.dbaccess.utils;
  */
 public class TenancyContext {
 
-	private static final String DEFAULT_TENANT = "zafira";
-	
 	private static ThreadLocal<String> tenant = new ThreadLocal<>();
 
     public static void setTenantName(String tenantName) {
@@ -32,6 +32,6 @@ public class TenancyContext {
 
     public static String getTenantName() {
     		String tenantName = tenant.get();
-        return tenantName != null ? tenantName : DEFAULT_TENANT;
+        return tenantName != null ? tenantName : Tenancy.getDefaultTenant();
     }
 }

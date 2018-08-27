@@ -16,24 +16,62 @@
 package com.qaprosoft.zafira.services.services.management;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngUserMapper;
-import com.qaprosoft.zafira.models.db.management.User;
+import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.application.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
 public class MngUserService {
 
+    private static final Logger LOGGER = Logger.getLogger(MngUserService.class);
+
+    @Value("${zafira.management.admin.username}")
+    private String adminManagementUsername;
+
+    @Value("${zafira.management.admin.password}")
+    private String adminManagementPassword;
+
     @Autowired
     private MngUserMapper mngUserMapper;
 
     @Autowired
+    private MngGroupService mngGroupService;
+
+    @Autowired
     private PasswordEncryptor passwordEncryptor;
+
+    @PostConstruct
+    public void init() {
+        if(! StringUtils.isBlank(adminManagementUsername) && ! StringUtils.isBlank(adminManagementPassword)) {
+            try {
+                User user = getUserByUsername(adminManagementUsername);
+                if (user == null) {
+                    user = new User(adminManagementUsername);
+                    user.setPassword(passwordEncryptor.encryptPassword(adminManagementPassword));
+                    createUser(user);
+
+                    Group group = mngGroupService.getPrimaryGroupByRole(Group.Role.ROLE_SUPERADMIN);
+                    if (group != null) {
+                        addUserToGroup(user, group.getId());
+                        user.getGroups().add(group);
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.error("Unable to init management admin: " + e.getMessage(), e);
+            }
+        }
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public User createUser(User user) throws ServiceException {

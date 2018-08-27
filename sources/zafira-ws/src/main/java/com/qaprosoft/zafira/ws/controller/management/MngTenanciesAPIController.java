@@ -29,6 +29,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,7 @@ public class MngTenanciesAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody TenancyType createTenancy(@Valid @RequestBody TenancyType tenancyType) throws ServiceException {
         return mapper.map(mngTenancyService.createTenancy(mapper.map(tenancyType, Tenancy.class)), TenancyType.class);
@@ -63,6 +65,7 @@ public class MngTenanciesAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @RequestMapping(value = "{idOrName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody TenancyType getTenancyByIdOrName(@PathVariable(value = "idOrName") String idOrName) throws ServiceException {
         return mapper.map(isNumber(idOrName) ? mngTenancyService.getTenancyById(Long.valueOf(idOrName)) : mngTenancyService.getTenancyByName(idOrName), TenancyType.class);
@@ -83,6 +86,7 @@ public class MngTenanciesAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody TenancyType updateTenancy(@Valid @RequestBody TenancyType tenancyType) throws ServiceException {
         return mapper.map(mngTenancyService.updateTenancy(mapper.map(tenancyType, Tenancy.class)), TenancyType.class);
@@ -93,6 +97,7 @@ public class MngTenanciesAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @RequestMapping(value = "{idOrName}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteTenancyByIdOrName(@PathVariable(value = "idOrName") String idOrName) throws ServiceException {
         if(isNumber(idOrName)) {

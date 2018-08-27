@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.qaprosoft.zafira.models.db.management.Tenancy;
 
 /**
  * TenancyDataSourceWrapper - initializes schema according to current tenant.
@@ -38,7 +39,7 @@ public class TenancyDataSourceWrapper {
 			@Override
 			protected Connection getConnection(ComboPooledDataSource delegate) throws SQLException {
 				Connection connection = delegate.getConnection();
-				String schema = delegate.getIdentityToken().equals("management") ? "management" : TenancyContext.getTenantName();
+				String schema = getSchema(delegate);
 				connection.prepareStatement(String.format(SET_SEARCH_PATH_SQL, schema)).execute();
 				return connection;
 			}
@@ -47,5 +48,10 @@ public class TenancyDataSourceWrapper {
 
 	public DataSource getDataSource() {
 		return this.dataSource;
+	}
+
+	private static String getSchema(ComboPooledDataSource delegate) {
+		return delegate.getIdentityToken().equals(Tenancy.getManagementSchema()) || TenancyContext.getTenantName().equals(Tenancy.getManagementSchema()) ?
+				Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 	}
 }

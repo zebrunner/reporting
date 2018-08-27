@@ -15,10 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.qaprosoft.zafira.models.db.application.Permission;
 import org.apache.log4j.Logger;
@@ -97,6 +94,10 @@ public class GroupService
 			Collections.sort(group.getUsers());
 		}
 		return groupList;
+	}
+
+	public static List<Role> getRoles() {
+		return Arrays.asList(Role.values());
 	}
 
 	@Transactional(readOnly = true)

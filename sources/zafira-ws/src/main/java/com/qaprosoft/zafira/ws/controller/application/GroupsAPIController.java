@@ -109,7 +109,7 @@ public class GroupsAPIController extends AbstractController {
     @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Group.Role> getRoles() throws ServiceException
     {
-        return Arrays.asList(Group.Role.values());
+        return GroupService.getRoles();
     }
 
     @ResponseStatusDetails

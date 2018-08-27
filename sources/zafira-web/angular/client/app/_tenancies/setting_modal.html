@@ -1,0 +1,38 @@
+<md-dialog flex="50" aria-label="Tenancy settings" zafira-background-theme="modal">
+    <form class="form-validation" name="tenancy_form" ng-submit="UtilService.untouchForm(tenancy_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle"><span ng-if="! tenancy.id">Create</span><span ng-if="tenancy.id">Edit</span> tenancy</h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Name</label>
+                        <input id="name" type="text" ng-model="tenancy.name" name="name"/>
+                        <div ng-messages="tenancy_form.name.$error">
+                            <div ng-message="validationError">
+                                {{ tenancy_form.name.errorMessage }}
+                            </div>
+                        </div>
+                    </md-input-container>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button ng-click="createTenancy(tenancy, tenancy_form)" ng-if="! tenancy.id" id="create" class="md-raised btn-w-md md-primary">
+                Create
+            </md-button>
+            <md-button ng-click="updateTenancy(tenancy, tenancy_form)" ng-if="tenancy.id" id="edit" class="md-raised btn-w-md md-primary">
+                Edit
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

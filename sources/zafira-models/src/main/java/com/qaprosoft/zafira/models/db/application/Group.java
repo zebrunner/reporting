@@ -43,7 +43,7 @@ public class Group extends AbstractEntity
 	
 	public enum Role
 	{
-		ROLE_USER, ROLE_ADMIN
+		ROLE_USER, ROLE_ADMIN, ROLE_SUPERADMIN
 	}
 
 	public String getName()

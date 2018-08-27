@@ -65,7 +65,7 @@ public class UserService {
 
     @PostConstruct
     public void init() {
-        if (!StringUtils.isEmpty(adminUsername) && !StringUtils.isEmpty(adminPassword)) {
+        if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
             tenancyService.iterateItems(tenancy -> {
                 try {
                     User user = getUserByUsername(adminUsername);
@@ -82,7 +82,7 @@ public class UserService {
                         userPreferenceService.createDefaultUserPreferences(user.getId());
                     }
                 } catch (Exception e) {
-                    LOGGER.error("Unable to init admin: " + e.getMessage());
+                    LOGGER.error("Unable to init admin: " + e.getMessage(), e);
                 }
             });
         }

@@ -20,6 +20,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.management.Tenancy;
+import com.qaprosoft.zafira.services.services.auth.VarUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +75,9 @@ public class AuthAPIController extends AbstractController {
 	private UserService userService;
 
 	@Autowired
+	private VarUserService varUserService;
+
+	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
@@ -102,14 +107,14 @@ public class AuthAPIController extends AbstractController {
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			User user = userService.getUserByUsername(credentials.getUsername());
+			User user = varUserService.getUserByUsername(credentials.getUsername());
 
-			final String tenant = TenancyContext.getTenantName();
+			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 
 			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
 
-			userService.updateLastLoginDate(user.getId());
+			varUserService.updateLastLoginDate(user.getId());
 		} catch (Exception e) {
 			throw new BadCredentialsException(e.getMessage());
 		}
@@ -137,7 +142,7 @@ public class AuthAPIController extends AbstractController {
 		try {
 			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
 
-			User user = userService.getUserById(jwtUser.getId());
+			User user = varUserService.getUserById(jwtUser.getId());
 			if (user == null) {
 				throw new UserNotFoundException();
 			}
@@ -158,7 +163,7 @@ public class AuthAPIController extends AbstractController {
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(),
 					TenancyContext.getTenantName());
 
-			userService.updateLastLoginDate(user.getId());
+			varUserService.updateLastLoginDate(user.getId());
 		} catch (Exception e) {
 			throw new ForbiddenOperationException(e);
 		}
