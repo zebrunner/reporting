@@ -40,7 +40,7 @@ public class GroupService
 	@Autowired
 	private GroupMapper groupMapper;
 
-	@CachePut(value = "groups", key = "#group.id")
+	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
 	@Transactional(rollbackFor = Exception.class)
 	public Group createGroup(Group group) throws ServiceException
 	{
@@ -74,7 +74,7 @@ public class GroupService
 	}
 
 	@Transactional(readOnly = true)
-	@Cacheable(value = "groups", key = "#id")
+	@Cacheable(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
 	public Group getGroupById(long id)
 	{
 		return groupMapper.getGroupById(id);
@@ -107,7 +107,7 @@ public class GroupService
 		return groupMapper.getGroupsCount();
 	}
 
-	@CachePut(value = "groups", key = "#group.id")
+	@CachePut(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #group.id")
 	@Transactional(rollbackFor = Exception.class)
 	public Group updateGroup(Group group) throws ServiceException
 	{
@@ -116,7 +116,7 @@ public class GroupService
 		return group;
 	}
 
-	@CacheEvict(value = "groups", key = "#id")
+	@CacheEvict(value = "groups", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteGroup(long id) throws ServiceException
 	{

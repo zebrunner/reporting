@@ -155,6 +155,8 @@
 	<bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
 		<constructor-arg name="redisOperations" ref="redisTemplate"/>
 		<property name="usePrefix" value="true"/>
+		<property name="defaultExpiration" value="43200"/>
+		<property name="transactionAware" value="true"/>
 		<property name="cacheNames">
 			<list>
 				<value>projects</value>
