@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular
@@ -19,12 +19,12 @@
         return service;
 
         function ping() {
-            return $q(function (resolve, reject) {
-                getInstance().then(function (esInstance) {
+            return $q(function(resolve, reject) {
+                getInstance().then(function(esInstance) {
                     esInstance.ping({
                         requestTimeout: 30000
-                    }, function (error) {
-                        resolve(! error);
+                    }, function(error) {
+                        resolve(!error);
                     });
                 });
             });
@@ -32,30 +32,27 @@
 
         function doAction(action, func, index, searchField, from, size, fromTime, query) {
             var body = {};
-            switch(action) {
+            switch (action) {
                 case 'SEARCH':
                     body = {
-                        sort: [
-                            {
-                                '@timestamp': {
-                                    order: "asc"
-                                }
+                        sort: [{
+                            '@timestamp': {
+                                order: "asc"
                             }
-                        ],
+                        }],
                         size: size,
                         from: from
                     };
                 case 'COUNT':
                     body.query = {
                         bool: {
-                            must: [
-                                {
+                            must: [{
                                     term: searchField
                                 },
                                 {
                                     range: {
-                                        '@timestamp':{
-                                            gte:fromTime
+                                        '@timestamp': {
+                                            gte: fromTime
                                         }
                                     }
                                 }
@@ -67,7 +64,7 @@
                     body = {
                         index: index,
                         query: {
-                            term : searchField
+                            term: searchField
                         }
                     };
                     break;
@@ -85,10 +82,10 @@
         };
 
         function search(index, searchField, from, page, size, fromTime, query) {
-            return $q(function (resolve, reject) {
-                doAction('SEARCH', function (params) {
-                    getInstance().then(function (esInstance) {
-                        esInstance.search(params, function (err, res) {
+            return $q(function(resolve, reject) {
+                doAction('SEARCH', function(params) {
+                    getInstance().then(function(esInstance) {
+                        esInstance.search(params, function(err, res) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -101,10 +98,10 @@
         };
 
         function count(index, searchField, fromTime, query) {
-            return $q(function (resolve, reject) {
-                doAction('COUNT', function (params) {
-                    getInstance().then(function (esInstance) {
-                        esInstance.count(params, function (err, res) {
+            return $q(function(resolve, reject) {
+                doAction('COUNT', function(params) {
+                    getInstance().then(function(esInstance) {
+                        esInstance.count(params, function(err, res) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -117,10 +114,10 @@
         };
 
         function isExists(index, searchField) {
-            return $q(function (resolve, reject) {
-                doAction('EXISTS', function (params) {
-                    getInstance().then(function (esInstance) {
-                        esInstance.indices.exists(params.body, function (err, res) {
+            return $q(function(resolve, reject) {
+                doAction('EXISTS', function(params) {
+                    getInstance().then(function(esInstance) {
+                        esInstance.indices.exists(params.body, function(err, res) {
                             if (err) {
                                 reject(err);
                             } else {
@@ -133,13 +130,13 @@
         };
 
         function getInstance() {
-            return $q(function (resolve, reject) {
-                if(instance) {
+            return $q(function(resolve, reject) {
+                if (instance) {
                     resolve(instance);
                 } else {
-                    prepareData().then(function (rs) {
+                    prepareData().then(function(rs) {
                         resolve(rs);
-                    }, function (rs) {
+                    }, function(rs) {
                         alertify.error(rs.errorMessage);
                         reject();
                     });
@@ -148,22 +145,24 @@
         };
 
         function prepareData() {
-            return $q(function (resolve, reject) {
-                SettingsService.getSettingByTool('ELASTICSEARCH').then(function (settingsRs) {
-                    if(settingsRs.success) {
-                        var url = settingsRs.data.find(function (element, index, array) {
+            return $q(function(resolve, reject) {
+                SettingsService.getSettingByTool('ELASTICSEARCH').then(function(settingsRs) {
+                    if (settingsRs.success) {
+                        var url = settingsRs.data.find(function(element, index, array) {
                             return element.name.toLowerCase() == 'url';
                         });
-                        var user = settingsRs.data.find(function (element, index, array) {
+                        var user = settingsRs.data.find(function(element, index, array) {
                             return element.name.toLowerCase() == 'user';
                         });
-                        var password = settingsRs.data.find(function (element, index, array) {
+                        var password = settingsRs.data.find(function(element, index, array) {
                             return element.name.toLowerCase() == 'password';
                         });
-                        if(url && url.value) {
+                        if (url && url.value) {
                             resolve(createInstance(url.value, user, password));
                         } else {
-                            reject({errorMessage: 'Cannot initialize elasticsearch url'});
+                            reject({
+                                errorMessage: 'Cannot initialize elasticsearch url'
+                            });
                         }
                     }
                 });
@@ -171,22 +170,29 @@
         };
 
         function createInstance(url, user, password) {
-            var protocol = url.split('://')[0];
-            var host = url.split('://')[1].split(':')[0];
-            var port = url.split(':')[2].match('\\d+')[0];
-            return esFactory({
-                host:[
-                    {
+            if (user && user.value && password && password.value) {
+                var protocol = url.split('://')[0];
+                var host = url.split('://')[1].split(':')[0];
+                var port = url.split(':')[2].match('\\d+')[0];
+                return esFactory({
+                    host: [{
                         protocol: protocol,
                         host: host,
                         port: port,
-                        auth: user && user.value && password && password.value ? user.value + ':' + password.value : undefined
+                        auth: user.value + ':' + password.value
+                    }],
+                    ssl: {
+                        rejectUnauthorized: false
                     }
-                ],
-                ssl: {
-                    rejectUnauthorized: false
-                }
-            });
+                });
+            } else {
+                return esFactory({
+                    host: url,
+                    ssl: {
+                        rejectUnauthorized: false
+                    }
+                });
+            }
         };
     }
 })();
