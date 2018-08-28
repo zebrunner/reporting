@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.services.services.management;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngUserMapper;
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import org.apache.commons.lang.StringUtils;

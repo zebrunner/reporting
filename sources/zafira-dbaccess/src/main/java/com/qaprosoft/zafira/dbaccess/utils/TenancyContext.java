@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.utils;
 
-import com.qaprosoft.zafira.models.db.management.Tenancy;
+import com.qaprosoft.zafira.models.db.Tenancy;
 
 /**
  * TenancyContext - stores client tenant ID.

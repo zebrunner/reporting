@@ -16,14 +16,14 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper;
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.db.application.Permission.Name;
+import static com.qaprosoft.zafira.models.db.Permission.Name;
 
 @Service
 public class PermissionService

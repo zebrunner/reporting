@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.db.management.Tenancy;
-import com.qaprosoft.zafira.models.dto.management.TenancyType;
+import com.qaprosoft.zafira.models.db.Tenancy;
+import com.qaprosoft.zafira.models.dto.TenancyType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.management.MngTenancyService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;

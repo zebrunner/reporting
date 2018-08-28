@@ -16,10 +16,10 @@
 package com.qaprosoft.zafira.services.services.application.jmx.google.models;
 
 import com.google.api.services.sheets.v4.model.*;
-import com.qaprosoft.zafira.models.db.application.Test;
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.db.application.config.Argument;
-import com.qaprosoft.zafira.models.db.application.config.Configuration;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.services.services.application.TestService;

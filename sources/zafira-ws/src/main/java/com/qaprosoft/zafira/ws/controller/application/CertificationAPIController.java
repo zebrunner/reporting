@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.db.application.config.Argument;
-import com.qaprosoft.zafira.models.dto.application.CertificationType;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.dto.CertificationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TestConfigService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;

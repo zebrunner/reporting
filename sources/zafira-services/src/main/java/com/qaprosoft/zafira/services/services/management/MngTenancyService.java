@@ -2,7 +2,7 @@ package com.qaprosoft.zafira.services.services.management;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngTenancyMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.management.Tenancy;
+import com.qaprosoft.zafira.models.db.Tenancy;
 import com.qaprosoft.zafira.services.exceptions.EntityIsAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.EntityIsNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;

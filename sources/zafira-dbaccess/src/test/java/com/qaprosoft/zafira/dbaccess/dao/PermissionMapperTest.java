@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.dao;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.PermissionMapper;
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;

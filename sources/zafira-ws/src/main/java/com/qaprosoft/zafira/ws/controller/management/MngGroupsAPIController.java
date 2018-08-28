@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.dto.management.GroupType;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.dto.GroupType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.management.MngGroupService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;

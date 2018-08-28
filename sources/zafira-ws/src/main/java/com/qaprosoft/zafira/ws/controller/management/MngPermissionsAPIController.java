@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.dto.management.PermissionType;
+import com.qaprosoft.zafira.models.dto.PermissionType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.management.MngPermissionService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;

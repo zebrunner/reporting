@@ -16,8 +16,8 @@
 package com.qaprosoft.zafira.services.services.management;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper;
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import com.qaprosoft.zafira.models.db.application.Setting.Tool;
+import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.services.application.jmx.models.AbstractType;
 
 public interface IJMXService<T extends AbstractType> {

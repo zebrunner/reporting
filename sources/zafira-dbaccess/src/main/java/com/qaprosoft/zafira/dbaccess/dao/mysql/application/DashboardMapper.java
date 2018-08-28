@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import com.qaprosoft.zafira.models.db.application.Attribute;
-import com.qaprosoft.zafira.models.db.application.Dashboard;
-import com.qaprosoft.zafira.models.db.application.Widget;
+import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Widget;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

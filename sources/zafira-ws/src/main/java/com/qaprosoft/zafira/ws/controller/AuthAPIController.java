@@ -20,8 +20,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.management.Tenancy;
-import com.qaprosoft.zafira.services.services.auth.VarUserService;
+import com.qaprosoft.zafira.models.db.Tenancy;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +41,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.auth.TenantType;
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -68,14 +67,12 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin
 @RequestMapping("api/auth")
 public class AuthAPIController extends AbstractController {
+
 	@Autowired
 	private JWTService jwtService;
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private VarUserService varUserService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -107,14 +104,14 @@ public class AuthAPIController extends AbstractController {
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			User user = varUserService.getUserByUsername(credentials.getUsername());
+			User user = userService.getUserByUsername(credentials.getUsername());
 
 			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 
 			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);
 
-			varUserService.updateLastLoginDate(user.getId());
+			userService.updateLastLoginDate(user.getId());
 		} catch (Exception e) {
 			throw new BadCredentialsException(e.getMessage());
 		}
@@ -142,7 +139,7 @@ public class AuthAPIController extends AbstractController {
 		try {
 			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
 
-			User user = varUserService.getUserById(jwtUser.getId());
+			User user = userService.getUserById(jwtUser.getId());
 			if (user == null) {
 				throw new UserNotFoundException();
 			}
@@ -163,7 +160,7 @@ public class AuthAPIController extends AbstractController {
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(),
 					TenancyContext.getTenantName());
 
-			varUserService.updateLastLoginDate(user.getId());
+			userService.updateLastLoginDate(user.getId());
 		} catch (Exception e) {
 			throw new ForbiddenOperationException(e);
 		}

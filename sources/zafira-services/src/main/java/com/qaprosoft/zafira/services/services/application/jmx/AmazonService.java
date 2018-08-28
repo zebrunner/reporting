@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.AMAZON;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -48,9 +48,9 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
-import com.qaprosoft.zafira.models.db.application.Setting;
-import com.qaprosoft.zafira.models.dto.application.aws.FileUploadType;
-import com.qaprosoft.zafira.models.dto.application.aws.SessionCredentials;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;

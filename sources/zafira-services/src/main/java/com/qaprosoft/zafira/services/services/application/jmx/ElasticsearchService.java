@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

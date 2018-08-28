@@ -40,7 +40,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.listener.ZafiraListener;
-import com.qaprosoft.zafira.models.dto.application.TestType;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;

@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.MARK_AS_BLOCKER;
-import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
-import static com.qaprosoft.zafira.models.dto.application.TestRunStatistics.Action.REMOVE_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_BLOCKER;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
+import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,16 +42,16 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.db.application.Test;
-import com.qaprosoft.zafira.models.db.application.TestArtifact;
-import com.qaprosoft.zafira.models.db.application.TestCase;
-import com.qaprosoft.zafira.models.db.application.TestConfig;
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.db.application.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.db.application.WorkItem;
-import com.qaprosoft.zafira.models.db.application.WorkItem.Type;
-import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestArtifact;
+import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.db.TestConfig;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.db.WorkItem;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;

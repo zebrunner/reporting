@@ -91,7 +91,7 @@
 		<include refid="deleteTestMetric" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.application.TestMetric" id="TestMetricResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestMetric" id="TestMetricResultMap" autoMapping="false">
 		<id column="TEST_METRIC_ID" property="id" />
 		<result column="TEST_METRIC_OPERATION" property="operation" />
 		<result column="TEST_METRIC_ELAPSED" property="elapsed" />

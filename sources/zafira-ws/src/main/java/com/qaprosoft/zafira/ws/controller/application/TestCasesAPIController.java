@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.application.TestMetric;
+import com.qaprosoft.zafira.models.db.TestMetric;
 import com.qaprosoft.zafira.services.services.application.TestMetricService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.lang3.ArrayUtils;
@@ -35,9 +35,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Project;
-import com.qaprosoft.zafira.models.db.application.TestCase;
-import com.qaprosoft.zafira.models.dto.application.TestCaseType;
+import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.db.TestCase;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.services.services.application.TestCaseService;

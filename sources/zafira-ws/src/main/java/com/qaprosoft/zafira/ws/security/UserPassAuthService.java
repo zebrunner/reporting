@@ -15,21 +15,21 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security;
 
-import com.qaprosoft.zafira.services.services.auth.VarUserService;
+import com.qaprosoft.zafira.services.services.application.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 
 @Component
 public class UserPassAuthService implements UserDetailsService
 {
 	@Autowired
-	private VarUserService varUserService;
+	private UserService userService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
@@ -37,7 +37,7 @@ public class UserPassAuthService implements UserDetailsService
 		User user = null;
 		try
 		{
-			user = varUserService.getUserByUsername(username);
+			user = userService.getUserByUsername(username);
 			if (user == null)
 			{
 				throw new Exception("Invalid user name " + username);

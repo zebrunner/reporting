@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.ldap;
 
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
@@ -30,7 +30,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
 
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.LDAP;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
 @ManagedResource(objectName="bean:name=ldapService", description="Ldap init Managed Bean",
         currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)

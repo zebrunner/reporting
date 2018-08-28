@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.db.application.User;
-import com.qaprosoft.zafira.models.dto.application.user.PasswordType;
-import com.qaprosoft.zafira.models.dto.management.UserType;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.user.PasswordType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.management.MngUserService;

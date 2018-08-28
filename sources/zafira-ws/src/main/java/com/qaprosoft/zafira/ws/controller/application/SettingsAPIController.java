@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.models.dto.application.aws.SessionCredentials;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.lang3.StringUtils;
@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.application.Setting;
-import com.qaprosoft.zafira.models.db.application.Setting.Tool;
-import com.qaprosoft.zafira.models.dto.application.ConnectedToolType;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.dto.ConnectedToolType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;

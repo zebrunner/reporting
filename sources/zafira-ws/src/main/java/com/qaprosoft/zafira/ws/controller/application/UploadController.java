@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import com.qaprosoft.zafira.models.dto.application.aws.FileUploadType;
+import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static com.qaprosoft.zafira.models.dto.application.aws.FileUploadType.Type;
+import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 
 @Api(value = "Upload files API")
 @Controller
