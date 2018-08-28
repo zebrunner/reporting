@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
@@ -148,7 +149,7 @@ public class TestRunStatisticsCacheTest extends AbstractServiceTest<TestRunStati
 
 	private void verifyCacheValues(TestRunStatistics trs)
 	{
-		TestRunStatistics testRunStatistics = getCachedValue(trs.getTestRunId());
+		TestRunStatistics testRunStatistics = getCachedValue(TenancyContext.getTenantName() + ":" + trs.getTestRunId());
 		Assert.assertNotNull(testRunStatistics, "Test run statistics cache does not exist");
 
 		Assert.assertEquals(testRunStatistics.getPassed(), trs.getPassed(), "Passed count is not actual");
