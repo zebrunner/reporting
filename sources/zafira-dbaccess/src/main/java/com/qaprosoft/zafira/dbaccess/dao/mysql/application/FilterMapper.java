@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
-import com.qaprosoft.zafira.models.db.application.Filter;
+import com.qaprosoft.zafira.models.db.Filter;
 
 import java.util.List;
 

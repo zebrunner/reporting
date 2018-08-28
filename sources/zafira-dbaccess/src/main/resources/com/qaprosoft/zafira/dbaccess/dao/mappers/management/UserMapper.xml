@@ -143,7 +143,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.management.User" id="UserResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.User" id="UserResultMap" autoMapping="false">
 		<id column="USER_ID" property="id" />
 		<result column="USER_USERNAME" property="username" />
 		<result column="USER_PASSWORD" property="password" />
@@ -154,7 +154,7 @@
 		<result column="USER_LAST_LOGIN" property="lastLogin" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />
 		<result column="USER_CREATED_AT" property="createdAt" />
-		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.application.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper.GroupResultMap"/>
+		<collection property="groups" ofType="com.qaprosoft.zafira.models.db.Group" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngGroupMapper.GroupResultMap"/>
 	</resultMap>
 
 	<insert id="addUserToGroup">

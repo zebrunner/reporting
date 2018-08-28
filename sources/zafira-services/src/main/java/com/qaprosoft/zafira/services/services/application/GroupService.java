@@ -15,12 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -30,8 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.GroupMapper;
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.Group.Role;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service
@@ -97,6 +95,10 @@ public class GroupService
 			Collections.sort(group.getUsers());
 		}
 		return groupList;
+	}
+
+	public static List<Role> getRoles() {
+		return Arrays.stream(Role.values()).filter(role -> ! Arrays.asList(Group.getIgnoredRoles()).contains(role)).collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

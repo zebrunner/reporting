@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.SettingType.JIRA_CLOSED_STATUS;
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.JIRA;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_CLOSED_STATUS;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JIRA;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.models.JiraType;

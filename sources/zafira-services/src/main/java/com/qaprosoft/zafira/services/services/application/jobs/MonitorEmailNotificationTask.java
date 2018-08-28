@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jobs;
 
-import com.qaprosoft.zafira.models.db.application.Monitor;
-import com.qaprosoft.zafira.models.db.application.MonitorStatus;
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
 import com.qaprosoft.zafira.services.services.application.MonitorService;

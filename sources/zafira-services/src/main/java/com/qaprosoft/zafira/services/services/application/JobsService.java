@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.services.services.application;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.JobViewMapper;
-import com.qaprosoft.zafira.models.db.application.Job;
-import com.qaprosoft.zafira.models.db.application.JobView;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.JobView;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

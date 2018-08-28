@@ -1,7 +1,7 @@
 package com.qaprosoft.zafira.tests.services.api.builders;
 
-import com.qaprosoft.zafira.models.dto.application.TestCaseType;
-import com.qaprosoft.zafira.models.dto.application.TestSuiteType;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
+import com.qaprosoft.zafira.models.dto.TestSuiteType;
 
 public class TestCaseTypeBuilder extends AbstractTypeBuilder<TestCaseType>
 {

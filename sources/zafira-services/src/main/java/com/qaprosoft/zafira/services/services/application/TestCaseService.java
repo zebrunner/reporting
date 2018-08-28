@@ -31,8 +31,8 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestCaseMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.db.application.TestCase;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestCase;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 import static com.qaprosoft.zafira.services.util.DateFormatter.*;

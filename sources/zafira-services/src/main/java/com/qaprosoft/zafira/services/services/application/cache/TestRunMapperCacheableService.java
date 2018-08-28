@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.services.services.application.cache;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
-import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

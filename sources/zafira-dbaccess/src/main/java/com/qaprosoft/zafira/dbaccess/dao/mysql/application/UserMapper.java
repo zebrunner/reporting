@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

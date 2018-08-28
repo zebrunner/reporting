@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.management;
 
-import com.qaprosoft.zafira.models.db.management.Tenancy;
+import com.qaprosoft.zafira.models.db.Tenancy;
 
 import java.util.List;
 

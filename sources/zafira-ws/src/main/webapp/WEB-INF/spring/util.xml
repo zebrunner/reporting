@@ -20,21 +20,17 @@
 	<bean id="mapper" class="com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
 		<property name="mappingFiles">
 			<list>
-				<value>dozer/app/Filter-dozer-mapping.xml</value>
-				<value>dozer/app/TestSuite-dozer-mapping.xml</value>
-				<value>dozer/app/TestCase-dozer-mapping.xml</value>
-				<value>dozer/app/Test-dozer-mapping.xml</value>
-				<value>dozer/app/Job-dozer-mapping.xml</value>
-				<value>dozer/app/Monitor-dozer-mapping.xml</value>
-				<value>dozer/app/TestRun-dozer-mapping.xml</value>
-				<value>dozer/app/User-dozer-mapping.xml</value>
-				<value>dozer/app/Project-dozer-mapping.xml</value>
-				<value>dozer/app/TestArtifact-dozer-mapping.xml</value>
-
-				<value>dozer/mng/User-dozer-mapping.xml</value>
-				<value>dozer/mng/Group-dozer-mapping.xml</value>
-				<value>dozer/mng/Permission-dozer-mapping.xml</value>
-				<value>dozer/mng/Tenancy-dozer-mapping.xml</value>
+				<value>dozer/Filter-dozer-mapping.xml</value>
+				<value>dozer/TestSuite-dozer-mapping.xml</value>
+				<value>dozer/TestCase-dozer-mapping.xml</value>
+				<value>dozer/Test-dozer-mapping.xml</value>
+				<value>dozer/Job-dozer-mapping.xml</value>
+				<value>dozer/Monitor-dozer-mapping.xml</value>
+				<value>dozer/TestRun-dozer-mapping.xml</value>
+				<value>dozer/User-dozer-mapping.xml</value>
+				<value>dozer/Project-dozer-mapping.xml</value>
+				<value>dozer/TestArtifact-dozer-mapping.xml</value>
+				<value>dozer/Tenancy-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

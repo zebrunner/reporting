@@ -16,10 +16,10 @@
 
     <div zafira-background-theme="table" class="top-nav" ng-controller="SidebarController">
         <ul class="nav-right pull-right list-unstyled">
-            <li>
+            <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                 <div class="profile-img" style="display: inline-block;" ng-controller="SidebarController">
                     <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
-                    <div has-any-role="['ROLE_ADMIN']">
+                    <div has-any-role="['ROLE_ADMIN', 'ROLE_SUPERADMIN']">
                         <div class="profile-img-content" style="top: 6px; left:12px">
                             <span><i id="brandPhotoSetting" class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
                         </div>
@@ -66,15 +66,15 @@
                             <md-button aria-label="menu" ng-href="#!/users/profile">
                                 <md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item>
+                        <md-menu-item has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                             <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.personalDashboardId}}?userId={{currentUser.id}}">
                                 <md-icon class="material-icons">equalizer</md-icon><span data-translate="PERSONAL"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item>
+                        <md-menu-item has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                           <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}">
                                 <md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']">
+                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']" has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                             <md-button aria-label="menu" ng-href="#!/integrations">
                                 <md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button>
                         </md-menu-item>

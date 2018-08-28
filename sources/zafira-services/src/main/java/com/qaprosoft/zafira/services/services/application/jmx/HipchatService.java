@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.HIPCHAT;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.HIPCHAT;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -29,7 +29,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.models.HipchatType;
 

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.ProjectMapper;
-import com.qaprosoft.zafira.models.db.application.Project;
+import com.qaprosoft.zafira.models.db.Project;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

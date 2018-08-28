@@ -22,10 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.FilterMapper;
-import com.qaprosoft.zafira.models.db.application.Filter;
-import com.qaprosoft.zafira.models.dto.application.filter.FilterType;
-import com.qaprosoft.zafira.models.dto.application.filter.StoredSubject;
-import com.qaprosoft.zafira.models.dto.application.filter.Subject;
+import com.qaprosoft.zafira.models.db.Filter;
+import com.qaprosoft.zafira.models.dto.filter.FilterType;
+import com.qaprosoft.zafira.models.dto.filter.StoredSubject;
+import com.qaprosoft.zafira.models.dto.filter.Subject;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 

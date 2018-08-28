@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.tests.services.api.builders;
 
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 
 public class UserTypeBuilder extends AbstractTypeBuilder<UserType>
 {

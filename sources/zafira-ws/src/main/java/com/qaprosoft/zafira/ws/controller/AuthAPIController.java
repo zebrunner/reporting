@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.Tenancy;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +41,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
 import com.qaprosoft.zafira.models.dto.auth.TenantType;
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -66,6 +67,7 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin
 @RequestMapping("api/auth")
 public class AuthAPIController extends AbstractController {
+
 	@Autowired
 	private JWTService jwtService;
 
@@ -104,7 +106,7 @@ public class AuthAPIController extends AbstractController {
 
 			User user = userService.getUserByUsername(credentials.getUsername());
 
-			final String tenant = TenancyContext.getTenantName();
+			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 
 			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);

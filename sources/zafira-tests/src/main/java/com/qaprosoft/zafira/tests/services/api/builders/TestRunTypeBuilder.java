@@ -6,10 +6,10 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.dto.application.JobType;
-import com.qaprosoft.zafira.models.dto.application.TestRunType;
-import com.qaprosoft.zafira.models.dto.application.TestSuiteType;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestSuiteType;
 
 public class TestRunTypeBuilder extends AbstractTypeBuilder<TestRunType>
 {

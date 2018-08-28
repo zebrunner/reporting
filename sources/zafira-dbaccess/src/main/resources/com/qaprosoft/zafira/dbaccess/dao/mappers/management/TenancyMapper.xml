@@ -80,7 +80,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.management.Tenancy" id="TenancyResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Tenancy" id="TenancyResultMap" autoMapping="false">
 		<id column="TENANCY_ID" property="id" />
 		<result column="TENANCY_NAME" property="name" />
 		<result column="TENANCY_MODIFIED_AT" property="modifiedAt" />

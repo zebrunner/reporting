@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
-import com.qaprosoft.zafira.models.dto.application.monitor.MonitorCheckType;
+import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.Monitor;
-import com.qaprosoft.zafira.models.dto.application.monitor.MonitorType;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.dto.monitor.MonitorType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.MonitorService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;

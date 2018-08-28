@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.models.db.application.Group;
+import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -109,7 +108,7 @@ public class GroupsAPIController extends AbstractController {
     @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Group.Role> getRoles() throws ServiceException
     {
-        return Arrays.asList(Group.Role.values());
+        return GroupService.getRoles();
     }
 
     @ResponseStatusDetails

@@ -363,7 +363,7 @@
 		<include refid="deleteTestCase" />
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.application.TestCase" id="TestCaseResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.TestCase" id="TestCaseResultMap" autoMapping="false">
 		<id column="TEST_CASE_ID" property="id" />
 		<result column="TEST_CASE_PRIMARY_OWNER_ID" property="primaryOwner.id" />
 		<result column="TEST_CASE_SECONDARY_OWNER_ID" property="secondaryOwner.id" />

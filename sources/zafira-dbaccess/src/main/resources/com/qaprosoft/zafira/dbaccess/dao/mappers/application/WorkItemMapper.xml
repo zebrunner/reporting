@@ -163,7 +163,7 @@
 		]]>
 	</delete>
 
-	<resultMap type="com.qaprosoft.zafira.models.db.application.WorkItem" id="WorkItemResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.WorkItem" id="WorkItemResultMap" autoMapping="false">
 		<id column="WORK_ITEM_ID" property="id" />
 		<result column="WORK_ITEM_JIRA_ID" property="jiraId" />
 		<result column="WORK_ITEM_TYPE" property="type" />
@@ -174,7 +174,7 @@
 		<result column="WORK_ITEM_MODIFIED_AT" property="modifiedAt" />
 		<result column="WORK_ITEM_CREATED_AT" property="createdAt" />
 					
-		<association property="user" javaType="com.qaprosoft.zafira.models.db.application.User"
+		<association property="user" javaType="com.qaprosoft.zafira.models.db.User"
 					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper.UserResultMap" />
 	</resultMap>
 

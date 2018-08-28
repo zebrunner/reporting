@@ -41,7 +41,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.qaprosoft.zafira.models.db.application.Attachment;
+import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.util.WebDriverUtil;
 

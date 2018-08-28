@@ -118,16 +118,16 @@
 		]]>
 	</delete>
 	
-	<resultMap type="com.qaprosoft.zafira.models.db.application.Dashboard" id="DashboardResultMap" autoMapping="false">
+	<resultMap type="com.qaprosoft.zafira.models.db.Dashboard" id="DashboardResultMap" autoMapping="false">
         <id column="DASHBOARD_ID" property="id" />
         <result column="DASHBOARD_TITLE" property="title" />
         <result column="DASHBOARD_HIDDEN" property="hidden"/>
         <result column="DASHBOARD_POSITION" property="position"/>
         <result column="DASHBOARD_MODIFIED_AT" property="modifiedAt" />
         <result column="DASHBOARD_CREATED_AT" property="createdAt" />
-        <collection property="widgets" ofType="com.qaprosoft.zafira.models.db.application.Widget"
+        <collection property="widgets" ofType="com.qaprosoft.zafira.models.db.Widget"
                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WidgetMapper.WidgetResultMap"/>
-        <collection property="attributes" ofType="com.qaprosoft.zafira.models.db.application.Attribute"
+        <collection property="attributes" ofType="com.qaprosoft.zafira.models.db.Attribute"
                     resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper.AttributeResultMap"/>
     </resultMap>
     
@@ -253,7 +253,7 @@
         ]]>
     </update>
 
-    <resultMap type="com.qaprosoft.zafira.models.db.application.Attribute" id="AttributeResultMap" autoMapping="false">
+    <resultMap type="com.qaprosoft.zafira.models.db.Attribute" id="AttributeResultMap" autoMapping="false">
         <id column="DASHBOARD_ATTRIBUTE_ID" property="id" />
         <result column="DASHBOARD_ATTRIBUTE_KEY" property="key" />
         <result column="DASHBOARD_ATTRIBUTE_VALUE" property="value"/>

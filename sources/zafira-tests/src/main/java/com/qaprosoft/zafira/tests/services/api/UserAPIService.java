@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
 
 public class UserAPIService extends AbstractAPIService

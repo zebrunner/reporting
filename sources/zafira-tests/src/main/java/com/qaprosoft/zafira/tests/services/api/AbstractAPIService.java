@@ -5,7 +5,7 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 import com.qaprosoft.zafira.client.ZafiraClient;
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.tests.util.Config;
 
 public abstract class AbstractAPIService

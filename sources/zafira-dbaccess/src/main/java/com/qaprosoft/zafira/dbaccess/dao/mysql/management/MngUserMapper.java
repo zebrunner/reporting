@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.management;
 
-import com.qaprosoft.zafira.models.db.management.User;
+import com.qaprosoft.zafira.models.db.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

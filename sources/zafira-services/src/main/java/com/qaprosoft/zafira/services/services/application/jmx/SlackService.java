@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
-import static com.qaprosoft.zafira.models.db.application.Setting.SettingType.SLACK_WEB_HOOK_URL;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_NOTIF_CHANNEL_EXAMPLE;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.SLACK_WEB_HOOK_URL;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +35,8 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
-import com.qaprosoft.zafira.models.db.application.Setting;
-import com.qaprosoft.zafira.models.db.application.TestRun;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;

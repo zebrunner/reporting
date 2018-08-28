@@ -15,15 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security;
 
+import com.qaprosoft.zafira.services.services.application.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.qaprosoft.zafira.models.db.application.User;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
-import com.qaprosoft.zafira.services.services.application.UserService;
 
 @Component
 public class UserPassAuthService implements UserDetailsService

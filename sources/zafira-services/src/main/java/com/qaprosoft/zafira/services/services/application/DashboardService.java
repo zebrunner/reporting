@@ -18,15 +18,15 @@ package com.qaprosoft.zafira.services.services.application;
 import java.util.List;
 import java.util.Map;
 
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.DashboardMapper;
-import com.qaprosoft.zafira.models.db.application.Attribute;
-import com.qaprosoft.zafira.models.db.application.Dashboard;
-import com.qaprosoft.zafira.models.db.application.Widget;
+import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.Dashboard;
+import com.qaprosoft.zafira.models.db.Widget;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 
 @Service

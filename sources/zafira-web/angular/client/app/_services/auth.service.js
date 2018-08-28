@@ -97,12 +97,26 @@
         .directive('hasAnyRole', ['AuthService', function(AuthService) {
             return {
                 restrict: 'A',
+                scope: {
+                    exceptCondition: '@'
+                },
                 link: function(scope, elem, attrs) {
-                    scope.$watch(AuthService.IsLoggedIn, function() {
-                        if (AuthService.UserHasAnyRole(eval(attrs.hasAnyRole))) {
-                            elem.show();
-                        } else {
-                            elem.hide();
+                    scope.$watch(AuthService.IsLoggedIn, function(newVal) {
+                        if(newVal) {
+                            var exceptValue = !!(attrs.exceptCondition && attrs.exceptCondition == 'true');
+                            if(! exceptValue) {
+                                if (AuthService.UserHasAnyRole(eval(attrs.hasAnyRole))) {
+                                    elem.show();
+                                } else {
+                                    elem.hide();
+                                }
+                            } else {
+                                if (AuthService.UserHasAnyRole(eval(attrs.hasAnyRole))) {
+                                    elem.hide()
+                                } else {
+                                    elem.show();
+                                }
+                            }
                         }
                     });
                 }

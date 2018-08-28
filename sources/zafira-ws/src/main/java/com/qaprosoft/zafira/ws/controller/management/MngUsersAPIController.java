@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.db.management.User;
-import com.qaprosoft.zafira.models.dto.application.user.PasswordType;
-import com.qaprosoft.zafira.models.dto.management.UserType;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.dto.user.PasswordType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.management.MngUserService;
@@ -30,10 +30,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -123,7 +121,6 @@ public class MngUsersAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody UserType createUser(@RequestBody @Valid UserType user) throws ServiceException {
         return mapper.map(mngUserService.createUser(mapper.map(user, User.class)), UserType.class);
@@ -134,7 +131,6 @@ public class MngUsersAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException {
         mngUserService.deleteUser(id);
@@ -145,7 +141,6 @@ public class MngUsersAPIController extends AbstractController {
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
-    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody UserType addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException {
         return mapper.map(mngUserService.addUserToGroup(user, id), UserType.class);
@@ -156,7 +151,6 @@ public class MngUsersAPIController extends AbstractController {
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
-    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
     public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId, @PathVariable(value = "userId") long userId)
             throws ServiceException {

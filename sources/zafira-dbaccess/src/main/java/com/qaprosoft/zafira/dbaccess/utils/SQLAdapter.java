@@ -17,7 +17,7 @@ package com.qaprosoft.zafira.dbaccess.utils;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.application.Attribute;
+import com.qaprosoft.zafira.models.db.Attribute;
 
 /**
  * SQLAdapter wraps SQL query and parametarizes it with attributes.
