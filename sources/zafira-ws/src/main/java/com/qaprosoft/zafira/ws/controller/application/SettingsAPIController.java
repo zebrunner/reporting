@@ -135,12 +135,12 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = String.class)
+	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getCompanyLogoURL() throws ServiceException
+	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Setting getCompanyLogoURL() throws ServiceException
 	{
-		return settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL);
+		return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
 	}
 
 	@ResponseStatusDetails

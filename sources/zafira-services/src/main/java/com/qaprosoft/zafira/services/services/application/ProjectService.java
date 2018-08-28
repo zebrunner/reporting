@@ -35,7 +35,7 @@ public class ProjectService
 	@Autowired
 	private ProjectMapper projectMapper;
 
-	@CachePut(value = "projects", key = "#project.name", condition = "#project != null && #project.name != null")
+	@CachePut(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #project.name", condition = "#project != null && #project.name != null")
 	@Transactional(rollbackFor = Exception.class)
 	public Project createProject(Project project) throws ServiceException
 	{
@@ -49,7 +49,7 @@ public class ProjectService
 		return projectMapper.getAllProjects();
 	}
 	
-	@Cacheable(value = "projects", key = "#name", condition = "#name != null")
+	@Cacheable(value = "projects", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #name", condition = "#name != null")
 	@Transactional(readOnly = true)
 	public Project getProjectByName(String name) throws ServiceException
 	{

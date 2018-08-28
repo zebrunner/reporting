@@ -614,7 +614,7 @@ public class TestRunService
 	}
 
 	@Transactional(readOnly = true)
-	@Cacheable(value = "environments", condition = "#result != null && #result.size() != 0")
+	@Cacheable(value = "environments", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #result", condition = "#result != null && #result.size() != 0")
 	public List<String> getEnvironments() throws ServiceException
 	{
 		return testRunMapper.getEnvironments();

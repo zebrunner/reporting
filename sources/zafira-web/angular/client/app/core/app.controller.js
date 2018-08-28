@@ -255,7 +255,8 @@
                             if(rs.success)
                             {
                                 if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
-                                    $rootScope.companyLogo.value = rs.data;
+                                    $rootScope.companyLogo.value = rs.data.value;
+                                    $rootScope.companyLogo.id = rs.data.id;
                                     SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
                                 }
                             }

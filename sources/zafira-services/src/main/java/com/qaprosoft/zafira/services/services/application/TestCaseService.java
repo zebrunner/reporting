@@ -72,7 +72,7 @@ public class TestCaseService
 	}
 	
 	@Transactional(readOnly = true)
-	@Cacheable(value="testCases", key="{ #testClass,  #testMethod }")
+	@Cacheable(value="testCases", key="{ T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testClass,  T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #testMethod }")
 	public TestCase getTestCaseByClassAndMethod(String testClass, String testMethod) throws ServiceException
 	{
 		return testCaseMapper.getTestCaseByClassAndMethod(testClass, testMethod);
