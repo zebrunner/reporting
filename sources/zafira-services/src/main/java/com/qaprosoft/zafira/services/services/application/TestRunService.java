@@ -16,7 +16,11 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.Status.*;
+import static com.qaprosoft.zafira.models.db.Status.ABORTED;
+import static com.qaprosoft.zafira.models.db.Status.FAILED;
+import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
+import static com.qaprosoft.zafira.models.db.Status.PASSED;
+import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import java.io.ByteArrayInputStream;
@@ -40,9 +44,6 @@ import java.util.function.Function;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -60,20 +61,24 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestConfig;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.services.exceptions.IntegrationException;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
+import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
 import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 
@@ -369,43 +374,24 @@ public class TestRunService
 		return testRun;
 	}
 
-	public void initTestRunWithXml(TestRun testRun) {
-
+	public void initTestRunWithXml(TestRun testRun) throws ServiceException
+	{
 		if(!StringUtils.isEmpty(testRun.getConfigXML()))
 		{
-			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
+			TestConfig config = testConfigService.createTestConfigForTestRun(testRun.getConfigXML());
+			testRun.setConfig(config);
+			testRun.setEnv(config.getEnv());
+			testRun.setAppVersion(config.getAppVersion());
+            if (!StringUtils.isEmpty(config.getBrowser()) && !config.getBrowser().equals("*"))
 			{
-				if(!StringUtils.isEmpty(arg.getValue()))
-				{
-					if("env".equals(arg.getKey()))
-					{
-						testRun.setEnv(arg.getValue());
-					}
-					else if("browser".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()))
-					{
-						if(StringUtils.isEmpty(testRun.getPlatform()) || (! StringUtils.isEmpty(testRun.getPlatform())
-								&& ! testRun.getPlatform().equalsIgnoreCase("api")))
-						{
-							testRun.setPlatform(arg.getValue());
-						}
-					}
-					else if("platform".equals(arg.getKey()) && !StringUtils.isEmpty(arg.getValue()) && !arg.getValue().equals("NULL")
-							&& !arg.getValue().equals("*"))
-					{
-						testRun.setPlatform(arg.getValue());
-					}
-					else if("mobile_platform_name".equals(arg.getKey()) && StringUtils.isEmpty(testRun.getPlatform()))
-					{
-						testRun.setPlatform(arg.getValue() );
-					}
-					else if("app_version".equals(arg.getKey()))
-					{
-						testRun.setAppVersion(arg.getValue());
-					}
-				}
+				testRun.setPlatform(config.getBrowser());
+			}
+			else
+			{
+				testRun.setPlatform(config.getPlatform());
 			}
 		}
-	};
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public TestRun abortTestRun(TestRun testRun, String abortCause) throws ServiceException, InterruptedException
@@ -703,7 +689,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Update statistic by {@link TestRunStatistics.Action}
+	 * Update statistic by {@link com.qaprosoft.zafira.models.dto.TestRunStatistics.Action}
 	 * @param testRunId - test run id
 	 * @return new statistics
 	 */
@@ -738,7 +724,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Calculate new statistic by {@link TestRun getStatus}
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
 	 * @param testRunId - test run id
 	 * @param status - new status
 	 * @return new statistics
@@ -759,7 +745,7 @@ public class TestRunService
 	}
 
 	/**
-	 * Calculate new statistic by {@link TestRun getStatus}
+	 * Calculate new statistic by {@link com.qaprosoft.zafira.models.db.TestRun getStatus}
 	 * @param testRunId - test run id
 	 * @param newStatus - new test status
 	 * @param currentStatus - current test status

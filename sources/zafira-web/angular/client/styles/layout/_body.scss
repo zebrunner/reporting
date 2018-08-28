@@ -2003,6 +2003,7 @@ td.settings-cell {
     background-color: rgba(0, 0, 0, 0) !important;
     box-shadow: none;
     .gallery-container {
+        position: relative;
         &_gallery-image {
             max-height: 100vh;
             max-width: 100vw;
@@ -2021,6 +2022,17 @@ td.settings-cell {
                 color: white;
                 height: auto;
                 line-height: 20px;
+            }
+        }
+    }
+    &_thumbnail-container {
+        height: 100px;
+        background-color: rgba(0, 0, 0, 0.5);
+        &_element {
+            display: inline-block;
+            margin: 5px 0 5px 15px;
+            &_image {
+                max-height: 90px;
             }
         }
     }

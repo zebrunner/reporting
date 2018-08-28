@@ -727,7 +727,10 @@
 
                     for (var i = 0; i < data.results.length; i++) {
                         var testRun = data.results[i];
-                        var browserVersion = $scope.splitPlatform(data.results[i].platform);
+                        var browserVersion = splitPlatform(data.results[i].platform);
+                        if(!browserVersion && data.results[i].config && data.results[i].config.browserVersion !== '*') {
+                            browserVersion = data.results[i].config.browserVersion
+                        }
                         testRun.browserVersion = browserVersion;
                         testRun.tests = null;
                         $scope.addTestRun(testRun);
@@ -1404,18 +1407,12 @@
             return count;
         };
 
-        $scope.splitPlatform = function (string) {
-	    if (string == null) {
-		return null;
-	    }
-            var array = string.split(' ');
-            var version = "v." + array[1];
-            if (array.length == 2) {
-                return version;
+        var splitPlatform = function (string) {
+            var version = null;
+            if (string && string.split(' ').length > 1) {
+                version = "v." + string.split(' ')[1]
             }
-            else {
-                return null;
-            }
+            return version
         };
 
         $scope.reset = function () {
