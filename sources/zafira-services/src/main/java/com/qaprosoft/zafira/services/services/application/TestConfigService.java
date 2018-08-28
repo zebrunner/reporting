@@ -95,6 +95,25 @@ public class TestConfigService
 		
 		return config;
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public TestConfig createTestConfigForTestRun(String configXML) throws ServiceException
+	{
+		List<Argument> testRunConfig = readConfigArgs(configXML);
+
+		TestConfig config = new TestConfig().init(testRunConfig);
+
+		TestConfig existingTestConfig = searchTestConfig(config);
+		if(existingTestConfig != null)
+		{
+			config = existingTestConfig;
+		}
+		else
+		{
+			createTestConfig(config);
+		}
+		return config;
+	}
 	
 	@Transactional(readOnly = true)
 	public TestConfig getTestConfigById(long id) throws ServiceException

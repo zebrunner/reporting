@@ -15,13 +15,15 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.models;
 
-import net.rcarz.jiraclient.BasicCredentials;
-import net.rcarz.jiraclient.JiraClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import net.rcarz.jiraclient.BasicCredentials;
+import net.rcarz.jiraclient.JiraClient;
+
+@SuppressWarnings("deprecation")
 public class JiraType extends AbstractType
 {
 

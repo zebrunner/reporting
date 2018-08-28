@@ -50,7 +50,7 @@ public class RabbitMQType extends AbstractType
         });
     }
 
-    public CompletableFuture getConnectionCompletableFuture() {
+    public CompletableFuture<?> getConnectionCompletableFuture() {
         return CompletableFuture.allOf(this.connectionCompletableFuture);
     }
 
