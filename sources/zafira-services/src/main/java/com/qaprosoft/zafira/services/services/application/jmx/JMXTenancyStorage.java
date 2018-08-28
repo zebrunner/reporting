@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.management.MngTenancyService;
 import com.qaprosoft.zafira.services.services.application.jmx.models.AbstractType;

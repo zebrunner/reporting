@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.emails;
 
-import com.qaprosoft.zafira.models.db.application.Setting;
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
@@ -30,7 +30,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import javax.mail.MessagingException;
 import java.util.List;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.EMAIL;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @ManagedResource(objectName = "bean:name=asyncSendEmailTask", description = "Email init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class AsynSendEmailTask implements Runnable, IJMXService<EmailType> {

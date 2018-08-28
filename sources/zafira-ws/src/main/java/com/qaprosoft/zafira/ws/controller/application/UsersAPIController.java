@@ -42,10 +42,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.User;
-import com.qaprosoft.zafira.models.db.application.UserPreference;
-import com.qaprosoft.zafira.models.dto.application.user.PasswordType;
-import com.qaprosoft.zafira.models.dto.application.user.UserType;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.UserPreference;
+import com.qaprosoft.zafira.models.dto.user.PasswordType;
+import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.UserPreferenceService;
 import com.qaprosoft.zafira.services.services.application.UserService;

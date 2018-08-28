@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
-import com.qaprosoft.zafira.models.db.application.Project;
+import com.qaprosoft.zafira.models.db.Project;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;

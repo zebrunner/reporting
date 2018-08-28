@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.management;
 
-import com.qaprosoft.zafira.models.dto.management.PermissionType;
+import com.qaprosoft.zafira.models.dto.PermissionType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.management.MngPermissionService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -25,10 +25,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +49,6 @@ public class MngPermissionsAPIController {
     @ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", code = 200, httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<PermissionType> getAllPermissions() throws ServiceException {
         return mngPermissionService.getAllPermissions().stream().map(permission -> mapper.map(permission, PermissionType.class))

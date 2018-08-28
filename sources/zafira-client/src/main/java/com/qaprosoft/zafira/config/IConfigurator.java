@@ -22,9 +22,9 @@ import java.util.Set;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-import com.qaprosoft.zafira.models.db.application.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.dto.application.TestArtifactType;
-import com.qaprosoft.zafira.models.dto.application.config.ConfigurationType;
+import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
+import com.qaprosoft.zafira.models.dto.config.ConfigurationType;
 
 /**
  * Interface provided to perform better integration with Zafira reporting tool.

@@ -6,10 +6,10 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.dto.application.TestCaseType;
-import com.qaprosoft.zafira.models.dto.application.TestRunType;
-import com.qaprosoft.zafira.models.dto.application.TestType;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestCaseType;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
 
 public class TestTypeBuilder extends AbstractTypeBuilder<TestType>
 {

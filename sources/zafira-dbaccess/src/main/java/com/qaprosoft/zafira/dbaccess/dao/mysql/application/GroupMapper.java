@@ -18,9 +18,9 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 import java.util.List;
 import java.util.Set;
 
-import com.qaprosoft.zafira.models.db.application.Group;
-import com.qaprosoft.zafira.models.db.application.Group.Role;
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Group;
+import com.qaprosoft.zafira.models.db.Group.Role;
+import com.qaprosoft.zafira.models.db.Permission;
 import org.apache.ibatis.annotations.Param;
 
 public interface GroupMapper

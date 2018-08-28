@@ -27,7 +27,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper;
-import com.qaprosoft.zafira.models.db.application.TestArtifact;
+import com.qaprosoft.zafira.models.db.TestArtifact;
 
 @Test
 @ContextConfiguration("classpath:com/qaprosoft/zafira/dbaccess/dbaccess-test.xml")

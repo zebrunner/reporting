@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application.emails;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.application.Attachment;
-import com.qaprosoft.zafira.models.db.application.Monitor;
+import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.Monitor;
 
 public class MonitorEmailMessageNotification implements IEmailMessage
 {

@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.qaprosoft.zafira.services.exceptions.*;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,21 +34,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.application.Permission;
+import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.models.dto.auth.UserGrantedAuthority;
 import com.qaprosoft.zafira.models.dto.errors.AdditionalErrorData;
 import com.qaprosoft.zafira.models.dto.errors.Error;
 import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 import com.qaprosoft.zafira.models.dto.errors.ErrorResponse;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.IntegrationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
-import com.qaprosoft.zafira.services.exceptions.JobNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;
-import com.qaprosoft.zafira.services.exceptions.UnableToRebuildCIJobException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 public abstract class AbstractController
 {
@@ -244,6 +237,26 @@ public abstract class AbstractController
 	{
 		ErrorResponse result = new ErrorResponse();
 		result.setError(new Error(ErrorCode.INTEGRATION_UNAVAILABLE));
+		return result;
+	}
+
+	@ExceptionHandler(EntityIsAlreadyExistsException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleEntityIsAlreadyExistsException(EntityIsAlreadyExistsException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.ENTITY_IS_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
+		return result;
+	}
+
+	@ExceptionHandler(EntityIsNotExistsException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleEntityIsNotExistsException(EntityIsNotExistsException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.ENTITY_IS_NOT_EXISTS, null, e.getMessage()));
 		return result;
 	}
 	

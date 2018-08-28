@@ -1,6 +1,6 @@
 package com.qaprosoft.zafira.tests.services.api.builders;
 
-import com.qaprosoft.zafira.models.dto.application.JobType;
+import com.qaprosoft.zafira.models.dto.JobType;
 
 public class JobTypeBuilder extends AbstractTypeBuilder<JobType>
 {

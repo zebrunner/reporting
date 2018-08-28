@@ -15,10 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.Tool.JENKINS;
-import static com.qaprosoft.zafira.models.dto.application.BuildParameterType.BuildParameterClass.BOOLEAN;
-import static com.qaprosoft.zafira.models.dto.application.BuildParameterType.BuildParameterClass.HIDDEN;
-import static com.qaprosoft.zafira.models.dto.application.BuildParameterType.BuildParameterClass.STRING;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
+import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.BOOLEAN;
+import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.HIDDEN;
+import static com.qaprosoft.zafira.models.dto.BuildParameterType.BuildParameterClass.STRING;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,9 +49,9 @@ import com.offbytwo.jenkins.model.ExtractHeader;
 import com.offbytwo.jenkins.model.FolderJob;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.QueueReference;
-import com.qaprosoft.zafira.models.db.application.Job;
-import com.qaprosoft.zafira.models.db.application.Setting;
-import com.qaprosoft.zafira.models.dto.application.BuildParameterType;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Setting;
+import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.models.JenkinsType;
 

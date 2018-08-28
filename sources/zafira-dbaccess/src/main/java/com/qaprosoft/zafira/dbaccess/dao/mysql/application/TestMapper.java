@@ -17,12 +17,12 @@ package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.Status;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Test;
-import com.qaprosoft.zafira.models.db.application.WorkItem;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.WorkItem;
 
 public interface TestMapper
 {

@@ -15,8 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import static com.qaprosoft.zafira.models.db.application.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.application.Status.*;
+import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
+import static com.qaprosoft.zafira.models.db.Status.*;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import java.io.ByteArrayInputStream;
@@ -62,15 +62,15 @@ import com.google.common.cache.LoadingCache;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Job;
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.db.application.Test;
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.db.application.User;
-import com.qaprosoft.zafira.models.db.application.config.Argument;
-import com.qaprosoft.zafira.models.db.application.config.Configuration;
-import com.qaprosoft.zafira.models.dto.application.QueueTestRunParamsType;
-import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
+import com.qaprosoft.zafira.models.db.Job;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Test;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.InvalidTestRunException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.TestRunNotFoundException;

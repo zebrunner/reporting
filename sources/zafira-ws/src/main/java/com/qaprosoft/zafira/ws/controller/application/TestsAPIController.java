@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.qaprosoft.zafira.models.db.application.*;
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.dozer.Mapper;
@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.WorkItem.Type;
-import com.qaprosoft.zafira.models.dto.application.TestArtifactType;
-import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
-import com.qaprosoft.zafira.models.dto.application.TestType;
+import com.qaprosoft.zafira.models.db.WorkItem.Type;
+import com.qaprosoft.zafira.models.dto.TestArtifactType;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;

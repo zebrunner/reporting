@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.dto.application.TestRunType;
-import com.qaprosoft.zafira.models.dto.application.TestType;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.dto.TestRunType;
+import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.tests.models.TestRunViewType;
 import com.qaprosoft.zafira.tests.services.api.builders.TestRunTypeBuilder;
 

@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.qaprosoft.zafira.models.db.application.View;
-import com.qaprosoft.zafira.models.dto.application.ViewType;
+import com.qaprosoft.zafira.models.db.View;
+import com.qaprosoft.zafira.models.dto.ViewType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ViewService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;

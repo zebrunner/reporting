@@ -19,13 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
-import com.qaprosoft.zafira.models.dto.application.TestRunStatistics;
+import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.application.Status;
-import com.qaprosoft.zafira.models.db.application.TestRun;
-import com.qaprosoft.zafira.models.db.application.config.Argument;
+import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 
 
 public interface TestRunMapper

@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.Status;
 
 public class TestRunSearchCriteria extends SearchCriteria implements DateSearchCriteria
 {

@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.qaprosoft.zafira.models.db.application.Status;
+import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.tests.gui.components.menus.TestArtifactMenu;
 import com.qaprosoft.zafira.tests.gui.components.modals.testrun.TestDetailsModalWindow;
 
