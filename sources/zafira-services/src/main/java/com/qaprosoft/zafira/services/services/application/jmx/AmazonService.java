@@ -171,16 +171,16 @@ public class AmazonService implements IJMXService<AmazonType> {
             PutObjectRequest putRequest = new PutObjectRequest(getAmazonType().getS3Bucket(), key, stream, metadata);
             getAmazonType().getAmazonS3().putObject(putRequest);
             getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key,
-                    CannedAccessControlList.PublicRead);
+                    CannedAccessControlList.Private);
 
-            request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key);
+            request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withMethod(HttpMethod.GET);
 
         } catch (IOException e) {
             throw new AWSException("Can't save file to Amazone", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString().split("\\?")[0];
+        return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString();
     }
 
     public void removeFile(final String linkToFile) throws ServiceException {
