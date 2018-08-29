@@ -287,7 +287,7 @@
                             .then(function (prs) {
                                 if(prs.success)
                                 {
-                                    $rootScope.companyLogo.value += '?' + (new Date()).getTime();
+                                   //$rootScope.companyLogo.value += '?' + (new Date()).getTime();
                                     alertify.success("Photo was uploaded");
                                     $scope.hide();
                                 } else {

@@ -221,7 +221,7 @@
                     if(rs.success)
                     {
                         $scope.user.photoURL = rs.data.url;
-                        $rootScope.currentUser.photoURL = rs.data.url + '?' + (new Date()).getTime();
+                        //$rootScope.currentUser.photoURL = rs.data.url + '?' + (new Date()).getTime();
                         delete $scope.user.preferences;
                         UserService.updateUserProfile($scope.user)
                             .then(function (prs) {
