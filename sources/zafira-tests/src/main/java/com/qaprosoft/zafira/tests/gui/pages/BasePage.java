@@ -2,6 +2,7 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,6 +33,9 @@ public abstract class BasePage extends AbstractPage
 	@FindBy(id = "nav-container")
 	private Navbar navbar;
 
+	@FindBy(xpath = "//p[text()='Invalid credentials']")
+	private WebElement invalidCredentialsBlock;
+
 	public BasePage(WebDriver driver, String path)
 	{
 		super(driver, path);
@@ -51,10 +55,20 @@ public abstract class BasePage extends AbstractPage
 	{
 		LOGGER.info("Wait until page is loading");
 		if(!isElementPresent(header.getZafiraLogo(), IMPLICITLY_TIMEOUT)){
-			Assert.fail("Zafira is not loaded for " + IMPLICITLY_TIMEOUT + " seconds" );
+			Assert.fail(String.format("Zafira is not loaded for %s seconds. Because '%s'", IMPLICITLY_TIMEOUT, getIsNotPageLoadedCause()));
 		}
 		return isElementPresent(header.getLoadingBarSpinner(), 1) &&
 				waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), seconds);
+	}
+
+	public String getIsNotPageLoadedCause() {
+		String cause = "";
+		if(invalidCredentialsBlock.isDisplayed()) {
+			cause = "invalid credentials";
+		} else if(isElementPresent(header.getLoadingBarSpinner(), 2) && waitUntilElementIsNotPresent(header.getLoadingBarSpinner(), 2)) {
+			cause = "'request timeout  is expired'";
+		}
+		return cause;
 	}
 
     public boolean waitUntilLoadingContainerDisappears (long seconds){
