@@ -63,7 +63,7 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 			dc = DesiredCapabilities.safari();
 		}
 		driver = new RemoteWebDriver(new URL(Config.get("selenium_host")), dc);
-		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(25, TimeUnit.SECONDS);
 	}
 	
 	@AfterMethod
