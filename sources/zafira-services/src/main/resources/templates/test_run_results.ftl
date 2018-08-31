@@ -146,9 +146,8 @@
             <tr>
                 <th width="10%" align="center">Result</th>
                 <th width="60%" align="center">Test name</th>
-                <#--<th width="10%" align="center">Info</th>-->
                 <th width="10%" align="center">Jira</th>
-                <th width="10%" align="center">Test files</th>
+                <th width="10%" align="center">Test info</th>
             </tr>
             <#assign testList = tests?sort_by("id")>
             <#list testList?sort_by("notNullTestGroup") as test>
@@ -223,7 +222,7 @@
 	                    </td>
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
                             <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
-                                <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}/info/${test.id?c}">Details</a>
+                                <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}/info/${test.id?c}" style='color: white;'>Logs</a>
                             </#if>
                         </td>
 	            	</tr>
