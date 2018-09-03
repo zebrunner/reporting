@@ -17,9 +17,12 @@ package com.qaprosoft.zafira.services.services.application.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,6 +40,10 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.internal.SdkBufferedInputStream;
+import com.amazonaws.services.cloudfront.CloudFrontCookieSigner;
+import com.amazonaws.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
+import com.amazonaws.services.cloudfront.CloudFrontCookieSigner.CookiesForCustomPolicy;
+import com.amazonaws.services.cloudfront.util.SignerUtils.Protocol;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -48,6 +55,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
+import com.amazonaws.util.DateUtils;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
@@ -171,7 +179,7 @@ public class AmazonService implements IJMXService<AmazonType> {
             PutObjectRequest putRequest = new PutObjectRequest(getAmazonType().getS3Bucket(), key, stream, metadata);
             getAmazonType().getAmazonS3().putObject(putRequest);
             getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key,
-                    CannedAccessControlList.Private);
+                    CannedAccessControlList.PublicRead);
 
             request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withMethod(HttpMethod.GET);
 
@@ -237,4 +245,21 @@ public class AmazonService implements IJMXService<AmazonType> {
     public AmazonType getAmazonType() {
         return getType(AMAZON);
     }
+    
+//    public static void main(String[] args) throws InvalidKeySpecException, IOException {
+//        Protocol protocol = Protocol.https;
+//        String distributionDomain = "storage.qaprosoft.cloud";
+//        File privateKeyFile = new File("/Users/akhursevich/tools/aws.der");
+//        String s3ObjectKey = "ua/**/*.png";
+//        String keyPairId = "";
+//        Date expiresOn = DateUtils.parseISO8601Date("2020-11-14T22:20:00.000Z");
+//        
+////        CookiesForCannedPolicy cookie1 = CloudFrontCookieSigner.getCookiesForCannedPolicy(
+////                             protocol, distributionDomain, privateKeyFile, s3ObjectKey,
+////                             keyPairId, expiresOn);
+//        
+//        CookiesForCustomPolicy cookies2 = CloudFrontCookieSigner.getCookiesForCustomPolicy(
+//                protocol, distributionDomain, privateKeyFile, s3ObjectKey, keyPairId, expiresOn, null, null);
+//        System.out.println();
+//    }
 }

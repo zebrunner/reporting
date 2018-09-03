@@ -216,13 +216,17 @@
 		<dependency>
 		  	<groupId>com.amazonaws</groupId>
 		  	<artifactId>aws-java-sdk</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.amazonaws</groupId>
-					<artifactId>aws-java-sdk-simpleworkflow</artifactId>
-				</exclusion>
-			</exclusions>
-	  	</dependency>
+				<exclusions>
+					<exclusion>
+						<groupId>com.amazonaws</groupId>
+						<artifactId>aws-java-sdk-simpleworkflow</artifactId>
+					</exclusion>
+				</exclusions>
+	  </dependency>
+		<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-cloudfront</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>io.evanwong.oss</groupId>
