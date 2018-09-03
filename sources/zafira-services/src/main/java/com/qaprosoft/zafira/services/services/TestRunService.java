@@ -218,7 +218,9 @@ public class TestRunService
 	@Transactional(readOnly = true)
 	public TestRun getLatestJobTestRunByBranchAndJobName(String branch, String jobName) throws ServiceException
 	{
-		return testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+
+		TestRun testRun = testRunMapper.getLatestJobTestRunByBranch(branch, jobsService.getJobByName(jobName).getId());
+		return testRun;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
