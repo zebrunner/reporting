@@ -46,6 +46,7 @@ ENV ZAFIRA_ELASTICSEARCH_URL=
 ENV ZAFIRA_SELENIUM_URL=http://localhost:4444/wd/hub
 
 RUN apt-get update && apt-get install zip
+RUN mkdir ${CATALINA_HOME}/shared
 
 COPY sources/zafira-ws/target/zafira-ws.war ${CATALINA_HOME}/temp/
 COPY sources/zafira-web/target/zafira.war ${CATALINA_HOME}/temp/
