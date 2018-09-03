@@ -26,6 +26,12 @@ import java.util.concurrent.Executors;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.internal.SdkBufferedInputStream;
@@ -33,14 +39,9 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.*;
-import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.qaprosoft.zafira.config.CIConfig;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
@@ -54,6 +55,7 @@ import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -937,12 +939,12 @@ public class ZafiraClient
 	}
 	
 	@SuppressWarnings({ "unchecked" })
-	public synchronized Response<List<HashMap<String, String>>> getToolSettings(String tool)
+	public synchronized Response<List<HashMap<String, String>>> getToolSettings(String tool, boolean decrypt)
 	{
 		Response<List<HashMap<String, String>>> response = new Response<List<HashMap<String, String>>>(0, null);
 		try
 		{
-			WebResource webResource = client.resource(serviceURL + String.format(SETTINGS_TOOL_PATH, tool));
+			WebResource webResource = client.resource(serviceURL + String.format(SETTINGS_TOOL_PATH, tool) + "?decrypt=" + decrypt);
 			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
 					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
 			response.setStatus(clientRS.getStatus());

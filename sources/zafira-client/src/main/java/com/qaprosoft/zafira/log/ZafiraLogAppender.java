@@ -37,11 +37,10 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 
-import com.qaprosoft.zafira.client.ZafiraClient;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
+import com.qaprosoft.zafira.client.ZafiraSingleton;
 import com.qaprosoft.zafira.listener.ZafiraListener;
 import com.qaprosoft.zafira.models.dto.TestType;
-import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -422,61 +421,47 @@ public class ZafiraLogAppender extends AppenderSkeleton
 			config.addConfiguration(new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
 				    					  .configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES)).getConfiguration());
 			
-			if(config.getBoolean("zafira_enabled", false))
-			{
-				ZafiraClient zc = new ZafiraClient(config.getString("zafira_service_url"));
-				if(zc.isAvailable())
+			if(ZafiraSingleton.INSTANCE.isRunning()) {
+				// Queue referenced to ci_run_id
+				this.routingKey = config.getString("ci_run_id", null);
+				if(StringUtils.isEmpty(routingKey))
 				{
-					Response<AuthTokenType> auth = zc.refreshToken(config.getString("zafira_access_token", null));
-					if(auth.getStatus() == 200)
+					this.routingKey = UUID.randomUUID().toString();
+					System.setProperty("ci_run_id", routingKey);
+				}
+				
+				Response<List<HashMap<String, String>>> rs = ZafiraSingleton.INSTANCE.getClient().getToolSettings("RABBITMQ", true);
+				if(rs.getStatus() == 200)
+				{
+					List<HashMap<String, String>> settings = rs.getObject();
+					if(settings != null)
 					{
-						zc.setAuthToken(auth.getObject().getType() + " " + auth.getObject().getAccessToken());
-					}
-					else
-					{
-						throw new Exception("Not authenticated in Zafira!");
-					}
-					
-					// Queue referenced to ci_run_id
-					routingKey = config.getString("ci_run_id", null);
-					if(StringUtils.isEmpty(routingKey))
-					{
-						routingKey = UUID.randomUUID().toString();
-						System.setProperty("ci_run_id", routingKey);
-					}
-					
-					Response<List<HashMap<String, String>>> rs = zc.getToolSettings("RABBITMQ");
-					if(rs.getStatus() == 200)
-					{
-						List<HashMap<String, String>> settings = rs.getObject();
-						if(settings != null)
+						for(HashMap<String, String> s : settings)
 						{
-							for(HashMap<String, String> s : settings)
+							if("RABBITMQ_HOST".equals(s.get("name")))
 							{
-								if("RABBITMQ_HOST".equals(s.get("name")))
-								{
-									this.host = s.get("value");
-								}
-								else if("RABBITMQ_PORT".equals(s.get("name")))
-								{
-									this.port = Integer.valueOf(s.get("value"));
-								}
-								else if("RABBITMQ_USER".equals(s.get("name")))
-								{
-									this.username = s.get("value");
-								}
-								else if("RABBITMQ_PASSWORD".equals(s.get("name")))
-								{
-									this.password = s.get("value");
-								}
-								else if("RABBITMQ_ENABLED".equals(s.get("name")))
-								{
-									connected = Boolean.valueOf(s.get("value"));
-								}
+								this.host = s.get("value");
+							}
+							else if("RABBITMQ_PORT".equals(s.get("name")))
+							{
+								this.port = Integer.valueOf(s.get("value"));
+							}
+							else if("RABBITMQ_USER".equals(s.get("name")))
+							{
+								this.username = s.get("value");
+							}
+							else if("RABBITMQ_PASSWORD".equals(s.get("name")))
+							{
+								this.password = s.get("value");
+							}
+							else if("RABBITMQ_ENABLED".equals(s.get("name")))
+							{
+								connected = Boolean.valueOf(s.get("value"));
 							}
 						}
 					}
 				}
+				
 			}
 		}
 		catch (Exception e) 
