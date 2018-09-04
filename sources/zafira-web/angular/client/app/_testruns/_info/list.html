@@ -77,10 +77,10 @@
                                         <tbody id="logs">
                                             <tr ng-dblclick="getVideoState(log);" ng-attr-id="log-{{ $index }}" ng-if="logs.length" ng-repeat="log in logs">
                                                 <td>
-                                                    <span ng-if="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
-                                                    <div ng-if="log.blobLog">
-                                                        <img ng-if="log.isImageExists" ng-click="showGalleryDialog($event, log.blobLog.message);" style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.message}}" alt="image"/>
-                                                        <i ng-if="log.isImageExists == false;" class="material-icons">insert_photo</i>
+                                                    <span ng-show="log.driver" style="border-radius: 8px" class="label label-default">Driver {{ log.driver.index + 1 }}</span>
+                                                    <div ng-show="log.blobLog">
+                                                        <img ng-if="log.isImageExists" ng-click="showGalleryDialog($event, log.blobLog.path);" style="max-width: 66%;max-height: 29px;" ng-src="{{log.blobLog.path}}" alt="image"/>
+                                                        <i ng-show="log.isImageExists === false;" class="material-icons">insert_photo</i>
                                                     </div>
                                                 </td>
                                                 <td ng-click="selectLogRow($event, $index);">{{ log.timestamp | date: 'HH:mm:ss'}}</td>

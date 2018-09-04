@@ -18,9 +18,12 @@ package com.qaprosoft.zafira.ws.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.Tenancy;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +75,9 @@ public class AuthAPIController extends AbstractController {
 	private JWTService jwtService;
 
 	@Autowired
+	private AmazonService amazonService;
+
+	@Autowired
 	private UserService userService;
 
 	@Autowired
@@ -95,7 +101,7 @@ public class AuthAPIController extends AbstractController {
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials)
+	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials, HttpServletResponse response)
 			throws BadCredentialsException {
 		AuthTokenType authToken = null;
 		try {
@@ -115,6 +121,7 @@ public class AuthAPIController extends AbstractController {
 		} catch (Exception e) {
 			throw new BadCredentialsException(e.getMessage());
 		}
+		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
 	}
 
@@ -133,7 +140,7 @@ public class AuthAPIController extends AbstractController {
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken)
+	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken, HttpServletResponse response)
 			throws BadCredentialsException, ForbiddenOperationException {
 		AuthTokenType authToken = null;
 		try {
@@ -164,7 +171,7 @@ public class AuthAPIController extends AbstractController {
 		} catch (Exception e) {
 			throw new ForbiddenOperationException(e);
 		}
-
+		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
 	}
 

@@ -24,6 +24,9 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 
+import java.io.File;
+import java.net.URL;
+
 public class AmazonType extends AbstractType
 {
 
@@ -31,6 +34,28 @@ public class AmazonType extends AbstractType
     private AWSSecurityTokenService awsSecurityTokenService;
     private BasicAWSCredentials basicAWSCredentials;
     private String s3Bucket;
+    private String distributionDomain;
+    private String keyPairId;
+    private File privateKeyFile;
+
+    public AmazonType(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration,
+                      String distributionDomain, String keyPairId)
+    {
+        this.s3Bucket = s3Bucket;
+        this.basicAWSCredentials = new BasicAWSCredentials(accessKey, privateKey);
+        this.amazonS3 = AmazonS3ClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+                .withRegion(Regions.fromName(region))
+                .withClientConfiguration(clientConfiguration).build();
+        this.awsSecurityTokenService = AWSSecurityTokenServiceClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
+                .withRegion(Regions.fromName(region))
+                .withClientConfiguration(clientConfiguration).build();
+        this.distributionDomain = distributionDomain;
+        this.keyPairId = keyPairId;
+        URL privateKeyResource = getClass().getClassLoader().getResource(this.keyPairId);
+        this.privateKeyFile = privateKeyResource /*!*/== null ? new File(/*privateKeyResource.getFile()*/"/Users/bogdanrutskov/Downloads/qaprosoft.cloud.der") : null;
+    }
 
     public AmazonType(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration)
     {
@@ -84,5 +109,29 @@ public class AmazonType extends AbstractType
     public void setS3Bucket(String s3Bucket)
     {
         this.s3Bucket = s3Bucket;
+    }
+
+    public String getDistributionDomain() {
+        return distributionDomain;
+    }
+
+    public void setDistributionDomain(String distributionDomain) {
+        this.distributionDomain = distributionDomain;
+    }
+
+    public String getKeyPairId() {
+        return keyPairId;
+    }
+
+    public void setKeyPairId(String keyPairId) {
+        this.keyPairId = keyPairId;
+    }
+
+    public File getPrivateKeyFile() {
+        return privateKeyFile;
+    }
+
+    public void setPrivateKeyFile(File privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
     }
 }

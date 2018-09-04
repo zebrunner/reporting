@@ -8,6 +8,8 @@
     // **************************************************************************
     function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
 
+        const TENANT = $rootScope.globals.auth.tenant;
+
         $scope.testRun = {};
         $scope.test = {};
         $scope.drivers = [];
@@ -82,7 +84,7 @@
                     tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
                         $timeout(function () {
                             logGetter.pageCount = null;
-                            logGetter.from = $scope.logs.length + $scope.trumbs.length;
+                            logGetter.from = $scope.logs.length + $scope.trumbs.length * 2 + Object.size(unrecognizedImages);
                             tryToGetLogsHistoryFromElasticsearch(logGetter);
 
                         }, 5000);
@@ -149,8 +151,10 @@
         function collectElasticsearchLogs(from, page, size, count, resolveFunc) {
 
             getLogsFromElasticsearch(from, page, size).then(function (hits) {
-                hits.forEach(function (hit) {
-                    followUpOnLogs(hit);
+                $scope.$applyAsync(function () {
+                    hits.forEach(function (hit) {
+                        followUpOnLogs(hit);
+                    });
                 });
                 if(! from && from != 0 && (page * size < count)) {
                     page ++;
@@ -434,7 +438,7 @@
             $scope.testsWebsocket.debug = null;
             $scope.testsWebsocket.connect({withCredentials: false}, function () {
                 if($scope.testsWebsocket.connected) {
-                    $scope.testsWebsocket.subscribe("/topic/testRuns." + testRun.id + ".tests", function (data) {
+                    $scope.testsWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRun.id + ".tests", function (data) {
                         var test = $scope.getEventFromMessage(data.body).test;
                         if(test.id == $scope.test.id) {
 
@@ -469,13 +473,9 @@
         $scope.logs = [];
 
         function followUpOnLogs(log) {
-            if(! $scope.$$phase) {
-                $scope.$applyAsync(function () {
-                    setLog(log);
-                });
-            } else {
+            //$scope.$applyAsync(function () {
                 setLog(log);
-            }
+            //});
         };
 
         var imagesInProgressCount = 0;
@@ -485,46 +485,73 @@
                 log.driver = driversQueue.pop();
                 driversQueue = [];
             }
-            if (! isS3ImageUrl(log.message)) {
+            if (log.level != 'META_INFO') {
                 $scope.logs.push(log);
             } else {
-                var appenToLog = $scope.logs[$scope.logs.length - 1];
-                $scope.trumbs.push({'log': appenToLog, trumb: log});
-                appenToLog.blobLog = log;
-                imagesInProgressCount ++;
-                waitForAllImages(appenToLog);
+                var existsUnrecognizedImage = unrecognizedImages[getMetaLogCorrelationId(log)];
+                if(existsUnrecognizedImage) {
+                    var trumbIndex = $scope.trumbs.indexOfField('correlationId', getMetaLogCorrelationId(log));
+                    $scope.trumbs[trumbIndex].trumb = log;
+                    existsUnrecognizedImage.blobLog = log;
+                    existsUnrecognizedImage.blobLog.path = getMetaLogAnazonPath(log);
+                    existsUnrecognizedImage.isImageExists = true;
+                    delete unrecognizedImages[getMetaLogCorrelationId(log)];
+                } else {
+                    var appenToLog = $scope.logs[$scope.logs.length - 1];
+                    $scope.trumbs.push({'log': appenToLog, trumb: log, correlationId: getMetaLogCorrelationId(log)});
+                    /*var appenToLog = $scope.logs[$scope.logs.length - 1];
+                    $scope.trumbs.push({'log': appenToLog, trumb: log});
+                    appenToLog.blobLog = log;*/
+                    imagesInProgressCount++;
+                    appenToLog.blobLog = log;
+                    appenToLog.isImageExists = false;
+                    unrecognizedImages[getMetaLogCorrelationId(log)] = appenToLog;
+                    //waitForAllImages(appenToLog);
+                }
             }
         };
 
-        var unrecognizedImages = [];
+        function getMetaLogCorrelationId(log) {
+            return log.headers['AMAZON_PATH_CORRELATION_ID'];
+        };
 
-        function waitForAllImages(log) {
-            isImageExists(log.blobLog.message).then(function (isExists) {
+        function getMetaLogAnazonPath(log) {
+            return log.headers['AMAZON_PATH'];
+        };
+
+        var unrecognizedImages = {};
+
+        /*function waitForAllImages(log) {
+            imagesInProgressCount --;
+            log.isImageExists = false;
+            unrecognizedImages[getMetaLogCorrelationId(log)] = log;
+
+            /!*isImageExists(log.blobLog.headers).then(function (isExists) {
                 imagesInProgressCount --;
                 log.isImageExists = isExists;
                 if(! isExists) {
                     unrecognizedImages.push(log);
                 }
-            });
-        };
+            });*!/
+        };*/
 
-        var intervalName = 'areImagesExistAction';
+        //var intervalName = 'areImagesExistAction';
 
-        pseudoLiveDoAction(intervalName, 5000, function () {
-            unrecognizedImages.forEach(function (unrecognizedImage, index) {
+        /*pseudoLiveDoAction(intervalName, 5000, function () {
+           /!* unrecognizedImages.forEach(function (unrecognizedImage, correlationId, map) {
                 isImageExists(unrecognizedImage.blobLog.message).then(function (isExists) {
                     if(isExists) {
                         unrecognizedImage.isImageExists = isExists;
                         unrecognizedImages.splice(index, 1);
                     }
                 });
-            });
-            if(! unrecognizedImages.length && ! imagesInProgressCount && $scope.MODE.name == 'record' && $scope.elasticsearchDataLoaded) {
+            });*!/
+            /!*if(! unrecognizedImages.length && ! imagesInProgressCount && $scope.MODE.name == 'record' && $scope.elasticsearchDataLoaded) {
                 pseudoLiveCloseAction(intervalName);
-            }
-        });
+            }*!/
+        });*/
 
-        function isImageExists(url) {
+        /*function isImageExists(url) {
             var deferred = $q.defer();
 
             var image = new Image();
@@ -538,10 +565,10 @@
 
             return deferred.promise;
         };
-
-        function isS3ImageUrl(message) {
+*/
+        /*function isS3ImageUrl(message) {
             return message.match('http.*://.+\\.s3\\..+\\.png') != null;
-        };
+        };*/
 
         function provideVideo() {
             var driversWatcher = $scope.$watchCollection('drivers', function (newVal) {
@@ -679,7 +706,7 @@
             return index > 0 && $scope.thumbs[index - 1].log.isImageExists;
         };
 
-        var thumbIndex = trumbs.indexOfField('trumb.message', url);
+        var thumbIndex = trumbs.indexOfField('trumb.path', url);
 
         $scope.image = getImage();
 
@@ -741,9 +768,9 @@
 
         document.onkeydown = checkKeycode;
 
-        $scope.fullscreen = function() {
+        $scope.fullscreen = function(forceQuit) {
             if (!document.fullscreenElement &&    // alternative standard method
-                !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+                !document.mozFullScreenElement && !document.webkitFullscreenElement && ! forceQuit) {  // current working methods
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen();
                 } else if (document.documentElement.mozRequestFullScreen) {
@@ -795,6 +822,7 @@
         };
         $scope.cancel = function() {
             $scope.galleryLoaded = false;
+            $scope.fullscreen(true);
             $mdDialog.cancel();
         };
 

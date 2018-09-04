@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -249,6 +250,15 @@ public class SettingsAPIController extends AbstractController
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
 		return amazonService.getTemporarySessionCredentials();
+	}
+
+	@ApiOperation(value = "Get amazon policy cookies", nickname = "getPolicyCookies", code = 200, httpMethod = "GET", response = Map.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+	@RequestMapping(value = "creds/amazon/cookies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getPolicyCookies() throws ServiceException
+	{
+		return amazonService.getPolicyCookies();
 	}
 
 	@ResponseStatusDetails

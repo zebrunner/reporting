@@ -152,8 +152,17 @@
 	            $document.scrollTo(0, 0);
 	        });
 
+            $scope.getAmazonPolicyCookies = function() {
+                SettingsService.getAmazonPolicyCookies().then(function (rs) {
+                    if(rs.success) {
+                        SettingProvider.setAmazonCookies(rs.data);
+                    }
+                });
+            };
+
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
 	            AuthService.SetCredentials(auth);
+	            $scope.getAmazonPolicyCookies();
 	            init(function () {
                     $scope.initSession();
                     $scope.initExtendedUserProfile().then(function(rs) {
@@ -186,6 +195,7 @@
 		            	if(rs.success)
 		            	{
                             AuthService.SetCredentials(rs.data);
+                            $scope.getAmazonPolicyCookies();
 		            		AuthIntercepter.loginConfirmed();
 		            	}
 		            	else

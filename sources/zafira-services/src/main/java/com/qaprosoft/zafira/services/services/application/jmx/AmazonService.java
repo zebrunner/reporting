@@ -17,18 +17,18 @@ package com.qaprosoft.zafira.services.services.application.jmx;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -41,8 +41,6 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.internal.SdkBufferedInputStream;
 import com.amazonaws.services.cloudfront.CloudFrontCookieSigner;
-import com.amazonaws.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
-import com.amazonaws.services.cloudfront.CloudFrontCookieSigner.CookiesForCustomPolicy;
 import com.amazonaws.services.cloudfront.util.SignerUtils.Protocol;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -55,7 +53,6 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.securitytoken.model.Credentials;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenRequest;
 import com.amazonaws.services.securitytoken.model.GetSessionTokenResult;
-import com.amazonaws.util.DateUtils;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
@@ -70,6 +67,8 @@ public class AmazonService implements IJMXService<AmazonType> {
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
     public static final String COMMENT_KEY = "comment";
+
+    public static final String S3_OBJECT_KEY_PATTERN = "%s/**/*.*";
 
     private static final String FILE_PATH_SEPARATOR = "/";
 
@@ -88,10 +87,12 @@ public class AmazonService implements IJMXService<AmazonType> {
         String privateKey = null;
         String region = null;
         String bucket = null;
+        String distributionDomain = null;
+        String keyPairId = null;
 
         try {
-            List<Setting> jiraSettings = settingsService.getSettingsByTool(AMAZON);
-            for (Setting setting : jiraSettings) {
+            List<Setting> amazonSettings = settingsService.getSettingsByTool(AMAZON);
+            for (Setting setting : amazonSettings) {
                 if (setting.isEncrypted()) {
                     setting.setValue(cryptoService.decrypt(setting.getValue()));
                 }
@@ -108,11 +109,17 @@ public class AmazonService implements IJMXService<AmazonType> {
                 case AMAZON_BUCKET:
                     bucket = setting.getValue();
                     break;
+                case AMAZON_DISTRIBUTION_DOMAIN:
+                    distributionDomain = setting.getValue();
+                    break;
+                case AMAZON_KEY_PAIR_ID:
+                    keyPairId = setting.getValue();
+                    break;
                 default:
                     break;
                 }
             }
-            init(accessKey, privateKey, region, bucket);
+            init(accessKey, privateKey, region, bucket, distributionDomain, keyPairId);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -123,15 +130,21 @@ public class AmazonService implements IJMXService<AmazonType> {
             @ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
             @ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
             @ManagedOperationParameter(name = "region", description = "Amazon region"),
-            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket") })
-    public void init(String accessKey, String privateKey, String region, String bucket) {
+            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket"),
+            @ManagedOperationParameter(name = "distributionDomain", description = "Amazon distribution domain"),
+            @ManagedOperationParameter(name = "keyPairId", description = "Amazon key pair id") })
+    public void init(String accessKey, String privateKey, String region, String bucket, String distributionDomain, String keyPairId) {
         try {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
                     && !StringUtils.isBlank(bucket)) {
-                putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration));
+                if(!StringUtils.isBlank(distributionDomain) && !StringUtils.isBlank(keyPairId)) {
+                    putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration, distributionDomain, keyPairId));
+                } else {
+                    putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration));
+                }
             }
         } catch (Exception e) {
-            LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
+            LOGGER.error("Unable to initialize Amazon integration: " + e.getMessage());
         }
     }
 
@@ -163,14 +176,14 @@ public class AmazonService implements IJMXService<AmazonType> {
         return getAmazonType().getAmazonS3().generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 
-    public String saveFile(final FileUploadType file, long principalId) throws ServiceException {
+    public String saveFile(final FileUploadType file) throws ServiceException {
         SdkBufferedInputStream stream = null;
         GeneratePresignedUrlRequest request;
         try {
             stream = new SdkBufferedInputStream(file.getFile().getInputStream(),
                     (int) (file.getFile().getSize() + 100));
             String type = Mimetypes.getInstance().getMimetype(file.getFile().getOriginalFilename());
-            String key = getFileKey(file, principalId);
+            String key = getFileKey(file);
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(type);
@@ -181,14 +194,14 @@ public class AmazonService implements IJMXService<AmazonType> {
             getAmazonType().getAmazonS3().setObjectAcl(getAmazonType().getS3Bucket(), key,
                     CannedAccessControlList.PublicRead);
 
-            request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withMethod(HttpMethod.GET);
+            request = new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key);
 
         } catch (IOException e) {
             throw new AWSException("Can't save file to Amazone", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
-        return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString();
+        return getAmazonType().getAmazonS3().generatePresignedUrl(request).toString().split("\\?")[0];
     }
 
     public void removeFile(final String linkToFile) throws ServiceException {
@@ -200,10 +213,13 @@ public class AmazonService implements IJMXService<AmazonType> {
         }
     }
 
-    private String getFileKey(final FileUploadType file, long principalId) {
-        return file.getType().name() + FILE_PATH_SEPARATOR + principalId + FILE_PATH_SEPARATOR +
-                RandomStringUtils.randomAlphanumeric(20) + "."
-                + FilenameUtils.getExtension(file.getFile().getOriginalFilename());
+    private String getFileKey(final FileUploadType file) {
+        return buildPath(file.getType()) + FILE_PATH_SEPARATOR + RandomStringUtils.randomAlphanumeric(20) + "." +
+                FilenameUtils.getExtension(file.getFile().getOriginalFilename());
+    }
+
+    private String buildPath(FileUploadType.Type type) {
+        return TenancyContext.getTenantName() + FILE_PATH_SEPARATOR + type.getPath();
     }
 
     /**
@@ -233,7 +249,7 @@ public class AmazonService implements IJMXService<AmazonType> {
                 Credentials credentials = getSessionTokenResult.getCredentials();
                 result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(),
                         credentials.getSessionToken(), getAmazonType().getAmazonS3().getRegionName(),
-                        getAmazonType().getS3Bucket());
+                        getAmazonType().getS3Bucket(), getAmazonType().getDistributionDomain());
             } catch (Exception e) {
                 LOGGER.error("Credentials for Security Token Service are invalid.", e);
             }
@@ -241,25 +257,26 @@ public class AmazonService implements IJMXService<AmazonType> {
         return result;
     }
 
+    public Map<String, String> getPolicyCookies() {
+        Map<String, String> cookies = new HashMap<>();
+        try {
+            CloudFrontCookieSigner.CookiesForCustomPolicy cookiesForCustomPolicy = getPolicyCookie(DateUtils.addDays(new Date(), 21));
+            cookies.put(cookiesForCustomPolicy.getPolicy().getKey(), cookiesForCustomPolicy.getPolicy().getValue());
+            cookies.put(cookiesForCustomPolicy.getKeyPairId().getKey(), cookiesForCustomPolicy.getKeyPairId().getValue());
+            cookies.put(cookiesForCustomPolicy.getSignature().getKey(), cookiesForCustomPolicy.getSignature().getValue());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return cookies;
+    }
+
+    private CloudFrontCookieSigner.CookiesForCustomPolicy getPolicyCookie(final Date expiresOn) throws InvalidKeySpecException, IOException {
+        return CloudFrontCookieSigner.getCookiesForCustomPolicy(Protocol.https, getAmazonType().getDistributionDomain(),
+                getAmazonType().getPrivateKeyFile(), String.format(S3_OBJECT_KEY_PATTERN, TenancyContext.getTenantName()), getAmazonType().getKeyPairId(), expiresOn, null, null);
+    }
+
     @ManagedAttribute(description = "Get current amazon entity")
     public AmazonType getAmazonType() {
         return getType(AMAZON);
     }
-    
-//    public static void main(String[] args) throws InvalidKeySpecException, IOException {
-//        Protocol protocol = Protocol.https;
-//        String distributionDomain = "storage.qaprosoft.cloud";
-//        File privateKeyFile = new File("/Users/akhursevich/tools/aws.der");
-//        String s3ObjectKey = "ua/**/*.png";
-//        String keyPairId = "";
-//        Date expiresOn = DateUtils.parseISO8601Date("2020-11-14T22:20:00.000Z");
-//        
-////        CookiesForCannedPolicy cookie1 = CloudFrontCookieSigner.getCookiesForCannedPolicy(
-////                             protocol, distributionDomain, privateKeyFile, s3ObjectKey,
-////                             keyPairId, expiresOn);
-//        
-//        CookiesForCustomPolicy cookies2 = CloudFrontCookieSigner.getCookiesForCustomPolicy(
-//                protocol, distributionDomain, privateKeyFile, s3ObjectKey, keyPairId, expiresOn, null, null);
-//        System.out.println();
-//    }
 }
