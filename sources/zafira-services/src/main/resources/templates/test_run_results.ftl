@@ -146,9 +146,8 @@
             <tr>
                 <th width="10%" align="center">Result</th>
                 <th width="60%" align="center">Test name</th>
-                <#--<th width="10%" align="center">Info</th>-->
                 <th width="10%" align="center">Jira</th>
-                <th width="10%" align="center">Test files</th>
+                <th width="10%" align="center">Test info</th>
             </tr>
             <#assign testList = tests?sort_by("id")>
             <#list testList?sort_by("notNullTestGroup") as test>
@@ -206,25 +205,6 @@
 	            				</pre>
 	            			</#if>
 	            		</td>
-                        <#--<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                            <#if (test.startTime ?? && test.finishTime??)>
-                                <div>
-                                    Elapsed:
-                                    <span style="color: gray">
-                                        ${getTestElapsed(test.startTime, test.finishTime, true)}m ${getTestElapsed(test.startTime, test.finishTime, false)}s
-                                    </span>
-                                </div>
-                            </#if>
-                            <span>${test.owner}</span>
-                                <#if test.secondaryOwner ??>
-                                    ${test.secondaryOwner}
-                                </#if>
-                            <#if (test.testConfig ?? && test.testConfig.device ??)>
-                                <div>
-                                    ${test.testConfig.device}
-                                </div>
-                            </#if>
-                        </td>-->
                         <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
 	                        <#list test.workItems as workItem>
 	                            <#if workItem.type == 'BUG'>
@@ -240,14 +220,11 @@
 	                            </#if>
 	                        </#list>
 	                    </td>
-	            		<td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
-                              <#list test.artifacts as artifact>
-                                  <#if artifact.name == 'Log' || artifact.name == 'Logs' || artifact.name == 'Demo'>
-                                      <a href='${artifact.link}' style='color: white;'>${artifact.name}</a>
-                                  <p>
-                                  </#if>
-                            </#list>
- 	            		</td>
+                        <td align='center' style='border-style: solid; border-width: 1px; border-color: white; padding: 5px; color: white;'>
+                            <#if configuration['zafira_service_url']?? && (configuration['zafira_service_url'] != 'NULL') && (configuration['zafira_service_url'] != '')>
+                                <a href="${configuration['zafira_service_url']}/#!/tests/runs/${testRun.id?c}/info/${test.id?c}" style='color: white;'>Logs</a>
+                            </#if>
+                        </td>
 	            	</tr>
             	</#if>
             </#list>

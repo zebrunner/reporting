@@ -569,6 +569,7 @@
 				STARTED_AT >= current_date - interval '4 week' AND
 				TR.STATUS <> 'IN_PROGRESS' AND
 				TR.STATUS <> 'ABORTED' AND
+				TR.STATUS <> 'QUEUED' AND
 				TR.SCM_BRANCH = #{branch} AND
 				TR.JOB_ID = #{jobId}
 			ORDER BY TR.STARTED_AT DESC
