@@ -41,7 +41,10 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Started</td>
-                                                    <td><span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span></td>
+                                                    <td>
+                                                        <span>{{ test.startTime | date: 'HH:mm dd MMM yyyy'}}</span>
+                                                        <span>(<time am-time-ago="test.startTime" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>)</span>
+                                                    </td>
                                                 </tr>
                                                 <tr ng-if="test.finishTime && test.startTime && (test.finishTime - test.startTime) > 0">
                                                     <td>Duration</td>
