@@ -10,6 +10,7 @@
 
         service.getAllSettings = getAllSettings;
         service.getSettingsByIntegration = getSettingsByIntegration;
+        service.getAmazonPolicyCookies = getAmazonPolicyCookies;
         service.getSetting = getSetting;
         service.getCompanyLogo = getCompanyLogo;
         service.getSettingByName = getSettingByName;
@@ -34,6 +35,10 @@
             if(isIntegrationTool)
                 config.params.isIntegrationTool = isIntegrationTool;
             return $http.get(API_URL + '/api/settings/integration', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to get settings by integration list'));
+        }
+
+        function getAmazonPolicyCookies() {
+            return $http.get(API_URL + '/api/settings/creds/amazon/cookies').then(UtilService.handleSuccess, UtilService.handleError('Unable to get Amazon s3 cookies'));
         }
 
         function getSettingByTool(tool) {

@@ -52,10 +52,10 @@ public class UploadController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String uploadFile(@RequestHeader(value = "FileType", required = true) Type type, 
+	public @ResponseBody String uploadFile(@RequestHeader(value = "FileType", required = true) Type type,
 			@RequestParam(value = "file", required = true) MultipartFile file) throws ServiceException
 	{
-		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type), getPrincipalId()));
+		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
 	}
 
 	@ApiOperation(value = "Upload google json file", nickname = "uploadGoogleCredentialsFile", code = 200, httpMethod = "POST", response = String.class)

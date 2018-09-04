@@ -18,11 +18,14 @@ package com.qaprosoft.zafira.log;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import static com.qaprosoft.zafira.log.MetaInfoLevel.META_INFO;
 
 /**
  * @author akhursevich
@@ -104,7 +107,13 @@ public class JSONLayout extends Layout
 		json.put("threadName", event.getThreadName());
 		json.put("level", event.getLevel().toString());
 		json.put("timestamp", System.currentTimeMillis());
-		json.put("message", event.getMessage());
+		if(event.getLevel().equals(META_INFO)) {
+			MetaInfoMessage metaInfoMessage = (MetaInfoMessage) event.getMessage();
+			json.put("message", metaInfoMessage.getMessage());
+			json.put("headers", new JSONObject(metaInfoMessage.getHeaders()));
+		} else {
+			json.put("message", event.getMessage());
+		}
 		json.put("logger", event.getLoggerName());
 	}
 

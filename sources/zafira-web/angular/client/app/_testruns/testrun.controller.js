@@ -11,7 +11,7 @@
     // **************************************************************************
     function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
 
-    		const TENANT = $rootScope.globals.auth.tenant;
+    	const TENANT = $rootScope.globals.auth.tenant;
     	
         $scope.predicate = 'startTime';
         $scope.reverse = false;

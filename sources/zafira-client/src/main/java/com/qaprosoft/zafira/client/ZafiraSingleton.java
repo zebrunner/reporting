@@ -67,6 +67,7 @@ public enum ZafiraSingleton {
 					this.running = true;
 
 					this.zc.initAmazonS3Client();
+					this.zc.initTenant();
 				}
 			}
 		} catch (Exception e) {

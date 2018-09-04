@@ -526,8 +526,14 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		AppenderTask(LoggingEvent loggingEvent)
 		{
 			this.loggingEvent = loggingEvent;
-			TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
-			this.correlationId = test != null ? routingKey + "_" + String.valueOf(test.getId()) : routingKey;
+			Long testId = null;
+			if(loggingEvent.getLevel().equals(MetaInfoLevel.META_INFO) && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("TEST_ID") != null) {
+				testId = Long.valueOf(((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("TEST_ID"));
+			} else {
+				TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
+				testId = test != null ? test.getId() : null;
+			}
+			this.correlationId = testId != null ? routingKey + "_" + String.valueOf(testId) : routingKey;
 		}
 
 		/**

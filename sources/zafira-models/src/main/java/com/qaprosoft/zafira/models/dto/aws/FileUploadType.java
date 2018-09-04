@@ -25,7 +25,17 @@ public class FileUploadType
 
 	public enum Type
 	{
-		USERS, COMMON
+		USERS("USERS"), COMMON("COMMON"), VIDEOS("ARTIFACTS/VIDEOS"), SCREENSHOTS("ARTIFACTS/SCREENSHOTS");
+
+		private String path;
+
+		Type(String path) {
+			this.path = path;
+		}
+
+		public String getPath() {
+			return path;
+		}
 	}
 
 	public FileUploadType()
