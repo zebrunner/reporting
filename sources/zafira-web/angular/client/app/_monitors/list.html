@@ -1,22 +1,19 @@
-<div class="page page-dashboard" data-ng-controller="MonitorsController">
-
-    <div>
-        <div class="row">
-            <div layout="row" layout-xs="column" class="col-lg-12">
-                <div>
-                    <h2 id="pageTitle" class="section-header">
-                        Monitors
-                        <small id="itemsCount" data-ng-if="sr.totalResults">({{sr.totalResults}})</small>
-                    </h2>
-                </div>
-                <div class="control-buttons">
-                    <button id="search" class="md-button md-primary md-ink-ripple pull-right" type="button" ng-click="search();">
-                        <b>Search</b>
-                    </button>
-                    <button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
-                        <b>Clear</b>
-                    </button>
-                </div>
+<div class="page" ng-controller="MonitorsController">
+    <div class="row ui-section">
+        <div layout="row" layout-xs="column" class="col-lg-12" style="min-width: 320px;">
+            <div>
+                <h2 id="pageTitle" class="section-header">
+                     Monitors
+                    <small id="itemsCount" data-ng-if="sr.totalResults">({{sr.totalResults}})</small>
+                </h2>
+            </div>
+            <div class="control-buttons">
+                <button id="search" class="md-button md-primary md-ink-ripple pull-right" type="button" ng-click="search();">
+                    <b>Search</b>
+                </button>
+                <button id="clear" class="md-button md-warn md-ink-ripple pull-right" type="button" ng-click="reset(); UtilService.untouchForm(search_form);">
+                    <b>Clear</b>
+                </button>
             </div>
         </div>
         <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_MONITORS']">
@@ -32,9 +29,8 @@
                 </md-button>
             </md-fab-actions>
         </md-fab-speed-dial>
-        <div class="row" ng-if="blockView">
-            <div class="col-md-12">
-                <article class="article">
+        <div class="col-md-12">
+            <article class="article">
                     <md-card class="no-margin-h">
                         <md-table-container>
                             <form ng-submit="search()" name="search_form">
@@ -110,7 +106,6 @@
                         <md-table-pagination id="pagination" zafira-background-theme="pagination" ng-if="sr.results.length != 0" md-limit="sr.pageSize" md-limit-options=false md-page="sr.page" md-total="{{sr.totalResults}}" md-page-select=false md-boundary-links=true md-on-paginate="search"></md-table-pagination>
                     </md-card>
                 </article>
-            </div>
         </div>
     </div>
 </div>
