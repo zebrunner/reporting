@@ -135,7 +135,8 @@
                     resolve(instance);
                 } else {
                     prepareData().then(function(rs) {
-                        resolve(rs);
+                        instance = rs;
+                        resolve(instance);
                     }, function(rs) {
                         alertify.error(rs.errorMessage);
                         reject();
