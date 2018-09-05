@@ -242,17 +242,19 @@
             };
 
 	        (function initController() {
-
-	        	// keep user logged in after page refresh
-//	              var authorization = $cookies.get('Access-Token');
-//                if(authorization) {
-//                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
-//                }
-
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
+                SettingsService.getCompanyLogo().then(function(rs) {
+                    if(rs.success)
+                    {
+                        if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
+                            $rootScope.companyLogo.value = rs.data.value;
+                            $rootScope.companyLogo.id = rs.data.id;
+                            SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
+                        }
+                    }
+                });
 	            if ($rootScope.globals.auth)
 	            {
-	            	//$http.defaults.headers.common['Authorization'] = $rootScope.globals.auth.type + " " + $rootScope.globals.auth.accessToken;
                     init(function () {
                         $scope.initSession();
                         $scope.initExtendedUserProfile().then(function (rs) {
@@ -260,26 +262,12 @@
                                 $state.go('dashboard', {id: rs});
                             }
                         });
-
-                        SettingsService.getCompanyLogo().then(function(rs) {
-                            if(rs.success)
-                            {
-                                if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
-                                    $rootScope.companyLogo.value = rs.data.value;
-                                    $rootScope.companyLogo.id = rs.data.id;
-                                    SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
-                                }
-                            }
-                        });
                     }, function () {
                         $state.go('tenancies');
                         $scope.initMngExtendedUserProfile();
                     });
 	            }
-
-                 getVersion().then(function (rs) {
-                     //clearCache(rs.service);
-                 });
+                 getVersion();
 	        })();
 	    }
 })();
