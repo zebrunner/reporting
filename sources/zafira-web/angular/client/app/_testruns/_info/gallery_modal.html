@@ -1,12 +1,12 @@
 <md-dialog class="gallery-modal" aria-label="Demo" zafira-background-theme="modal">
     <md-dialog-content>
         <div ng-init="galleryLoaded = true;" class="gallery-container">
-            <img class="gallery-container_gallery-image" ng-src="{{ image.trumb.path }}"/>
-            <div ng-mouseenter="showHideLog($event, true);"  ng-mouseleave="showHideLog($event, false);" class="gallery-container_gallery-image_log">{{ image.log.message }}</div>
+            <img class="gallery-container_gallery-image" ng-src="{{ image.path }}"/>
+            <div ng-mouseenter="showHideLog($event, true);"  ng-mouseleave="showHideLog($event, false);" class="gallery-container_gallery-image_log">{{ image.log }}</div>
         </div>
        <!-- <div class="gallery-modal_thumbnail-container">
             <div class="gallery-modal_thumbnail-container_element" ng-repeat="thumb in thumbs">
-                <img class="gallery-modal_thumbnail-container_element_image" ng-src="{{ thumb.trumb.message }}">
+                <img class="gallery-modal_thumbnail-container_element_image" ng-src="{{ thumb.thumb.message }}">
             </div>
         </div>-->
     </md-dialog-content>
