@@ -53,8 +53,8 @@ public class AmazonType extends AbstractType
                 .withClientConfiguration(clientConfiguration).build();
         this.distributionDomain = distributionDomain;
         this.keyPairId = keyPairId;
-        URL privateKeyResource = getClass().getClassLoader().getResource(this.keyPairId);
-        this.privateKeyFile = privateKeyResource /*!*/== null ? new File(/*privateKeyResource.getFile()*/"/Users/bogdanrutskov/Downloads/qaprosoft.cloud.der") : null;
+        URL privateKeyResource = getClass().getClassLoader().getResource("qaprosoft.cloud.der");
+        this.privateKeyFile = privateKeyResource != null ? new File(privateKeyResource.getFile()) : null;
     }
 
     public AmazonType(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration)
