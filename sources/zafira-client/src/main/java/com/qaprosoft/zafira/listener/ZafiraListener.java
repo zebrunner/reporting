@@ -755,16 +755,23 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		ENABLED("zafira_enabled", false),
 		SERVICE_URL("zafira_service_url", StringUtils.EMPTY),
 		ACCESS_TOKEN("zafira_access_token", StringUtils.EMPTY),
-		PROJECT("zafira_project", StringUtils.EMPTY),
+		PROJECT("zafira_project", StringUtils.EMPTY, true),
 		RERUN_FAILURES("zafira_rerun_failures", false),
-		CONFIGURATOR("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator");
+		CONFIGURATOR("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator", true);
 
 		private String configName;
 		private Object defaultValue;
+		private boolean canOverride;
 
 		ZafiraConfiguration(String configName, Object defaultValue) {
 			this.configName = configName;
 			this.defaultValue = defaultValue;
+		}
+
+		ZafiraConfiguration(String configName, Object defaultValue, boolean canOverride) {
+			this.configName = configName;
+			this.defaultValue = defaultValue;
+			this.canOverride = canOverride;
 		}
 
 		public String getConfigName() {
@@ -775,9 +782,13 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			return defaultValue;
 		}
 
+		public boolean isCanOverride() {
+			return canOverride;
+		}
+
 		@SuppressWarnings("unchecked")
 		public Object get(Configuration config, ISuite suiteConfig) {
-			return suiteConfig.getParameter(this.configName) != null ? suiteConfig.getParameter(this.configName) :
+			return this.canOverride &&  suiteConfig.getParameter(this.configName) != null ? suiteConfig.getParameter(this.configName) :
 					config.get(getDefaultClassValue(), this.configName, this.defaultValue);
 		}
 
