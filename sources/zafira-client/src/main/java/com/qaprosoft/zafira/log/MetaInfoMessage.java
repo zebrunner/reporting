@@ -1,75 +1,55 @@
+/*******************************************************************************
+ * Copyright 2013-2018 QaProSoft (http://www.qaprosoft.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package com.qaprosoft.zafira.log;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class MetaInfoMessage {
 
-    /*private static final Pattern stringMapMessagePattern = Pattern.compile("(?<=#message@).+(?=#)");
-    private static final Pattern stringMapHeadersPattern = Pattern.compile("(?<=#headers@\\{).+(?=})");
-    private static final Pattern stringMapHeaderKeyPattern = Pattern.compile(".+(?=:)");
-    private static final Pattern stringMapHeaderValuePattern = Pattern.compile("(?<=:).+");*/
+	private String message;
+	private Map<String, String> headers;
 
-    private String message;
-    private Map<String, String> headers;
+	public MetaInfoMessage() {
+		this.headers = new HashMap<>();
+	}
 
-    public MetaInfoMessage() {
-        this.headers = new HashMap<>();
-    }
+	public MetaInfoMessage addHeader(String key, String value) {
+		this.headers.put(key, value);
+		return this;
+	}
 
-    public MetaInfoMessage addHeader(String key, String value) {
-        this.headers.put(key, value);
-        return this;
-    }
+	public MetaInfoMessage addMessage(String message) {
+		this.message = message;
+		return this;
+	}
 
-    public MetaInfoMessage addMessage(String message) {
-        this.message = message;
-        return this;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
 
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
-
-    /*@Override
-    public String toString() {
-        return "#message@" + this.message + "#headers@{" + this.headers.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue()).collect(Collectors.joining(";")) + "}";
-    }
-
-    public static MetaInfoMessage toMetaInfo(String stringObject) {
-        MetaInfoMessage metaInfoMessage = null;
-        Matcher messageMatcher = stringMapMessagePattern.matcher(stringObject);
-        if(messageMatcher.find()) {
-            new MetaInfoMessage(messageMatcher.group());
-            Matcher headersMatcher = stringMapHeadersPattern.matcher(stringObject);
-            if (headersMatcher.find()) {
-                String headers = headersMatcher.group();
-                Arrays.stream(headers.split(";")).forEach(header -> {
-                    Matcher keyMatcher = stringMapHeaderKeyPattern.matcher(header);
-                    Matcher valueMatcher = stringMapHeaderValuePattern.matcher(header);
-                    if(keyMatcher.find() && valueMatcher.find()) {
-                        metaInfoMessage.getHeaders().put(keyMatcher.group(), valueMatcher.group());
-                    }
-                });
-                System.out.println();
-            }
-        }
-        return metaInfoMessage;
-    }*/
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
 }
