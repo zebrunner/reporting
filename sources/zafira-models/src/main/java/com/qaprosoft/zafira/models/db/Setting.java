@@ -21,6 +21,7 @@ import com.qaprosoft.zafira.models.db.AbstractEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
 public class Setting extends AbstractEntity
@@ -91,7 +92,7 @@ public class Setting extends AbstractEntity
 
 	public enum Tool
 	{
-		GOOGLE, JIRA, ELASTICSEARCH, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP, CRYPTO, RABBITMQ
+		CRYPTO, RABBITMQ, GOOGLE, JIRA, ELASTICSEARCH, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP
 	}
 
 	public boolean isValueForEncrypting()
