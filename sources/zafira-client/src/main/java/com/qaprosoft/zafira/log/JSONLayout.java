@@ -15,17 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.log;
 
+import static com.qaprosoft.zafira.log.MetaInfoLevel.META_INFO;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-
-import static com.qaprosoft.zafira.log.MetaInfoLevel.META_INFO;
 
 /**
  * @author akhursevich
