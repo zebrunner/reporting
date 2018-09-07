@@ -16,19 +16,19 @@
 package com.qaprosoft.zafira.services.services.application.jmx;
 
 import com.qaprosoft.zafira.models.db.Setting.Tool;
-import com.qaprosoft.zafira.services.services.application.jmx.models.AbstractType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
 
-public interface IJMXService<T extends AbstractType> {
+public interface IJMXService<T extends AbstractContext> {
 
     void init();
 
     boolean isConnected();
 
-    default T getType(Tool tool) {
-        return JMXTenancyStorage.<T> getType(tool);
+    default T getContext(Tool tool) {
+        return JMXTenancyStorage.<T>getContext(tool);
     }
 
-    default void putType(Tool tool, T t) {
-        JMXTenancyStorage.<T> putType(tool, t);
+    default void putContext(Tool tool, T t) {
+        JMXTenancyStorage.<T>putContext(tool, t);
     }
 }

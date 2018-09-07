@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -27,7 +27,7 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder
 import java.io.File;
 import java.net.URL;
 
-public class AmazonType extends AbstractType
+public class AmazonContext extends AbstractContext
 {
 
     private AmazonS3 amazonS3;
@@ -38,8 +38,8 @@ public class AmazonType extends AbstractType
     private String keyPairId;
     private File privateKeyFile;
 
-    public AmazonType(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration,
-                      String distributionDomain, String keyPairId)
+    public AmazonContext(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration,
+                         String distributionDomain, String keyPairId)
     {
         this.s3Bucket = s3Bucket;
         this.basicAWSCredentials = new BasicAWSCredentials(accessKey, privateKey);
@@ -53,11 +53,11 @@ public class AmazonType extends AbstractType
                 .withClientConfiguration(clientConfiguration).build();
         this.distributionDomain = distributionDomain;
         this.keyPairId = keyPairId;
-        URL privateKeyResource = getClass().getClassLoader().getResource("qaprosoft.cloud.der");
+        final URL privateKeyResource = getClass().getClassLoader().getResource(this.keyPairId + ".der");
         this.privateKeyFile = privateKeyResource != null ? new File(privateKeyResource.getFile()) : null;
     }
 
-    public AmazonType(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration)
+    public AmazonContext(String accessKey, String privateKey, String region, String s3Bucket, ClientConfiguration clientConfiguration)
     {
         this.s3Bucket = s3Bucket;
         this.basicAWSCredentials = new BasicAWSCredentials(accessKey, privateKey);

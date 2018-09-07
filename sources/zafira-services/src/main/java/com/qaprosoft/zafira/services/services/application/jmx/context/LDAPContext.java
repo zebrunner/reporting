@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPUserDetailsContextMapper;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -21,7 +21,7 @@ import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
-public class LDAPType extends AbstractType
+public class LDAPContext extends AbstractContext
 {
 
     private LdapContextSource ldapContextSource;
@@ -29,7 +29,7 @@ public class LDAPType extends AbstractType
     private FilterBasedLdapUserSearch filterBasedLdapUserSearch;
     private LdapAuthenticationProvider ldapAuthenticationProvider;
 
-    public LDAPType(String dn, String searchFilter, String url, String managerUser, String managerPassword, LDAPUserDetailsContextMapper ldapUserDetailsContextMapper)
+    public LDAPContext(String dn, String searchFilter, String url, String managerUser, String managerPassword, LDAPUserDetailsContextMapper ldapUserDetailsContextMapper)
     {
         this.ldapContextSource = new LdapContextSource();
         this.ldapContextSource.setUrl(url);

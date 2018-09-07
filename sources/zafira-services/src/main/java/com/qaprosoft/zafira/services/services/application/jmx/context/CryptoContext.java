@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.jasypt.util.text.BasicTextEncryptor;
 
-public class CryptoType extends AbstractType
+public class CryptoContext extends AbstractContext
 {
 
     private String type;
@@ -26,7 +26,7 @@ public class CryptoType extends AbstractType
     private String salt;
     private BasicTextEncryptor basicTextEncryptor;
 
-    public CryptoType(String type, int size, String key, String salt)
+    public CryptoContext(String type, int size, String key, String salt)
     {
         this.type = type;
         this.size = size;

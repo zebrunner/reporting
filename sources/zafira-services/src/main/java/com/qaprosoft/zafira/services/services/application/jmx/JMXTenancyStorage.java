@@ -23,7 +23,7 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.management.MngTenancyService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.AbstractType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +38,7 @@ public class JMXTenancyStorage {
     @Autowired
     private SettingsService settingsService;
 
-    private static Map<Setting.Tool, Map<String, ? extends AbstractType>> tenancyEntity = new ConcurrentHashMap<>();
+    private static Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -50,7 +50,7 @@ public class JMXTenancyStorage {
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized static <T extends AbstractType> void putType(Setting.Tool tool, T t) {
+    public synchronized static <T extends AbstractContext> void putContext(Setting.Tool tool, T t) {
         if (tenancyEntity.get(tool) == null) {
             Map<String, T> typeMap = new ConcurrentHashMap<>();
             typeMap.put(TenancyContext.getTenantName(), t);
@@ -61,8 +61,8 @@ public class JMXTenancyStorage {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getType(Setting.Tool tool) {
-        Map<String, ? extends AbstractType> clientMap = tenancyEntity.get(tool);
+    public static <T> T getContext(Setting.Tool tool) {
+        Map<String, ? extends AbstractContext> clientMap = tenancyEntity.get(tool);
         return clientMap == null ? null : (T) tenancyEntity.get(tool).get(TenancyContext.getTenantName());
     }
 

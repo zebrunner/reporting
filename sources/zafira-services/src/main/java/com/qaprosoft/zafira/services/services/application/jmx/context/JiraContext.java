@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -24,13 +24,13 @@ import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.JiraClient;
 
 @SuppressWarnings("deprecation")
-public class JiraType extends AbstractType
+public class JiraContext extends AbstractContext
 {
 
     private BasicCredentials credentials;
     private JiraClient jiraClient;
 
-    public JiraType(String url, String username, String password)
+    public JiraContext(String url, String username, String password)
     {
         this.credentials = new BasicCredentials(username, password);
         this.jiraClient = new JiraClient(url, credentials);

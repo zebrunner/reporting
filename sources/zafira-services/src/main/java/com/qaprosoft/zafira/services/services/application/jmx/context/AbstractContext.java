@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.apache.log4j.Logger;
 
-public abstract class AbstractType {
+public abstract class AbstractContext {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractType.class);
+    protected static final Logger LOGGER = Logger.getLogger(AbstractContext.class);
 }

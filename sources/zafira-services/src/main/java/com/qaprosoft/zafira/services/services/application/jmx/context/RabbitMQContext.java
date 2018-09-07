@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
@@ -21,14 +21,14 @@ import org.springframework.amqp.rabbit.connection.ConnectionListener;
 
 import java.util.concurrent.CompletableFuture;
 
-public class RabbitMQType extends AbstractType
+public class RabbitMQContext extends AbstractContext
 {
 
     private CachingConnectionFactory cachingConnectionFactory;
     private Connection connection;
     private CompletableFuture<Connection> connectionCompletableFuture;
 
-    public RabbitMQType(String host, String port, String username, String password)
+    public RabbitMQContext(String host, String port, String username, String password)
     {
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);

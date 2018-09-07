@@ -19,7 +19,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.EmailType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.EmailContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.List;
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
 @ManagedResource(objectName = "bean:name=asyncSendEmailTask", description = "Email init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AsynSendEmailTask implements Runnable, IJMXService<EmailType> {
+public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
 
@@ -99,7 +99,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType> {
     public void init(String host, int port, String user, String fromAddress, String password) {
         try {
             if (!StringUtils.isBlank(host) && !StringUtils.isBlank(user) && !StringUtils.isBlank(password) && port != 0) {
-                putType(EMAIL, new EmailType(host, port, user, fromAddress, password));
+                putContext(EMAIL, new EmailContext(host, port, user, fromAddress, password));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize SMTP integration: " + e.getMessage());
@@ -127,10 +127,10 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailType> {
 
     @ManagedAttribute(description = "Get email server")
     public JavaMailSenderImpl getJavaMailSenderImpl() {
-        return getType(EMAIL) != null ? (JavaMailSenderImpl) getType(EMAIL).getJavaMailSender() : null;
+        return getContext(EMAIL) != null ? (JavaMailSenderImpl) getContext(EMAIL).getJavaMailSender() : null;
     }
 
     public String getFromAddress() {
-        return getType(EMAIL) != null ? getType(EMAIL).getFromAddress() : null;
+        return getContext(EMAIL) != null ? getContext(EMAIL).getFromAddress() : null;
     }
 }
