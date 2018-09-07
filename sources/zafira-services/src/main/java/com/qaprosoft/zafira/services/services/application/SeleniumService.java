@@ -68,7 +68,9 @@ public class SeleniumService
 		WebDriver wd = null;
 		try
 		{
-			wd = new RemoteWebDriver(new URL(seleniumURL), DesiredCapabilities.chrome());
+		    DesiredCapabilities dc = DesiredCapabilities.chrome();
+		    dc.setCapability("enableVNC", true);
+			wd = new RemoteWebDriver(new URL(seleniumURL), dc);
 			
 			wd.manage().window().setSize(dimension != null ? dimension : DEFAULT_SCREEN_DIMENSION);
 
