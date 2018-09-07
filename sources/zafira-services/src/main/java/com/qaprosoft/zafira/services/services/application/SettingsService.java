@@ -187,7 +187,7 @@ public class SettingsService {
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
-        rabbitTemplate.convertAndSend("events", "settings", new ReinitMessage(tool, tenant));
+        rabbitTemplate.convertAndSend("events", "", new ReinitMessage(tool, tenant));
     }
 
     @RabbitListener(queues = "#{settingsQueue.name}")
