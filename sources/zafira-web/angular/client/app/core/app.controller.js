@@ -242,6 +242,12 @@
             };
 
 	        (function initController() {
+	        	
+	            var authorization = $cookies.get('Access-Token');
+                if(authorization) {
+                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
+                }
+	        	
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
                 SettingsService.getCompanyLogo().then(function(rs) {
                     if(rs.success)
@@ -253,6 +259,7 @@
                         }
                     }
                 });
+                
 	            if ($rootScope.globals.auth)
 	            {
                     init(function () {
