@@ -33,20 +33,23 @@ public class RabbitMQContext extends AbstractContext
         this.cachingConnectionFactory = new CachingConnectionFactory(host, Integer.parseInt(port));
         this.cachingConnectionFactory.setUsername(username);
         this.cachingConnectionFactory.setPassword(password);
-        this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
-            this.connection = this.cachingConnectionFactory.createConnection();
-            return this.connection;
-        });
         this.cachingConnectionFactory.addConnectionListener(new ConnectionListener() {
-            @Override public void onCreate(Connection connection) {
+            @Override
+            public void onCreate(Connection connection) {
                 try {
                     connectionCompletableFuture.complete(connection);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
-            @Override public void onClose(Connection connection) {
+            @Override
+            public void onClose(Connection conn) {
+                //connection = cachingConnectionFactory.createConnection();
             }
+        });
+        this.connectionCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            this.connection = this.cachingConnectionFactory.createConnection();
+            return this.connection;
         });
     }
 
