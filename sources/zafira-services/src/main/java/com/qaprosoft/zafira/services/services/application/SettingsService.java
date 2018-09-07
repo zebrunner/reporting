@@ -190,7 +190,7 @@ public class SettingsService {
         rabbitTemplate.convertAndSend("events", "settings", new ReinitMessage(tool, tenant));
     }
 
-    @RabbitListener(queues = "settings")
+    @RabbitListener(queues = "${settingsQueue.name}")
     public void process(Message message) {
         ReinitMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitMessage.class);
         if (getServiceByTool(rm.getTool()) != null) {
