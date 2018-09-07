@@ -19,7 +19,7 @@ import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.LDAPType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.LDAPContext;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +34,7 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 
 @ManagedResource(objectName="bean:name=ldapService", description="Ldap init Managed Bean",
         currencyTimeLimit=15, persistPolicy="OnUpdate", persistPeriod=200)
-public class LDAPService implements IJMXService<LDAPType> {
+public class LDAPService implements IJMXService<LDAPContext> {
 
     private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
 
@@ -101,7 +101,7 @@ public class LDAPService implements IJMXService<LDAPType> {
     public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword){
         try
         {
-            putType(LDAP, new LDAPType(dn, searchFilter, url, managerUser, managerPassword, this.ldapUserDetailsContextMapper));
+            putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword, this.ldapUserDetailsContextMapper));
         } catch (Exception e)
         {
             LOGGER.error("Unable to initialize Ldap integration: " + e.getMessage());
@@ -136,8 +136,8 @@ public class LDAPService implements IJMXService<LDAPType> {
         return getType() != null ? getType().getLdapAuthenticationProvider() : null;
     }
 
-    public LDAPType getType()
+    public LDAPContext getType()
     {
-        return getType(LDAP);
+        return getContext(LDAP);
     }
 }

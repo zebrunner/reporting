@@ -53,10 +53,10 @@ import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.BuildParameterType;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.JenkinsType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.JenkinsContext;
 
 @ManagedResource(objectName = "bean:name=jenkinsService", description = "Jenkins init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
-public class JenkinsService implements IJMXService<JenkinsType> {
+public class JenkinsService implements IJMXService<JenkinsContext> {
     private static Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
@@ -107,7 +107,7 @@ public class JenkinsService implements IJMXService<JenkinsType> {
     public void init(String url, String username, String passwordOrApiToken) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(passwordOrApiToken)) {
-                putType(JENKINS, new JenkinsType(url, username, passwordOrApiToken));
+                putContext(JENKINS, new JenkinsContext(url, username, passwordOrApiToken));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jenkins integration: " + e.getMessage());
@@ -299,6 +299,6 @@ public class JenkinsService implements IJMXService<JenkinsType> {
 
     @ManagedAttribute(description = "Get jenkins server")
     public JenkinsServer getServer() {
-        return getType(JENKINS) != null ? getType(JENKINS).getJenkinsServer() : null;
+        return getContext(JENKINS) != null ? getContext(JENKINS).getJenkinsServer() : null;
     }
 }

@@ -13,8 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
-public class GoogleType extends AbstractType
+import com.offbytwo.jenkins.JenkinsServer;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class JenkinsContext extends AbstractContext
 {
+
+    private JenkinsServer jenkinsServer;
+
+    public JenkinsContext(String url, String username, String passwordOrApiToken) {
+        try {
+            this.jenkinsServer = new JenkinsServer(new URI(url), username, passwordOrApiToken);
+        } catch (URISyntaxException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    public JenkinsServer getJenkinsServer()
+    {
+        return jenkinsServer;
+    }
+
+    public void setJenkinsServer(JenkinsServer jenkinsServer)
+    {
+        this.jenkinsServer = jenkinsServer;
+    }
 }

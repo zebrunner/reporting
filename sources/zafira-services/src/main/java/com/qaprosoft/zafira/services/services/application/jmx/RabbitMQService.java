@@ -32,10 +32,10 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.RabbitMQType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.RabbitMQContext;
 
 @ManagedResource(objectName = "bean:name=rabbitMQService", description = "RabbitMQ init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
-public class RabbitMQService implements IJMXService<RabbitMQType> {
+public class RabbitMQService implements IJMXService<RabbitMQContext> {
     private static final Logger LOGGER = Logger.getLogger(RabbitMQService.class);
 
     @Autowired
@@ -90,8 +90,8 @@ public class RabbitMQService implements IJMXService<RabbitMQType> {
         try {
             if (!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(username)
                     && !StringUtils.isEmpty(password)) {
-                putType(RABBITMQ, new RabbitMQType(host, port, username, password));
-                getType(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
+                putContext(RABBITMQ, new RabbitMQContext(host, port, username, password));
+                getContext(RABBITMQ).getConnectionCompletableFuture().get(15, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize RabbitMQ integration: " + e.getMessage());
@@ -105,6 +105,6 @@ public class RabbitMQService implements IJMXService<RabbitMQType> {
 
     @ManagedAttribute(description = "Get rabbitMQ connection")
     public Connection getConnection() {
-        return getType(RABBITMQ) != null ? getType(RABBITMQ).getConnection() : null;
+        return getContext(RABBITMQ) != null ? getContext(RABBITMQ).getConnection() : null;
     }
 }

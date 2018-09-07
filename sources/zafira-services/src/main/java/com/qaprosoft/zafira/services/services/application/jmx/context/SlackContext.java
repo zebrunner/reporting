@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
-import io.evanwong.oss.hipchat.v2.HipChatClient;
+import in.ashwanthkumar.slack.webhook.Slack;
 
-public class HipchatType extends AbstractType
+public class SlackContext extends AbstractContext
 {
 
-    private HipChatClient hipchatClient;
+    private Slack slack;
 
-    public HipchatType(String accessToken)
+    public SlackContext(String webHook, String author, String picPath)
     {
-        this.hipchatClient = new HipChatClient(accessToken);
+        this.slack = new Slack(webHook);
+        this.slack = this.slack.displayName(author);
+        this.slack = this.slack.icon(picPath);
     }
 
-    public HipChatClient getHipchatClient()
+    public Slack getSlack()
     {
-        return hipchatClient;
+        return slack;
     }
 
-    public void setHipchatClient(HipChatClient hipchatClient)
+    public void setSlack(Slack slack)
     {
-        this.hipchatClient = hipchatClient;
+        this.slack = slack;
     }
 }

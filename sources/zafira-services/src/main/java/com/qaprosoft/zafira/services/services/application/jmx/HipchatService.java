@@ -31,7 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.HipchatType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.HipchatContext;
 
 import io.evanwong.oss.hipchat.v2.commons.NoContent;
 import io.evanwong.oss.hipchat.v2.oauth.Session;
@@ -39,7 +39,7 @@ import io.evanwong.oss.hipchat.v2.rooms.MessageFormat;
 import io.evanwong.oss.hipchat.v2.users.UserItem;
 
 @ManagedResource(objectName = "bean:name=hipchatService", description = "Hipchat init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class HipchatService implements IJMXService<HipchatType> {
+public class HipchatService implements IJMXService<HipchatContext> {
     private static final Logger LOGGER = Logger.getLogger(HipchatService.class);
 
     @Autowired
@@ -78,7 +78,7 @@ public class HipchatService implements IJMXService<HipchatType> {
     public void init(String accessToken) {
         try {
             if (!StringUtils.isEmpty(accessToken)) {
-                putType(HIPCHAT, new HipchatType(accessToken));
+                putContext(HIPCHAT, new HipchatContext(accessToken));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Hipchat integration: " + e.getMessage());
@@ -152,7 +152,7 @@ public class HipchatService implements IJMXService<HipchatType> {
     }
 
     @ManagedAttribute(description = "Get current hipchat entity")
-    public HipchatType getHipchatType() {
-        return getType(HIPCHAT);
+    public HipchatContext getHipchatType() {
+        return getContext(HIPCHAT);
     }
 }

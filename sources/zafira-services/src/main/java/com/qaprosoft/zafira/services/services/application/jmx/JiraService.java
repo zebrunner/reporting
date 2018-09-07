@@ -32,13 +32,13 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.JiraType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.JiraContext;
 
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraClient;
 
 @ManagedResource(objectName = "bean:name=jiraService", description = "Jira init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class JiraService implements IJMXService<JiraType> {
+public class JiraService implements IJMXService<JiraContext> {
     private static final Logger LOGGER = Logger.getLogger(JiraService.class);
 
     @Autowired
@@ -88,7 +88,7 @@ public class JiraService implements IJMXService<JiraType> {
     public void init(String url, String username, String password) {
         try {
             if (!StringUtils.isEmpty(url) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                putType(JIRA, new JiraType(url, username, password));
+                putContext(JIRA, new JiraContext(url, username, password));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Jira integration: " + e.getMessage());
@@ -134,6 +134,6 @@ public class JiraService implements IJMXService<JiraType> {
 
     @ManagedAttribute(description = "Get jira client")
     public JiraClient getJiraClient() {
-        return getType(JIRA) != null ? getType(JIRA).getJiraClient() : null;
+        return getContext(JIRA) != null ? getContext(JIRA).getJiraClient() : null;
     }
 }

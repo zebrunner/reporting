@@ -13,33 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
-import com.offbytwo.jenkins.JenkinsServer;
+import io.evanwong.oss.hipchat.v2.HipChatClient;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-public class JenkinsType extends AbstractType
+public class HipchatContext extends AbstractContext
 {
 
-    private JenkinsServer jenkinsServer;
+    private HipChatClient hipchatClient;
 
-    public JenkinsType(String url, String username, String passwordOrApiToken) {
-        try {
-            this.jenkinsServer = new JenkinsServer(new URI(url), username, passwordOrApiToken);
-        } catch (URISyntaxException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    public HipchatContext(String accessToken)
+    {
+        this.hipchatClient = new HipChatClient(accessToken);
     }
 
-    public JenkinsServer getJenkinsServer()
+    public HipChatClient getHipchatClient()
     {
-        return jenkinsServer;
+        return hipchatClient;
     }
 
-    public void setJenkinsServer(JenkinsServer jenkinsServer)
+    public void setHipchatClient(HipChatClient hipchatClient)
     {
-        this.jenkinsServer = jenkinsServer;
+        this.hipchatClient = hipchatClient;
     }
 }

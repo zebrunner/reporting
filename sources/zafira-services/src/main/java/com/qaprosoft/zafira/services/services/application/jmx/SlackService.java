@@ -40,7 +40,7 @@ import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.emails.TestRunResultsEmail;
-import com.qaprosoft.zafira.services.services.application.jmx.models.SlackType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.SlackContext;
 
 import in.ashwanthkumar.slack.webhook.Slack;
 import in.ashwanthkumar.slack.webhook.SlackAttachment;
@@ -48,7 +48,7 @@ import in.ashwanthkumar.slack.webhook.SlackAttachment.Field;
 import in.ashwanthkumar.slack.webhook.SlackMessage;
 
 @ManagedResource(objectName = "bean:name=slackService", description = "Slack init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
-public class SlackService implements IJMXService<SlackType> {
+public class SlackService implements IJMXService<SlackContext> {
 
     private final static String RESULTS_PATTERN = "Passed: %d, Failed: %d, Known Issues: %d, Skipped: %d";
     private final static String MAIN_PATTERN = "Test run #%1$d has been completed after %2$s with status %3$s\n"
@@ -112,7 +112,7 @@ public class SlackService implements IJMXService<SlackType> {
         String wH = getWebhook();
         if (wH != null) {
             try {
-                putType(Setting.Tool.SLACK, new SlackType(wH, author, picPath));
+                putContext(Setting.Tool.SLACK, new SlackContext(wH, author, picPath));
             } catch (IllegalArgumentException e) {
                 LOGGER.info("Webhook url is not provided");
             }
@@ -122,7 +122,7 @@ public class SlackService implements IJMXService<SlackType> {
     public void sendAutoStatus(TestRun tr) throws IOException, ServiceException {
         String channel = getChannelMapping(tr);
         if (channel != null) {
-            getType(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
+            getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
             String elapsed = countElapsedInSMH(tr.getElapsed());
             String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
@@ -157,7 +157,7 @@ public class SlackService implements IJMXService<SlackType> {
     public boolean sendReviwedStatus(TestRun tr) throws IOException, ServiceException {
         String channel = getChannelMapping(tr);
         if (channel != null) {
-            getType(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
+            getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
             String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
             String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
@@ -269,6 +269,6 @@ public class SlackService implements IJMXService<SlackType> {
 
     @ManagedAttribute(description = "Get Slack current instance")
     public Slack getSlack() {
-        return getType(Setting.Tool.SLACK) != null ? getType(Setting.Tool.SLACK).getSlack() : null;
+        return getContext(Setting.Tool.SLACK) != null ? getContext(Setting.Tool.SLACK).getSlack() : null;
     }
 }

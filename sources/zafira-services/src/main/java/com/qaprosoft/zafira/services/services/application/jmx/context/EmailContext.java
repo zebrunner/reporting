@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.models;
+package com.qaprosoft.zafira.services.services.application.jmx.context;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
-public class EmailType extends AbstractType
+public class EmailContext extends AbstractContext
 {
 
     private JavaMailSender javaMailSender;
     private String fromAddress;
 
-    public EmailType(String host, int port, String user, String fromAddress, String password)
+    public EmailContext(String host, int port, String user, String fromAddress, String password)
     {
         this.javaMailSender = new JavaMailSenderImpl();
         ((JavaMailSenderImpl) this.javaMailSender).setDefaultEncoding("UTF-8");

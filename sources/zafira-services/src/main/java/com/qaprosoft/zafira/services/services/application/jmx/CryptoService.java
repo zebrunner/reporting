@@ -37,13 +37,13 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.exceptions.EncryptorInitializationException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.CryptoType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.CryptoContext;
 
 /**
  * Created by irina on 21.7.17.
  */
 @ManagedResource(objectName = "bean:name=cryptoService", description = "Crypto init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class CryptoService implements IJMXService<CryptoType> {
+public class CryptoService implements IJMXService<CryptoContext> {
     private static final Logger LOGGER = Logger.getLogger(CryptoService.class);
 
     private String salt;
@@ -77,7 +77,7 @@ public class CryptoService implements IJMXService<CryptoType> {
                 }
             }
 
-            putType(CRYPTO, new CryptoType(type, size, key, this.salt));
+            putContext(CRYPTO, new CryptoContext(type, size, key, this.salt));
 
             String dbKey = settingsService.getSettingByType(KEY).getValue();
             if (StringUtils.isBlank(dbKey)) {
@@ -157,7 +157,7 @@ public class CryptoService implements IJMXService<CryptoType> {
     }
 
     @ManagedAttribute(description = "Get current crypto entity")
-    public CryptoType getCryptoType() {
-        return getType(CRYPTO);
+    public CryptoContext getCryptoType() {
+        return getContext(CRYPTO);
     }
 }

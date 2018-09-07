@@ -59,10 +59,10 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.AWSException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.models.AmazonType;
+import com.qaprosoft.zafira.services.services.application.jmx.context.AmazonContext;
 
 @ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AmazonService implements IJMXService<AmazonType> {
+public class AmazonService implements IJMXService<AmazonContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
@@ -138,9 +138,9 @@ public class AmazonService implements IJMXService<AmazonType> {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
                     && !StringUtils.isBlank(bucket)) {
                 if(!StringUtils.isBlank(distributionDomain) && !StringUtils.isBlank(keyPairId)) {
-                    putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration, distributionDomain, keyPairId));
+                    putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, distributionDomain, keyPairId));
                 } else {
-                    putType(AMAZON, new AmazonType(accessKey, privateKey, region, bucket, clientConfiguration));
+                    putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration));
                 }
             }
         } catch (Exception e) {
@@ -276,7 +276,7 @@ public class AmazonService implements IJMXService<AmazonType> {
     }
 
     @ManagedAttribute(description = "Get current amazon entity")
-    public AmazonType getAmazonType() {
-        return getType(AMAZON);
+    public AmazonContext getAmazonType() {
+        return getContext(AMAZON);
     }
 }
