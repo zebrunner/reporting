@@ -192,7 +192,7 @@
 	                           
 	<rabbit:admin id="rabbitAdmin" connection-factory="rabbitConnectionFactory" />
 	
-	<rabbit:queue id="settingsQueue" name="settings" durable="false" auto-declare="true" auto-delete="true" />
+	<rabbit:queue id="settingsQueue" durable="false" auto-declare="true" auto-delete="true" />
 	
 	<rabbit:fanout-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
 	    <rabbit:bindings>
