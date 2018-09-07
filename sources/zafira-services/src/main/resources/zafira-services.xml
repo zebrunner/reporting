@@ -22,7 +22,6 @@
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="beans">
 			<map>
-				<entry key="bean:name=asyncSendEmailTask" value-ref="asyncSendEmailTask"/>
 				<entry key="bean:name=googleService" value-ref="googleService"/>
 				<entry key="bean:name=ldapService" value-ref="ldapService"/>
 				<entry key="bean:name=jiraService" value-ref="jiraService"/>
@@ -55,8 +54,6 @@
 		<property name="attributeSource" ref="jmxAttributeSource"/>
 	</bean>
 
-	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask"/>
-
 	<bean id="googleService" class="com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService"/>
 
 	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService"/>
@@ -76,6 +73,8 @@
 	</bean>
 	
 	<bean id="rabbitMQService" class="com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService"/>
+
+	<bean id="asyncSendEmailTask" class="com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask" scope="prototype"/>
 
 	<bean id="passwordEncryptor" class="org.jasypt.util.password.BasicPasswordEncryptor" />
 

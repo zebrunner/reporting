@@ -23,7 +23,6 @@ import com.qaprosoft.zafira.services.services.application.jmx.context.EmailConte
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.*;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
@@ -32,7 +31,6 @@ import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.EMAIL;
 
-@ManagedResource(objectName = "bean:name=asyncSendEmailTask", description = "Email init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
 
     private static final Logger LOGGER = Logger.getLogger(AsynSendEmailTask.class);
@@ -50,7 +48,7 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
         getJavaMailSenderImpl().send(preparator);
     }
 
-    @Autowired
+    @Override
     public void init() {
         String host = null;
         int port = 0;
@@ -89,13 +87,6 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
         }
     }
 
-    @ManagedOperation(description = "Change SMTP initialization")
-    @ManagedOperationParameters({
-            @ManagedOperationParameter(name = "host", description = "SMTP host"),
-            @ManagedOperationParameter(name = "port", description = "SMTP port"),
-            @ManagedOperationParameter(name = "user", description = "SMTP user"),
-            @ManagedOperationParameter(name = "fromAddress", description = "SMTP from address"),
-            @ManagedOperationParameter(name = "password", description = "SMTP password") })
     public void init(String host, int port, String user, String fromAddress, String password) {
         try {
             if (!StringUtils.isBlank(host) && !StringUtils.isBlank(user) && !StringUtils.isBlank(password) && port != 0) {
@@ -125,7 +116,6 @@ public class AsynSendEmailTask implements Runnable, IJMXService<EmailContext> {
         this.preparator = preparator;
     }
 
-    @ManagedAttribute(description = "Get email server")
     public JavaMailSenderImpl getJavaMailSenderImpl() {
         return getContext(EMAIL) != null ? (JavaMailSenderImpl) getContext(EMAIL).getJavaMailSender() : null;
     }
