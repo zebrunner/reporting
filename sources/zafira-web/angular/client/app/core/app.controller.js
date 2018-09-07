@@ -242,12 +242,12 @@
             };
 
 	        (function initController() {
-	        	
+	        		// Used for dashboard emails
 	            var authorization = $cookies.get('Access-Token');
                 if(authorization) {
                     AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
                 }
-	        	
+                
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
                 SettingsService.getCompanyLogo().then(function(rs) {
                     if(rs.success)
