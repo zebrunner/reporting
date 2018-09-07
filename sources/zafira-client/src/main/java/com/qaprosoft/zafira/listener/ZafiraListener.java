@@ -31,10 +31,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.SystemConfiguration;
+import org.apache.commons.configuration2.*;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -117,7 +114,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	@Override
 	public void onStart(ISuite suiteContext)
 	{
-		boolean initialized = initializeZafira();
+		boolean initialized = initializeZafira(suiteContext);
 		// Exit on initialization failure
 		if(!initialized) return;
 		
@@ -561,7 +558,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	 * 
 	 * @return if initialization success
 	 */
-	private boolean initializeZafira()
+	private boolean initializeZafira(ISuite suiteContext)
 	{
 		boolean success = false;
 		try
@@ -590,12 +587,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			
 			JIRA_SUITE_ID = config.getString("jira_suite_id", null);
 			
-			ZAFIRA_ENABLED = config.getBoolean("zafira_enabled", false);
-			ZAFIRA_URL = config.getString("zafira_service_url", StringUtils.EMPTY);
-			ZAFIRA_ACCESS_TOKEN = config.getString("zafira_access_token", StringUtils.EMPTY);
-			ZAFIRA_PROJECT = config.getString("zafira_project", StringUtils.EMPTY);
-			ZAFIRA_RERUN_FAILURES = config.getBoolean("zafira_rerun_failures", false);
-			ZAFIRA_CONFIGURATOR = config.getString("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator");
+			ZAFIRA_ENABLED = (Boolean) ZafiraConfiguration.ENABLED.get(config, suiteContext);
+			ZAFIRA_URL = (String) ZafiraConfiguration.SERVICE_URL.get(config, suiteContext);
+			ZAFIRA_ACCESS_TOKEN = (String) ZafiraConfiguration.ACCESS_TOKEN.get(config, suiteContext);
+			ZAFIRA_PROJECT = (String) ZafiraConfiguration.PROJECT.get(config, suiteContext);
+			ZAFIRA_RERUN_FAILURES = (Boolean) ZafiraConfiguration.RERUN_FAILURES.get(config, suiteContext);
+			ZAFIRA_CONFIGURATOR = (String) ZafiraConfiguration.CONFIGURATOR.get(config, suiteContext);
 			
 			if(ZAFIRA_ENABLED)
 			{
@@ -722,7 +719,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		
 	    return !StringUtils.isEmpty(sb.toString()) ? sb.toString() : null;
 	}
-	
+
 	/**
 	 * TestRunShutdownHook - aborts test run when CI job is aborted.
 	 */
@@ -751,5 +748,60 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	public static ConcurrentHashMap<Long, TestType> getTestbythread() 
 	{
 		return testByThread;
+	}
+
+	public enum ZafiraConfiguration {
+
+		ENABLED("zafira_enabled", false),
+		SERVICE_URL("zafira_service_url", StringUtils.EMPTY),
+		ACCESS_TOKEN("zafira_access_token", StringUtils.EMPTY),
+		PROJECT("zafira_project", StringUtils.EMPTY, true),
+		RERUN_FAILURES("zafira_rerun_failures", false),
+		CONFIGURATOR("zafira_configurator", "com.qaprosoft.zafira.listener.DefaultConfigurator", true);
+
+		private String configName;
+		private Object defaultValue;
+		private boolean canOverride;
+
+		ZafiraConfiguration(String configName, Object defaultValue) {
+			this.configName = configName;
+			this.defaultValue = defaultValue;
+		}
+
+		ZafiraConfiguration(String configName, Object defaultValue, boolean canOverride) {
+			this.configName = configName;
+			this.defaultValue = defaultValue;
+			this.canOverride = canOverride;
+		}
+
+		public String getConfigName() {
+			return configName;
+		}
+
+		public Object getDefaultValue() {
+			return defaultValue;
+		}
+
+		public boolean isCanOverride() {
+			return canOverride;
+		}
+
+		@SuppressWarnings("unchecked")
+		public Object get(Configuration config, ISuite suiteConfig) {
+			return this.canOverride &&  suiteConfig.getParameter(this.configName) != null ? suiteConfig.getParameter(this.configName) :
+					config.get(getDefaultClassValue(), this.configName, this.defaultValue);
+		}
+
+		private Class getDefaultClassValue() {
+			Class aClass = null;
+			if(this.defaultValue instanceof String) {
+				aClass = String.class;
+			} else if(this.defaultValue instanceof Boolean) {
+				aClass = Boolean.class;
+			} else if(this.defaultValue instanceof Integer) {
+				aClass = Integer.class;
+			}
+			return aClass;
+		}
 	}
 }

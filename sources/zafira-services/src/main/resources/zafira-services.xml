@@ -194,11 +194,11 @@
 	
 	<rabbit:queue id="settingsQueue" name="settings" durable="false" auto-declare="true" auto-delete="true" />
 	
-	<rabbit:topic-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
+	<rabbit:fanout-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
 	    <rabbit:bindings>
-	        <rabbit:binding pattern="settings" queue="settingsQueue"/>
+	        <rabbit:binding queue="settingsQueue"/>
 	    </rabbit:bindings>
-	</rabbit:topic-exchange>
+	</rabbit:fanout-exchange>
 	
 	<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
 	
@@ -207,7 +207,7 @@
     <bean id="rabbitListenerContainerFactory" class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
 	    <property name="connectionFactory" ref="rabbitConnectionFactory"/>
 	    <property name="concurrentConsumers" value="1"/>
-	    <property name="maxConcurrentConsumers" value="20"/>
+	    <property name="maxConcurrentConsumers" value="25"/>
 	</bean>
     
 </beans>
