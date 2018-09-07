@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.ws.controller;
+package com.qaprosoft.zafira.ws.controller.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
-import com.qaprosoft.zafira.services.services.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,12 +34,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.models.dto.ConnectedToolType;
+import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.SettingsService;
-import com.qaprosoft.zafira.services.services.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.Api;
@@ -92,9 +97,24 @@ public class SettingsAPIController extends AbstractController
 	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool) throws ServiceException
+	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool, @RequestParam(value = "decrypt", required = false, defaultValue="false") boolean decrypt) throws Exception
 	{
-        return settingsService.getSettingsByTool(Tool.valueOf(tool));
+		List<Setting> settings = settingsService.getSettingsByTool(Tool.valueOf(tool));
+		
+		if(decrypt) {
+			// TODO: think about tools allowed for decryption
+			if(!Tool.RABBITMQ.name().equals(tool)) {
+				throw new ForbiddenOperationException();
+			}
+			for(Setting setting : settings) {
+				if(setting.isEncrypted()) {
+					setting.setValue(cryptoService.decrypt(setting.getValue()));
+					setting.setEncrypted(false);
+				}
+			}
+		}
+		
+        return settings;
 	}
 
     @ResponseStatusDetails
@@ -132,10 +152,10 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get company logo setting", nickname = "getSettingSetting", code = 200, httpMethod = "GET", response = Setting.class)
+	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Setting getCompanyLogoSetting() throws ServiceException
+	public @ResponseBody Setting getCompanyLogoURL() throws ServiceException
 	{
 		return settingsService.getSettingByName(Setting.SettingType.COMPANY_LOGO_URL.name());
 	}
@@ -214,7 +234,9 @@ public class SettingsAPIController extends AbstractController
 			}
             settingsService.updateSetting(setting);
 		}
-        settingsService.reinstantiateTool(tool);
+        settingsService.notifyToolReinitiated(tool, TenancyContext.getTenantName());
+        // TODO: find better solution
+        TimeUnit.SECONDS.sleep(3);
 		connectedTool.setName(tool.name());
 		connectedTool.setSettingList(settings);
 		connectedTool.setConnected(settingsService.getServiceByTool(tool).isConnected());
@@ -228,6 +250,15 @@ public class SettingsAPIController extends AbstractController
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
 		return amazonService.getTemporarySessionCredentials();
+	}
+
+	@ApiOperation(value = "Get amazon policy cookies", nickname = "getPolicyCookies", code = 200, httpMethod = "GET", response = Map.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+	@RequestMapping(value = "creds/amazon/cookies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, String> getPolicyCookies() throws ServiceException
+	{
+		return amazonService.getPolicyCookies();
 	}
 
 	@ResponseStatusDetails
