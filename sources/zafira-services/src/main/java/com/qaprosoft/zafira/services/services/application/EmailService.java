@@ -101,7 +101,7 @@ public class EmailService
 			};
 			emailTask.setPreparator(preparator);
 			Runnable task = emailTask;
-			autowireizer.autowireBean(task);
+			//autowireizer.autowireBean(task);
 			Executors.newSingleThreadExecutor().execute(task);
 		}
 		return text;
