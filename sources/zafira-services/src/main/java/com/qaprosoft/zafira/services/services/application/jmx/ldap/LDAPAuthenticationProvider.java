@@ -25,31 +25,28 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
+import org.springframework.security.ldap.authentication.NullLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.ppolicy.PasswordPolicyException;
+import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 /** Uses for load user from LDAP and recognize it.
  * Need override LdapAuthenticationProvider cause superclass has private getAuthenticator only
  * @author brutskov
  */
-public class LDAPAuthenticationProvider extends LdapAuthenticationProvider {
+public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvider {
 
     @Autowired
     private LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
 
-    public LDAPAuthenticationProvider(LdapAuthenticator authenticator) {
-        super(authenticator);
-    }
-
-    public LDAPAuthenticationProvider() {
-        super(new BindAuthenticator(getContext().getLdapContextSource()));
-    }
+    private LdapAuthoritiesPopulator authoritiesPopulator = new NullLdapAuthoritiesPopulator();
 
     @PostConstruct
     private void init() {
@@ -93,5 +90,14 @@ public class LDAPAuthenticationProvider extends LdapAuthenticationProvider {
     @Override
     protected UserDetailsContextMapper getUserDetailsContextMapper() {
         return this.ldapUserDetailsContextMapper;
+    }
+
+    protected LdapAuthoritiesPopulator getAuthoritiesPopulator() {
+        return this.authoritiesPopulator;
+    }
+
+    @Override
+    protected Collection<? extends GrantedAuthority> loadUserAuthorities(DirContextOperations userData, String username, String password) {
+        return getAuthoritiesPopulator().getGrantedAuthorities(userData, username);
     }
 }
