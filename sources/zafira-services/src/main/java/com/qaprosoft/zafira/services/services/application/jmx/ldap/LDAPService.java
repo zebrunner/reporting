@@ -22,11 +22,8 @@ import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.LDAPContext;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 
 import java.util.List;
 
@@ -37,9 +34,6 @@ import static com.qaprosoft.zafira.models.db.Setting.Tool.LDAP;
 public class LDAPService implements IJMXService<LDAPContext> {
 
     private final static Logger LOGGER = Logger.getLogger(LDAPService.class);
-
-    @Autowired
-    private LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
 
     @Autowired
     private SettingsService settingsService;
@@ -101,7 +95,7 @@ public class LDAPService implements IJMXService<LDAPContext> {
     public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword){
         try
         {
-            putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword, this.ldapUserDetailsContextMapper));
+            putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword));
         } catch (Exception e)
         {
             LOGGER.error("Unable to initialize Ldap integration: " + e.getMessage());
@@ -126,14 +120,6 @@ public class LDAPService implements IJMXService<LDAPContext> {
     public LdapContextSource getLdapContextSource()
     {
         return getType().getLdapContextSource();
-    }
-
-    @ManagedAttribute(description="Get ldap authentication provider")
-    @Bean
-    @Scope(value = "prototype")
-    public LdapAuthenticationProvider getLdapAuthenticationProvider()
-    {
-        return getType() != null ? getType().getLdapAuthenticationProvider() : null;
     }
 
     public LDAPContext getType()

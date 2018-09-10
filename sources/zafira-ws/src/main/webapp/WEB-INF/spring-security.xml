@@ -12,6 +12,8 @@
 			<ref bean="passwordEncryptor" />
 		</property>
 	</bean>
+
+	<bean id="ldapProvider" class="com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPAuthenticationProvider"/>
 	
 	<security:authentication-manager alias="authenticationManager">
 
@@ -19,7 +21,7 @@
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
 
-		<security:authentication-provider ref="getLdapAuthenticationProvider" />
+		<security:authentication-provider ref="ldapProvider" />
 		
 		<!-- Comment out to use LDAP (make sure LDAP configuration specified in maven profile) -->
 		<!-- security:authentication-provider ref="ldapAuthProvider"  / -->
