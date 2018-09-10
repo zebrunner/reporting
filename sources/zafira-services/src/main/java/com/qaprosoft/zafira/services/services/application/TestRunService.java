@@ -64,6 +64,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
@@ -87,8 +88,11 @@ public class TestRunService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
 	
-	@Value("${zafira.webservice.url}")
-	private String wsURL;
+	@Value("${zafira.multitenant}")
+    private boolean isMultitenant;
+	
+	@Value("${zafira.web.url}")
+	private String webURL;
 	
 	@Autowired
 	private TestRunMapper testRunMapper;
@@ -542,7 +546,7 @@ public class TestRunService
 	{
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
-		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
+		configuration.getArg().add(new Argument("zafira_service_url", buildWebURL()));
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
@@ -572,7 +576,7 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + id);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", StringUtils.removeEnd(wsURL, "-ws")));
+		configuration.getArg().add(new Argument("zafira_service_url", buildWebURL()));
 
 		List<Test> tests = testService.getTestsByTestRunId(id);
 
@@ -760,5 +764,14 @@ public class TestRunService
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)
 	{
 		return updateStatistics(testRunId, status, false);
+	}
+	
+	/**
+	 * In case if multitenancy will resolve current tenancy id into the URL pattern: http://demo.qaprosoft.com/zafira.
+	 * 
+	 * @return Zafira web URL
+	 */
+	private String buildWebURL() {
+	    return isMultitenant ? String.format(webURL, TenancyContext.getTenantName()) : webURL;
 	}
 }

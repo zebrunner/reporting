@@ -38,11 +38,24 @@ then
 fi
 
 # Run Tomcat
-echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catalina.properties
-echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.multitenant=$ZAFIRA_MULTITENANT >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.url=$ZAFIRA_URL >> $CATALINA_HOME/conf/catalina.properties
+# Backend URL
+if [ ! -z "$ZAFIRA_WS_URL" ];
+then
+echo zafira.webservice.url=$ZAFIRA_WS_URL >> $CATALINA_HOME/conf/catalina.properties
+else
 echo zafira.webservice.url=$ZAFIRA_URL/zafira-ws >> $CATALINA_HOME/conf/catalina.properties
+fi
+# Frontend URL
+if [ ! -z "$ZAFIRA_WEB_URL" ];
+then
+echo zafira.web.url=$ZAFIRA_WEB_URL >> $CATALINA_HOME/conf/catalina.properties
+else
+echo zafira.web.url=$ZAFIRA_URL/zafira >> $CATALINA_HOME/conf/catalina.properties
+fi
+echo zafira.service.version=$ZAFIRA_SERVICE_VERSION >> $CATALINA_HOME/conf/catalina.properties
+echo zafira.client.version=$ZAFIRA_CLIENT_VERSION >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.admin.username=$ZAFIRA_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.admin.password=$ZAFIRA_PASS >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.db.jdbc.url=$ZAFIRA_JDBC_URL >> $CATALINA_HOME/conf/catalina.properties

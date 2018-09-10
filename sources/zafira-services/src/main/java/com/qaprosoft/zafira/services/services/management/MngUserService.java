@@ -35,12 +35,12 @@ import java.util.List;
 public class MngUserService {
 
     private static final Logger LOGGER = Logger.getLogger(MngUserService.class);
+    
+    @Value("${zafira.admin.username}")
+    private String adminUsername;
 
-    @Value("${zafira.management.admin.username}")
-    private String adminManagementUsername;
-
-    @Value("${zafira.management.admin.password}")
-    private String adminManagementPassword;
+    @Value("${zafira.admin.password}")
+    private String adminPassword;
 
     @Autowired
     private MngUserMapper mngUserMapper;
@@ -53,12 +53,12 @@ public class MngUserService {
 
     @PostConstruct
     public void init() {
-        if(! StringUtils.isBlank(adminManagementUsername) && ! StringUtils.isBlank(adminManagementPassword)) {
+        if(! StringUtils.isBlank(adminUsername) && ! StringUtils.isBlank(adminPassword)) {
             try {
-                User user = getUserByUsername(adminManagementUsername);
+                User user = getUserByUsername(adminUsername);
                 if (user == null) {
-                    user = new User(adminManagementUsername);
-                    user.setPassword(passwordEncryptor.encryptPassword(adminManagementPassword));
+                    user = new User(adminUsername);
+                    user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                     createUser(user);
 
                     Group group = mngGroupService.getPrimaryGroupByRole(Group.Role.ROLE_SUPERADMIN);

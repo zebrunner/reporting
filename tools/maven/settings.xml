@@ -20,9 +20,6 @@
 
             <zafira.admin.username/>
             <zafira.admin.password/>
-            
-            <zafira.management.admin.username></zafira.management.admin.username>
-            <zafira.management.admin.password></zafira.management.admin.password>
 
             <zafira.jwt.secret>AUwMLdWFBtUHVgvjFfMmAEadXqZ6HA4dKCiCmjgCXxaZ4ZO8od</zafira.jwt.secret>
             <zafira.crypto_salt>TDkxalR4T3EySGI0T0YyMitScmkxWDlsUXlPV2R4OEZ1b2kyL1VJeFVHST0=</zafira.crypto_salt>

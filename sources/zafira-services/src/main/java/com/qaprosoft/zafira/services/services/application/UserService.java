@@ -40,6 +40,7 @@ import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
 @Service
 public class UserService {
+    
     private static final Logger LOGGER = Logger.getLogger(UserService.class);
 
     @Value("${zafira.admin.username}")
