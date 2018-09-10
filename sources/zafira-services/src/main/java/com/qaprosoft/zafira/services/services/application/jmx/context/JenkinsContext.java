@@ -15,31 +15,33 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.context;
 
-import com.offbytwo.jenkins.JenkinsServer;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class JenkinsContext extends AbstractContext
-{
+import com.offbytwo.jenkins.JenkinsServer;
+import com.qaprosoft.zafira.services.util.JenkinsClient;
+import com.qaprosoft.zafira.services.util.JenkinsConfig;
+
+public class JenkinsContext extends AbstractContext {
+
+    private static final Integer HTTP_TIMEOUT = 15;
 
     private JenkinsServer jenkinsServer;
 
     public JenkinsContext(String url, String username, String passwordOrApiToken) {
         try {
-            this.jenkinsServer = new JenkinsServer(new URI(url), username, passwordOrApiToken);
+            JenkinsConfig config = new JenkinsConfig(username, passwordOrApiToken, HTTP_TIMEOUT);
+            this.jenkinsServer = new JenkinsServer(new JenkinsClient(new URI(url), config));
         } catch (URISyntaxException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
-    public JenkinsServer getJenkinsServer()
-    {
+    public JenkinsServer getJenkinsServer() {
         return jenkinsServer;
     }
 
-    public void setJenkinsServer(JenkinsServer jenkinsServer)
-    {
+    public void setJenkinsServer(JenkinsServer jenkinsServer) {
         this.jenkinsServer = jenkinsServer;
     }
 }
