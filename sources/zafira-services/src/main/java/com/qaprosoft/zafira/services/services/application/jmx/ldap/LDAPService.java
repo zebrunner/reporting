@@ -20,6 +20,7 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.LDAPContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
@@ -95,7 +96,9 @@ public class LDAPService implements IJMXService<LDAPContext> {
     public void init(String dn, String searchFilter, String url, String managerUser, String managerPassword){
         try
         {
-            putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword));
+            if(!StringUtils.isBlank(dn) && !StringUtils.isBlank(searchFilter) && !StringUtils.isBlank(url) && !StringUtils.isBlank(managerUser) && !StringUtils.isBlank(managerPassword)) {
+                putContext(LDAP, new LDAPContext(dn, searchFilter, url, managerUser, managerPassword));
+            }
         } catch (Exception e)
         {
             LOGGER.error("Unable to initialize Ldap integration: " + e.getMessage());
