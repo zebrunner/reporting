@@ -31,6 +31,7 @@
 				<value>dozer/Project-dozer-mapping.xml</value>
 				<value>dozer/TestArtifact-dozer-mapping.xml</value>
 				<value>dozer/Tenancy-dozer-mapping.xml</value>
+				<value>dozer/Invitation-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

@@ -2082,3 +2082,8 @@ td.settings-cell {
 .md-panel-outer-wrapper {
     z-index: 1041 !important;
 }
+
+
+.validation_error *[ng-message] {
+    color: red !important;
+}

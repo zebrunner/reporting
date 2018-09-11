@@ -1,0 +1,38 @@
+<md-dialog flex="50" aria-label="Invite profile" zafira-background-theme="modal">
+    <form class="form-validation" name="invite_form" ng-submit="invite(emails, invite_form); UtilService.untouchForm(invite_form)" ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 id="modalTitle">Invite users</h2>
+                <span flex></span>
+                <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
+                    <md-icon aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
+                    <md-chips ng-model="emails"
+                              name="email"
+                              filter-selected=false
+                              md-autocomplete-snap
+                              md-transform-chip="checkAndTransformRecipient($chip)"
+                              md-on-remove="removeRecipient($chip)"
+                              md-separator-keys="keys"
+                              placeholder="Enter an email...">
+                    </md-chips>
+                    <div class="validation_error" ng-messages="invite_form.email.$error">
+                        <div ng-message="validationError">
+                            {{ invite_form.email.errorMessage }}
+                        </div>
+                    </div>
+                </md-content>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button ng-disabled="emails.length == 0" id="change" type="submit" class="md-raised btn-w-md md-primary">
+                Invite
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

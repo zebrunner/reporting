@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import javax.annotation.PostConstruct;
@@ -53,6 +54,9 @@ public class UserService {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private PasswordEncryptor passwordEncryptor;
@@ -107,6 +111,11 @@ public class UserService {
         return userMapper.getUserByUserName(username);
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) throws ServiceException {
+        return userMapper.getUserByEmail(email);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void updateLastLoginDate(long userId) {
         userMapper.updateLastLoginDate(userId);
@@ -139,6 +148,7 @@ public class UserService {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
                 newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
             }
+            newUser.setSource(newUser.getSource() != null ? newUser.getSource() : INTERNAL);
             createUser(newUser);
             Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
             if (group != null) {

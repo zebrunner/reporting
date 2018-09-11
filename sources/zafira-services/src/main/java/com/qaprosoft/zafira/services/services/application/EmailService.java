@@ -49,8 +49,8 @@ public class EmailService
 	@Autowired
 	private FreemarkerUtil freemarkerUtil;
 	
-	@Autowired
-	private AutowireCapableBeanFactory autowireizer;
+	/*@Autowired
+	private AutowireCapableBeanFactory autowireizer;*/
 
 	@Autowired
 	private AsynSendEmailTask emailTask;
@@ -68,7 +68,7 @@ public class EmailService
 			throw new IntegrationException("SMTP server connection is refused.");
 		}
 
-		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getTemplate(), message);
+		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
 		final String[] recipients = processRecipients(emails);
 
 		if(! ArrayUtils.isEmpty(recipients))
@@ -91,7 +91,7 @@ public class EmailService
 				}
 			};
 			this.emailTask.setPreparator(preparator);
-			autowireizer.autowireBean(this.emailTask);
+			//autowireizer.autowireBean(this.emailTask);
 			Executors.newSingleThreadExecutor().execute(this.emailTask);
 		}
 		return text;

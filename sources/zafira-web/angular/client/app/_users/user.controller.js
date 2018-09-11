@@ -463,6 +463,20 @@
                 });
         };
 
+        $scope.showInviteUsersDialog = function(event) {
+            $mdDialog.show({
+                controller: InviteController,
+                templateUrl: 'app/_users/invite_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true
+            })
+                .then(function(answer) {
+                }, function() {
+                });
+        };
+
         $scope.isDateChosen = true;
         $scope.isDateBetween = false;
 
@@ -778,6 +792,78 @@
             $scope.getGroupsCount();
             $scope.getAllGroups();
             $scope.getAllPermissions();
+        })();
+    }
+
+    function InviteController($scope, $mdDialog, UserService, AuthService) {
+
+        $scope.emails = [];
+
+        $scope.invite = function(emails, form) {
+            if(emails && emails.length > 0) {
+                AuthService.Invite(toInvite(emails)).then(function (rs) {
+                    if (rs.success) {
+                        var message = emails.length > 1 ? "Invitations were sent." : "Invitation was sent.";
+                        alertify.success(message);
+                    } else {
+                        var errorField = getErrorField(rs);
+                        if(errorField) {
+                            callError(function () {
+                                return errorField;
+                            }, form, errorField, getErrorMessage(rs))
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                    }
+                });
+            }
+        };
+
+        function toInvite(emails) {
+            return emails.map(function (email) {
+                return {'email': email};
+            });
+        };
+
+        function getErrorMessage(rs) {
+            var result;
+            if(rs.error && rs.error.status == 400 && rs.error.data.error) {
+                result = rs.error.data.error.message;
+            }
+            return result;
+        };
+
+        function getErrorField(rs) {
+            var result;
+            if(rs.error && rs.error.status == 400 && rs.error.data.error) {
+                result = rs.error.data.error.field;
+            }
+            return result;
+        };
+
+        function callError(func, form, inputName, errorMessage) {
+            var condition = func.call();
+            if (condition) {
+                form[inputName].errorMessage = errorMessage;
+                form[inputName].$setValidity('validationError', false);
+            }
+            else {
+                form[inputName].$setValidity('validationError', true);
+            }
+        };
+
+        $scope.checkAndTransformRecipient = function (email) {
+        };
+        $scope.removeRecipient = function (email) {
+            delete $scope.emails[email];
+        };
+        $scope.hide = function() {
+            $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+        (function initController() {
         })();
     }
 })();

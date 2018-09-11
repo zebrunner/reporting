@@ -21,7 +21,6 @@ import com.qaprosoft.zafira.models.db.Attachment;
 
 public class DashboardEmail implements IEmailMessage
 {
-	private static final String TEMPLATE = "dashboard.ftl";
 	
 	private String subject;
 	private String text;
@@ -41,9 +40,8 @@ public class DashboardEmail implements IEmailMessage
 	}
 
 	@Override
-	public String getTemplate()
-	{
-		return TEMPLATE;
+	public EmailType getType() {
+		return EmailType.DASHBOARD;
 	}
 
 	@Override
