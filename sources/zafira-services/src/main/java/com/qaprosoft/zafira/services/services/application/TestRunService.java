@@ -583,7 +583,7 @@ public class TestRunService
 		TestRunResultsEmail email = new TestRunResultsEmail(configuration, testRun, tests);
 		email.setJiraURL(settingsService.getSettingByType(JIRA_URL));
 		email.setSuccessRate(calculateSuccessRate(testRun));
-		return freemarkerUtil.getFreeMarkerTemplateContent(email.getTemplate(), email);
+		return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
 	}
 	
 	public Configuration readConfiguration(String xml) throws JAXBException

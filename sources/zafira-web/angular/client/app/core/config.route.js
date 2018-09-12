@@ -26,6 +26,10 @@
                         url: '/register',
                         templateUrl: 'app/_auth/register.html'
                     })
+                    .state('signup', {
+                        url: '/signup',
+                        templateUrl: 'app/_auth/signup.html'
+                    })
                     .state('users/profile', {
                         url: '/users/profile',
                         templateUrl: 'app/_users/profile.html'

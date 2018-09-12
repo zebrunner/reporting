@@ -16,13 +16,19 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.Tenancy;
+import com.qaprosoft.zafira.models.dto.auth.*;
+import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
+import com.qaprosoft.zafira.services.exceptions.*;
+import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -36,26 +42,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
-import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
-import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
-import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -79,6 +71,9 @@ public class AuthAPIController extends AbstractController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private InvitationService invitationService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -137,6 +132,22 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
+	@ApiOperation(value = "Sign up", nickname = "signup", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void signup(@RequestHeader(value = "Token", required = true) String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
+		Invitation invitation = invitationService.getInvitationByToken(token);
+		if(invitation == null || invitation.isExpired()) {
+			throw new ForbiddenOperationException();
+		}
+		invitationService.deleteInvitation(invitation.getId());
+		List<Group.Role> roles = new ArrayList<>();
+		roles.add(Group.Role.ROLE_USER);
+		userType.setRoles(roles);
+		userService.createOrUpdateUser(mapper.map(userType, User.class));
+	}
+
+	@ResponseStatusDetails
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -173,6 +184,26 @@ public class AuthAPIController extends AbstractController {
 		}
 		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Invite user", nickname = "inviteUser", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "invite", method = RequestMethod.POST)
+	public void inviteUser(@RequestBody @Valid InvitationType... invitations) throws ServiceException {
+		invitationService.createInvitations(Arrays.stream(invitations).map(invitationType -> mapper.map(invitationType, Invitation.class)).toArray(Invitation[]::new));
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get invitation", nickname = "getInvitation", code = 200, httpMethod = "GET", response = InvitationType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "invite", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody InvitationType getInvitation(@RequestParam(value = "token", required = true) String token) throws ServiceException {
+		Invitation invitation = invitationService.getInvitationByToken(token);
+		if(invitation == null || invitation.isExpired()) {
+			throw new ForbiddenOperationException();
+		}
+		return mapper.map(invitation, InvitationType.class);
 	}
 
 	@ResponseStatusDetails

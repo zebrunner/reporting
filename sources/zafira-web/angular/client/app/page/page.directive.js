@@ -31,6 +31,7 @@
                         return $element.addClass('body-wide body-err');
                     case '/signin':
                     case '/register':
+                    case '/signup':
                     case '/page/signin':
                     case '/page/signup':
                     case '/page/register':
