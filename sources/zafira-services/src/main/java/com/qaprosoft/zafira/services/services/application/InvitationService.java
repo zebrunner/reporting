@@ -6,17 +6,23 @@ import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.services.exceptions.EntityIsAlreadyExistsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.UserInviteEmail;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class InvitationService {
+
+    private static final Logger LOGGER = Logger.getLogger(InvitationService.class);
 
     @Value("${zafira.webservice.url}")
     private String wsURL;
@@ -44,14 +50,25 @@ public class InvitationService {
         return invitation;
     }
 
-    public List<Invitation> createInvitations(Invitation... invitations) throws ServiceException {
+    private CompletableFuture[] createInvitationsAsync(List<Invitation> results, Invitation... invitations) {
+        return Arrays.stream(invitations).map(invitation -> CompletableFuture.supplyAsync(() -> {
+            Invitation inv = null;
+            try {
+                inv = createInvitation(invitation, false);
+            } catch (ServiceException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            results.add(inv);
+            return inv;
+        })).toArray(CompletableFuture[]::new);
+    }
+
+    public List<Invitation> createInvitations(Invitation... invitations) throws Exception {
         List<Invitation> result = new ArrayList<>();
         for(Invitation invitation : invitations) {
             checkExisting(invitation.getEmail());
         }
-        for(Invitation invitation : invitations) {
-            result.add(createInvitation(invitation, false));
-        }
+        CompletableFuture.allOf(createInvitationsAsync(result, invitations)).join();
         return result;
     }
 
