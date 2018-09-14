@@ -25,7 +25,7 @@ public class FileUploadType
 
 	public enum Type
 	{
-		USERS("users"), COMMON("common"), VIDEOS("artifacts/videos"), SCREENSHOTS("artifacts/screenshots");
+		USERS("/users"), COMMON("/common"), VIDEOS("/artifacts/videos"), SCREENSHOTS("/artifacts/screenshots");
 
 		private String path;
 
