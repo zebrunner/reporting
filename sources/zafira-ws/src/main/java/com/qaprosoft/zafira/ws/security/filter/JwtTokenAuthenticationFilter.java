@@ -89,6 +89,11 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean
 			 * filters that will throw Exceptions if necessary (like if authorizations are incorrect).
 			 */
 			User user = extractAndDecodeJwt(request);
+
+			if(user.getStatus().equals(User.Status.INACTIVE)) {
+				return;
+			}
+
 			Authentication auth = buildAuthenticationFromJwt(user, request);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 

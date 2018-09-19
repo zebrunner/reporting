@@ -48,6 +48,7 @@ public class UserType extends AbstractType
 	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
 	private User.Source source;
+	private User.Status status;
 
 	public UserType() 
 	{
@@ -165,6 +166,14 @@ public class UserType extends AbstractType
 
 	public void setSource(User.Source source) {
 		this.source = source;
+	}
+
+	public User.Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(User.Status status) {
+		this.status = status;
 	}
 
 	@AssertTrue(message = "Email confirmation not matching")

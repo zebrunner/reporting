@@ -42,6 +42,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private Date lastLogin;
 	private String tenant;
 	private Source source;
+	private Status status;
 
 	public User()
 	{
@@ -49,6 +50,10 @@ public class User extends AbstractEntity implements Comparable<User>
 
 	public enum Source {
 		INTERNAL, LDAP
+	}
+
+	public enum Status {
+		ACTIVE, INACTIVE
 	}
 
 	public User(long id)
@@ -198,6 +203,14 @@ public class User extends AbstractEntity implements Comparable<User>
 
 	public void setSource(Source source) {
 		this.source = source;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	@Override

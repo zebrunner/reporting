@@ -10,6 +10,7 @@
 
         service.getUserProfile = getUserProfile;
         service.getExtendedUserProfile = getExtendedUserProfile;
+        service.updateStatus = updateStatus;
         service.searchUsers = searchUsers;
         service.searchUsersWithQuery = searchUsersWithQuery;
         service.updateUserProfile = updateUserProfile;
@@ -31,6 +32,10 @@
 
         function getExtendedUserProfile() {
             return $http.get(API_URL + '/api/users/profile/extended').then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
+        }
+
+        function updateStatus(user) {
+            return $http.put(API_URL + '/api/users/status', user).then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
         }
 
         function searchUsers(criteria) {
