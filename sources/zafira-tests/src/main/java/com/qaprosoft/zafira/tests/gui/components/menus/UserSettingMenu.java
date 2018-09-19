@@ -13,7 +13,7 @@ import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 public class UserSettingMenu extends AbstractMenu
 {
 
-	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//button[./*[text() = 'build']]")
+	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//button[./*[text() = 'settings']]")
 	private WebElement editProfileButton;
 
 	@FindBy(xpath = "//div[preceding-sibling::header]/md-menu-content//button[./*[text() = 'lock_outline']]")

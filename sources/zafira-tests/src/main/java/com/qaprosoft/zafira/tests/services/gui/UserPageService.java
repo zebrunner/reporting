@@ -60,7 +60,7 @@ public class UserPageService extends AbstractPageService
 	public CreateUserModalWindow goToCreateUserModalWindow()
 	{
 		userPage.clickFabMenu();
-		userPage.clickFabMenuButtonByClassName(CREATE_USER_BUTTON_CLASS);
+		//userPage.clickFabMenuButtonByClassName(CREATE_USER_BUTTON_CLASS);
 		return userPage.getCreateUserModalWindow();
 	}
 
