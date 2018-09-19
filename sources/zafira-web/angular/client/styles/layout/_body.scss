@@ -1559,7 +1559,10 @@ div[aria-selected='true'] span.ng-binding {
 }
 
 #search md-input-container.searchable.select, .date-picker-container:not(.no-padding){
-  margin-left: 8px !important;
+    margin-left: 0 !important;
+    @media (min-width:600px) {
+        margin-left: 8px !important;
+    }
 }
 
 .date-picker-container {
