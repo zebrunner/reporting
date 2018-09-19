@@ -44,6 +44,12 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
+            <md-button ng-if="user.status == 'INACTIVE'" ng-really-click="updateStatus(user, 'ACTIVE', $index);" ng-really-message="Do you really want to activate this user?" id="activate" class="md-raised btn-w-md">
+                Activate
+            </md-button>
+            <md-button ng-if="user.status == 'ACTIVE'" ng-really-click="updateStatus(user, 'INACTIVE', $index);" ng-really-message="Do you really want to deactivate this user?" id="deactivate" class="md-raised btn-w-md">
+                Deactivate
+            </md-button>
             <md-button id="save" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="profile_form.$invalid">

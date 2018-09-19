@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.services.services.application.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qaprosoft.zafira.models.db.Group;
@@ -36,6 +37,9 @@ public class JWTService
 	private Integer authTokenExp;
 	
 	private Integer refreshTokenExp;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private GroupService groupService;
@@ -79,6 +83,7 @@ public class JWTService
 		user.setUsername((String) body.get("username"));
 		((List) body.get("groupIds"))
 				.forEach(groupId -> user.getGroups().add(groupService.getGroupById(((Number) groupId).longValue())));
+		user.setStatus(userService.getUserByIdTrusted(user.getId()).getStatus());
 		user.setTenant((String) body.get("tenant"));
 		return user;
 	}
