@@ -1,5 +1,5 @@
 <md-dialog flex="50" aria-label="Invite profile" zafira-background-theme="modal">
-    <form class="form-validation" name="invite_form" ng-submit="invite(emails, invite_form); UtilService.untouchForm(invite_form)" ng-cloak>
+    <form class="form-validation" name="invite_form" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2 id="modalTitle">Invite users</h2>
@@ -12,6 +12,11 @@
         <md-dialog-content>
             <div class="md-dialog-content">
                 <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
+                    <md-select id="projectName" name="projectId" data-ng-model="userGroup" placeholder="Choose group...." required>
+                        <md-option ng-repeat="group in groups" ng-value="group.id">
+                            {{group.name}}
+                        </md-option>
+                    </md-select>
                     <md-chips ng-model="emails"
                               name="email"
                               filter-selected=false
@@ -20,6 +25,9 @@
                               md-on-remove="removeRecipient($chip)"
                               md-separator-keys="keys"
                               placeholder="Enter an email...">
+                        <md-chip-template ng-init="setMdChipsCtrl($mdChipsCtrl);">
+                            {{ $chip }}
+                        </md-chip-template>
                     </md-chips>
                     <div class="validation_error" ng-messages="invite_form.email.$error">
                         <div ng-message="validationError">
@@ -30,7 +38,7 @@
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">
-            <md-button ng-disabled="emails.length == 0" id="change" type="submit" class="md-raised btn-w-md md-primary">
+            <md-button ng-click="invite(emails, invite_form);" ng-disabled="emails.length == 0 || ! userGroup || tryInvite" id="change" class="md-raised btn-w-md md-primary">
                 Invite
             </md-button>
         </md-dialog-actions>

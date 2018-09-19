@@ -76,6 +76,7 @@ public class UserService {
                     User user = getUserByUsername(adminUsername);
                     if (user == null) {
                         user = new User(adminUsername);
+                        user.setSource(INTERNAL);
                         user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                         createUser(user);
 
@@ -143,7 +144,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User createOrUpdateUser(User newUser) throws ServiceException {
+    public User createOrUpdateUser(User newUser, Group group) throws ServiceException {
         User user = getUserByUsername(newUser.getUsername());
         if (user == null) {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
@@ -151,7 +152,7 @@ public class UserService {
             }
             newUser.setSource(newUser.getSource() != null ? newUser.getSource() : INTERNAL);
             createUser(newUser);
-            Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
+            group = group != null ? group : groupService.getPrimaryGroupByRole(Role.ROLE_USER);
             if (group != null) {
                 addUserToGroup(newUser, group.getId());
                 newUser.getGroups().add(group);
@@ -163,6 +164,10 @@ public class UserService {
             updateUser(newUser);
         }
         return newUser;
+    }
+
+    public User createOrUpdateUser(User newUser) throws ServiceException {
+        return createOrUpdateUser(newUser, null);
     }
 
     @CacheEvict(value = "users", allEntries = true)

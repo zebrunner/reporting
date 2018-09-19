@@ -10,7 +10,6 @@
         var service = {};
 
         service.Login = Login;
-        service.Register = Register;
         service.Invite = Invite;
         service.getInvitation = getInvitation;
         service.signup = signup;
@@ -29,10 +28,6 @@
             }).then(UtilService.handleSuccess, UtilService.handleError('Invalid credentials'));
         }
 
-        function Register(user) {
-            return $http.post(API_URL + '/api/auth/register', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to register user'));
-        }
-
         function Invite(emails) {
             return $http.post(API_URL + '/api/auth/invite', emails).then(UtilService.handleSuccess, UtilService.handleError('Failed to invite users'));
         }
@@ -41,8 +36,8 @@
             return $http.get(API_URL + '/api/auth/invite?token=' + token).then(UtilService.handleSuccess, UtilService.handleError('Failed to get user invitation'));
         }
 
-        function signup(user) {
-            return $http.post(API_URL + '/api/auth/signup', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to sign up'));
+        function signup(user, token) {
+            return $http.post(API_URL + '/api/auth/signup', user, {headers: {'Access-Token': token}}).then(UtilService.handleSuccess, UtilService.handleError('Failed to sign up'));
         }
 
         function RefreshToken(token) {

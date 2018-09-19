@@ -25,7 +25,13 @@ public interface InvitationMapper
 
 	Invitation getInvitationByCode(String code);
 
+	Invitation getInvitationByEmail(String email);
+
 	List<Invitation> getAllInvitations();
 
-	void deleteInvitation(Long id);
+	void updateInvitation(Invitation invitation);
+
+	void deleteInvitationById(Long id);
+
+	void deleteInvitationByEmail(String email);
 }

@@ -60,24 +60,24 @@
                             <tr>
                                 <td style="word-wrap:break-word;font-size:0px;padding:0px 20px 0px 20px;" align="left">
                                     <div style="cursor:auto;color:#000000;font-family:Roboto, Tahoma, sans-serif;font-size:11px;line-height:22px;text-align:left;">
-                                        <h1 style="font-family: Roboto, Tahoma, sans-serif; line-height: 100%;"><strong>Join a workspace on Zafira</strong></h1>
+                                        <h1 style="font-family: Roboto, Tahoma, sans-serif; line-height: 100%;"><strong>Join Zafira</strong></h1>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td style="word-wrap:break-word;font-size:0px;padding:0px 20px 0px 20px;" align="left">
                                     <div style="cursor:auto;color:#000000;font-family:Roboto, Tahoma, sans-serif;font-size:11px;line-height:22px;text-align:left;">
-                                        <p>You&apos;ve been invited to join a Zafira workspace. Join now to start</p>
-                                        <p>collaborating!&#xA0;Join now to start collaborating!&#xA0;</p>
+                                        <p style="margin-top: 2px; margin-bottom: 2px; line-height: 2;">You&apos;ve been invited to join a Zafira application.</p>
+                                        <p style="margin-top: 2px; margin-bottom: 2px; line-height: 2;">Join now to start collaborating!&#xA0;</p>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td style="word-wrap:break-word;font-size:0px;padding:10px 20px 10px 20px;padding-top:10px;padding-left:25px;" align="left">
+                                <td style="word-wrap:break-word;font-size:0px;padding:10px 20px 10px 20px;padding-top:10px;padding-left:20px;" align="left">
                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;" align="left" border="0">
                                         <tbody>
                                         <tr>
-                                            <td style="border:none;border-radius:none;color:#fff;cursor:auto;padding:10px 25px;" align="center" valign="middle" bgcolor="#26a69a"><a href="${wsURL}/#!/signup?token=${token}" style="text-decoration:none;background:#26a69a;color:#fff;font-family:Roboto, Tahoma, sans-serif;font-size:13px;font-weight:normal;line-height:120%;text-transform:none;margin:0px;" target="_blank">Join Now</a></td>
+                                            <td style="border:none;border-radius:none;color:#fff;cursor:auto;padding:10px 25px;" align="center" valign="middle" bgcolor="#26a69a"><a href="${workspaceURL}/#!/signup?token=${token}" style="text-decoration:none;background:#26a69a;color:#fff;font-family:Roboto, Tahoma, sans-serif;font-size:13px;font-weight:normal;line-height:120%;text-transform:none;margin:0px;" target="_blank">Join Now</a></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -95,18 +95,18 @@
                                     <![endif]-->
                                 </td>
                             </tr>
+                            <#if companyLogoURL??>
                             <tr>
                                 <td style="word-wrap:break-word;font-size:0px;padding:0 20px 10px 25px;" align="left">
                                     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;" align="left" border="0">
                                         <tbody>
                                         <tr>
-
                                             <td style="border:none;border-radius:none;cursor:auto;width: 30px;" align="center" valign="middle">
                                                 <img alt="" title="" height="auto" src="${companyLogoURL}" style="border:none;border-radius:50%;display:block;font-size:13px;outline:none;text-decoration:none;width:100%;height:auto;" width="30">
                                             </td>
                                             <td style="border:none;border-radius:none;cursor:auto;" align="center" valign="middle">
                                                 <div style="cursor:auto;color:#000000;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:11px;line-height:22px;text-align:left;">
-                                                    <p style="padding: 0 0 0 20px;">Workspace URL&#xA0;<a href="${workspaceURL}" target="_blank">http://ua.qaprosoft.cloud/zafira</a></p>
+                                                    <p style="padding: 0 0 0 20px;">Workspace URL&#xA0;<a href="${workspaceURL}" target="_blank">${workspaceURL}</a></p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -114,6 +114,7 @@
                                     </table>
                                 </td>
                             </tr>
+                            </#if>
                             </tbody>
                         </table>
                     </div>

@@ -3,12 +3,13 @@
 
     angular
         .module('app.services')
-        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', UtilService])
+        .factory('UtilService', ['$rootScope', '$mdToast', '$timeout', '$q', UtilService])
 
-    function UtilService($rootScope, $mdToast, $timeout) {
+    function UtilService($rootScope, $mdToast, $timeout, $q) {
         var service = {};
 
         service.untouchForm = untouchForm;
+        service.resolveError = resolveError;
         service.truncate = truncate;
         service.handleSuccess = handleSuccess;
         service.handleError = handleError;
@@ -126,6 +127,53 @@
                 },
                 templateUrl : 'app/_testruns/websocket-reconnect_toast.html'
             });
+        };
+
+        /**
+         * Errors resolver
+         */
+
+        function resolveError(rs, form, ngMessage, defaultField) {
+            return $q(function (resolve, reject) {
+                var errorField = getErrorField(rs, defaultField);
+                if(errorField) {
+                    var showMessage = callError(function () {
+                        return errorField;
+                    }, form, errorField, getErrorMessage(rs), ngMessage);
+                    resolve(showMessage);
+                } else {
+                    reject(rs);
+                }
+            });
+        };
+
+        function getErrorMessage(rs) {
+            var result;
+            if(rs.error && rs.error.status == 400 && rs.error.data.error) {
+                result = rs.error.data.validationErrors ? rs.error.data.validationErrors[0].message : rs.error.data.error.message;
+            }
+            return result;
+        };
+
+        function getErrorField(rs, defaultField) {
+            var result;
+            if(rs.error && rs.error.status == 400 && rs.error.data.error) {
+                result = rs.error.data.error.field;
+                result = result ? result : defaultField;
+            }
+            return result;
+        };
+
+        function callError(func, form, inputName, errorMessage, ngMessage) {
+            var result = false;
+            var condition = func.call();
+            if (condition) {
+                form[inputName].errorMessage = errorMessage;
+            } else {
+                result = true;
+            }
+            form[inputName].$setValidity(ngMessage, result);
+            return result;
         };
     }
 })();

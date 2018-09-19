@@ -10,5 +10,9 @@
 			<a>email</a>
 			<b>email</b>
 		</field>
+		<field>
+			<a>groupId</a>
+			<b>groupId</b>
+		</field>
 	</mapping>
 </mappings>

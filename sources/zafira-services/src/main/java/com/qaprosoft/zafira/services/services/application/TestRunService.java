@@ -44,6 +44,7 @@ import java.util.function.Function;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
@@ -51,7 +52,6 @@ import org.joda.time.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -64,7 +64,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Job;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.Test;
@@ -87,12 +86,9 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 public class TestRunService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
-	
-	@Value("${zafira.multitenant}")
-    private boolean isMultitenant;
-	
-	@Value("${zafira.web.url}")
-	private String webURL;
+
+	@Autowired
+	private URLResolver urlResolver;
 	
 	@Autowired
 	private TestRunMapper testRunMapper;
@@ -546,7 +542,7 @@ public class TestRunService
 	{
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
 		// Forward from API to Web
-		configuration.getArg().add(new Argument("zafira_service_url", buildWebURL()));
+		configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
 		for (Test test: tests)
 		{
 			test.setArtifacts(new TreeSet<>(test.getArtifacts()));
@@ -576,7 +572,7 @@ public class TestRunService
 			throw new ServiceException("No test runs found by ID: " + id);
 		}
 		Configuration configuration = readConfiguration(testRun.getConfigXML());
-		configuration.getArg().add(new Argument("zafira_service_url", buildWebURL()));
+		configuration.getArg().add(new Argument("zafira_service_url", urlResolver.buildWebURL()));
 
 		List<Test> tests = testService.getTestsByTestRunId(id);
 
@@ -764,14 +760,5 @@ public class TestRunService
 	public TestRunStatistics updateStatistics(Long testRunId, Status status)
 	{
 		return updateStatistics(testRunId, status, false);
-	}
-	
-	/**
-	 * In case if multitenancy will resolve current tenancy id into the URL pattern: http://demo.qaprosoft.com/zafira.
-	 * 
-	 * @return Zafira web URL
-	 */
-	private String buildWebURL() {
-	    return isMultitenant ? String.format(webURL, TenancyContext.getTenantName()) : webURL;
 	}
 }

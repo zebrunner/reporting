@@ -16,7 +16,6 @@
 package com.qaprosoft.zafira.ws.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -26,8 +25,8 @@ import javax.validation.Valid;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.Tenancy;
 import com.qaprosoft.zafira.models.dto.auth.*;
-import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.*;
+import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +70,9 @@ public class AuthAPIController extends AbstractController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private GroupService groupService;
 
 	@Autowired
 	private InvitationService invitationService;
@@ -121,30 +123,20 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST")
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void register(@Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
-		List<Group.Role> roles = new ArrayList<>();
-		roles.add(Group.Role.ROLE_USER);
-		userType.setRoles(roles);
-		userService.createOrUpdateUser(mapper.map(userType, User.class));
-	}
-
-	@ResponseStatusDetails
 	@ApiOperation(value = "Sign up", nickname = "signup", code = 200, httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void signup(@RequestHeader(value = "Token", required = true) String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
-		Invitation invitation = invitationService.getInvitationByToken(token);
-		if(invitation == null || invitation.isExpired()) {
-			throw new ForbiddenOperationException();
+	public void signup(@RequestHeader(value = "Access-Token", required = true) String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
+		if(userService.getUserByUsername(userType.getUsername()) != null) {
+			throw new EntityAlreadyExistsException("username", User.class, false);
 		}
-		invitationService.deleteInvitation(invitation.getId());
+		Invitation invitation = invitationService.getInvitationByToken(token);
+		invitation.setStatus(Invitation.Status.ACCEPTED);
+		invitationService.updateInvitation(invitation);
 		List<Group.Role> roles = new ArrayList<>();
 		roles.add(Group.Role.ROLE_USER);
 		userType.setRoles(roles);
-		userService.createOrUpdateUser(mapper.map(userType, User.class));
+		userService.createOrUpdateUser(mapper.map(userType, User.class), groupService.getGroupById(invitation.getGroupId()));
 	}
 
 	@ResponseStatusDetails
@@ -184,26 +176,6 @@ public class AuthAPIController extends AbstractController {
 		}
 		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
-	}
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Invite user", nickname = "inviteUser", code = 200, httpMethod = "POST")
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "invite", method = RequestMethod.POST)
-	public void inviteUser(@RequestBody @Valid InvitationType... invitations) throws ServiceException {
-		invitationService.createInvitations(Arrays.stream(invitations).map(invitationType -> mapper.map(invitationType, Invitation.class)).toArray(Invitation[]::new));
-	}
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Get invitation", nickname = "getInvitation", code = 200, httpMethod = "GET", response = InvitationType.class)
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "invite", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody InvitationType getInvitation(@RequestParam(value = "token", required = true) String token) throws ServiceException {
-		Invitation invitation = invitationService.getInvitationByToken(token);
-		if(invitation == null || invitation.isExpired()) {
-			throw new ForbiddenOperationException();
-		}
-		return mapper.map(invitation, InvitationType.class);
 	}
 
 	@ResponseStatusDetails

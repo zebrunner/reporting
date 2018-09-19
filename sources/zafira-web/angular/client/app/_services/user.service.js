@@ -16,7 +16,6 @@
         service.deleteUserProfilePhoto = deleteUserProfilePhoto;
         service.updateUserPassword = updateUserPassword;
         service.createOrUpdateUser = createOrUpdateUser;
-        service.deleteUser = deleteUser;
         service.addUserToGroup = addUserToGroup;
         service.deleteUserFromGroup = deleteUserFromGroup;
         service.getDefaultPreferences = getDefaultPreferences;
@@ -56,10 +55,6 @@
 
         function createOrUpdateUser(user){
             return $http.put(API_URL + '/api/users', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to update user'));
-        }
-
-        function deleteUser(id){
-            return $http.delete(API_URL + '/api/users/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user'));
         }
 
         function addUserToGroup(user, id){
