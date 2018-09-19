@@ -119,7 +119,7 @@ public class UserPreferenceService
 		{
 			createUserPreference(newUserPreference);
 		}
-		else if(!userPreference.equals(newUserPreference))
+		else if(! userPreference.equals(newUserPreference))
 		{
 			newUserPreference.setId(userPreference.getId());
 			updateUserPreference(newUserPreference);
