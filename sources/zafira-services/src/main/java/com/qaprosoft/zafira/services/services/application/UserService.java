@@ -95,7 +95,6 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
     public User getUserById(long id) throws ServiceException {
         return userMapper.getUserById(id);
     }

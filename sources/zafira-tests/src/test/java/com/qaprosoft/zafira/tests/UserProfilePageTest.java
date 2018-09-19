@@ -163,7 +163,7 @@ public class UserProfilePageTest extends AbstractTest {
         Assert.assertTrue(userProfilePage.isElementPresent(userProfilePage.getSuccessAlert(), 2), "Preferences saving is not successful");
         userProfilePage.reload();
         userProfilePage.waitUntilLoadingContainerDisappears(5);
-        Assert.assertTrue((userProfilePage.getDefaultDashboardSelect().getText()).equals(testChosenDashboardName), "Saved dashboard mismatch with previously chosen");
+        Assert.assertEquals((userProfilePage.getDefaultDashboardSelect().getText()), testChosenDashboardName, "Saved dashboard mismatch with previously chosen");
         userProfilePage.getDefaultDashboardSelect().click();
         userProfilePage.waitUntilElementToBeClickableByBackdropMask(userProfilePage.getDashboardSelectValues().get(0), 1);
         List<WebElement> webElements2 = userProfilePage.getDashboardSelectValues();
