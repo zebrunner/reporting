@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.security;
 
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,6 +42,9 @@ public class UserPassAuthService implements UserDetailsService
 			if (user == null)
 			{
 				throw new Exception("Invalid user name " + username);
+			}
+			if(user.getStatus().equals(User.Status.INACTIVE)) {
+				throw new ForbiddenOperationException("User was blocked by admin.");
 			}
 		} 
 		catch (Exception e)

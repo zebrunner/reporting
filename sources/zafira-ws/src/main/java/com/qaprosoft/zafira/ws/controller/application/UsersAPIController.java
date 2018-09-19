@@ -169,8 +169,6 @@ public class UsersAPIController extends AbstractController
 		return userService.searchUsers(sc);
 	}
 
-
-
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -178,10 +176,21 @@ public class UsersAPIController extends AbstractController
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user,
-			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
+	public @ResponseBody UserType createOrUpdateUser(@RequestBody @Valid UserType user) throws ServiceException
 	{
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Update user status", nickname = "updateStatus", code = 200, httpMethod = "PUT", response = UserType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams(
+			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
+	@RequestMapping(value = "status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserType updateStatus(@RequestBody @Valid UserType user) throws ServiceException
+	{
+		return mapper.map(userService.updateStatus(mapper.map(user, User.class)), UserType.class);
 	}
 
 	@ResponseStatusDetails

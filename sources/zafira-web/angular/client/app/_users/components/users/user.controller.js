@@ -60,10 +60,20 @@
                 });
         };
 
-        $scope.showEditProfileDialog = function(event, user) {
+        $scope.showEditProfileDialog = function(event, user, index) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {
                     $scope.user = angular.copy(user);
+                    $scope.updateStatus = function(user, status, index) {
+                        user.status = status;
+                        UserService.updateStatus(user).then(function (rs) {
+                            if(rs.success) {
+                                $scope.cancel(rs.data.status);
+                            } else {
+                                alertify.error(rs.message);
+                            }
+                        });
+                    };
                     $scope.updateUser = function() {
                         UserService.createOrUpdateUser($scope.user).then(function(rs) {
                             if(rs.success)
@@ -80,8 +90,8 @@
                     $scope.hide = function() {
                         $mdDialog.hide(true);
                     };
-                    $scope.cancel = function() {
-                        $mdDialog.cancel(false);
+                    $scope.cancel = function(status) {
+                        $mdDialog.cancel(status);
                     };
                 },
                 templateUrl: 'app/_users/components/users/edit_modal.html',
@@ -95,7 +105,10 @@
                     {
                         $state.reload();
                     }
-                }, function() {
+                }, function(status) {
+                    if(status) {
+                        $scope.sr.results[index].status = status;
+                    }
                 });
         };
 

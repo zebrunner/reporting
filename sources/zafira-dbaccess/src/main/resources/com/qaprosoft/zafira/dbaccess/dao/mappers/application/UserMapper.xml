@@ -5,7 +5,7 @@
 
 	<insert id="createUser" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL, COVER_PHOTO_URL, SOURCE)
+			INSERT INTO USERS (USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, EMAIL, COVER_PHOTO_URL, SOURCE, STATUS)
 			VALUES (
 				#{username},
 				#{password},
@@ -13,7 +13,8 @@
 				#{lastName},
 				#{email},
 				#{photoURL},
-				#{source}
+				#{source},
+				#{status}
 			)
 		]]>
 	</insert>
@@ -28,6 +29,7 @@
 				U.LAST_NAME AS USER_LAST_NAME,
 				U.EMAIL AS USER_EMAIL,
 				U.SOURCE AS USER_SOURCE,
+				U.STATUS AS USER_STATUS,
 				G.ID AS GROUP_ID,
 				G.NAME AS GROUP_NAME,
 				G.ROLE AS GROUP_ROLE,
@@ -100,6 +102,7 @@
 				U.LAST_NAME AS USER_LAST_NAME,
 				U.EMAIL AS USER_EMAIL,
 				U.SOURCE AS USER_SOURCE,
+				U.STATUS AS USER_STATUS,
 				U.COVER_PHOTO_URL AS USER_COVER_PHOTO_URL,
 				U.LAST_LOGIN AS USER_LAST_LOGIN,
 				U.MODIFIED_AT AS USER_MODIFIED_AT,
@@ -126,6 +129,11 @@
 			<if test="null != firstLastName">
 	            <![CDATA[
 	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{firstLastName}, '%')) 
+	            ]]>
+			</if>
+			<if test="null != status">
+				<![CDATA[
+	               AND U.STATUS = #{status}
 	            ]]>
 			</if>
 			<if test="null != date">
@@ -171,6 +179,11 @@
 			<if test="null != firstLastName">
 	            <![CDATA[
 	               AND LOWER(CONCAT(U.FIRST_NAME, ' ', U.LAST_NAME)) LIKE LOWER(CONCAT('%', #{firstLastName}, '%')) 
+	            ]]>
+			</if>
+			<if test="null != status">
+				<![CDATA[
+	               AND U.STATUS = #{status}
 	            ]]>
 			</if>
 			<if test="null != email">
@@ -260,6 +273,17 @@
 		]]>
 	</update>
 
+	<update id="updateStatus">
+		<![CDATA[
+			UPDATE
+			    USERS
+			SET
+				STATUS = #{status}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
 	<sql id="deleteUser">
 		<![CDATA[
 			DELETE FROM USERS
@@ -283,6 +307,7 @@
 		<result column="USER_LAST_NAME" property="lastName" />
 		<result column="USER_EMAIL" property="email" />
 		<result column="USER_SOURCE" property="source" />
+		<result column="USER_STATUS" property="status" />
 		<result column="USER_COVER_PHOTO_URL" property="photoURL" />
 		<result column="USER_LAST_LOGIN" property="lastLogin" />
 		<result column="USER_MODIFIED_AT" property="modifiedAt" />

@@ -46,5 +46,9 @@
 			<a>source</a>
 			<b>source</b>
 		</field>
+		<field>
+			<a>status</a>
+			<b>status</b>
+		</field>
 	</mapping>
 </mappings>

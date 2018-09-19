@@ -44,10 +44,7 @@
                 <td name="userEmail" md-cell>{{user.email}}</td>
                 <td name="userFirstLastName" md-cell>{{user.firstName}} {{user.lastName}}</td>
                 <td md-cell>
-                                    	<span ng-switch on="user.password != null && user.password != ''">
-                                    		<span name="active" class="label text-success" ng-switch-when="true">ACTIVE</span>
-                                    		<span name="inactive" class="label text-error" ng-switch-when="false">INACTIVE</span>
-                                    	</span>
+                    <span name="status" ng-class="{'text-success': user.status == 'ACTIVE', 'text-error': user.status == 'INACTIVE'}" class="label">{{ user.status}}</span>
                 </td>
                 <td md-cell style="padding-right: 0;">
                                       <span name="userCreated">
@@ -69,7 +66,7 @@
                         </md-button>
                         <md-menu-content width="2">
                             <md-menu-item has-any-permission="['MODIFY_USERS']">
-                                <md-button name="userEdit" data-ng-click="showEditProfileDialog($event, user, false)">
+                                <md-button name="userEdit" data-ng-click="showEditProfileDialog($event, user, $index)">
                                     <md-icon class="material-icons">settings</md-icon>
                                     Edit
                                 </md-button>

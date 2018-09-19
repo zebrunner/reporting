@@ -180,7 +180,7 @@
             return $date.getTime() < new Date().getTime();
         };
 
-        $scope.showCreateUserDialog = function(event) {
+        $scope.showCreateUserDialog = function(event, index) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog) {
                     $scope.createUser = function() {
