@@ -22,9 +22,9 @@
                         url: '/signin',
                         templateUrl: 'app/_auth/signin.html'
                     })
-                    .state('register', {
-                        url: '/register',
-                        templateUrl: 'app/_auth/register.html'
+                    .state('signup', {
+                        url: '/signup',
+                        templateUrl: 'app/_auth/signup.html'
                     })
                     .state('users/profile', {
                         url: '/users/profile',
@@ -77,6 +77,10 @@
                     .state('404', {
                         url: '/404',
                         templateUrl: 'app/page/404.html'
+                    })
+                    .state('500', {
+                        url: '/500',
+                        templateUrl: 'app/page/500.html'
                     });
 
                 $urlRouterProvider

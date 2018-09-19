@@ -700,6 +700,34 @@
                 };
             }
         };
+    }).directive('passwordEye', function () {
+        "use strict";
+        return {
+            restrict: 'A',
+            replace: false,
+            transclude: false,
+            link: function (scope, iElement, iAttrs, ngModel) {
+
+                var eyeElement = angular.element('<i style="position: absolute; right: 20px; bottom: 60%;" class="fa fa-eye"></i>');
+                iElement.after(eyeElement);
+
+                var currentMode = 'password';
+
+                var actions = iAttrs.passwordEye.split('-');
+                if(actions.length == 2) {
+                    eyeElement.on(actions[1].trim(), function () {
+                        iElement[0].type = 'password';
+                    });
+                    eyeElement.on(actions[0].trim(), function () {
+                        iElement[0].type = 'text';
+                    });
+                }
+                eyeElement.on(iAttrs.passwordEye, function () {
+                    currentMode = currentMode == 'text' ? 'password' : 'text';
+                    iElement[0].type = currentMode;
+                });
+            }
+        };
     }).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,

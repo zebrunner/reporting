@@ -22,7 +22,6 @@ import com.qaprosoft.zafira.models.db.Monitor;
 
 public class MonitorEmailMessageNotification implements IEmailMessage
 {
-	private static final String TEMPLATE = "monitor_status.ftl";
 
 	private Monitor monitor;
 	private Integer actualStatus;
@@ -70,9 +69,8 @@ public class MonitorEmailMessageNotification implements IEmailMessage
 	}
 
 	@Override
-	public String getTemplate()
-	{
-		return TEMPLATE;
+	public EmailType getType() {
+		return EmailType.MONITOR;
 	}
 
 	@Override

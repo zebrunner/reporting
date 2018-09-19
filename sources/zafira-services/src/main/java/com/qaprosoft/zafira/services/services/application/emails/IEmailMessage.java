@@ -23,6 +23,6 @@ public interface IEmailMessage
 {
 	String getSubject();
 	String getText();
-	String getTemplate();
+	EmailType getType();
 	List<Attachment> getAttachments();
 }

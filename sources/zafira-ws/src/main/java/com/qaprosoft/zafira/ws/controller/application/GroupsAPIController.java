@@ -17,6 +17,8 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import java.util.List;
 
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -130,6 +132,13 @@ public class GroupsAPIController extends AbstractController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteGroup(@PathVariable(value = "id") long id) throws ServiceException
     {
+        Group group = groupService.getGroupById(id);
+        if(group == null) {
+            throw new EntityNotExistsException(Group.class, false);
+        }
+        if(group.getUsers().size() > 0) {
+            throw new ForbiddenOperationException("It's necessary to clear the group initially.", true);
+        }
         groupService.deleteGroup(id);
     }
 }

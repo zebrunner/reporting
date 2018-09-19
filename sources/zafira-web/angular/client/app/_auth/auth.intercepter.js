@@ -41,7 +41,8 @@ angular
    * and broadcasts 'event:auth-loginRequired'.
    */
   .config(['$httpProvider', function($httpProvider) {
-    $httpProvider.interceptors.push(['$rootScope', '$q', 'httpBuffer', 'API_URL', function($rootScope, $q, httpBuffer, API_URL) {
+    $httpProvider.interceptors.push(['$rootScope', '$q', '$injector', 'httpBuffer', 'API_URL', function($rootScope, $q, $injector, httpBuffer, API_URL) {
+        var UNRECOGNIZED_STATES = ['signin', 'signup'];
       return {
           request: function (config) {
 
@@ -54,7 +55,8 @@ angular
           },
         responseError: function(rejection) {
             var location = window.location.href;
-        	if(!location.endsWith('signin'))
+            var stateName = $injector.get('$state').current.name;
+        	if(UNRECOGNIZED_STATES.indexOf(stateName) == -1)
         	{
         		var config = rejection.config || {};
                 switch (rejection.status) {
@@ -64,6 +66,9 @@ angular
                     if (bufferLength === 1)
                       $rootScope.$broadcast('event:auth-loginRequired', rejection);
                     return deferred.promise;
+                  /*case 403:
+                      $injector.get('$state').go('403');
+                      break;*/
                 }
         	}
 	      // otherwise, default behaviour

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping type="bi-directional" wildcard="false">
+		<class-a>com.qaprosoft.zafira.models.dto.auth.InvitationType</class-a>
+		<class-b>com.qaprosoft.zafira.models.db.Invitation</class-b>
+
+		<field>
+			<a>email</a>
+			<b>email</b>
+		</field>
+		<field>
+			<a>groupId</a>
+			<b>groupId</b>
+		</field>
+	</mapping>
+</mappings>

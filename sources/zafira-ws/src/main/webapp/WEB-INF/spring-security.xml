@@ -5,7 +5,7 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/ldap http://www.springframework.org/schema/ldap/spring-ldap.xsd">
 
-	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserPassAuthService" />
+	<bean id="userAuthService" class="com.qaprosoft.zafira.ws.security.UserPassAuthService" depends-on="ldapProvider"/>
 	
 	<bean id="passwordEncoder" class="org.jasypt.springsecurity3.authentication.encoding.PasswordEncoder">
 		<property name="passwordEncryptor">
@@ -48,6 +48,7 @@
 	<security:http pattern="/api/settings/companyLogo" security="none" />
 	<security:http pattern="/api/websockets/**" security="none" />
 	<security:http pattern="/api/auth/tenant" security="none" />
+	<security:http pattern="/api/invitations/info" security="none" />
 
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
@@ -76,8 +77,7 @@
 		<security:intercept-url pattern="/api/projects/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/slack/**" access="isAuthenticated()" />
 		<security:intercept-url pattern="/api/views/**" access="isAuthenticated()" />
-		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
-		<security:intercept-url pattern="/api/widgets/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/api/invitations/**" access="isAuthenticated()" />
 		<!--  security:intercept-url pattern="/api/websockets/**" access="isAuthenticated()" /-->
 
 	</security:http>
