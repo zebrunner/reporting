@@ -8,6 +8,8 @@
     function GroupService($http, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
+        service.groups = [];
+
         service.getRoles = getRoles;
         service.createGroup = createGroup;
         service.getGroup = getGroup;

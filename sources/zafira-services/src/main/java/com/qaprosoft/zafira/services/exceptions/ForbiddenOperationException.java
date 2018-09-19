@@ -19,6 +19,8 @@ public class ForbiddenOperationException extends ServiceException
 {
 	private static final long serialVersionUID = -1840720518398070678L;
 
+	private boolean showMessage;
+
 	public ForbiddenOperationException()
 	{
 		super();
@@ -29,6 +31,12 @@ public class ForbiddenOperationException extends ServiceException
 		super(message);
 	}
 
+	public ForbiddenOperationException(String message, boolean showMessage)
+	{
+		super(message);
+		this.showMessage = showMessage;
+	}
+
 	public ForbiddenOperationException(Throwable cause)
 	{
 		super(cause);
@@ -37,5 +45,13 @@ public class ForbiddenOperationException extends ServiceException
 	public ForbiddenOperationException(String message, Throwable cause)
 	{
 		super(message, cause);
+	}
+
+	public ForbiddenOperationException(String message, Throwable cause, boolean writableStackTrace) {
+		super(message, cause, writableStackTrace);
+	}
+
+	public boolean isShowMessage() {
+		return showMessage;
 	}
 }

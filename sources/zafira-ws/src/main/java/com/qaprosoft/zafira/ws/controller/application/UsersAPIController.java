@@ -169,6 +169,8 @@ public class UsersAPIController extends AbstractController
 		return userService.searchUsers(sc);
 	}
 
+
+
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
@@ -180,18 +182,6 @@ public class UsersAPIController extends AbstractController
 			@RequestHeader(value = "Project", required = false) String project) throws ServiceException
 	{
 		return mapper.map(userService.createOrUpdateUser(mapper.map(user, User.class)), UserType.class);
-	}
-
-	@ResponseStatusDetails
-	@ApiOperation(value = "Delete user", nickname = "deleteUser", code = 200, httpMethod = "DELETE")
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USERS')")
-	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public void deleteUser(@PathVariable(value = "id") long id) throws ServiceException
-	{
-		userService.deleteUser(id);
 	}
 
 	@ResponseStatusDetails

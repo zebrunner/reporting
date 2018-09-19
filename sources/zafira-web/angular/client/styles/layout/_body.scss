@@ -52,7 +52,7 @@ body > div {
     to {opacity: 1}
 }
 
-#main-fab {
+#main-fab, .lonely-fab button {
     position: fixed;
     @media (min-width: $screen-sm) {
         right: 90px;
@@ -2081,4 +2081,32 @@ td.settings-cell {
 
 .md-panel-outer-wrapper {
     z-index: 1041 !important;
+}
+
+
+.validation_error *[ng-message] {
+    color: red !important;
+}
+
+.groups-tab {
+    padding: 0 20px 0 20px;
+    &_group {
+        padding: 20px;
+    }
+}
+
+.expired-invitation, .expired-invitation:hover {
+    background-color: #e0b7b7 !important;
+}
+
+.text-success {
+    color: #8BC34A;
+}
+
+.text-error {
+    color: #F44336;
+}
+
+.text-info {
+    color: #00BCD4;
 }

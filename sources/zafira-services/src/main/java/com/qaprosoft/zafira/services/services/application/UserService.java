@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import javax.annotation.PostConstruct;
@@ -56,6 +57,9 @@ public class UserService {
     private GroupService groupService;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private PasswordEncryptor passwordEncryptor;
 
     @Autowired
@@ -72,6 +76,7 @@ public class UserService {
                     User user = getUserByUsername(adminUsername);
                     if (user == null) {
                         user = new User(adminUsername);
+                        user.setSource(INTERNAL);
                         user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                         createUser(user);
 
@@ -108,6 +113,11 @@ public class UserService {
         return userMapper.getUserByUserName(username);
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) throws ServiceException {
+        return userMapper.getUserByEmail(email);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void updateLastLoginDate(long userId) {
         userMapper.updateLastLoginDate(userId);
@@ -134,14 +144,15 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User createOrUpdateUser(User newUser) throws ServiceException {
+    public User createOrUpdateUser(User newUser, Group group) throws ServiceException {
         User user = getUserByUsername(newUser.getUsername());
         if (user == null) {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
                 newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
             }
+            newUser.setSource(newUser.getSource() != null ? newUser.getSource() : INTERNAL);
             createUser(newUser);
-            Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
+            group = group != null ? group : groupService.getPrimaryGroupByRole(Role.ROLE_USER);
             if (group != null) {
                 addUserToGroup(newUser, group.getId());
                 newUser.getGroups().add(group);
@@ -153,6 +164,10 @@ public class UserService {
             updateUser(newUser);
         }
         return newUser;
+    }
+
+    public User createOrUpdateUser(User newUser) throws ServiceException {
+        return createOrUpdateUser(newUser, null);
     }
 
     @CacheEvict(value = "users", allEntries = true)

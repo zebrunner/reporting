@@ -29,6 +29,8 @@ public interface UserMapper
 
 	User getUserByUserName(String username);
 
+	User getUserByEmail(String email);
+
 	void updateUser(User user);
 	
 	void updateLastLoginDate(long userId);

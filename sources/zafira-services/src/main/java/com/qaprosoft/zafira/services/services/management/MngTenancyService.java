@@ -18,9 +18,10 @@ package com.qaprosoft.zafira.services.services.management;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngTenancyMapper;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Tenancy;
-import com.qaprosoft.zafira.services.exceptions.EntityIsAlreadyExistsException;
-import com.qaprosoft.zafira.services.exceptions.EntityIsNotExistsException;
+import com.qaprosoft.zafira.services.exceptions.EntityAlreadyExistsException;
+import com.qaprosoft.zafira.services.exceptions.EntityNotExistsException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.util.LocaleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,17 +89,17 @@ public class MngTenancyService {
         });
     }
 
-    private void checkIsTenancyExists(Tenancy tenancy) throws EntityIsAlreadyExistsException {
+    private void checkIsTenancyExists(Tenancy tenancy) throws EntityAlreadyExistsException {
         Tenancy dbTenancy = getTenancyByName(tenancy.getName());
         if((tenancy.getId() == null && dbTenancy != null) || (dbTenancy != null && tenancy.getId() != null && ! tenancy.getId().equals(dbTenancy.getId()))) {
-            throw new EntityIsAlreadyExistsException("name", Tenancy.class);
+            throw new EntityAlreadyExistsException("email", Tenancy.class, false);
         }
     }
 
-    private Tenancy checkIsTenancyNotExists(Long id) throws EntityIsNotExistsException {
+    private Tenancy checkIsTenancyNotExists(Long id) throws EntityNotExistsException {
         Tenancy dbTenancy = getTenancyById(id);
         if(dbTenancy == null) {
-            throw new EntityIsNotExistsException(Tenancy.class);
+            throw new EntityNotExistsException(Tenancy.class, false);
         }
         return dbTenancy;
     }

@@ -26,7 +26,6 @@ import java.util.Map;
 public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s %s (%s) on %s %s";
-	private static final String TEMPLATE = "test_run_results.ftl";
 
 	private Map<String, String> configuration = new HashMap<String, String>();
 	private TestRun testRun;
@@ -177,9 +176,8 @@ public class TestRunResultsEmail implements IEmailMessage
 	}
 
 	@Override
-	public String getTemplate()
-	{
-		return TEMPLATE;
+	public EmailType getType() {
+		return EmailType.TEST_RUN;
 	}
 
 	@Override
