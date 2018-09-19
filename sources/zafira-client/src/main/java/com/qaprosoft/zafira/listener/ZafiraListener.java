@@ -82,8 +82,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	
 	private static final String ZAFIRA_PROPERTIES = "zafira.properties";
 	
-	private static final String ANONYMOUS = "anonymous";
-	
 	private static final String ZAFIRA_PROJECT_PARAM = "zafira_project";
 	private static final String ZAFIRA_RUN_ID_PARAM = "zafira_run_id";
 	
@@ -133,10 +131,10 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
 			
 			// Register user who initiated test run
-			this.user = zc.registerUser(ci.getCiUserId(), ci.getCiUserEmail(), ci.getCiUserFirstName(), ci.getCiUserLastName());
-	
+			this.user = zc.getUserOrAnonymousIfNotFound(ci.getCiUserId());
+					
 			// Register test suite along with suite owner
-			UserType suiteOwner = zc.registerUser(configurator.getOwner(suiteContext), null, null, null);
+			UserType suiteOwner =  zc.getUserOrAnonymousIfNotFound(configurator.getOwner(suiteContext));
 			this.suite = zc.registerTestSuite(suiteContext.getName(), FilenameUtils.getName(suiteContext.getXmlSuite().getFileName()), suiteOwner.getId());
 			
 			// Register job that triggers test run
@@ -146,7 +144,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			UserType anonymous = null;
 			if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) 
 			{
-				anonymous = zc.registerUser(ANONYMOUS, null, null, null);
+				anonymous = zc.getUserOrAnonymousIfNotFound(ZafiraClient.ANONYMOUS);
 				parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
 			}
 			
@@ -241,14 +239,14 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
 			// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
 			String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-			UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+			UserType primaryOwner = zc.getUserOrAnonymousIfNotFound(primaryOwnerName);
 			LOGGER.debug("primaryOwner: " + primaryOwnerName);
 			
 			String secondaryOwnerName = configurator.getSecondaryOwner(result);
 			UserType secondaryOwner = null;
 			if(!StringUtils.isEmpty(secondaryOwnerName))
 			{
-				secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+				secondaryOwner = zc.getUserOrAnonymousIfNotFound(secondaryOwnerName);
 				LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
 			}
 			
@@ -388,14 +386,14 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				// If method owner is not specified then try to use suite owner. If both are not declared then ANONYMOUS will be used.
 				String primaryOwnerName = !StringUtils.isEmpty(configurator.getPrimaryOwner(result)) ? configurator.getPrimaryOwner(result) : configurator.getOwner(result.getTestContext().getSuite());
-				UserType primaryOwner = zc.registerUser(primaryOwnerName, null, null, null);
+				UserType primaryOwner = zc.getUserOrAnonymousIfNotFound(primaryOwnerName);
 				LOGGER.debug("primaryOwner: " + primaryOwnerName);
 				
 				String secondaryOwnerName = configurator.getSecondaryOwner(result);
 				UserType secondaryOwner = null;
 				if(!StringUtils.isEmpty(secondaryOwnerName))
 				{
-					secondaryOwner = zc.registerUser(secondaryOwnerName, null, null, null);
+					secondaryOwner = zc.getUserOrAnonymousIfNotFound(secondaryOwnerName);
 					LOGGER.debug("secondaryOwner: " + secondaryOwnerName);
 				}
 				
@@ -576,7 +574,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			ci.setCiBuildCause(config.getString("ci_build_cause", "MANUALTRIGGER"));
 			ci.setCiParentUrl(config.getString("ci_parent_url", null));
 			ci.setCiParentBuild(config.getString("ci_parent_build", null));
-			ci.setCiUserId(config.getString("ci_user_id", ANONYMOUS));
+			ci.setCiUserId(config.getString("ci_user_id", ZafiraClient.ANONYMOUS));
 			ci.setCiUserFirstName(config.getString("ci_user_first_name", null));
 			ci.setCiUserLastName(config.getString("ci_user_last_name", null));
 			ci.setCiUserEmail(config.getString("ci_user_email", null));
@@ -792,6 +790,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 					config.get(getDefaultClassValue(), this.configName, this.defaultValue);
 		}
 
+		@SuppressWarnings("rawtypes")
 		private Class getDefaultClassValue() {
 			Class aClass = null;
 			if(this.defaultValue instanceof String) {

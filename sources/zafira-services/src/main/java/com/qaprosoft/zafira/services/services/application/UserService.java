@@ -57,9 +57,6 @@ public class UserService {
     private GroupService groupService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private PasswordEncryptor passwordEncryptor;
 
     @Autowired

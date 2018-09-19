@@ -66,7 +66,7 @@ public class  ZafiraClient
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraClient.class);
 	
-	private static final String ANONYMOUS = "anonymous";
+	public static final String ANONYMOUS = "anonymous";
 	
 	private static final Integer CONNECT_TIMEOUT = 30000;
 	private static final Integer READ_TIMEOUT = 30000;
@@ -157,6 +157,27 @@ public class  ZafiraClient
 		return response;
 	}
 	
+	public synchronized Response<UserType> getUserProfile(String username)
+	{
+		Response<UserType> response = new Response<UserType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + PROFILE_PATH + "?username=" + username);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to authorize user", e);
+		}
+		return response;
+	}
+	
 	public synchronized Response<AuthTokenType> login(String username, String password)
 	{
 		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
@@ -178,27 +199,6 @@ public class  ZafiraClient
 		return response;
 	}
 	
-	public synchronized Response<AuthTokenType> refreshToken(String token)
-	{
-		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(AuthTokenType.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to create user", e);
-		}
-		return response;
-	}
-	
 	public synchronized Response<UserType> createUser(UserType user)
 	{
 		Response<UserType> response = new Response<UserType>(0, null);
@@ -211,6 +211,27 @@ public class  ZafiraClient
 			if (clientRS.getStatus() == 200)
 			{
 				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to create user", e);
+		}
+		return response;
+	}
+	
+	public synchronized Response<AuthTokenType> refreshToken(String token)
+	{
+		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(AuthTokenType.class));
 			}
 
 		} catch (Exception e)
@@ -616,7 +637,8 @@ public class  ZafiraClient
 		}
 		return user;
 	}
-	
+
+		
 	/**
 	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
 	 * 
@@ -1079,5 +1101,18 @@ public class  ZafiraClient
 			LOGGER.error("Unable to get tenant", e);
 		}
 		return response;
+	}
+	
+	/**
+	 * Returns user by username or anonymous if not found.
+	 * @param username to find user
+	 * @return user from DB
+	 */
+	public synchronized UserType getUserOrAnonymousIfNotFound(String username) {
+		Response<UserType> response = getUserProfile(username);
+		if(response.getStatus() != 200) {
+			response = getUserProfile(ANONYMOUS);
+		}
+		return response.getObject();
 	}
 }
