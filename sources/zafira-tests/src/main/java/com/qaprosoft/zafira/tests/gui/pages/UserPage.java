@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests.gui.pages;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.qaprosoft.zafira.tests.gui.components.blocks.pagination.PaginationBlock;
@@ -30,6 +31,9 @@ public class UserPage extends BasePage
 
 	@FindBy(tagName = "md-dialog")
 	private CreateGroupModalWindow createGroupModalWindow;
+
+	@FindBy(xpath = "//*[contains(@class, 'lonely-fab')]//*[contains(@class, 'md-fab')]")
+	private WebElement fabButton;
 
 	public UserPage(WebDriver driver)
 	{
@@ -64,5 +68,15 @@ public class UserPage extends BasePage
 	public CreateGroupModalWindow getCreateGroupModalWindow()
 	{
 		return createGroupModalWindow;
+	}
+
+	@Override
+	public boolean isFabMenuPresent(int seconds) {
+		return super.isElementPresent(fabButton, seconds);
+	}
+
+	@Override
+	public void clickFabMenu() {
+		fabButton.click();
 	}
 }
