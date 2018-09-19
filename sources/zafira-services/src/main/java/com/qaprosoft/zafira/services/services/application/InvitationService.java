@@ -149,9 +149,7 @@ public class InvitationService {
     }
 
     private String generateToken() {
-        String token;
-        while(getInvitationByToken(token = RandomStringUtils.randomAlphanumeric(50)) != null) {}
-        return token;
+        return RandomStringUtils.randomAlphanumeric(50);
     }
 
     private void checkExisting(String email) throws ServiceException {
