@@ -108,7 +108,7 @@ public class ProjectsAPIController extends AbstractController {
 	@ApiOperation(value = "Get project by name", nickname = "getProjectByName", code = 200, httpMethod = "GET", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ProjectType getProjectByName(@PathVariable(value = "name") String name) throws ServiceException {
 		Project project = projectService.getProjectByName(name);
 		if(project == null) {
