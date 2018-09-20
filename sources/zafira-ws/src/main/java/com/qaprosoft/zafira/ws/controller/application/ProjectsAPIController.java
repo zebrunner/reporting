@@ -15,11 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.ws.controller.AbstractController;
+
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +37,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.models.db.Project;
+import com.qaprosoft.zafira.models.dto.ProjectType;
+import com.qaprosoft.zafira.services.exceptions.ProjectNotFoundException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.ProjectService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -47,56 +52,68 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Projects API")
 @CrossOrigin
 @RequestMapping("api/projects")
-public class ProjectsAPIController extends AbstractController
-{
+public class ProjectsAPIController extends AbstractController {
+	@Autowired
+	private Mapper mapper;
 
 	@Autowired
 	private ProjectService projectService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create project", nickname = "createProject", code = 200, httpMethod = "POST", response = Project.class)
+	@ApiOperation(value = "Create project", nickname = "createProject", code = 200, httpMethod = "POST", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Project createProject(@RequestBody @Valid Project project) throws ServiceException
-	{
-		return projectService.createProject(project);
+	public @ResponseBody ProjectType createProject(@RequestBody @Valid ProjectType project) throws ServiceException {
+		Project newProject = projectService.createProject(mapper.map(project, Project.class));
+		return mapper.map(newProject, ProjectType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Delete project", nickname = "deleteProject", code = 200, httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public void deleteProject(@PathVariable(value = "id") long id) throws ServiceException
-	{
+	public void deleteProject(@PathVariable(value = "id") long id) throws ServiceException {
 		projectService.deleteProjectById(id);
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update project", nickname = "updateProject", code = 200, httpMethod = "PUT", response = Project.class)
+	@ApiOperation(value = "Update project", nickname = "updateProject", code = 200, httpMethod = "PUT", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Project updateProject(@RequestBody Project project) throws ServiceException
-	{
-		return projectService.updateProject(project);
+	public @ResponseBody ProjectType updateProject(@RequestBody @Valid ProjectType project) throws ServiceException {
+		Project updatedProject = projectService.updateProject(mapper.map(project, Project.class));
+		return mapper.map(updatedProject, ProjectType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all projects", nickname = "getAllProjects", code = 200, httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Project> getAllProjects() throws ServiceException
-	{
-		return projectService.getAllProjects();
+	public @ResponseBody List<ProjectType> getAllProjects() throws ServiceException {
+		List<ProjectType> projects = new ArrayList<>();
+		for (Project project : projectService.getAllProjects()) {
+			projects.add(mapper.map(project, ProjectType.class));
+		}
+		return projects;
+	}
+	
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get project by name", nickname = "getProjectByName", code = 200, httpMethod = "GET", response = ProjectType.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ProjectType getProjectByName(@PathVariable(value = "name") String name) throws ServiceException {
+		Project project = projectService.getProjectByName(name);
+		if(project == null) {
+			throw new ProjectNotFoundException();
+		}
+		return mapper.map(project, ProjectType.class);
 	}
 }

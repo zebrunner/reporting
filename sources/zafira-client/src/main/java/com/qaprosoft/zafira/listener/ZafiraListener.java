@@ -128,7 +128,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			
 			// Override project if specified in XML
 			String project = suiteContext.getXmlSuite().getParameter(ZAFIRA_PROJECT_PARAM);
-			zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
+			zc.initProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
 			
 			// Register user who initiated test run
 			this.user = zc.getUserProfile().getObject();
@@ -144,7 +144,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			UserType anonymous = null;
 			if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) 
 			{
-				anonymous = zc.getUserOrAnonymousIfNotFound(ZafiraClient.ANONYMOUS);
+				anonymous = zc.getUserOrAnonymousIfNotFound(ZafiraClient.DEFAULT_USER);
 				parentJob = zc.registerJob(ci.getCiParentUrl(), anonymous.getId());
 			}
 			

@@ -48,6 +48,7 @@ import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.ProjectType;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
@@ -68,7 +69,8 @@ public class  ZafiraClient
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraClient.class);
 	
-	public static final String ANONYMOUS = "anonymous";
+	public static final String DEFAULT_USER = "anonymous";
+	public static final String DEFAULT_PROJECT = "UNKNOWN";
 	
 	private static final Integer CONNECT_TIMEOUT = 30000;
 	private static final Integer READ_TIMEOUT = 30000;
@@ -95,11 +97,12 @@ public class  ZafiraClient
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/creds/amazon";
 	private static final String TENANT_TYPE_PATH = "/api/auth/tenant";
+	private static final String PROJECTS_PATH = "/api/projects/%s";
 
 	private String serviceURL;
 	private Client client;
 	private String authToken;
-	private String project;
+	private String project = DEFAULT_PROJECT;
 
 	private AmazonS3 amazonClient;
 	private SessionCredentials amazonS3SessionCredentials;
@@ -599,9 +602,19 @@ public class  ZafiraClient
 		return project;
 	}
 
-	public ZafiraClient setProject(String project)
+	/**
+	 * Initializes project context, sets default project if none found in DB.
+	 * @param project name
+	 * @return instance of {@link ZafiraClient}
+	 */
+	public ZafiraClient initProject(String project)
 	{
-		this.project = project;
+		if(!StringUtils.isEmpty(project)) {
+			Response<ProjectType> rs = getProjectByName(project);
+			if(rs.getStatus() == 200) {
+				this.project = rs.getObject().getName();
+			}
+		}
 		return this;
 	}
 	
@@ -618,7 +631,7 @@ public class  ZafiraClient
 	{
 		if (StringUtils.isEmpty(userName) || userName.equals("$BUILD_USER_ID"))
 		{
-			userName = ANONYMOUS;
+			userName = DEFAULT_USER;
 		}
 		userName = userName.toLowerCase();
 		
@@ -1113,8 +1126,34 @@ public class  ZafiraClient
 	public synchronized UserType getUserOrAnonymousIfNotFound(String username) {
 		Response<UserType> response = getUserProfile(username);
 		if(response.getStatus() != 200) {
-			response = getUserProfile(ANONYMOUS);
+			response = getUserProfile(DEFAULT_USER);
 		}
 		return response.getObject();
+	}
+	
+	/**
+	 * Gets project by name
+	 * @param name of the project
+	 * @return project
+	 */
+	public Response<ProjectType> getProjectByName(String name)
+	{
+		Response<ProjectType> response = new Response<ProjectType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(PROJECTS_PATH, name));
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(ProjectType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to get project by name", e);
+		}
+		return response;
 	}
 }
