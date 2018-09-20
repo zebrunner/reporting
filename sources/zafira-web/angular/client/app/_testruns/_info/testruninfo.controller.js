@@ -65,6 +65,7 @@
         };
 
         var LIVE_LOGS_INTERVAL_NAME = 'liveLogsFromElasticsearch';
+        var scrollEnable = true;
 
         function postModeConstruct(test) {
             var logGetter = MODES[$scope.MODE.name].logGetter;
@@ -82,14 +83,21 @@
                     $scope.logs = [];
                     $scope.thumbs = {};
                     unrecognizedImages = {};
+                    scrollEnable = false;
                     tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
                         $timeout(function () {
                             logGetter.pageCount = null;
                             logGetter.from = $scope.logs.length + Object.size($scope.thumbs) * 2 + Object.size(unrecognizedImages);
+                            function update() {
+                                $timeout(function() {
+                                    if (Object.size(unrecognizedImages) > 0) {
+                                        tryToGetLogsHistoryFromElasticsearch(logGetter);
+                                        update();
+                                    }
+                                }, 5000, false);
+                            }
                             tryToGetLogsHistoryFromElasticsearch(logGetter).then(function (rs) {
-                                while(Object.size(unrecognizedImages) > 0) {
-                                    tryToGetLogsHistoryFromElasticsearch(logGetter);
-                                }
+                                update();
                             });
                         }, 5000);
                     });
@@ -165,7 +173,7 @@
                     $scope.elasticsearchDataLoaded = true;
                     resolveFunc.call(this, count);
                     var hash = $location.hash();
-                    if(hash) {
+                    if(hash && scrollEnable) {
                         $anchorScroll();
                     }
                 }
