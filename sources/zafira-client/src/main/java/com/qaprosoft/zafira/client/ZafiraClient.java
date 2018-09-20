@@ -43,6 +43,7 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.GensonProvider;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
@@ -61,6 +62,7 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class  ZafiraClient
 {
@@ -107,7 +109,7 @@ public class  ZafiraClient
 	public ZafiraClient(String serviceURL)
 	{
 		this.serviceURL = serviceURL;
-		this.client = Client.create();
+		this.client = Client.create(new DefaultClientConfig(GensonProvider.class));
 		this.client.setConnectTimeout(CONNECT_TIMEOUT);
 		this.client.setReadTimeout(READ_TIMEOUT);
 	}

@@ -131,7 +131,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			zc.setProject(!StringUtils.isEmpty(project) ? project : ZAFIRA_PROJECT);
 			
 			// Register user who initiated test run
-			this.user = zc.getUserOrAnonymousIfNotFound(ci.getCiUserId());
+			this.user = zc.getUserProfile().getObject();
 					
 			// Register test suite along with suite owner
 			UserType suiteOwner =  zc.getUserOrAnonymousIfNotFound(configurator.getOwner(suiteContext));
@@ -574,10 +574,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			ci.setCiBuildCause(config.getString("ci_build_cause", "MANUALTRIGGER"));
 			ci.setCiParentUrl(config.getString("ci_parent_url", null));
 			ci.setCiParentBuild(config.getString("ci_parent_build", null));
-			ci.setCiUserId(config.getString("ci_user_id", ZafiraClient.ANONYMOUS));
-			ci.setCiUserFirstName(config.getString("ci_user_first_name", null));
-			ci.setCiUserLastName(config.getString("ci_user_last_name", null));
-			ci.setCiUserEmail(config.getString("ci_user_email", null));
 			
 			ci.setGitBranch(config.getString("git_branch", null));
 			ci.setGitCommit(config.getString("git_commit", null));
