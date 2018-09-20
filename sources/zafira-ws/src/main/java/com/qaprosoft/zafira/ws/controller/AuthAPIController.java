@@ -78,7 +78,10 @@ public class AuthAPIController extends AbstractController {
 	private InvitationService invitationService;
 
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationInternalManager;
+
+	@Autowired
+	private AuthenticationManager authenticationLdapManager;
 
 	@Autowired
 	private Mapper mapper;
@@ -100,14 +103,20 @@ public class AuthAPIController extends AbstractController {
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials, HttpServletResponse response)
 			throws BadCredentialsException {
-		AuthTokenType authToken = null;
+		AuthTokenType authToken;
 		try {
-			Authentication authentication = this.authenticationManager.authenticate(
+			Authentication authentication;
+			User user = userService.getUserByUsername(credentials.getUsername());
+
+			final AuthenticationManager authenticationManager = user == null || user.getSource().equals(User.Source.LDAP) ?
+					this.authenticationLdapManager : this.authenticationInternalManager;
+
+			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			user = userService.getUserByUsername(credentials.getUsername());
 
-			User user = userService.getUserByUsername(credentials.getUsername());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 
