@@ -914,7 +914,7 @@
         };
 
         function getDebugData(log){
-            if(log){
+            if(log || log === ''){
                 var portLine = log.slice(log.indexOf('Enabling remote debug on '));
                 var debugValues = portLine.split(":");
                 $scope.debugPort = debugValues[0];
