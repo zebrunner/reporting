@@ -1907,6 +1907,10 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
       }
   }
 
+    thead {
+        height: 32px !important;
+    }
+
   tr {
     display: table;
     width: 100%;
