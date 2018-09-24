@@ -858,11 +858,9 @@
                                     value = map[key];
                                     if (value.includes("Listening for transport dt_socket at address:")) {
                                         if (debugLog === '') {
-                                            $scope.debugPort = getPortFromLog(value);
-                                            $scope.debugHost = getHostFromLog(value);
+                                            getDebugData(debugLog)
                                         }
                                         $timeout.cancel(connectDebugTimeout);
-
                                         disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                             closeToast();
@@ -915,16 +913,12 @@
             alertify.warning("Debug mode is disabled");
         };
 
-        function getPortFromLog(log){
+        function getDebugData(log){
             if(log){
-                var portLine = log.slice(log.indexOf('address:'));
-                return portLine.split(" ")[1];
-            }
-        }
-
-        function getHostFromLog(log){
-            if(log){
-                return log.slice(log.indexOf('debug_host='));
+                var portLine = log.slice(log.indexOf('Enabling remote debug on '));
+                var debugValues = portLine.split(":");
+                $scope.debugPort = debugValues[0];
+                $scope.debugHost = debugValues[1];
             }
         }
 
