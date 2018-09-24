@@ -858,7 +858,7 @@
                                     value = map[key];
                                     if (value.includes("Listening for transport dt_socket at address:")) {
                                         if (debugLog === '') {
-                                            getDebugData(debugLog)
+                                            getDebugData(value)
                                         }
                                         $timeout.cancel(connectDebugTimeout);
                                         disconnectDebugTimeout = $timeout(function () {
@@ -914,7 +914,7 @@
         };
 
         function getDebugData(log){
-            if(log || log === ''){
+            if(log){
                 var portLine = log.slice(log.indexOf('Enabling remote debug on '));
                 var debugValues = portLine.split(":");
                 $scope.debugPort = debugValues[0];
