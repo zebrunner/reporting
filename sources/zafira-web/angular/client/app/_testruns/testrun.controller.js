@@ -859,7 +859,7 @@
                                     if (value.includes("Listening for transport dt_socket at address:")) {
                                         if (debugLog === '') {
                                             $scope.debugPort = getPortFromLog(value);
-                                            $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
+                                            $scope.debugHost = getHostFromLog(value);
                                         }
                                         $timeout.cancel(connectDebugTimeout);
 
@@ -919,6 +919,12 @@
             if(log){
                 var portLine = log.slice(log.indexOf('address:'));
                 return portLine.split(" ")[1];
+            }
+        }
+
+        function getHostFromLog(log){
+            if(log){
+                return log.slice(log.indexOf('debug_host='));
             }
         }
 
