@@ -1,87 +1,97 @@
-<div class="page-signin" ng-controller="AuthController">
+<div class="page-signup" ng-controller="AuthController">
 
-    <div class="wrapper">
-        <div class="main-body">
-            <div class="body-inner">
-                <div class="card bg-white">
-                    <div class="card-content">
-
-                        <section class="logo text-center">
-                            <h1>ZAFIRA</h1>
-                        </section>
-
-                        <form name="signup_form" data-ng-submit="signup(user, signup_form);">
-                            <fieldset>
-                                <md-input-container class="md-block">
-                                    <label>Email</label>
-                                    <input required
-                                           type="email"
-                                           name="email"
-                                           id="email"
-                                           ng-model="user.email"
-                                           disabled/>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <label>Username</label>
-                                    <input required
-                                           ng-change="onChange(signup_form.username);"
-                                           type="text"
-                                           name="username"
-                                           id="username"
-                                           autocomplete="new-password"
-                                           ng-model="user.username"
-                                           ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
-                                    <div ng-messages="signup_form.username.$error">
-                                        <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
+        <div class="wrapper">
+            <div class="main-body">
+                <div class="body-inner">
+    
+                    <div class="card bg-white">
+                        <div class="card-content">
+                            <section class="logo-container">
+                                <div class="logo"></div>
+                            </section>
+    
+                            <form class="form-horizontal" name="signup_form">
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label>Email</label>
+                                        <input required
+                                               type="email"
+                                               name="email"
+                                               id="email"
+                                               ng-model="user.email"
+                                               class="form-control"
+                                               disabled/>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <span class="input-bar"></span>
+                                        <label>Username</label>
+                                        <input required
+                                               ng-change="onChange(signup_form.username);"
+                                               type="text"
+                                               name="username"
+                                               id="username"
+                                               autocomplete="new-password"
+                                               ng-model="user.username"
+                                               class="form-control"
+                                               ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
+                                        <div ng-messages="signup_form.username.$error">
+                                            <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
+                                                <span ng-if="validation.additional">
+                                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                    {{ validation.message }}
+                                                </span>
+                                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                            </div>
+                                            <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
                                         </div>
-                                        <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
-                                    </div>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <label>Password</label>
-                                    <input required
-                                           autocomplete="new-password"
-                                           type="password"
-                                           password-eye="mousedown - mouseup"
-                                           name="password"
-                                           id="password"
-                                           ng-model="user.password"
-                                           ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
-                                    <div ng-messages="signup_form.password.$error" ng-if="signup_form.password.$dirty">
-                                        <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <span class="input-bar"></span>
+                                        <label>Password</label>
+                                        <input required
+                                               autocomplete="new-password"
+                                               type="password"
+                                               password-eye="mousedown - mouseup"
+                                               name="password"
+                                               id="password"
+                                               ng-model="user.password"
+                                               ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                                        <div ng-messages="signup_form.password.$error" ng-if="signup_form.password.$dirty">
+                                            <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
+                                                <span ng-if="validation.additional">
+                                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                    {{ validation.message }}
+                                                </span>
+                                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                            </div>
                                         </div>
+                                    </md-input-container>
+                                    <div class="divider"></div>
+                                    <div class="form-group">
+                                        <p class="text-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
                                     </div>
-                                </md-input-container>
-                                <div layout="row" layout-align="center">
-                                    <md-button type="submit"
-                                               id="signup"
-                                               class="md-raised btn-w-md md-primary"
-                                               ng-disabled="signup_form.$invalid">Signup</md-button>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="card-action no-border text-right">
+                            <a href="#!/auth/signin">Login</a>
+                            <a ng-disabled="signup_form.$invalid" ng-click="signup(user, signup_form);" href="" class="color-primary">Sign Up</a>
+                        </div>
+                    </div> 
                 </div>
-
-                <div class="additional-info">
-                    <span>© 2018 Zafira all rights reserved</span>
-                    <br/>
-                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
-                </div>
-
             </div>
         </div>
-
+       
+        <div class="additional-background">
+                <div class="text">
+                    <p>Hooray! <br/> We have some new features for you.</p>
+                    <p>Now you are capable to track automation results in more profound way: real-time test streaming and video recording.</p>
+                </div>
+                <div class="robot"></div>
+            </div>
+            <div class="additional-info">
+                    <small>© 2018 Zafira all rights reserved</small>
+                    <br/>
+                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
+            </div>
     </div>
-
-</div>

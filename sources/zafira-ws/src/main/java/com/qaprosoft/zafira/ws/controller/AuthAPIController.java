@@ -225,7 +225,7 @@ public class AuthAPIController extends AbstractController {
 			PasswordChangingType passwordChangingType = new PasswordChangingType();
 			passwordChangingType.setPassword(passwordType.getPassword());
 			passwordChangingType.setUserId(user.getId());
-			userService.updateUserPassword(passwordChangingType);
+			userService.updateUserPassword(null, passwordChangingType);
 			userService.updateResetToken(null, user.getId());
 		}
 	}

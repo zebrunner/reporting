@@ -31,16 +31,8 @@
                         return $element.addClass('body-wide body-err');
                     case '/signin':
                     case '/signup':
-                    case '/forgotpwd':
-                    case '/changepwd':
-                    case '/register':
-                    case '/signup':
                     case '/password/forgot':
                     case '/password/reset':
-                    case '/page/signin':
-                    case '/page/signup':
-                    case '/page/register':
-                    case '/page/forgot-password':
                         return $element.addClass('body-wide body-auth');
                     case '/page/lock-screen':
                         return $element.addClass('body-wide body-lock');

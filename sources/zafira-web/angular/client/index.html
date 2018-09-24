@@ -88,7 +88,7 @@
         </aside>
 
         <div id="content" class="content-container">
-            <section data-ui-view class="view-container {{main.pageTransition.class}}" ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
+            <section data-ui-view ng-class="{'{{main.pageTransition.class}}': isAnimated()}" class="view-container" ng-class="{ 'dark-container zaf-dark': darkThemes.indexOf(main.skin) >= 0,
                              'bg-page-grey zaf-light': darkThemes.indexOf(main.skin) === -1}"></section>
         </div>
 

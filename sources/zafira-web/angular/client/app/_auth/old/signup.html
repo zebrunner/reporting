@@ -2,27 +2,36 @@
 
     <div class="wrapper">
         <div class="main-body">
+            <div class="body-inner">
                 <div class="card bg-white">
                     <div class="card-content">
 
-                        <section class="logo-container">
-                            <div class="logo"></div>
+                        <section class="logo text-center">
+                            <h1>ZAFIRA</h1>
                         </section>
 
-                        <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
-                            <div class="callout callout-danger" ng-if="!credentials.valid">
-                                <p>Invalid credentials</p>
-                            </div>
+                        <form name="signup_form" data-ng-submit="signup(user, signup_form);">
                             <fieldset>
                                 <md-input-container class="md-block">
-                                    <label class="placeholder-label">Username</label>
-                                    <input
+                                    <label>Email</label>
+                                    <input required
+                                           type="email"
+                                           name="email"
+                                           id="email"
+                                           ng-model="user.email"
+                                           disabled/>
+                                </md-input-container>
+                                <md-input-container class="md-block">
+                                    <label>Username</label>
+                                    <input required
+                                           ng-change="onChange(signup_form.username);"
                                            type="text"
                                            name="username"
                                            id="username"
-                                           ng-model="credentials.username"
+                                           autocomplete="new-password"
+                                           ng-model="user.username"
                                            ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
-                                    <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
+                                    <div ng-messages="signup_form.username.$error">
                                         <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
                                             <span ng-if="validation.additional">
                                                 <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
@@ -30,17 +39,20 @@
                                             </span>
                                             <span ng-if="! validation.additional">{{ validation.message }}</span>
                                         </div>
+                                        <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
                                     </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
-                                    <label class="placeholder-label">Password</label>
-                                    <input
+                                    <label>Password</label>
+                                    <input required
+                                           autocomplete="new-password"
                                            type="password"
+                                           password-eye="mousedown - mouseup"
                                            name="password"
                                            id="password"
-                                           ng-model="credentials.password"
+                                           ng-model="user.password"
                                            ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
-                                    <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
+                                    <div ng-messages="signup_form.password.$error" ng-if="signup_form.password.$dirty">
                                         <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
                                             <span ng-if="validation.additional">
                                                 <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
@@ -50,20 +62,26 @@
                                         </div>
                                     </div>
                                 </md-input-container>
-                                <div layout="row" class="align-middle button-container" layout-align="space-between">
-                                    <a href="#!/password/forgot">Forgot your password?</a>
+                                <div layout="row" layout-align="center">
                                     <md-button type="submit"
-                                               id="signin"
-                                               class="btn-w-sm md-primary signin"
-                                               ng-disabled="signin_form.$invalid">Sign in</md-button>
+                                               id="signup"
+                                               class="md-raised btn-w-md md-primary"
+                                               ng-disabled="signup_form.$invalid">Signup</md-button>
                                 </div>
                             </fieldset>
                         </form>
                     </div>
                 </div>
+
+                <div class="additional-info">
+                    <span>© 2018 Zafira all rights reserved</span>
+                    <br/>
+                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
+                </div>
+
             </div>
+        </div>
 
     </div>
-        
-    <div ng-include="roboFooter"></div>
+
 </div>
