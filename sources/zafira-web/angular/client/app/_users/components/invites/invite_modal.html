@@ -12,6 +12,11 @@
         <md-dialog-content>
             <div class="md-dialog-content">
                 <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
+                    <!--<md-select id="sourceName" name="sourceName" data-ng-model="sourceName" placeholder="Choose source...." required>
+                        <md-option class="text-capitalize" ng-repeat="source in sources" ng-value="source">
+                            {{source}}
+                        </md-option>
+                    </md-select>-->
                     <md-select id="projectName" name="projectId" data-ng-model="userGroup" placeholder="Choose group...." required>
                         <md-option ng-repeat="group in groups" ng-value="group.id">
                             {{group.name}}

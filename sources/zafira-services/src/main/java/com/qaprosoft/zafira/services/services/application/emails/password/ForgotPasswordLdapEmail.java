@@ -13,29 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.emails;
+package com.qaprosoft.zafira.services.services.application.emails.password;
 
 import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.services.services.application.emails.EmailType;
+import com.qaprosoft.zafira.services.services.application.emails.AbstractEmail;
 
 import java.util.List;
 
-public class UserInviteEmail extends AbstractEmail {
+public class ForgotPasswordLdapEmail extends AbstractEmail {
 
-    private static final String SUBJECT = "Invitation to Zafira";
+    private static final String SUBJECT = "Forgot password in Zafira";
 
-    private String token;
-
-    public UserInviteEmail(String token, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
+    public ForgotPasswordLdapEmail(String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
         super(SUBJECT, zafiraLogoURL, companyLogoURL, workspaceURL);
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     @Override
@@ -50,7 +41,7 @@ public class UserInviteEmail extends AbstractEmail {
 
     @Override
     public EmailType getType() {
-        return EmailType.USER_INVITE;
+        return EmailType.FORGOT_PASSWORD_LDAP;
     }
 
     @Override

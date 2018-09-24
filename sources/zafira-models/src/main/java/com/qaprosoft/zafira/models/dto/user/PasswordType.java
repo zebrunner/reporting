@@ -15,16 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.user;
 
-import java.io.Serializable;
-
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import java.io.Serializable;
 
 @JsonInclude(Include.NON_NULL)
 public class PasswordType implements Serializable
@@ -33,13 +32,11 @@ public class PasswordType implements Serializable
 	
 	@NotNull
 	private Long userId;
-	
+
 	@NotEmpty(message = "Password required")
-	@Size(min = 5, message = "Too short password")
-	private String password;
-	
-	@NotEmpty(message = "Password confirmation required")
-	private String confirmPassword;
+	@Size(min = 8, max = 50, message = "Too short password")
+	@Pattern(regexp = "^[A-Za-z0-9_@!]+$")
+	protected String password;
 
 	public Long getUserId()
 	{
@@ -50,30 +47,12 @@ public class PasswordType implements Serializable
 	{
 		this.userId = userId;
 	}
-	
-	public String getPassword()
-	{
+
+	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password)
-	{
+	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getConfirmPassword()
-	{
-		return confirmPassword;
-	}
-
-	public void setConfirmPassword(String confirmPassword)
-	{
-		this.confirmPassword = confirmPassword;
-	}
-	
-	@AssertTrue(message = "Password confirmation not matching")
-	public boolean isConfirmationValid()
-	{
-		return password != null && password.equals(confirmPassword);
 	}
 }

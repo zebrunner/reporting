@@ -91,6 +91,13 @@
 			WHERE U.EMAIL = #{email};
 		]]>
 	</select>
+
+	<select id="getUserByResetToken" resultMap="UserResultMap">
+		<include refid="getUser" />
+		<![CDATA[
+			WHERE U.RESET_TOKEN = #{token};
+		]]>
+	</select>
 	
 	<select id="searchUsers" resultMap="UserResultMap">
 		<![CDATA[
@@ -279,6 +286,17 @@
 			    USERS
 			SET
 				STATUS = #{status}
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<update id="updateResetToken">
+		<![CDATA[
+			UPDATE
+			    USERS
+			SET
+				RESET_TOKEN = #{resetToken}
 			WHERE
 			    ID = #{id}
 		]]>

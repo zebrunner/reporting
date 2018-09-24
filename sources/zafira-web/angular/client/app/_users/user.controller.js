@@ -43,6 +43,8 @@
                 .then(function (rs) {
                     if (rs.success) {
                         $scope.user = rs.data;
+                        $rootScope.currentUser.firstName = rs.data.firstName;
+                        $rootScope.currentUser.lastName = rs.data.lastName;
                         alertify.success("User profile updated");
                     }
                     else {
@@ -88,21 +90,17 @@
         };
 
         $scope.updateUserPassword = function (changePassword) {
-            if (changePassword.password.length < 5 || changePassword.confirmPassword.length < 5){
-                alertify.warning("Password length must be more than 5 characters");
-            } else {
-                changePassword.userId = $rootScope.currentUser.id;
-                UserService.updateUserPassword(changePassword)
-                    .then(function (rs) {
-                        if (rs.success) {
-                            $scope.changePassword = {};
-                            alertify.success("Password changed");
-                        }
-                        else {
-                            alertify.error(rs.message);
-                        }
-                    });
-            }
+            changePassword.userId = $rootScope.currentUser.id;
+            UserService.updateUserPassword(changePassword)
+                .then(function (rs) {
+                    if (rs.success) {
+                        $scope.changePassword = {};
+                        alertify.success("Password changed");
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
         };
 
         $scope.getUserProfile = function () {

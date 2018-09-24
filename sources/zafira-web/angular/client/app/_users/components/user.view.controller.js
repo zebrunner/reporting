@@ -182,7 +182,8 @@
 
         $scope.showCreateUserDialog = function(event, index) {
             $mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+                controller: function ($scope, $mdDialog, UtilService) {
+                    $scope.UtilService = UtilService;
                     $scope.createUser = function() {
                         UserService.createOrUpdateUser($scope.user).then(function(rs) {
                             if(rs.success)

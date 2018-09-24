@@ -17,16 +17,23 @@ package com.qaprosoft.zafira.models.dto.auth;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class CredentialsType implements Serializable
 {
 	private static final long serialVersionUID = 1567014101763491651L;
 	
 	@NotNull
+	@Pattern(regexp = "^[A-Za-z_-]+$")
+	@Size(min = 3, max = 50)
 	private String username;
 	
 	@NotNull
+	@Pattern(regexp = "^[A-Za-z0-9_@!]+$")
+	@Size(min = 8, max = 50)
 	private String password;
 	
 	public CredentialsType()

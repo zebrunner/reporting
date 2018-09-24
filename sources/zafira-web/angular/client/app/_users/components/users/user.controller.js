@@ -19,7 +19,8 @@
 
         $scope.showChangePasswordDialog = function($event, user) {
             $mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+                controller: function ($scope, $mdDialog, UtilService) {
+                    $scope.UtilService = UtilService;
                     $scope.user = user;
                     $scope.changePassword = {'userId' : user.id};
                     $scope.updateUserPassword = function(changePassword)
@@ -62,7 +63,8 @@
 
         $scope.showEditProfileDialog = function(event, user, index) {
             $mdDialog.show({
-                controller: function ($scope, $mdDialog) {
+                controller: function ($scope, $mdDialog, UtilService) {
+                    $scope.UtilService = UtilService;
                     $scope.user = angular.copy(user);
                     $scope.updateStatus = function(user, status, index) {
                         user.status = status;

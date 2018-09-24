@@ -25,10 +25,13 @@ import javax.validation.Valid;
 import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.Tenancy;
 import com.qaprosoft.zafira.models.dto.auth.*;
+import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
+import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,9 @@ public class AuthAPIController extends AbstractController {
 
 	@Autowired
 	private AmazonService amazonService;
+
+	@Autowired
+	private ForgotPasswordService forgotPasswordService;
 
 	@Autowired
 	private UserService userService;
@@ -185,6 +191,43 @@ public class AuthAPIController extends AbstractController {
 		}
 		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Forgot password", nickname = "forgotPassword", code = 200, httpMethod = "POST")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "password/forgot", method = RequestMethod.POST)
+	public void forgotPassword(@Valid @RequestBody EmailType emailType) throws ServiceException {
+		User user = userService.getUserByEmail(emailType.getEmail());
+		if(user != null) {
+			forgotPasswordService.sendForgotPasswordEmail(emailType, user);
+		}
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Get forgot password type by token", nickname = "getForgotPasswordType", code = 200, httpMethod = "GET")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "password/forgot", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getForgotPasswordType(@RequestParam(value = "token", required = true) String token) throws ForbiddenOperationException {
+		User user = userService.getUserByResetToken(token);
+		if(user == null || ! user.getSource().equals(User.Source.INTERNAL)) {
+			throw new ForbiddenOperationException();
+		}
+	}
+
+	@ResponseStatusDetails
+	@ApiOperation(value = "Reset password", nickname = "resetPassword", code = 200, httpMethod = "PUT")
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "password", method = RequestMethod.PUT)
+	public void resetPassword(@RequestHeader(value = "Access-Token", required = true) String token, @Valid @RequestBody PasswordType passwordType) throws ServiceException {
+		User user = userService.getUserByResetToken(token);
+		if(user != null && user.getSource().equals(User.Source.INTERNAL)) {
+			PasswordChangingType passwordChangingType = new PasswordChangingType();
+			passwordChangingType.setPassword(passwordType.getPassword());
+			passwordChangingType.setUserId(user.getId());
+			userService.updateUserPassword(passwordChangingType);
+			userService.updateResetToken(null, user.getId());
+		}
 	}
 
 	@ResponseStatusDetails

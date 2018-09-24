@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="profile-personal-info">
-            {{user.firstName}} {{user.lastName}}
+            {{currentUser.firstName}} {{currentUser.lastName}}
         </div>
     </header>
 
@@ -37,17 +37,37 @@
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>First Name</label>
-                                                <input id="userFirstName" type="text" ng-model="user.firstName" name="firstName"/>
+                                                <input id="userFirstName" type="text" ng-model="user.firstName" name="firstName"
+                                                    ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                                                <div ng-messages="profile_form.firstName.$error">
+                                                    <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                             <md-input-container flex>
                                                 <label>Last Name</label>
-                                                <input id="userLastName" type="text" ng-model="user.lastName" name="lastName"/>
+                                                <input id="userLastName" type="text" ng-model="user.lastName" name="lastName"
+                                                       ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                                                <div ng-messages="profile_form.lastName.$error">
+                                                    <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                                        <span ng-if="validation.additional">
+                                                            <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                            {{ validation.message }}
+                                                        </span>
+                                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                    </div>
+                                                </div>
                                             </md-input-container>
                                         </div>
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>Email</label>
-                                                <input id="userEmail" type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/">
+                                                <input id="userEmail" type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/" disabled>
                                                 <div ng-messages="profile_form.email.$error" ng-if="profile_form.email.$dirty">
 		                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
 		                                            <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
@@ -118,7 +138,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div ng-if="user.source == 'INTERNAL'" class="row">
         <div class="col-lg-8 clearfix"> <h2 class="section-header">Change password</h2> </div>
         <div class="col-md-12">
             <section class="panel panel-default">
@@ -129,18 +149,22 @@
                                 <div layout-padding>
                                     <form class="form-validation" name="password_form" ng-submit="updateUserPassword(changePassword); UtilService.untouchForm(password_form);">
                                         <md-input-container  class="md-block">
-                                            <label>Password</label>
-                                            <input id="userPassword" type="password" ng-model="changePassword.password" name="password" required/>
-                                            <div ng-messages="password_form.password.$error" ng-if="password_form.password.$dirty">
-	                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-	                                        </div>
+                                            <label>Old password</label>
+                                            <input id="userOldPassword" type="password" ng-model="changePassword.oldPassword" name="password" required/>
                                         </md-input-container>
                                         <md-input-container  class="md-block">
-                                            <label>Repeat</label>
-                                            <input id="userRepeatePassword" type="password" ng-model="changePassword.confirmPassword" name="confirmPassword" required/>
-                                            <div ng-messages="password_form.confirmPassword.$error" ng-if="password_form.confirmPassword.$dirty">
-	                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-	                                        </div>
+                                            <label>Password</label>
+                                            <input id="userPassword" password-eye="mousedown - mouseup" type="password" ng-model="changePassword.password" name="password" required
+                                                   ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                                            <div ng-messages="password_form.password.$error" ng-if="password_form.password.$dirty">
+                                                <div ng-repeat="validation in UtilService.validations.password" ng-message="{{validation.name}}">
+                                                    <span ng-if="validation.additional">
+                                                        <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                        {{ validation.message }}
+                                                    </span>
+                                                    <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                                </div>
+                                            </div>
                                         </md-input-container>
                                         <div layout="row">
 		                                    <md-button id="changePassword" type="submit"

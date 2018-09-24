@@ -18,6 +18,61 @@
         service.reconnectWebsocket = reconnectWebsocket;
         service.websocketConnected = websocketConnected;
 
+        service.validations = {
+            username: [
+                {
+                    name: 'minlength',
+                    message: 'Username must be between 3 and 50 characters'
+                },
+                {
+                    name: 'maxlength',
+                    message: 'Username must be between 3 and 50 characters'
+                },
+                {
+                    name: 'pattern',
+                    message: 'Username must have only latin letters and special characters',
+                    additional: '_ -'
+                },
+                {
+                    name: 'required',
+                    message: 'Username required'
+                }
+            ],
+            password: [
+                {
+                    name: 'minlength',
+                    message: 'Password must be between 8 and 40 characters'
+                },
+                {
+                    name: 'maxlength',
+                    message: 'Password must be between 8 and 40 characters'
+                },
+                {
+                    name: 'pattern',
+                    message: 'Password must have only latin letters, numbers or special symbols',
+                    additional: '@ ! _'
+                },
+                {
+                    name: 'required',
+                    message: 'Password required'
+                }
+            ],
+            name: [
+                {
+                    name: 'minlength',
+                    message: 'Must be between 2 and 50 characters'
+                },
+                {
+                    name: 'maxlength',
+                    message: 'Must be between 2 and 50 characters'
+                },
+                {
+                    name: 'pattern',
+                    message: 'Must have only latin letters'
+                }
+            ]
+        };
+
         return service;
 
         function untouchForm(form) {

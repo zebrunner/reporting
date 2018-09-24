@@ -13,38 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.auth;
+package com.qaprosoft.zafira.models.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
-import org.hibernate.validator.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class InvitationType extends AbstractEntity {
+public class PasswordChangingType extends PasswordType {
 
-    private static final long serialVersionUID = 3259491531064546797L;
+    private static final long serialVersionUID = 6708214365157741315L;
 
-    @NotNull(message = "{error.email.required}")
-    @Email(message = "{error.email.invalid}")
-    private String email;
+    @NotNull
+    private String oldPassword;
 
-    @NotNull(message = "{error.group.required}")
-    private Long groupId;
-
-    public String getEmail() {
-        return email;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

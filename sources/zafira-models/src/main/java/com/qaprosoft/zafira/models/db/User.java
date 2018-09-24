@@ -43,6 +43,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	private String tenant;
 	private Source source;
 	private Status status;
+	private String resetToken;
 
 	public User()
 	{
@@ -211,6 +212,14 @@ public class User extends AbstractEntity implements Comparable<User>
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
 	}
 
 	@Override

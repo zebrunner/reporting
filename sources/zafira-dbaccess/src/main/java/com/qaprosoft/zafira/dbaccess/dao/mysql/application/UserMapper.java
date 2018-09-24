@@ -31,11 +31,15 @@ public interface UserMapper
 
 	User getUserByEmail(String email);
 
+	User getUserByResetToken(String token);
+
 	void updateUser(User user);
 
 	void updateStatus(@Param("status") User.Status status, @Param("id") Long id);
 	
 	void updateLastLoginDate(long userId);
+
+	void updateResetToken(@Param("resetToken") String resetToken, @Param("id") Long id);
 
 	void deleteUserById(long id);
 

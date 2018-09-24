@@ -13,6 +13,8 @@
             valid: true
         };
 
+        $scope.VALIDATIONS = UtilService.validations;
+
         $scope.invitation = {};
 
         $scope.getInvitation = function (token) {
@@ -29,10 +31,57 @@
 
         var token;
 
+        $scope.forgotPasswordType = {};
+        $scope.forgotPasswordEmailWasSent = false;
+
+        $scope.forgotPassword = function (forgotPassword) {
+            AuthService.forgotPassword(forgotPassword).then(function (rs) {
+                if(rs.success) {
+                    $scope.forgotPassword = {};
+                    $scope.forgotPasswordEmailWasSent = true;
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
+        $scope.getForgotPasswordInfo = function (token) {
+            AuthService.getForgotPasswordInfo(token).then(function (rs) {
+                if(rs.success) {
+                    $scope.forgotPasswordType.email = rs.data.email;
+                }
+            });
+        };
+
+        $scope.resetPassword = function (credentials) {
+            credentials.userId = 0;
+            AuthService.resetPassword(credentials, token).then(function (rs) {
+                if(rs.success) {
+                    alertify.success('Was reset successfully.');
+                    $state.go('signin');
+                } else {
+                    alertify.error(rs.message);
+                }
+            });
+        };
+
         (function initController() {
-            if($state.current.name == 'signup') {
-                token = $location.search()['token'];
-                $scope.getInvitation(token);
+            switch($state.current.name) {
+                case 'signup':
+                    token = $location.search()['token'];
+                    $scope.getInvitation(token);
+                    break;
+                case 'forgotPassword':
+                    break;
+                case 'resetPassword':
+                    token = $location.search()['token'];
+                    if(! token) {
+                        $state.go('signin');
+                        return;
+                    }
+                    $scope.getForgotPasswordInfo(token);
+                default:
+                    break;
             }
             AuthService.ClearCredentials();
         })();

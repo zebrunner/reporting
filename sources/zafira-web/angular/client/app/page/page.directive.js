@@ -32,6 +32,8 @@
                     case '/signin':
                     case '/register':
                     case '/signup':
+                    case '/password/forgot':
+                    case '/password/reset':
                     case '/page/signin':
                     case '/page/signup':
                     case '/page/register':

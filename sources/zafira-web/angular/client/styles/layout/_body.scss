@@ -2113,3 +2113,20 @@ td.settings-cell {
 .text-info {
     color: #00BCD4;
 }
+
+#forgot-password {
+    position: absolute;
+    right: 15px;
+    bottom: 9px;
+    a {
+        color: #009688;
+        font-size: 9px;
+        text-decoration: underline;
+    }
+}
+
+.forgot-message {
+    text-align: center;
+    font-size: 14px;
+
+}

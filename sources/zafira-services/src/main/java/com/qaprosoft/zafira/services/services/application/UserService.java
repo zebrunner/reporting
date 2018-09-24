@@ -20,6 +20,8 @@ import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCr
 
 import javax.annotation.PostConstruct;
 
+import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.services.management.MngTenancyService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -142,12 +144,25 @@ public class UserService {
         return user;
     }
 
-    @CacheEvict(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
+    @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(long id, String password) throws ServiceException {
-        User user = getNotNullUserById(id);
-        user.setPassword(passwordEncryptor.encryptPassword(password));
+    public void updateUserPassword(PasswordChangingType password) throws ServiceException {
+        User user = getNotNullUserById(password.getUserId());
+        if(password.getOldPassword() == null || ! passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword())) {
+            throw new ForbiddenOperationException();
+        }
+        user.setPassword(passwordEncryptor.encryptPassword(password.getPassword()));
         updateUser(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateResetToken(String token, Long userId) {
+        userMapper.updateResetToken(token, userId);
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserByResetToken(String token) {
+        return userMapper.getUserByResetToken(token);
     }
 
     @Transactional(rollbackFor = Exception.class)

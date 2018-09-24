@@ -11,6 +11,9 @@
 
         service.Login = Login;
         service.Invite = Invite;
+        service.forgotPassword = forgotPassword;
+        service.getForgotPasswordInfo = getForgotPasswordInfo;
+        service.resetPassword = resetPassword;
         service.getInvitation = getInvitation;
         service.signup = signup;
         service.SetCredentials = SetCredentials;
@@ -30,6 +33,20 @@
 
         function Invite(emails) {
             return $http.post(API_URL + '/api/auth/invite', emails).then(UtilService.handleSuccess, UtilService.handleError('Failed to invite users'));
+        }
+
+        function forgotPassword(forgotPassword) {
+            return $http.post(API_URL + '/api/auth/password/forgot', forgotPassword).then(UtilService.handleSuccess, UtilService.handleError('Unable to restore password'));
+        }
+
+        function getForgotPasswordInfo(token) {
+            return $http.get(API_URL + '/api/auth/password/forgot?token=' + token).then(UtilService.handleSuccess, function (rs) {
+                $state.go('signin');
+            });
+        }
+
+        function resetPassword(credentials, token) {
+            return $http.put(API_URL + '/api/auth/password', credentials, {headers: {'Access-Token': token}}).then(UtilService.handleSuccess, UtilService.handleError('Unable to restore password'));
         }
 
         function getInvitation(token) {

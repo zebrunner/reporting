@@ -21,13 +21,33 @@
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>First name</label>
-                        <input id="firstName" type="text" ng-model="user.firstName" name="firstName"/>
+                        <input id="firstName" type="text" ng-model="user.firstName" name="firstName"
+                               ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                        <div ng-messages="profile_form.firstName.$error">
+                            <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                <span ng-if="validation.additional">
+                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                    {{ validation.message }}
+                                </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">
                     <md-input-container flex>
                         <label>Last Name</label>
-                        <input id="lastName" type="text" ng-model="user.lastName" name="lastName"/>
+                        <input id="lastName" type="text" ng-model="user.lastName" name="lastName"
+                               ng-minlength="2" ng-maxlength="50" ng-pattern="/^[a-zA-Z]+$/"/>
+                        <div ng-messages="profile_form.lastName.$error">
+                            <div ng-repeat="validation in UtilService.validations.name" ng-message="{{validation.name}}">
+                                <span ng-if="validation.additional">
+                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                    {{ validation.message }}
+                                </span>
+                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                            </div>
+                        </div>
                     </md-input-container>
                 </div>
                 <div layout layout-sm="column">

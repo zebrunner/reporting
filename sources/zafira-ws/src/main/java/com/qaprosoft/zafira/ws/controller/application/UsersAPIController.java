@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.services.application.DashboardService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
@@ -151,10 +152,10 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
-	public void updateUserPassword(@Valid @RequestBody PasswordType password) throws ServiceException
+	public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) throws ServiceException
 	{
 		checkCurrentUserAccess(password.getUserId());
-		userService.updateUserPassword(password.getUserId(), password.getPassword());
+		userService.updateUserPassword(password);
 	}
 
 	@ResponseStatusDetails

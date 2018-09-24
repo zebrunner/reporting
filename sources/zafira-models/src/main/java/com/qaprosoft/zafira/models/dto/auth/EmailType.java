@@ -15,22 +15,25 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.db.AbstractEntity;
 import org.hibernate.validator.constraints.Email;
+
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class InvitationType extends AbstractEntity {
+public class EmailType implements Serializable {
 
-    private static final long serialVersionUID = 3259491531064546797L;
+    private static final long serialVersionUID = 2359053026630602599L;
 
     @NotNull(message = "{error.email.required}")
     @Email(message = "{error.email.invalid}")
     private String email;
 
-    @NotNull(message = "{error.group.required}")
-    private Long groupId;
+    public EmailType() {
+    }
+
+    public EmailType(String email) {
+        this.email = email;
+    }
 
     public String getEmail() {
         return email;
@@ -38,13 +41,5 @@ public class InvitationType extends AbstractEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
     }
 }

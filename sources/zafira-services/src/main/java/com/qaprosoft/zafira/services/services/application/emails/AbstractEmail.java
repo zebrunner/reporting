@@ -19,28 +19,35 @@ import com.qaprosoft.zafira.models.db.Attachment;
 
 import java.util.List;
 
-public class UserInviteEmail extends AbstractEmail {
+public abstract class AbstractEmail implements IEmailMessage {
 
-    private static final String SUBJECT = "Invitation to Zafira";
+    private String subject;
+    private String zafiraLogoURL;
+    private String companyLogoURL;
+    private String workspaceURL;
 
-    private String token;
-
-    public UserInviteEmail(String token, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
-        super(SUBJECT, zafiraLogoURL, companyLogoURL, workspaceURL);
-        this.token = token;
+    public AbstractEmail(String subject, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
+        this.subject = subject;
+        this.zafiraLogoURL = zafiraLogoURL;
+        this.companyLogoURL = companyLogoURL;
+        this.workspaceURL = workspaceURL;
     }
 
-    public String getToken() {
-        return token;
+    public String getZafiraLogoURL() {
+        return zafiraLogoURL;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public String getCompanyLogoURL() {
+        return companyLogoURL;
+    }
+
+    public String getWorkspaceURL() {
+        return workspaceURL;
     }
 
     @Override
     public String getSubject() {
-        return SUBJECT;
+        return subject;
     }
 
     @Override
@@ -50,7 +57,7 @@ public class UserInviteEmail extends AbstractEmail {
 
     @Override
     public EmailType getType() {
-        return EmailType.USER_INVITE;
+        return null;
     }
 
     @Override

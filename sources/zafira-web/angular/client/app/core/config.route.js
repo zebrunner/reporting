@@ -26,6 +26,14 @@
                         url: '/signup',
                         templateUrl: 'app/_auth/signup.html'
                     })
+                    .state('forgotPassword', {
+                        url: '/password/forgot',
+                        templateUrl: 'app/_auth/forgot-password.html'
+                    })
+                    .state('resetPassword', {
+                        url: '/password/reset',
+                        templateUrl: 'app/_auth/reset-password.html'
+                    })
                     .state('users/profile', {
                         url: '/users/profile',
                         templateUrl: 'app/_users/profile.html'
