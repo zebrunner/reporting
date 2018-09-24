@@ -13,7 +13,6 @@ import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 public class UserPageService extends AbstractPageService
 {
 
-	private static final String CREATE_USER_BUTTON_CLASS = "fa-plus";
 	private static final String CREATE_GROUP_BUTTON_CLASS = "fa-users";
 
 	private UserPage userPage;

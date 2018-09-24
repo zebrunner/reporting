@@ -13,42 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.errors;
+package com.qaprosoft.zafira.config;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
-@JsonSerialize(using = ErrorCodeSerializer.class)
-public enum ErrorCode
-{
+import org.springframework.stereotype.Component;
 
-	VALIDATION_ERROR(0),
-	INVALID_VALUE(1),
+import com.owlike.genson.Genson;
 
-	UNAUTHORIZED(401),
-	FORBIDDENT(403),
-	
-	JOB_NOT_FOUND(1000),
-	INVALID_TEST_RUN(1001),
-	TEST_RUN_NOT_FOUND(1002),
-	TEST_NOT_FOUND(1003),
-	TEST_RUN_NOT_REBUILT(1004),
-	USER_NOT_FOUND(1005),
-	ENTITY_ALREADY_EXISTS(1006),
-	ENTITY_NOT_EXISTS(1007),
-	PROJECT_NOT_EXISTS(1008),
+/**
+ * GensonProvider - allows to deserialize timestamp to Date.
+ * 
+ * @author akhursevich
+ */
+@Component
+@Provider
+public class GensonProvider implements ContextResolver<Genson> {
 
-	INTEGRATION_UNAVAILABLE(2001);
+	private final Genson genson = new Genson.Builder().useTimeInMillis(true).create();
 
-	private int code;
-
-	private ErrorCode(int code)
-	{
-		this.code = code;
-	}
-
-	public int getCode()
-	{
-		return code;
+	@Override
+	public Genson getContext(Class<?> type) {
+		return genson;
 	}
 }

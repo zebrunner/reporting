@@ -87,9 +87,7 @@ import io.swagger.annotations.ApiParam;
 @Controller
 @Api(value = "Test runs API")
 @RequestMapping("api/tests/runs")
-public class TestRunsAPIController extends AbstractController
-{
-
+public class TestRunsAPIController extends AbstractController {
 	@Autowired
 	private Mapper mapper;
 
@@ -131,34 +129,30 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType startTestRun(@RequestBody @Valid TestRunType tr,
 			@RequestHeader(value = "Project", required = false) String project)
-			throws ServiceException, MappingException, JAXBException
-	{
+			throws ServiceException, MappingException, JAXBException {
 		TestRun testRun = mapper.map(tr, TestRun.class);
 		testRun.setProject(projectService.getProjectByName(project));
 		testRun = testRunService.startTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
-		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
+				new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Update test run config", nickname = "updateTestRun", code = 200, httpMethod = "PUT", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType updateTestRun(@RequestBody TestRunType tr)
-			throws ServiceException, MappingException, JAXBException
-	{
+			throws ServiceException, MappingException, JAXBException {
 		TestRun testRun = testRunService.getTestRunById(tr.getId());
-		if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML()))
-		{
+		if (testRun == null && !StringUtils.isEmpty(tr.getConfigXML())) {
 			throw new ServiceException("Test run not found by id: " + tr.getId());
 		}
 		testRun.setConfigXML(tr.getConfigXML());
@@ -166,23 +160,23 @@ public class TestRunsAPIController extends AbstractController
 		testRunService.updateTestRun(testRun);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
 		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
-		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
+				new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		return mapper.map(testRun, TestRunType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Finish test run", nickname = "finishTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType finishTestRun(
 			@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value = "id") long id)
-			throws ServiceException, InterruptedException, IOException
-	{
+			throws ServiceException, InterruptedException, IOException {
 		TestRun testRun = testRunService.calculateTestRunResult(id, true);
 		TestRun testRunFull = testRunService.getTestRunByIdFull(testRun.getId());
-		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
+				new TestRunStatisticPush(statisticsService.getTestRunStatistic(id)));
 		websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunFull));
 		slackService.sendAutoStatus(testRunFull);
 		return mapper.map(testRun, TestRunType.class);
@@ -191,46 +185,42 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "abort", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType abortTestRun(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
-			@RequestBody(required = false) CommentType abortCause)
-			throws ServiceException, InterruptedException
-	{
+			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException {
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
-		if(testRun == null) {
+		if (testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
-		
-		if(Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
+
+		if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
 			testRunService.abortTestRun(testRun, abortCause.getComment());
-			for (Test test : testService.getTestsByTestRunId(testRun.getId()))
-			{
-				if(Status.ABORTED.equals(test.getStatus()))
-				{
+			for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
+				if (Status.ABORTED.equals(test.getStatus())) {
 					websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestPush(test));
 				}
 			}
-			websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
-			websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
+			websocketTemplate.convertAndSend(getTestRunsWebsocketPath(),
+					new TestRunPush(testRunService.getTestRunByIdFull(testRun.getId())));
+			websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
+					new TestRunStatisticPush(statisticsService.getTestRunStatistic(testRun.getId())));
 		}
 		return mapper.map(testRun, TestRunType.class);
 	}
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "queue",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams) throws
-			ServiceException
-	{
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@RequestMapping(value = "queue", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody TestRunType createQueuedTestRun(@RequestBody QueueTestRunParamsType queuedTestRunParams)
+			throws ServiceException {
 		TestRun testRun = new TestRun();
-		if(jobsService.getJobByName(queuedTestRunParams.getJobName()) != null)
-		{
+		if (jobsService.getJobByName(queuedTestRunParams.getJobName()) != null) {
 			testRun = testRunService.queueTestRun(queuedTestRunParams, userService.getUserById(getPrincipalId()));
 		}
 		return mapper.map(testRun, TestRunType.class);
@@ -239,16 +229,13 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get test run", nickname = "getTestRun", code = 200, httpMethod = "GET", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRun(
 			@ApiParam(value = "Id of the test-run", required = true) @PathVariable(value = "id") long id)
-			throws ServiceException
-	{
+			throws ServiceException {
 		TestRun testRun = testRunService.getTestRunById(id);
-		if (testRun == null)
-		{
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 		return mapper.map(testRun, TestRunType.class);
@@ -256,64 +243,53 @@ public class TestRunsAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody SearchResult<TestRun> searchTestRuns(@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
-			throws ServiceException
-	{
-		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class) : null;
-		if(filterType != null)
-		{
+	public @ResponseBody SearchResult<TestRun> searchTestRuns(
+			@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
+			throws ServiceException {
+		FilterType filterType = filterId != null ? mapper.map(filterService.getFilterById(filterId), FilterType.class)
+				: null;
+		if (filterType != null) {
 			sc.setFilterSearchCriteria(new FilterSearchCriteria());
 			sc.getFilterSearchCriteria().setFilterTemplate(filterService.getTemplate(filterType, TEST_RUN_TEMPLATE));
-			sc.getFilterSearchCriteria().setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
+			sc.getFilterSearchCriteria()
+					.setFilterSearchCountTemplate(filterService.getTemplate(filterType, TEST_RUN_COUNT_TEMPLATE));
 		}
 		return testRunService.searchTestRuns(sc);
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<TestRunType> rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
 			@RequestParam(value = "rerunFailures", defaultValue = "true", required = false) Boolean rerunFailures,
-			@RequestBody JobSearchCriteria sc)
-			throws ServiceException
-	{
-		if (!StringUtils.isEmpty(sc.getUpstreamJobUrl()))
-		{
+			@RequestBody JobSearchCriteria sc) throws ServiceException {
+		if (!StringUtils.isEmpty(sc.getUpstreamJobUrl())) {
 			sc.setUpstreamJobUrl(sc.getUpstreamJobUrl().replaceAll("/$", ""));
-			if(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()) != null)
-			{
+			if (jobsService.getJobByJobURL(sc.getUpstreamJobUrl()) != null) {
 				sc.setUpstreamJobId(jobsService.getJobByJobURL(sc.getUpstreamJobUrl()).getId());
 			}
 		}
-		if (rerunFailures && sc.getFailurePercent() == null)
-		{
+		if (rerunFailures && sc.getFailurePercent() == null) {
 			sc.setFailurePercent(0);
 		}
-		List <TestRun> testRuns = testRunService.getJobsTestRuns(sc);
-		List <TestRunType> testRunTypes = new ArrayList<>();
-		if (testRuns != null)
-		{
+		List<TestRun> testRuns = testRunService.getJobsTestRuns(sc);
+		List<TestRunType> testRunTypes = new ArrayList<>();
+		if (testRuns != null) {
 			testRunTypes = testRuns.stream().map(testRun -> {
-				if (doRebuild)
-				{
-					try
-					{
+				if (doRebuild) {
+					try {
 						boolean success = jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(),
 								rerunFailures);
-						if (!success)
-						{
+						if (!success) {
 							throw new UnableToRebuildCIJobException();
 						}
-					} catch (UnableToRebuildCIJobException e)
-					{
+					} catch (UnableToRebuildCIJobException e) {
 						LOGGER.error("Problems with job building occurred", e);
 					}
 				}
@@ -326,15 +302,12 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get test run by ci run id", nickname = "getTestRunByCiRunId", code = 200, httpMethod = "GET", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TestRunType getTestRunByCiRunId(@RequestParam(value = "ciRunId") String ciRunId)
-			throws ServiceException
-	{
+			throws ServiceException {
 		TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
-		if (testRun == null)
-		{
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 		return mapper.map(testRun, TestRunType.class);
@@ -343,14 +316,11 @@ public class TestRunsAPIController extends AbstractController
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get test run results by id", nickname = "getTestRunResults", code = 200, httpMethod = "GET", response = java.util.List.class)
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<TestType> getTestRunResults(@PathVariable(value = "id") long id) throws ServiceException
-	{
+	public @ResponseBody List<TestType> getTestRunResults(@PathVariable(value = "id") long id) throws ServiceException {
 		List<TestType> tests = new ArrayList<>();
-		for (Test test : testService.getTestsByTestRunId(id))
-		{
+		for (Test test : testService.getTestsByTestRunId(id)) {
 			tests.add(mapper.map(test, TestType.class));
 		}
 		return tests;
@@ -358,16 +328,13 @@ public class TestRunsAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Create compare matrix", nickname = "createCompareMatrix", code = 200, httpMethod = "GET", response = Map.class)
 	@RequestMapping(value = "{ids}/compare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, Map<String, Test>> createCompareMatrix(
-			@PathVariable(value = "ids") String testRunIds) throws ServiceException
-	{
+			@PathVariable(value = "ids") String testRunIds) throws ServiceException {
 		List<Long> ids = new ArrayList<>();
-		for (String id : testRunIds.split("\\+"))
-		{
+		for (String id : testRunIds.split("\\+")) {
 			ids.add(Long.valueOf(id));
 		}
 		return testRunService.createCompareMatrix(ids);
@@ -375,125 +342,110 @@ public class TestRunsAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Delete test run", nickname = "deleteTestRun", code = 200, httpMethod = "DELETE")
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public void deleteTestRun(@PathVariable(value = "id") long id) throws ServiceException
-	{
+	public void deleteTestRun(@PathVariable(value = "id") long id) throws ServiceException {
 		testRunService.deleteTestRunById(id);
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Send test run result email", nickname = "sendTestRunResultsEmail", code = 200, httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value = "id") String id,
 			@RequestBody @Valid EmailType email,
 			@RequestParam(value = "filter", defaultValue = "all", required = false) String filter,
 			@RequestParam(value = "showStacktrace", defaultValue = "true", required = false) boolean showStacktrace)
-			throws ServiceException, JAXBException
-	{
+			throws ServiceException, JAXBException {
 		String[] recipients = getRecipients(email.getRecipients());
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", code = 200, httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/spreadsheet", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") String id, @RequestBody String recipients) throws ServiceException
-	{
+	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") String id,
+			@RequestBody String recipients) throws ServiceException {
 		recipients = recipients + ";" + userService.getUserById(getPrincipalId()).getEmail();
-		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id), getRecipients(recipients));
+		return testRunSpreadsheetService.createTestRunResultSpreadsheet(testRunService.getTestRunByIdFull(id),
+				getRecipients(recipients));
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", code = 200, httpMethod = "GET", response = String.class)
 	@RequestMapping(value = "{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String exportTestRunHTML(@PathVariable(value = "id") String id)
-			throws ServiceException, JAXBException
-	{
+			throws ServiceException, JAXBException {
 		return testRunService.exportTestRunHTML(id);
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Mark test run as reviewed", nickname = "markTestRunAsReviewed", code = 200, httpMethod = "POST")
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
-			throws ServiceException
-	{
+			throws ServiceException {
 		TestRun tr = testRunService.markAsReviewed(id, comment.getComment());
-		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(), new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
+		websocketTemplate.convertAndSend(getStatisticsWebsocketPath(),
+				new TestRunStatisticPush(statisticsService.getTestRunStatistic(tr.getId())));
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/rerun", method = RequestMethod.GET)
 	public void rerunTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "rerunFailures", required = false, defaultValue = "false") boolean rerunFailures)
-			throws ServiceException
-	{
+			throws ServiceException {
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures))
-		{
+		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
 			throw new UnableToRebuildCIJobException();
 		}
 	}
 
-    @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET")
-    @PreAuthorize("hasPermission('TEST_RUNS_CI')")
-    @RequestMapping(value = "{id}/debug", method = RequestMethod.GET)
-    public void debugTestRun(@PathVariable(value = "id") long id) throws ServiceException
-    {
-        TestRun testRun = testRunService.getTestRunByIdFull(id);
-        if (testRun == null)
-        {
-            throw new TestRunNotFoundException();
-        }
-
-        if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber()))
-        {
-            throw new UnableToRebuildCIJobException();
-        }
-    }
-
-    @ResponseStatusDetails
+	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
+	@RequestMapping(value = "{id}/debug", method = RequestMethod.GET)
+	public void debugTestRun(@PathVariable(value = "id") long id) throws ServiceException {
+		TestRun testRun = testRunService.getTestRunByIdFull(id);
+		if (testRun == null) {
+			throw new TestRunNotFoundException();
+		}
+
+		if (!jenkinsService.debug(testRun.getJob(), testRun.getBuildNumber())) {
+			throw new UnableToRebuildCIJobException();
+		}
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "abort/ci", method = RequestMethod.GET)
-	public void abortCIJob(
-			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
-	{
-		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+	public void abortCIJob(@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId)
+			throws ServiceException {
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id)
+				: testRunService.getTestRunByCiRunIdFull(ciRunId);
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
@@ -503,63 +455,55 @@ public class TestRunsAPIController extends AbstractController
 		}
 	}
 
-    @ResponseStatusDetails
-    @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParams(
-            { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Abort debug", nickname = "abortDebug", code = 200, httpMethod = "GET")
-    @PreAuthorize("hasPermission('TEST_RUNS_CI')")
-    @RequestMapping(value = "abort/debug", method = RequestMethod.GET)
-    public void abortDebug(
-            @ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
-            @ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
-    {
-        TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
-        if (testRun == null) {
-            throw new TestRunNotFoundException();
-        }
-
-        if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
-            throw new UnableToAbortCIJobException();
-        }
-    }
-
-    @ResponseStatusDetails
+	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Abort debug", nickname = "abortDebug", code = 200, httpMethod = "GET")
+	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
+	@RequestMapping(value = "abort/debug", method = RequestMethod.GET)
+	public void abortDebug(@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
+			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId)
+			throws ServiceException {
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id)
+				: testRunService.getTestRunByCiRunIdFull(ciRunId);
+		if (testRun == null) {
+			throw new TestRunNotFoundException();
+		}
+
+		if (!jenkinsService.abortJob(testRun.getJob(), testRun.getBuildNumber())) {
+			throw new UnableToAbortCIJobException();
+		}
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Build test run", nickname = "buildTestRun", code = 200, httpMethod = "POST")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/build", method = RequestMethod.POST)
 	public void buildTestRun(@PathVariable(value = "id") long id,
 			@RequestParam(value = "buildWithParameters", required = false, defaultValue = "true") boolean buildWithParameters,
-			@RequestBody Map<String, String> jobParameters) throws ServiceException
-	{
+			@RequestBody Map<String, String> jobParameters) throws ServiceException {
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 
-		if (!jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, buildWithParameters))
-		{
+		if (!jenkinsService.buildJob(testRun.getJob(), testRun.getBuildNumber(), jobParameters, buildWithParameters)) {
 			throw new UnableToRebuildCIJobException();
 		}
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get job parameters", nickname = "getjobParameters", code = 200, httpMethod = "GET", response = Map.class)
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/jobParameters", method = RequestMethod.GET)
 	public @ResponseBody List<BuildParameterType> getjobParameters(@PathVariable(value = "id") long id)
-			throws ServiceException
-	{
+			throws ServiceException {
 		TestRun testRun = testRunService.getTestRunByIdFull(id);
-		if (testRun == null)
-		{
+		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
 		return jenkinsService.getBuildParameters(testRun.getJob(), testRun.getBuildNumber());
@@ -567,48 +511,41 @@ public class TestRunsAPIController extends AbstractController
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get environments", nickname = "getEnvironments", code = 200, httpMethod = "GET", response = List.class)
 	@RequestMapping(value = "environments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<String> getEnvironments() throws ServiceException
-	{
+	public @ResponseBody List<String> getEnvironments() throws ServiceException {
 		return testRunService.getEnvironments();
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get platforms", nickname = "getPlatforms", code = 200, httpMethod = "GET", response = List.class)
 	@RequestMapping(value = "platforms", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<String> getPlatforms() throws ServiceException
-	{
+	public @ResponseBody List<String> getPlatforms() throws ServiceException {
 		return testRunService.getPlatforms();
 	}
 
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams(
-			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
 	@RequestMapping(value = "jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Integer, String> getConsoleOutput(
-			@PathVariable(value = "count") int count,
-			@PathVariable(value = "fullCount") int fullCount,
-			@RequestParam(value = "id", required = false) Long id,
-			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException
-	{
-		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id) : testRunService.getTestRunByCiRunIdFull(ciRunId);
+	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "count") int count,
+			@PathVariable(value = "fullCount") int fullCount, @RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "ciRunId", required = false) String ciRunId) throws ServiceException {
+		TestRun testRun = id != null ? testRunService.getTestRunByIdFull(id)
+				: testRunService.getTestRunByCiRunIdFull(ciRunId);
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
-        return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
+		return jenkinsService.getBuildConsoleOutputHtml(testRun.getJob(), testRun.getBuildNumber(), count, fullCount);
 	}
 
-	private String[] getRecipients(String recipients)
-	{
-		return  !StringUtils.isEmpty(recipients) ? recipients.trim().replaceAll(",", " ")
-				.replaceAll(";", " ").replaceAll("\\[\\]", " ").split(" ") : new String[] {};
+	private String[] getRecipients(String recipients) {
+		return !StringUtils.isEmpty(recipients)
+				? recipients.trim().replaceAll(",", " ").replaceAll(";", " ").replaceAll("\\[\\]", " ").split(" ")
+				: new String[] {};
 	}
 }

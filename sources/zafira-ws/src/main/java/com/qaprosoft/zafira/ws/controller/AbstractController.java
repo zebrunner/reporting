@@ -260,6 +260,16 @@ public abstract class AbstractController
 		return result;
 	}
 	
+	@ExceptionHandler(ProjectNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, null, e.getMessage()));
+		return result;
+	}
+	
 	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
 	{
 		if(!isAdmin() && userId != getPrincipalId())

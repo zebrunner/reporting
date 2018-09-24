@@ -13,42 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto.errors;
+package com.qaprosoft.zafira.services.exceptions;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qaprosoft.zafira.models.dto.errors.ErrorCodeSerializer;
-
-@JsonSerialize(using = ErrorCodeSerializer.class)
-public enum ErrorCode
+public class ProjectNotFoundException extends ServiceException
 {
+    private static final long serialVersionUID = 3096397473250298650L;
 
-	VALIDATION_ERROR(0),
-	INVALID_VALUE(1),
-
-	UNAUTHORIZED(401),
-	FORBIDDENT(403),
-	
-	JOB_NOT_FOUND(1000),
-	INVALID_TEST_RUN(1001),
-	TEST_RUN_NOT_FOUND(1002),
-	TEST_NOT_FOUND(1003),
-	TEST_RUN_NOT_REBUILT(1004),
-	USER_NOT_FOUND(1005),
-	ENTITY_ALREADY_EXISTS(1006),
-	ENTITY_NOT_EXISTS(1007),
-	PROJECT_NOT_EXISTS(1008),
-
-	INTEGRATION_UNAVAILABLE(2001);
-
-	private int code;
-
-	private ErrorCode(int code)
+    public ProjectNotFoundException()
 	{
-		this.code = code;
+		super();
 	}
 
-	public int getCode()
+	public ProjectNotFoundException(String message)
 	{
-		return code;
+		super(message);
+	}
+
+	public ProjectNotFoundException(Throwable cause)
+	{
+		super(cause);
+	}
+
+	public ProjectNotFoundException(String message, Throwable cause)
+	{
+		super(message, cause);
 	}
 }
