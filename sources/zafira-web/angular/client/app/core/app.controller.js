@@ -15,6 +15,12 @@
                 value: SettingProvider.getCompanyLogoURl() || ''
             };
 
+            var UNANIMATED_STATES = ['signin', 'signup', 'forgotPassword', 'resetPassword'];
+
+            $scope.isAnimated = function() {
+                return UNANIMATED_STATES.indexOf($state.current.name) == -1;
+            };
+
 	        // ************** Integrations **************
 
 	        $rootScope.jenkins  = { enabled : false };

@@ -143,13 +143,19 @@ public class UserService {
         return user;
     }
 
-    @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(PasswordChangingType password) throws ServiceException {
         User user = getNotNullUserById(password.getUserId());
         if(password.getOldPassword() == null || ! passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword())) {
             throw new ForbiddenOperationException();
         }
+        updateUserPassword(user, password);
+    }
+
+    @CacheEvict(value = "users", condition = "#password.userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #password.userId")
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserPassword(User user, PasswordChangingType password) throws ServiceException {
+        user =  user != null ? user : getNotNullUserById(password.getUserId());
         user.setPassword(passwordEncryptor.encryptPassword(password.getPassword()));
         updateUser(user);
     }

@@ -17,6 +17,8 @@
 
         $scope.invitation = {};
 
+        $scope.roboFooter = 'app/_auth/robo-footer.html';
+
         $scope.getInvitation = function (token) {
             InvitationService.getInvitation(token).then(function (rs) {
                 if(rs.success) {
