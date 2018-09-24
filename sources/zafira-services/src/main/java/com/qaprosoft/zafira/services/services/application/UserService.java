@@ -78,6 +78,7 @@ public class UserService {
                     if (user == null) {
                         user = new User(adminUsername);
                         user.setSource(INTERNAL);
+                        user.setStatus(User.Status.ACTIVE);
                         user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                         createUser(user);
 
