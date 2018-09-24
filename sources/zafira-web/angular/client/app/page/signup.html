@@ -1,52 +1,64 @@
 <div class="page-signup" ng-controller="authCtrl">
 
-    <div class="wrapper">
-        <div class="main-body">
-            <div class="body-inner">
-
-                <div class="card bg-white">
-                    <div class="card-content">
-                        <section class="logo text-center">
-                            <h1><a href="#!/">{{main.brand}}</a></h1>
-                        </section>
-
-                        <form class="form-horizontal">
-                            <fieldset>
-                                <div class="form-group">
-                                    <div class="ui-input-group">        
-                                        <input type="text" required class="form-control">
-                                        <span class="input-bar"></span>
-                                        <label>Username</label>
+        <div class="wrapper">
+            <div class="main-body">
+                <div class="body-inner">
+    
+                    <div class="card bg-white">
+                        <div class="card-content">
+                            <section class="logo-container">
+                                <div class="logo"></div>
+                            </section>
+    
+                            <form class="form-horizontal">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="ui-input-group">        
+                                            <input type="text" required class="form-control">
+                                            <span class="input-bar"></span>
+                                            <label>Username</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="ui-input-group">        
-                                        <input type="text" required class="form-control">
-                                        <span class="input-bar"></span>
-                                        <label>Email</label>
+                                    <div class="form-group">
+                                        <div class="ui-input-group">        
+                                            <input type="text" required class="form-control">
+                                            <span class="input-bar"></span>
+                                            <label>Email</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="ui-input-group">        
-                                        <input type="text" required class="form-control">
-                                        <span class="input-bar"></span>
-                                        <label>Password</label>
+                                    <div class="form-group">
+                                        <div class="ui-input-group">        
+                                            <input type="text" required class="form-control">
+                                            <span class="input-bar"></span>
+                                            <label>Password</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="divider"></div>
-                                <div class="form-group">
-                                    <p class="text-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                    <div class="card-action no-border text-right">
-                        <a href="#!/page/signin">Login</a>
-                        <a href="#!/" class="color-primary">Sign Up</a>
-                    </div>
-                </div> 
-
+                                    <div class="divider"></div>
+                                    <div class="form-group">
+                                        <p class="text-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="card-action no-border text-right">
+                            <a href="#!/page/signin">Login</a>
+                            <a href="#!/" class="color-primary">Sign Up</a>
+                        </div>
+                    </div> 
+                </div>
             </div>
         </div>
+       
+        <div class="additional-background">
+                <div class="text">
+                    <p>Hooray! <br/> We have some new features for you.</p>
+                    <p>Now you are capable to track automation results in more profound way: real-time test streaming and video recording.</p>
+                </div>
+                <div class="robot"></div>
+            </div>
+            <div class="additional-info">
+                    <small>© 2018 Zafira all rights reserved</small>
+                    <br/>
+                    <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
+            </div>
     </div>
-</div>

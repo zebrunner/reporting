@@ -30,6 +30,9 @@
                     case '/page/500':
                         return $element.addClass('body-wide body-err');
                     case '/signin':
+                    case '/signup':
+                    case '/forgotpwd':
+                    case '/changepwd':
                     case '/register':
                     case '/signup':
                     case '/page/signin':
