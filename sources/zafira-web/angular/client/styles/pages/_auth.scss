@@ -11,7 +11,7 @@
 .btn-minimal {
     color: $reverse;
     color: rgba(255,255,255,.8);
-    background-color: transparent; 
+    background-color: transparent;
     border-color: $reverse;
     border-color: rgba(255,255,255,.8);
     &:hover,
@@ -45,14 +45,14 @@
     @media (min-width: $screen-phone){
         margin-top: -65px;
     }
-    
+
         display: flex;
         flex-direction: column;
         min-height: 100vh ;
         margin-top: -128px;
-    
+
     .wrapper {
-        padding: 0 30px; 
+        padding: 0 30px;
         flex: 1 0 auto;
     }
     .main-body {
@@ -75,7 +75,7 @@
         padding-bottom: 10px;
         @media (max-width: $screen-phone){
             text-align: left;
-            
+
         }
         @media (min-width: 1200px){
             position: fixed;
@@ -111,14 +111,14 @@
         padding-bottom: 15px;
     }
     .logo-container{
-        height: 50px; 
+        height: 50px;
         margin-bottom: 30px;
         .logo{
             width: 50px;
             height: 50px;
             background: url(../../assets/images/logo/Logo.png) no-repeat;
             background-size: cover !important;
-            
+
         }
     }
     .button-container{
@@ -128,10 +128,10 @@
         a{
             color: #888888;
             font-weight: normal;
-        } 
+        }
     }
     .additional-background{
-        
+
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
@@ -147,18 +147,18 @@
             right:0;
             bottom:0;
         }
-        
+
         p:first-child{
             font-weight: bold;
         }
-          
-        
+
+
         @media (max-width: $screen-phone){
             .text p{
-                line-height: 15px; 
+                line-height: 15px;
             }
             .text p:first-child{
-                line-height: 20px; 
+                line-height: 20px;
             }
             p:first-child{
                 font-size: $font-size-h5;
@@ -171,31 +171,31 @@
             }
             font-size: $font-size-h4;
         }
-        
+
         .text{
             color: $gray-base;
-            
+
             @media (min-width: 1200px){
                 margin-bottom: 0;
                 width: 30%;
-                
-            } 
+
+            }
             @media (min-width: $screen-phone) and (max-width: 1200px){
                 p{
-                    line-height: 25px; 
+                    line-height: 25px;
                 }
                 p:first-child{
-                    line-height: 30px; 
+                    line-height: 30px;
                 }
-                width: 42%;  
+                width: 42%;
                 margin-bottom: -5vw;
                 margin-right: 5vw;
-                
+
             }
             width: 50%;
             margin-bottom: 10%;
-            
-           
+
+
         }
         .robot{
             @media (min-width: 1200px){
@@ -208,12 +208,12 @@
                 width: 20vw;
                 height: 20vw;
             }
-            margin-bottom: -25px;
+            margin-bottom: -30px;
             width: 35vw;
             height: 35vw;
             background: url(../../assets/images/background/bg-robot.png) right bottom no-repeat;
             background-size: 100%;
         }
-        
+
     }
 }
