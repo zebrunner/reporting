@@ -3,9 +3,9 @@
 
     angular
         .module('app.auth')
-        .controller('AuthController', ['$scope', '$rootScope', '$state', '$cookies', '$templateCache', 'AuthService', 'UserService', 'UtilService', AuthController])
+        .controller('AuthController', ['$scope', '$rootScope', '$location', '$state', '$cookies', '$templateCache', 'AuthService', 'UserService', 'UtilService', 'InvitationService', AuthController])
 
-    function AuthController($scope, $rootScope, $state, $cookies, $templateCache, AuthService, UserService, UtilService) {
+    function AuthController($scope, $rootScope, $location, $state, $cookies, $templateCache, AuthService, UserService, UtilService, InvitationService) {
 
         $scope.UtilService = UtilService;
 
@@ -13,7 +13,27 @@
             valid: true
         };
 
+        $scope.invitation = {};
+
+        $scope.getInvitation = function (token) {
+            InvitationService.getInvitation(token).then(function (rs) {
+                if(rs.success) {
+                    $scope.invitation = rs.data;
+                    $scope.user = {};
+                    $scope.user.email = $scope.invitation.email;
+                } else {
+                    $state.go('signin');
+                }
+            });
+        };
+
+        var token;
+
         (function initController() {
+            if($state.current.name == 'signup') {
+                token = $location.search()['token'];
+                $scope.getInvitation(token);
+            }
             AuthService.ClearCredentials();
         })();
 
@@ -30,18 +50,21 @@
                 });
         };
 
-        $scope.register = function() {
-            AuthService.Register($scope.user)
-                .then(function(rs) {
+        $scope.signup = function(user, form) {
+            AuthService.signup(user, token).then(function(rs) {
                     if (rs.success) {
                         $state.go('signin');
-                        alertify.success('Success! Sign in now.');
                     } else {
-                        $scope.credentials = {
-                            valid: false
-                        };
+                        UtilService.resolveError(rs, form, 'validationError', 'username').then(function (rs) {
+                        }, function (rs) {
+                            alertify.error(rs.message);
+                        });
                     }
                 });
+        };
+
+        $scope.onChange = function(input) {
+            input.$setValidity('validationError', true);
         };
     }
 })();

@@ -12,7 +12,7 @@ public class TenancyType extends AbstractType {
 
     private static final long serialVersionUID = 8230787643243488944L;
 
-    @NotEmpty(message = "Name required")
+    @NotEmpty(message = "{error.name.required}")
     private String name;
 
     public String getName() {
@@ -23,7 +23,7 @@ public class TenancyType extends AbstractType {
         this.name = name;
     }
 
-    @AssertTrue(message = "Name confirmation not matching")
+    @AssertTrue(message = "{error.name.invalid}")
     @JsonIgnore
     public boolean isNameConfirmationValid() {
         return ! Arrays.asList(Tenancy.getDefaultNames()).contains(name.toLowerCase());

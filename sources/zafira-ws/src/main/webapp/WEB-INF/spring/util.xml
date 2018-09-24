@@ -11,10 +11,6 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-		<property name="validationMessageSource" ref="messageSource" />
-	</bean>
-
 	<bean id="longToUserConverter" class="com.qaprosoft.zafira.ws.util.dozer.LongToUserConverter" />
 
 	<bean id="mapper" class="com.qaprosoft.zafira.ws.util.dozer.NullSafeDozerBeanMapper">
@@ -31,6 +27,7 @@
 				<value>dozer/Project-dozer-mapping.xml</value>
 				<value>dozer/TestArtifact-dozer-mapping.xml</value>
 				<value>dozer/Tenancy-dozer-mapping.xml</value>
+				<value>dozer/Invitation-dozer-mapping.xml</value>
 			</list>
 		</property>
 		<property name="customConvertersWithId">

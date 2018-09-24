@@ -198,14 +198,14 @@
                             $scope.getAmazonPolicyCookies();
 		            		AuthIntercepter.loginConfirmed();
 		            	}
-		            	else
+		            	else if($state.current.name != 'signup')
 		            	{
 		            		$state.go("signin");
 		            		AuthIntercepter.loginCancelled();
 		            	}
 		            });
 	        	}
-	        	else
+	        	else if($state.current.name != 'signup')
 	        	{
 	        		$state.go("signin");
 	        	}

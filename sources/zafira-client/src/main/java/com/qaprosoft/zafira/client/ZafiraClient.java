@@ -43,10 +43,12 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.qaprosoft.zafira.config.CIConfig;
+import com.qaprosoft.zafira.config.GensonProvider;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
 import com.qaprosoft.zafira.models.dto.JobType;
+import com.qaprosoft.zafira.models.dto.ProjectType;
 import com.qaprosoft.zafira.models.dto.TestArtifactType;
 import com.qaprosoft.zafira.models.dto.TestCaseType;
 import com.qaprosoft.zafira.models.dto.TestRunType;
@@ -61,12 +63,14 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class  ZafiraClient
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZafiraClient.class);
 	
-	private static final String ANONYMOUS = "anonymous";
+	public static final String DEFAULT_USER = "anonymous";
+	public static final String DEFAULT_PROJECT = "UNKNOWN";
 	
 	private static final Integer CONNECT_TIMEOUT = 30000;
 	private static final Integer READ_TIMEOUT = 30000;
@@ -93,11 +97,12 @@ public class  ZafiraClient
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
 	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/creds/amazon";
 	private static final String TENANT_TYPE_PATH = "/api/auth/tenant";
+	private static final String PROJECTS_PATH = "/api/projects/%s";
 
 	private String serviceURL;
 	private Client client;
 	private String authToken;
-	private String project;
+	private String project = DEFAULT_PROJECT;
 
 	private AmazonS3 amazonClient;
 	private SessionCredentials amazonS3SessionCredentials;
@@ -107,7 +112,7 @@ public class  ZafiraClient
 	public ZafiraClient(String serviceURL)
 	{
 		this.serviceURL = serviceURL;
-		this.client = Client.create();
+		this.client = Client.create(new DefaultClientConfig(GensonProvider.class));
 		this.client.setConnectTimeout(CONNECT_TIMEOUT);
 		this.client.setReadTimeout(READ_TIMEOUT);
 	}
@@ -157,6 +162,27 @@ public class  ZafiraClient
 		return response;
 	}
 	
+	public synchronized Response<UserType> getUserProfile(String username)
+	{
+		Response<UserType> response = new Response<UserType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + PROFILE_PATH + "?username=" + username);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to authorize user", e);
+		}
+		return response;
+	}
+	
 	public synchronized Response<AuthTokenType> login(String username, String password)
 	{
 		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
@@ -178,27 +204,6 @@ public class  ZafiraClient
 		return response;
 	}
 	
-	public synchronized Response<AuthTokenType> refreshToken(String token)
-	{
-		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
-		try
-		{
-			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
-			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
-					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
-			response.setStatus(clientRS.getStatus());
-			if (clientRS.getStatus() == 200)
-			{
-				response.setObject(clientRS.getEntity(AuthTokenType.class));
-			}
-
-		} catch (Exception e)
-		{
-			LOGGER.error("Unable to create user", e);
-		}
-		return response;
-	}
-	
 	public synchronized Response<UserType> createUser(UserType user)
 	{
 		Response<UserType> response = new Response<UserType>(0, null);
@@ -211,6 +216,27 @@ public class  ZafiraClient
 			if (clientRS.getStatus() == 200)
 			{
 				response.setObject(clientRS.getEntity(UserType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to create user", e);
+		}
+		return response;
+	}
+	
+	public synchronized Response<AuthTokenType> refreshToken(String token)
+	{
+		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new RefreshTokenType(token));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(AuthTokenType.class));
 			}
 
 		} catch (Exception e)
@@ -576,9 +602,19 @@ public class  ZafiraClient
 		return project;
 	}
 
-	public ZafiraClient setProject(String project)
+	/**
+	 * Initializes project context, sets default project if none found in DB.
+	 * @param project name
+	 * @return instance of {@link ZafiraClient}
+	 */
+	public ZafiraClient initProject(String project)
 	{
-		this.project = project;
+		if(!StringUtils.isEmpty(project)) {
+			Response<ProjectType> rs = getProjectByName(project);
+			if(rs.getStatus() == 200) {
+				this.project = rs.getObject().getName();
+			}
+		}
 		return this;
 	}
 	
@@ -595,7 +631,7 @@ public class  ZafiraClient
 	{
 		if (StringUtils.isEmpty(userName) || userName.equals("$BUILD_USER_ID"))
 		{
-			userName = ANONYMOUS;
+			userName = DEFAULT_USER;
 		}
 		userName = userName.toLowerCase();
 		
@@ -616,7 +652,8 @@ public class  ZafiraClient
 		}
 		return user;
 	}
-	
+
+		
 	/**
 	 * Registers test case in Zafira, it may be a new one or existing returned by service. 
 	 * 
@@ -1077,6 +1114,45 @@ public class  ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to get tenant", e);
+		}
+		return response;
+	}
+	
+	/**
+	 * Returns user by username or anonymous if not found.
+	 * @param username to find user
+	 * @return user from DB
+	 */
+	public synchronized UserType getUserOrAnonymousIfNotFound(String username) {
+		Response<UserType> response = getUserProfile(username);
+		if(response.getStatus() != 200) {
+			response = getUserProfile(DEFAULT_USER);
+		}
+		return response.getObject();
+	}
+	
+	/**
+	 * Gets project by name
+	 * @param name of the project
+	 * @return project
+	 */
+	public Response<ProjectType> getProjectByName(String name)
+	{
+		Response<ProjectType> response = new Response<ProjectType>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + String.format(PROJECTS_PATH, name));
+			ClientResponse clientRS = initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(ProjectType.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to get project by name", e);
 		}
 		return response;
 	}

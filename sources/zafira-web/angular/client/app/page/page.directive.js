@@ -34,6 +34,7 @@
                     case '/forgotpwd':
                     case '/changepwd':
                     case '/register':
+                    case '/signup':
                     case '/page/signin':
                     case '/page/signup':
                     case '/page/register':

@@ -32,10 +32,6 @@ public class CIConfig
 	private BuildCasue ciBuildCause;
 	private String ciParentUrl;
 	private Integer ciParentBuild;
-	private String ciUserId;
-	private String ciUserFirstName;
-	private String ciUserLastName;
-	private String ciUserEmail;
 	
 	private String gitBranch;
 	private String gitCommit;
@@ -103,46 +99,6 @@ public class CIConfig
 	public void setCiParentBuild(String ciParentBuild)
 	{
 		this.ciParentBuild = StringUtils.isEmpty(ciParentBuild) ? 0 : Integer.valueOf(ciParentBuild);
-	}
-
-	public String getCiUserId()
-	{
-		return ciUserId;
-	}
-
-	public void setCiUserId(String ciUserId)
-	{
-		this.ciUserId = ciUserId;
-	}
-
-	public String getCiUserFirstName()
-	{
-		return ciUserFirstName;
-	}
-
-	public void setCiUserFirstName(String ciUserFirstName)
-	{
-		this.ciUserFirstName = ciUserFirstName;
-	}
-
-	public String getCiUserLastName()
-	{
-		return ciUserLastName;
-	}
-
-	public void setCiUserLastName(String ciUserLastName)
-	{
-		this.ciUserLastName = ciUserLastName;
-	}
-
-	public String getCiUserEmail()
-	{
-		return ciUserEmail;
-	}
-
-	public void setCiUserEmail(String ciUserEmail)
-	{
-		this.ciUserEmail = ciUserEmail;
 	}
 
 	public String getGitBranch()

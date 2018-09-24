@@ -31,6 +31,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
+
 @Component
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 {
@@ -53,8 +55,7 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 				String email = operations.getStringAttribute("mail");
 				String cn = operations.getStringAttribute("cn");
 				String sn = operations.getStringAttribute("sn");
-				String password = new String((byte[]) operations.getObjectAttribute("userpassword"));
-				if(!StringUtils.isEmpty(email) && ! StringUtils.isEmpty(cn) && ! StringUtils.isEmpty(sn) && ! StringUtils.isEmpty(password))
+				if(!StringUtils.isEmpty(email) && ! StringUtils.isEmpty(cn) && ! StringUtils.isEmpty(sn))
 				{
 					String[] cna = cn.split(" ");
 					String firstName = cna.length == 2 ? cna[0] : cn;
@@ -64,7 +65,8 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 					user.setEmail(email);
 					user.setFirstName(firstName);
 					user.setLastName(lastName);
-					user.setPassword(password);
+					user.setSource(LDAP);
+					user.setPassword(null);
 					user = userService.createOrUpdateUser(user);
 				} else
 				{

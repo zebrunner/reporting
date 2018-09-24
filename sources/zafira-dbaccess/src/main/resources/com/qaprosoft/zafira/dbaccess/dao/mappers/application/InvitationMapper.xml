@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.InvitationMapper">
+
+	<insert id="createInvitation" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[
+			INSERT INTO INVITATIONS (EMAIL, TOKEN, USER_ID, STATUS, GROUP_ID)
+			VALUES (
+				#{email},
+				#{token},
+			    #{createdBy.id},
+			    #{status},
+			    #{groupId}
+			)
+		]]>
+	</insert>
+
+	<sql id="getInvitation">
+		<![CDATA[
+			SELECT
+				I.ID AS INVITATION_ID,
+				I.EMAIL AS INVITATION_EMAIL,
+				I.TOKEN AS INVITATION_TOKEN,
+				I.STATUS AS INVITATION_STATUS,
+				I.GROUP_ID AS INVITATION_GROUP_ID,
+				U.ID AS USER_ID,
+				U.USERNAME AS USER_USERNAME,
+				I.MODIFIED_AT AS INVITATION_MODIFIED_AT,
+				I.CREATED_AT AS INVITATION_CREATED_AT
+			FROM
+				INVITATIONS I
+			LEFT JOIN
+				USERS U
+			ON
+				U.ID = I.USER_ID
+		]]>
+	</sql>
+
+	<select id="getInvitationByCode" resultMap="InvitationResultMap">
+		<include refid="getInvitation" />
+		<![CDATA[
+			WHERE I.TOKEN = #{token};
+		]]>
+	</select>
+
+	<select id="getInvitationByEmail" resultMap="InvitationResultMap">
+		<include refid="getInvitation" />
+		<![CDATA[
+			WHERE I.EMAIL = #{email};
+		]]>
+	</select>
+
+	<select id="getAllInvitations" resultMap="InvitationResultMap">
+		<include refid="getInvitation" />
+	</select>
+
+	<sql id="deleteInvitationSql">
+		<![CDATA[
+			DELETE FROM INVITATIONS
+		]]>
+	</sql>
+
+	<update id="updateInvitation">
+		<![CDATA[
+			UPDATE
+			    INVITATIONS
+		]]>
+		<set>
+			<if test="null != status">
+				<![CDATA[
+		               STATUS = #{status},
+		            ]]>
+			</if>
+			<if test="null != token">
+				<![CDATA[
+		               TOKEN = #{token},
+		            ]]>
+			</if>
+		</set>
+		<![CDATA[
+			WHERE
+			    ID = #{id}
+		]]>
+	</update>
+
+	<delete id="deleteInvitationById">
+		<include refid="deleteInvitationSql" />
+		<![CDATA[
+			WHERE ID = #{id}
+		]]>
+	</delete>
+
+	<delete id="deleteInvitationByEmail">
+		<include refid="deleteInvitationSql" />
+		<![CDATA[
+			WHERE EMAIL = #{email}
+		]]>
+	</delete>
+
+	<resultMap type="com.qaprosoft.zafira.models.db.Invitation" id="InvitationResultMap" autoMapping="false">
+		<id column="INVITATION_ID" property="id" />
+		<result column="INVITATION_EMAIL" property="email" />
+		<result column="INVITATION_TOKEN" property="token" />
+		<result column="INVITATION_STATUS" property="status" />
+		<result column="INVITATION_GROUP_ID" property="groupId" />
+		<result column="INVITATION_USER_ID" property="createdById" />
+		<result column="INVITATION_MODIFIED_AT" property="modifiedAt" />
+		<result column="INVITATION_CREATED_AT" property="createdAt" />
+		<association property="createdBy" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.UserMapper.UserResultMap"/>
+	</resultMap>
+
+</mapper>

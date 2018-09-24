@@ -29,7 +29,11 @@ public interface UserMapper
 
 	User getUserByUserName(String username);
 
+	User getUserByEmail(String email);
+
 	void updateUser(User user);
+
+	void updateStatus(@Param("status") User.Status status, @Param("id") Long id);
 	
 	void updateLastLoginDate(long userId);
 

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import static com.qaprosoft.zafira.models.db.User.Source.INTERNAL;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCrit
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
@@ -72,6 +75,8 @@ public class UserService {
                     User user = getUserByUsername(adminUsername);
                     if (user == null) {
                         user = new User(adminUsername);
+                        user.setSource(INTERNAL);
+                        user.setStatus(Status.ACTIVE);
                         user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                         createUser(user);
 
@@ -95,6 +100,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
+    public User getUserByIdTrusted(long id) {
+        return userMapper.getUserById(id);
+    }
+
+    @Transactional(readOnly = true)
     public User getNotNullUserById(long id) throws ServiceException {
         User user = getUserById(id);
         if (user == null) {
@@ -108,6 +119,11 @@ public class UserService {
         return userMapper.getUserByUserName(username);
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) throws ServiceException {
+        return userMapper.getUserByEmail(email);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void updateLastLoginDate(long userId) {
         userMapper.updateLastLoginDate(userId);
@@ -118,14 +134,14 @@ public class UserService {
         userMapper.createUser(user);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
     public User updateUser(User user) throws ServiceException {
         userMapper.updateUser(user);
         return user;
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
     @Transactional(rollbackFor = Exception.class)
     public void updateUserPassword(long id, String password) throws ServiceException {
         User user = getNotNullUserById(id);
@@ -134,14 +150,16 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public User createOrUpdateUser(User newUser) throws ServiceException {
+    public User createOrUpdateUser(User newUser, Group group) throws ServiceException {
         User user = getUserByUsername(newUser.getUsername());
         if (user == null) {
             if (!StringUtils.isEmpty(newUser.getPassword())) {
                 newUser.setPassword(passwordEncryptor.encryptPassword(newUser.getPassword()));
             }
+            newUser.setSource(newUser.getSource() != null ? newUser.getSource() : INTERNAL);
+            newUser.setStatus(User.Status.ACTIVE);
             createUser(newUser);
-            Group group = groupService.getPrimaryGroupByRole(Role.ROLE_USER);
+            group = group != null ? group : groupService.getPrimaryGroupByRole(Role.ROLE_USER);
             if (group != null) {
                 addUserToGroup(newUser, group.getId());
                 newUser.getGroups().add(group);
@@ -155,26 +173,37 @@ public class UserService {
         return newUser;
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
+    public User updateStatus(User user) {
+        userMapper.updateStatus(user.getStatus(), user.getId());
+        return user;
+    }
+
+    public User createOrUpdateUser(User newUser) throws ServiceException {
+        return createOrUpdateUser(newUser, null);
+    }
+
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(User user) throws ServiceException {
         userMapper.deleteUser(user);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", condition = "#id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #id")
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(long id) throws ServiceException {
         userMapper.deleteUserById(id);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", condition = "#user.id != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #user.id")
     @Transactional(rollbackFor = Exception.class)
     public User addUserToGroup(User user, long groupId) throws ServiceException {
         userMapper.addUserToGroup(user.getId(), groupId);
         return userMapper.getUserById(user.getId());
     }
 
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = "users", condition = "#userId != null", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #userId")
     @Transactional(rollbackFor = Exception.class)
     public User deleteUserFromGroup(long groupId, long userId) throws ServiceException {
         userMapper.deleteUserFromGroup(userId, groupId);

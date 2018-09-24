@@ -2,7 +2,7 @@
     <form class="form-validation" name="profile_form" ng-submit="updateUser(); UtilService.untouchForm(profile_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2 id="modalTitle">Edit Profile</h2>
+                <h2 id="modalTitle">User</h2>
                 <span flex></span>
                 <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
@@ -44,13 +44,16 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
-            <md-button id="delete" ng-click="deleteUser()" class="md-raised btn-w-md md-warn">
-                Delete
+            <md-button ng-if="user.status == 'INACTIVE'" ng-really-click="updateStatus(user, 'ACTIVE', $index);" ng-really-message="Do you really want to activate this user?" id="activate" class="md-raised btn-w-md">
+                Activate
+            </md-button>
+            <md-button ng-if="user.status == 'ACTIVE'" ng-really-click="updateStatus(user, 'INACTIVE', $index);" ng-really-message="Do you really want to deactivate this user?" id="deactivate" class="md-raised btn-w-md">
+                Deactivate
             </md-button>
             <md-button id="save" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="profile_form.$invalid">
-                Save
+                Update
             </md-button>
         </md-dialog-actions>
     </form>

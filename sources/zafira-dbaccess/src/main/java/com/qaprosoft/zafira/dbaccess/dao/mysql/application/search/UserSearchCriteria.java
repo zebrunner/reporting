@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application.search;
 
+import com.qaprosoft.zafira.models.db.User;
+
 import java.util.Date;
 
 public class UserSearchCriteria extends SearchCriteria implements DateSearchCriteria
@@ -27,6 +29,7 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 	private String groupName;
 	private Date fromDate;
 	private Date toDate;
+	private User.Status status;
 
 	public Long getId()
 	{
@@ -100,5 +103,13 @@ public class UserSearchCriteria extends SearchCriteria implements DateSearchCrit
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public User.Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(User.Status status) {
+		this.status = status;
 	}
 }

@@ -1151,27 +1151,6 @@
             }
         };
 
-        $scope.showDemoDialog = function(event, wsURL, testRun, test, isLive) {
-            $mdDialog.show({
-                controller: DemoController,
-                templateUrl: 'app/_testruns/demo_modal.html',
-                parent: angular.element(document.body),
-                targetEvent: event,
-                clickOutsideToClose:true,
-                fullscreen: true,
-                locals: {
-                    wsURL: wsURL,
-                    testRun: testRun,
-                    test: test,
-                    rabbitmq: $scope.rabbitmq,
-                    isLive: isLive
-                }
-            })
-                .then(function(answer) {
-                }, function() {
-                });
-        };
-
         $scope.showCompareDialog = function (event) {
             $mdDialog.show({
                 controller: CompareController,

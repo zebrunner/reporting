@@ -22,7 +22,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.qaprosoft.zafira.models.db.Invitation;
 import com.qaprosoft.zafira.models.db.Tenancy;
+import com.qaprosoft.zafira.models.dto.auth.*;
+import com.qaprosoft.zafira.services.exceptions.*;
+import com.qaprosoft.zafira.services.services.application.GroupService;
+import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
@@ -36,26 +41,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.auth.AccessTokenType;
-import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
-import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
-import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
-import com.qaprosoft.zafira.models.dto.auth.TenantType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
-import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.exceptions.InvalidCredentialsException;
-import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.auth.JWTService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -81,7 +72,16 @@ public class AuthAPIController extends AbstractController {
 	private UserService userService;
 
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	private GroupService groupService;
+
+	@Autowired
+	private InvitationService invitationService;
+
+	@Autowired
+	private AuthenticationManager authenticationInternalManager;
+
+	@Autowired
+	private AuthenticationManager authenticationLdapManager;
 
 	@Autowired
 	private Mapper mapper;
@@ -103,14 +103,20 @@ public class AuthAPIController extends AbstractController {
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials, HttpServletResponse response)
 			throws BadCredentialsException {
-		AuthTokenType authToken = null;
+		AuthTokenType authToken;
 		try {
-			Authentication authentication = this.authenticationManager.authenticate(
+			Authentication authentication;
+			User user = userService.getUserByUsername(credentials.getUsername());
+
+			final AuthenticationManager authenticationManager = user == null || user.getSource().equals(User.Source.LDAP) ?
+					this.authenticationLdapManager : this.authenticationInternalManager;
+
+			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			user = userService.getUserByUsername(credentials.getUsername());
 
-			User user = userService.getUserByUsername(credentials.getUsername());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
 
@@ -126,14 +132,20 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Registration", nickname = "register", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Sign up", nickname = "signup", code = 200, httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void register(@Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
+	@RequestMapping(value = "signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void signup(@RequestHeader(value = "Access-Token", required = true) String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
+		if(userService.getUserByUsername(userType.getUsername()) != null) {
+			throw new EntityAlreadyExistsException("username", User.class, false);
+		}
+		Invitation invitation = invitationService.getInvitationByToken(token);
+		invitation.setStatus(Invitation.Status.ACCEPTED);
+		invitationService.updateInvitation(invitation);
 		List<Group.Role> roles = new ArrayList<>();
 		roles.add(Group.Role.ROLE_USER);
 		userType.setRoles(roles);
-		userService.createOrUpdateUser(mapper.map(userType, User.class));
+		userService.createOrUpdateUser(mapper.map(userType, User.class), groupService.getGroupById(invitation.getGroupId()));
 	}
 
 	@ResponseStatusDetails

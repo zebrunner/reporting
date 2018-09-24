@@ -38,4 +38,8 @@ public class ServiceException extends Exception
 	{
 		super(message, cause);
 	}
+
+	public ServiceException(String message, Throwable cause, boolean writableStackTrace) {
+		super(message, cause, false, writableStackTrace);
+	}
 }

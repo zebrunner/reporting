@@ -216,7 +216,7 @@ public abstract class AbstractController
     public ErrorResponse handleForbiddenOperationException(ForbiddenOperationException e) 
 	{
 		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.FORBIDDENT));
+		result.setError(new Error(ErrorCode.FORBIDDENT, null, e.isShowMessage() ? e.getMessage() : null));
 		return result;
     }
 	
@@ -240,23 +240,33 @@ public abstract class AbstractController
 		return result;
 	}
 
-	@ExceptionHandler(EntityIsAlreadyExistsException.class)
+	@ExceptionHandler(EntityAlreadyExistsException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public ErrorResponse handleEntityIsAlreadyExistsException(EntityIsAlreadyExistsException e)
+	public ErrorResponse handleEntityIsAlreadyExistsException(EntityAlreadyExistsException e)
 	{
 		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.ENTITY_IS_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
+		result.setError(new Error(ErrorCode.ENTITY_ALREADY_EXISTS, e.getFieldName(), e.getMessage()));
 		return result;
 	}
 
-	@ExceptionHandler(EntityIsNotExistsException.class)
+	@ExceptionHandler(EntityNotExistsException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public ErrorResponse handleEntityIsNotExistsException(EntityIsNotExistsException e)
+	public ErrorResponse handleEntityIsNotExistsException(EntityNotExistsException e)
 	{
 		ErrorResponse result = new ErrorResponse();
-		result.setError(new Error(ErrorCode.ENTITY_IS_NOT_EXISTS, null, e.getMessage()));
+		result.setError(new Error(ErrorCode.ENTITY_NOT_EXISTS, null, e.getMessage()));
+		return result;
+	}
+	
+	@ExceptionHandler(ProjectNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorResponse handleProjectNotFoundException(ProjectNotFoundException e)
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.PROJECT_NOT_EXISTS, null, e.getMessage()));
 		return result;
 	}
 	

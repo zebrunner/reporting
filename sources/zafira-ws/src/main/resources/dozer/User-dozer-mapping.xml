@@ -42,5 +42,13 @@
 			<a>photoURL</a>
 			<b>photoURL</b>
 		</field>
+		<field>
+			<a>source</a>
+			<b>source</b>
+		</field>
+		<field>
+			<a>status</a>
+			<b>status</b>
+		</field>
 	</mapping>
 </mappings>

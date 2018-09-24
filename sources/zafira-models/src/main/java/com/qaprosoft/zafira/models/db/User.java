@@ -41,9 +41,19 @@ public class User extends AbstractEntity implements Comparable<User>
 	private List<UserPreference> preferences = new ArrayList<>();
 	private Date lastLogin;
 	private String tenant;
+	private Source source;
+	private Status status;
 
 	public User()
 	{
+	}
+
+	public enum Source {
+		INTERNAL, LDAP
+	}
+
+	public enum Status {
+		ACTIVE, INACTIVE
 	}
 
 	public User(long id)
@@ -168,7 +178,7 @@ public class User extends AbstractEntity implements Comparable<User>
 	{
 		this.preferences = preferences;
 	}
-	
+
 	public Date getLastLogin()
 	{
 		return lastLogin;
@@ -178,13 +188,29 @@ public class User extends AbstractEntity implements Comparable<User>
 	{
 		this.lastLogin = lastLogin;
 	}
-	
+
 	public String getTenant() {
 		return tenant;
 	}
 
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
+	}
+
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	@Override

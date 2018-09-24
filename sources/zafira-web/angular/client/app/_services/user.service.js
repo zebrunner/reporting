@@ -10,13 +10,13 @@
 
         service.getUserProfile = getUserProfile;
         service.getExtendedUserProfile = getExtendedUserProfile;
+        service.updateStatus = updateStatus;
         service.searchUsers = searchUsers;
         service.searchUsersWithQuery = searchUsersWithQuery;
         service.updateUserProfile = updateUserProfile;
         service.deleteUserProfilePhoto = deleteUserProfilePhoto;
         service.updateUserPassword = updateUserPassword;
         service.createOrUpdateUser = createOrUpdateUser;
-        service.deleteUser = deleteUser;
         service.addUserToGroup = addUserToGroup;
         service.deleteUserFromGroup = deleteUserFromGroup;
         service.getDefaultPreferences = getDefaultPreferences;
@@ -32,6 +32,10 @@
 
         function getExtendedUserProfile() {
             return $http.get(API_URL + '/api/users/profile/extended').then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
+        }
+
+        function updateStatus(user) {
+            return $http.put(API_URL + '/api/users/status', user).then(UtilService.handleSuccess, UtilService.handleError('Unable to get extended user profile'));
         }
 
         function searchUsers(criteria) {
@@ -56,10 +60,6 @@
 
         function createOrUpdateUser(user){
             return $http.put(API_URL + '/api/users', user).then(UtilService.handleSuccess, UtilService.handleError('Failed to update user'));
-        }
-
-        function deleteUser(id){
-            return $http.delete(API_URL + '/api/users/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete user'));
         }
 
         function addUserToGroup(user, id){
