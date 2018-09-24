@@ -916,9 +916,9 @@
         function getDebugData(log){
             if(log){
                 var portLine = log.split('Enabling remote debug on ');
-                var debugValues = portLine[0].split(":");
-                $scope.debugPort = debugValues[0];
-                $scope.debugHost = debugValues[1];
+                var debugValues = portLine[1].split(":");
+                $scope.debugHost = debugValues[0];
+                $scope.debugPort = debugValues[1];
             }
         }
 
