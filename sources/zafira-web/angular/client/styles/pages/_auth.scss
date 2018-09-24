@@ -1,21 +1,19 @@
 .body-auth {
-        // #content {
-        background: url(../assets/images/signin_bg.jpg) no-repeat center center fixed;
-        // background: url('#{$image_path}/background/1.png') no-repeat center center fixed;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        background-size: cover;
-    // }
+    background: $skin-gray url(../../assets/images/background/bg-pattern.png) no-repeat left top fixed;
+    background-size: 50vw auto;
+    @media (max-width:$screen-tablet) {
+        background-size: 70vw auto;
+    }
+    @media (max-width:$screen-phone) {
+        background-size: 100vw auto;
+    }
 }
-
-
 .btn-minimal {
     color: $reverse;
     color: rgba(255,255,255,.8);
     background-color: transparent;
     border-color: $reverse;
     border-color: rgba(255,255,255,.8);
-
     &:hover,
     &:focus,
     &:active,
@@ -30,92 +28,192 @@
         }
     }
 }
-
-
+// .page-register{
+//     @media(min-width: $screen-tablet){
+//         min-height: 120vh;
+//     }
+// }
 .page-signin,
 .page-signup,
-.page-forgot {
-
-    //
-    .wrapper {
-        padding: 0 10px;
+.page-forgot,
+.page-register,
+.page-change {
+    .placeholder-label{
+        color: #888888;
+        font-weight: normal;
+    }
+    @media (min-width: $screen-phone){
+        margin-top: -65px;
     }
 
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh ;
+        margin-top: -128px;
+
+    .wrapper {
+        padding: 0 30px;
+        flex: 1 0 auto;
+    }
     .main-body {
         max-width: 480px;
         margin: 10px auto;
     }
-    .body-inner {
-        position: relative;
-        padding: 20px;
-        &:before {
-            z-index: -1;
-            content: ' ';
-            line-height: 0;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: $brand-primary;
-            height: 220px;
+    #signin{
+        &:hover{
+            background-color: $reverse;
+            text-decoration: underline;
         }
     }
     .additional-info {
+        z-index: -2;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        line-height: 10px;
+        padding-left: 30px;
+        padding-bottom: 10px;
+        @media (max-width: $screen-phone){
+            text-align: left;
+
+        }
+        @media (min-width: 1200px){
+            position: fixed;
+            bottom:0;
+        }
+        margin-bottom: 5px;
+        position: static;
+        flex: 0 0 auto;
+        height: 25px;
         text-align: center;
         font-size: $font-size-small;
-        a {
-            color: $bright;
-        }
-        .divider-h {
-            border-right: 1px solid $bright;
-            margin: 0 15px;
-        }
     }
-
-
-    h1 {
-        font-weight: normal;
-        color: $brand-primary;
-        font-size: 38px;
-        margin-bottom: 40px;
-        a {
-            color: $brand-primary;
-        }
-    }
-
     .card {
         @extend .z-depth-2;
         .card-content {
-            padding: 30px 20px;
+            padding: 20px;
         }
     }
-
     .ui-input-group {
         .form-control {
             color: $gray;
         }
     }
-
     .form-group {
         position: relative;
         margin: 0;
     }
-
     .wrapper {
         margin-top: 50px;
-        @media (min-width: $screen-sm) {
+        @media (min-width: $screen-phone) {
             margin-top: 150px;
         }
+        padding-bottom: 15px;
     }
+    .logo-container{
+        height: 50px;
+        margin-bottom: 30px;
+        .logo{
+            width: 50px;
+            height: 50px;
+            background: url(../../assets/images/logo/Logo.png) no-repeat;
+            background-size: cover !important;
 
-    .logo {
-        font-size: 26px;
-        font-weight: normal;
-        // text-transform: uppercase;
-        a {
-            &:hover {
-                text-decoration: none;
-            }
         }
+    }
+    .button-container{
+        display: flex;
+        align-items: center;
+        margin-bottom: -10px;
+        a{
+            color: #888888;
+            font-weight: normal;
+        }
+    }
+    .additional-background{
+
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        position: static;
+        margin: 0px 60px 0px 30px;
+        @media (min-width: $screen-phone){
+            flex-direction: column;
+            margin: 0px 30px;
+        }
+        @media (min-width: 1200px){
+            margin-right: 5vw;
+            position: fixed;
+            right:0;
+            bottom:0;
+        }
+
+        p:first-child{
+            font-weight: bold;
+        }
+
+
+        @media (max-width: $screen-phone){
+            .text p{
+                line-height: 15px;
+            }
+            .text p:first-child{
+                line-height: 20px;
+            }
+            p:first-child{
+                font-size: $font-size-h5;
+            }
+            font-size: $font-size-h6;
+        }
+        @media (min-width: $screen-phone){
+            p:first-child{
+                font-size: $font-size-h3;
+            }
+            font-size: $font-size-h4;
+        }
+
+        .text{
+            color: $gray-base;
+
+            @media (min-width: 1200px){
+                margin-bottom: 0;
+                width: 30%;
+
+            }
+            @media (min-width: $screen-phone) and (max-width: 1200px){
+                p{
+                    line-height: 25px;
+                }
+                p:first-child{
+                    line-height: 30px;
+                }
+                width: 42%;
+                margin-bottom: -5vw;
+                margin-right: 5vw;
+
+            }
+            width: 50%;
+            margin-bottom: 10%;
+
+
+        }
+        .robot{
+            @media (min-width: 1200px){
+                margin-bottom: 0;
+                width: 10vw;
+                height: 10vw;
+            }
+            @media (min-width: $screen-phone) and (max-width: 1200px){
+                margin-right: 0;
+                width: 20vw;
+                height: 20vw;
+            }
+            margin-bottom: -30px;
+            width: 35vw;
+            height: 35vw;
+            background: url(../../assets/images/background/bg-robot.png) right bottom no-repeat;
+            background-size: 100%;
+        }
+
     }
 }

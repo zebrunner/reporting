@@ -39,6 +39,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCrit
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Group.Role;
 import com.qaprosoft.zafira.models.db.User;
+import com.qaprosoft.zafira.models.db.User.Status;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 
@@ -60,9 +61,6 @@ public class UserService {
     private GroupService groupService;
 
     @Autowired
-    private EmailService emailService;
-
-    @Autowired
     private PasswordEncryptor passwordEncryptor;
 
     @Autowired
@@ -80,6 +78,7 @@ public class UserService {
                     if (user == null) {
                         user = new User(adminUsername);
                         user.setSource(INTERNAL);
+                        user.setStatus(Status.ACTIVE);
                         user.setPassword(passwordEncryptor.encryptPassword(adminPassword));
                         createUser(user);
 

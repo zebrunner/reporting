@@ -35,9 +35,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -45,9 +45,9 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.UserSearchCriteria;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.UserPreference;
-import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.exceptions.UserNotFoundException;
 import com.qaprosoft.zafira.services.services.application.UserPreferenceService;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -84,9 +84,13 @@ public class UsersAPIController extends AbstractController
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "profile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody UserType getUserProfile() throws ServiceException
+	public @ResponseBody UserType getUserProfile(@RequestParam(value = "username", required=false) String username) throws ServiceException
 	{
-		User user = userService.getUserById(getPrincipalId());
+		User user = StringUtils.isEmpty(username) ? userService.getUserById(getPrincipalId()) : userService.getUserByUsername(username);
+		if(user == null) 
+		{
+			throw new UserNotFoundException();
+		}
 		UserType userType = mapper.map(user, UserType.class);
 		userType.setRoles(user.getRoles());
 		userType.setPreferences(user.getPreferences());
