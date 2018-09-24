@@ -915,8 +915,8 @@
 
         function getDebugData(log){
             if(log){
-                var portLine = log.slice(log.indexOf('Enabling remote debug on '));
-                var debugValues = portLine.split(":");
+                var portLine = log.split('Enabling remote debug on ');
+                var debugValues = portLine[0].split(":");
                 $scope.debugPort = debugValues[0];
                 $scope.debugHost = debugValues[1];
             }
@@ -993,6 +993,7 @@
                                 alertify.error(rs.message);
                             }
                         });
+                        $scope.stopDebugMode();
                     }
                     else {
                         alertify.error(rs.message);
