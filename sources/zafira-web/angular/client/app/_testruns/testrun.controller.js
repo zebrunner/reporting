@@ -890,8 +890,8 @@
                     }, 60 * 10 * 1000);
 
                     $scope.stopConnectingDebug = function () {
-                        $timeout.cancel(waitToDisconnectDebugTimeout);
                         $interval.cancel(parseLogsInterval);
+                        $timeout.cancel(waitToDisconnectDebugTimeout);
                         $timeout.cancel(waitToConnectDebugTimeout);
                     };
 
