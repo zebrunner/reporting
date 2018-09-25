@@ -1,8 +1,8 @@
 .body-auth {
-    background: $skin-gray url(../../assets/images/background/bg-pattern.png) no-repeat left top fixed;
+    background: $skin-gray url(../../assets/images/background/bg-pattern.png) no-repeat left top scroll;
     background-size: 50vw auto;
     @media (max-width:$screen-tablet) {
-        background-size: 70vw auto;
+        background-size: 67vw auto;
     }
     @media (max-width:$screen-phone) {
         background-size: 100vw auto;
@@ -28,11 +28,6 @@
         }
     }
 }
-// .page-register{
-//     @media(min-width: $screen-tablet){
-//         min-height: 120vh;
-//     }
-// }
 .page-signin,
 .page-signup,
 .page-forgot,
@@ -45,19 +40,33 @@
     @media (min-width: $screen-phone){
         margin-top: -65px;
     }
-
         display: flex;
         flex-direction: column;
-        min-height: 100vh ;
+        min-height: 100vh;
         margin-top: -128px;
-
     .wrapper {
         padding: 0 30px;
         flex: 1 0 auto;
     }
     .main-body {
-        max-width: 480px;
+        max-width: 440px;
+        min-height: 320px;
+        
         margin: 10px auto;
+        .body-inner{
+            min-height: 320px;
+            .card{
+                min-height: 320px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                .message{
+                    font-size: 14px;
+                    text-align: left;
+                }
+            }
+        }
+        
     }
     #signin{
         &:hover{
@@ -66,20 +75,22 @@
         }
     }
     .additional-info {
+        color: #898989;
         z-index: -2;
         bottom: 0;
         left: 0;
         right: 0;
         line-height: 10px;
-        padding-left: 30px;
         padding-bottom: 10px;
         @media (max-width: $screen-phone){
             text-align: left;
-
+            padding-left: 30px;
         }
-        @media (min-width: 1200px){
+        @media (min-width: 1230px){
             position: fixed;
-            bottom:0;
+            bottom: 40px;
+            line-height: 20px;
+            font-size: $font-size-h5;
         }
         margin-bottom: 5px;
         position: static;
@@ -104,23 +115,26 @@
         margin: 0;
     }
     .wrapper {
-        margin-top: 50px;
+        
+        margin-top: 70px;
         @media (min-width: $screen-phone) {
-            margin-top: 150px;
+            margin-top: 170px;
         }
-        padding-bottom: 15px;
     }
     .logo-container{
         height: 50px;
-        margin-bottom: 30px;
+        margin-bottom: 70px;
+        @media (min-width:1230px){
+            margin-bottom: 45px;
+        }
         .logo{
             width: 50px;
             border-radius: 50%;
             height: 50px;
             background-size: cover !important;
-
         }
     }
+    
     .button-container{
         display: flex;
         align-items: center;
@@ -131,39 +145,37 @@
         }
     }
     .additional-background{
-
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
         position: static;
         margin: 0px 60px 0px 30px;
         @media (min-width: $screen-phone){
             flex-direction: column;
             margin: 0px 30px;
         }
-        @media (min-width: 1200px){
-            margin-right: 5vw;
+        @media (min-width: 1230px){
+            margin-right: 8vw;
             position: fixed;
             right:0;
-            bottom:0;
+            bottom: 0;
         }
-
         p:first-child{
             font-weight: bold;
         }
-
-
         @media (max-width: $screen-phone){
             .text p{
-                line-height: 15px;
+                line-height: 13px;
+                letter-spacing: 0.2px;
             }
             .text p:first-child{
-                line-height: 20px;
+                line-height: 19px;
+                letter-spacing: 0.5px;
             }
             p:first-child{
                 font-size: $font-size-h5;
             }
-            font-size: $font-size-h6;
+            font-size: 11px; 
         }
         @media (min-width: $screen-phone){
             p:first-child{
@@ -171,16 +183,21 @@
             }
             font-size: $font-size-h4;
         }
-
         .text{
-            color: $gray-base;
-
-            @media (min-width: 1200px){
+            color: #000000;
+            @media (min-width: 1230px){
                 margin-bottom: 0;
-                width: 30%;
-
+                width: 23%;
+                margin-right: 40px;
+                p{
+                    line-height: 23px;
+                }
+                p:first-child{
+                    line-height: 30px;
+                    margin-bottom: 20px;
+                }
             }
-            @media (min-width: $screen-phone) and (max-width: 1200px){
+            @media (min-width: $screen-phone) and (max-width: 1230px){
                 p{
                     line-height: 25px;
                 }
@@ -190,30 +207,25 @@
                 width: 42%;
                 margin-bottom: -5vw;
                 margin-right: 5vw;
-
             }
-            width: 50%;
-            margin-bottom: 10%;
-
-
+            width: 58%;
         }
         .robot{
-            @media (min-width: 1200px){
+            @media (min-width: 1230px){
                 margin-bottom: 0;
-                width: 10vw;
-                height: 10vw;
+                width: 14vw;
+                height: 12vw;
             }
-            @media (min-width: $screen-phone) and (max-width: 1200px){
+            @media (min-width: $screen-phone) and (max-width: 1230px){
                 margin-right: 0;
-                width: 20vw;
-                height: 20vw;
+                max-width: 180px;
+                max-height: 180px;
             }
             margin-bottom: -30px;
-            width: 35vw;
-            height: 35vw;
+            width: 34vw;  
+            height: 34vw;
             background: url(../../assets/images/background/bg-robot.png) right bottom no-repeat;
             background-size: 100%;
         }
-
     }
 }

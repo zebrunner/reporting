@@ -1,4 +1,4 @@
-<div class="page-forgot" ng-controller="AuthController">
+<div class="page-message" ng-controller="AuthController">
 
         <div class="wrapper">
             <div class="main-body">
@@ -6,31 +6,30 @@
                     <div class="card bg-white">
                         <div class="card-content">
                             <section class="logo-container">
-                                <img class="logo" ng-src="{{companyLogo.value}}">
+                                <div class="logo"></div>
                             </section>
                        
                             <form>
                                 <fieldset>
                                     <div class="form-group">
-                                        <div class="ui-input-group">        
-                                            <input ng-model="emailType.email" type="email" required class="form-control">
-                                            <span class="input-bar"></span>
-                                            <label>Email</label>
-                                        </div>
-                                        <div class="comment text-center text-small">
-                                           Enter your email address that you used to register. We'll send you an email with your username and a link to reset your password.
+                                        <div class="comment message text-small">
+                                            The link was successfully sent to <strong>exampleadress@yahoo.com.</strong>
+                                            Please check the email.
                                        </div>
                                    </div>
                                </fieldset>
                            </form>
                        </div>
                        <div class="card-action no-border text-right">
-                            <a ng-click="forgotPassword(emailType);" href="" class="color-primary">RESET</a>
+                            <a href="#!/changepwd" class="color-primary">Reset</a>
                         </div>
                     </div>
+    
                     
+    
                 </div>
-            </div> 
+            </div>
+    
         </div>
         <div class="additional-background">
                 <div class="text">
