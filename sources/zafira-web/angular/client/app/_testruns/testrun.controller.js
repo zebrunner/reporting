@@ -839,7 +839,7 @@
             }
         };
 
-        $scope.testRunInDebugMode = {};
+        $scope.testRunInDebugMode = null;
         $scope.debugHost = null;
         $scope.debugPort = null;
 
@@ -848,7 +848,7 @@
                 if (rs.success) {
                     showDebugToast();
                     var debugLog = '';
-                    var waitToDisconnectDebugTimeout;
+                    var disconnectDebugTimeout;
                     var parseLogsInterval = $interval(function () {
                         TestRunService.getConsoleOutput(testRun.id, testRun.ciRunId, 200, 50).then(function (rs) {
                             if (rs.success) {
@@ -860,17 +860,18 @@
                                         if (debugLog === '') {
                                             getDebugData(value)
                                         }
-                                        $timeout.cancel(waitToConnectDebugTimeout);
-                                        waitToDisconnectDebugTimeout = $timeout(function () {
+                                        $timeout.cancel(connectDebugTimeout);
+
+                                        disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                             closeToast();
-                                        }, 60 * 10 * 1000);
+                                        }, 60*10*1000);
 
                                         if (debugLog === '') {
                                             debugLog = value;
                                         }
                                         if (debugLog !== value) {
-                                            $timeout.cancel(waitToDisconnectDebugTimeout);
+                                            $timeout.cancel(disconnectDebugTimeout);
                                             $interval.cancel(parseLogsInterval);
                                             closeToast();
                                             alertify.success("Tests started in debug");
@@ -884,15 +885,15 @@
                         });
                     }, 10000);
 
-                    var waitToConnectDebugTimeout = $timeout(function () {
+                    var connectDebugTimeout = $timeout(function () {
                         alertify.error("Problems with starting debug mode occurred, disabling");
                         $scope.stopDebugMode();
-                    }, 60 * 10 * 1000);
+                    }, 60*10*1000);
 
                     $scope.stopConnectingDebug = function () {
                         $interval.cancel(parseLogsInterval);
-                        $timeout.cancel(waitToDisconnectDebugTimeout);
-                        $timeout.cancel(waitToConnectDebugTimeout);
+                        $timeout.cancel(disconnectDebugTimeout);
+                        $timeout.cancel(connectDebugTimeout);
                     };
 
                 } else {
@@ -905,7 +906,7 @@
             $scope.stopConnectingDebug();
             if($scope.testRunInDebugMode){
                 $scope.abortDebug($scope.testRunInDebugMode);
-                $scope.testRunInDebugMode = {};
+                $scope.testRunInDebugMode = null;
                 $scope.debugHost = null;
                 $scope.debugPort = null;
             }
