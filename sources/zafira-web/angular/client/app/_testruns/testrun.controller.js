@@ -865,7 +865,7 @@
                                         disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                             closeToast();
-                                        }, 60*10*1000);
+                                        }, 60*1000);
 
                                         if (debugLog === '') {
                                             debugLog = value;
