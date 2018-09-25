@@ -290,7 +290,8 @@
                 clickOutsideToClose:false,
                 fullscreen: true,
                 locals: {
-                    groups: GroupService.groups
+                    groups: GroupService.groups,
+                    isLDAPConnected: $rootScope.tools['LDAP']
                 }
             })
                 .then(function(invitations) {
@@ -308,7 +309,9 @@
     };
 
     // **************************************************************************
-    function InviteController($scope, $mdDialog, InvitationService, UtilService, groups) {
+    function InviteController($scope, $mdDialog, InvitationService, UtilService, groups, isLDAPConnected) {
+
+        $scope.isLDAPConnected = isLDAPConnected;
 
         $scope.tryInvite = false;
         $scope.emails = [];

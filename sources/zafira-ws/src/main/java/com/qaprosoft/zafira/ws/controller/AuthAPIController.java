@@ -142,9 +142,6 @@ public class AuthAPIController extends AbstractController {
 		Invitation invitation = invitationService.getInvitationByToken(token);
 		invitation.setStatus(Invitation.Status.ACCEPTED);
 		invitationService.updateInvitation(invitation);
-		List<Group.Role> roles = new ArrayList<>();
-		roles.add(Group.Role.ROLE_USER);
-		userType.setRoles(roles);
 		userService.createOrUpdateUser(mapper.map(userType, User.class), groupService.getGroupById(invitation.getGroupId()));
 	}
 
