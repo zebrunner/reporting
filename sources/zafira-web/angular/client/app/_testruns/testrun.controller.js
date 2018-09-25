@@ -865,7 +865,7 @@
                                         disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                             closeToast();
-                                        }, 60*1000);
+                                        }, 60 * 10 * 1000);
 
                                         if (debugLog === '') {
                                             debugLog = value;
@@ -888,7 +888,7 @@
                     var connectDebugTimeout = $timeout(function () {
                         alertify.error("Problems with starting debug mode occurred, disabling");
                         $scope.stopDebugMode();
-                    }, 60*10*1000);
+                    }, 60 * 10 * 1000);
 
                     $scope.stopConnectingDebug = function () {
                         $interval.cancel(parseLogsInterval);
@@ -909,6 +909,7 @@
                 $scope.testRunInDebugMode = null;
                 $scope.debugHost = null;
                 $scope.debugPort = null;
+                alertify.warning("Debug mode is disabled");
             }
         };
 
