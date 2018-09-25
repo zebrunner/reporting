@@ -5,13 +5,14 @@
 
 	<insert id="createInvitation" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO INVITATIONS (EMAIL, TOKEN, USER_ID, STATUS, GROUP_ID)
+			INSERT INTO INVITATIONS (EMAIL, TOKEN, USER_ID, STATUS, GROUP_ID, SOURCE)
 			VALUES (
 				#{email},
 				#{token},
 			    #{createdBy.id},
 			    #{status},
-			    #{groupId}
+			    #{groupId},
+			    #{source}
 			)
 		]]>
 	</insert>
@@ -24,6 +25,7 @@
 				I.TOKEN AS INVITATION_TOKEN,
 				I.STATUS AS INVITATION_STATUS,
 				I.GROUP_ID AS INVITATION_GROUP_ID,
+				I.SOURCE AS INVITATION_SOURCE,
 				U.ID AS USER_ID,
 				U.USERNAME AS USER_USERNAME,
 				I.MODIFIED_AT AS INVITATION_MODIFIED_AT,
@@ -104,6 +106,7 @@
 		<result column="INVITATION_TOKEN" property="token" />
 		<result column="INVITATION_STATUS" property="status" />
 		<result column="INVITATION_GROUP_ID" property="groupId" />
+		<result column="INVITATION_SOURCE" property="source" />
 		<result column="INVITATION_USER_ID" property="createdById" />
 		<result column="INVITATION_MODIFIED_AT" property="modifiedAt" />
 		<result column="INVITATION_CREATED_AT" property="createdAt" />

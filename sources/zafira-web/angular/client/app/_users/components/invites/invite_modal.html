@@ -12,7 +12,12 @@
         <md-dialog-content>
             <div class="md-dialog-content">
                 <md-content class="md-padding autocomplete" layout="column" style="background-color: transparent">
-                    <md-select id="projectName" name="projectId" data-ng-model="userGroup" placeholder="Choose group...." required>
+                    <md-select id="source" name="source" data-ng-model="source" placeholder="Choose source...." required>
+                        <md-option ng-repeat="s in SOURCES" ng-value="s">
+                            {{s}}
+                        </md-option>
+                    </md-select>
+                    <md-select id="userGroup" name="projectId" data-ng-model="userGroup" placeholder="Choose group...." required>
                         <md-option ng-repeat="group in groups" ng-value="group.id">
                             {{group.name}}
                         </md-option>
@@ -38,7 +43,7 @@
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">
-            <md-button ng-click="invite(emails, invite_form);" ng-disabled="emails.length == 0 || ! userGroup || tryInvite" id="change" class="md-raised btn-w-md md-primary">
+            <md-button ng-click="invite(emails, source, invite_form);" ng-disabled="emails.length == 0 || ! userGroup || tryInvite" id="change" class="md-raised btn-w-md md-primary">
                 Invite
             </md-button>
         </md-dialog-actions>

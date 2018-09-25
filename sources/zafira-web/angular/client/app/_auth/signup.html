@@ -38,7 +38,7 @@
                                         <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
                                     </div>
                                 </md-input-container>
-                                <md-input-container class="md-block">
+                                <md-input-container ng-if="invitation.source == 'INTERNAL'" class="md-block">
                                     <label>Password</label>
                                     <input required
                                            autocomplete="new-password"

@@ -14,5 +14,9 @@
 			<a>groupId</a>
 			<b>groupId</b>
 		</field>
+		<field>
+			<a>source</a>
+			<b>source</b>
+		</field>
 	</mapping>
 </mappings>
