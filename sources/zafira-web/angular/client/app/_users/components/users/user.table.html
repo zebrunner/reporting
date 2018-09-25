@@ -24,6 +24,7 @@
                     </md-input-container>
                 </th>
                 <th md-column>Status</th>
+                <th md-column>Source</th>
                 <th md-column class="no-padding">
                     <span data-ng-if="selectedRange.dateStart == null && selectedRange.dateEnd == null">Registration date</span>
                     <span data-ng-if="selectedRange.dateStart && selectedRange.dateEnd && !isEqualDate()">{{selectedRange.dateStart | date : 'dd MMM'}} - </span><span>{{selectedRange.dateEnd | date : 'dd MMM yyyy'}}</span>
@@ -45,6 +46,9 @@
                 <td name="userFirstLastName" md-cell>{{user.firstName}} {{user.lastName}}</td>
                 <td md-cell>
                     <span name="status" ng-class="{'text-success': user.status == 'ACTIVE', 'text-error': user.status == 'INACTIVE'}" class="label">{{ user.status}}</span>
+                </td>
+                <td md-cell>
+                    <span name="status" class="label black_font">{{ user.source}}</span>
                 </td>
                 <td md-cell style="padding-right: 0;">
                                       <span name="userCreated">
@@ -71,7 +75,7 @@
                                     Edit
                                 </md-button>
                             </md-menu-item>
-                            <md-menu-item has-any-permission="['MODIFY_USERS']">
+                            <md-menu-item ng-if="user.source == 'INTERNAL'" has-any-permission="['MODIFY_USERS']">
                                 <md-button name="userChangePassword" data-ng-click="showChangePasswordDialog($event, user, false)">
                                     <md-icon class="material-icons">lock_outline</md-icon>
                                     Change password
