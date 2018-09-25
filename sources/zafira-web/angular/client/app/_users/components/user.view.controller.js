@@ -313,6 +313,8 @@
 
         $scope.isLDAPConnected = isLDAPConnected;
 
+        $scope.source = null;
+
         $scope.tryInvite = false;
         $scope.emails = [];
         $scope.groups = angular.copy(groups);
@@ -327,13 +329,13 @@
             chipCtrl = mdChipCtrl;
         };
 
-        $scope.invite = function(emails, source, form) {
+        $scope.invite = function(emails, form) {
             if(chipCtrl.chipBuffer) {
                 startedEmail = chipCtrl.chipBuffer;
             }
             if(emails && emails.length > 0) {
                 $scope.tryInvite = true;
-                InvitationService.invite(toInvite(emails, $scope.userGroup, source)).then(function (rs) {
+                InvitationService.invite(toInvite(emails, $scope.userGroup, $scope.source)).then(function (rs) {
                     if (rs.success) {
                         var message = emails.length > 1 ? "Invitations were sent." : "Invitation was sent.";
                         alertify.success(message);
