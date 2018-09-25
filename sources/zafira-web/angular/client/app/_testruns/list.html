@@ -150,7 +150,8 @@
                                             <span>
                                             <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
                                             <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
-                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) == -1">'{{ $chip.value }}'</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) != -1 && DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) != -1">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
                                             </span>
                                         </md-chip-template>
                                         <button md-chip-remove class="md-primary filter-slice-chip-button">
