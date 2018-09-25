@@ -993,7 +993,6 @@
                                 alertify.error(rs.message);
                             }
                         });
-                        $scope.stopDebugMode();
                     }
                     else {
                         alertify.error(rs.message);
