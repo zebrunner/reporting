@@ -36,6 +36,8 @@
         $scope.forgotPasswordType = {};
         $scope.forgotPasswordEmailWasSent = false;
 
+        $scope.emailType = {};
+
         $scope.forgotPassword = function (forgotPassword) {
             AuthService.forgotPassword(forgotPassword).then(function (rs) {
                 if(rs.success) {
