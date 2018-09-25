@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,14 +62,14 @@ public class SlackService implements IJMXService<SlackContext> {
 
     private static final Logger LOGGER = Logger.getLogger(SlackService.class);
 
-    @Value("${zafira.webservice.url}")
-    private String wsURL;
-
     @Value("${zafira.slack.image}")
     private String image;
 
     @Value("${zafira.slack.author}")
     private String author;
+
+    @Autowired
+    private URLResolver urlResolver;
 
     @Autowired
     private JenkinsService jenkinsService;
@@ -125,7 +126,7 @@ public class SlackService implements IJMXService<SlackContext> {
             getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
             String elapsed = countElapsedInSMH(tr.getElapsed());
-            String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
+            String zafiraUrl = urlResolver.buildWebURL() + "/#!/tests/runs/" + tr.getId();
             String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
             String status = TestRunResultsEmail.buildStatusText(tr);
 
@@ -159,7 +160,7 @@ public class SlackService implements IJMXService<SlackContext> {
         if (channel != null) {
             getContext(Setting.Tool.SLACK).setSlack(getSlack().sendToChannel(channel));
 
-            String zafiraUrl = getWsURL() + "/#!/tests/runs/" + tr.getId();
+            String zafiraUrl = urlResolver.buildWebURL() + "/#!/tests/runs/" + tr.getId();
             String jenkinsUrl = tr.getJob().getJobURL() + "/" + tr.getBuildNumber();
             String status = TestRunResultsEmail.buildStatusText(tr);
 
@@ -261,10 +262,6 @@ public class SlackService implements IJMXService<SlackContext> {
             return "danger";
         }
         return "warning";
-    }
-
-    private String getWsURL() {
-        return StringUtils.removeEnd(wsURL, "-ws");
     }
 
     @ManagedAttribute(description = "Get Slack current instance")
