@@ -315,7 +315,6 @@ public class TestRunService
 			{
 				existingTestRun.setBuildNumber(testRun.getBuildNumber());
 				existingTestRun.setConfigXML(testRun.getConfigXML());
-				existingTestRun.setProject(testRun.getProject());
 				testRun = existingTestRun;
 				//TODO: investigate if startedBy should be also copied
 			}
