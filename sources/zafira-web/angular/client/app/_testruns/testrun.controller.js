@@ -910,7 +910,6 @@
                 $scope.debugHost = null;
                 $scope.debugPort = null;
             }
-            alertify.warning("Debug mode is disabled");
         };
 
         function getDebugData(log){
