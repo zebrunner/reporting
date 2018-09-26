@@ -2131,3 +2131,14 @@ td.settings-cell {
 .text-info {
     color: #00BCD4;
 }
+
+
+.lonely-testrun {
+    > thead {
+        > tr {
+            > th:nth-child(2) {
+                padding: 0 24px !important;
+            }
+        }
+    }
+}
