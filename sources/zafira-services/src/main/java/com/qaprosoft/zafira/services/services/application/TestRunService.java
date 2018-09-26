@@ -44,6 +44,7 @@ import java.util.function.Function;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -64,12 +65,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Job;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestConfig;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
@@ -257,6 +252,10 @@ public class TestRunService
 				}
 				if (!StringUtils.isEmpty(queueTestRunParams.getProject()))
 				{
+					if (projectService.getProjectByName(queueTestRunParams.getProject()) == null)
+					{
+						projectService.createProject(new Project(queueTestRunParams.getProject()));
+					}
 					testRun.setProject(projectService.getProjectByName(queueTestRunParams.getProject()));
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
