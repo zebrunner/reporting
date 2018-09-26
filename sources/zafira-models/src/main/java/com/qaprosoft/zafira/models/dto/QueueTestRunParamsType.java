@@ -16,6 +16,7 @@ public class QueueTestRunParamsType implements Serializable
 	private String ciParentUrl;
 	private String ciParentBuild;
 	private String buildNumber;
+	private String project;
 
 	public String getJobName()
 	{
@@ -87,4 +88,13 @@ public class QueueTestRunParamsType implements Serializable
 		this.buildNumber = buildNumber;
 	}
 
+	public String getProject()
+	{
+		return project;
+	}
+
+	public void setProject(String project)
+	{
+		this.project = project;
+	}
 }

@@ -115,6 +115,9 @@ public class TestRunService
 	private JobsService jobsService;
 
 	@Autowired
+	private ProjectService projectService;
+
+	@Autowired
 	private StatisticsService statisticsService;
 
 	private static LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
@@ -251,6 +254,10 @@ public class TestRunService
 				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
 				{
 					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+				}
+				if (!StringUtils.isEmpty(queueTestRunParams.getProject()))
+				{
+					testRun.setProject(projectService.getProjectByName(queueTestRunParams.getProject()));
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
