@@ -252,11 +252,12 @@ public class TestRunService
 				}
 				if (!StringUtils.isEmpty(queueTestRunParams.getProject()))
 				{
-					if (projectService.getProjectByName(queueTestRunParams.getProject()) == null)
+					Project project = projectService.getProjectByName(queueTestRunParams.getProject());
+					if (project == null)
 					{
-						projectService.createProject(new Project(queueTestRunParams.getProject()));
+						project = projectService.getProjectByName("UNKNOWN");
 					}
-					testRun.setProject(projectService.getProjectByName(queueTestRunParams.getProject()));
+					testRun.setProject(project);
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
