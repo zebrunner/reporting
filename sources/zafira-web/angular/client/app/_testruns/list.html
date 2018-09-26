@@ -28,10 +28,10 @@
             </md-button>
         </md-fab-actions>
     </md-fab-speed-dial>
-    <div ng-if="currentMode == 'MANY'" class="row ui-section col-md-2 no-padding no-margin">
+    <div class="row ui-section col-md-2 no-padding no-margin">
         <div class="fixed-search-column no-padding">
             <h2 id="pageTitle" class="section-header pull-left">Test runs
-                <small id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
+                <small ng-show="currentMode == 'MANY'" id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
             </h2>
         </div>
     </div>
@@ -228,7 +228,7 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                         <form ng-submit="search()" name="search_form">
-                            <table md-table zafira-background-theme="table">
+                            <table ng-class="{'lonely-testrun' : currentMode != 'MANY'}" md-table zafira-background-theme="table">
                                 <thead md-head>
                                 <tr md-row>
                                     <th ng-show="currentMode == 'MANY'" md-column>
