@@ -1,4 +1,4 @@
-<div class="page" ng-controller="UserViewController">
+<div class="page user-view-page" ng-controller="UserViewController">
 
     <div class="row ui-section">
         <div layout="row" layout-xs="column" class="col-lg-12">
@@ -21,10 +21,10 @@
             </md-fab-actions>
         </md-fab-speed-dial>
         <div class="lonely-fab" ng-include="activeTab.fabControls" ng-if="activeTab.fabControlsCount == 1"></div>
-        <div class="col-md-12">
+        <div ng-cloak class="col-md-12">
             <article class="article">
                 <md-card class="no-margin-h">
-                    <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
+                    <md-tabs md-no-ink md-stretch-tabs="never" md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
                         <md-tab ng-if="tab.show();" ng-repeat="tab in tabs" label="{{ tab.name }}" md-on-select="switchTab(tab, $index);"><div ng-include="tab.template"></div></md-tab>
                     </md-tabs>
                 </md-card>

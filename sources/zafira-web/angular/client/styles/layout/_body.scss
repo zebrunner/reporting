@@ -1795,6 +1795,20 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
     }
   }
 }
+.page.user-view-page {
+    md-tabs [role="tabpanel"] {
+        transition: none;
+    }
+
+   /* md-tabs md-ink-bar {
+        transition: none;
+    }*/
+}
+
+md-ink-bar {
+    color: #26a69a !important;
+    background: #26a69a !important;
+}
 
 .video-section {
   position: absolute;
