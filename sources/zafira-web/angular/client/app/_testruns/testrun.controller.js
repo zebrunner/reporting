@@ -684,6 +684,14 @@
             $scope.search();
         };
 
+        var MODES = ['ONE', 'MANY'];
+
+        $scope.currentMode = MODES[1];
+
+        function switchMode(index) {
+            $scope.currentMode = MODES[index];
+        };
+
         $scope.search = function (page, pageSize) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
@@ -700,6 +708,7 @@
 
             if ($scope.testRunId) {
                 $scope.sc.id = $scope.testRunId;
+                switchMode(0);
             }
             else {
                 $scope.sc = ProjectProvider.initProjects($scope.sc);
