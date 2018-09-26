@@ -522,7 +522,7 @@
         };
 
         function catchScreenshot(log, preScreenshot, correlationId) {
-            var path = getMetaLogAnazonPath(log);
+            var path = getMetaLogAmazonPath(log);
             $scope.thumbs[correlationId] = {'log': preScreenshot.log.message, 'thumb': log, 'index': preScreenshot.index, 'path': path};
             preScreenshot.log.blobLog.path = path;
             preScreenshot.log.isImageExists = true;
@@ -533,7 +533,7 @@
             return log.headers['AMAZON_PATH_CORRELATION_ID'];
         };
 
-        function getMetaLogAnazonPath(log) {
+        function getMetaLogAmazonPath(log) {
             return log.headers['AMAZON_PATH'];
         };
 

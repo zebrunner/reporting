@@ -22,9 +22,6 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
-                },
-                onActive: function () {
-                    $scope.search(1);
                 }
             },
             {
@@ -35,9 +32,6 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
-                },
-                onActive: function () {
-
                 }
             },
             {
@@ -49,20 +43,16 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
-                },
-                onActive: function () {
-
                 }
             }
         ];
 
-        $scope.activeTab = $scope.tabs[0];
-
         $scope.switchTab = function (toTab, index) {
             $scope.activeTab = toTab;
             $scope.selectedTabIndex = index != undefined ? index : $scope.selectedTabIndex;
-            $scope.activeTab.onActive();
         };
+
+        $scope.activeTab = $scope.tabs[0];
 
         var DEFAULT_SC = {page : 1, pageSize : 20};
         $scope.sc = angular.copy(DEFAULT_SC);
@@ -305,6 +295,7 @@
         };
 
         (function initController() {
+            $scope.search(1);
         })();
     };
 
