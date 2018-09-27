@@ -64,7 +64,8 @@
         padding: 0 30px;
         flex: 1 0 auto;
     }
-
+    
+    
     .main-body {
         max-width: 440px;
         min-height: 315px;
@@ -83,9 +84,14 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                
             }
         }
+        .card-content{
+            min-height: 315px;
+        }
+    }
+    .added-small{
+        padding: 20px;
     }
     .message{
         margin-top: 48px;
@@ -109,7 +115,9 @@
         }
     }
     #changepwd{
-        margin-right: -27px;
+        position: absolute;
+        right: -20px;
+        bottom: 10px;
         font-weight: normal;
     }
     
@@ -173,10 +181,9 @@
         }
     }
     
-    /*.comment{
+    .comment{
         margin-top: -25px;
-        margin-bottom: 75px;
-    }*/
+    }
 
     .button-container{
         margin-top: 27px;
