@@ -646,7 +646,7 @@
                         return t.id === parseInt($stateParams.testId);
                     })[0];
                     $scope.testRun.tests = testsRs;
-                    SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.id};
+                    SEARCH_CRITERIA = {'correlation-id': $scope.testRun.ciRunId + '_' + $scope.test.ciTestId};
                     ELASTICSEARCH_INDEX = buildIndex();
 
                     setMode($scope.test.status == 'IN_PROGRESS' ? 'live' : 'record');
