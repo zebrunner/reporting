@@ -18,7 +18,6 @@
                         url: '/views/:id',
                         templateUrl: 'app/_views/list.html'
                     })
-                    //for testing pages 
                     .state('signin', {
                         url: '/signin',
                         templateUrl: 'app/_auth/signin.html'
@@ -27,14 +26,6 @@
                         url: '/signup',
                         templateUrl: 'app/_auth/signup.html'
                     })
-                   /* .state('forgotpwd', {
-                        url: '/forgotpwd',
-                        templateUrl: 'app/page/forgot-password.html'
-                    })
-                    .state('changepwd', {
-                        url: '/changepwd',
-                        templateUrl: 'app/page/change-password.html'
-                    })*/
                     .state('forgotPassword', {
                         url: '/password/forgot',
                         templateUrl: 'app/_auth/forgot-password.html'

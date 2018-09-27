@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.LdapContextSource;
 
 import java.util.List;
@@ -103,6 +104,11 @@ public class LDAPService implements IJMXService<LDAPContext> {
         {
             LOGGER.error("Unable to initialize Ldap integration: " + e.getMessage());
         }
+    }
+
+    public DirContextOperations searchUser(String username) {
+        LDAPContext ldapContext = getType();
+        return ldapContext == null ? null : ldapContext.getFilterBasedLdapUserSearch().searchForUser(username);
     }
 
     @Override

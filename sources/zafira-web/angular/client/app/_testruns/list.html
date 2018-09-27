@@ -1,38 +1,42 @@
 <div class="page" ng-controller="TestRunListController">
-    <div class="row ui-section no-margin">
-        <md-fab-speed-dial id="main-fab" ng-if="getLengthOfSelectedTestRuns() > 0" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_TEST_RUNS', 'TEST_RUNS_CI']">
-            <md-fab-trigger>
-                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
-                    <span class="fa fa-bars" aria-hidden="true"></span>
-                </md-button>
-            </md-fab-trigger>
-            <md-fab-actions>
-                <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
-                    <md-tooltip md-direction="top">Compare</md-tooltip>
-                    <span class="fa fa-columns" aria-hidden="true"></span>
-                </md-button>
-                <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
-                    <md-tooltip md-direction="top">Rerun</md-tooltip>
-                    <span class="fa fa-undo" aria-hidden="true"></span>
-                </md-button>
-                <md-button id="deleteTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" has-any-permission="['MODIFY_TEST_RUNS']">
-                    <md-tooltip md-direction="top">Delete</md-tooltip>
-                    <span class="fa fa-trash" aria-hidden="true"></span>
-                </md-button>
-                <md-button id="abortTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
-                    <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
-                    <span class="fa fa-ban" aria-hidden="true"></span>
-                </md-button>
-                <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="batchEmail($event)" data-ng-if="tools['EMAIL']">
-                    <md-tooltip md-direction="top">Send as email</md-tooltip>
-                    <span class="fa fa-envelope-o" aria-hidden="true"></span>
-                </md-button>
-            </md-fab-actions>
-        </md-fab-speed-dial>
-        <div class="fixed-search-column col-md-12 no-padding">
+    <md-fab-speed-dial id="main-fab" ng-if="getLengthOfSelectedTestRuns() > 0" md-direction="up" class="md-scale md-fab-bottom-right" has-any-permission="['MODIFY_TEST_RUNS', 'TEST_RUNS_CI']">
+        <md-fab-trigger>
+            <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
+                <span class="fa fa-bars" aria-hidden="true"></span>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button id="compareTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-if="getLengthOfSelectedTestRuns() > 1 && areTestRunsFromOneSuite()" ng-click="showCompareDialog($event)">
+                <md-tooltip md-direction="top">Compare</md-tooltip>
+                <span class="fa fa-columns" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="rerunTestRuns" data-ng-if="jenkinsEnabled" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to rerun multiple test runs?" data-ng-really-click="batchRerun()" has-any-permission="['TEST_RUNS_CI']">
+                <md-tooltip md-direction="top">Rerun</md-tooltip>
+                <span class="fa fa-undo" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="deleteTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to delete multiple test runs?" data-ng-really-click="batchDelete()" has-any-permission="['MODIFY_TEST_RUNS']">
+                <md-tooltip md-direction="top">Delete</md-tooltip>
+                <span class="fa fa-trash" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="abortTestRuns" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-really-message="Do you really want to abort multiple test runs?" data-ng-really-click="abortSelectedTestRuns()" has-any-permission="['TEST_RUNS_CI']">
+                <md-tooltip md-direction="top">Abort selected test runs</md-tooltip>
+                <span class="fa fa-ban" aria-hidden="true"></span>
+            </md-button>
+            <md-button id="sendTestRunsAsEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" ng-click="batchEmail($event)" data-ng-if="tools['EMAIL']">
+                <md-tooltip md-direction="top">Send as email</md-tooltip>
+                <span class="fa fa-envelope-o" aria-hidden="true"></span>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
+    <div class="row ui-section col-md-2 no-padding no-margin">
+        <div class="fixed-search-column no-padding">
             <h2 id="pageTitle" class="section-header pull-left">Test runs
-                <small id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
+                <small ng-show="currentMode == 'MANY'" id="itemsCount" data-ng-if="sr">({{sr.totalResults ? sr.totalResults : 0}})</small>
             </h2>
+        </div>
+    </div>
+    <div ng-if="currentMode == 'MANY'" class="row ui-section no-margin">
+        <div class="fixed-search-column col-md-10 no-padding">
             <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
             </button>
@@ -150,7 +154,8 @@
                                             <span>
                                             <strong>{{$chip.name.split('_').join(' ') | lowercase}}</strong>
                                             <span class="chip-operator">{{ SYMBOLS[$chip.operator] }}</span>
-                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) >= 0">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) == -1 || DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) == -1">'{{ $chip.value }}'</span>
+                                            <span ng-if="DATE_CRITERIAS.indexOf($chip.name) != -1 && DATE_CRITERIAS_PICKER_OPERATORS.indexOf($chip.operator) != -1">'{{ $chip.value | date : 'MMM dd yyyy' }}'</span>
                                             </span>
                                         </md-chip-template>
                                         <button md-chip-remove class="md-primary filter-slice-chip-button">
@@ -223,10 +228,10 @@
                 <md-card class="no-margin-h">
                     <md-table-container>
                         <form ng-submit="search()" name="search_form">
-                            <table md-table zafira-background-theme="table">
+                            <table ng-class="{'lonely-testrun' : currentMode != 'MANY'}" md-table zafira-background-theme="table">
                                 <thead md-head>
                                 <tr md-row>
-                                    <th md-column>
+                                    <th ng-show="currentMode == 'MANY'" md-column>
                                         <md-input-container>
                                             <md-checkbox id="searchChechbox" class="md-primary"
                                                          aria-label="Select"
@@ -256,7 +261,7 @@
                                 </thead>
                                 <tbody md-body>
                                 <tr md-row ng-repeat-start="testRun in testRuns | orderObjectBy:'startedAt':true track by $index" ng-class="{'background-gray': testRun.selected}" class="result {{testRun.status}}">
-                                    <td name="testRunStatus" md-cell>
+                                    <td ng-if="currentMode == 'MANY'" name="testRunStatus" md-cell>
                                             <span ng-click="addToSelectedTestRuns(testRun)">
                                         		<md-checkbox name="testRunCheckbox" class="md-primary"
                                                              aria-label="Select"

@@ -25,6 +25,7 @@
                     $scope.invitation = rs.data;
                     $scope.user = {};
                     $scope.user.email = $scope.invitation.email;
+                    $scope.user.source = $scope.invitation.source;
                 } else {
                     $state.go('signin');
                 }

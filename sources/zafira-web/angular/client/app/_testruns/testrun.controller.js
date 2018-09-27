@@ -684,6 +684,14 @@
             $scope.search();
         };
 
+        var MODES = ['ONE', 'MANY'];
+
+        $scope.currentMode = MODES[1];
+
+        function switchMode(index) {
+            $scope.currentMode = MODES[index];
+        };
+
         $scope.search = function (page, pageSize) {
             $scope.sc.date = null;
             $scope.sc.toDate = null;
@@ -700,6 +708,7 @@
 
             if ($scope.testRunId) {
                 $scope.sc.id = $scope.testRunId;
+                switchMode(0);
             }
             else {
                 $scope.sc = ProjectProvider.initProjects($scope.sc);
@@ -839,7 +848,7 @@
             }
         };
 
-        $scope.testRunInDebugMode = {};
+        $scope.testRunInDebugMode = null;
         $scope.debugHost = null;
         $scope.debugPort = null;
 
@@ -858,15 +867,14 @@
                                     value = map[key];
                                     if (value.includes("Listening for transport dt_socket at address:")) {
                                         if (debugLog === '') {
-                                            $scope.debugPort = getPortFromLog(value);
-                                            $scope.debugHost = new URL($rootScope.jenkins.url).hostname;
+                                            getDebugData(value)
                                         }
                                         $timeout.cancel(connectDebugTimeout);
 
                                         disconnectDebugTimeout = $timeout(function () {
                                             $scope.stopDebugMode();
                                             closeToast();
-                                        }, 60*10*1000);
+                                        }, 60 * 10 * 1000);
 
                                         if (debugLog === '') {
                                             debugLog = value;
@@ -880,8 +888,7 @@
                                     }
                                 });
                             } else {
-                                $scope.stopConnectingDebug();
-                                $timeout.cancel(connectDebugTimeout);
+                                $scope.stopDebugMode();
                                 alertify.error(rs.message);
                             }
                         });
@@ -889,13 +896,13 @@
 
                     var connectDebugTimeout = $timeout(function () {
                         alertify.error("Problems with starting debug mode occurred, disabling");
-                        $scope.stopConnectingDebug();
-                    }, 60*10*1000);
+                        $scope.stopDebugMode();
+                    }, 60 * 10 * 1000);
 
                     $scope.stopConnectingDebug = function () {
-                        $timeout.cancel(connectDebugTimeout);
-                        $timeout.cancel(disconnectDebugTimeout);
                         $interval.cancel(parseLogsInterval);
+                        $timeout.cancel(disconnectDebugTimeout);
+                        $timeout.cancel(connectDebugTimeout);
                     };
 
                 } else {
@@ -908,17 +915,19 @@
             $scope.stopConnectingDebug();
             if($scope.testRunInDebugMode){
                 $scope.abortDebug($scope.testRunInDebugMode);
-                $scope.testRunInDebugMode = {};
+                $scope.testRunInDebugMode = null;
                 $scope.debugHost = null;
                 $scope.debugPort = null;
+                alertify.warning("Debug mode is disabled");
             }
-            alertify.warning("Debug mode is disabled");
         };
 
-        function getPortFromLog(log){
+        function getDebugData(log){
             if(log){
-                var portLine = log.slice(log.indexOf('address:'));
-                return portLine.split(" ")[1];
+                var portLine = log.split('Enabling remote debug on ');
+                var debugValues = portLine[1].split(":");
+                $scope.debugHost = debugValues[0];
+                $scope.debugPort = debugValues[1].split("\n")[0];
             }
         }
 

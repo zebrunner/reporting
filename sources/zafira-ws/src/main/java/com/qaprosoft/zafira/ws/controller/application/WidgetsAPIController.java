@@ -23,21 +23,12 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.db.Attachment;
-import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.DashboardEmailType;
-import com.qaprosoft.zafira.services.services.application.EmailService;
-import com.qaprosoft.zafira.services.services.application.SeleniumService;
-import com.qaprosoft.zafira.services.services.auth.JWTService;
-import com.qaprosoft.zafira.services.services.application.emails.DashboardEmail;
-import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,11 +45,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.qaprosoft.zafira.dbaccess.utils.SQLAdapter;
+import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Attribute;
+import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.Widget;
+import com.qaprosoft.zafira.models.dto.DashboardEmailType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
+import com.qaprosoft.zafira.services.services.application.EmailService;
+import com.qaprosoft.zafira.services.services.application.SeleniumService;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.WidgetService;
+import com.qaprosoft.zafira.services.services.application.emails.DashboardEmail;
+import com.qaprosoft.zafira.services.services.auth.JWTService;
+import com.qaprosoft.zafira.services.util.URLResolver;
+import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -71,11 +71,10 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("api/widgets")
 public class WidgetsAPIController extends AbstractController
 {
-
 	private static final Logger LOGGER = Logger.getLogger(WidgetsAPIController.class);
 
-	@Value("${zafira.webservice.url}")
-	private String wsURL;
+	@Autowired
+	private URLResolver urlResolver;
 
 	@Autowired
 	private WidgetService widgetService;
@@ -168,11 +167,11 @@ public class WidgetsAPIController extends AbstractController
 				.replaceAll("#\\{dashboardName\\}", !StringUtils.isEmpty(dashboardName) ? dashboardName : "")
 				.replaceAll("#\\{currentUserId\\}", !StringUtils.isEmpty(currentUserId) ? currentUserId : String.valueOf(getPrincipalId()))
 				.replaceAll("#\\{currentUserName\\}", String.valueOf(getPrincipalName()))
-				.replaceAll("#\\{zafiraURL\\}", StringUtils.removeEnd(wsURL, "-ws"))
+				.replaceAll("#\\{zafiraURL\\}", urlResolver.buildWebURL())
 				.replaceAll("#\\{jenkinsURL\\}", settingsService.getSettingByName("JENKINS_URL").getValue())
 				.replaceAll("#\\{hashcode\\}", "0")
 				.replaceAll("#\\{testCaseId\\}", "0");
-
+			
             resultList = widgetService.executeSQL(query);
         }
         catch (Exception e) {
