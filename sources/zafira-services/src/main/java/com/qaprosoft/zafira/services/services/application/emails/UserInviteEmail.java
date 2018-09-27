@@ -16,18 +16,26 @@
 package com.qaprosoft.zafira.services.services.application.emails;
 
 import com.qaprosoft.zafira.models.db.Attachment;
+import com.qaprosoft.zafira.models.db.User;
 
 import java.util.List;
 
-public class UserInviteEmail extends AbstractEmail {
+public class UserInviteEmail implements IEmailMessage {
 
     private static final String SUBJECT = "Invitation to Zafira";
 
     private String token;
+    private String zafiraLogoURL;
+    private String companyLogoURL;
+    private String workspaceURL;
+    private User.Source source;
 
-    public UserInviteEmail(String token, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
-        super(SUBJECT, zafiraLogoURL, companyLogoURL, workspaceURL);
+    public UserInviteEmail(String token, String zafiraLogoURL, String companyLogoURL, String workspaceURL, User.Source source) {
         this.token = token;
+        this.zafiraLogoURL = zafiraLogoURL;
+        this.companyLogoURL = companyLogoURL;
+        this.workspaceURL = workspaceURL;
+        this.source = source;
     }
 
     public String getToken() {
@@ -36,6 +44,38 @@ public class UserInviteEmail extends AbstractEmail {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getZafiraLogoURL() {
+        return zafiraLogoURL;
+    }
+
+    public void setZafiraLogoURL(String zafiraLogoURL) {
+        this.zafiraLogoURL = zafiraLogoURL;
+    }
+
+    public String getCompanyLogoURL() {
+        return companyLogoURL;
+    }
+
+    public void setCompanyLogoURL(String companyLogoURL) {
+        this.companyLogoURL = companyLogoURL;
+    }
+
+    public String getWorkspaceURL() {
+        return workspaceURL;
+    }
+
+    public void setWorkspaceURL(String workspaceURL) {
+        this.workspaceURL = workspaceURL;
+    }
+
+    public User.Source getSource() {
+        return source;
+    }
+
+    public void setSource(User.Source source) {
+        this.source = source;
     }
 
     @Override

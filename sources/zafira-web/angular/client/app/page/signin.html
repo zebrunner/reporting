@@ -1,65 +1,50 @@
-<div class="page-signin" ng-controller="AuthController">
-        <div class="wrapper">
-            <div class="main-body">
-                    <div class="card bg-white">
-                        <div class="card-content">
-    
-                            <section class="logo-container">
-                                <div class="logo"></div>
-                            </section>
-    
-                            <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
-                                <div class="callout callout-danger" ng-if="!credentials.valid">
-                                    <p>Invalid credentials</p>
-                                </div>
-                                <fieldset>
-                                    <md-input-container class="md-block">
-                                        <label class="placeholder-label">Username</label>
-                                        <input
-                                               type="text"
-                                               name="username"
-                                               id="username"
-                                               ng-model="credentials.username"/>
-                                        <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
-                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                                       </div>
-                                    </md-input-container>
-                                    <md-input-container class="md-block">
-                                        <label class="placeholder-label">Password</label>
-                                        <input
-                                               type="password"
-                                               name="password"
-                                               id="password"
-                                               ng-model="credentials.password"/>
-                                               <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
-                                                    <div ng-message="required" data-translate="VLD_REQUIRED"></div>
-                                               </div>
-                                    </md-input-container>
-                                    <div layout="row" class="align-middle button-container" layout-align="space-between">
-                                        <a href="" >Forgot your password?</a>
-                                        <md-button type="submit"
-                                                   id="signin"
-                                                   class="btn-w-sm md-primary signin"
-                                                   ng-disabled="signin_form.$invalid">Sign in</md-button>
+<div class="page-signin" ng-controller="LoginController">
+
+    <div class="wrapper">
+        <div class="main-body">
+            <div class="body-inner">
+                <div class="card bg-white">
+                    <div class="card-content">
+
+                        <section class="logo text-center">
+                            <h1>ZAFIRA</h1>
+                        </section>
+
+                        <form class="form-horizontal">
+                            <fieldset>
+                                <div class="form-group">
+                                    <div class="ui-input-group">        
+                                        <input type="text" required class="form-control">
+                                        <span class="input-bar"></span>
+                                        <label>Email</label>
                                     </div>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>      
+                                </div>
+                                <div class="form-group">
+                                    <div class="ui-input-group">        
+                                        <input type="text" required class="form-control">
+                                        <span class="input-bar"></span>
+                                        <label>Password</label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="card-action no-border text-right">
+                        <a href="#!/" class="color-primary">Sign in</a>
+                    </div>
                 </div>
-                
-        </div>
-        
-        <div class="additional-background">
-            <div class="text">
-                <p>Hooray! <br/> We have some new features for you.</p>
-                <p>Now you are capable to track automation results in more profound way: real-time test streaming and video recording.</p>
+
+                <div class="additional-info">
+                	<!--  
+                    <a href="#!/page/signup">Register</a>
+                    <span class="divider-h"></span>
+                    -->
+                    <a href="#!/page/forgot-password">Forgot your password?</a>
+                </div>
+
             </div>
-            <div class="robot"></div>
         </div>
-        <div class="additional-info">
-                <small>© 2018 Zafira all rights reserved</small>
-                <br/>
-                <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
-        </div>
-    </div> 
+
+    </div>
+
+</div>

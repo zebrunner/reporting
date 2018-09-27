@@ -193,7 +193,7 @@
             }
         };
 
-        $scope.showUploadImageDialog = function ($event) {
+        $scope.showUploadImageDialog = function ($event, user) {
             $mdDialog.show({
                 controller: FileUploadController,
                 templateUrl: 'app/_users/upload_image_modal.html',
@@ -201,18 +201,20 @@
                 targetEvent: $event,
                 clickOutsideToClose: true,
                 fullscreen: true,
-                scope: $scope,
-                preserveScope: true
+                locals: {
+                    user : user
+                }
             })
-                .then(function (answer) {
-                    if (answer) {
-                        $state.reload();
+                .then(function () {
+                }, function (data) {
+                    if(data) {
+                        user.photoURL = data.photoURL += '?' + (new Date()).getTime();
                     }
-                }, function () {
                 });
         };
 
-        function FileUploadController($scope, $mdDialog) {
+        function FileUploadController($scope, $mdDialog, user) {
+            $scope.user = user;
             $scope.uploadImage = function (multipartFile) {
                 UploadService.upload(multipartFile, FILE_USERS_TYPE).then(function (rs) {
                     if(rs.success)
@@ -224,8 +226,7 @@
                             .then(function (prs) {
                                 if(prs.success)
                                 {
-                                    $scope.user = prs.data;
-                                    $scope.hide();
+                                    $scope.cancel(prs.data);
                                 }
                             });
                         alertify.success("Photo was uploaded");
@@ -237,10 +238,10 @@
                 });
             };
             $scope.hide = function() {
-                $mdDialog.hide(true);
+                $mdDialog.hide();
             };
-            $scope.cancel = function() {
-                $mdDialog.cancel(false);
+            $scope.cancel = function(data) {
+                $mdDialog.cancel(data);
             };
         }
 

@@ -23,6 +23,7 @@ public class Invitation extends AbstractEntity {
     private String token;
     private User createdBy;
     private Status status;
+    private User.Source source;
     private Long groupId;
 
     public enum Status {
@@ -67,6 +68,14 @@ public class Invitation extends AbstractEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public User.Source getSource() {
+        return source;
+    }
+
+    public void setSource(User.Source source) {
+        this.source = source;
     }
 
     public Long getGroupId() {
