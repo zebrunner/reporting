@@ -1,7 +1,10 @@
 .body-auth {
     background: $skin-gray url('data:img/png;base64,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') no-repeat left top scroll;
     background-size: auto calc(100vh - 180px);
-    @media (max-width:$screen-tablet) {
+    @media (max-height: 700px){
+        background-size: 550px 550px;
+    }
+    @media (max-width:$screen-tablet){
         background-size: 67vw auto;
     }
     @media (max-width:$screen-phone) {
@@ -34,116 +37,147 @@
 .page-forgot,
 .page-message,
 .page-change {
-    .placeholder-label{
-        color: #888888;
-        font-weight: normal;
-        padding-bottom: 5px;
-    }
-    .md-block{
-        margin: 12px 0;
+    @media (max-height: 700px) and (min-width: 1230px){
+        height: 700px;
+        min-height: auto;
     }
     @media (min-width: $screen-phone){
         margin-top: -65px;
     }
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        margin-top: -128px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-top: -128px;
+    
+    .placeholder-label{
+        padding-left: 0px !important;
+        color: #888888;
+        font-weight: normal !important;
+        padding-bottom: 5px;
+    }
+
+    .md-block{
+        margin: 12px 0;
+    }
+    
     .wrapper {
         padding: 0 30px;
         flex: 1 0 auto;
     }
+
     .main-body {
         max-width: 440px;
-        min-height: 320px;
-        @media (min-width: 1230px){
-            margin: -10px auto;
-        }
+        min-height: 315px;
         margin: 10px auto;
-       
+        @media (min-width: 1230px){
+            margin: 0px auto;
+        }
+        @media (min-width: 1230px){
+            margin-top: -10px;
+        }  
         .body-inner{
-            min-height: 320px;
+            min-height: 315px;
             .card{
-                min-height: 320px;
+                min-height: 315px;
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                .message{
-                    font-size: 14px;
-                    text-align: left;
-                }
+                
             }
         }
     }
+    .message{
+        margin-top: 48px;
+        font-weight: normal;
+        text-align: left;
+        line-height: 19px;
+        letter-spacing: 0.01px;
+        font-size: $font-size-h5;
+        margin-bottom: 111px;
+    }
     #signin{
-        padding: 5px 0 5px 10px;
+        padding: 5px 0 5px 12px;
+        font-weight: normal;
+        letter-spacing: 0.02px;
+        @media (min-width: 1230px){
+            padding: 5px 0 5px 10px;
+        }
         &:hover{
             background-color: $reverse;
             text-decoration: underline;
         }
     }
+    #changepwd{
+        margin-right: -27px;
+        font-weight: normal;
+    }
+    
     .additional-info {
         color: #898989;
         z-index: -2;
-        bottom: 0;
-        left: 0;
-        right: 0;
         line-height: 10px;
         padding-bottom: 10px;
-        @media (max-width: $screen-phone){
-            text-align: left;
-            padding-left: 30px;
-            font-size: $font-size-small;
-        }
-        @media (min-width: 1230px){
-            position: fixed;
-            bottom: 30px;
-            line-height: 17px;
-            letter-spacing: 0.2px;
-            font-size: $font-size-h5;
-        }
         margin-bottom: 5px;
         position: static;
         flex: 0 0 auto;
         height: 25px;
         text-align: center;
         font-size: $font-size-small;
+        @media (max-width: $screen-phone){
+            text-align: left;
+            padding-left: 30px;
+            font-size: $font-size-small;
+        }
+        @media (min-width: 1230px){
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: fixed;
+            bottom: 30px;
+            line-height: 15px;
+            letter-spacing: 0.1px;
+            font-size: $font-size-h5;
+        }
+        @media (max-height: 700px) and (min-width: 1230px){
+            position: static; 
+            margin-bottom: 30px;
+        }
     }
+
     .card {
         @extend .z-depth-2;
         .card-content {
             padding: 20px;
         }
     }
-    .ui-input-group {
-        .form-control {
-            color: $gray;
-        }
-    }
-    .form-group {
-        position: relative;
-        margin: 0;
-    }
+    
     .wrapper {
         margin-top: 70px;
         @media (min-width: $screen-phone) {
             margin-top: 170px;
         }
     }
+
     .logo-container{
         height: 50px;
-        margin-bottom: 72px;
-        @media (min-width:1230px){
+        margin-bottom: 40px;
+        @media (min-width: 1230px){
             margin-bottom: 32px;
         }
         .logo{
             width: 50px;
             border-radius: 50%;
-            height: 50px;
+            height: 50px; 
             background-size: cover !important;
         }
     }
     
+    .comment{
+        margin-top: -25px;
+        margin-bottom: 75px;
+    }
+
     .button-container{
         margin-top: 27px;
         display: flex;
@@ -167,47 +201,42 @@
             margin: 0px 30px;
         }
         @media (min-width: 1230px){
-            margin-right: 107px;
+            margin-right: 108px;
             position: fixed;
             right:0;
             bottom: 0;
         }
-        p:first-child{
-            font-weight: bold;
-        }
-        @media (max-width: $screen-phone){
-            .text p{
-                line-height: 14px;
-                letter-spacing: 0.07px;
-            }
-            .text p:first-child{
-                margin-bottom: 17px;
-                line-height: 18px;
-                letter-spacing: 0.5px;
-            }
-            p:first-child{
-                font-size: $font-size-h5;
-            }
-            font-size: 11px; 
-        }
-        @media (min-width: $screen-phone){
-            p:first-child{
-                font-size: $font-size-h3;
-            }
-            font-size: $font-size-h4;
+        @media (max-height: 700px) and (min-width: 1230px){
+            position: static;
+            margin-top: -370px;  
+            margin-right: 50px;
         }
         
         .text{
+            p:first-child{
+                font-weight: bold;
+            }
             color: #000000;
-            @media (min-width: 1230px){
-                margin-bottom: 0;
-                width: 23%;
-                margin-right: 55px;
+            @media (max-width: $screen-phone){
+                width: 55%;
+                p{
+                    line-height: 13.9px;
+                    letter-spacing: 0.07px;
+                }  
+                p:first-child{
+                    margin-bottom: 17px;
+                    line-height: 18px;
+                    letter-spacing: 0.45px;
+                    font-size: $font-size-h5;
+                }
+                font-size: 11px; 
+            }
+            @media (min-width: $screen-phone){
                 
                 p:first-child{
-                    line-height: 30px;
-                    margin-bottom: 27px;
+                    font-size: $font-size-h3;
                 }
+                font-size: $font-size-h4;
             }
             @media (min-width: $screen-phone) and (max-width: 1230px){
                 p{
@@ -218,30 +247,40 @@
                     margin-bottom: 16px;
                 }
                 width: 42%;
-                margin-bottom: -55px;
-                margin-right: 6vw;
+                max-width: 245px;
+                margin-bottom: -52px;
+                margin-right: 47px;
             }
             @media (min-width: 1230px){
+                margin-bottom: 0;
+                width: 23%;
+                min-width: 245px;
+                margin-right: 35px;
+                p:first-child{
+                    line-height: 29px;
+                    margin-bottom: 29px;
+                }
                 p:nth-child(2){
-                    line-height: 22px;
+                    line-height: 21px;
                 }
             }
-            width: 55%;
+            @media (max-height: 700px) and (min-width: 1230px){
+                width: 15.5%;
+            }
         }
         .robot{
             @media (min-width: 1230px){
                 margin-bottom: 0;
-                width: 12vw;
-                height: 12vw;
-                max-height: 200px;
-                max-width: 200px;
+                max-height: 172px;
+                max-width: 171px;
             }
             @media (min-width: $screen-phone) and (max-width: 1230px){
-                margin-right: 1vw;
-                max-width: 150px;
-                max-height: 150px;
-                width: 22vw;
-                height: 22vw;
+                margin-right: 8px;
+                max-width: 165px;
+                max-height: 165px;
+            }
+            @media (max-height: 700px) and (min-width: 1230px){
+                margin-bottom: -55px; 
             }
             margin-bottom: -30px;
             width: 29vw;  
@@ -250,12 +289,12 @@
             background-size: 100%;
         }
         .line{
-            transform: rotate(12deg);
+            transform: rotate(8deg);
             width: 55px;  
-            height: 55px;
+            height: 48px;
             margin-left: 50px;
             margin-top: 26px;
-            margin-bottom: -40px;
+            margin-bottom: -33px;
             background: url(../../assets/images/background/line.svg) right bottom no-repeat;
             background-size: 100%;
             @media (max-width: $screen-phone){
@@ -263,8 +302,8 @@
             }
             @media (min-width: 1230px){
                 margin-left: 70px;
-                margin-top: 33px;
-                margin-bottom: -70px;
+                margin-top: 42px;
+                margin-bottom: -66px;
             }
         }
     }
