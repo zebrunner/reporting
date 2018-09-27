@@ -46,6 +46,8 @@
 	<security:http pattern="/api/websockets/**" security="none" />
 	<security:http pattern="/api/auth/tenant" security="none" />
 	<security:http pattern="/api/invitations/info" security="none" />
+	<security:http pattern="/api/auth/signup" security="none" />
+	<security:http pattern="/api/auth/password/**" security="none" />
 
 	<!-- Protected API end-points -->
 	<security:http realm="Protected API" use-expressions="true" auto-config="false" create-session="stateless" entry-point-ref="unauthorizedEntryPoint" >
