@@ -64,12 +64,8 @@
         padding: 0 30px;
         flex: 1 0 auto;
     }
-    form, fieldset{
-        min-height: 213px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between !important;
-    }
+    
+    
     .main-body {
         max-width: 440px;
         min-height: 315px;
@@ -94,7 +90,7 @@
             min-height: 315px;
         }
     }
-    .text-small{
+    .added-small{
         padding: 20px;
     }
     .message{
@@ -119,7 +115,9 @@
         }
     }
     #changepwd{
-        margin-right: -27px;
+        position: absolute;
+        right: -20px;
+        bottom: 10px;
         font-weight: normal;
     }
     
@@ -185,7 +183,6 @@
     
     .comment{
         margin-top: -25px;
-        margin-bottom: 75px;
     }
 
     .button-container{

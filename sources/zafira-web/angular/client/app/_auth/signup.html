@@ -1,88 +1,87 @@
 <div class="page-signup" ng-controller="AuthController">
 
-    <div class="wrapper">
-        <div class="main-body">
-            <div class="body-inner">
-
-                <div class="card bg-white">
-                    <div class="card-content">
-                        <section class="logo-container">
-                            <img class="logo" ng-src="{{companyLogo.value}}">
-                        </section>
-
-                        <form class="form-horizontal" name="signup_form">
-                            <fieldset>
-                                <md-input-container class="md-block">
-                                    <label class="placeholder-lable">Email</label>
-                                    <input required
-                                           type="email"
-                                           name="email"
-                                           id="email"
-                                           ng-model="user.email"
-                                           class="form-control"
-                                           disabled/>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <span class="input-bar"></span>
-                                    <label class="placeholder-lable">Username</label>
-                                    <input required
-                                           ng-change="onChange(signup_form.username);"
-                                           type="text"
-                                           name="username"
-                                           id="username"
-                                           autocomplete="new-password"
-                                           ng-model="user.username"
-                                           class="form-control"
-                                           ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
-                                    <div ng-messages="signup_form.username.$error">
-                                        <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
+        <div class="wrapper">
+            <div class="main-body">
+                <div class="body-inner">
+    
+                    <div class="card bg-white">
+                        <div class="card-content">
+                            <section class="logo-container">
+                                <img class="logo" ng-src="{{companyLogo.value}}">
+                            </section>
+    
+                            <form class="form-horizontal" name="signup_form">
+                                <fieldset>
+                                    <md-input-container class="md-block">
+                                        <label class="placeholder-lable">Email</label>
+                                        <input required
+                                               type="email"
+                                               name="email"
+                                               id="email"
+                                               ng-model="user.email"
+                                               class="form-control"
+                                               disabled/>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <span class="input-bar"></span>
+                                        <label class="placeholder-lable">Username</label>
+                                        <input required
+                                               ng-change="onChange(signup_form.username);"
+                                               type="text"
+                                               name="username"
+                                               id="username"
+                                               autocomplete="new-password"
+                                               ng-model="user.username"
+                                               class="form-control"
+                                               ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
+                                        <div ng-messages="signup_form.username.$error">
+                                            <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
+                                                <span ng-if="validation.additional">
+                                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                    {{ validation.message }}
+                                                </span>
+                                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                            </div>
+                                            <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
                                         </div>
-                                        <div ng-message="validationError">{{ signup_form.username.errorMessage }}</div>
-                                    </div>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <span class="input-bar"></span>
-                                    <label class="placeholder-lable">Password</label>
-                                    <input required
-                                           autocomplete="new-password"
-                                           type="password"
-                                           password-eye="mousedown - mouseup"
-                                           name="password"
-                                           id="password"
-                                           ng-model="user.password"
-                                           ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
-                                    <div ng-messages="signup_form.password.$error" ng-if="signup_form.password.$dirty">
-                                        <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                    </md-input-container>
+                                    <md-input-container class="md-block">
+                                        <span class="input-bar"></span>
+                                        <label class="placeholder-lable">Password</label>
+                                        <input required
+                                               autocomplete="new-password"
+                                               type="password"
+                                               password-eye="mousedown - mouseup"
+                                               name="password"
+                                               id="password"
+                                               ng-model="user.password"
+                                               ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                                        <div ng-messages="signup_form.password.$error" ng-if="signup_form.password.$dirty">
+                                            <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
+                                                <span ng-if="validation.additional">
+                                                    <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                    {{ validation.message }}
+                                                </span>
+                                                <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                            </div>
                                         </div>
+                                    </md-input-container>
+                                    <div class="divider"></div>
+                                    <div class="form-group">
+                                        <p class="added-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
                                     </div>
-                                </md-input-container>
-                                <div class="divider"></div>
-                                <div class="form-group">
-                                    <p class="text-small">By clicking on sign up, you agree to <a href="javascript:;"><i>terms</i></a> and <a href="javascript:;"><i>privacy policy</i></a></p>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                    <div class="card-action no-border text-right">
-                        <a href="#!/auth/signin">Login</a>
-                        <a ng-disabled="signup_form.$invalid" ng-click="signup(user, signup_form);" href="" class="color-primary">Sign Up</a>
-                    </div>
-                </div> 
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="card-action no-border text-right">
+                            <a href="#!/auth/signin">Login</a>
+                            <a ng-disabled="signup_form.$invalid" ng-click="signup(user, signup_form);" href="" class="color-primary">Sign Up</a>
+                        </div>
+                    </div> 
+                </div>
             </div>
+            
         </div>
-<<<<<<< HEAD
-=======
         <div ng-include="roboFooter"></div>
->>>>>>> 23f661356a33681fa7e41487a7c1e64789dd6547
     </div>
-</div>
+    
