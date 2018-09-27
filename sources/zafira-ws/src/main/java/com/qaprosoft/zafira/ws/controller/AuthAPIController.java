@@ -15,9 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -32,6 +29,7 @@ import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
+import com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +74,9 @@ public class AuthAPIController extends AbstractController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private LDAPService ldapService;
 
 	@Autowired
 	private GroupService groupService;
@@ -146,11 +147,17 @@ public class AuthAPIController extends AbstractController {
 			throw new EntityAlreadyExistsException("username", User.class, false);
 		}
 		Invitation invitation = invitationService.getInvitationByToken(token);
+		if(invitation == null) {
+			throw new ForbiddenOperationException();
+		}
+		if(invitation.getSource().equals(User.Source.LDAP)) {
+			if(ldapService.searchUser(userType.getUsername()) == null) {
+				throw new ForbiddenOperationException();
+			}
+		}
+		userType.setSource(invitation.getSource());
 		invitation.setStatus(Invitation.Status.ACCEPTED);
 		invitationService.updateInvitation(invitation);
-		List<Group.Role> roles = new ArrayList<>();
-		roles.add(Group.Role.ROLE_USER);
-		userType.setRoles(roles);
 		userService.createOrUpdateUser(mapper.map(userType, User.class), groupService.getGroupById(invitation.getGroupId()));
 	}
 

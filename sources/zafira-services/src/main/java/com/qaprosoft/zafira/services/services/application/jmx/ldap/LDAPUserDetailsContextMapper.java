@@ -17,6 +17,7 @@ package com.qaprosoft.zafira.services.services.application.jmx.ldap;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
+import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -50,28 +51,8 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 		try
 		{
 			user = userService.getUserByUsername(username);
-			if(user == null)
-			{
-				String email = operations.getStringAttribute("mail");
-				String cn = operations.getStringAttribute("cn");
-				String sn = operations.getStringAttribute("sn");
-				if(!StringUtils.isEmpty(email) && ! StringUtils.isEmpty(cn) && ! StringUtils.isEmpty(sn))
-				{
-					String[] cna = cn.split(" ");
-					String firstName = cna.length == 2 ? cna[0] : cn;
-					String lastName = cna.length == 2 ? cna[1] : sn;
-					user = new User();
-					user.setUsername(username);
-					user.setEmail(email);
-					user.setFirstName(firstName);
-					user.setLastName(lastName);
-					user.setSource(LDAP);
-					user.setPassword(null);
-					user = userService.createOrUpdateUser(user);
-				} else
-				{
-					userService.getUserByUsername(ANONYMOUS);
-				}
+			if(user == null) {
+				throw new ForbiddenOperationException();
 			}
 		} catch (ServiceException e)
 		{

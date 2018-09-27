@@ -54,6 +54,7 @@
             });
             var userTabIndex = $scope.tabs.indexOfField('name', userTab.name);
             $location.search('email', invite.email);
+            $scope.search(1);
             $scope.switchTab(userTab, userTabIndex);
         };
 

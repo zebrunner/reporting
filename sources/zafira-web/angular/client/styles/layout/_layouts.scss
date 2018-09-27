@@ -17,7 +17,7 @@
     &.app > .main-container > .nav-container,
     &.app > .main-container > .content-container,
     .header-container > .top-header .logo,
-    .header-container > .top-header .top-nav{
+    .header-container > .top-header .top-nav {
         transition: none;
     }
 }
@@ -53,7 +53,7 @@ html {
 
         }
 
-        // .top-header {}
+        .top-header {}
     }
 
     > .main-container {

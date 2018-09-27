@@ -27,13 +27,13 @@ public class UserTableRow extends AbstractRow
 	@FindBy(xpath = ".//td[5]//span[contains(@class, 'label')]")
 	private WebElement statusLabel;
 
-	@FindBy(xpath = ".//td[6]/span")
+	@FindBy(xpath = ".//td[7]/span")
 	private WebElement registrationDate;
 
-	@FindBy(xpath = ".//td[6]//span[contains(@class, 'time')]")
+	@FindBy(xpath = ".//td[7]//span[contains(@class, 'time')]")
 	private WebElement lastLogin;
 
-	@FindBy(xpath = ".//td[7]//button[contains(@class, 'md-icon-button ')]")
+	@FindBy(xpath = ".//td[8]//button[contains(@class, 'md-icon-button ')]")
 	private UserSettingMenu userSettingMenu;
 
 	public UserTableRow(WebDriver driver, SearchContext context)

@@ -15,9 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.qaprosoft.zafira.models.db.AbstractEntity;
 import org.hibernate.validator.constraints.Email;
+import com.qaprosoft.zafira.models.db.User;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,6 +33,9 @@ public class InvitationType extends AbstractEntity {
     @NotNull(message = "{error.email.required}")
     @Email(message = "{error.email.invalid}")
     private String email;
+
+    @NotNull(message = "{error.source.required}")
+    private User.Source source;
 
     @NotNull(message = "{error.group.required}")
     private Long groupId;
@@ -46,5 +54,19 @@ public class InvitationType extends AbstractEntity {
 
     public void setGroupId(Long groupId) {
         this.groupId = groupId;
+    }
+
+    public User.Source getSource() {
+        return source;
+    }
+
+    public void setSource(User.Source source) {
+        this.source = source;
+    }
+
+    @AssertTrue(message = "{error.email.invalid}")
+    @JsonIgnore
+    public boolean isEmailConfirmationValid() {
+        return this.email == null || new EmailValidator().isValid(this.email, null);
     }
 }

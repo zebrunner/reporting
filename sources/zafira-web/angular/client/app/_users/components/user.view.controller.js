@@ -22,9 +22,6 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USERS', 'VIEW_USERS']);
-                },
-                onActive: function () {
-                    $scope.search(1);
                 }
             },
             {
@@ -35,9 +32,6 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyPermission(['MODIFY_USER_GROUPS']);
-                },
-                onActive: function () {
-
                 }
             },
             {
@@ -49,20 +43,16 @@
                 fabControlsCount: 1,
                 show: function () {
                     return AuthService.UserHasAnyRole(['ROLE_ADMIN']) && AuthService.UserHasAnyPermission(['INVITE_USERS', 'MODIFY_INVITATIONS']);
-                },
-                onActive: function () {
-
                 }
             }
         ];
 
-        $scope.activeTab = $scope.tabs[0];
-
         $scope.switchTab = function (toTab, index) {
             $scope.activeTab = toTab;
             $scope.selectedTabIndex = index != undefined ? index : $scope.selectedTabIndex;
-            $scope.activeTab.onActive();
         };
+
+        $scope.activeTab = $scope.tabs[0];
 
         var DEFAULT_SC = {page : 1, pageSize : 20};
         $scope.sc = angular.copy(DEFAULT_SC);
@@ -291,7 +281,8 @@
                 clickOutsideToClose:false,
                 fullscreen: true,
                 locals: {
-                    groups: GroupService.groups
+                    groups: GroupService.groups,
+                    isLDAPConnected: $rootScope.tools['LDAP']
                 }
             })
                 .then(function(invitations) {
@@ -305,16 +296,23 @@
         };
 
         (function initController() {
+            $scope.search(1);
         })();
     };
 
     // **************************************************************************
-    function InviteController($scope, $mdDialog, InvitationService, UtilService, groups) {
+    function InviteController($scope, $mdDialog, InvitationService, UtilService, groups, isLDAPConnected) {
+
+        $scope.isLDAPConnected = isLDAPConnected;
+
+        $scope.source = null;
 
         $scope.tryInvite = false;
         $scope.emails = [];
         $scope.groups = angular.copy(groups);
         $scope.userGroup = undefined;
+
+        $scope.SOURCES = ['INTERNAL', 'LDAP'];
 
         var chipCtrl;
         var startedEmail;
@@ -329,7 +327,7 @@
             }
             if(emails && emails.length > 0) {
                 $scope.tryInvite = true;
-                InvitationService.invite(toInvite(emails, $scope.userGroup)).then(function (rs) {
+                InvitationService.invite(toInvite(emails, $scope.userGroup, $scope.source)).then(function (rs) {
                     if (rs.success) {
                         var message = emails.length > 1 ? "Invitations were sent." : "Invitation was sent.";
                         alertify.success(message);
@@ -352,10 +350,10 @@
             }
         };
 
-        function toInvite(emails, groupId) {
+        function toInvite(emails, groupId, source) {
             return {
                 invitationTypes: emails.map(function (email) {
-                                return {'email': email, 'groupId': groupId};
+                                return {'email': email, 'groupId': groupId, 'source': source && $scope.SOURCES.indexOf(source) >= 0 ? source : 'INTERNAL'};
                             })};
         };
 

@@ -161,7 +161,7 @@ public class InvitationService {
     }
 
     private void sendEmail(Invitation invitation) throws ServiceException {
-        UserInviteEmail userInviteEmail = new UserInviteEmail(invitation.getToken(), zafiraLogoURL, settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL), urlResolver.buildWebURL());
+        UserInviteEmail userInviteEmail = new UserInviteEmail(invitation.getToken(), zafiraLogoURL, settingsService.getSettingValue(Setting.SettingType.COMPANY_LOGO_URL), urlResolver.buildWebURL(), invitation.getSource());
         emailService.sendEmail(userInviteEmail, invitation.getEmail());
     }
 }
