@@ -40,7 +40,6 @@ import org.apache.log4j.spi.LoggingEvent;
 import com.qaprosoft.zafira.client.ZafiraClient.Response;
 import com.qaprosoft.zafira.client.ZafiraSingleton;
 import com.qaprosoft.zafira.listener.ZafiraListener;
-import com.qaprosoft.zafira.models.dto.TestType;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -526,12 +525,11 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		AppenderTask(LoggingEvent loggingEvent)
 		{
 			this.loggingEvent = loggingEvent;
-			Long testId = null;
-			if(loggingEvent.getLevel().equals(MetaInfoLevel.META_INFO) && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("TEST_ID") != null) {
-				testId = Long.valueOf(((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("TEST_ID"));
+			String testId = null;
+			if(loggingEvent.getLevel().equals(MetaInfoLevel.META_INFO) && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID") != null) {
+				testId = ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID");
 			} else {
-				TestType test = ZafiraListener.getTestbythread().get(Thread.currentThread().getId());
-				testId = test != null ? test.getId() : null;
+				testId = ZafiraListener.getThreadCiTestId();
 			}
 			this.correlationId = testId != null ? routingKey + "_" + String.valueOf(testId) : routingKey;
 		}

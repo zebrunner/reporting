@@ -25,13 +25,16 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.commons.configuration2.*;
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -105,7 +108,9 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private TestRunType run = null;
 	private Map<String, TestType> registeredTests = new HashMap<>();
 	private Set<String> classesToRerun = new HashSet<>();
-	private static final ConcurrentHashMap<Long, TestType> testByThread = new ConcurrentHashMap<Long, TestType>();
+	
+	private static ThreadLocal<String> threadCiTestId = new InheritableThreadLocal<>();
+	private static ThreadLocal<TestType> threadTest = new InheritableThreadLocal<>();
 	
 	private Marshaller marshaller;
 	
@@ -281,12 +286,13 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId());
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
 			// TODO: investigate why we need it
-			testByThread.put(Thread.currentThread().getId(), startedTest);
+			threadTest.set(startedTest);
+//			testByThread.put(Thread.currentThread().getId(), startedTest);
 			
 			registeredTests.put(testName, startedTest);
 			
@@ -370,7 +376,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		try 
 		{
 			// Test skipped manually from test body
-			TestType test = testByThread.get(Thread.currentThread().getId());
+			TestType test = threadTest.get();//testByThread.get(Thread.currentThread().getId());
 			// Test skipped when upstream failed
 			if(test == null)
 			{
@@ -409,8 +415,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods);
-				testByThread.put(Thread.currentThread().getId(), test);
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId());
+				threadTest.set(test);
 			}
 			
 			Response<TestType> rs = zc.finishTest(populateTestResult(result, Status.SKIPPED, getFullStackTrace(result)));
@@ -427,7 +433,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private TestType populateTestResult(ITestResult result, Status status, String message) throws JAXBException
 	{
 		long threadId = Thread.currentThread().getId();
-		TestType test = testByThread.get(threadId);
+		TestType test = threadTest.get();//testByThread.get(threadId);
 		final Long finishTime = new Date().getTime();
 		
 		String testName = configurator.getTestName(result);
@@ -451,7 +457,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		test.setMessage(message);
 		test.setFinishTime(finishTime);
 		
-		testByThread.remove(threadId);
+		threadTest.remove();
+		threadCiTestId.remove();
 		
 		return test;
 	}
@@ -738,10 +745,13 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			}
 		}
 	}
-
-	public static ConcurrentHashMap<Long, TestType> getTestbythread() 
+	
+	public static String getThreadCiTestId() 
 	{
-		return testByThread;
+		if(StringUtils.isEmpty(threadCiTestId.get())) {
+			threadCiTestId.set(UUID.randomUUID().toString());
+		}
+		return threadCiTestId.get();
 	}
 
 	public enum ZafiraConfiguration {
