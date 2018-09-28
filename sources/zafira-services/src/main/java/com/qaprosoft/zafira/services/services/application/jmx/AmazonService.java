@@ -219,7 +219,7 @@ public class AmazonService implements IJMXService<AmazonContext> {
     }
 
     private String buildPath(FileUploadType.Type type) {
-        return TenancyContext.getTenantName() + FILE_PATH_SEPARATOR + type.getPath();
+        return TenancyContext.getTenantName() + type.getPath();
     }
 
     /**
