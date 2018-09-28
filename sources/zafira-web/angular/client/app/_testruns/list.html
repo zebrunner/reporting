@@ -35,7 +35,7 @@
             </h2>
         </div>
     </div>
-    <div ng-if="currentMode == 'MANY'" class="row ui-section no-margin">
+    <div ng-show="currentMode == 'MANY'" class="row ui-section no-margin">
         <div class="fixed-search-column col-md-10 no-padding">
             <button ng-if="matchMode(['APPLY', 'SEARCH'])" id="reset" class="md-button md-raised md-warn md-ink-ripple pull-right" type="button" ng-click="reset();">
                 <b>RESET</b>
