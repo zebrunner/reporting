@@ -61,16 +61,70 @@
                 > ul {
                     z-index: 9;
                     position: absolute;
+                    height: 95%;
                     left: 100%;
                     top: 0;
-                    width: 220px;
+                    min-width: 240px;
+                    //overflow: auto;
                     @include border-right-radius($border-radius-base);
                     box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+
+                    li.search-menu {
+                        > ul {
+                            height: 100%;
+                            overflow: auto;
+                        }
+                        .fa-angle-down {
+                            display: none !important;
+                        }
+                    }
+
+                    > li:not(.nav-search) {
+                        height: calc(95% - 40px);
+                        @media (min-width:$screen-sm) {
+                            height: calc(95% - 20px);
+                        }
+                    }
+
+                    > li {
+                        &.nav-search {
+                            height: 5%;
+                            margin-left: 16px !important;
+                            md-input-container {
+                                label {
+                                    font-size: 12px;
+                                    color: #4e5259;
+                                }
+                                &.md-input-focused {
+                                    label {
+                                        display: none !important;
+                                    }
+                                }
+                                input {
+                                    width: 160px;
+                                    border-color: #4e5259;
+                                    color: #4e5259;
+                                    margin-bottom: 12px !important;
+                                }
+                                md-icon {
+                                    font-size: 18px;
+                                }
+                            }
+                            md-icon {
+                                color: #4e5259;
+                                font-size: 17px;
+                            }
+                            .search_close-button {
+                                position: relative;
+                                left: 36px;
+                            }
+                        }
+                    }
                 }
 
-                &:hover,
+                //&:hover,
                 &.open {
-                    > ul {
+                    > ul, li.search-menu > ul {
                         display: block !important;
                     }
                 }

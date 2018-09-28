@@ -4,10 +4,64 @@
     angular.module('app.layout')
         .directive('toggleNavCollapsedMin', ['$rootScope', toggleNavCollapsedMin])
         .directive('collapseNav', collapseNav)
+        .directive('toggleMenu', toggleMenu)
         .directive('highlightActive', highlightActive)
         .directive('toggleOffCanvas', toggleOffCanvas);
 
     var minWidth = 768;
+
+
+    var CLOSE_ON = ['body'];
+
+    var sidebar;
+
+    CLOSE_ON.forEach(function (value) {
+        angular.element(value).on('click', function (e) {
+            var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
+            if(! isSliceOfSidebar) {
+                closeMenu();
+            }
+        });
+    });
+
+    function toggleMenu() {
+        var directive = {
+            restrict: 'A',
+            link: link
+        };
+
+        return directive;
+
+        var openedMenu;
+
+        function link(scope, ele, attrs) {
+            var open = attrs.toggleMenu != 'close';
+            if(open) {
+                var trigger = ele.find(' > a');
+                sidebar = angular.element('#nav');
+                trigger.on('click', function (e) {
+                    if(openedMenu) {
+                        openedMenu.removeClass('open');
+                    }
+                    if (!ele.hasClass('open')) {
+                        ele.addClass('open');
+                        openedMenu = ele;
+                    }
+                });
+            } else {
+                ele.on('click', function (e) {
+                    closeMenu(scope);
+                });
+            }
+        }
+    }
+
+    function closeMenu($scope) {
+        var openElement = angular.element('li.open');
+        if(openElement) {
+            openElement.removeClass('open');
+        }
+    };
 
     // switch for mini style NAV, realted to 'collapseNav' directive
     function toggleNavCollapsedMin($rootScope) {

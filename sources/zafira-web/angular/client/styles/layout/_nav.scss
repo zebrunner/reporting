@@ -62,7 +62,7 @@
         }
 
         >li {
-            position: relative;
+            position: static;
             margin: 0;
             text-align: left;
             font-weight: bold;
@@ -142,7 +142,7 @@
                 >.menu-btn {
                     position: relative;
                     display: block;
-                    padding: 13px 0 13px 25px;
+                    padding: 12px 0 13px 24px;
                     transition: all $nav-transition_duration ease-in-out;
                     &:first-child {
                         border-top: none;
