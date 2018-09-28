@@ -146,6 +146,7 @@ public class TestService
 		test.setStatus(Status.QUEUED);
 		test.setTestConfig(null);
 		test.setNeedRerun(false);
+		test.setCiTestId(null);
 		testMapper.createTest(test);
 	}
 
