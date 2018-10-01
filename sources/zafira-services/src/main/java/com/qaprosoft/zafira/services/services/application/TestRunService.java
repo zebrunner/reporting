@@ -81,6 +81,7 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 public class TestRunService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
+	public static final String DEFAULT_PROJECT = "UNKNOWN";
 
 	@Autowired
 	private URLResolver urlResolver;
@@ -255,7 +256,7 @@ public class TestRunService
 					Project project = projectService.getProjectByName(queueTestRunParams.getProject());
 					if (project == null)
 					{
-						project = projectService.getProjectByName("UNKNOWN");
+						project = projectService.getProjectByName(DEFAULT_PROJECT);
 					}
 					testRun.setProject(project);
 				}
