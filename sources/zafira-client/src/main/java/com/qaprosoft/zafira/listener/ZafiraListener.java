@@ -748,11 +748,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	public static String getThreadCiTestId() 
 	{
 		if(StringUtils.isEmpty(threadCiTestId.get())) {
-			System.out.println(Thread.currentThread().getId() + "; Generating new ci_test_id...");
 			threadCiTestId.set(UUID.randomUUID().toString());
-			System.out.println(Thread.currentThread().getId() + "; Generated ci_test_id: " + threadCiTestId.get());
 		}
-		System.out.println(Thread.currentThread().getId() + "; return existing ci_test_id: " + threadCiTestId.get());
 		return threadCiTestId.get();
 	}
 
