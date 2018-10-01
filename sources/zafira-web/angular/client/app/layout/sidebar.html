@@ -1,10 +1,10 @@
 <div ng-controller="SidebarController" class="nav-wrapper" xmlns:font-size="http://www.w3.org/1999/xhtml">
     <ul id="nav" class="nav" data-slim-scroll data-collapse-nav data-highlight-active>
-        <!--<li hide-xs>
-            <a md-button class="menu-btn toggle-min" data-toggle-nav-collapsed-min aria-label="menu toggle-nav-collapsed-min">
+        <li class="sidebar-menu-button bg-dark">
+            <a md-button class="menu-btn toggle-min" toggle-nav-bottom aria-label="menu toggle-nul-collapsed-min">
             <i class="material-icons">menu</i>
           </a>
-        </li>-->
+        </li>
         <li toggle-menu has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
             <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards();">
               <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
@@ -22,7 +22,7 @@
                     <ul>
                         <li data-ng-repeat="dashboard in dashboardList | orderBy:'position' | filter:navSC">
                             <a toggle-menu="close" md-button aria-label="menu" href="#!/dashboards/{{dashboard.id}}">
-                              <i data-ng-if="dashboard.hidden == true" class="fa fa-eye-slash" style="font-size: 14px;"></i>
+                              <i data-ng-if="dashboard.hidden == true" style="font-size: 14px;" class="material-icons">visibility_off</i>
                               {{dashboard.title}}
                             </a>
                         </li>
@@ -76,7 +76,7 @@
                         <li data-ng-repeat="view in views | orderBy:'name' | filter:navSCView" style="position: relative;" class="show-on-hover">
                             <a toggle-menu="close" md-button aria-label="menu" href="#!/views/{{view.id}}">{{view.name}}</a>
                             <span style="position: absolute; right: 10px; top: 15px;" class="show-icon-on-hover">
-                                <i class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
+                                <i style="font-size: 14px;" class="material-icons" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']">edit</i>
                             </span>
                         </li>
                     </ul>

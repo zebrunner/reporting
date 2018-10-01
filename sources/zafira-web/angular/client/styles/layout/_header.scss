@@ -3,9 +3,9 @@
 .app.nav-collapsed-min {
     .top-header {
         .logo {
-            @media (min-width: $screen-sm) {
+            //@media (min-width: $screen-sm) {
                 width: 60px; // 59 + 1 (border)
-            }
+            //}
 
             .logo-text {
                 display: none;
@@ -15,6 +15,18 @@
         .top-nav {
             padding: 0 0 0 60px;
         }
+    }
+}
+
+.hide-phone {
+    @media (max-width: $screen-phone) {
+        display: none !important;
+    }
+}
+
+.show-phone {
+    @media (min-width: $screen-phone + 1px) {
+        display: none !important;
     }
 }
 
@@ -49,28 +61,32 @@
         }
 
         .hidden-mobile {
-            display: none;
-            @media (min-width: $screen-xs) {
+            //display: none;
+            //@media (min-width: $screen-xs) {
                 display: inline;
-            }
+            //}
         }
 
         //
         .logo {
             position: absolute;
-            width: 100%;
+            //width: 100%;
             height: $header_height;
             line-height: $header_height;
             text-align: left;
             left: 12px;
             transition: width .25s ease-in-out;
-            @media (min-width: $screen-sm) {
+            //@media (min-width: $screen-sm) {
                 display: inline-block;
                 width: 220px;
                 border-right: 1px solid $header-border;
-            }
+            //}
             @media (max-width: 767px) {
-                left: 20px;
+                //left: 20px;
+            }
+            @media (max-width: $screen-phone) {
+                left: 60px;
+                padding-left: 20px;
             }
             .logo-icon {
                 font-size: 19px;
@@ -89,7 +105,7 @@
         }
 
         .menu-button {
-            display: block;
+            //display: block;
             position: absolute;
             top:  ( $header_height/2 - 17px);
             right: 20px;
@@ -112,9 +128,9 @@
                 margin-top: 4px;
             }
 
-            @media (min-width: $screen-sm) {
+            //@media (min-width: $screen-sm) {
                 display: none;
-            }
+            //}
         }
 
         //
@@ -165,14 +181,14 @@
         .top-nav {
             width: 100%;
             height: $header_height;
-            padding: $header_height 0 0;
+            //padding: $header_height 0 0;
             transition: padding .25s ease-in-out;
-            @media (min-width: $screen-sm) {
+            //@media (min-width: $screen-sm) {
                 padding: 0 0 0 220px;
-            }
-            @media (max-width: $screen-sm)  {
+            //}
+            /*@media (max-width: $screen-sm)  {
                 border-bottom: 1px solid rgba(0,0,0,.1);
-            }
+            }*/
             > ul {
                 margin-bottom: 0;
             }
@@ -201,10 +217,10 @@
                     }
 
                     > .toggle-min {
-                        display: none;
-                        @media (min-width:$screen-sm) {
+                        //display: none;
+                        //@media (min-width:$screen-sm) {
                             display: block;
-                        }
+                        //}
                     }
 
                     a {
@@ -219,10 +235,10 @@
                         position: relative;
                         display: block;
                         height: $header_height;
-                        padding: ( ($header_height - $header_line_height)/2 ) 16px;
-                        @media (min-width:$screen-sm) {
+                        //padding: ( ($header_height - $header_line_height)/2 ) 16px;
+                        //@media (min-width:$screen-sm) {
                             padding: ( ($header_height - $header_line_height)/2 ) 20px;
-                        }
+                        //}
 
                         > i {
                             font-size: 18px;
@@ -232,10 +248,10 @@
                             position: absolute;
                             top: 6px;
                             right: 3px;
-                            @media (min-width:$screen-sm) {
+                            //@media (min-width:$screen-sm) {
                                 background-color: transparent;
                                 color: $header_link_color;
-                            }
+                            //}
                         }
                     }
 
@@ -556,9 +572,9 @@
     > .top-header {
         .logo {
             //border: 1px solid rgba(0,0,0,.1);
-            @media (min-width: $screen-sm-min) {
+            //@media (min-width: $screen-sm-min) {
                 border: 0;
-            }
+            //}
             &.bg-white {
                 color: $dark;
                 a {
