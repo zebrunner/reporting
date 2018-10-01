@@ -44,6 +44,7 @@ import java.util.function.Function;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.services.util.URLResolver;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -64,12 +65,6 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestRunMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestRunSearchCriteria;
-import com.qaprosoft.zafira.models.db.Job;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestConfig;
-import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.QueueTestRunParamsType;
@@ -86,6 +81,7 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 public class TestRunService
 {
 	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
+	public static final String DEFAULT_PROJECT = "UNKNOWN";
 
 	@Autowired
 	private URLResolver urlResolver;
@@ -113,6 +109,9 @@ public class TestRunService
 
 	@Autowired
 	private JobsService jobsService;
+
+	@Autowired
+	private ProjectService projectService;
 
 	@Autowired
 	private StatisticsService statisticsService;
@@ -251,6 +250,15 @@ public class TestRunService
 				if (!StringUtils.isEmpty(queueTestRunParams.getCiParentBuild()))
 				{
 					testRun.setUpstreamJobBuildNumber(Integer.valueOf(queueTestRunParams.getCiParentBuild()));
+				}
+				if (!StringUtils.isEmpty(queueTestRunParams.getProject()))
+				{
+					Project project = projectService.getProjectByName(queueTestRunParams.getProject());
+					if (project == null)
+					{
+						project = projectService.getProjectByName(DEFAULT_PROJECT);
+					}
+					testRun.setProject(project);
 				}
 				testRun.setEnv(queueTestRunParams.getEnv());
 				testRun.setCiRunId(queueTestRunParams.getCiRunId());
