@@ -109,8 +109,8 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	private Map<String, TestType> registeredTests = new HashMap<>();
 	private Set<String> classesToRerun = new HashSet<>();
 	
-	private static ThreadLocal<String> threadCiTestId = new InheritableThreadLocal<>();
-	private static ThreadLocal<TestType> threadTest = new InheritableThreadLocal<>();
+	private static ThreadLocal<String> threadCiTestId = new ThreadLocal<>();
+	private static ThreadLocal<TestType> threadTest = new ThreadLocal<>();
 	
 	private Marshaller marshaller;
 	
