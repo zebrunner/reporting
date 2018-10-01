@@ -613,6 +613,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 					}
 				}
 				LOGGER.info("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
+				System.out.println("Zafira is " + (ZAFIRA_ENABLED ? "available" : "unavailable"));
 			}
 			
 			success = ZAFIRA_ENABLED;
@@ -749,9 +750,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	{
 		if(StringUtils.isEmpty(threadCiTestId.get())) {
 			LOGGER.info("Generating new ci_test_id...");
+			System.out.println("Generating new ci_test_id...");
 			threadCiTestId.set(UUID.randomUUID().toString());
 			LOGGER.info("Generated ci_test_id: " + threadCiTestId.get());
+			System.out.println("Generated ci_test_id: " + threadCiTestId.get());
 		}
+		System.out.println("return existing ci_test_id: " + threadCiTestId.get());
 		LOGGER.info("return existing ci_test_id: " + threadCiTestId.get());
 		return threadCiTestId.get();
 	}
