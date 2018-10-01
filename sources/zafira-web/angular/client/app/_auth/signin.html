@@ -4,7 +4,6 @@
         <div class="main-body">
                 <div class="card bg-white">
                     <div class="card-content">
-
                         <section class="logo-container">
                             <img class="logo" ng-src="{{companyLogo.value}}">
                         </section>
@@ -50,15 +49,16 @@
                                         </div>
                                     </div>
                                 </md-input-container>
-                                <div layout="row" class="align-middle button-container" layout-align="space-between">
-                                    <a href="#!/password/forgot">Forgot your password?</a>
-                                    <md-button type="submit"
-                                               id="signin"
-                                               class="btn-w-sm md-primary signin"
-                                               ng-disabled="signin_form.$invalid">Sign in</md-button>
-                                </div>
+                                
                             </fieldset>
                         </form>
+                    </div>
+                    <div layout="row" class=" button-container " layout-align="space-between">
+                        <a href="#!/password/forgot">Forgot your password?</a>
+                        <md-button type="submit"
+                                   id="signin"
+                                   class="btn-w-sm md-primary signin"
+                                   ng-disabled="signin_form.$invalid">Sign in</md-button>
                     </div>
                 </div>
             </div>
