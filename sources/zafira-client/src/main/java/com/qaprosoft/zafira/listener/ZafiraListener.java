@@ -273,6 +273,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
+				startedTest.setCiTestId(getThreadCiTestId());
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
@@ -292,8 +293,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
 			// TODO: investigate why we need it
 			threadTest.set(startedTest);
-//			testByThread.put(Thread.currentThread().getId(), startedTest);
-			
 			registeredTests.put(testName, startedTest);
 			
 			// Add Zafira test id for internal usage
