@@ -137,8 +137,8 @@ public class TestService
 		test.setTestRunId(queuedTestRunId);
 		test.setStatus(Status.QUEUED);
 		test.setTestConfig(null);
-		test.setNeedRerun(false);
-		test.setCiTestId(UUID.randomUUID().toString());
+		test.setNeedRerun(true);
+		test.setCiTestId(null);
 		testMapper.createTest(test);
 	}
 
