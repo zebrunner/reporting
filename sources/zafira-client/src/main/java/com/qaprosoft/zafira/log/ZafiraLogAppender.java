@@ -532,6 +532,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 				testId = ZafiraListener.getThreadCiTestId();
 			}
 			this.correlationId = testId != null ? routingKey + "_" + String.valueOf(testId) : routingKey;
+			System.out.println("this.correlationId: " + this.correlationId);
 		}
 
 		/**
@@ -551,7 +552,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 						.type(loggingEvent.getLevel().toString())
 						.correlationId(String.valueOf(correlationId))
 						.contentType("text/json");
-
+				System.out.println("this.correlationId2: " + correlationId);
 				createChannel().basicPublish(exchange, routingKey, b.build(), payload.toString().getBytes());
 			}
 
