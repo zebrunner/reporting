@@ -81,21 +81,24 @@ html {
         }
 
         > .nav-container {
-            display: none;
+            //display: none;
             z-index: 100; // should be highter than top header
             position: fixed;
             left: 0;
             top: $header_height + 1px;
+            @media (max-width: $screen-phone) {
+                top: 0;
+            }
             float: left;
             width: 220px;
-            height: 100%;
-            transition: width .25s ease-in-out;
+            height: 100vh;
+            //transition: width .25s ease-in-out;
             // border-width: 0 1px 0 0;
             // border-style: solid;
             // border-color: darken($sidebar_bg, 10%);
-            @media (min-width:$screen-sm) {
+            //@media (min-width:$screen-sm) {
                 display: block;
-            }
+            //}
             &:before {
                 z-index: -1; // so that it is beneath top header
                 content: " ";
@@ -129,12 +132,37 @@ html {
             margin-left: 0;
             margin-top: 0;
             transition: margin-left .25s ease-in-out;
-            @media (min-width:$screen-sm) {
+            /*@media (min-width:$screen-sm) {
+                margin-left: 60px;
+                padding-top: 64px;
+            }*/
+
+            @media (min-width:$screen-phone) {
                 margin-left: 60px;
                 padding-top: 64px;
             }
         }
 
+
+
     }
 
+    &.sidebar-toggled {
+        > .main-container {
+            > .content-container {
+                @media (max-width: $screen-phone) {
+                    margin-left: 60px;
+                    padding-top: 64px;
+                }
+                .btn-check {
+                    display: inline-block;
+                    button {
+                        @media (max-width: $screen-phone) {
+                            display: inline-block;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

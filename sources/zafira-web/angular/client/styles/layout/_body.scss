@@ -1,5 +1,9 @@
 body {
     background: $main_container_bg;
+
+    &.sidebar-toggled.menu-toggled {
+        overflow-y: hidden;
+    }
     /*overflow: hidden;
     max-width:100%;
     max-height:100%;*/
@@ -198,6 +202,10 @@ md-chip:hover .show-icon-on-hover,
     min-width: 360px;
     min-height: 52px;
     padding: 8px 20px;
+
+    @media (max-width: $screen-phone) {
+        min-width: 0;
+    }
 }
 
 .fixed-testrun-name-header {
@@ -799,15 +807,24 @@ input[type="file"].content-input.not-empty{
     display: block;
     position: relative;
     width: 800px;
+    @media (max-width: 959px) {
+        width: auto !important;
+    }
     border: 2px dashed #80CBC4 !important;
     transition: opacity  0.1s linear;
-    border-top: 0; }
+    border-top: 0;
+}
 
 .page-profile .bottom-block {
     display: block;
     position: relative;
     height: 400px;
-    width: 100%; }
+    width: 100%;
+
+    @media (max-width: $screen-phone) {
+        display: table;
+    }
+}
 
 .upload-zone-label {
     position: absolute;
@@ -816,6 +833,12 @@ input[type="file"].content-input.not-empty{
     text-transform: uppercase;
     font-size: 24px;
     color: grey !important;
+    @media (max-width: $screen-phone) {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+        position: static;
+    }
 }
 
 /* Profile info block */
@@ -1535,6 +1558,12 @@ div[aria-selected='true'] span.ng-binding {
     color: white;
 }
 
+.radio-inline + .radio-inline, .checkbox-inline + .checkbox-inline {
+    @media (max-width: $screen-phone) {
+        margin: 0 !important;
+    }
+}
+
 .btn-check {
     position: absolute;
     right: 13px;
@@ -1550,6 +1579,8 @@ div[aria-selected='true'] span.ng-binding {
         transition: all .2s;
         font-size: 13px;
         margin: 4px 2px;
+
+
 
         &:hover {
           background-color: $gray-light !important;

@@ -4,7 +4,7 @@ $boxed_layout_width:    1200px;
 $screen-sm-max:         ($screen-sm - 1);
 
 // Top header
-$header_height:             64px;           //** 
+$header_height:             64px;           //**
 $header_line_height:        20px;           //** line-height of the header text
 $header_container_bg:       $dark;
 $header-border:             rgba(255,255,255,.06);
@@ -14,7 +14,7 @@ $header_link_color:         #aaa;
 $main_container_bg:         #efefef;
 
 // Sidebar, default is vertical
-$nav-transition_duration: .25s;
+$nav-transition_duration: .15s;
 
 $light_bg_link_hover_bg:             transparent; //#f6f6f6;
 $light_bg_link_hover_color:          $brand-primary;
