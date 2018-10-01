@@ -164,7 +164,7 @@
                                     font-size: 12px;
                                     color: #4e5259;
                                 }
-                                &.md-input-focused {
+                                &.md-input-focused, &.md-input-has-value {
                                     label {
                                         display: none !important;
                                     }
