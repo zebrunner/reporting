@@ -39,6 +39,10 @@
             border-color: transparent;
         }
 
+        i.nav-close-icon {
+            display: none;
+        }
+
         >li>a>i,
         >li>a>.nav-icon {
             display: inline-block;
