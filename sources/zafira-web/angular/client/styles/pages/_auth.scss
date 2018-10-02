@@ -1,48 +1,82 @@
+.form-validation .ng-valid.ng-dirty{
+    border-color:  #CBD5DD;
+}
 .page-signin,
 .page-signup,
 .page-forgot,
 .page-message,
 .page-change {
+    
     @media(min-width: 480px){
         margin-right: 60px;
     }
-    margin-top: -65px;
+    margin-top: -64px;
+    
     
     .placeholder-label{
-        padding-left: 0px !important;
         color: #888888;
         font-weight: normal !important;
         padding-bottom: 5px;
     }
-
+    .md-input-container .md-input.ng-invalid.ng-dirty,
+    .md-input-focused .md-input{
+        padding-bottom: 10px !important;
+        border-color: rgb(0,150,136);
+    }
     .md-block{
         margin: 12px 0;
     }
     
+    input{
+        padding-bottom: 10px;
+    }
     .main-body {
+        
+        @media(min-width:840px)
+        {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+        }
+        @media(max-width:840px)
+        {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 40px; 
+        }
         max-width: 720px; 
+        width: 720px;
         min-height: 480px;
-        margin: 10px auto;
-        @media(max-width: 720px){
+        @media(max-width: 840px){
             max-width: 360px;
+            width: auto;
+            min-height: auto;
         }
         @media (max-width: 360px){
             margin: auto 20px;
         }
 
         .card{
+            @media(min-width:840px)
+            {
+                font-size: 14px;
+                text-align: left;
+            }
             display: flex;
             width: 100%;
             height: 100%;
-            margin-top: 0px;
-            @media(max-width: 720px){
+            margin-top: 40px;
+            @media(max-width: 840px){
                 flex-direction: column;
             }
         }
 
         .card-action{
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
             padding: 40px 0px 0px;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
             a{
                 margin-right: -8px;
             }
@@ -52,8 +86,9 @@
             width: 50%;
             max-width: 360px;
             min-height: 480px;
-            @media(max-width: 720px){
+            @media(max-width: 840px){
                width: 100%;
+               min-height: auto;
             }
             .added-small{
                 margin-top: -8px;
@@ -98,8 +133,10 @@
         padding-bottom: 28px;
         bottom: 0;
         font-size: $font-size-small;
-        @media(max-width: 720px){
-            bottom: 50%;
+        @media(max-width: 840px){
+            position: static;
+            padding-bottom: 0px;
+
         }
     }
 
@@ -111,9 +148,18 @@
     }
     
     .wrapper {
-        margin-top: 70px;
-        @media (min-width: $screen-phone) {
-            margin-top: 170px;
+        @media(min-width:840px)
+        {
+            height: 100vh;
+            font-size: 0;
+            text-align: center;
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 0;
+                height: 100%;
+                vertical-align: middle;
+            }
         }
     }
 
@@ -135,7 +181,7 @@
     }
     
     .button-container{
-        padding: 16px 0px 0px;
+        padding: 16px 0px 20px;
         display: flex;
         align-items: center;
         a{ 
@@ -148,9 +194,9 @@
     }
     
     .additional-background{
-        @media(max-width: 720px){
+        @media(max-width: 840px){
             width: 100%;
-         }
+        }
         padding: 30px 30px 0px;
         width: 50%;
         max-width: 360px;
