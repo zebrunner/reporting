@@ -229,6 +229,11 @@
             return value;
         };
 
+        $scope.isFormatted = function (string) {
+            var pattern = /^<.+>.*<\/.+>$/g;
+            return pattern.test(string);
+        };
+
         function jsonSafeParse (preparedJson) {
             if(!isJSON(preparedJson)) {
                 return JSON.parse(preparedJson);
