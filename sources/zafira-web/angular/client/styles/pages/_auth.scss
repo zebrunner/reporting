@@ -3,10 +3,6 @@
 .page-forgot,
 .page-message,
 .page-change {
-
-    @media (min-width: $screen-phone){
-        margin-top: -65px;
-    }
     @media(min-width: 480px){
         margin-right: 60px;
     }
@@ -42,7 +38,6 @@
             @media(max-width: 720px){
                 flex-direction: column;
             }
-            
         }
 
         .card-action{
@@ -78,12 +73,9 @@
     }
 
     #signin, #signup{
-        padding: 5px 0 5px 12px;
         font-weight: normal;
         letter-spacing: 0.02px;
-        @media (min-width: 1230px){
-            padding: 5px 0 5px 10px;
-        }
+        padding: 5px 0 5px 10px;
         &:hover{
             background-color: $reverse;
             text-decoration: underline;
