@@ -28,8 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Status;
 
 @JsonInclude(Include.NON_NULL)
-public class TestType extends AbstractType
-{	
+public class TestType extends AbstractType {
 	private static final long serialVersionUID = 7777895715362820880L;
 	@NotNull
 	private String name;
@@ -55,13 +54,14 @@ public class TestType extends AbstractType
 	private String testClass;
 	@Valid
 	private Set<TestArtifactType> artifacts = new HashSet<>();
+	private String ciTestId;
 
 	public TestType() {
-		
+
 	}
-	
-	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime, List<String> workItems, int retry, String configXML)
-	{
+
+	public TestType(String name, Status status, String testArgs, Long testRunId, Long testCaseId, Long startTime,
+			List<String> workItems, int retry, String configXML) {
 		this.name = name;
 		this.status = status;
 		this.testArgs = testArgs;
@@ -72,204 +72,172 @@ public class TestType extends AbstractType
 		this.retry = retry;
 		this.configXML = configXML;
 	}
-	
-	public String getName()
-	{
+
+	public String getName() {
 		return name;
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Status getStatus()
-	{
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status)
-	{
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
-	public String getTestArgs()
-	{
+	public String getTestArgs() {
 		return testArgs;
 	}
 
-	public void setTestArgs(String testArgs)
-	{
+	public void setTestArgs(String testArgs) {
 		this.testArgs = testArgs;
 	}
 
-	public Long getTestRunId()
-	{
+	public Long getTestRunId() {
 		return testRunId;
 	}
 
-	public void setTestRunId(Long testRunId)
-	{
+	public void setTestRunId(Long testRunId) {
 		this.testRunId = testRunId;
 	}
 
-	public Long getTestCaseId()
-	{
+	public Long getTestCaseId() {
 		return testCaseId;
 	}
 
-	public void setTestCaseId(Long testCaseId)
-	{
+	public void setTestCaseId(Long testCaseId) {
 		this.testCaseId = testCaseId;
 	}
 
-	public String getMessage()
-	{
+	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message)
-	{
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	public Long getStartTime()
-	{
+	public Long getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Long startTime)
-	{
+	public void setStartTime(Long startTime) {
 		this.startTime = startTime;
 	}
 
-	public Long getFinishTime()
-	{
+	public Long getFinishTime() {
 		return finishTime;
 	}
 
-	public void setFinishTime(Long finishTime)
-	{
+	public void setFinishTime(Long finishTime) {
 		this.finishTime = finishTime;
 	}
 
-	public List<String> getWorkItems()
-	{
+	public List<String> getWorkItems() {
 		return workItems;
 	}
 
-	public void setWorkItems(List<String> workItems)
-	{
+	public void setWorkItems(List<String> workItems) {
 		this.workItems = workItems;
 	}
 
-	public int getRetry()
-	{
+	public int getRetry() {
 		return retry;
 	}
 
-	public void setRetry(int retry)
-	{
+	public void setRetry(int retry) {
 		this.retry = retry;
 	}
 
-	public String getConfigXML()
-	{
+	public String getConfigXML() {
 		return configXML;
 	}
 
-	public void setConfigXML(String configXML)
-	{
+	public void setConfigXML(String configXML) {
 		this.configXML = configXML;
 	}
 
-	public Map<String, Long> getTestMetrics()
-	{
+	public Map<String, Long> getTestMetrics() {
 		return testMetrics;
 	}
 
-	public void setTestMetrics(Map<String, Long> testMetrics)
-	{
+	public void setTestMetrics(Map<String, Long> testMetrics) {
 		this.testMetrics = testMetrics;
 	}
 
-	public boolean isKnownIssue()
-	{
+	public boolean isKnownIssue() {
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue)
-	{
+	public void setKnownIssue(boolean knownIssue) {
 		this.knownIssue = knownIssue;
 	}
 
-	public boolean isBlocker()
-	{
+	public boolean isBlocker() {
 		return blocker;
 	}
 
-	public void setBlocker(boolean blocker)
-	{
+	public void setBlocker(boolean blocker) {
 		this.blocker = blocker;
 	}
 
-	public String getTestGroup()
-	{
+	public String getTestGroup() {
 		return testGroup;
 	}
 
-	public void setTestGroup(String testGroup)
-	{
+	public void setTestGroup(String testGroup) {
 		this.testGroup = testGroup;
 	}
 
-	public boolean isNeedRerun()
-	{
+	public boolean isNeedRerun() {
 		return needRerun;
 	}
 
-	public void setNeedRerun(boolean needRerun)
-	{
+	public void setNeedRerun(boolean needRerun) {
 		this.needRerun = needRerun;
 	}
 
-	public String getDependsOnMethods()
-	{
+	public String getDependsOnMethods() {
 		return dependsOnMethods;
 	}
 
-	public void setDependsOnMethods(String dependsOnMethods)
-	{
+	public void setDependsOnMethods(String dependsOnMethods) {
 		this.dependsOnMethods = dependsOnMethods;
 	}
 
-	public Integer getMessageHashCode()
-	{
+	public Integer getMessageHashCode() {
 		return messageHashCode;
 	}
 
-	public void setMessageHashCode(Integer messageHashCode)
-	{
+	public void setMessageHashCode(Integer messageHashCode) {
 		this.messageHashCode = messageHashCode;
 	}
 
-	public String getTestClass()
-	{
+	public String getTestClass() {
 		return testClass;
 	}
 
-	public void setTestClass(String testClass)
-	{
+	public void setTestClass(String testClass) {
 		this.testClass = testClass;
 	}
 
-	public Set<TestArtifactType> getArtifacts()
-	{
+	public Set<TestArtifactType> getArtifacts() {
 		return artifacts;
 	}
 
-	public void setArtifacts(Set<TestArtifactType> artifacts)
-	{
+	public void setArtifacts(Set<TestArtifactType> artifacts) {
 		this.artifacts = artifacts;
+	}
+
+	public String getCiTestId() {
+		return ciTestId;
+	}
+
+	public void setCiTestId(String ciTestId) {
+		this.ciTestId = ciTestId;
 	}
 }

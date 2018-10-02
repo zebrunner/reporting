@@ -900,7 +900,7 @@ public class  ZafiraClient
 	 * @param configXML - config XML
 	 * @return registered test
 	 */
-	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods)
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods, String ciTestId)
 	{
 		Long startTime = new Date().getTime();
 
@@ -909,6 +909,7 @@ public class  ZafiraClient
 		TestType test = new TestType(name, status, testArgs, testRunId, testCaseId, startTime, null, retry, configXML);
 		LOGGER.debug("Test details for startup registration:" + String.format(testDetails, name, status, testArgs, testRunId, testCaseId, startTime, retry));
 
+		test.setCiTestId(ciTestId);
 		test.setTestGroup(group);
 		if(dependsOnMethods != null)
 		{
