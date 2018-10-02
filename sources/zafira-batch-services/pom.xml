@@ -133,8 +133,8 @@
 										<commandLineArgument>start</commandLineArgument>
 									</commandLineArguments>
 									<jvmSettings>
-										<initialMemorySize>256M</initialMemorySize>
-										<maxMemorySize>256M</maxMemorySize>
+										<initialMemorySize>1024M</initialMemorySize>
+										<maxMemorySize>2048M</maxMemorySize>
 									</jvmSettings>
 									<generatorConfigurations>
 										<generatorConfiguration>
