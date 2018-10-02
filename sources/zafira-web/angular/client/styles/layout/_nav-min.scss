@@ -108,6 +108,10 @@
                     }
                 }
 
+                .nav-menu-icon {
+                    vertical-align: middle;
+                }
+
                 .icon-has-ul {
                     display: none;
                 }
@@ -241,3 +245,32 @@
 
     }
 //}
+
+#app {
+    @media (max-width: $screen-phone) {
+        &.sidebar-toggled {
+            #nav {
+                .sidebar-menu-button {
+                    i {
+                        &.nav-menu-icon {
+                            display: none;
+                        }
+                        &.nav-close-icon {
+                            display: block;
+                            animation: rotateRight 0.09s linear forwards;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes rotateRight {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(90deg);
+    }
+}
