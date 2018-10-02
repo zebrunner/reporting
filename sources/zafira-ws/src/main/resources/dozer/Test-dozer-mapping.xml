@@ -83,5 +83,9 @@
 			<a>artifacts</a>
 			<b>artifacts</b>
 		</field>
+		<field>
+			<a>ciTestId</a>
+			<b>ciTestId</b>
+		</field>
 	</mapping>
 </mappings>

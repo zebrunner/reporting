@@ -81,7 +81,10 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-init="optimizeWidget(widget, rowIndex)" data-ng-repeat="(rowIndex, row) in widget.data.dataset | orderObjectBy:widget.sort.column:widget.sort.descending track by $index">
-                                            <td data-ng-repeat="column in widget.model.columns track by $index" data-ng-bind-html="asString(row[column])"></td>
+                                            <td ng-switch="isFormatted(row[column]);" data-ng-repeat="column in widget.model.columns track by $index">
+                                                <span ng-switch-when="true" data-ng-bind-html="asString(row[column])"></span>
+                                                <span ng-switch-default>{{row[column]}}</span>
+                                            </td>
                                         </tr>
                                         <tr ng-init="optimizeWidget(widget)" class="text-center" data-ng-if="widget.data.dataset == 0">
                                             <td colspan="{{widget.model.columns.length}}">No data</td>

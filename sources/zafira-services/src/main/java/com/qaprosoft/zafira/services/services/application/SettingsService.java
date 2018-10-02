@@ -15,16 +15,15 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.util.EventPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,10 +86,7 @@ public class SettingsService {
     private RabbitMQService rabbitMQService;
 
     @Autowired
-    @Qualifier("eventsTemplate")
-    private RabbitTemplate rabbitTemplate;
-
-    protected static final String SETTINGS_WEBSOCKET_PATH = "/topic/settings";
+    private EventPushService<ReinitEventMessage> eventPushService;
 
     @Transactional(readOnly = true)
     public Setting getSettingByName(String name) throws ServiceException {
@@ -187,12 +183,12 @@ public class SettingsService {
      * @param tenant whose integration was updated
      */
     public void notifyToolReinitiated(Tool tool, String tenant) {
-        rabbitTemplate.convertAndSend("events", "", new ReinitMessage(tool, tenant));
+        eventPushService.convertAndSend(EventPushService.Type.SETTINGS, new ReinitEventMessage(tenant, tool));
     }
 
     @RabbitListener(queues = "#{settingsQueue.name}")
     public void process(Message message) {
-        ReinitMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitMessage.class);
+        ReinitEventMessage rm = new Gson().fromJson(new String(message.getBody()), ReinitEventMessage.class);
         if (getServiceByTool(rm.getTool()) != null) {
             TenancyContext.setTenantName(rm.getTenancy());
             getServiceByTool(rm.getTool()).init();
@@ -240,40 +236,5 @@ public class SettingsService {
             break;
         }
         return service;
-    }
-
-    /**
-     * ReinitMessage - websocket message sent to re-init integration tool.
-     * 
-     * @author akhursevich
-     */
-    public class ReinitMessage implements Serializable {
-
-        private static final long serialVersionUID = 6368220282207538315L;
-
-        private Tool tool;
-
-        private String tenancy;
-
-        public ReinitMessage(Tool tool, String tenancy) {
-            this.tool = tool;
-            this.tenancy = tenancy;
-        }
-
-        public Tool getTool() {
-            return tool;
-        }
-
-        public void setTool(Tool tool) {
-            this.tool = tool;
-        }
-
-        public String getTenancy() {
-            return tenancy;
-        }
-
-        public void setTenancy(String tenancy) {
-            this.tenancy = tenancy;
-        }
     }
 }

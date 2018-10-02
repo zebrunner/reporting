@@ -18,17 +18,22 @@ package com.qaprosoft.zafira.services.services.application;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.MonitorSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.models.dto.monitor.MonitorCheckType;
+import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.jobs.MonitorEmailNotificationTask;
-import com.qaprosoft.zafira.services.services.application.jobs.MonitorJobService;
+import com.qaprosoft.zafira.services.services.application.jobs.MonitorHttpService;
+import com.qaprosoft.zafira.services.util.EventPushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.qaprosoft.zafira.models.push.events.MonitorEventMessage.Action;
+import static com.qaprosoft.zafira.services.util.EventPushService.Type.MONITORS;
 
 @Service
 public class MonitorService
@@ -37,16 +42,16 @@ public class MonitorService
 	private MonitorMapper monitorMapper;
 
 	@Autowired
-	private MonitorJobService monitorJobService;
+	private EventPushService<MonitorEventMessage> eventPushService;
 
 	@Autowired
-	private MonitorEmailNotificationTask monitorEmailNotificationTask;
+	private MonitorHttpService monitorHttpService;
 
 	@Transactional(rollbackFor = Exception.class)
 	public Monitor createMonitor(Monitor monitor)
 	{
 		monitorMapper.createMonitor(monitor);
-		monitorJobService.addJob(monitor);
+		doAction(Action.CREATE, monitor.getId());
 		return monitor;
 	}
 
@@ -64,7 +69,7 @@ public class MonitorService
 		{
 			monitor = getMonitorById(monitor.getId());
 		}
-		Integer actualCode = monitorEmailNotificationTask.getResponseCode(monitor);
+		Integer actualCode = monitorHttpService.getResponseCode(monitor);
 		Boolean success = actualCode.equals(monitor.getExpectedCode());
 		if(monitor.getId() != null && ! check)
 		{
@@ -95,14 +100,14 @@ public class MonitorService
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteMonitor(Monitor monitor)
 	{
-		monitorJobService.deleteJob(monitor.getId());
+		doAction(Action.DELETE, monitor.getId());
 		monitorMapper.deleteMonitor(monitor);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteMonitorById(long id)
 	{
-		monitorJobService.deleteJob(id);
+		doAction(Action.DELETE, id);
 		monitorMapper.deleteMonitorById(id);
 	}
 
@@ -113,8 +118,8 @@ public class MonitorService
 		if (switchJob)
 		{
 			currentMonitor.setMonitorEnabled(monitor.isMonitorEnabled());
-			monitorJobService.updateMonitor(currentMonitor);
-			monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
+			doAction(Action.UPDATE, currentMonitor.getId());
+			doAction(Action.SWITCH, monitor.getId());
 		} else
 		{
 			currentMonitor.setName(monitor.getName());
@@ -132,10 +137,10 @@ public class MonitorService
 			currentMonitor.setSuccess(monitor.isSuccess());
 			currentMonitor.setMonitorEnabled(monitor.isMonitorEnabled());
 			if(updateJob) {
-				monitorJobService.updateMonitor(currentMonitor);
+				doAction(Action.UPDATE, currentMonitor.getId());
 			}
 			if(!currentMonitor.isMonitorEnabled()) {
-				monitorJobService.switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
+				doAction(Action.SWITCH, monitor.getId());
 			}
 		}
 		monitorMapper.updateMonitor(currentMonitor);
@@ -158,5 +163,9 @@ public class MonitorService
 	public Integer getMonitorsCount()
 	{
 		return monitorMapper.getMonitorsCount();
+	}
+
+	public void doAction(Action action, Long id) {
+		eventPushService.convertAndSend(MONITORS, new MonitorEventMessage(TenancyContext.getTenantName(), action, id));
 	}
 }

@@ -35,11 +35,14 @@ public class FilterService
 	@Autowired
 	private FilterMapper filterMapper;
 
-	@Autowired
 	private StoredSubject storedSubject;
 
 	@Autowired
 	private FreemarkerUtil freemarkerUtil;
+	
+	public FilterService() {
+		this.storedSubject = new StoredSubject();
+	}
 
 	public enum Template
 	{

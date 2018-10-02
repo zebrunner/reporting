@@ -13,41 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.push.events;
 
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.models.dto.AbstractType;
-import org.hibernate.validator.constraints.NotEmpty;
+public class MonitorEventMessage extends EventMessage {
 
-import javax.validation.constraints.NotNull;
+    private static final long serialVersionUID = -6684926429582811764L;
 
-public class PermissionType extends AbstractType {
+    private Action action;
+    private Long monitorId;
 
-    private static final long serialVersionUID = 7083932006258442862L;
-
-    @NotEmpty(message = "Name required")
-    private Permission.Name name;
-
-    @NotNull(message = "Block required")
-    private Permission.Block block;
-
-    public Permission.Name getName()
-    {
-        return name;
+    public enum Action {
+        CREATE, UPDATE, SWITCH, DELETE
     }
 
-    public void setName(Permission.Name name)
-    {
-        this.name = name;
+    public MonitorEventMessage(String tenantName, Action action, Long monitorId) {
+        super(tenantName);
+        this.action = action;
+        this.monitorId = monitorId;
     }
 
-    public Permission.Block getBlock()
-    {
-        return block;
+    public Action getAction() {
+        return action;
     }
 
-    public void setBlock(Permission.Block block)
-    {
-        this.block = block;
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public Long getMonitorId() {
+        return monitorId;
+    }
+
+    public void setMonitorId(Long monitorId) {
+        this.monitorId = monitorId;
     }
 }
