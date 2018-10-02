@@ -67,7 +67,7 @@
                             <tr>
                                 <td style="word-wrap:break-word;font-size:0px;padding:0px 20px 0px 20px;" align="left">
                                     <div style="cursor:auto;color:#000000;font-family:Roboto, Tahoma, sans-serif;font-size:11px;line-height:22px;text-align:left;">
-                                        <p style="margin-top: 2px; margin-bottom: 2px; line-height: 2;">You&apos;ve been invited to join a Zafira application.</p>
+                                        <p style="margin-top: 2px; margin-bottom: 2px; line-height: 2;">You have been invited to join a Zafira application.</p>
                                         <#if source?? && source == 'INTERNAL'>
                                             <p style="margin-top: 2px; margin-bottom: 2px; line-height: 2;">Join now to start collaborating!&#xA0;</p>
                                         <#elseif source?? && source == 'LDAP'>

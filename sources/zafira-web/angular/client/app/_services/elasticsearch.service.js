@@ -48,13 +48,6 @@
                         bool: {
                             must: [{
                                     term: searchField
-                                },
-                                {
-                                    range: {
-                                        '@timestamp': {
-                                            gte: fromTime
-                                        }
-                                    }
                                 }
                             ]
                         }

@@ -87,10 +87,6 @@
 		<property name="serializationInclusion" value="NON_NULL" />
 	</bean>
 
-	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
-	</bean>
-
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetObject" ref="messageJsonifier" />
@@ -103,12 +99,7 @@
 		</property>
 	</bean>
 
-	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-		<property name="defaultLocale" value="en"/>
-	</bean>
-
-	<bean id="serviceMessageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+	<bean id="serviceMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basename" value="classpath:i18n/services/messages" />
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
@@ -197,12 +188,15 @@
 	<rabbit:admin id="rabbitAdmin" connection-factory="rabbitConnectionFactory" />
 	
 	<rabbit:queue id="settingsQueue" durable="false" auto-declare="true" auto-delete="true" />
-	
-	<rabbit:fanout-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
+
+	<rabbit:queue id="monitorsQueue" durable="false" auto-declare="true" auto-delete="true"/>
+
+	<rabbit:direct-exchange id="eventsTopicExchange" name="events" durable="false" auto-declare="true" auto-delete="true" >
 	    <rabbit:bindings>
-	        <rabbit:binding queue="settingsQueue"/>
+	        <rabbit:binding queue="settingsQueue" key="settings"/>
+	        <rabbit:binding queue="monitorsQueue" key="monitors"/>
 	    </rabbit:bindings>
-	</rabbit:fanout-exchange>
+	</rabbit:direct-exchange>
 	
 	<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
 	

@@ -5,7 +5,7 @@
 
 	<insert id="createTest" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, MESSAGE_HASH_CODE, START_TIME, FINISH_TIME, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS)
+			INSERT INTO TESTS (NAME, STATUS, TEST_ARGS, TEST_RUN_ID, TEST_CASE_ID, TEST_GROUP, MESSAGE, MESSAGE_HASH_CODE, START_TIME, FINISH_TIME, RETRY, TEST_CONFIG_ID, KNOWN_ISSUE, BLOCKER, NEED_RERUN, DEPENDS_ON_METHODS, CI_TEST_ID)
 			VALUES (
 				#{name},
 			    #{status},
@@ -22,7 +22,8 @@
 			    #{knownIssue},
 			    #{blocker},
 			    #{needRerun},
-			    #{dependsOnMethods}
+			    #{dependsOnMethods},
+			    #{ciTestId}
 			)
 		]]>
 	</insert>
@@ -97,6 +98,7 @@
 				T.BLOCKER AS TEST_BLOCKER,
 				T.NEED_RERUN AS TEST_NEED_RERUN,
 				T.DEPENDS_ON_METHODS AS TEST_DEPENDS_ON_METHODS,
+				T.CI_TEST_ID AS TEST_CI_TEST_ID,
 				TCU.USERNAME AS TEST_OWNER,
 				SO.USERNAME AS TEST_SECONDARY_OWNER,
 				TCS.TEST_CLASS AS TEST_TEST_CLASS,
@@ -313,6 +315,11 @@
                TEST_CONFIG_ID = #{testConfig.id},
             ]]>
 		</if>
+		<if test="null != ciTestId">
+            <![CDATA[
+               CI_TEST_ID = #{ciTestId},
+            ]]>
+		</if>
 		<![CDATA[
 				RETRY = #{retry},
 				KNOWN_ISSUE = #{knownIssue},
@@ -380,6 +387,7 @@
 		<result column="TEST_OWNER" property="owner" />
 		<result column="TEST_SECONDARY_OWNER" property="secondaryOwner" />
 		<result column="TEST_TEST_CLASS" property="testClass" />
+		<result column="TEST_CI_TEST_ID" property="ciTestId" />
 		<result column="TEST_MODIFIED_AT" property="modifiedAt" />
 		<result column="TEST_CREATED_AT" property="createdAt" />
 		

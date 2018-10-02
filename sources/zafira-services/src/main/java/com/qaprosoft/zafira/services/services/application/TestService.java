@@ -19,15 +19,7 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_B
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_KNOWN_ISSUE;
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -145,7 +137,8 @@ public class TestService
 		test.setTestRunId(queuedTestRunId);
 		test.setStatus(Status.QUEUED);
 		test.setTestConfig(null);
-		test.setNeedRerun(false);
+		test.setNeedRerun(true);
+		test.setCiTestId(null);
 		testMapper.createTest(test);
 	}
 

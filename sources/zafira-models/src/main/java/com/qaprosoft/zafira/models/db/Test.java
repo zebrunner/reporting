@@ -25,8 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class Test extends AbstractEntity implements Comparable<Test>
-{
+public class Test extends AbstractEntity implements Comparable<Test> {
 	private static final long serialVersionUID = -915700504693067056L;
 
 	private String name;
@@ -34,7 +33,7 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private String testArgs;
 	private Long testRunId;
 	private Long testCaseId;
-    private String testGroup;
+	private String testGroup;
 	private String message;
 	private Integer messageHashCode;
 	private Date startTime;
@@ -50,137 +49,112 @@ public class Test extends AbstractEntity implements Comparable<Test>
 	private String dependsOnMethods;
 	private String testClass;
 	private Set<TestArtifact> artifacts = new HashSet<>();
+	private String ciTestId;
 
-	public Test()
-	{
+	public Test() {
 		testConfig = new TestConfig();
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Status getStatus()
-	{
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status)
-	{
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
-	public String getTestArgs()
-	{
+	public String getTestArgs() {
 		return testArgs;
 	}
 
-	public void setTestArgs(String testArgs)
-	{
+	public void setTestArgs(String testArgs) {
 		this.testArgs = testArgs;
 	}
 
-	public Long getTestRunId()
-	{
+	public Long getTestRunId() {
 		return testRunId;
 	}
 
-	public void setTestRunId(Long testRunId)
-	{
+	public void setTestRunId(Long testRunId) {
 		this.testRunId = testRunId;
 	}
 
-	public Long getTestCaseId()
-	{
+	public Long getTestCaseId() {
 		return testCaseId;
 	}
 
-	public void setTestCaseId(Long testCaseId)
-	{
+	public void setTestCaseId(Long testCaseId) {
 		this.testCaseId = testCaseId;
 	}
 
-    public String getTestGroup() {
-        return testGroup;
-    }
+	public String getTestGroup() {
+		return testGroup;
+	}
 
-    public String getNotNullTestGroup() {
-        return testGroup == null? "n/a": testGroup;
-    }
+	public String getNotNullTestGroup() {
+		return testGroup == null ? "n/a" : testGroup;
+	}
 
-    public void setTestGroup(String testGroup) {
-        this.testGroup = testGroup;
-    }
+	public void setTestGroup(String testGroup) {
+		this.testGroup = testGroup;
+	}
 
-    public String getMessage()
-	{
+	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message)
-	{
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	public Date getStartTime()
-	{
+	public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime)
-	{
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getFinishTime()
-	{
+	public Date getFinishTime() {
 		return finishTime;
 	}
 
-	public void setFinishTime(Date finishTime)
-	{
+	public void setFinishTime(Date finishTime) {
 		this.finishTime = finishTime;
 	}
 
-	public int getRetry()
-	{
+	public int getRetry() {
 		return retry;
 	}
 
-	public void setRetry(int retry)
-	{
+	public void setRetry(int retry) {
 		this.retry = retry;
 	}
 
-	public TestConfig getTestConfig()
-	{
+	public TestConfig getTestConfig() {
 		return testConfig;
 	}
 
-	public void setTestConfig(TestConfig testConfig)
-	{
+	public void setTestConfig(TestConfig testConfig) {
 		this.testConfig = testConfig;
 	}
 
-	public List<WorkItem> getWorkItems()
-	{
+	public List<WorkItem> getWorkItems() {
 		return workItems;
 	}
 
-	public WorkItem getWorkItemByType(WorkItem.Type type)
-	{
-		if (workItems != null)
-		{
-			for (WorkItem workItem : workItems)
-			{
-				if (type.equals(workItem.getType()))
-				{
+	public WorkItem getWorkItemByType(WorkItem.Type type) {
+		if (workItems != null) {
+			for (WorkItem workItem : workItems) {
+				if (type.equals(workItem.getType())) {
 					return workItem;
 				}
 			}
@@ -188,18 +162,15 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		return null;
 	}
 
-	public void setWorkItems(List<WorkItem> workItems)
-	{
+	public void setWorkItems(List<WorkItem> workItems) {
 		this.workItems = workItems;
 	}
 
-	public boolean isKnownIssue()
-	{
+	public boolean isKnownIssue() {
 		return knownIssue;
 	}
 
-	public void setKnownIssue(boolean knownIssue)
-	{
+	public void setKnownIssue(boolean knownIssue) {
 		this.knownIssue = knownIssue;
 	}
 
@@ -211,13 +182,11 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		this.blocker = blocker;
 	}
 
-	public String getOwner()
-	{
+	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner)
-	{
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
@@ -229,65 +198,59 @@ public class Test extends AbstractEntity implements Comparable<Test>
 		this.secondaryOwner = secondaryOwner;
 	}
 
-	public boolean isNeedRerun()
-	{
+	public boolean isNeedRerun() {
 		return needRerun;
 	}
 
-	public void setNeedRerun(boolean needRerun)
-	{
+	public void setNeedRerun(boolean needRerun) {
 		this.needRerun = needRerun;
 	}
 
-	public String getDependsOnMethods()
-	{
+	public String getDependsOnMethods() {
 		return dependsOnMethods;
 	}
 
-	public void setDependsOnMethods(String dependsOnMethods)
-	{
+	public void setDependsOnMethods(String dependsOnMethods) {
 		this.dependsOnMethods = dependsOnMethods;
 	}
-	
-	public Integer getMessageHashCode()
-	{
+
+	public Integer getMessageHashCode() {
 		return messageHashCode;
 	}
 
-	public void setMessageHashCode(Integer messageHashCode)
-	{
+	public void setMessageHashCode(Integer messageHashCode) {
 		this.messageHashCode = messageHashCode;
 	}
 
-	public String getTestClass()
-	{
+	public String getTestClass() {
 		return testClass;
 	}
 
-	public void setTestClass(String testClass)
-	{
+	public void setTestClass(String testClass) {
 		this.testClass = testClass;
 	}
-	
-	public Set<TestArtifact> getArtifacts()
-	{
+
+	public Set<TestArtifact> getArtifacts() {
 		return artifacts;
 	}
 
-	public void setArtifacts(Set<TestArtifact> artifacts)
-	{
+	public void setArtifacts(Set<TestArtifact> artifacts) {
 		this.artifacts = artifacts;
 	}
 
+	public String getCiTestId() {
+		return ciTestId;
+	}
+
+	public void setCiTestId(String ciTestId) {
+		this.ciTestId = ciTestId;
+	}
+
 	@Override
-	public int compareTo(Test test)
-	{
-		if(Arrays.asList(Status.QUEUED, Status.ABORTED, Status.SKIPPED, Status.FAILED).contains(this.getStatus()))
-		{
+	public int compareTo(Test test) {
+		if (Arrays.asList(Status.QUEUED, Status.ABORTED, Status.SKIPPED, Status.FAILED).contains(this.getStatus())) {
 			return -1;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}

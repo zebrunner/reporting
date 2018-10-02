@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.batchservices.service.impl;
+package com.qaprosoft.zafira.models.push.events;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.qaprosoft.zafira.models.db.Setting;
 
-import com.qaprosoft.zafira.batchservices.service.ISchedulerService;
-import com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask;
+public class ReinitEventMessage extends EventMessage {
 
-public class SchedulerService implements ISchedulerService
-{
-	private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
-	
-	@Autowired
-	private AbortFrozenTestRunsTask abortFrozenTestRunsTask;
-	
+    private static final long serialVersionUID = 5300913238106855128L;
 
-	@Override
-	public void execute()
-	{
-		try
-		{
-			abortFrozenTestRunsTask.runTask();
-			logger.info("");		
-		} catch (Exception e)
-		{
-			logger.error("" + e);
-		}
-	}
+    private Setting.Tool tool;
+
+    public ReinitEventMessage(String tenancy, Setting.Tool tool) {
+        super(tenancy);
+        this.tool = tool;
+    }
+
+    public Setting.Tool getTool() {
+        return tool;
+    }
+
+    public void setTool(Setting.Tool tool) {
+        this.tool = tool;
+    }
 }

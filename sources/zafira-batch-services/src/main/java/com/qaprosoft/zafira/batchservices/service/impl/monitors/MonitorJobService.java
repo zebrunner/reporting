@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jobs;
+package com.qaprosoft.zafira.batchservices.service.impl.monitors;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.MonitorMapper;
+import com.google.gson.Gson;
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
+import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
+import com.qaprosoft.zafira.services.services.application.MonitorService;
+import com.qaprosoft.zafira.services.services.management.MngTenancyService;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
@@ -33,7 +38,6 @@ import java.util.Objects;
 
 import static org.quartz.TriggerKey.triggerKey;
 
-@Service
 public class MonitorJobService
 {
 
@@ -43,41 +47,46 @@ public class MonitorJobService
 	private final static String TRIGGER_GROUP_NAME = "monitorTriggerGroup";
 
 	@Autowired
-	private SchedulerFactoryBean schedulerFactoryBean;
+	private SchedulerFactoryBean springScheduler;
 
 	@Autowired
-	private MonitorMapper monitorMapper;
+	private MonitorService monitorService;
+
+	@Autowired
+	private MngTenancyService mngTenancyService;
 
 	@PostConstruct
 	public void init()
 	{
-		List<Monitor> monitors = monitorMapper.getAllMonitors();
-		for (Monitor monitor : monitors)
-		{
-			addJob(monitor);
-			if (! monitor.isMonitorEnabled())
+		mngTenancyService.iterateItems(tenancy -> {
+			List<Monitor> monitors = monitorService.getAllMonitors();
+			for (Monitor monitor : monitors)
 			{
-				pauseJob(monitor.getId());
+				addJob(monitor);
+				if (! monitor.isMonitorEnabled())
+				{
+					pauseJob(monitor.getId());
+				}
 			}
-		}
+		});
 	}
 
 	public void addJob(Monitor monitor)
 	{
 		JobDetail jobDetail = JobBuilder
 				.newJob(MonitorEmailNotificationTask.class)
-				.withIdentity(monitor.getId().toString(), JOB_GROUP_NAME)
+				.withIdentity(getIdentity(monitor.getId()), getJobGroupName())
 				.storeDurably(true).build();
 
 		CronTriggerImpl trigger = new CronTriggerImpl();
-		trigger.setName(monitor.getId().toString());
-		trigger.setGroup(TRIGGER_GROUP_NAME);
+		trigger.setName(getIdentity(monitor.getId()));
+		trigger.setGroup(getTriggerGroupName());
 
 		try
 		{
 			trigger.setCronExpression(monitor.getCronExpression());
-			schedulerFactoryBean.getScheduler().getContext().put(jobDetail.getKey().getName(), monitor);
-			schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
+			springScheduler.getScheduler().getContext().put(jobDetail.getKey().getName(), monitor);
+			springScheduler.getScheduler().scheduleJob(jobDetail, trigger);
 		} catch (ParseException e)
 		{
 			LOGGER.error("Can't  set cron expression!");
@@ -91,7 +100,7 @@ public class MonitorJobService
 	{
 		try
 		{
-			schedulerFactoryBean.getScheduler().pauseJob(findJobKey(String.valueOf(id)));
+			springScheduler.getScheduler().pauseJob(findJobKey(String.valueOf(id)));
 		} catch (SchedulerException e)
 		{
 			LOGGER.error("Can't delete job");
@@ -102,7 +111,7 @@ public class MonitorJobService
 	{
 		try
 		{
-			schedulerFactoryBean.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
+			springScheduler.getScheduler().resumeJob(findJobKey(String.valueOf(id)));
 		} catch (SchedulerException e)
 		{
 			LOGGER.error("Can't delete job");
@@ -113,7 +122,7 @@ public class MonitorJobService
 	{
 		try
 		{
-			schedulerFactoryBean.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
+			springScheduler.getScheduler().deleteJob(findJobKey(String.valueOf(id)));
 		} catch (SchedulerException e)
 		{
 			LOGGER.error("Can't delete job");
@@ -125,12 +134,12 @@ public class MonitorJobService
 
 		JobDetail job = JobBuilder
 				.newJob(MonitorEmailNotificationTask.class)
-				.withIdentity(monitor.getId().toString(), JOB_GROUP_NAME)
+				.withIdentity(getIdentity(monitor.getId()), getJobGroupName())
 				.storeDurably(true).build();
 		try
 		{
-			schedulerFactoryBean.getScheduler().getContext().put(job.getKey().getName(), monitor);
-			schedulerFactoryBean.getScheduler().addJob(job, true);
+			springScheduler.getScheduler().getContext().put(job.getKey().getName(), monitor);
+			springScheduler.getScheduler().addJob(job, true);
 		} catch (SchedulerException e)
 		{
 			LOGGER.error("Can't  schedule job!");
@@ -144,16 +153,16 @@ public class MonitorJobService
 		Trigger oldTrigger = null;
 		try
 		{
-			oldTrigger = schedulerFactoryBean.getScheduler()
-					.getTrigger(triggerKey(monitor.getId().toString(), TRIGGER_GROUP_NAME));
+			oldTrigger = springScheduler.getScheduler()
+					.getTrigger(triggerKey(getIdentity(monitor.getId()), getTriggerGroupName()));
 
 			CronTriggerImpl newTrigger = new CronTriggerImpl();
-			newTrigger.setName(monitor.getId().toString());
-			newTrigger.setGroup(TRIGGER_GROUP_NAME);
+			newTrigger.setName(getIdentity(monitor.getId()));
+			newTrigger.setGroup(getTriggerGroupName());
 			newTrigger.setCronExpression(monitor.getCronExpression());
 			if(oldTrigger != null)
 			{
-				schedulerFactoryBean.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
+				springScheduler.getScheduler().rescheduleJob(oldTrigger.getKey(), newTrigger);
 			}
 		} catch (SchedulerException e)
 		{
@@ -173,7 +182,7 @@ public class MonitorJobService
 	public JobKey findJobKey(String jobName) throws SchedulerException
 	{
 		// Check running jobs first
-		for (JobExecutionContext runningJob : schedulerFactoryBean.getScheduler().getCurrentlyExecutingJobs())
+		for (JobExecutionContext runningJob : springScheduler.getScheduler().getCurrentlyExecutingJobs())
 		{
 			if (Objects.equals(jobName, runningJob.getJobDetail().getKey().getName()))
 			{
@@ -181,9 +190,9 @@ public class MonitorJobService
 			}
 		}
 		// Check all jobs if not found
-		for (String groupName : schedulerFactoryBean.getScheduler().getJobGroupNames())
+		for (String groupName : springScheduler.getScheduler().getJobGroupNames())
 		{
-			for (JobKey jobKey : schedulerFactoryBean.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName)))
+			for (JobKey jobKey : springScheduler.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName)))
 			{
 				if (Objects.equals(jobName, jobKey.getName()))
 				{
@@ -205,4 +214,40 @@ public class MonitorJobService
 		}
 	}
 
+	@RabbitListener(queues = "#{monitorsQueue.name}")
+	public void process(Message message) {
+		MonitorEventMessage monitorMessage = new Gson().fromJson(new String(message.getBody()), MonitorEventMessage.class);
+		Monitor monitor = monitorService.getMonitorById(monitorMessage.getMonitorId());
+		if (monitor != null) {
+			TenancyContext.setTenantName(monitorMessage.getTenancy());
+			switch (monitorMessage.getAction()) {
+				case CREATE:
+					addJob(monitor);
+					break;
+				case UPDATE:
+					updateMonitor(monitor);
+					break;
+				case SWITCH:
+					switchMonitor(monitor.isMonitorEnabled(), monitor.getId());
+					break;
+				case DELETE:
+					deleteJob(monitor.getId());
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	private String getIdentity(Long monitorId) {
+		return monitorId + "_" + TenancyContext.getTenantName();
+	}
+
+	private String getJobGroupName() {
+		return JOB_GROUP_NAME + "_" + TenancyContext.getTenantName();
+	}
+
+	private String getTriggerGroupName() {
+		return TRIGGER_GROUP_NAME + "_" + TenancyContext.getTenantName();
+	}
 }
