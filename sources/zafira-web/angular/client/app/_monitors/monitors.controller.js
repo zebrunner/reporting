@@ -125,6 +125,7 @@
             } else {
                 user = currentUser;
             }
+            monitor.emailList = monitor.emailList ? monitor.emailList : [];
             monitor.emailList.push(user);
             /*monitor.users.push(user);*/
             return user;

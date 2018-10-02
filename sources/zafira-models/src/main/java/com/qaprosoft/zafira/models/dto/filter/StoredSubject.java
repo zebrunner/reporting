@@ -1,12 +1,9 @@
 package com.qaprosoft.zafira.models.dto.filter;
 
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
 public class StoredSubject
 {
 	private Subject testRunSubject = new Subject()

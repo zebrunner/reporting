@@ -13,33 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.batchservices.service.impl;
+package com.qaprosoft.zafira.models.push.events;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.Serializable;
 
-import com.qaprosoft.zafira.batchservices.service.ISchedulerService;
-import com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask;
+public abstract class EventMessage implements Serializable {
 
-public class SchedulerService implements ISchedulerService
-{
-	private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
-	
-	@Autowired
-	private AbortFrozenTestRunsTask abortFrozenTestRunsTask;
-	
+    private static final long serialVersionUID = 2241656564064701459L;
 
-	@Override
-	public void execute()
-	{
-		try
-		{
-			abortFrozenTestRunsTask.runTask();
-			logger.info("");		
-		} catch (Exception e)
-		{
-			logger.error("" + e);
-		}
-	}
+    private String tenancy;
+
+    protected EventMessage(String tenancy) {
+        this.tenancy = tenancy;
+    }
+
+    public String getTenancy() {
+        return tenancy;
+    }
+
+    public void setTenancy(String tenancy) {
+        this.tenancy = tenancy;
+    }
 }

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 	<context:annotation-config />
 
 	<import resource="classpath:zafira-app-dbaccess.xml" />
+	<import resource="classpath:zafira-mng-dbaccess.xml" />
 	<import resource="classpath:zafira-services.xml" />
 
 	<util:properties id="environmentProperties" location="classpath:environment.properties" />
@@ -34,7 +35,7 @@
 	<bean id="abortFrozenTestRunsTaskJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="executeAbortFrozenTestRunsTask" />
+		<property name="targetMethod" value="execute" />
 	</bean>
 
 	<!-- Triggers -->
@@ -45,8 +46,7 @@
 			value="${zafira.batch.jobs.abortFrozenTestRuns.trigger.cronExpression}" />
 	</bean>
 
-	<bean id="springScheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="springSchedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="jobDetails">
 			<list>
 				<ref bean="abortFrozenTestRunsTaskJobDetail" />
@@ -57,5 +57,8 @@
 				<ref bean="abortFrozenTestRunsTaskTrigger" />
 			</list>
 		</property>
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
 	</bean>
+
+	<bean id="monitorJobService" class="com.qaprosoft.zafira.batchservices.service.impl.monitors.MonitorJobService"/>
 </beans>

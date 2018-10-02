@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jobs;
+package com.qaprosoft.zafira.batchservices.service.impl.monitors;
 
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.db.MonitorStatus;
@@ -21,12 +21,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.EmailService;
 import com.qaprosoft.zafira.services.services.application.MonitorService;
 import com.qaprosoft.zafira.services.services.application.emails.MonitorEmailMessageNotification;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
+import com.qaprosoft.zafira.services.services.application.jobs.MonitorHttpService;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,22 +43,23 @@ public class MonitorEmailNotificationTask implements Job
 	{
 		try
 		{
-			// Initialize email service for quartz
-			EmailService emailService = ((ApplicationContext) jobExecutionContext
-					.getScheduler().getContext().get("applicationContext")).getBean(EmailService.class);
-
-			MonitorService monitorService = ((ApplicationContext) jobExecutionContext
-					.getScheduler().getContext().get("applicationContext")).getBean(MonitorService.class);
-
 			SchedulerContext schedulerContext = jobExecutionContext.getScheduler().getContext();
+
 			if (schedulerContext == null)
 			{
 				throw new ServiceException("Scheduler context is null");
 			}
 
+			ApplicationContext applicationContext = ((ApplicationContext) schedulerContext.get("applicationContext"));
+
+			// Initialize email service for quartz
+			EmailService emailService = applicationContext.getBean(EmailService.class);
+			MonitorService monitorService = applicationContext.getBean(MonitorService.class);
+			MonitorHttpService monitorHttpService = applicationContext.getBean(MonitorHttpService.class);
+
 			Monitor monitor = (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
 
-			int actualResponseStatus = getResponseCode(monitor);
+			int actualResponseStatus = monitorHttpService.getResponseCode(monitor);
 			boolean codeMatch = monitor.getExpectedCode() == actualResponseStatus;
 
 			monitor.setSuccess(codeMatch);
@@ -104,65 +100,6 @@ public class MonitorEmailNotificationTask implements Job
 		{
 			LOGGER.error("Scheduler context is null");
 		}
-	}
-
-	public Integer getResponseCode(Monitor monitor)
-	{
-		int responseCode = 0;
-		
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		switch (monitor.getHttpMethod())
-		{
-			case GET:
-			{
-				try
-				{
-					HttpGet request = new HttpGet(monitor.getUrl());
-					request.addHeader("Accept", "*/*");
-					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-				}
-				catch (Exception e)
-				{
-					LOGGER.error(e.getMessage());
-				}
-				break;
-			}
-			case PUT:
-			{
-				try
-				{
-					HttpPut request = new HttpPut(monitor.getUrl());
-					request.addHeader("Content-Type", "application/json");
-					request.addHeader("Accept", "*/*");
-					request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-				}
-				catch (Exception e)
-				{
-					LOGGER.error(e.getMessage());
-				}
-				break;
-			}
-			case POST:
-			{
-				try
-				{
-					HttpPost request = new HttpPost(monitor.getUrl());
-					request.addHeader("Content-Type", "application/json");
-					request.addHeader("Accept", "*/*");
-					request.setEntity(new StringEntity(monitor.getRequestBody(), "UTF-8"));
-					responseCode = httpClient.execute(request).getStatusLine().getStatusCode();
-				}
-				catch (Exception e)
-				{
-					LOGGER.error(e.getMessage());
-				}
-				break;
-			}
-			default:
-				break;
-			}
-		return responseCode;
 	}
 
 	private String[] getRecipientList(String recipients)
