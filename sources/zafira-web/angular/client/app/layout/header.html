@@ -19,7 +19,7 @@
             <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                 <div class="profile-img hide-phone" style="display: inline-block;" ng-controller="SidebarController">
                     <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
-                    <div has-any-role="['ROLE_ADMIN', 'ROLE_SUPERADMIN']">
+                    <div has-any-role="['ROLE_ADMIN']">
                         <div class="profile-img-content" style="top: 6px; left:12px">
                             <span><i id="brandPhotoSetting" class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 16px">settings</i></span>
                         </div>
@@ -34,7 +34,7 @@
                             <profile-photo id="brandPhotoPhone" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
                         </div>
                     </md-button>
-                    <md-menu-content class="top-header-dropdown" width="3">
+                    <md-menu-content style="z-index:99;"  width="3">
                         <md-list class="md-dense">
                             <md-list-item id="clearProject" class="md-2-line" ng-click="resetProjects()">
                                 <md-icon class="material-icons highlight_red">close</md-icon>
@@ -57,27 +57,25 @@
                         </md-list>
                     </md-menu-content>
                 </md-menu>
-            </li>
-            <li>
                 <md-menu md-position-mode="left bottom">
                     <md-button id="profileMenu" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
                         <profile-photo ng-model="currentUser.photoURL" size="36" auto-resize="false"></profile-photo>
                         <small class="hide-phone" style="margin-right: 15px;">{{currentUser.username}}</small>
                     </md-button>
-                    <md-menu-content class="top-header-dropdown" width="3">
+                    <md-menu-content style="z-index:99;" width="3">
                         <md-menu-item>
                             <md-button aria-label="menu" ng-href="#!/users/profile">
                                 <md-icon class="material-icons">settings</md-icon><span data-translate="MY_PROFILE"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
+                        <md-menu-item>
                             <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.personalDashboardId}}?userId={{currentUser.id}}">
                                 <md-icon class="material-icons">equalizer</md-icon><span data-translate="PERSONAL"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
+                        <md-menu-item>
                           <md-button aria-label="menu" ng-href="#!/dashboards/{{currentUser.pefrDashboardId}}?userId={{currentUser.id}}">
                                 <md-icon class="material-icons">timeline</md-icon><span data-translate="PERFORMANCE"></span></md-button>
                         </md-menu-item>
-                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']" has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
+                        <md-menu-item has-any-permission="['VIEW_INTEGRATIONS']">
                             <md-button aria-label="menu" ng-href="#!/integrations">
                                 <md-icon class="material-icons">settings_input_component</md-icon><span data-translate="INTEGRATIONS"></span></md-button>
                         </md-menu-item>
@@ -87,12 +85,13 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </li>
             <div class="menu-button" toggle-off-canvas>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </div>
-        </ul>
+        </md-menu-bar>
+        </div>
+    </md-tool-bar>
     </div>
 </header>

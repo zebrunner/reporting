@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    margin-top: -128px;
+    margin-top: -65px;
     
     .placeholder-label{
         padding-left: 0px !important;
@@ -48,6 +48,7 @@
     
     .main-body {
         max-width: 440px;
+        min-height: 320px;
         margin: 10px auto;
         @media (min-width: 1230px){
             margin: 0px auto;
@@ -62,15 +63,16 @@
                 flex-direction: column;
                 justify-content: space-between;
                 .card-action{
-                    padding-bottom: 13px;
-                    padding-top:22px;
+                    padding: 40px 0px 0px;
+                    margin-bottom: -10px;
                     a{
-                        margin-right: -10px;
+                        margin-right: -8px;
                     }
                 }
             }
         }
         .card-content{
+            min-height: 320px;
             .added-small{
                 margin-top: -8px;
                 font-size: 12px;    
@@ -101,7 +103,9 @@
     }
 
     #changepwd, #forgotpwd{
-        padding: 5px 0 5px 52px;
+        position: absolute;
+        right: -5px;;
+        bottom: 15px;
         font-weight: normal;
         &:hover{
             background-color: $reverse;
@@ -175,8 +179,8 @@
     }
     
     .button-container{
-        margin-top: -5px;
-        padding: 0px 20px 10px;
+        margin-bottom: -5px;
+        padding: 12px 0px 0px;
         display: flex;
         align-items: center;
         a{ 
