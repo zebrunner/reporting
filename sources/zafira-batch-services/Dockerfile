@@ -20,8 +20,9 @@ ENV ZAFIRA_RABBITMQ_STOMP_PORT=61613
 
 WORKDIR /opt/zafira-batch-services/generated-resources/appassembler/jsw/JobService
 COPY /target/ /opt/zafira-batch-services/
+COPY entrypoint.sh .
 
 RUN mkdir -p logs
 RUN chmod +x bin/JobService bin/wrapper-linux-x86-64
 
-ENTRYPOINT bin/JobService console
+ENTRYPOINT ./entrypoint.sh
