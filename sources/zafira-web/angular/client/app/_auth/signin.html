@@ -48,18 +48,20 @@
                                             <span ng-if="! validation.additional">{{ validation.message }}</span>
                                         </div>
                                     </div>
+
                                 </md-input-container>
                                 
                             </fieldset>
+                            <div layout="row" class=" button-container " layout-align="space-between">
+                                    <a href="#!/password/forgot">Forgot your password?</a>
+                                    <md-button type="submit"
+                                        id="signin"
+                                        class="btn-w-sm md-primary signin"
+                                        ng-disabled="signin_form.$invalid">Sign in</md-button>
+                                </div>
                         </form>
                     </div>
-                    <div layout="row" class=" button-container " layout-align="space-between">
-                        <a href="#!/password/forgot">Forgot your password?</a>
-                        <md-button type="submit"
-                                   id="signin"
-                                   class="btn-w-sm md-primary signin"
-                                   ng-disabled="signin_form.$invalid">Sign in</md-button>
-                    </div>
+                    
                 </div>
             </div>
 

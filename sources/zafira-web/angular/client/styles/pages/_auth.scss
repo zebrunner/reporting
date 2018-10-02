@@ -48,6 +48,7 @@
     
     .main-body {
         max-width: 440px;
+        min-height: 320px;
         margin: 10px auto;
         @media (min-width: 1230px){
             margin: 0px auto;
@@ -62,15 +63,16 @@
                 flex-direction: column;
                 justify-content: space-between;
                 .card-action{
-                    padding-bottom: 13px;
-                    padding-top:22px;
+                    padding: 40px 0px 0px;
+                    margin-bottom: -10px;
                     a{
-                        margin-right: -10px;
+                        margin-right: -8px;
                     }
                 }
             }
         }
         .card-content{
+            min-height: 320px;
             .added-small{
                 margin-top: -8px;
                 font-size: 12px;    
@@ -101,7 +103,9 @@
     }
 
     #changepwd, #forgotpwd{
-        padding: 5px 0 5px 52px;
+        position: absolute;
+        right: -5px;;
+        bottom: 15px;
         font-weight: normal;
         &:hover{
             background-color: $reverse;
@@ -140,6 +144,13 @@
             margin-bottom: 30px;
         }
     }
+
+    .card {
+        @extend .z-depth-2;
+        .card-content {
+            padding: 20px;
+        }
+    }
     
     .wrapper {
         margin-top: 70px;
@@ -168,8 +179,8 @@
     }
     
     .button-container{
-        margin-top: -5px;
-        padding: 0px 20px 10px;
+        margin-bottom: -5px;
+        padding: 12px 0px 0px;
         display: flex;
         align-items: center;
         a{ 
@@ -179,7 +190,7 @@
         }
     }
     .additional-background{
-        width: 50%;
+        z-index: -2;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
@@ -190,7 +201,10 @@
             margin: 0px 30px;
         }
         @media (min-width: 1230px){
-            margin-bottom: -25px;
+            margin-right: 108px;
+            position: fixed;
+            right:0;
+            bottom: 0;
         }
         @media (max-height: 730px) and (min-width: 1230px){
             position: static;
@@ -257,8 +271,8 @@
         .robot{
             @media (min-width: 1230px){
                 margin-bottom: 0;
-                max-height: 120px;
-                max-width: 120px;
+                max-height: 172px;
+                max-width: 171px;
             }
             @media (min-width: $screen-phone) and (max-width: 1230px){
                 margin-right: 8px;
@@ -276,8 +290,8 @@
         }
         .line{
             transform: rotate(8deg);
-            width: 30px;  
-            height: 30px;
+            width: 55px;  
+            height: 48px;
             margin-left: 50px;
             margin-top: 26px;
             margin-bottom: -33px;
