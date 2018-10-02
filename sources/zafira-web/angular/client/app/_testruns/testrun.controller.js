@@ -104,9 +104,10 @@
         };
 
         $scope.matchMode = function(modes) {
-            return getMode().filter(function (m) {
+            var isMode = getMode().filter(function (m) {
                 return modes.indexOf(m) >= 0;
             }).length > 0;
+            return isMode || (! isMode && modes.indexOf('ANY') != -1 && getMode().length);
         };
 
         $scope.DATE_CRITERIAS = ['DATE'];

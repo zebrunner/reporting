@@ -1,4 +1,4 @@
-@media (min-width: $screen-sm) {
+//@media (min-width: $screen-sm) {
 
     .app.nav-collapsed-min {
 
@@ -15,11 +15,54 @@
 
         #nav-container {
             width: 60px;
+            @media (max-width: $screen-phone) {
+                &:not(.toggle-bottom) {
+                    width: 0;
+                    #nav {
+                        > li:not(:first-child) {
+                            display: none !important;
+                        }
+                        >li:first-child {
+                            width: 60px;
+                        }
+                    }
+                }
+                &.toggle-bottom {
+                    animation: toggleBottom 0.1s linear;
+                    #nav {
+                        >li:first-child {
+                            transition: none !important;
+                            width: 60px;
+                        }
+                        > li:not(:first-child) {
+                            animation: iconsShowing 0.1s linear;
+                        }
+                    }
+                }
+            }
         }
 
-        .content-container {
-            margin-left: 60px;
+        @keyframes toggleBottom {
+            from {
+                width: 0;
+            }
+            to {
+                width: 60px;
+            }
         }
+
+        @keyframes iconsShowing {
+            from {
+                transform: translateX(-20px);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /*.content-container {
+            margin-left: 60px;
+        }*/
 
         #content {
             padding-top: $header_height;
@@ -29,6 +72,13 @@
             overflow: visible !important;
         }
         #nav {
+            .sidebar-menu-button {
+                display: none;
+                @media (max-width: $screen-phone) {
+                    display: block;
+                    height: $header_height;
+                }
+            }
             overflow: visible !important;
             > li {
                 // width: 50px;
@@ -41,6 +91,10 @@
                 > .menu-btn {
                     padding: 15px 15px;
                     text-align: center;
+
+                    @media (max-width: $screen-phone) {
+                        height: 100%;
+                    }
 
                     > i {
                         margin: 0;
@@ -59,18 +113,93 @@
                 }
 
                 > ul {
+
                     z-index: 9;
                     position: absolute;
+                    height: 95%;
                     left: 100%;
                     top: 0;
-                    width: 220px;
+                    min-width: 240px;
+
+                    @media (max-width: $screen-phone) {
+                        position: fixed;
+                        left: 60px;
+                        top: $header_height + 1px;
+                        width: calc(100% - 60px) !important;
+                        height: 100%;
+                    }
+
+                    //overflow: auto;
                     @include border-right-radius($border-radius-base);
                     box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+                    li.search-menu {
+                        //margin-top: 6px;
+                        > ul {
+                            height: 100%;
+                            overflow: auto;
+                        }
+                        .fa-angle-down {
+                            display: none !important;
+                        }
+                        /*li:first-child {
+                            margin-top: 6px;
+                        }*/
+                    }
+
+                    > li:not(.nav-search) {
+                        height: calc(95% - 40px);
+                        @media (min-width:$screen-sm) {
+                            height: calc(95% - 20px);
+                        }
+                    }
+
+                    > li {
+                        &.nav-search {
+                            height: 5%;
+                            margin-left: 16px !important;
+                            margin-top: 6px;
+                            margin-bottom: 18px;
+                            md-input-container {
+                                label {
+                                    font-size: 12px;
+                                    color: #4e5259;
+                                }
+                                &.md-input-focused, &.md-input-has-value {
+                                    label {
+                                        display: none !important;
+                                    }
+                                }
+                                input {
+                                    width: 160px;
+                                    border-color: #4e5259;
+                                    color: #4e5259;
+                                    margin-bottom: 12px !important;
+                                }
+                                md-icon {
+                                    font-size: 18px;
+                                }
+                            }
+                            md-icon {
+                                color: #4e5259;
+                                font-size: 17px;
+                            }
+                            .search_close-button {
+                                position: relative;
+                                left: 34px;
+
+                                @media (max-width: $screen-phone) {
+                                    position: absolute;
+                                    left: 90%;
+                                    top: 8px;
+                                }
+                            }
+                        }
+                    }
                 }
 
-                &:hover,
+                //&:hover,
                 &.open {
-                    > ul {
+                    > ul, li.search-menu > ul {
                         display: block !important;
                     }
                 }
@@ -111,4 +240,4 @@
         }
 
     }
-}
+//}

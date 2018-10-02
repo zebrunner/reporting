@@ -15,10 +15,9 @@
     </div>
 
     <div zafira-background-theme="table" class="top-nav" ng-controller="SidebarController">
-                <md-toolbar class="md-menu-toolbar ">
-                        <div layout="row" layout-align="end" style="min-height: 64px">
-        <md-menu-bar class="nav-right pull-right">
-                <div class="profile-img" style="display: inline-block;" ng-controller="SidebarController">
+        <ul class="nav-right pull-right list-unstyled">
+            <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
+                <div class="profile-img hide-phone" style="display: inline-block;" ng-controller="SidebarController">
                     <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
                     <div has-any-role="['ROLE_ADMIN']">
                         <div class="profile-img-content" style="top: 6px; left:12px">
@@ -27,10 +26,13 @@
                     </div>
                 </div>
                 <md-menu id="projects-menu" md-position-mode="left bottom">
-                    <md-button id="projects" class="header-btn" aria-label="menu1" ng-click="$mdMenu.open($event); loadProjects();">
-                        <small data-ng-if="selectedProjectsPresent()">{{ joinProjectNames() }}</small>
-                        <small data-ng-if="! selectedProjectsPresent()">Projects</small>
-                        <i class="material-icons">keyboard_arrow_down</i>
+                    <md-button id="projects" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event); loadProjects();">
+                        <small class="hide-phone" data-ng-if="selectedProjectsPresent()">{{ joinProjectNames() }}</small>
+                        <small class="hide-phone" data-ng-if="! selectedProjectsPresent()">Projects</small>
+                        <i class="material-icons hide-phone">keyboard_arrow_down</i>
+                        <div class="profile-img show-phone" style="display: inline-block;" ng-controller="SidebarController">
+                            <profile-photo id="brandPhotoPhone" ng-model="companyLogo.value" size="40" icon="image" icon-visible="currentUser.isAdmin"></profile-photo>
+                        </div>
                     </md-button>
                     <md-menu-content style="z-index:99;"  width="3">
                         <md-list class="md-dense">
@@ -58,7 +60,7 @@
                 <md-menu md-position-mode="left bottom">
                     <md-button id="profileMenu" class="header-btn" aria-label="menu" ng-click="$mdMenu.open($event)">
                         <profile-photo ng-model="currentUser.photoURL" size="36" auto-resize="false"></profile-photo>
-                        <small style="margin-right: 15px;">{{currentUser.username}}</small>
+                        <small class="hide-phone" style="margin-right: 15px;">{{currentUser.username}}</small>
                     </md-button>
                     <md-menu-content style="z-index:99;" width="3">
                         <md-menu-item>

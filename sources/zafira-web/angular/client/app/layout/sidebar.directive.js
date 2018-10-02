@@ -4,10 +4,103 @@
     angular.module('app.layout')
         .directive('toggleNavCollapsedMin', ['$rootScope', toggleNavCollapsedMin])
         .directive('collapseNav', collapseNav)
+        .directive('toggleNavBottom', toggleNavBottom)
+        .directive('toggleMenu', toggleMenu)
         .directive('highlightActive', highlightActive)
         .directive('toggleOffCanvas', toggleOffCanvas);
 
     var minWidth = 768;
+
+
+    var CLOSE_ON = ['body'];
+
+    var sidebar;
+    var body = angular.element('#app');
+
+    var openedMenu;
+    var slideTime = 250;
+
+    CLOSE_ON.forEach(function (value) {
+        angular.element(value).on('click', function (e) {
+            var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
+            if(! isSliceOfSidebar) {
+                closeMenu(openedMenu);
+            }
+        });
+    });
+
+    function toggleMenu() {
+        var directive = {
+            restrict: 'A',
+            link: link
+        };
+
+        return directive;
+
+        function link(scope, ele, attrs) {
+            var open = attrs.toggleMenu != 'close';
+            if(open) {
+                var trigger = ele.find(' > a');
+                sidebar = angular.element('#nav');
+                trigger.on('click', function (e) {
+                    if(angular.equals(ele, openedMenu)) {
+                        openedMenu.removeClass('open').find('ul').slideUp(slideTime);
+                        body.removeClass('menu-toggled');
+                        openedMenu = null;
+                        return;
+                    }
+                    if(openedMenu) {
+                        openedMenu.removeClass('open').find('ul').slideUp(slideTime);
+                        body.removeClass('menu-toggled');
+                        openedMenu = null;
+                    }
+                    if (!ele.hasClass('open')) {
+                        body.addClass('menu-toggled');
+                        ele.addClass('open');
+                        openedMenu = ele;
+                    }
+                });
+            } else {
+                ele.on('click', function (e) {
+                    closeMenu();
+                });
+            }
+        }
+    }
+
+    function toggleNavBottom() {
+        var directive = {
+            restrict: 'A',
+            link: link
+        };
+
+        return directive;
+
+        function link(scope, ele, attrs) {
+
+            var sidebar = angular.element('#nav-container');
+            var toggleBottomClassName = 'toggle-bottom';
+
+            ele.on('click', function (e) {
+                if(sidebar.hasClass(toggleBottomClassName)) {
+                    sidebar.removeClass(toggleBottomClassName);
+                    body.removeClass('sidebar-toggled');
+                } else {
+                    sidebar.addClass(toggleBottomClassName);
+                    body.addClass('sidebar-toggled');
+                }
+            });
+        }
+    }
+
+    function closeMenu() {
+        var openElement = angular.element('li.open');
+        if(openElement) {
+            openElement.removeClass('open').find('ul').slideUp(slideTime);
+            body.removeClass('menu-toggled');
+            openedMenu = null;
+        }
+    };
 
     // switch for mini style NAV, realted to 'collapseNav' directive
     function toggleNavCollapsedMin($rootScope) {
@@ -55,10 +148,10 @@
 
             $lists = ele.find('ul').parent('li');
 
-            $lists.append('<i class="fa fa-angle-down icon-has-ul-h"></i>');
+            //$lists.append('<i class="fa fa-angle-down icon-has-ul-h"></i>');
 
             $a = $lists.children('a');
-            $a.append('<i class="fa fa-angle-down icon-has-ul"></i>');
+            //$a.append('<i class="fa fa-angle-down icon-has-ul"></i>');
 
             $listsRest = ele.children('li').not($lists);
 
@@ -76,41 +169,50 @@
                 $this = $(this);
                 $parent = $this.parent('li');
                 $lists.not($parent).removeClass('open').find('ul').slideUp(slideTime);
+                body.removeClass('menu-toggled');
                 $parent.toggleClass('open').find('ul').stop().slideToggle(slideTime);
                 event.preventDefault();
             });
 
             $aRest.on('click', function(event) {
                 $lists.removeClass('open').find('ul').slideUp(slideTime);
+                body.removeClass('menu-toggled');
+                openedMenu = null;
             });
 
             scope.$on('nav:reset', function(event) {
                 $lists.removeClass('open').find('ul').slideUp(slideTime);
+                body.removeClass('menu-toggled');
+                openedMenu = null;
             });
 
             Timer = void 0;
 
             prevWidth = $window.width();
 
+            $app.addClass('nav-collapsed-min');
+
             updateClass = function() {
                 var currentWidth;
                 currentWidth = $window.width();
                 if (currentWidth < minWidth) {
-                    $app.removeClass('nav-collapsed-min');
+                    //$app.removeClass('nav-collapsed-min');
                 } else {
                     $app.addClass('nav-collapsed-min');
                 }
                 if (prevWidth < minWidth && currentWidth >= minWidth && $nav.hasClass('nav-horizontal')) {
                     $lists.removeClass('open').find('ul').slideUp(slideTime);
+                    body.removeClass('menu-toggled');
+                    openedMenu = null;
                 }
                 prevWidth = currentWidth;
             };
 
-            $window.resize(function() {
+            /*$window.resize(function() {
                 var t;
                 clearTimeout(t);
                 t = setTimeout(updateClass, 300);
-            });
+            });*/
 
         }
     }
