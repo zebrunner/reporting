@@ -3,9 +3,9 @@
 
     angular
         .module('app.monitors')
-        .controller('MonitorsController', ['$scope', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'MonitorsService', 'UserService', MonitorsController])
+        .controller('MonitorsController', ['$scope', '$q', '$rootScope', '$state', '$mdConstant', '$stateParams', '$mdDialog', 'MonitorsService', 'UserService', MonitorsController])
 
-    function MonitorsController($scope, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, MonitorsService, UserService) {
+    function MonitorsController($scope, $q, $rootScope, $state, $mdConstant, $stateParams, $mdDialog, MonitorsService, UserService) {
 
         $scope.monitors = [];
 
@@ -148,6 +148,34 @@
             }
         };
 
+        $scope.update = function (monitor, switchJob) {
+            return $q(function (resolve, reject) {
+                if(monitor.emailList) {
+                    monitor.recipients = monitor.emailList.toString();
+                }
+                MonitorsService.updateMonitor(monitor, switchJob).then(function (rs) {
+                    if(rs.success)
+                    {
+                        if(switchJob)
+                        {
+                            var status = rs.data.monitorEnabled ? 'ran': 'stopped';
+                            alertify.success("Monitor was " + status);
+                        } else {
+                            alertify.success('Monitor was updated');
+                        }
+                        resolve();
+                    } else {
+                        if(rs.error.status == 400) {
+                            $scope.errorResponse = rs;
+                        } else {
+                            alertify.error(rs.message);
+                        }
+                        reject();
+                    }
+                })
+            });
+        };
+
         $scope.openMonitorDialog = function ($event, monitor) {
             $mdDialog.show({
                 controller: function ($scope, $mdDialog, monitor) {
@@ -201,28 +229,9 @@
                         })
                     };
 
-                    $scope.updateMonitor = function (monitor, switchJob) {
-                        if(monitor.emailList) {
-                            monitor.recipients = monitor.emailList.toString();
-                        }
-                        MonitorsService.updateMonitor(monitor, switchJob).then(function (rs) {
-                            if(rs.success)
-                            {
-                                if(switchJob)
-                                {
-                                    var status = rs.data.monitorEnabled ? 'ran': 'stopped';
-                                    alertify.success("Monitor was " + status);
-                                } else {
-                                    alertify.success('Monitor was updated');
-                                }
-                                $scope.hide();
-                            } else {
-                                if(rs.error.status == 400) {
-                                    $scope.errorResponse = rs;
-                                } else {
-                                    alertify.error(rs.message);
-                                }
-                            }
+                    $scope.updateMonitor = function(monitor, switchJob) {
+                        $scope.update(monitor, switchJob).then(function (rs) {
+                            $scope.hide();
                         })
                     };
 
