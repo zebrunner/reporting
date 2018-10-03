@@ -112,8 +112,10 @@
         letter-spacing: 0.02px;
         padding: 5px 0 5px 10px;
         &:hover{
-            background-color: $reverse;
-            text-decoration: underline;
+            &:not([disabled]) {
+                background-color: $reverse;
+                text-decoration: underline;
+            }
         }
     }
 
