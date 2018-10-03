@@ -144,9 +144,9 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(PasswordChangingType password) throws ServiceException {
+    public void updateUserPassword(PasswordChangingType password, boolean forceUpdate) throws ServiceException {
         User user = getNotNullUserById(password.getUserId());
-        if(password.getOldPassword() == null || ! passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword())) {
+        if(! forceUpdate && (password.getOldPassword() == null || ! passwordEncryptor.checkPassword(password.getOldPassword(), user.getPassword()))) {
             throw new ForbiddenOperationException();
         }
         updateUserPassword(user, password);

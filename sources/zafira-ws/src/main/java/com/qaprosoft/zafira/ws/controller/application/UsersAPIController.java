@@ -159,7 +159,7 @@ public class UsersAPIController extends AbstractController
 	public void updateUserPassword(@Valid @RequestBody PasswordChangingType password) throws ServiceException
 	{
 		checkCurrentUserAccess(password.getUserId());
-		userService.updateUserPassword(password);
+		userService.updateUserPassword(password, isAdmin() && password.getOldPassword() == null);
 	}
 
 	@ResponseStatusDetails

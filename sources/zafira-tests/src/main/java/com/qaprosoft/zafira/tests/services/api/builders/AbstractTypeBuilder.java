@@ -34,6 +34,6 @@ public abstract class AbstractTypeBuilder<T extends AbstractType> implements IMo
 
 	public String getNextRandomString(int count)
 	{
-		return RandomStringUtils.random(count, true, true);
+		return RandomStringUtils.randomAlphabetic(count);
 	}
 }

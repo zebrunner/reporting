@@ -11,9 +11,6 @@ public class ChangePasswordModalWindow extends AbstractModalWindow
 	@FindBy(name = "password")
 	private WebElement passwordInput;
 
-	@FindBy(name = "confirmPassword")
-	private WebElement confirmPasswordInput;
-
 	@FindBy(xpath = ".//button[contains(text(), 'Change')]")
 	private WebElement changeButton;
 
@@ -25,7 +22,6 @@ public class ChangePasswordModalWindow extends AbstractModalWindow
 	public void changePassword(String password)
 	{
 		passwordInput.sendKeys(password);
-		confirmPasswordInput.sendKeys(password);
 		changeButton.click();
 		waitUntilModalIsNotPresent();
 	}
@@ -33,11 +29,6 @@ public class ChangePasswordModalWindow extends AbstractModalWindow
 	public WebElement getPasswordInput()
 	{
 		return passwordInput;
-	}
-
-	public WebElement getConfirmPasswordInput()
-	{
-		return confirmPasswordInput;
 	}
 
 	public WebElement getChangeButton()

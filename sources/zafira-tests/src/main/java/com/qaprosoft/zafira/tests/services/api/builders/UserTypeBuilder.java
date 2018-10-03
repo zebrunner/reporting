@@ -9,9 +9,9 @@ public class UserTypeBuilder extends AbstractTypeBuilder<UserType>
 	{
 		private static final long serialVersionUID = -779719747964127512L;
 		{
-			setFirstName("f" + getNextRandomInt());
-			setLastName("l" + getNextRandomInt());
-			setUsername("u" + getNextRandomInt());
+			setFirstName("f" + getNextRandomString(15));
+			setLastName("l" + getNextRandomString(15));
+			setUsername("u" + getNextRandomString(15));
 			setEmail("e" + getNextRandomInt() + "@test.com");
 		}
 	};

@@ -21,7 +21,6 @@ public class PasswordChangingType extends PasswordType {
 
     private static final long serialVersionUID = 6708214365157741315L;
 
-    @NotNull
     private String oldPassword;
 
     public String getOldPassword() {

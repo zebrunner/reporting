@@ -15,6 +15,7 @@ import com.qaprosoft.zafira.tests.services.api.UserAPIService;
 import com.qaprosoft.zafira.tests.services.api.builders.UserTypeBuilder;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import com.qaprosoft.zafira.tests.services.gui.UserPageService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
@@ -119,7 +120,7 @@ public class UserPageTest extends AbstractTest
 		}
 		CreateUserModalWindow createUserModalWindow = userPageService.goToCreateUserModalWindow();
 		UserType userType = (new UserTypeBuilder()).getUserType();
-		String username = "1a" + (new Random()).nextInt(10000);
+		String username = "a" + RandomStringUtils.randomAlphabetic(10);
 		userType.setUsername(username);
 		userType.setPassword("Welcome1!");
 		userPage = createUserModalWindow.registerUser(userType);
@@ -156,9 +157,6 @@ public class UserPageTest extends AbstractTest
 		Assert.assertTrue(StringUtils
 						.isBlank(changePasswordModalWindow.getWebElementValue(changePasswordModalWindow.getPasswordInput())),
 				"Password input is not empty");
-		Assert.assertTrue(StringUtils.isBlank(
-				changePasswordModalWindow.getWebElementValue(changePasswordModalWindow.getConfirmPasswordInput())),
-				"Confirm password input is not empty");
 		Assert.assertTrue(changePasswordModalWindow.hasDisabledAttribute(changePasswordModalWindow.getChangeButton()),
 				"Change button is not disabled");
 

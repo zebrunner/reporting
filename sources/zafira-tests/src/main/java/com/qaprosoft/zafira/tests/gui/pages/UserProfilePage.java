@@ -77,11 +77,11 @@ public class UserProfilePage extends BasePage
 	@FindBy(xpath="//md-select[ancestor::form[@name='preference_form'] and @name='refreshInterval']")
 	private WebElement defaultRefreshIntervalSelect;
 
-	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='password']")
+	@FindBy(id = "userPassword")
 	private WebElement passwordInput;
 
-	@FindBy(xpath="//input[ancestor::form[@name='password_form'] and @name='confirmPassword']")
-	private WebElement confirmPasswordInput;
+	@FindBy(id = "userOldPassword")
+	private WebElement oldPassword;
 
 	@FindBy(xpath="//button[ancestor::form[@name='password_form']]")
 	private WebElement changePasswordButton;
@@ -168,8 +168,8 @@ public class UserProfilePage extends BasePage
 		return passwordInput;
 	}
 
-	public WebElement getConfirmPasswordInput() {
-		return confirmPasswordInput;
+	public WebElement getOldPassword() {
+		return oldPassword;
 	}
 
 	public WebElement getChangePasswordButton() {
