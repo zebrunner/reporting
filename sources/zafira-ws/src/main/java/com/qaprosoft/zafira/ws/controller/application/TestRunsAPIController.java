@@ -412,7 +412,13 @@ public class TestRunsAPIController extends AbstractController {
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
-
+		if(!StringUtils.isEmpty(testRun.getComments())) {
+			if(rerunFailures){
+				testRunService.updateComment(testRun, "rebuild failures run");
+			} else {
+				testRunService.updateComment(testRun, null);
+			}
+		}
 		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
 			throw new UnableToRebuildCIJobException();
 		}

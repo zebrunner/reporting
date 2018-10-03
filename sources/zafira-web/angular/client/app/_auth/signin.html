@@ -1,71 +1,85 @@
 <div class="page-signin" ng-controller="AuthController">
-
     <div class="wrapper">
         <div class="main-body">
-                <div class="card bg-white">
-                    <div class="card-content">
-                        <section class="logo-container">
-                            <img class="logo" ng-src="{{companyLogo.value}}">
-                        </section>
+            <div class="card bg-white">
+                <div class="card-content">
+                    <section class="logo-container">
+                        <img class="logo" src="{{ companyLogo.value ? companyLogo.value : 'assets/images/background/company_logo_plug.svg' }}">
+                    </section>
 
-                        <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
-                            <div class="callout callout-danger" ng-if="!credentials.valid">
-                                <p>Invalid credentials</p>
-                            </div>
-                            <fieldset>
-                                <md-input-container class="md-block">
-                                    <label class="placeholder-label">Username</label>
-                                    <input
-                                           type="text"
-                                           name="username"
-                                           id="username"
-                                           ng-model="credentials.username"
-                                           ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
-                                    <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
-                                        <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
+                    <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
+                        <div class="callout callout-danger" ng-if="!credentials.valid">
+                            <p>Invalid credentials</p>
+                        </div>
+
+                        <fieldset>
+                            <md-input-container class="md-block">
+                                <label class="placeholder-label">Username</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    id="username"
+                                    required
+                                    ng-model="credentials.username"
+                                    ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
+                                <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
+                                    <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
                                             <span ng-if="validation.additional">
                                                 <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
                                                 {{ validation.message }}
                                             </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
-                                        </div>
+                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
                                     </div>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <label class="placeholder-label">Password</label>
-                                    <input
-                                           type="password"
-                                           name="password"
-                                           id="password"
-                                           ng-model="credentials.password"
-                                           ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
-                                    <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
-                                        <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                            <span ng-if="! validation.additional">{{ validation.message }}</span>
-                                        </div>
-                                    </div>
-
-                                </md-input-container>
-                                
-                            </fieldset>
-                            <div layout="row" class=" button-container " layout-align="space-between">
-                                    <a href="#!/password/forgot">Forgot your password?</a>
-                                    <md-button type="submit"
-                                        id="signin"
-                                        class="btn-w-sm md-primary signin"
-                                        ng-disabled="signin_form.$invalid">Sign in</md-button>
                                 </div>
-                        </form>
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label class="placeholder-label">Password</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    required
+                                    ng-model="credentials.password"
+                                    ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
+                                <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
+                                    <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
+                                            <span ng-if="validation.additional">
+                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
+                                                {{ validation.message }}
+                                            </span>
+                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </fieldset>
+                        <div layout="row" class="button-container" layout-align="space-between">
+                            <span class="additional-action">Forgot your password? <a class="additional-action__link" href="#!/password/forgot">Reset</a></span>
+                            <md-button type="submit"
+                                       id="signin"
+                                       class="btn-w-sm md-primary signin"
+                                       ng-disabled="signin_form.$invalid">Sign in</md-button>
+                        </div>
+                    </form>
+                    <div class="additional-info">
+                        <span>© 2018 Zafira all rights reserved</span>
+                        <br/>
+                        <span id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</span>
                     </div>
-                    
+                </div>
+
+                <div class="additional-background">
+                    <div class="logo-container">
+                        <div class="logo"></div>
+                    </div>
+                    <div class="robo-background">
+                        <div class="text">
+                            <div class="text__caption">Hooray! <br/> We have some new great features for you.</div>
+                            <p>Now you are capable to track automation results in more profound way: real-time logging and test session playback.</p>
+                        </div>
+                        <div class="robot"></div>
+                    </div>
                 </div>
             </div>
-
+        </div>
     </div>
-        
-    <div ng-include="roboFooter"></div>
 </div>

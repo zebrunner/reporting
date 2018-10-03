@@ -70,6 +70,10 @@
             });
         };
 
+        $scope.goToState = function (state) {
+            $state.go(state);
+        };
+
         (function initController() {
             switch($state.current.name) {
                 case 'signup':
