@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.batchservices.service.impl.monitors;
 
+import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.db.MonitorStatus;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -56,6 +57,9 @@ public class MonitorEmailNotificationTask implements Job
 			EmailService emailService = applicationContext.getBean(EmailService.class);
 			MonitorService monitorService = applicationContext.getBean(MonitorService.class);
 			MonitorHttpService monitorHttpService = applicationContext.getBean(MonitorHttpService.class);
+
+			String tenancy = jobExecutionContext.getTrigger().getKey().getGroup();
+			TenancyContext.setTenantName(tenancy);
 
 			Monitor monitor = (Monitor) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
 
