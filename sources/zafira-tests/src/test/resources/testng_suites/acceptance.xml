@@ -35,11 +35,11 @@
 					<include name="verifyFabButtonActionsTest"/>
 				</methods>
 			</class>
-			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+			<!--<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
 					<include name="verifyViewTableCreationTest"/>
 				</methods>
-			</class>
+			</class>-->
 		</classes>
 	</test>
 
