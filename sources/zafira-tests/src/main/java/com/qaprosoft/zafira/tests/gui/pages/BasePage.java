@@ -2,7 +2,6 @@ package com.qaprosoft.zafira.tests.gui.pages;
 
 import java.util.List;
 
-import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

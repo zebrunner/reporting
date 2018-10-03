@@ -37,6 +37,9 @@ public class Navbar extends AbstractUIObject
 	@FindBy(xpath = "//i[following-sibling::*[text() = 'Monitors']]")
 	private WebElement monitorsTab;
 
+	@FindBy(className = "menu-btn")
+	private WebElement mobileMenuButton;
+
 	public Navbar(WebDriver driver, SearchContext context)
 	{
 		super(driver, context);
@@ -96,6 +99,10 @@ public class Navbar extends AbstractUIObject
 	public CreateTestRunViewModalWindow goToCreateTestRunViewModal()
 	{
 		return hoverOnTestRunTab().clickCreateTestRunViewButton();
+	}
+
+	public WebElement getMobileMenuButton() {
+		return mobileMenuButton;
 	}
 
 	public TestCasePage clickTestCasesTab()

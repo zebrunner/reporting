@@ -30,7 +30,7 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = ".//*[contains(@class, 'logo')]//img[contains(@class, 'img-circle')]")
 	private WebElement companyLogo;
 
-	@FindBy(xpath = ".//*[@id = 'brandPhoto']//i[text() = 'image']")
+	@FindBy(xpath = ".//*[@id = 'brandPhoto']//i[text() = 'image'] | .//*[@id = 'brandPhoto']//img")
 	private WebElement companyLogoBackgroundIcon;
 
 	@FindBy(xpath = ".//*[contains(@class, 'profile-img')]//i[text() = 'settings']")
@@ -39,11 +39,8 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = ".//button[.//*[text() = 'Projects']]")
 	private WebElement projectsFilterButton;
 
-	@FindBy(xpath = ".//md-menu[.//img | .//i[text() = 'account_circle']]")
+	@FindBy(xpath = ".//md-menu[.//*[@id = 'profileMenu']]")
 	private WebElement userMenuButton;
-
-	@FindBy(xpath = ".//*[@class='menu-button']")
-	private WebElement mobileMenuButton;
 
 	@FindBy(xpath = "//md-dialog")
 	private UploadImageModalWindow uploadImageModalWindow;
@@ -96,11 +93,6 @@ public class Header extends AbstractUIObject
 	public WebElement getUserMenuButton()
 	{
 		return userMenuButton;
-	}
-
-	public WebElement getMobileMenuButton()
-	{
-		return mobileMenuButton;
 	}
 
 	public UploadImageModalWindow clickCompanyPhotoHoverIcon()
