@@ -54,7 +54,7 @@
 		</classes>
 	</test>
 
-	<test parallel="false" name="Test run view tests">
+	<!--<test parallel="false" name="Test run view tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
@@ -63,7 +63,7 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
+	</test>-->
 
 	<test parallel="false" name="User tests">
 		<classes>
