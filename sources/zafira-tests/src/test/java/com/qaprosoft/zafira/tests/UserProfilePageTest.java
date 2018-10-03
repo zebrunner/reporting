@@ -288,7 +288,7 @@ public class UserProfilePageTest extends AbstractTest {
 
         //Check save empty first&last name
         userProfilePage.getSaveUserProfileButton().click();
-        userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "User profile updated", 5);
+        //userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "User profile updated", 5);
         userProfilePage.waitUntilAlertWithTextIsPresent(15);
         Assert.assertEquals(userProfilePage.getSuccessAlert().getText(), "User profile updated", "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
@@ -302,7 +302,7 @@ public class UserProfilePageTest extends AbstractTest {
 
         //Check save for all filled out data
         userProfilePage.getSaveUserProfileButton().click();
-        userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "User profile updated", 5);
+        //userProfilePage.waitUntilElementWithTextIsPresent(userProfilePage.getSuccessAlert(), "User profile updated", 5);
         Assert.assertEquals(userProfilePage.getSuccessAlert().getText(), "User profile updated", "Save User profile action is not successful");
         userProfilePage.waitUntilElementIsNotPresent(userProfilePage.getSuccessAlert(),2);
     }
