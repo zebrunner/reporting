@@ -607,7 +607,7 @@ public class TestRunService
 		double rate = (double) testRun.getPassed() / (double) total;
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
 	}
-	
+
 	@Transactional
 	public TestRun addComment(long id, String comment) throws ServiceException
 	{
@@ -619,6 +619,13 @@ public class TestRunService
 		testRun.setComments(comment);
 		updateTestRun(testRun);
 		return testRunMapper.getTestRunByIdFull(id);
+	}
+
+	@Transactional
+	public void updateComment(TestRun testRun, String comment) throws ServiceException
+	{
+		testRun.setComments(comment);
+		updateTestRun(testRun);
 	}
 
 	@Transactional(readOnly = true)
