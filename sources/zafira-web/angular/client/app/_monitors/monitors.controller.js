@@ -186,7 +186,9 @@
                         $scope.monitor.httpMethod = $scope.HTTP_METHODS['GET'];
                     } else {
                         $scope.monitor = angular.copy(monitor);
-                        $scope.monitor.emailList = monitor.recipients.split(',');
+                        $scope.monitor.emailList = monitor.recipients.split(',').filter(function (recipient) {
+                            return recipient;
+                        });
                     }
 
                     $scope.createMonitor = function () {
