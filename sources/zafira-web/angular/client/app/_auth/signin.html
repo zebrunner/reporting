@@ -21,6 +21,11 @@
                                     id="username"
                                     required
                                     ng-model="credentials.username"/>
+                                <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
+                                    <div ng-message="required">
+                                        <span>Username required</span>
+                                    </div>
+                                </div>
                             </md-input-container>
                             <md-input-container class="md-block">
                                 <label class="placeholder-label">Password</label>
@@ -30,6 +35,11 @@
                                     id="password"
                                     required
                                     ng-model="credentials.password"/>
+                                <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
+                                    <div ng-message="required">
+                                        <span>Password required</span>
+                                    </div>
+                                </div>
                             </md-input-container>
                         </fieldset>
                         <div layout="row" class="button-container" layout-align="space-between">
