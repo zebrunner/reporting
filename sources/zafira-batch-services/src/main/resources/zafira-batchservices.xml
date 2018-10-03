@@ -26,39 +26,9 @@
 		</property>
 	</bean>
 
-	<bean id="abortFrozenTestRunsTask"
-		class="com.qaprosoft.zafira.batchservices.tasks.AbortFrozenTestRunsTask" />
-
-	<bean id="schedulerService" class="com.qaprosoft.zafira.batchservices.service.impl.SchedulerService" />
-
-	<!-- Job Details -->
-	<bean id="abortFrozenTestRunsTaskJobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="schedulerService" />
-		<property name="targetMethod" value="execute" />
-	</bean>
-
-	<!-- Triggers -->
-	<bean id="abortFrozenTestRunsTaskTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="abortFrozenTestRunsTaskJobDetail" />
-		<property name="cronExpression"
-			value="${zafira.batch.jobs.abortFrozenTestRuns.trigger.cronExpression}" />
-	</bean>
-
 	<bean id="springSchedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="jobDetails">
-			<list>
-				<ref bean="abortFrozenTestRunsTaskJobDetail" />
-			</list>
-		</property>
-		<property name="triggers">
-			<list>
-				<ref bean="abortFrozenTestRunsTaskTrigger" />
-			</list>
-		</property>
 		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
 	</bean>
 
-	<bean id="monitorJobService" class="com.qaprosoft.zafira.batchservices.service.impl.monitors.MonitorJobService"/>
+	<bean id="monitorJobService" class="com.qaprosoft.zafira.batchservices.services.MonitorJobService"/>
 </beans>

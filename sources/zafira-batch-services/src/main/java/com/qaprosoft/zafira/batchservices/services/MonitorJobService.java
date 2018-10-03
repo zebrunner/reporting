@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.batchservices.service.impl.monitors;
+package com.qaprosoft.zafira.batchservices.services;
 
 import com.google.gson.Gson;
+import com.qaprosoft.zafira.batchservices.tasks.MonitorEmailNotificationTask;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
@@ -217,9 +218,9 @@ public class MonitorJobService
 	@RabbitListener(queues = "#{monitorsQueue.name}")
 	public void process(Message message) {
 		MonitorEventMessage monitorMessage = new Gson().fromJson(new String(message.getBody()), MonitorEventMessage.class);
+		TenancyContext.setTenantName(monitorMessage.getTenancy());
 		Monitor monitor = monitorService.getMonitorById(monitorMessage.getMonitorId());
 		if (monitor != null) {
-			TenancyContext.setTenantName(monitorMessage.getTenancy());
 			switch (monitorMessage.getAction()) {
 				case CREATE:
 					addJob(monitor);
@@ -244,10 +245,10 @@ public class MonitorJobService
 	}
 
 	private String getJobGroupName() {
-		return JOB_GROUP_NAME + "_" + TenancyContext.getTenantName();
+		return JOB_GROUP_NAME;
 	}
 
 	private String getTriggerGroupName() {
-		return TRIGGER_GROUP_NAME + "_" + TenancyContext.getTenantName();
+		return TenancyContext.getTenantName();
 	}
 }
