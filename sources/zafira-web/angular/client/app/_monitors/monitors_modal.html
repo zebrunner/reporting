@@ -100,7 +100,7 @@
                         </div>
                     </md-input-container>
                 </div>
-                <div layout layout-sm="column">
+                <div ng-if="tools['EMAIL']" layout layout-sm="column">
                     <md-input-container style="float: right; margin-top: 0px">
                         <md-switch name="enableNotification" style="margin-top: 0px" class="md-primary" ng-model="monitor.notificationsEnabled" aria-label="notif-switch">Enable notifications</md-switch>
                     </md-input-container>
