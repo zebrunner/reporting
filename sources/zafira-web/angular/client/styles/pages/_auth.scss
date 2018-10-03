@@ -176,7 +176,7 @@
         width: 50%;
         max-width: 360px;
         min-height: 480px;
-        background: $main_container_bg url('../../assets/images/background/zafira_logo_background.svg') no-repeat -119px top/cover scroll;
+        background: $main_container_bg url('../assets/images/background/zafira_logo_background.svg') no-repeat -119px top/cover scroll;
         background-size: cover;
         display: flex;
         flex-direction: column;
@@ -189,7 +189,7 @@
                 height: 32px;
                 background-size: contain;
                 border-radius: 0;
-                background:#dddfe1 url('../../assets/images/background/zafira_logo_bw.svg') no-repeat center;
+                background:#dddfe1 url('../assets/images/background/zafira_logo_bw.svg') no-repeat center;
             }
         }
 
@@ -220,7 +220,7 @@
         .robot{
             width: 100%;
             height: 140px;
-            background: url('../../assets/images/background/robo.svg') right bottom no-repeat;
+            background: url('../assets/images/background/robo.svg') right bottom no-repeat;
             background-size: contain;
         }
     }
