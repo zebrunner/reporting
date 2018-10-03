@@ -24,12 +24,10 @@ public class NavigationTest extends AbstractTest {
 
 	@Test(groups = {"acceptance", "navigation"})
 	public void verifyNavbarFunctionalityTest() {
-		TestRunTabMenu testRunTabMenu = dashboardPage.getNavbar().hoverOnTestRunTab();
-		Assert.assertTrue(testRunTabMenu.isElementPresent(10), "Test run menu not visible!");
-		TestRunPage testRunPage = testRunTabMenu.clickShowRunsButton();
+		TestRunPage testRunPage = dashboardPage.getNavbar().clickOnTestRunTab();
 		Assert.assertTrue(testRunPage.isOpened(), "Test run page is not opened");
 
-		DashboardTabMenu dashboardTabMenu = dashboardPage.getNavbar().hoverOnDashboardTab();
+		DashboardTabMenu dashboardTabMenu = dashboardPage.getNavbar().clickOnDashboardTab();
 		Assert.assertTrue(dashboardTabMenu.isElementPresent(10), "Dashboard menu not visible!");
 		DashboardPage dashboardPage = dashboardTabMenu.clickDashboardByName("General");
 		Assert.assertTrue(dashboardPage.isOpened(), "Dashboard page is not opened");

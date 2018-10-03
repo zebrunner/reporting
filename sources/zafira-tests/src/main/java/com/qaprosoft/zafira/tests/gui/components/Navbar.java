@@ -16,19 +16,19 @@ import com.qaprosoft.zafira.tests.gui.pages.UserPage;
 public class Navbar extends AbstractUIObject
 {
 
-	@FindBy(xpath = ".//ul[preceding-sibling::a[.//*[text() = 'Dashboards']]]")
+	@FindBy(xpath = ".//ul[preceding-sibling::a[.//*[text() = 'Boards']]]")
 	private DashboardTabMenu dashboardTabMenu;
 
-	@FindBy(xpath = ".//ul[preceding-sibling::a[.//*[text() = 'Test runs']]]")
+	@FindBy(xpath = ".//ul[preceding-sibling::a[.//*[text() = 'Runs']]]")
 	private TestRunTabMenu testRunTabMenu;
 
-	@FindBy(xpath = "//i[following-sibling::*[text() = 'Dashboards']]")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Boards']]")
 	private WebElement dashboardsTab;
 
-	@FindBy(xpath = ".//i[following-sibling::*[text() = 'Test runs']]")
+	@FindBy(xpath = ".//i[following-sibling::*[text() = 'Runs']]")
 	private WebElement testRunsTab;
 
-	@FindBy(xpath = "//i[following-sibling::*[text() = 'Test cases']]")
+	@FindBy(xpath = "//i[following-sibling::*[text() = 'Cases']]")
 	private WebElement testCasesTab;
 
 	@FindBy(xpath = "//i[following-sibling::*[text() = 'Users']]")
@@ -50,6 +50,14 @@ public class Navbar extends AbstractUIObject
 		return this.dashboardTabMenu;
 	}
 
+	public DashboardTabMenu clickOnDashboardTab()
+	{
+		dashboardsTab.click();
+		super.waitUntilElementIsPresent(getRootElement(), 10);
+		LOGGER.info("Dashboard tab was clicked");
+		return this.dashboardTabMenu;
+	}
+
 	public TestRunTabMenu hoverOnTestRunTab()
 	{
 		super.hoverOnElement(this.testRunsTab);
@@ -59,12 +67,22 @@ public class Navbar extends AbstractUIObject
 		return this.testRunTabMenu;
 	}
 
+	public TestRunPage clickOnTestRunTab()
+	{
+		testRunsTab.click();
+		super.waitUntilElementIsPresent(this.testRunTabMenu.getRootElement(), 10);
+		pause(0.2);
+		LOGGER.info("Test run tab menu was clicked");
+		return new TestRunPage(driver);
+	}
+
 	public TestRunPage goToTestRunPage()
 	{
-		TestRunTabMenu testRunTabMenu = hoverOnTestRunTab();
+		/*TestRunTabMenu testRunTabMenu = hoverOnTestRunTab();
 		TestRunPage testRunPage = testRunTabMenu.clickShowRunsButton();
 		LOGGER.info("Test runs button was clicked");
-		return testRunPage;
+		return testRunPage;*/
+		return clickOnTestRunTab();
 	}
 
 	public TestRunViewPage goToTestRunView(String name)
