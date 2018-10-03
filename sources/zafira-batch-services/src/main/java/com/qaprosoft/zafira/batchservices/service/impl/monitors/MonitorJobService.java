@@ -217,9 +217,9 @@ public class MonitorJobService
 	@RabbitListener(queues = "#{monitorsQueue.name}")
 	public void process(Message message) {
 		MonitorEventMessage monitorMessage = new Gson().fromJson(new String(message.getBody()), MonitorEventMessage.class);
+		TenancyContext.setTenantName(monitorMessage.getTenancy());
 		Monitor monitor = monitorService.getMonitorById(monitorMessage.getMonitorId());
 		if (monitor != null) {
-			TenancyContext.setTenantName(monitorMessage.getTenancy());
 			switch (monitorMessage.getAction()) {
 				case CREATE:
 					addJob(monitor);
@@ -244,10 +244,10 @@ public class MonitorJobService
 	}
 
 	private String getJobGroupName() {
-		return JOB_GROUP_NAME + "_" + TenancyContext.getTenantName();
+		return JOB_GROUP_NAME;
 	}
 
 	private String getTriggerGroupName() {
-		return TRIGGER_GROUP_NAME + "_" + TenancyContext.getTenantName();
+		return TenancyContext.getTenantName();
 	}
 }
