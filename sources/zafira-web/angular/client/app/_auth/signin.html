@@ -20,17 +20,7 @@
                                     name="username"
                                     id="username"
                                     required
-                                    ng-model="credentials.username"
-                                    ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
-                                <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
-                                    <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
-                                    </div>
-                                </div>
+                                    ng-model="credentials.username"/>
                             </md-input-container>
                             <md-input-container class="md-block">
                                 <label class="placeholder-label">Password</label>
@@ -39,17 +29,7 @@
                                     name="password"
                                     id="password"
                                     required
-                                    ng-model="credentials.password"
-                                    ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
-                                <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
-                                    <div ng-repeat="validation in VALIDATIONS.password" ng-message="{{validation.name}}">
-                                            <span ng-if="validation.additional">
-                                                <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
-                                                {{ validation.message }}
-                                            </span>
-                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
-                                    </div>
-                                </div>
+                                    ng-model="credentials.password"/>
                             </md-input-container>
                         </fieldset>
                         <div layout="row" class="button-container" layout-align="space-between">
