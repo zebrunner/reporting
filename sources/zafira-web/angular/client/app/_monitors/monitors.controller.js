@@ -125,7 +125,6 @@
             } else {
                 user = currentUser;
             }
-            monitor.emailList = monitor.emailList ? monitor.emailList : [];
             monitor.emailList.push(user);
             /*monitor.users.push(user);*/
             return user;
@@ -187,6 +186,7 @@
                         $scope.monitor.httpMethod = $scope.HTTP_METHODS['GET'];
                     } else {
                         $scope.monitor = angular.copy(monitor);
+                        $scope.monitor.emailList = monitor.recipients.split(',');
                     }
 
                     $scope.createMonitor = function () {
@@ -281,12 +281,6 @@
 
         (function init(){
             $scope.search(1);
-//          var rfb = new RFB(document.body, "ws://host:port/websockify",
-//                    { repeaterID: '',
-//                      shared: true,
-//                      credentials: { password: 'selenoid' } });
-            
-            
         })();
     }
 })();
