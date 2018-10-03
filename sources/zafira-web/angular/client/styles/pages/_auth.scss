@@ -228,16 +228,16 @@
         .text{
             max-width: 228px;
             font-size: 14px;
-            p:first-child{
+            color: #000;
+            &__caption{
                 font-weight: bold;
                 line-height: 1.2;
                 font-size: 20px;
                 margin-bottom: 15px;
             }
-            p:nth-child(2){
+            p{
                 line-height: 1.25;
             }
-            color: #000000;
         }
 
         .robot{
