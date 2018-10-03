@@ -88,7 +88,7 @@
                                     <td name="monitorCron" md-cell class="col-md-1">{{monitor.cronExpression}}</td>
                                     <td name="monitorCode" md-cell class="col-md-1">{{monitor.expectedCode}}</td>
                                     <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']">
-                                        <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="updateMonitor(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
+                                        <md-switch name="monitorEnabled" style="margin: 0; padding: 0" class="md-primary" ng-change="update(monitor, false)" ng-model="monitor.monitorEnabled" aria-label="notif-switch"></md-switch>
                                     </td>
                                     <td md-cell class="col-md-1" has-any-permission="['MODIFY_MONITORS']" ng-if="monitors.length != 0">
                                         <div class="pull-right">
