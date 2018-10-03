@@ -4,7 +4,6 @@
 .page-signin,
 .page-signup,
 .page-forgot,
-.page-message,
 .page-change {
     .placeholder-label{
         color: #888888;
@@ -88,25 +87,9 @@
         }
     }
 
-    .message{
-        margin-top: 48px;
-        font-weight: normal;
-        text-align: left;
-        line-height: 19px;
-        letter-spacing: 0.01px;
-        font-size: $font-size-h5;
-        margin-bottom: 111px;
-    }
-
     .md-button {
         letter-spacing: 0.02px;
         padding: 5px 10px;
-        &:hover{
-            &:not([disabled]) {
-                background-color: $reverse;
-                text-decoration: underline;
-            }
-        }
     }
 
     .additional-info {
@@ -156,8 +139,12 @@
         }
     }
 
+    .message,
     .comment{
-        margin-bottom: 32px;
+        font-weight: normal;
+        text-align: left;
+        line-height: 19px;
+        letter-spacing: 0.01px;
     }
 
     .button-container{
@@ -176,6 +163,7 @@
             color: $gray-base;
             &:hover {
                 text-decoration: none;
+                color: $gray-base;
             }
         }
     }

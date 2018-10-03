@@ -18,7 +18,12 @@
                                         id="email"
                                         required
                                         ng-model="user.email"
+                                        ng-pattern="/^.+@.+\..+$/"
                                         class="form-control"/>
+                                    <div ng-messages="signup_form.email.$error" ng-if="signup_form.email.$dirty">
+                                        <div ng-message="required" data-translate="VLD_REQUIRED"></div>
+                                        <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
+                                    </div>
                                 </md-input-container>
                                 <md-input-container class="md-block">
                                     <span class="input-bar"></span>
@@ -89,7 +94,7 @@
                         <div class="robo-background">
                             <div class="text">
                                 <div class="text__caption">Hooray! <br/> We have some new great features for you.</div>
-                                <p> Now you are capable to track automation results in more profound way. Now you are capable to track automation results in more profound way. </p>
+                                <p>Now you are capable to track automation results in more profound way: real-time logging and test session playback.</p>
                             </div>
                             <div class="robot"></div>
                         </div>

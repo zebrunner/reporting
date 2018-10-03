@@ -57,6 +57,24 @@
                     message: 'Password required'
                 }
             ],
+            confirmPwd: [
+                {
+                    name: 'minlength',
+                    message: 'Password must be between 8 and 40 characters'
+                },
+                {
+                    name: 'maxlength',
+                    message: 'Password must be between 8 and 40 characters'
+                },
+                {
+                    name: 'pattern',
+                    message: 'Password does not match',
+                },
+                {
+                    name: 'required',
+                    message: 'Password required'
+                }
+            ],
             name: [
                 {
                     name: 'minlength',
