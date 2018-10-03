@@ -253,10 +253,6 @@ md-chip:hover .show-icon-on-hover,
 
     // when it's normal nav
     @media (min-width: $screen-sm) {
-        .page-signin,
-        .page-signup,
-        .page-forgot,
-        .page-change,
         .page-message,
         .page-err {
             margin-right: 220px;
@@ -265,10 +261,6 @@ md-chip:hover .show-icon-on-hover,
     // when it's collapsed nav
     &.nav-collapsed-min {
         @media (min-width: $screen-sm) {
-            .page-signin,
-            .page-signup,
-            .page-forgot,
-            .page-change,
             .page-message,
             .page-err {
                 margin-right: 60px;
@@ -278,10 +270,6 @@ md-chip:hover .show-icon-on-hover,
     // when it's horizontal nav
     .nav-horizontal + .content-container {
         @media (min-width: $screen-sm) {
-            .page-signin,
-            .page-signup,
-            .page-forgot,
-            .page-change,
             .page-message,
             .page-err {
                 margin-right: 0;
@@ -313,8 +301,7 @@ md-chip:hover .show-icon-on-hover,
         right: 0;
         // bottom: 0;
         // margin: 0;
-        padding-bottom: 0;
-        // padding-bottom: 50px;
+        padding: 0 15px;
     }
 
     //

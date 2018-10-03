@@ -4,7 +4,7 @@
             <div class="card bg-white">
                 <div class="card-content">
                     <section class="logo-container">
-                        <img class="logo" src="assets/images/background/company_logo_plug.svg">
+                        <img class="logo" src="{{ companyLogo.value ? companyLogo.value : 'assets/images/background/company_logo_plug.svg' }}">
                     </section>
 
                     <form name="signin_form" class="md-form-login form-validation" data-ng-submit="signin(credentials); UtilService.untouchForm(signin_form)">
@@ -19,6 +19,7 @@
                                     type="text"
                                     name="username"
                                     id="username"
+                                    required
                                     ng-model="credentials.username"
                                     ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
                                 <div ng-messages="signin_form.username.$error" ng-if="signin_form.username.$dirty">
@@ -27,7 +28,7 @@
                                                 <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
                                                 {{ validation.message }}
                                             </span>
-                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
                                     </div>
                                 </div>
                             </md-input-container>
@@ -37,6 +38,7 @@
                                     type="password"
                                     name="password"
                                     id="password"
+                                    required
                                     ng-model="credentials.password"
                                     ng-minlength="8" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_@!]+$/"/>
                                 <div ng-messages="signin_form.password.$error" ng-if="signin_form.password.$dirty">
@@ -45,13 +47,13 @@
                                                 <md-tooltip md-direction="top">{{ validation.additional }}</md-tooltip>
                                                 {{ validation.message }}
                                             </span>
-                                        <span ng-if="! validation.additional">{{ validation.message }}</span>
+                                        <span ng-if="!validation.additional">{{ validation.message }}</span>
                                     </div>
                                 </div>
                             </md-input-container>
                         </fieldset>
-                        <div layout="row" class=" button-container " layout-align="space-between">
-                            <a href="#!/password/forgot">Forgot your password?</a>
+                        <div layout="row" class="button-container" layout-align="space-between">
+                            <span class="additional-action">Forgot your password? <a class="additional-action__link" href="#!/password/forgot">Reset</a></span>
                             <md-button type="submit"
                                        id="signin"
                                        class="btn-w-sm md-primary signin"
@@ -59,9 +61,9 @@
                         </div>
                     </form>
                     <div class="additional-info">
-                        <small>© 2018 Zafira all rights reserved</small>
+                        <span>© 2018 Zafira all rights reserved</span>
                         <br/>
-                        <small id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</small>
+                        <span id="versionInfo">server v.{{version.service}} | client v.{{version.client}}</span>
                     </div>
                 </div>
 
