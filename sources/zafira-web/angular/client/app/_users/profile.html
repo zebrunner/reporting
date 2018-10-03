@@ -67,7 +67,7 @@
                                         <div layout layout-sm="column">
                                             <md-input-container flex>
                                                 <label>Email</label>
-                                                <input id="userEmail" type="email" ng-model="user.email" name="email" required ng-pattern="/^.+@.+\..+$/" disabled>
+                                                <input id="userEmail" type="email" ng-model="user.email" name="email" ng-pattern="/^.+@.+\..+$/" disabled>
                                                 <div ng-messages="profile_form.email.$error" ng-if="profile_form.email.$dirty">
 		                                            <div ng-message="required" data-translate="VLD_REQUIRED"></div>
 		                                            <div ng-message="pattern" data-translate="VLD_PATTERN"></div>
