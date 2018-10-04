@@ -19,11 +19,11 @@
 					<include name="verifyNavigationTest"/>
 				</methods>
 			</class>
-			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
+			<!--<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
 					<include name="verifyViewTableCreationTest"/>
 				</methods>
-			</class>
+			</class>-->
 		</classes>
 	</test>
 
@@ -37,7 +37,7 @@
 		</classes>
 	</test>
 
-	<test parallel="false" name="Test run view tests">
+	<!--<test parallel="false" name="Test run view tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunViewPageTest">
 				<methods>
@@ -45,7 +45,7 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
+	</test>-->
 
 	<test parallel="false" name="User tests">
 		<classes>
