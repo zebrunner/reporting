@@ -74,6 +74,9 @@
                 </li>
                 <li class="sub-search search-menu">
                     <ul>
+                        <li>
+                            <a class="create-view-button" md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)"></i>Create view +</a>
+                        </li>
                         <li data-ng-repeat="view in views | orderBy:'name' | filter:navSCView" style="position: relative;" class="show-on-hover">
                             <a toggle-menu="close" md-button aria-label="menu" href="#!/views/{{view.id}}">{{view.name}}</a>
                             <span style="position: absolute; right: 10px; top: 15px;" class="show-icon-on-hover">
