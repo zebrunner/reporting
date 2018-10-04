@@ -8,7 +8,7 @@
                             <img class="logo" src="{{ companyLogo.value ? companyLogo.value : 'assets/images/background/company_logo_plug.svg' }}">
                         </section>
 
-                        <form class="form-horizontal" name="signup_form">
+                        <form class="form-horizontal" name="signup_form" data-ng-submit="signup(user, signup_form);">
                             <fieldset>
                                 <md-input-container class="md-block">
                                     <label class="placeholder-label">Email</label>
@@ -17,6 +17,7 @@
                                         name="email"
                                         id="email"
                                         required
+                                        disabled
                                         ng-model="user.email"
                                         ng-pattern="/^.+@.+\..+$/"
                                         class="form-control"/>
