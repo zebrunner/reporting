@@ -69,30 +69,30 @@ public class EmailService
 		}
 
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
-		final String[] recipients = processRecipients(emails);
 
-		if(! ArrayUtils.isEmpty(recipients))
-		{
-			final MimeMessagePreparator preparator = mimeMessage -> {
-				boolean hasAttachments = message.getAttachments() != null;
+		synchronized (emailTask) {
+			final String[] recipients = processRecipients(emails);
 
-				MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
-				msg.setSubject(message.getSubject());
-				msg.setTo(recipients);
-				msgSetFrom(msg);
-				msg.setText(text, true);
-				if(hasAttachments)
-				{
-					for(Attachment attachment : message.getAttachments())
-					{
-						msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
-						msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+			if (!ArrayUtils.isEmpty(recipients)) {
+				final MimeMessagePreparator preparator = mimeMessage -> {
+					boolean hasAttachments = message.getAttachments() != null;
+
+					MimeMessageHelper msg = new MimeMessageHelper(mimeMessage, hasAttachments);
+					msg.setSubject(message.getSubject());
+					msg.setTo(recipients);
+					msgSetFrom(msg);
+					msg.setText(text, true);
+					if (hasAttachments) {
+						for (Attachment attachment : message.getAttachments()) {
+							msg.addAttachment(attachment.getName() + "." + FilenameUtils.getExtension(attachment.getFile().getName()), attachment.getFile());
+							msg.addInline(attachment.getName().replaceAll(" ", "_"), attachment.getFile());
+						}
 					}
-				}
-			};
-			this.emailTask.setPreparator(preparator);
-			//autowireizer.autowireBean(this.emailTask);
-			Executors.newSingleThreadExecutor().execute(this.emailTask);
+				};
+				this.emailTask.setPreparator(preparator);
+				//autowireizer.autowireBean(this.emailTask);
+				Executors.newSingleThreadExecutor().execute(this.emailTask);
+			}
 		}
 		return text;
 	}
