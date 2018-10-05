@@ -13,7 +13,11 @@
 		</property>
 	</bean>
 
-	<bean id="ldapProvider" class="com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPAuthenticationProvider"/>
+	<bean id="ldapUserDetailsContextMapper" class="com.qaprosoft.zafira.ws.security.ldap.LDAPUserDetailsContextMapper"/>
+
+	<bean id="ldapProvider" class="com.qaprosoft.zafira.ws.security.ldap.LDAPAuthenticationProvider">
+		<constructor-arg name="ldapUserDetailsContextMapper" ref="ldapUserDetailsContextMapper"/>
+	</bean>
 	
 	<security:authentication-manager id="authenticationInternalManager">
 		<security:authentication-provider user-service-ref="userAuthService">

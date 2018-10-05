@@ -29,7 +29,7 @@ import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
 import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
-import com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService;
+import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;

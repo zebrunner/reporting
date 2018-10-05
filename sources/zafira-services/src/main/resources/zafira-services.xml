@@ -56,7 +56,7 @@
 
 	<bean id="googleService" class="com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService"/>
 
-	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService"/>
+	<bean id="ldapService" class="com.qaprosoft.zafira.services.services.application.jmx.LDAPService"/>
 
 	<bean id="jiraService" class="com.qaprosoft.zafira.services.services.application.jmx.JiraService"/>
 

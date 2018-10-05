@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.ldap;
+package com.qaprosoft.zafira.services.services.application.jmx;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
-import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.LDAPContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
