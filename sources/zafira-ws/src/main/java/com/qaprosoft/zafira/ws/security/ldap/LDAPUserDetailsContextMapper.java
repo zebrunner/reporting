@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.ldap;
+package com.qaprosoft.zafira.ws.security.ldap;
 
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.auth.JwtUserType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.UserService;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -28,18 +27,12 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
-import static com.qaprosoft.zafira.models.db.User.Source.LDAP;
-
-@Component
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 {
 	private Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
-
-	private static final String ANONYMOUS = "ananymous";
 	
 	@Autowired
 	private UserService userService;
@@ -56,7 +49,7 @@ public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 			}
 		} catch (ServiceException e)
 		{
-			LOGGER.error(e.getMessage());
+			LOGGER.error(e.getMessage(), e);
 		}
 		return new JwtUserType(user.getId(), username, user.getPassword(), user.getGroups());
 	}

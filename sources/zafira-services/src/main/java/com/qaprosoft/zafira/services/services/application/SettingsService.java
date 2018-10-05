@@ -45,7 +45,7 @@ import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
 import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
-import com.qaprosoft.zafira.services.services.application.jmx.ldap.LDAPService;
+import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 
 @Service
 public class SettingsService {

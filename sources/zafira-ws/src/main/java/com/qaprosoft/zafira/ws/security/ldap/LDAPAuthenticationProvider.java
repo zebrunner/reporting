@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx.ldap;
+package com.qaprosoft.zafira.ws.security.ldap;
 
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.jmx.JMXTenancyStorage;
@@ -35,6 +35,7 @@ import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import java.util.Collection;
 
 /** Uses for load user from LDAP and recognize it.
@@ -44,9 +45,16 @@ import java.util.Collection;
 public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvider {
 
     @Autowired
+    private ServletContext servletContext;
+
     private LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
 
-    private LdapAuthoritiesPopulator authoritiesPopulator = new NullLdapAuthoritiesPopulator();
+    private LdapAuthoritiesPopulator authoritiesPopulator;
+
+    public LDAPAuthenticationProvider(LDAPUserDetailsContextMapper ldapUserDetailsContextMapper) {
+        this.ldapUserDetailsContextMapper = ldapUserDetailsContextMapper;
+        this.authoritiesPopulator = new NullLdapAuthoritiesPopulator();
+    }
 
     @PostConstruct
     private void init() {
@@ -62,18 +70,22 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
     protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken authentication) {
         LdapAuthenticator ldapAuthenticator = getAuthenticator();
         if(ldapAuthenticator == null) {
+            servletContext.log("Provide LDAP integration before");
             throw new InternalAuthenticationServiceException("Provide LDAP integration before");
         }
         try {
             return ldapAuthenticator.authenticate(authentication);
         }
         catch (PasswordPolicyException ppe) {
+            servletContext.log(ppe.getMessage(), ppe);
             throw new LockedException(this.messages.getMessage(ppe.getStatus().getErrorCode(), ppe.getStatus().getDefaultMessage()));
         }
         catch (UsernameNotFoundException notFound) {
+            servletContext.log(notFound.getMessage(), notFound);
             throw new BadCredentialsException(this.messages.getMessage("LdapAuthenticationProvider.badCredentials", "Bad credentials"));
         }
         catch (NamingException ldapAccessFailure) {
+            servletContext.log(ldapAccessFailure.getMessage(), ldapAccessFailure);
             throw new InternalAuthenticationServiceException(ldapAccessFailure.getMessage(), ldapAccessFailure);
         }
     }
