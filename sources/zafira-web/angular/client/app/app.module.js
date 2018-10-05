@@ -193,7 +193,29 @@
                 };
             }
         };
-    }]).directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
+    }]).directive('showPart', function() {
+        "use strict";
+        return {
+            restrict: 'E',
+            template: '<span><span>{{ text.substring(0, limit + 1) }}</span><span ng-if="text.length > limit">{{ symbols }}</span></span>',
+            replace: true,
+            scope: {
+                text: '=',
+                limit: '=',
+                symbols: '=?'
+            },
+
+            compile: function(element, attrs){
+                return {
+                    pre: function preLink(scope, iElement, iAttrs, controller) {
+                        if (!attrs.symbols) { scope.symbols = '....'; }
+                    },
+                    post: function postLink(scope, iElement, iAttrs, controller) {
+                    }
+                }
+            }
+        };
+    }).directive('codeTextarea', ['$timeout', '$interval', '$rootScope', function ($timeout, $interval, $rootScope) {
         "use strict";
         return {
             restrict: 'E',

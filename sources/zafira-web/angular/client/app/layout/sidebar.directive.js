@@ -20,15 +20,6 @@
     var openedMenu;
     var slideTime = 250;
 
-    CLOSE_ON.forEach(function (value) {
-        angular.element(value).on('click', function (e) {
-            var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
-            if(! isSliceOfSidebar) {
-                closeMenu(openedMenu);
-            }
-        });
-    });
-
     function toggleMenu() {
         var directive = {
             restrict: 'A',
@@ -46,12 +37,14 @@
                     if(angular.equals(ele, openedMenu)) {
                         openedMenu.removeClass('open').find('ul').slideUp(slideTime);
                         body.removeClass('menu-toggled');
+                        clearInputs(scope, openedMenu);
                         openedMenu = null;
                         return;
                     }
                     if(openedMenu) {
                         openedMenu.removeClass('open').find('ul').slideUp(slideTime);
                         body.removeClass('menu-toggled');
+                        clearInputs(scope, openedMenu);
                         openedMenu = null;
                     }
                     if (!ele.hasClass('open')) {
@@ -62,9 +55,17 @@
                 });
             } else {
                 ele.on('click', function (e) {
-                    closeMenu();
+                    closeMenu(scope);
                 });
             }
+            CLOSE_ON.forEach(function (value) {
+                angular.element(value).on('click', function (e) {
+                    var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
+                    if(! isSliceOfSidebar) {
+                        closeMenu(scope);
+                    }
+                });
+            });
         }
     }
 
@@ -93,12 +94,25 @@
         }
     }
 
-    function closeMenu() {
-        var openElement = angular.element('li.open');
+    function closeMenu(scope) {
+        var selector = 'li.open';
+        var openElement = angular.element(selector);
         if(openElement) {
             openElement.removeClass('open').find('ul').slideUp(slideTime);
             body.removeClass('menu-toggled');
+            clearInputs(scope, openElement);
             openedMenu = null;
+        }
+    };
+
+    function clearInputs(scope, openedElement) {
+        var input = openedElement.find(' input');
+        var ngModel = input.controller('ngModel');
+        if(ngModel) {
+            input[0].value = '';
+            scope.$apply(function () {
+                ngModel.$setViewValue('');
+            });
         }
     };
 
