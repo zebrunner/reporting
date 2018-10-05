@@ -130,7 +130,7 @@
                         left: 60px;
                         top: $header_height + 1px;
                         width: calc(100% - 60px) !important;
-                        height: 100%;
+                        //height: 100%;
                     }
 
                     //overflow: auto;
@@ -141,6 +141,10 @@
                         > ul {
                             height: 100%;
                             overflow: auto;
+                            -ms-overflow-style: none;
+                            &::-webkit-scrollbar {
+                                width: 0 !important
+                            }
                         }
                         .fa-angle-down {
                             display: none !important;

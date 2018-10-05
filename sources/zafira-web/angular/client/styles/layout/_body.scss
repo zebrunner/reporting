@@ -1,8 +1,8 @@
 body {
     background: $main_container_bg;
 
-    &.sidebar-toggled.menu-toggled {
-        overflow-y: hidden;
+    &.menu-toggled {
+        overflow: hidden !important;
     }
     /*overflow: hidden;
     max-width:100%;
@@ -20,7 +20,7 @@ body > div {
 .create-view-button {
     height: 35px !important;
     text-align: center !important;
-    line-height: 22px !important;
+    line-height: 23px !important;
     border: 1px solid white !important;
     margin: 0 5px !important;
     border-radius: 20px !important;
