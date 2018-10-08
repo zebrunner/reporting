@@ -141,10 +141,6 @@
                         > ul {
                             height: 100%;
                             overflow: auto;
-                            -ms-overflow-style: none;
-                            &::-webkit-scrollbar {
-                                width: 0 !important
-                            }
                         }
                         .fa-angle-down {
                             display: none !important;
@@ -156,8 +152,8 @@
 
                     > li:not(.nav-search) {
                         height: calc(95% - 40px);
-                        @media (min-width:$screen-sm) {
-                            height: calc(95% - 20px);
+                        @media (max-width:$screen-sm) {
+                            height: calc(95% - 60px);
                         }
                     }
 
@@ -170,6 +166,9 @@
                             md-input-container {
                                 label {
                                     font-size: 12px;
+                                    @media(max-width: $screen-phone) {
+                                        font-size: 16px;
+                                    }
                                     color: #4e5259;
                                 }
                                 &.md-input-focused, &.md-input-has-value {
@@ -179,6 +178,9 @@
                                 }
                                 input {
                                     width: 160px;
+                                    @media(max-width: $screen-phone) {
+                                        width: 200px;
+                                    }
                                     border-color: #4e5259;
                                     color: #4e5259;
                                     margin-bottom: 12px !important;
