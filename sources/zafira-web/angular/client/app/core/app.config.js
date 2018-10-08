@@ -35,7 +35,7 @@
             isMenuCollapsed: $(window).width() > 768,                         // Boolean: true, false
             fixedHeader: false,                              // Boolean: true, false
             fixedSidebar: false,                             // Boolean: true, false
-            pageTransition: pageTransitionOpts[0],          // Object: 0, 1, 2, 3 and build your own
+            pageTransition: {},//pageTransitionOpts[0],          // Object: 0, 1, 2, 3 and build your own
             skin: '32',                                     // String: 11,12,13,14,15,16; 21,22,23,24,25,26; 31,32,33,34,35,36
             link: 'https://themeforest.net/item/material-design-admin-with-angularjs/13582227'
         };
