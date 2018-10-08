@@ -90,8 +90,8 @@
                                                 <td ng-click="selectLogRow($event, $index);">[{{ log.threadName }}] [{{ log.level}}]
                                                     <show-more class="log_message" name="logMessage" element-id="log.timestamp" text="log.message" limit="255" ></show-more>
                                                 </td>
-                                                <td ng-click="selectLogRow($event, $index);" class="settings-cell" style="padding: 0 !important;" ng-if="selectedLogRow == $index">
-                                                    <md-menu class="pull-right">
+                                                <td ng-click="selectLogRow($event, $index);" class="settings-cell" style="padding: 0 !important;">
+                                                    <md-menu ng-if="selectedLogRow == $index" class="pull-right">
                                                         <md-button name="logsSetting" aria-label="Logs settings" class="md-icon-button" data-ng-click="$mdMenu.open($event);">
                                                             <md-icon class="material-icons">more_vert</md-icon>
                                                         </md-button>

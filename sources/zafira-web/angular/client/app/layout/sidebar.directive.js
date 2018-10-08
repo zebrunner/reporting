@@ -55,19 +55,21 @@
                 });
             } else {
                 ele.on('click', function (e) {
-                    closeMenu(scope);
+                    closeMenu(scope, ele);
                 });
             }
             CLOSE_ON.forEach(function (value) {
                 angular.element(value).on('click', function (e) {
                     var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
                     if(! isSliceOfSidebar) {
-                        closeMenu(scope);
+                        closeMenu(scope, ele);
                     }
                 });
             });
         }
     }
+
+    var toggleBottomClassName = 'toggle-bottom';
 
     function toggleNavBottom() {
         var directive = {
@@ -80,7 +82,6 @@
         function link(scope, ele, attrs) {
 
             var sidebar = angular.element('#nav-container');
-            var toggleBottomClassName = 'toggle-bottom';
 
             ele.on('click', function (e) {
                 if(sidebar.hasClass(toggleBottomClassName)) {
@@ -94,7 +95,8 @@
         }
     }
 
-    function closeMenu(scope) {
+    function closeMenu(scope, element) {
+        var sidebar = angular.element('#nav-container');
         var selector = 'li.open';
         var openElement = angular.element(selector);
         if(openElement) {
@@ -102,6 +104,10 @@
             body.removeClass('menu-toggled');
             clearInputs(scope, openElement);
             openedMenu = null;
+        }
+        if(! element.hasClass('search_close-button')) {
+            sidebar.removeClass(toggleBottomClassName);
+            body.removeClass('sidebar-toggled');
         }
     };
 
@@ -154,6 +160,7 @@
         return directive;
 
         function link(scope, ele, attrs) {
+            var sidebar = angular.element('#nav-container');
             var $a, $aRest, $app, $lists, $listsRest, $nav, $window, Timer, prevWidth, slideTime, updateClass;
 
             slideTime = 250;
@@ -191,6 +198,8 @@
             $aRest.on('click', function(event) {
                 $lists.removeClass('open').find('ul').slideUp(slideTime);
                 body.removeClass('menu-toggled');
+                sidebar.removeClass(toggleBottomClassName);
+                body.removeClass('sidebar-toggled');
                 openedMenu = null;
             });
 

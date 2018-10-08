@@ -581,7 +581,7 @@ section.zaf-light .article-title {
 
 #testrun-info-title {
   margin: 0;
-  padding: 16px 0 13px 23px;
+  padding: 16px 0 13px 16px;
   font-size: 18px;
   border-bottom: 1px solid $custom-gray;
 }
@@ -1721,7 +1721,6 @@ button#add-button{
   color: $coal !important;
   line-height: 1.2;
 }
-
 #search-filter-body md-select.md-default-theme .md-select-icon, #search-filter-body md-select .md-select-icon{
     color: $gray-light !important;
 }
@@ -1743,6 +1742,32 @@ button#add-button{
       &:hover{
         border-color: #000 !important;
       }
+    }
+}
+
+.highlight_test {
+    transition: background-color 0.8s linear;
+}
+
+.back-icon {
+    padding-left: 0;
+    padding-right: 0;
+    min-width: 24px;
+    min-height: 24px;
+    height: 24px;
+    position: relative;
+    top: 0;
+    left: 6px;
+    animation: arrow_moving 0.6s linear;
+    animation-iteration-count: 1;
+}
+
+@keyframes arrow_moving {
+    0% {
+        left: 15px;
+    }
+    100% {
+        left: 6px;
     }
 }
 
@@ -2030,13 +2055,17 @@ table.table-loupe {
 }
 
 td.settings-cell {
-    width: 20px;
+    width: 25px;
     button {
-        padding-right: 0 !important;
+        min-height: 20px !important;
+        padding: 0 !important;
+        padding-right: 9px !important;
         margin: 0 !important;
         height: 20px !important;
-        width: 20px !important;
+        width: 100% !important;
         md-icon {
+            min-height: 20px;
+            height: 20px;
             margin: 0;
             float: right;
         }
