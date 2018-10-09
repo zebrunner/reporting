@@ -288,6 +288,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
 				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId());
+				startedTest.setTags(configurator.getTestTags(result));
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));

@@ -16,8 +16,10 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import java.util.List;
+import java.util.Set;
 
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Tag;
 import org.apache.ibatis.annotations.Param;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
@@ -27,6 +29,8 @@ import com.qaprosoft.zafira.models.db.WorkItem;
 public interface TestMapper
 {
 	void createTest(Test test);
+
+	void addTags(@Param(value = "testId") Long testId, @Param(value = "tags") Set<Tag> tags);
 
 	Test getTestById(long id);
 	
@@ -53,6 +57,8 @@ public interface TestMapper
 	void deleteTestByTestRunIdAndNameAndStatus(@Param("testRunId") long testRunId, @Param("testName") String testName, @Param("status") Status status);
 
 	void deleteTest(Test test);
+
+	void deleteTag(@Param(value = "testId") Long testId, @Param(value = "tagId") Long tagId);
 	
 	List<Test> searchTests(TestSearchCriteria sc);
 	

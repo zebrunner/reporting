@@ -38,6 +38,33 @@
 		]]>
 	</insert>
 
+	<insert id="addTags">
+		<![CDATA[
+			INSERT INTO TEST_TAGS (TAG_ID, TEST_ID)
+			SELECT
+				DATA.TAG_ID, DATA.TEST_ID
+			FROM
+		]]>
+		<foreach item="tag" index="index" collection="tags" open="(" separator=" UNION ALL" close=")">
+			<![CDATA[
+			  SELECT #{tag.id} as TAG_ID, #{testId} AS TEST_ID
+			]]>
+		</foreach>
+		<![CDATA[
+			AS DATA
+            WHERE NOT EXISTS (
+              SELECT
+                TEST_ID
+              FROM
+                TEST_TAGS TT
+              WHERE
+                DATA.TAG_ID = TT.TAG_ID
+			  AND
+				DATA.TEST_ID = TT.TEST_ID
+            )
+		]]>
+	</insert>
+
 	<delete id="deleteTestByTestRunIdAndNameAndStatus">
 		<![CDATA[
 		    DELETE FROM TESTS
@@ -145,6 +172,13 @@
 		        TA.TEST_ID     AS TEST_ARTIFACT_TEST_ID,
 		        TA.MODIFIED_AT AS TEST_ARTIFACT_MODIFIED_AT,
 		        TA.CREATED_AT  AS TEST_ARTIFACT_CREATED_AT
+
+		        TG.ID AS TAG_ID,
+				TG.NAME AS TAG_NAME,
+				TG.VALUE AS TAG_VALUE,
+				TG.CREATED_AT AS TAG_CREATED_AT,
+				TG.MODIFIED_AT AS TAG_MODIFIED_AT
+
 		        FROM
 				TESTS T
 			LEFT JOIN
@@ -183,6 +217,14 @@
 		        TEST_ARTIFACTS TA
 	      	ON
 		        TA.TEST_ID = T.ID
+			LEFT JOIN
+				TEST_TAGS TT
+			ON
+				T.ID = TT.TEST_ID
+			LEFT JOIN
+				TAGS TG
+			ON
+				TT.TAG_ID = TG.ID
         ]]>
 	</sql>
 
@@ -366,6 +408,13 @@
 	<delete id="deleteTestById">
 		<include refid="deleteTest" />
 	</delete>
+
+	<delete id="deleteTag">
+		<![CDATA[
+			DELETE FROM TEST_TAGS
+			WHERE TEST_ID = #{testId} AND TAG_ID = #{tagId}
+		]]>
+	</delete>
 	
 	<resultMap type="com.qaprosoft.zafira.models.db.Test" id="TestResultMap" autoMapping="false">
 		<id column="TEST_ID" property="id" />
@@ -409,6 +458,8 @@
 					resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.WorkItemMapper.WorkItemResultMap"/>
 
 		<collection property="artifacts" ofType="com.qaprosoft.zafira.models.db.TestArtifact" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestArtifactMapper.TestArtifactResultMap"/>
+
+		<collection property="tags" ofType="com.qaprosoft.zafira.models.db.Tag" resultMap="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper.TagResultMap"/>
 
 	</resultMap>
 	
