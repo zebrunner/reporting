@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qaprosoft.zafira.models.dto.TagType;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
@@ -104,4 +105,8 @@ public class DefaultConfigurator implements IConfigurator
 		return new HashSet<>();
 	}
 
+	@Override
+	public Set<TagType> getTestTags(ITestResult test) {
+		return new HashSet<>();
+	}
 }

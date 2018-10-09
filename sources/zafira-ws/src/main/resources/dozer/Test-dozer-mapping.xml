@@ -87,5 +87,9 @@
 			<a>ciTestId</a>
 			<b>ciTestId</b>
 		</field>
+		<field>
+			<a>tags</a>
+			<b>tags</b>
+		</field>
 	</mapping>
 </mappings>
