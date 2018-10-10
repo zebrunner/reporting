@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.db.Status;
+import com.qaprosoft.zafira.models.db.Tag;
 
 @JsonInclude(Include.NON_NULL)
 public class TestType extends AbstractType {
@@ -55,6 +56,8 @@ public class TestType extends AbstractType {
 	@Valid
 	private Set<TestArtifactType> artifacts = new HashSet<>();
 	private String ciTestId;
+	@Valid
+	private Set<TagType> tags;
 
 	public TestType() {
 
@@ -239,5 +242,13 @@ public class TestType extends AbstractType {
 
 	public void setCiTestId(String ciTestId) {
 		this.ciTestId = ciTestId;
+	}
+
+	public Set<TagType> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<TagType> tags) {
+		this.tags = tags;
 	}
 }

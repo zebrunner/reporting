@@ -50,6 +50,7 @@ public class Test extends AbstractEntity implements Comparable<Test> {
 	private String testClass;
 	private Set<TestArtifact> artifacts = new HashSet<>();
 	private String ciTestId;
+	private Set<Tag> tags;
 
 	public Test() {
 		testConfig = new TestConfig();
@@ -244,6 +245,14 @@ public class Test extends AbstractEntity implements Comparable<Test> {
 
 	public void setCiTestId(String ciTestId) {
 		this.ciTestId = ciTestId;
+	}
+
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
 	}
 
 	@Override
