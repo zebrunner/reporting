@@ -578,36 +578,76 @@
 
         $scope.batchDelete = function()
         {
-        		$scope.selectAll = false;
-	        	for(var id in $scope.testRuns)
-	    		{
-	        		if($scope.testRuns[id].selected)
-	        		{
-	        			$scope.deleteTestRun(id, true);
-	        		}
-	    		}
-        };
-
-        $scope.deleteTestRun = function (id, confirmation)
-         {
-        		if(confirmation == null)
-        		{
-        			confirmation = confirm('Do you really want to delete "' + $scope.testRuns[id].testSuite.name + '" test run?');
-        		}
-            if (confirmation)
-            {
-                TestRunService.deleteTestRun(id).then(function(rs) {
-                    if(rs.success)
-                    {
-                        delete $scope.testRuns[id];
-                        alertify.success('Test run #' + id + ' removed');
+            $scope.selectAll = false;
+            var results = [];
+            var errors = [];
+            var keys = Object.keys($scope.testRuns);
+            var keysToDelete = keys.filter(function (key) {
+                return $scope.testRuns[key].selected;
+            });
+            keysToDelete.forEach(function (key) {
+                $scope.deleteTestRun($scope.testRuns[key].id, true).then(function (rs) {
+                    if(rs.success) {
+                        results.push(rs);
+                    } else {
+                        errors.push(rs);
                     }
-                    else
-                    {
-                        alertify.error(rs.message);
+                    var message = buildMessage(keysToDelete, results, errors);
+                    if(message.message) {
+                        alertify.success(message.message);
+                    }
+                    if(message.errorMessage) {
+                        alertify.error(message.errorMessage);
                     }
                 });
+            });
+        };
+
+        function buildMessage(keysToDelete, results, errors) {
+            var result = {};
+            if(keysToDelete.length == results.length + errors.length) {
+                var message = results.length ? results[0].message : '';
+                var errorMessage = errors.length ? errors[0].message : '';
+                if(results.length) {
+                    var ids = '';
+                    results.forEach(function (result, index, array) {
+                        ids = ids + '#' + result.id;
+                        if(index != results.length - 1) {
+                            ids += ', ';
+                        }
+                    });
+                    message = message.format(results.length > 1 ? 's' : ' ', ids);
+                    result.message = message;
+                }
+                if(errors.length) {
+                    var errorIds = '';
+                    errors.forEach(function (result, index, array) {
+                        errorIds = errorIds + '#' + result.id;
+                        if(index != errors.length - 1) {
+                            errorIds += ', ';
+                        }
+                    });
+                    errorMessage = errorMessage.format(errors.length > 1 ? 's' : ' ', errorIds);
+                    result.errorMessage = errorMessage;
+                }
             }
+            return result;
+        };
+
+        $scope.deleteTestRun = function (id, confirmation) {
+             return $q(function (resolve, reject) {
+                 if(confirmation == null) {
+                     confirmation = confirm('Do you really want to delete "' + $scope.testRuns[id].testSuite.name + '" test run?');
+                 }
+                 if (confirmation) {
+                     TestRunService.deleteTestRun(id).then(function(rs) {
+                         if(rs.success) {
+                             delete $scope.testRuns[id];
+                         }
+                         resolve(rs.success ? {success: rs.success, id: id, message: 'Test run{0} {1} removed'} : {id: id, message: 'Unable to delete test run{0} {1}'});
+                     });
+                 }
+             });
         };
 
         $scope.batchEmail = function(event)
