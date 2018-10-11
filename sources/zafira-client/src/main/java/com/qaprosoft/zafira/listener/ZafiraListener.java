@@ -274,6 +274,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				startedTest.setFinishTime(null);
 				startedTest.setStartTime(new Date().getTime());
 				startedTest.setCiTestId(getThreadCiTestId());
+				startedTest.setTags(configurator.getTestTags(result));
 				startedTest = zc.registerTestRestart(startedTest);
 			}
 			
