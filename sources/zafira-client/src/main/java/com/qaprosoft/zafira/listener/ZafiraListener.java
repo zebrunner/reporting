@@ -287,8 +287,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 
-				startedTest.setTags(configurator.getTestTags(result));
-				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId());
+				startedTest = zc.registerTestStart(testName, group, Status.IN_PROGRESS, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
 			}
 			
 			zc.registerWorkItems(startedTest.getId(), configurator.getTestWorkItems(result));
@@ -415,7 +414,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 				
 				String [] dependsOnMethods = result.getMethod().getMethodsDependedUpon();
 				
-				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId());
+				test = zc.registerTestStart(testName, group, Status.SKIPPED, testArgs, run.getId(), testCase.getId(), configurator.getRunCount(result), convertToXML(configurator.getConfiguration()), dependsOnMethods, getThreadCiTestId(), configurator.getTestTags(result));
 				threadTest.set(test);
 			}
 			
