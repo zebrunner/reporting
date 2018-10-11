@@ -587,20 +587,24 @@
             });
             keysToDelete.forEach(function (key) {
                 $scope.deleteTestRun($scope.testRuns[key].id, true).then(function (rs) {
-                    if(rs.success) {
-                        results.push(rs);
-                    } else {
-                        errors.push(rs);
-                    }
-                    var message = buildMessage(keysToDelete, results, errors);
-                    if(message.message) {
-                        alertify.success(message.message);
-                    }
-                    if(message.errorMessage) {
-                        alertify.error(message.errorMessage);
-                    }
+                    showDeleteMessage(rs, keysToDelete, results, errors);
                 });
             });
+        };
+
+        function showDeleteMessage(rs, keysToDelete, results, errors) {
+            if(rs.success) {
+                results.push(rs);
+            } else {
+                errors.push(rs);
+            }
+            var message = buildMessage(keysToDelete, results, errors);
+            if(message.message) {
+                alertify.success(message.message);
+            }
+            if(message.errorMessage) {
+                alertify.error(message.errorMessage);
+            }
         };
 
         function buildMessage(keysToDelete, results, errors) {
@@ -1089,7 +1093,9 @@
         };
 
         $scope.deleteTestRunAction = function (testRun) {
-            $scope.deleteTestRun(testRun.id);
+            $scope.deleteTestRun(testRun.id).then(function (rs) {
+                showDeleteMessage(rs, [testRun.id], [], [])
+            });
         };
 
         $scope.initMenuRights = function (testRun) {
