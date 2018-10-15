@@ -191,14 +191,14 @@ public class TestRunsAPIController extends AbstractController {
 	public @ResponseBody TestRunType abortTestRun(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
-			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException {
+			@RequestBody(required = false) String abortCause) throws ServiceException, InterruptedException {
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		if (testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
 
 		if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
-			testRunService.abortTestRun(testRun, abortCause.getComment());
+			testRunService.abortTestRun(testRun, abortCause);
 			for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
 				if (Status.ABORTED.equals(test.getStatus())) {
 					websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestPush(test));
