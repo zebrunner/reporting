@@ -1548,12 +1548,29 @@
         })();
 
         // Calls on scope store
-        $scope.storescope = function () {
-            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window);
+        $scope.storescope = function (testId) {
+            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId);
         };
 
         // Add operation behind all async calls
-        TestRunsStorage.applySnapshot(this, $scope);
+        TestRunsStorage.applySnapshot(this, $scope).then(function (testId) {
+            if(testId) {
+                var timeout = 900;
+                waitUntilElementPresents('#test_' + testId, function () {
+                    var row = angular.element('#test_' + testId);
+                    row.addClass('target_row');
+                    $timeout(function () {
+                        row.removeClass('target_row');
+                    }, timeout);
+                });
+            }
+        });
+
+        function waitUntilElementPresents(elementLocator, func) {
+            $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function() {
+                func.call();
+            });
+        };
     }
 
     // *** Modals Controllers ***

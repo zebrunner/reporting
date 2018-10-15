@@ -3,11 +3,12 @@
 
     angular
         .module('app.services')
-        .factory('TestRunsStorage', ['$timeout', '$window', '$httpMock', TestRunsStorage])
+        .factory('TestRunsStorage', ['$timeout', '$window', '$httpMock', '$q', TestRunsStorage])
 
-    function TestRunsStorage($timeout, $window, $httpMock) {
+    function TestRunsStorage($timeout, $window, $httpMock, $q) {
 
         var storage = {};
+        var additional;
         var windowOffset = 0;
 
         return {
@@ -16,18 +17,25 @@
         };
 
         function applySnapshot(controller, scope) {
-            controller.$onInit = function () {
-                $timeout(function() {
-                    applyAfterControllerInit(scope);
-                }, 0, false);
-            };
+            return $q(function (resolve, reject) {
+                if($httpMock.isBackClicked()) {
+                    triggerLoad();
+                }
+                controller.$onInit = function () {
+                    $timeout(function() {
+                        applyAfterControllerInit(scope);
+                        resolve(additional);
+                    }, 0, false);
+                };
+            });
         };
 
-        function takeSnapshot(scope, values, window) {
+        function takeSnapshot(scope, values, window, additionalValue) {
             values.forEach(function (value) {
                 storage[value] = scope[value];
             });
             windowOffset = window.scrollY;
+            additional = additionalValue;
         };
 
         function applyAfterControllerInit(scope) {
@@ -39,8 +47,21 @@
                     $window.scrollTo(0, windowOffset);
                     $httpMock.clearBackClicking();
                     clear();
+                    triggerLoadFinish();
                 }, 0, false);
             }
+        };
+
+        function triggerLoad() {
+            var evt = document.createEvent('Event');
+            evt.initEvent('load-force', false, false);
+            window.dispatchEvent(evt);
+        };
+
+        function triggerLoadFinish() {
+            var evt = document.createEvent('Event');
+            evt.initEvent('load-force-finish', false, false);
+            window.dispatchEvent(evt);
         };
 
         function clear() {

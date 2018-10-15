@@ -2234,3 +2234,10 @@ td.settings-cell {
         }
     }
 }
+
+.target_row {
+    td {
+        background-color: #ffff19 !important;
+        transition: background-color 500ms linear;
+    }
+}
