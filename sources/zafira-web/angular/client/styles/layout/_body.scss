@@ -584,6 +584,20 @@ section.zaf-light .article-title {
   padding: 16px 0 13px 16px;
   font-size: 18px;
   border-bottom: 1px solid $custom-gray;
+    .back_button {
+        position: relative;
+        top: 5px;
+        animation: back_button-move 0.2s linear;
+    }
+}
+
+@keyframes back_button-move {
+    0% {
+        left: 5px;
+    }
+    100% {
+        left: 0;
+    }
 }
 
 /*Element backgrounds*/

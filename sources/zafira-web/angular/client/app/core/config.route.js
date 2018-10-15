@@ -52,11 +52,13 @@
                     })
                     .state('tests/run', {
 	                    url: '/tests/runs/:id',
-	                    templateUrl: 'app/_testruns/list.html'
+	                    templateUrl: 'app/_testruns/list.html',
+                        store: true
 	                })
                     .state('tests/runs', {
                         url: '/tests/runs',
-                        templateUrl: 'app/_testruns/list.html'
+                        templateUrl: 'app/_testruns/list.html',
+                        store: true
                     })
                     .state('tenancies', {
                         url: '/tenancies',

@@ -3,13 +3,15 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET) {
+    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage) {
+
+        var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "expandedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter"];
 
     	const TENANT = $rootScope.globals.auth.tenant;
     	
@@ -27,7 +29,7 @@
         $scope.totalResults = 0;
         $scope.selectedTestRuns = {};
         $scope.expandedTestRuns = [];
-
+        $scope.searchFormIsEmpty = true;
         $scope.showRealTimeEvents = true;
 
         $scope.projects = ProjectProvider.getProjects();
@@ -40,8 +42,6 @@
         $scope.sc = angular.copy(DEFAULT_SC);
 
         $scope.STATUSES = ['PASSED', 'FAILED', 'SKIPPED', 'ABORTED', 'IN_PROGRESS', 'QUEUED', 'UNKNOWN'];
-
-        $scope.searchFormIsEmpty = true;
 
         /*
             Filters
@@ -148,8 +148,9 @@
 
         $scope.$watchGroup(['fastSearch.testSuite', 'fastSearch.executionURL', 'fastSearch.appVersion', 'sc.status',
             'sc.environment', 'sc.platform', 'sc.reviewed', 'selectedRange.dateStart', 'selectedRange.dateEnd'], function (fastSearchArray) {
-            var notEmptyValues = fastSearchArray.filter(function(value) {return value != undefined && (value.length > 0
-                || new Date(value) ||  value.$$hashKey || value === true);});
+            var notEmptyValues = fastSearchArray.filter(function(value) {
+                return value != undefined && (value.length > 0 || Object.prototype.toString.call(value) === '[object Date]' ||  value.$$hashKey || value === true);
+            });
             $scope.searchFormIsEmpty = notEmptyValues.length == 0;
         });
 
@@ -1545,6 +1546,14 @@
             $scope.storeSlackAvailability();
             loadPublicFilters();
         })();
+
+        // Calls on scope store
+        $scope.storescope = function () {
+            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window);
+        };
+
+        // Add operation behind all async calls
+        TestRunsStorage.applySnapshot(this, $scope);
     }
 
     // *** Modals Controllers ***

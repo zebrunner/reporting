@@ -5,6 +5,13 @@
         .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'MngUserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'ElasticsearchService', 'SettingProvider', AppCtrl]); // overall control
 	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, MngUserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
 
+            $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
+                /*if(fromState.name == 'yourstate'){
+                    // Here is your param
+                    console.log(fromParams.stateid);
+                }*/
+            });
+
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
 	        $scope.color = appConfig.color;
