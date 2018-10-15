@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('DashboardService', ['$http', '$cookies', '$rootScope', '$location', 'UtilService', 'API_URL', DashboardService])
+        .factory('DashboardService', ['$httpMock', '$cookies', '$rootScope', '$location', 'UtilService', 'API_URL', DashboardService])
 
-    function DashboardService($http, $cookies, $rootScope, $location, UtilService, API_URL) {
+    function DashboardService($httpMock, $cookies, $rootScope, $location, UtilService, API_URL) {
 
     	var service = {};
 
@@ -37,95 +37,95 @@
             var config = { params : {} };
             if(hidden)
                 config.params.hidden = hidden;
-         	return $http.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+         	return $httpMock.get(API_URL + '/api/dashboards', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
         function GetDashboardByTitle(title) {
             var config = { params : {} };
             if(title)
                 config.params.title = title;
-            return $http.get(API_URL + '/api/dashboards/title', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
+            return $httpMock.get(API_URL + '/api/dashboards/title', config).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboards'));
         }
 
         function CreateDashboard(dashboard) {
-            return $http.post(API_URL + '/api/dashboards', dashboard).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard'));
+            return $httpMock.post(API_URL + '/api/dashboards', dashboard).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard'));
         }
 
         function UpdateDashboard(dashboard) {
-            return $http.put(API_URL + '/api/dashboards', dashboard).then(UtilService.handleSuccess, UtilService.handleError('Unable to update dashboard'));
+            return $httpMock.put(API_URL + '/api/dashboards', dashboard).then(UtilService.handleSuccess, UtilService.handleError('Unable to update dashboard'));
         }
 
         function DeleteDashboard(id) {
-            return $http.delete(API_URL + '/api/dashboards/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete dashboard'));
+            return $httpMock.delete(API_URL + '/api/dashboards/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete dashboard'));
         }
 
         function CreateDashboardAttribute(dashboardId, attribute) {
-            return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attribute'));
+            return $httpMock.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attribute'));
         }
 
         function CreateDashboardAttributes(dashboardId, attributes) {
-            return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes/queries', attributes).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attributes'));
+            return $httpMock.post(API_URL + '/api/dashboards/' + dashboardId + '/attributes/queries', attributes).then(UtilService.handleSuccess, UtilService.handleError('Unable to create dashboard attributes'));
         }
 
         function UpdateDashboardAttribute(dashboardId, attribute) {
-            return $http.put(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to update dashboard attribute'));
+            return $httpMock.put(API_URL + '/api/dashboards/' + dashboardId + '/attributes', attribute).then(UtilService.handleSuccess, UtilService.handleError('Unable to update dashboard attribute'));
         }
 
         function DeleteDashboardAttribute(dashboardId, attributeId) {
-            return $http.delete(API_URL + '/api/dashboards/' + dashboardId + '/attributes/' + attributeId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete dashboard attribute'));
+            return $httpMock.delete(API_URL + '/api/dashboards/' + dashboardId + '/attributes/' + attributeId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete dashboard attribute'));
         }
 
         function GetDashboardById(id) {
-        	return $http.get(API_URL + '/api/dashboards/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboard'));
+        	return $httpMock.get(API_URL + '/api/dashboards/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to load dashboard'));
         }
 
         function AddDashboardWidget(dashboardId, widget) {
-            return $http.post(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to add widget to dashboard'));
+            return $httpMock.post(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to add widget to dashboard'));
         }
 
         function UpdateDashboardWidget(dashboardId, widget) {
-            return $http.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget on dashboard'));
+            return $httpMock.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget on dashboard'));
         }
 
         function UpdateDashboardWidgets(dashboardId, widgets) {
-            return $http.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets/all', widgets).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widgets on dashboard'));
+            return $httpMock.put(API_URL + '/api/dashboards/' + dashboardId + '/widgets/all', widgets).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widgets on dashboard'));
         }
 
         function DeleteDashboardWidget(dashboardId, widgetId) {
-            return $http.delete(API_URL + '/api/dashboards/' + dashboardId + '/widgets/' + widgetId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete widget from dashboard'));
+            return $httpMock.delete(API_URL + '/api/dashboards/' + dashboardId + '/widgets/' + widgetId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete widget from dashboard'));
         }
 
         function SendDashboardByEmail(email, projects) {
         	var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
         	var path = projects ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
-            return $http.post(API_URL + '/api/dashboards/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+            return $httpMock.post(API_URL + '/api/dashboards/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function SendWidgetByEmail(email, projects, widgetId) {
             var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
             var path = projects && projects.length ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
             path = widgetId ? path.length ? path + '&widgetId=' + widgetId : '?widgetId=' + widgetId : '';
-            return $http.post(API_URL + '/api/widgets/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+            return $httpMock.post(API_URL + '/api/widgets/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function GetWidgets() {
-        	return $http.get(API_URL + '/api/widgets').then(UtilService.handleSuccess, UtilService.handleError('Unable to load widgets'));
+        	return $httpMock.get(API_URL + '/api/widgets').then(UtilService.handleSuccess, UtilService.handleError('Unable to load widgets'));
         }
 
         function CreateWidget(widget) {
-            return $http.post(API_URL + '/api/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to create widget'));
+            return $httpMock.post(API_URL + '/api/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to create widget'));
         }
 
         function UpdateWidget(widget) {
-            return $http.put(API_URL + '/api/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget'));
+            return $httpMock.put(API_URL + '/api/widgets', widget).then(UtilService.handleSuccess, UtilService.handleError('Unable to update widget'));
         }
 
         function DeleteWidget(id) {
-            return $http.delete(API_URL + '/api/widgets/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete widget'));
+            return $httpMock.delete(API_URL + '/api/widgets/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete widget'));
         }
 
         function ExecuteWidgetSQL(params, sqlAdapter) {
-        	return $http.post(API_URL + '/api/widgets/sql' + params, sqlAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to exequte SQL'));
+        	return $httpMock.post(API_URL + '/api/widgets/sql' + params, sqlAdapter).then(UtilService.handleSuccess, UtilService.handleError('Unable to exequte SQL'));
         }
     }
 })();
