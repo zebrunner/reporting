@@ -382,7 +382,7 @@ public class TestRunsAPIController extends AbstractController {
             String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
             ArrayUtils.add(recipients, suiteOwnerEmail);
         }
-        if(suiteOwner){
+        if(suiteRunner){
             String suiteRunnerEmail = testRunService.getTestRunByCiRunIdFull(id).getUser().getEmail();
             ArrayUtils.add(recipients, suiteRunnerEmail);
         }
