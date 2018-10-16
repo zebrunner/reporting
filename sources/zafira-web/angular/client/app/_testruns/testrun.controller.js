@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', '$tableExpandUtil', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage) {
+    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil) {
 
         var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "expandedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter"];
 
@@ -1412,18 +1412,23 @@
         $scope.switchTestRunExpand = function (testRun) {
             if (!testRun.expand) {
                 $scope.loadTests(testRun.id);
-                testRun.expand = true;
-                $scope.expandedTestRuns.push(testRun.id);
-                $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
+                $tableExpandUtil.expand('testRun_' + testRun.id).then(function () {
+                    testRun.expand = true;
+                    $scope.expandedTestRuns.push(testRun.id);
+                    $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
+                    $scope.testRun = testRun;
+                });
             } else {
-                testRun.expand = false;
-                testRun.tests = null;
-                $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
-                var subscription = $scope.subscribtions[testRun.id];
-                if(subscription != null) {
-                		subscription.unsubscribe();
-                }
-                delete $scope.subscribtions[testRun.id];
+                $tableExpandUtil.compress().then(function (rs) {
+                    testRun.expand = false;
+                    testRun.tests = null;
+                    $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
+                    var subscription = $scope.subscribtions[testRun.id];
+                    if(subscription != null) {
+                        subscription.unsubscribe();
+                    }
+                    delete $scope.subscribtions[testRun.id];
+                });
             }
         };
 

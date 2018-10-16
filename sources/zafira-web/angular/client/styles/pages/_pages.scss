@@ -29,7 +29,7 @@
 }
 
 .page {
-    padding: 15px 20px;
+    padding: $page-padding-top-bottom $page-padding-right-left;
 
     > .ui-section:last-child {
         margin-bottom: 0;
