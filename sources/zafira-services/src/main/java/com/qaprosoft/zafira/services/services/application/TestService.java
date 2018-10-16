@@ -20,7 +20,10 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.MARK_AS_K
 import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BLOCKER;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper;
+import com.qaprosoft.zafira.models.db.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -34,14 +37,7 @@ import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TestMapper;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.SearchResult;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestCaseSearchCriteria;
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.TestSearchCriteria;
-import com.qaprosoft.zafira.models.db.Status;
-import com.qaprosoft.zafira.models.db.Test;
-import com.qaprosoft.zafira.models.db.TestArtifact;
-import com.qaprosoft.zafira.models.db.TestCase;
-import com.qaprosoft.zafira.models.db.TestConfig;
-import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
-import com.qaprosoft.zafira.models.db.WorkItem;
 import com.qaprosoft.zafira.models.db.WorkItem.Type;
 import com.qaprosoft.zafira.models.dto.TestRunStatistics;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
@@ -82,6 +78,9 @@ public class TestService
 	@Autowired
 	private TestArtifactService testArtifactService;
 
+	@Autowired
+	private TagService tagService;
+
 	@Transactional(rollbackFor = Exception.class)
 	public Test startTest(Test test, List<String> jiraIds, String configXML) throws ServiceException
 	{
@@ -95,7 +94,7 @@ public class TestService
 
 			if((test.getId() == null || test.getId() == 0))
 			{
-				testMapper.createTest(test);
+				createTest(test);
 				if (jiraIds != null)
 				{
 					for (String jiraId : jiraIds)
@@ -131,6 +130,12 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
+	public void createTest(Test test) throws ServiceException {
+		testMapper.createTest(test);
+		addTags(test.getTags(), test.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public void createQueuedTest(Test test, Long queuedTestRunId) throws ServiceException
 	{
 		test.setId(null);
@@ -139,7 +144,7 @@ public class TestService
 		test.setTestConfig(null);
 		test.setNeedRerun(true);
 		test.setCiTestId(null);
-		testMapper.createTest(test);
+		createTest(test);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -348,6 +353,7 @@ public class TestService
 	public Test updateTest(Test test) throws ServiceException
 	{
 		testMapper.updateTest(test);
+		addTags(test.getTags(), test.getId());
 		return test;
 	}
 
@@ -583,6 +589,22 @@ public class TestService
 			LOGGER.error("Unable to calculate rurun flags", e);
 			testMapper.updateTestsNeedRerun(testIds, true);
 		}
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void addTags(Set<Tag> tags, Long testId) throws ServiceException {
+		if(tags != null && tags.size() > 0) {
+			tagService.createTags(tags);
+			Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());
+			if(tagsToAdd.size() > 0) {
+				testMapper.addTags(testId, tagsToAdd);
+			}
+		}
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTag(Long testId, Long tagId) {
+		testMapper.deleteTag(testId, tagId);
 	}
 
 	public int getTestMessageHashCode(String message)

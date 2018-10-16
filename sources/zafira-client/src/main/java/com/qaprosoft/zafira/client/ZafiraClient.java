@@ -17,13 +17,11 @@ package com.qaprosoft.zafira.client;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.core.MediaType;
 
+import com.qaprosoft.zafira.models.dto.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,13 +45,6 @@ import com.qaprosoft.zafira.config.GensonProvider;
 import com.qaprosoft.zafira.models.db.Status;
 import com.qaprosoft.zafira.models.db.TestRun.DriverMode;
 import com.qaprosoft.zafira.models.db.TestRun.Initiator;
-import com.qaprosoft.zafira.models.dto.JobType;
-import com.qaprosoft.zafira.models.dto.ProjectType;
-import com.qaprosoft.zafira.models.dto.TestArtifactType;
-import com.qaprosoft.zafira.models.dto.TestCaseType;
-import com.qaprosoft.zafira.models.dto.TestRunType;
-import com.qaprosoft.zafira.models.dto.TestSuiteType;
-import com.qaprosoft.zafira.models.dto.TestType;
 import com.qaprosoft.zafira.models.dto.auth.AuthTokenType;
 import com.qaprosoft.zafira.models.dto.auth.CredentialsType;
 import com.qaprosoft.zafira.models.dto.auth.RefreshTokenType;
@@ -900,7 +891,7 @@ public class  ZafiraClient
 	 * @param configXML - config XML
 	 * @return registered test
 	 */
-	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods, String ciTestId)
+	public TestType registerTestStart(String name, String group, Status status, String testArgs, Long testRunId, Long testCaseId, int retry, String configXML, String [] dependsOnMethods, String ciTestId, Set<TagType> tags)
 	{
 		Long startTime = new Date().getTime();
 
@@ -911,6 +902,7 @@ public class  ZafiraClient
 
 		test.setCiTestId(ciTestId);
 		test.setTestGroup(group);
+		test.setTags(tags);
 		if(dependsOnMethods != null)
 		{
 			StringBuilder sb = new StringBuilder();
