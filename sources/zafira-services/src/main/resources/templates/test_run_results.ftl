@@ -98,6 +98,8 @@
                 <td>
                     <#if testRun.comments?contains('\n')>
                         ${testRun.comments?trim?substring(0, testRun.comments?trim?index_of('\n'))}
+                    <#else>
+                        ${testRun.comments?trim}
                     </#if>
                 </td>
             </tr>
