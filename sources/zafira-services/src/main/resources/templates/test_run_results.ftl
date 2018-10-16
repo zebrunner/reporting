@@ -95,7 +95,11 @@
             <#if testRun.comments??>
             <tr>
                 <td>Comments:</td>
-                <td>${testRun.comments}</td>
+                <td>
+                    <pre style="white-space: pre-line;">
+                        ${testRun.comments?trim?substring(0, 255)}
+                    </pre>
+                </td>
             </tr>
             </#if>
             <tr class="pass" style="color: #66C266;">
