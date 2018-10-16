@@ -25,6 +25,8 @@ public interface TestSuiteMapper
 
 	TestSuite getTestSuiteById(long id);
 
+	TestSuite getTestSuiteByIdFull(long id);
+
 	TestSuite getTestSuiteByName(String name);
 
 	TestSuite getTestSuiteByNameAndFileNameAndUserId(@Param("name") String name, @Param("fileName") String fileName, @Param("userId") long userId);

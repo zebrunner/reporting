@@ -31,9 +31,11 @@ import javax.xml.bind.JAXBException;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.search.JobSearchCriteria;
 import com.qaprosoft.zafira.services.exceptions.*;
+import com.qaprosoft.zafira.services.services.application.*;
 import com.qaprosoft.zafira.services.services.application.cache.StatisticsService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.models.TestRunSpreadsheetService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.dozer.MappingException;
@@ -70,12 +72,6 @@ import com.qaprosoft.zafira.models.dto.filter.FilterType;
 import com.qaprosoft.zafira.models.push.TestPush;
 import com.qaprosoft.zafira.models.push.TestRunPush;
 import com.qaprosoft.zafira.models.push.TestRunStatisticPush;
-import com.qaprosoft.zafira.services.services.application.FilterService;
-import com.qaprosoft.zafira.services.services.application.JobsService;
-import com.qaprosoft.zafira.services.services.application.ProjectService;
-import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.TestService;
-import com.qaprosoft.zafira.services.services.application.UserService;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -96,7 +92,10 @@ public class TestRunsAPIController extends AbstractController {
 	@Autowired
 	private TestRunService testRunService;
 
-	@Autowired
+    @Autowired
+    private TestSuiteService testSuiteService;
+
+    @Autowired
 	private TestRunSpreadsheetService testRunSpreadsheetService;
 
 	@Autowired
@@ -364,6 +363,31 @@ public class TestRunsAPIController extends AbstractController {
 			throws ServiceException, JAXBException {
 		String[] recipients = getRecipients(email.getRecipients());
 		return testRunService.sendTestRunResultsEmail(id, "failures".equals(filter), showStacktrace, recipients);
+	}
+
+	@ResponseStatusDetails
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+	@ApiOperation(value = "Send failed test run result email", nickname = "sendTestRunFailureEmail", code = 200, httpMethod = "POST", response = String.class)
+	@RequestMapping(value = "{id}/emailFailure", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+	public @ResponseBody String sendTestRunFailureEmail(@PathVariable(value = "id") String id,
+														@RequestBody @Valid EmailType email,
+														@RequestParam(value = "suiteOwner", defaultValue = "false", required = false) boolean suiteOwner,
+														@RequestParam(value = "suiteRunner", defaultValue = "false", required = false) boolean suiteRunner)
+			throws ServiceException, JAXBException {
+
+		String[] recipients = getRecipients(email.getRecipients());
+        if(suiteOwner){
+            Long testSuiteId = testRunService.getTestRunByCiRunIdFull(id).getTestSuite().getId();
+            String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
+            ArrayUtils.add(recipients, suiteOwnerEmail);
+        }
+        if(suiteOwner){
+            String suiteRunnerEmail = testRunService.getTestRunByCiRunIdFull(id).getUser().getEmail();
+            ArrayUtils.add(recipients, suiteRunnerEmail);
+        }
+
+		return testRunService.sendTestRunResultsEmail(id, false, true, recipients);
 	}
 
 	@ResponseStatusDetails
