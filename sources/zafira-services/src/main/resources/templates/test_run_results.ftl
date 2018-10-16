@@ -95,7 +95,11 @@
             <#if testRun.comments??>
             <tr>
                 <td>Comments:</td>
-                <td>${testRun.comments}</td>
+                <td>
+                    <#if testRun.comments?contains('\n')>
+                        ${testRun.comments?trim?substring(0, testRun.comments?trim?index_of('\n'))}
+                    </#if>
+                </td>
             </tr>
             </#if>
             <tr class="pass" style="color: #66C266;">
