@@ -96,7 +96,9 @@
             <tr>
                 <td>Comments:</td>
                 <td>
-                    ${testRun.comments?trim}
+                    <pre style="white-space: pre-line; word-wrap: break-word;">
+                        ${testRun.comments?trim}
+                    </pre>
                 </td>
             </tr>
             </#if>
