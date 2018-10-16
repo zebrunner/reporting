@@ -96,8 +96,24 @@
             <tr>
                 <td>Comments:</td>
                 <td>
-                    <pre style="white-space: pre-line; word-wrap: break-word;">
-                        ${testRun.comments?trim}
+                    <pre style="white-space: pre-line;">
+                        ${testRun.comments?trim?substring(0, 50)}
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>Comments:</td>
+                <td>
+                    <pre style="white-space: pre-line;">
+                        ${testRun.comments?trim?substring(0, 100)}
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <td>Comments:</td>
+                <td>
+                    <pre style="white-space: pre-line;">
+                        ${testRun.comments?trim?substring(0, 255)}
                     </pre>
                 </td>
             </tr>
