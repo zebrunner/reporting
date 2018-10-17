@@ -64,7 +64,7 @@ services:
     env_file:
       - integrations.env
     environment:
-      - ZAFIRA_URL=http://zafira:9000
+      - ZAFIRA_URL=http://localhost:9000
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
       - ZAFIRA_JDBC_URL=jdbc:postgresql://db:5432/postgres
