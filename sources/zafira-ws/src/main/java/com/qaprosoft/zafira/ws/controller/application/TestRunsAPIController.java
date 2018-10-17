@@ -19,6 +19,8 @@ import static com.qaprosoft.zafira.services.services.application.FilterService.T
 import static com.qaprosoft.zafira.services.services.application.FilterService.Template.TEST_RUN_TEMPLATE;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -191,14 +193,14 @@ public class TestRunsAPIController extends AbstractController {
 	public @ResponseBody TestRunType abortTestRun(
 			@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
 			@ApiParam(value = "Test run CI id") @RequestParam(value = "ciRunId", required = false) String ciRunId,
-			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException {
+			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException, UnsupportedEncodingException {
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		if (testRun == null) {
 			throw new ServiceException("Test run not found for abort!");
 		}
 
 		if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
-			testRunService.abortTestRun(testRun, abortCause.getComment());
+			testRunService.abortTestRun(testRun, URLDecoder.decode(abortCause.getComment(), "UTF-8"));
 			for (Test test : testService.getTestsByTestRunId(testRun.getId())) {
 				if (Status.ABORTED.equals(test.getStatus())) {
 					websocketTemplate.convertAndSend(getTestRunsWebsocketPath(), new TestPush(test));
