@@ -756,6 +756,39 @@
                 });
             }
         };
+    }).directive('statusButtons', function () {
+        "use strict";
+        return {
+            restrict: 'AE',
+            scope: {
+                onButtonClick: '&onButtonClick'
+            },
+            template:
+                '      <div class="test-run-group_group-items">\n' +
+                '        <div name="failed" class="test-run-group_group-items_item FAILED" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="skipped" class="test-run-group_group-items_item SKIPPED" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="passed" class="test-run-group_group-items_item PASSED" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="aborted" class="test-run-group_group-items_item ABORTED" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="queued" class="test-run-group_group-items_item QUEUED" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="inprogress" class="test-run-group_group-items_item IN_PROGRESS" ng-click="changeStatus($event);></div>\n' +
+                '      </div>',
+            replace: true,
+            link: function (scope, iElement, iAttrs, ngModel) {
+
+                var previousChecked;
+
+                scope.changeStatus = function (event) {
+                    var elementStatus = angular.element(event.target);
+                    if(previousChecked) {
+                        previousChecked.removeClass('item-checked');
+                    }
+                    elementStatus.addClass('item-checked');
+                    previousChecked = elementStatus;
+                    var value = elementStatus[0].attributes['name'].value;
+                    scope.onButtonClick({arg1: value});
+                };
+            }
+        };
     }).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,

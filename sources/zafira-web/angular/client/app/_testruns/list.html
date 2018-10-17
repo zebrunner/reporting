@@ -375,7 +375,7 @@
                                         Platform
                                     </th>
                                     <th md-column>
-                                       Statistics
+                                        Statistics
                                     </th>
                                     <th md-column>
                                         Date
@@ -525,14 +525,34 @@
                                         <td md-cell colspan="7">
                                             <table md-table class="table">
                                                 <thead md-head data-ng-hide="testRun.tests == null">
-                                                    <tr md-row>
-                                                        <th md-column class="row sort-new" colspan="4">
-                                                            <div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
+                                                    <tr class="test-run-group-row" md-row>
+                                                        <th md-column class="sort-new test-run-group-column" colspan="4">
+                                                            <div class="test-run-group">
+                                                                <div class="test-run-group_controls-buttons">
+                                                                    <button id="plainToggle" ng-class="{'md-primary': testGroupMode == 'PLAIN'}" class="md-button md-raised md-ink-ripple" type="button" ng-click="switchTestGroupMode('PLAIN');">
+                                                                        Plain
+                                                                    </button>
+                                                                    <button id="groupsToggle" ng-class="{'md-primary': testGroupMode == 'GROUPS'}" class="md-button md-raised md-ink-ripple" type="button" ng-click="switchTestGroupMode('GROUPS');">
+                                                                        Groups
+                                                                    </button>
+                                                                </div>
+                                                                <div class="test-run-group_tags"></div>
+                                                                <div class="test-run-group_sorts">
+                                                                    <div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
+                                                                </div>
+                                                                <status-buttons on-button-click="onStatusButtonClick(arg1);"></status-buttons>
+                                                                <div class="test-run-group_other-buttons">
+                                                                    <button id="resetAllToggle" class="md-button md-primary md-raised md-ink-ripple" type="button" ng-click="">
+                                                                        RESET ALL
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <!--<div name="sortStatus" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'status'; reverse=!reverse">Status&nbsp;</div >
                                                             <div name="sortName" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'name'; reverse=!reverse">Title&nbsp;</div >
                                                        		<div name="sortOwner" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'owner'; reverse=!reverse">Owner&nbsp;</div >
                                                        		<div name="sortDevice" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'testConfig.device'; reverse=!reverse">Device&nbsp;</div >
                                                        		<div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
-                                                       		<div name="sortStartTime" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started&nbsp;</div >
+                                                       		<div name="sortStartTime" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'startTime'; reverse=!reverse">Started&nbsp;</div >-->
                                                         </th>
                                                     </tr>
                                                 </thead>

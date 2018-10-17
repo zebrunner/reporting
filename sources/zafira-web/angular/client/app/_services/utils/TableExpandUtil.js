@@ -41,6 +41,8 @@
                 timeout = rectangleRow.top / speed;
                 elementsToHide = initElements(LOCATORS_TO_HIDE);
 
+                // nullable timeout if there is not needed place to scroll
+                timeout = document.body.scrollHeight - $window.pageYOffset - rectangleRow.height < row.offset().top + paddingTop ? 0 : timeout;
                 // scroll test run row top
                 scrollBottom(- (headerHeight + paddingTop), timeout, id);
 

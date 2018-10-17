@@ -2348,3 +2348,142 @@ td.settings-cell {
         margin-left: 0;
     }
 }
+
+$light-passed: #a6dd65;
+$light-failed: #ff6363;
+$light-skipped: #ffd360;
+$light-aborted: #a5a5a5;
+$light-queued: #b0b0b0;
+$light-inprogress: #68c9fd;
+
+// TESTS CONTROLS
+.test-run-group-row {
+    height: 64px !important;
+    .test-run-group-column {
+        padding: 0 !important;
+        border-bottom: 0;
+        .test-run-group {
+            width: 100%;
+            font-size: 0;
+            box-sizing: border-box;
+            > * {
+                display: inline-block;
+                box-sizing: border-box;
+                vertical-align: middle;
+            }
+            &_controls-buttons {
+                width: 15.48%;
+                button {
+                    width: 80px;
+                    height: 32px;
+                    min-width: 80px;
+                    min-height: 32px;
+                    text-transform: none;
+                    &:first-child {
+                        border-radius: 3px 0 0 3px;
+                    }
+                    &:last-child {
+                        border-radius: 0 3px 3px 0;
+                    }
+                    &:not(:first-child) {
+                        position: relative;
+                        left: -3px;
+                    }
+                    * {
+                        font-size: 14px;
+                    }
+                }
+            }
+            &_tags {
+                width: 55.73%;
+                min-height: 20px;
+            }
+            &_sorts {
+                width: 7.59%;
+                > * {
+                    padding-left: 0;
+                }
+                * {
+                    font-size: 13px;
+                }
+                md-icon {
+                    height: 15px;
+                    width: 15px;
+                    min-height: 15px;
+                    min-width: 15px;
+                }
+            }
+            &_group-items {
+                width: 10.68%;
+                &_item {
+                    display: inline-block;
+                    &:not(:last-child) {
+                        margin-right: 2px;
+                    }
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    position: relative;
+                    box-sizing: border-box;
+                    opacity: 0.6;
+
+                    &.PASSED {
+                        background-color: $light-passed;
+                        border: 2px solid $light-passed;
+                    }
+                    &.FAILED {
+                        background-color: $light-failed;
+                        border: 2px solid $light-failed;
+                    }
+                    &.SKIPPED {
+                        background-color: $light-skipped;
+                        border: 2px solid $light-skipped;
+                    }
+                    &.ABORTED {
+                        background-color: $light-aborted;
+                        border: 2px solid $light-aborted;
+                    }
+                    &.QUEUED {
+                        &:not(.item-checked) {
+                            background-color: white;
+                        }
+                        background-color: $light-queued;
+                        border: 2px solid $light-queued;
+                    }
+                    &.IN_PROGRESS {
+                        background-color: $light-inprogress;
+                        border: 2px solid $light-inprogress;
+                    }
+
+                    &.item-checked {
+                        opacity: 1;
+                        &:after {
+                            display: block;
+                            content: '';
+                            position: absolute;
+                            height: 9px;
+                            width: 4px;
+                            transform: rotate(45deg);
+                            border: 1px solid $dark;
+                            border-top: none;
+                            border-left: none;
+                            top: 2px;
+                            left: 5px;
+                        }
+                    }
+                }
+            }
+            &_other-buttons {
+                width: 10.52%;
+                text-align: end;
+                button {
+                    height: 32px;
+                    width: 96px;
+                    min-height: 32px;
+                    min-width: 98px;
+                    background-color: $dark !important;
+                }
+            }
+        }
+    }
+}

@@ -1396,6 +1396,18 @@
             });
         };
 
+        $scope.onStatusButtonClick = function(status) {
+            var sdcdsc = '';
+        };
+
+        $scope.testGroupMode = 'PLAIN';
+
+        $scope.switchTestGroupMode = function (mode) {
+            if($scope.testGroupMode != mode) {
+                $scope.testGroupMode = mode;
+            }
+        };
+
         var setWorkItemIsNewStatus = function (workItems){
             for (var i = 0; i < workItems.length; i++) {
                 switch (workItems[i].type) {
