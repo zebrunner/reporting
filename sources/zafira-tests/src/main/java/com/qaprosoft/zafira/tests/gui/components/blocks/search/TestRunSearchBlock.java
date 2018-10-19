@@ -66,6 +66,7 @@ public class TestRunSearchBlock extends AbstractSearchBlock
 
 	public void selectStatus(String status)
 	{
+		clickOutside();
 		if(! isBlank(status))
 			select(statusSelect, status);
 	}

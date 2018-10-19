@@ -39,8 +39,11 @@ public class TestRunTableRow extends AbstractRow
 	@FindBy(xpath = "./td[3]//span")
 	private WebElement environment;
 
-	@FindBy(xpath = "./td[3]//i")
+	@FindBy(xpath = "./td[2]//i")
 	private WebElement expandTestsIcon;
+
+	@FindBy(xpath = "//*[@id = 'test-run-background']//*[contains(@class, 'expand-button')]")
+	private WebElement closeTestsIcon;
 
 	@FindBy(xpath = "./td[4]//span")
 	private WebElement platformIcon;
@@ -188,9 +191,18 @@ public class TestRunTableRow extends AbstractRow
 		return expandTestsIcon;
 	}
 
+	public WebElement getCloseTestsIcon() {
+		return closeTestsIcon;
+	}
+
 	public TestTable clickExpandTestsIcon()
 	{
 		expandTestsIcon.click();
+		return testTable;
+	}
+
+	public TestTable clickCloseTestIcon() {
+		closeTestsIcon.click();
 		return testTable;
 	}
 
