@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('JobService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', JobService])
+        .factory('JobService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', JobService])
 
-    function JobService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function JobService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
         service.createJob = createJob;
@@ -19,31 +19,31 @@
         return service;
 
         function createJob(job, project){
-            return $http.post(API_URL + '/api/jobs', {headers:{'Project': project}}, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to create job'));
+            return $httpMock.post(API_URL + '/api/jobs', {headers:{'Project': project}}, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to create job'));
         }
 
         function getAllJobs(){
-            return $http.get(API_URL + '/api/jobs').then(UtilService.handleSuccess, UtilService.handleError('Failed to get all jobs'));
+            return $httpMock.get(API_URL + '/api/jobs').then(UtilService.handleSuccess, UtilService.handleError('Failed to get all jobs'));
         }
 
         function getLatestJobTestRuns(id, job, env){
-            return $http.post(API_URL + '/api/jobs/views/' + id + '/tests/runs?env=' + env, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to get latest job test runs'));
+            return $httpMock.post(API_URL + '/api/jobs/views/' + id + '/tests/runs?env=' + env, job).then(UtilService.handleSuccess, UtilService.handleError('Failed to get latest job test runs'));
         }
 
         function createJobView(jobViews){
-            return $http.post(API_URL + '/api/jobs/views', jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to create job views'));
+            return $httpMock.post(API_URL + '/api/jobs/views', jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to create job views'));
         }
 
         function updateJobViews(id, jobViews, env){
-            return $http.put(API_URL + '/api/jobs/views/' + id + '?env=' + env, jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to update job views'));
+            return $httpMock.put(API_URL + '/api/jobs/views/' + id + '?env=' + env, jobViews).then(UtilService.handleSuccess, UtilService.handleError('Failed to update job views'));
         }
 
         function getJobViews(id){
-            return $http.get(API_URL + '/api/jobs/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to get job views'));
+            return $httpMock.get(API_URL + '/api/jobs/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Failed to get job views'));
         }
 
         function deleteJobViews(id, env){
-            return $http.delete(API_URL + '/api/jobs/views/' + id, {params:{'env': env}}).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete job views'));
+            return $httpMock.delete(API_URL + '/api/jobs/views/' + id, {params:{'env': env}}).then(UtilService.handleSuccess, UtilService.handleError('Failed to delete job views'));
         }
     }
 })();

@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('FilterService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', FilterService])
+        .factory('FilterService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', FilterService])
 
-    function FilterService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function FilterService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
         service.createFilter = createFilter;
@@ -17,23 +17,23 @@
         return service;
 
         function createFilter(filter) {
-            return $http.post(API_URL + '/api/filters', filter).then(UtilService.handleSuccess, UtilService.handleError('Unable to create filter'));
+            return $httpMock.post(API_URL + '/api/filters', filter).then(UtilService.handleSuccess, UtilService.handleError('Unable to create filter'));
         }
 
         function getAllPublicFilters() {
-            return $http.get(API_URL + '/api/filters/all/public').then(UtilService.handleSuccess, UtilService.handleError('Unable to get public filters'));
+            return $httpMock.get(API_URL + '/api/filters/all/public').then(UtilService.handleSuccess, UtilService.handleError('Unable to get public filters'));
         }
 
         function updateFilter(filter) {
-            return $http.put(API_URL + '/api/filters', filter).then(UtilService.handleSuccess, UtilService.handleError('Unable to update filter'));
+            return $httpMock.put(API_URL + '/api/filters', filter).then(UtilService.handleSuccess, UtilService.handleError('Unable to update filter'));
         }
 
         function deleteFilter(id) {
-            return $http.delete(API_URL + '/api/filters/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete filter'));
+            return $httpMock.delete(API_URL + '/api/filters/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete filter'));
         }
 
         function getSubjectBuilder(name) {
-            return $http.get(API_URL + '/api/filters/' + name + '/builder').then(UtilService.handleSuccess, UtilService.handleError('Unable to get ' + name + ' builder'));
+            return $httpMock.get(API_URL + '/api/filters/' + name + '/builder').then(UtilService.handleSuccess, UtilService.handleError('Unable to get ' + name + ' builder'));
         }
     }
 })();

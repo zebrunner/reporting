@@ -5,6 +5,9 @@ $screen-sm-max:         ($screen-sm - 1);
 
 // Top header
 $header_height:             64px;           //**
+$page-padding-right-left:   20px;
+$page-padding-top-bottom:   15px;
+$sidebar_width:             60px;
 $header_line_height:        20px;           //** line-height of the header text
 $header_container_bg:       $dark;
 $header-border:             rgba(255,255,255,.06);

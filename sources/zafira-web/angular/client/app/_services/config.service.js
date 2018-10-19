@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('ConfigService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', ConfigService])
+        .factory('ConfigService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', ConfigService])
 
-    function ConfigService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function ConfigService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
 
         var service = {};
 
@@ -14,7 +14,7 @@
         return service;
 
         function getConfig(name) {
-            return $http.get(API_URL + '/api/config/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get config "' + name + '"'));
+            return $httpMock.get(API_URL + '/api/config/' + name).then(UtilService.handleSuccess, UtilService.handleError('Unable to get config "' + name + '"'));
         }
     }
 })();

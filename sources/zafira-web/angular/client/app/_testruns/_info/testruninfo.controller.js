@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', '$state', '$httpMock', 'TestRunsStorage', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL) {
+    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL, $state, $httpMock, TestRunsStorage) {
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -21,6 +21,13 @@
         $scope.OFFSET = OFFSET;
         $scope.MODE = {};
         $scope.tab =  { title: 'History', content: "Tabs will become paginated if there isn't enough room for them."};
+        $scope.TestRunsStorage = TestRunsStorage;
+
+        $scope.goToTestRuns = function () {
+            $httpMock.back();
+            var path = TestRunsStorage.getTestRunId() ? 'tests/run' : 'tests/runs';
+            $state.go(path, {id: TestRunsStorage.getTestRunId()});
+        };
 
         var from = 0;
 

@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('ProjectService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', ProjectService])
+        .factory('ProjectService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', ProjectService])
 
-    function ProjectService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function ProjectService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
         service.createProject = createProject;
@@ -16,18 +16,18 @@
         return service;
 
         function createProject(project) {
-            return $http.post(API_URL + '/api/projects', project).then(UtilService.handleSuccess, UtilService.handleError('Unable to create project'));
+            return $httpMock.post(API_URL + '/api/projects', project).then(UtilService.handleSuccess, UtilService.handleError('Unable to create project'));
         }
 
         function deleteProject(id) {
-            return $http.delete(API_URL + '/api/projects/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete project'));
+            return $httpMock.delete(API_URL + '/api/projects/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete project'));
         }
 
         function updateProject(project) {
-            return $http.put(API_URL + '/api/projects', project).then(UtilService.handleSuccess, UtilService.handleError('Unable to update project'));
+            return $httpMock.put(API_URL + '/api/projects', project).then(UtilService.handleSuccess, UtilService.handleError('Unable to update project'));
         }
         function getAllProjects() {
-            return $http.get(API_URL + '/api/projects').then(UtilService.handleSuccess, UtilService.handleError('Unable to get projects list'));
+            return $httpMock.get(API_URL + '/api/projects').then(UtilService.handleSuccess, UtilService.handleError('Unable to get projects list'));
         }
     }
 })();
