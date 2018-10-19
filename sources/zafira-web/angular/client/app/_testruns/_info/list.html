@@ -1,7 +1,7 @@
 <div id="testrun-info-page" class="page page-profile no-padding no-margin" ng-controller="TestRunInfoController">
   <div class="row ui-section no-margin title-container">
     <h2 id="testrun-info-title">
-        <i button ng-click="goToTestRuns();" class="material-icons back_button" md-ink-ripple>keyboard_backspace</i>
+        <i ng-if="TestRunsStorage.isPrepared();" button ng-click="goToTestRuns();" class="material-icons back_button" md-ink-ripple>keyboard_backspace</i>
         {{ test.name }}
         <span class="recording-icon" ng-if="MODE.name == 'live'">
             <div class="red-point" ng-class="{'flash-point': true}"></div>

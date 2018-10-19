@@ -29,20 +29,23 @@
 
         return service;
 
-        function expand(id) {
+        function expand(id, quick) {
 
             return $q(function (resolve, reject) {
                 // take snapshot of current values
                 testRunId = id;
-                offsetTop = $window.scrollY;
-                var row = angular.element('#' + id);
+                if(! offsetTop) {
+                    offsetTop = $window.scrollY;
+                }
+                var rowLocator = '#' + id;
+                var row = angular.element(rowLocator);
                 tableHeader = angular.element('thead#testRuns_table_header th, thead#testRuns_table_header > tr');
                 rectangleRow = row[0].getBoundingClientRect();
                 timeout = rectangleRow.top / speed;
                 elementsToHide = initElements(LOCATORS_TO_HIDE);
 
                 // nullable timeout if there is not needed place to scroll
-                timeout = document.body.scrollHeight - $window.pageYOffset - rectangleRow.height < row.offset().top + paddingTop ? 0 : timeout;
+                timeout = quick ? 0 : document.body.scrollHeight - $window.pageYOffset - rectangleRow.height < row.offset().top + paddingTop ? 0 : timeout;
                 // scroll test run row top
                 scrollBottom(- (headerHeight + paddingTop), timeout, id);
 
@@ -63,7 +66,6 @@
                     scrollBottom(0, 0);
 
                     // clear hide styles for needed test run
-                    angular.element('#' + id).removeAttr('style');
                     angular.element('#test-run-background tr').removeAttr('style');
 
                     resolve();
@@ -114,13 +116,25 @@
         function showHidePseudoTestRunRow(show) {
             var page = angular.element('.page');
             var testRunBackgroundContainer = angular.element('#test-run-background');
+            var body = angular.element('#app');
             if(show) {
                 var height = rectangleRow.height + paddingTop + 2 + 'px';
-                testRunBackgroundContainer.css({height: height, display: 'block'});
-                page.css({'padding-top': 0});
+                testRunBackgroundContainer.css({'min-height': height, display: 'block'});
+                page.css({'padding-top': rectangleRow.height + paddingTop + 'px'});
+                $timeout(function () {
+                    var testRunBackgroundContainerHeight = testRunBackgroundContainer[0].getBoundingClientRect().height - 2;
+                    page.css({'padding-top': testRunBackgroundContainerHeight + 'px'});
+                }, 0);
+                body.addClass('testrun-full');
+                angular.element($window).bind('resize', function(){
+                    var testRunBackgroundContainerHeight = testRunBackgroundContainer[0].getBoundingClientRect().height - 2;
+                    page.css({'padding-top': testRunBackgroundContainerHeight + 'px'});
+                });
             } else {
                 page.removeAttr('style');
+                body.removeClass('testrun-full');
                 testRunBackgroundContainer.removeAttr('style');
+                angular.element($window).bind('resize', undefined);
             }
         };
 

@@ -10,45 +10,64 @@
         var storage = {};
         var additional;
         var windowOffset = 0;
+        var testRun = {};
+        var testRunId;
+        var isDataPrepared = false;
 
         return {
             takeSnapshot: takeSnapshot,
-            applySnapshot: applySnapshot
+            applySnapshot: applySnapshot,
+            clear: clear,
+            isPrepared: isPrepared,
+            getTestRunId: function () {
+                return testRunId;
+            }
         };
 
-        function applySnapshot(controller, scope) {
+        function applySnapshot(scope) {
             return $q(function (resolve, reject) {
                 if($httpMock.isBackClicked()) {
                     triggerLoad();
-                }
-                controller.$onInit = function () {
-                    $timeout(function() {
-                        applyAfterControllerInit(scope);
-                        resolve(additional);
-                    }, 0, false);
+                    scope.$on('controller-inited', function (event, name) {
+                        if(name == 'TestRunListController') {
+                            waitUntilQueueIsEmpty(function () {
+                                applyAfterControllerInit(scope);
+                                var resolveData = angular.copy(additional);
+                                resolve(resolveData);
+                            });
+                        }
+                    });
                 };
             });
         };
 
-        function takeSnapshot(scope, values, window, additionalValue) {
+        function takeSnapshot(scope, values, window, additionalValue, tr, trId) {
             values.forEach(function (value) {
                 storage[value] = scope[value];
             });
             windowOffset = window.scrollY;
             additional = additionalValue;
+            tr.expand = false;
+            testRun = tr;
+            isDataPrepared = true;
+            testRunId = trId;
         };
 
         function applyAfterControllerInit(scope) {
             if($httpMock.isBackClicked()) {
+                storage['testRun'] = testRun;
                 angular.forEach(storage, function (value, key, object) {
                     scope[key] = value;
                 });
-                $timeout(function () {
-                    $window.scrollTo(0, windowOffset);
-                    $httpMock.clearBackClicking();
-                    clear();
-                    triggerLoadFinish();
-                }, 0, false);
+                waitUntilQueueIsEmpty(function () {
+                    scope.switchTestRunExpand(storage['testRun'], true);
+                    waitUntilQueueIsEmpty(function () {
+                        $window.scrollTo(0, windowOffset);
+                        $httpMock.clearBackClicking();
+                        clear();
+                        triggerLoadFinish();
+                    });
+                });
             }
         };
 
@@ -64,9 +83,22 @@
             window.dispatchEvent(evt);
         };
 
+        function waitUntilQueueIsEmpty(func) {
+            $timeout(function () {
+                func.call();
+            }, 0, false);
+        };
+
+        function isPrepared() {
+            return isDataPrepared;
+        };
+
         function clear() {
             storage = {};
             windowOffset = 0;
+            testRun = {};
+            additional = null;
+            isDataPrepared = false;
         };
     }
 })();

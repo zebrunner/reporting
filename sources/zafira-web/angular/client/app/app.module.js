@@ -326,13 +326,26 @@
             template: '<span ng-transclude></span><md-icon class="md-sort-icon" md-svg-icon="arrow-up.svg"></md-icon>',
             replace: false,
             transclude: true,
+            scope: {
+                sortItem: '@'
+            },
             link: function (scope, iElement, iAttrs) {
                 iElement.bind("click",function() {
-                    var classToAdd = iAttrs.sortItem === 'true' ? 'md-asc' : 'md-desc';
-                    var classToDelete = iAttrs.sortItem === 'true' ? 'md-desc' : 'md-asc';
+                    switchMode();
+                });
+
+                scope.$watch('sortItem', function (newVal) {
+                    if(newVal) {
+                        switchMode();
+                    }
+                });
+
+                function switchMode() {
+                    var classToAdd = scope.sortItem === 'true' ? 'md-asc' : 'md-desc';
+                    var classToDelete = scope.sortItem === 'true' ? 'md-desc' : 'md-asc';
                     iElement.children('md-icon')[0].classList.remove(classToDelete);
                     iElement.children('md-icon').addClass(classToAdd);
-                });
+                };
             }
         };
     }).directive('formErrorValidation', function($q, $timeout, $compile) {
@@ -756,12 +769,14 @@
                 });
             }
         };
-    }).directive('statusButtons', function () {
+    }).directive('statusButtons', ['$timeout', function ($timeout) {
         "use strict";
         return {
             restrict: 'AE',
             scope: {
-                onButtonClick: '&onButtonClick'
+                onButtonClick: '&onButtonClick',
+                multi: '=',
+                options: '='
             },
             template:
                 '      <div class="test-run-group_group-items">\n' +
@@ -775,21 +790,184 @@
             replace: true,
             link: function (scope, iElement, iAttrs, ngModel) {
 
-                var previousChecked;
+                var previousChecked = {};
+
+                angular.extend(scope.options, {
+                    reset: function(){
+                        angular.element('.test-run-group_group-items_item').removeClass('item-checked');
+                        previousChecked = {};
+                        scope.onButtonClick({'$statuses': []});
+                    }
+                });
 
                 scope.changeStatus = function (event) {
                     var elementStatus = angular.element(event.target);
-                    if(previousChecked) {
-                        previousChecked.removeClass('item-checked');
+                    if(previousChecked && (! iAttrs.multi || ! iAttrs.multi == 'true')) {
+                        angular.forEach(previousChecked, function (previousElement) {
+                            previousElement.removeClass('item-checked');
+                        });
+                        previousChecked = {};
                     }
-                    elementStatus.addClass('item-checked');
-                    previousChecked = elementStatus;
-                    var value = elementStatus[0].attributes['name'].value;
-                    scope.onButtonClick({arg1: value});
+                    var value =elementStatus[0].attributes['name'].value;
+                    var removed;
+                    if(previousChecked && iAttrs.multi == 'true' && elementStatus.hasClass('item-checked')) {
+                        elementStatus.removeClass('item-checked');
+                        delete previousChecked[value];
+                        removed = true;
+                    }
+                    if(! removed) {
+                        elementStatus.addClass('item-checked');
+                        previousChecked[value] = elementStatus;
+                    }
+
+                    var values = collectValues(previousChecked);
+                    scope.onButtonClick({'$statuses': values});
                 };
+
+                function collectValues(elements) {
+                    var result = [];
+                    angular.forEach(elements, function (element) {
+                        result.push(element[0].attributes['name'].value);
+                    });
+                    return result;
+                };
+
+                scope.$watch('options', function (newVal) {
+                    if(newVal) {
+                        if(scope.options && scope.options.initValues) {
+                            scope.options.initValues.forEach(function (value) {
+                                var chipTemplates = angular.element('*[name = ' + value + ']');
+                                chipTemplates.addClass('item-checked');
+                            });
+                            $timeout(function () {
+                                scope.onButtonClick({'$statuses': scope.options.initValues});
+                            }, 0, false);
+                        }
+                    }
+                });
             }
         };
-    }).filter('orderObjectBy', ['$sce', function($sce) {
+    }]).directive('chipsArray', ['$timeout', function ($timeout) {
+        "use strict";
+        return {
+            restrict: 'E',
+            scope: {
+                onSelect: '&',
+                multi: '=',
+                chips: '=',
+                countToShow: '=',
+                options: '='
+            },
+            template:
+                '      <div class="test-run-group_tags">\n' +
+                '         <md-chips ng-model="showingChips" md-removable="false" readonly="true">\n' +
+                '             <input disabled>\n' +
+                '             <md-chip-template>\n' +
+                '                 <div name="{{$chip.value}}" style="display: inline-block;" ng-click="selectGroup($event, $chip, $index);">\n' +
+                '                     <span>#{{$chip.value}}</span>\n' +
+                '                 </div>\n' +
+                '             </md-chip-template>\n' +
+                '         </md-chips>\n' +
+                '         <md-menu ng-if="chips.length > countToShow" md-position-mode="left bottom">\n' +
+                '             <md-button aria-label="More tags" ng-click="$mdMenu.open($event);" md-ink-ripple="false" class="md-icon-button no-padding">\n' +
+                '                 <i class="fa fa-angle-double-up" aria-hidden="true"></i>\n' +
+                '             </md-button>\n' +
+                '             <md-menu-content class="test-run-group_menu" style="z-index:99;"  width="3">\n' +
+                '                 <md-list class="md-dense">\n' +
+                '                     <md-list-item id="clearProject" class="md-2-line" ng-repeat="chip in chips" md-prevent-menu-close>\n' +
+                '                         <md-checkbox md-prevent-menu-close class="md-primary" ng-model="chip.checked" aria-label="tag"></md-checkbox>\n' +
+                '                         <div class="md-list-item-text">\n' +
+                '                             {{chip.value}}\n' +
+                '                         </div>\n' +
+                '                     </md-list-item>\n' +
+                '                     <md-list-item>\n' +
+                '                         <button md-prevent-menu-close style="margin-right: 8px" class="md-button md-raised md-dark md-ink-ripple" type="button" ng-click="resetCheckedTags();">\n' +
+                '                             RESET\n' +
+                '                         </button>\n' +
+                '                         <button  class="md-button md-primary md-raised md-ink-ripple" type="button" ng-click="addCheckedTags();">\n' +
+                '                            APPLY\n' +
+                '                         </button>\n' +
+                '                     </md-list-item>\n' +
+                '                 </md-list>\n' +
+                '             </md-menu-content>\n' +
+                '         </md-menu>\n' +
+                '     </div>',
+            replace: true,
+            link: function (scope, iElement, iAttrs, ngModel) {
+
+                scope.showingChips = [];
+                var selectedTags = {};
+
+                angular.extend(scope.options, {
+                    reset: function(){
+                        angular.element('md-chip').removeClass('md-focused');
+                        selectedTags = {};
+                        scope.onSelect({'$tags': selectedTags});
+                    }
+                });
+
+                scope.selectGroup = function(event, currentChip, index) {
+                    var chip = angular.element(event.target.closest('md-chip'));
+                    if(chip.hasClass('md-focused')) {
+                        chip.removeClass('md-focused');
+                        delete selectedTags[currentChip.name + currentChip.value];
+                    } else {
+                        chip.addClass('md-focused');
+                        selectedTags[currentChip.name + currentChip.value] = currentChip.value;
+                    }
+                    scope.onSelect({'$tags': collectSelectedTags()});
+                };
+
+                function collectSelectedTags() {
+                    var result = [];
+                    angular.forEach(selectedTags, function (value) {
+                        result.push(value);
+                    });
+                    return result;
+                };
+
+                function collectTagsToShow() {
+                    return scope.chips.filter(function (chip) {
+                        return chip.checked;
+                    });
+                };
+
+                scope.resetCheckedTags = function () {
+                    scope.chips.forEach(function (chip) {
+                        chip.checked = false;
+                    });
+                };
+
+                scope.addCheckedTags = function () {
+                    scope.showingChips = collectTagsToShow();
+                };
+
+                scope.$watch('chips', function (newVal) {
+                    if(newVal) {
+                        if(scope.countToShow > 0 && scope.chips) {
+                            scope.chips.forEach(function (chip, index) {
+                                if(scope.countToShow > index) {
+                                    chip.checked = true;
+                                }
+                            });
+                            scope.addCheckedTags();
+                        }
+                        $timeout(function () {
+                            if(scope.options && scope.options.initValues) {
+                                scope.options.initValues.forEach(function (value) {
+                                    var chipTemplates = angular.element('*[name = ' + value + ']');
+                                    angular.forEach(chipTemplates, function (element) {
+                                        angular.element(element.closest('md-chip')).addClass('md-focused');
+                                    });
+                                });
+                                scope.onSelect({'$tags': scope.options.initValues});
+                            }
+                        }, 0, false);
+                    }
+                });
+            }
+        };
+    }]).filter('orderObjectBy', ['$sce', function($sce) {
         var STATUSES_ORDER = {
             'PASSED': 0,
             'FAILED': 1,

@@ -11,7 +11,7 @@
     // **************************************************************************
     function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil) {
 
-        var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "expandedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter"];
+        var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter", "testGroupDataToStore"];
 
     	const TENANT = $rootScope.globals.auth.tenant;
     	
@@ -671,7 +671,9 @@
 
         $scope.addTestRun = function (testRun) {
 
-            testRun.expand = $scope.testRunId ? true : false;
+            if($scope.testRunId) {
+                $scope.testRun = testRun;
+            }
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
                 testRun.UID = testRun.testSuite.name + " " + testRun.jenkinsURL;
@@ -736,6 +738,14 @@
 
         function switchMode(index) {
             $scope.currentMode = MODES[index];
+            switch($scope.currentMode) {
+                case 'ONE':
+                    break;
+                case 'MANY':
+                    break;
+                default:
+                    break;
+            }
         };
 
         $scope.search = function (page, pageSize) {
@@ -789,9 +799,6 @@
                         testRun.browserVersion = browserVersion;
                         testRun.tests = null;
                         $scope.addTestRun(testRun);
-                    }
-                    if ($scope.testRunId) {
-                        $scope.loadTests($scope.testRunId);
                     }
                 }
                 else
@@ -1396,8 +1403,63 @@
             });
         };
 
-        $scope.onStatusButtonClick = function(status) {
-            var sdcdsc = '';
+        $scope.testGroupDataToStore = {
+            statuses: [],
+            tags: []
+        };
+
+        $scope.onStatusButtonClick = function(statuses) {
+            onTestGroupingMode(function () {
+                $scope.testGroupDataToStore.statuses = statuses;
+                showTestsByStatuses($scope.testRun.tests, statuses);
+            }, function () {
+
+            });
+        };
+
+        $scope.onTagSelect = function(tags) {
+            onTestGroupingMode(function () {
+                $scope.testGroupDataToStore.tags = tags;
+                showTestsByTags($scope.testRun.tests, tags);
+            }, function () {
+
+            });
+        };
+
+        function showTestsByTags(tests, tags) {
+            angular.forEach(tests, function (test) {
+                test.show = false;
+                if(tags && tags.length) {
+                    tags.forEach(function (tag) {
+                        if(! test.show) {
+                            test.show = test.tags.map(function (testTag) {
+                                return testTag.value;
+                            }).includes(tag);
+                        }
+                    });
+                } else {
+                    test.show = true;
+                }
+            });
+        };
+
+        function showTestsByStatuses(tests, statuses) {
+            angular.forEach(tests, function (test) {
+                test.showByStatus = false;
+                if(statuses && statuses.length) {
+                    test.showByStatus = statuses.includes(test.status.toLowerCase());
+                } else {
+                    test.showByStatus = true;
+                }
+            });
+        };
+
+        $scope.testsTagsOptions = {};
+        $scope.testsStatusesOptions = {};
+
+        $scope.resetTestsGrouping = function() {
+            $scope.testsTagsOptions.reset();
+            $scope.testsStatusesOptions.reset();
         };
 
         $scope.testGroupMode = 'PLAIN';
@@ -1405,7 +1467,16 @@
         $scope.switchTestGroupMode = function (mode) {
             if($scope.testGroupMode != mode) {
                 $scope.testGroupMode = mode;
+
             }
+        };
+
+        function collectTags(tests) {
+            var result = [];
+            angular.forEach(tests, function (test, key, object) {
+                result = result.concat(test.tags);
+            });
+            return result;
         };
 
         var setWorkItemIsNewStatus = function (workItems){
@@ -1421,10 +1492,27 @@
             }
         };
 
-        $scope.switchTestRunExpand = function (testRun) {
+        function onTestGroupingMode(funcPlain, funcGroups) {
+            switch($scope.testGroupMode) {
+                case 'PLAIN':
+                    funcPlain.call();
+                    break;
+                case 'GROUPS':
+                    funcGroups.call();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        $scope.switchTestRunExpand = function (testRun, quick) {
             if (!testRun.expand) {
-                $scope.loadTests(testRun.id);
-                $tableExpandUtil.expand('testRun_' + testRun.id).then(function () {
+                $scope.loadTests(testRun.id).then(function (rs) {
+                    showTestsByTags(testRun.tests);
+                    showTestsByStatuses(testRun.tests);
+                    testRun.tags = collectTags(testRun.tests);
+                });
+                $tableExpandUtil.expand('testRun_' + testRun.id, quick).then(function () {
                     testRun.expand = true;
                     $scope.expandedTestRuns.push(testRun.id);
                     $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
@@ -1434,6 +1522,7 @@
                 $tableExpandUtil.compress().then(function (rs) {
                     testRun.expand = false;
                     testRun.tests = null;
+                    testRun.tags = null;
                     $scope.expandedTestRuns.splice($scope.expandedTestRuns.indexOf(testRun.id), 1);
                     var subscription = $scope.subscribtions[testRun.id];
                     if(subscription != null) {
@@ -1442,22 +1531,6 @@
                     delete $scope.subscribtions[testRun.id];
                 });
             }
-        };
-
-        // Control that only 1 test run expanded at a time
-        $scope.$watch('expandedTestRuns.length', function() {
-            if($scope.expandedTestRuns.length > 1)
-            {
-            		$scope.switchTestRunExpand($scope.testRuns[$scope.expandedTestRuns[0]]);
-            }
-        });
-
-        var getJSONLength = function(jsonObj) {
-            var count = 0;
-            for(var id in jsonObj) {
-                count++;
-            }
-            return count;
         };
 
         var splitPlatform = function (string) {
@@ -1566,27 +1639,41 @@
 
         // Calls on scope store
         $scope.storescope = function (testId) {
-            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId);
+            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.testRun, $scope.testRunId);
         };
 
         // Add operation behind all async calls
-        TestRunsStorage.applySnapshot(this, $scope).then(function (testId) {
+        TestRunsStorage.applySnapshot($scope).then(function (testId) {
             if(testId) {
                 var timeout = 900;
-                waitUntilElementPresents('#test_' + testId, function () {
+                var watcher = waitUntilElementPresents('#test_' + testId, function () {
                     var row = angular.element('#test_' + testId);
                     row.addClass('target_row');
+
+                    $scope.testsTagsOptions.initValues = $scope.testGroupDataToStore.tags;
+                    $scope.testsStatusesOptions.initValues = $scope.testGroupDataToStore.statuses;
                     $timeout(function () {
                         row.removeClass('target_row');
+                        watcher();
                     }, timeout);
                 });
             }
         });
 
         function waitUntilElementPresents(elementLocator, func) {
-            $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function() {
+            var watcher = $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function() {
                 func.call();
             });
+            return watcher;
+        };
+
+        this.$onInit = function () {
+            $scope.$broadcast('controller-inited', 'TestRunListController');
+            if($scope.testRunId) {
+                $timeout(function () {
+                    $scope.switchTestRunExpand($scope.testRun, true);
+                }, 0, false);
+            }
         };
     }
 
