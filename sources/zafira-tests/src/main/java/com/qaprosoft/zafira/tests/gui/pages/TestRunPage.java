@@ -35,7 +35,7 @@ public class TestRunPage extends BasePage
 	@FindBy(id = "search")
 	private TestRunSearchBlock testRunSearchBlock;
 
-	@FindBy(xpath = ".//tbody[@md-body]")
+	@FindBy(xpath = "//tbody[@md-body]")
 	private TestRunTable testRunTable;
 
 	@FindBy(xpath = ".//md-table-pagination")
