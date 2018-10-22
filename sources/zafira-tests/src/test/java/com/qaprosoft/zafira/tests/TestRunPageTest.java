@@ -672,7 +672,7 @@ public class TestRunPageTest extends AbstractTest
 				setTestRunId(testRun.getId());
 			}
 		}).size());
-		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
+		//testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
 		testTable = testRunTableRow.clickCloseTestIcon();
 		pause(5);
 		Assert.assertFalse(testTable.isElementPresent(1), "Test table is visible after closing");
