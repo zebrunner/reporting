@@ -62,6 +62,7 @@ public class AbstractTest extends AbstractTestNGSpringContextTests
 		{
 			dc = DesiredCapabilities.safari();
 		}
+		dc.setCapability("enableVNC", true);
 		driver = new RemoteWebDriver(new URL(Config.get("selenium_host")), dc);
 		driver.manage().timeouts().implicitlyWait(25, TimeUnit.SECONDS);
 	}
