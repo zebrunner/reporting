@@ -21,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TagService {
@@ -32,15 +34,22 @@ public class TagService {
 	@Transactional(rollbackFor = Exception.class)
 	public Tag createTag(Tag tag) {
 		tagMapper.createTag(tag);
+		if(tag.getId() == null || tag.getId() == 0) {
+			Tag existsTag = getTagByNameAndValue(tag.getName(), tag.getValue());
+			if(existsTag != null) {
+				tag = existsTag;
+			}
+		}
 		return tag;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public Set<Tag> createTags(Set<Tag> tags) {
+		Set<Tag> result = new HashSet<>();
 		if(tags != null && tags.size() > 0) {
-			tags.forEach(tag -> tagMapper.createTag(tag));
+			result = tags.stream().map(this::createTag).collect(Collectors.toSet());
 		}
-		return tags;
+		return result;
 	}
 
 	@Transactional(readOnly = true)
@@ -51,6 +60,11 @@ public class TagService {
 	@Transactional(readOnly = true)
 	public Tag getTagByNameAndTestId(String name, Long testId) {
 		return tagMapper.getTagByNameAndTestId(name, testId);
+	}
+
+	@Transactional(readOnly = true)
+	public Tag getTagByNameAndValue(String name, String value) {
+		return tagMapper.getTagByNameAndValue(name, value);
 	}
 
 	@Transactional(readOnly = true)

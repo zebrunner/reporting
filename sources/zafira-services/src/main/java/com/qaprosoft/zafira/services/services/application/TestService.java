@@ -594,7 +594,7 @@ public class TestService
 	@Transactional(rollbackFor = Exception.class)
 	public void addTags(Set<Tag> tags, Long testId) throws ServiceException {
 		if(tags != null && tags.size() > 0) {
-			tagService.createTags(tags);
+			tags = tagService.createTags(tags);
 			Set<Tag> tagsToAdd = tags.stream().filter(tag -> tag.getId() != null && tag.getId() != 0).collect(Collectors.toSet());
 			if(tagsToAdd.size() > 0) {
 				testMapper.addTags(testId, tagsToAdd);
