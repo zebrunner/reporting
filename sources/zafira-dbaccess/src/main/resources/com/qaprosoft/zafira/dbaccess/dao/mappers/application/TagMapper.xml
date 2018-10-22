@@ -79,6 +79,14 @@
         ]]>
     </select>
 
+    <select id="getTagByNameAndValue" resultMap="TagResultMap">
+        <include refid="getTags"/>
+        <![CDATA[
+			WHERE
+			  T.VALUE = #{value} AND T.NAME = #{name}
+        ]]>
+    </select>
+
     <select id="getAllTags" resultMap="TagResultMap">
         <include refid="getTags"/>
     </select>

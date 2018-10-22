@@ -38,6 +38,8 @@ public interface TagMapper {
 
 	Tag getTagByNameAndTestId(@Param(value = "name") String name, @Param(value = "testId") Long testId);
 
+	Tag getTagByNameAndValue(@Param(value = "name") String name, @Param(value = "value") String value);
+
 	Set<Tag> getAllTags();
 
 	Set<Tag> getTagsByTestId(Long testId);

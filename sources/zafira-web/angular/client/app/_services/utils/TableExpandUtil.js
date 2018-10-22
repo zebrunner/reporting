@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('$tableExpandUtil', ['$timeout', '$window', '$q', TableExpandUtil])
+        .factory('$tableExpandUtil', ['$timeout', '$rootScope', '$window', '$q', TableExpandUtil])
 
-    function TableExpandUtil($timeout, $window, $q) {
+    function TableExpandUtil($timeout, $rootScope, $window, $q) {
 
         var service = {
             expand: expand,
@@ -24,6 +24,7 @@
         var rectangleRow;
         var tableHeader;
         var elementsToHide;
+        var painterWatcher;
 
         initDefaults();
 
@@ -62,6 +63,10 @@
                         element.css({'display': 'none'});
                     });
 
+                    watchUntilPainted('.result:not(.main-row)', function (locator) {
+                        angular.element(locator).css({'display': 'none'});
+                    });
+
                     // scroll top if unused elements was hidden
                     scrollBottom(0, 0);
 
@@ -80,6 +85,10 @@
                 // add class on test run compressing
                 var testRunBackgroundContainer = angular.element('#test-run-background');
                 testRunBackgroundContainer.addClass('test-run-compressing');
+
+                if(painterWatcher) {
+                    painterWatcher();
+                }
 
                 // show test run table header
                 elementsToHide.concat(tableHeader).forEach(function (element) {
@@ -142,6 +151,14 @@
             return locatorsArray.map(function (locator) {
                 return angular.element(locator);
             })
+        };
+
+        function watchUntilPainted(elementLocator, func) {
+            painterWatcher = $rootScope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function(newVal) {
+                if(newVal) {
+                    func.call(this, elementLocator);
+                }
+            });
         };
 
         function initDefaults() {

@@ -418,8 +418,9 @@
             if($scope.zafiraWebsocket.connected) {
                 return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRunId + ".tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
-                    $scope.addTest(event.test);
-                    $scope.$apply();
+                    $scope.$apply(function () {
+                        $scope.addTest(event.test);
+                    });
                 });
             }
         };
@@ -458,13 +459,17 @@
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
             var testRun = $scope.testRuns[test.testRunId];
+            var testId = test.id;
             if (testRun == null) {
                 return;
             }
             if(testRun.tests == null){
                 testRun.tests = {};
             }
-            testRun.tests[test.id] = test;
+            $scope.$applyAsync(function () {
+                testRun.tests[testId] = test;
+                testRun.tags = collectTags(testRun.tests);
+            });
         };
 
         $scope.getLengthOfSelectedTestRuns = function () {
@@ -672,7 +677,7 @@
         $scope.addTestRun = function (testRun) {
 
             if($scope.testRunId) {
-                $scope.testRun = testRun;
+                $scope.tr= testRun;
             }
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
@@ -1411,7 +1416,7 @@
         $scope.onStatusButtonClick = function(statuses) {
             onTestGroupingMode(function () {
                 $scope.testGroupDataToStore.statuses = statuses;
-                showTestsByStatuses($scope.testRun.tests, statuses);
+                showTestsByStatuses($scope.tr.tests, statuses);
             }, function () {
 
             });
@@ -1420,7 +1425,7 @@
         $scope.onTagSelect = function(tags) {
             onTestGroupingMode(function () {
                 $scope.testGroupDataToStore.tags = tags;
-                showTestsByTags($scope.testRun.tests, tags);
+                showTestsByTags($scope.tr.tests, tags);
             }, function () {
 
             });
@@ -1474,7 +1479,11 @@
         function collectTags(tests) {
             var result = [];
             angular.forEach(tests, function (test, key, object) {
-                result = result.concat(test.tags);
+                test.tags.forEach(function (tag) {
+                    if(result.indexOfField('value', tag.value) == -1) {
+                        result.push(tag);
+                    }
+                });
             });
             return result;
         };
@@ -1516,7 +1525,7 @@
                     testRun.expand = true;
                     $scope.expandedTestRuns.push(testRun.id);
                     $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                    $scope.testRun = testRun;
+                    $scope.tr= testRun;
                 });
             } else {
                 $tableExpandUtil.compress().then(function (rs) {
@@ -1639,7 +1648,7 @@
 
         // Calls on scope store
         $scope.storescope = function (testId) {
-            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.testRun, $scope.testRunId);
+            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
         };
 
         // Add operation behind all async calls
@@ -1671,7 +1680,7 @@
             $scope.$broadcast('controller-inited', 'TestRunListController');
             if($scope.testRunId) {
                 $timeout(function () {
-                    $scope.switchTestRunExpand($scope.testRun, true);
+                    $scope.switchTestRunExpand($scope.tr, true);
                 }, 0, false);
             }
         };
