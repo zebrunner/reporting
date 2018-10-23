@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class QueueTestRunParamsType implements Serializable

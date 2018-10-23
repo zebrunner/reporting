@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto.user;
 
-import javax.validation.constraints.NotNull;
-
 public class PasswordChangingType extends PasswordType {
 
     private static final long serialVersionUID = 6708214365157741315L;

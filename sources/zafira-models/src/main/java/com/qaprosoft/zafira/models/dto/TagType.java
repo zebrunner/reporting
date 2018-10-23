@@ -15,9 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class TagType extends AbstractType {
 

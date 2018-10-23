@@ -15,11 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.models.dto.AbstractType;
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
+import com.qaprosoft.zafira.models.db.Permission;
 
 public class PermissionType extends AbstractType {
 

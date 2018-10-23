@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.dto.AbstractType;
 
 @JsonInclude(Include.NON_NULL)
 public class JobType extends AbstractType

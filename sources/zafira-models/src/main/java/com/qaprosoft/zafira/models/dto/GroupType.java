@@ -15,14 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.Permission;
 import com.qaprosoft.zafira.models.db.User;
-import com.qaprosoft.zafira.models.dto.AbstractType;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import java.util.List;
-import java.util.Set;
 
 public class GroupType extends AbstractType {
 
