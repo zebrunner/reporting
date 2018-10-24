@@ -38,117 +38,117 @@
     <div id="test-run-background">
         <table>
             <tbody>
-                <tr class="result {{testRun.status}}">
+                <tr class="result {{tr.status}} main-row">
                     <td>
                         <b>
-                            {{testRun.testSuite.name}}
-                            <md-tooltip md-direction="right">{{testRun.testSuite.fileName}}</md-tooltip>
-                            <md-button ng-show="currentMode == 'MANY'" aria-label="Show or hide tests" ng-click="switchTestRunExpand(testRun)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
-                                <i class="fa expand-icon" ng-class="testRun.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
+                            {{tr.testSuite.name}}
+                            <md-tooltip md-direction="right">{{tr.testSuite.fileName}}</md-tooltip>
+                            <md-button ng-show="currentMode == 'MANY'" aria-label="Show or hide tests" ng-click="switchTestRunExpand(tr)" md-ink-ripple="false" class="md-icon-button no-padding expand-button">
+                                <i class="fa expand-icon" ng-class="tr.expand ? 'fa-angle-double-up' : 'fa-angle-double-down'" aria-hidden="true"></i>
                             </md-button>
                         </b>
-                        <span data-ng-if="testRun.comments">
-                                            <md-icon data-ng-click="showCommentsDialog(testRun, $event)" aria-label="Comments" aria-hidden="true" class="comments-area">comments</md-icon>
+                        <span data-ng-if="tr.comments">
+                                            <md-icon data-ng-click="showCommentsDialog(tr, $event)" aria-label="Comments" aria-hidden="true" class="comments-area">comments</md-icon>
                                             <md-tooltip md-direction="right">Comment</md-tooltip>
                                             </span>
-                        <span data-ng-if="testRun.reviewed" class="label label-success">R<md-tooltip md-direction="right">Reviewed</md-tooltip></span>
-                        <span data-ng-if="testRun.blocker" class="badge ng-binding bug-label-bg" alt="BLOCKERS">BLOCKERS</span>
+                        <span data-ng-if="tr.reviewed" class="label label-success">R<md-tooltip md-direction="right">Reviewed</md-tooltip></span>
+                        <span data-ng-if="tr.blocker" class="badge ng-binding bug-label-bg" alt="BLOCKERS">BLOCKERS</span>
                         <br/>
-                        <a href="{{testRun.jenkinsURL}}" target="_blank">{{testRun.job.name}}</a>
-                        <small ng-show="!testRun.appVersionValid" ng-mouseenter="checkFilePresence(testRun)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">insert_drive_file</md-icon>{{testRun.appVersion}}</small>
-                        <small ng-show="testRun.appVersionValid" ng-click="downloadApplication(testRun.appVersion)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="testRun.appVersion">file_download</md-icon>{{testRun.appVersion}}</small>
-                        <md-progress-circular ng-show="testRun.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
+                        <a href="{{tr.jenkinsURL}}" target="_blank">{{tr.job.name}}</a>
+                        <small ng-show="!tr.appVersionValid" ng-mouseenter="checkFilePresence(tr)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="tr.appVersion">insert_drive_file</md-icon>{{tr.appVersion}}</small>
+                        <small ng-show="tr.appVersionValid" ng-click="downloadApplication(tr.appVersion)"><md-icon class="material-icons testrun-appversion-icon" data-ng-if="tr.appVersion">file_download</md-icon>{{tr.appVersion}}</small>
+                        <md-progress-circular ng-show="tr.appVersionLoading != undefined" md-mode="indeterminate" md-diameter="10px" style="display: inline-block" class="tests-loading-spinner"></md-progress-circular>
                     </td>
                     <td>
-                        <span class="label label-default">{{testRun.env}}</span>
+                        <span class="label label-default">{{tr.env}}</span>
                     </td>
                     <td style="text-align: center;">
-                        <span data-ng-if="testRun.platform != ''" class="platform-icon {{testRun.platform | lowercase}}"/>
-                        <span data-ng-if="testRun.platform == ''" class="platform-icon unknown"></span>
-                        <span data-ng-if="testRun.browserVersion">{{testRun.browserVersion}}</span>
+                        <span data-ng-if="tr.platform != ''" class="platform-icon {{tr.platform | lowercase}}"/>
+                        <span data-ng-if="tr.platform == ''" class="platform-icon unknown"></span>
+                        <span data-ng-if="tr.browserVersion">{{tr.browserVersion}}</span>
                     </td>
-                    <td><span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="testRun.passed ? 'label-success' : 'label-success-empty'">{{testRun.passed}}</span>
-                        <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="testRun.failed ? 'label-danger' : 'label-danger-empty'">{{testRun.failed}}<span> | {{testRun.failedAsKnown}}</span><span> | {{testRun.failedAsBlocker}}</span></span>
-                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="testRun.skipped ? 'label-warning' : 'label-warning-empty'">{{testRun.skipped}}</span>
-                        <span title="Aborted" data-ng-if="testRun.aborted" class="label arrowed arrowed-in-right label-aborted-border" data-ng-class="testRun.aborted ? 'label-aborted-bg' : 'label-aborted-empty'">{{testRun.aborted}}</span>
-                        <span title="Queued" data-ng-if="testRun.queued" class="label arrowed arrowed-in-right label-default-empty label-default-border" >{{testRun.queued}}</span>
-                        <span title="In Progress" data-ng-if="testRun.inProgress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="testRun.inProgress ? 'label-info' : 'label-info-empty'">{{testRun.inProgress}}</span></td>
+                    <td><span title="Passed" class="label arrowed arrowed-in-right label-success-border" data-ng-class="tr.passed ? 'label-success' : 'label-success-empty'">{{tr.passed}}</span>
+                        <span title="Failed | Known issues | Blockers" class="label arrowed arrowed-in-right label-danger-border" data-ng-class="tr.failed ? 'label-danger' : 'label-danger-empty'">{{tr.failed}}<span> | {{tr.failedAsKnown}}</span><span> | {{tr.failedAsBlocker}}</span></span>
+                        <span title="Skipped" class="label arrowed arrowed-in-right label-warning-border" data-ng-class="tr.skipped ? 'label-warning' : 'label-warning-empty'">{{tr.skipped}}</span>
+                        <span title="Aborted" data-ng-if="tr.aborted" class="label arrowed arrowed-in-right label-aborted-border" data-ng-class="tr.aborted ? 'label-aborted-bg' : 'label-aborted-empty'">{{tr.aborted}}</span>
+                        <span title="Queued" data-ng-if="tr.queued" class="label arrowed arrowed-in-right label-default-empty label-default-border" >{{tr.queued}}</span>
+                        <span title="In Progress" data-ng-if="tr.inProgress" class="label arrowed arrowed-in-right label-info-border" data-ng-class="tr.inProgress ? 'label-info' : 'label-info-empty'">{{tr.inProgress}}</span></td>
                     <td>
                         <div class="time">
-                            <span data-ng-hide="testRun.status == 'QUEUED' || testRun.status == 'ABORTED'">Started</span>
-                            <span data-ng-if="testRun.status == 'QUEUED'">Queued</span>
-                            <span data-ng-if="testRun.status == 'ABORTED'">Aborted</span>
-                            <time am-time-ago="testRun.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
+                            <span data-ng-hide="tr.status == 'QUEUED' || tr.status == 'ABORTED'">Started</span>
+                            <span data-ng-if="tr.status == 'QUEUED'">Queued</span>
+                            <span data-ng-if="tr.status == 'ABORTED'">Aborted</span>
+                            <time am-time-ago="tr.startedAt" title="{{ main.time | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}"></time>
                         </div>
-                        <div data-ng-if="testRun.elapsed && testRun.elapsed > 0" class="light_text">
-                            <i class="fa fa-clock-o" aria-hidden="true"></i> <timer max-time-unit="'minute'" autostart="false" countdown="testRun.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
+                        <div data-ng-if="tr.elapsed && tr.elapsed > 0" class="light_text">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i> <timer max-time-unit="'minute'" autostart="false" countdown="tr.elapsed"><span ng-show="minutes">{{minutes}} minute{{minutesS}}</span> <span ng-show="!minutes">{{seconds}} second{{secondsS}}</span></timer>
                         </div>
                     </td>
                     <td>
                         <md-menu class="pull-right" md-offset="0 {{currentOffset}}">
-                            <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(testRun); setOffset($event); $mdMenu.open($event);">
+                            <md-button name="testRunSetting" aria-label="User settings" class="md-icon-button" data-ng-click="initMenuRights(tr); setOffset($event); $mdMenu.open($event);">
                                 <md-icon class="material-icons">more_vert</md-icon>
                             </md-button>
                             <md-menu-content width="2" class="fixed-md-menu-content">
                                 <md-menu-item>
-                                    <md-button name="open" data-ng-click="openTestRun(testRun)">
+                                    <md-button name="open" data-ng-click="openTestRun(tr)">
                                         Open
                                     </md-button>
                                 </md-menu-item>
                                 <md-menu-item>
-                                    <md-button name="copyLink" data-ng-click="copyLink(testRun)">
+                                    <md-button name="copyLink" data-ng-click="copyLink(tr)">
                                         Copy link
                                     </md-button>
                                 </md-menu-item>
                                 <md-menu-item has-any-permission="['MODIFY_TEST_RUNS']">
-                                    <md-button name="markAsReviewed" data-ng-click="markAsReviewed(testRun)">
+                                    <md-button name="markAsReviewed" data-ng-click="markAsReviewed(tr)">
                                         Mark as reviewed
                                     </md-button>
                                 </md-menu-item>
-                                <md-menu-item ng-if="testRun.status != 'IN_PROGRESS' && tools['EMAIL']">
-                                    <md-button name="sendAsEmail" data-ng-click="sendAsEmail(testRun, $event)">
+                                <md-menu-item ng-if="tr.status != 'IN_PROGRESS' && tools['EMAIL']">
+                                    <md-button name="sendAsEmail" data-ng-click="sendAsEmail(tr, $event)">
                                         Send as email
                                     </md-button>
                                 </md-menu-item>
-                                <md-menu-item ng-if="testRun.status != 'IN_PROGRESS' && tools['GOOGLE']">
-                                    <md-button name="createSpreadsheet" data-ng-click="createSpreadsheet(testRun, $event)">
+                                <md-menu-item ng-if="tr.status != 'IN_PROGRESS' && tools['GOOGLE']">
+                                    <md-button name="createSpreadsheet" data-ng-click="createSpreadsheet(tr, $event)">
                                         Export to Google
                                     </md-button>
                                 </md-menu-item>
-                                <md-menu-item ng-if="testRun.status != 'IN_PROGRESS'">
-                                    <md-button name="export" data-ng-click="export(testRun)">
+                                <md-menu-item ng-if="tr.status != 'IN_PROGRESS'">
+                                    <md-button name="export" data-ng-click="export(tr)">
                                         Export to HTML
                                     </md-button>
                                 </md-menu-item>
                                 <md-menu-item ng-if="showNotifyInSlackOption" has-any-permission="['MODIFY_TEST_RUNS']">
-                                    <md-button name="notifyInSlack" data-ng-click="notifyInSlack(testRun)">
+                                    <md-button name="notifyInSlack" data-ng-click="notifyInSlack(tr)">
                                         Notify in Slack
                                     </md-button>
                                 </md-menu-item>
                                 <md-divider></md-divider>
                                 <md-menu-item ng-if="showBuildNowOption" has-any-permission="['TEST_RUNS_CI']">
-                                    <md-button name="buildNow" data-ng-click="buildNow(testRun, $event)">
+                                    <md-button name="buildNow" data-ng-click="buildNow(tr, $event)">
                                         Build now
                                     </md-button>
                                 </md-menu-item>
-                                <md-menu-item ng-if="testRun.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
-                                    <md-button name="abort" data-ng-click="abort(testRun, false)">
+                                <md-menu-item ng-if="tr.status=='IN_PROGRESS'" has-any-permission="['TEST_RUNS_CI']">
+                                    <md-button name="abort" data-ng-click="abort(tr, false)">
                                         Abort
                                     </md-button>
                                 </md-menu-item>
                                 <md-menu-item has-any-permission="['TEST_RUNS_CI']">
-                                    <md-button name="rebuild" data-ng-click="rerun(testRun, $event)">
+                                    <md-button name="rebuild" data-ng-click="rerun(tr, $event)">
                                         Rebuild
                                     </md-button>
                                 </md-menu-item>
-                                <md-menu-item ng-if="testRun.status!='PASSED'" has-any-permission="['TEST_RUNS_CI']">
-                                    <md-button name="debug" ng-click="startDebug(testRun)">
+                                <md-menu-item ng-if="tr.status!='PASSED'" has-any-permission="['TEST_RUNS_CI']">
+                                    <md-button name="debug" ng-click="startDebug(tr)">
                                         Debug
                                     </md-button>
                                 </md-menu-item>
                                 <md-divider has-any-permission="['MODIFY_TEST_RUNS']"></md-divider>
                                 <md-menu-item ng-if="showDeleteTestRunOption" has-any-permission="['MODIFY_TEST_RUNS']">
-                                    <md-button name="delete" data-ng-click="deleteTestRunAction(testRun)">
+                                    <md-button name="delete" data-ng-click="deleteTestRunAction(tr)">
                                         Delete
                                     </md-button>
                                 </md-menu-item>
@@ -528,17 +528,17 @@
                                                     <tr class="test-run-group-row" md-row>
                                                         <th md-column class="sort-new test-run-group-column" colspan="4">
                                                             <div class="test-run-group">
-                                                                <!--<div class="test-run-group_controls-buttons">
+                                                                <div class="test-run-group_controls-buttons">
                                                                     <button id="plainToggle" ng-class="{'md-primary': testGroupMode == 'PLAIN'}" class="md-button md-raised md-ink-ripple" type="button" ng-click="switchTestGroupMode('PLAIN');">
                                                                         Plain
                                                                     </button>
                                                                     <button id="groupsToggle" ng-class="{'md-primary': testGroupMode == 'GROUPS'}" class="md-button md-raised md-ink-ripple" type="button" ng-click="switchTestGroupMode('GROUPS');">
                                                                         Groups
                                                                     </button>
-                                                                </div>-->
-                                                                <chips-array chips="testRun.tags" options="testsTagsOptions" count-to-show="3" on-select="onTagSelect($tags);"></chips-array>
+                                                                </div>
+                                                                <chips-array chips="testRun.tags" options="testsTagsOptions" count-to-show="3" multi="testGroupMode == 'PLAIN'" on-select="onTagSelect($tags);"></chips-array>
                                                                 <div class="test-run-group_sorts">
-                                                                    <div name="sortElapsed" sort-item="{{reverse}}" class="pointer col-sm-2" data-ng-click="predicate = 'elapsed'; reverse=!reverse">Elapsed&nbsp;</div >
+                                                                    <div name="sortElapsed" sort-item="{{testGroups.reverse}}" class="pointer col-sm-2" data-ng-click="testGroups.predicate = 'elapsed'; testGroups.reverse=!testGroups.reverse">Elapsed&nbsp;</div>
                                                                 </div>
                                                                 <status-buttons on-button-click="onStatusButtonClick($statuses);" options="testsStatusesOptions" multi="true"></status-buttons>
                                                                 <div class="test-run-group_other-buttons">
@@ -557,11 +557,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                <tr ng-show="testGroupMode == 'GROUPS'" ng-repeat-start="(packageName, tests) in testGroups.group[testGroups.mode].data track by $index" class="test-run-group-row groups" md-row>
+                                                    <th class="test-run-group-column md-column" colspan="4">
+                                                        <div class="test-run-group">
+                                                            <div class="test-run-group_name">
+                                                                <i ng-click="selectTestGroup(testGroups.group[testGroups.mode], packageName);" ng-class="testGroups.group[testGroups.mode].selectedName == packageName ? 'checked' : 'unchecked'" class="material-icons">
+                                                                    keyboard_arrow_down
+                                                                </i>
+                                                                <span>{{packageName}}</span>
+                                                            </div>
+                                                            <div ng-if="testGroups.group[testGroups.mode].selectedName == packageName" class="test-run-group_sorts">
+                                                                <div name="sortElapsed" sort-item="{{testGroups.reverse}}" class="pointer col-sm-2" data-ng-click="testGroups.predicate = 'elapsed'; testGroups.reverse=!testGroups.reverse">Elapsed&nbsp;</div>
+                                                            </div>
+                                                            <status-buttons ng-if="testGroups.group[testGroups.mode].selectedName == packageName" on-button-click="onStatusButtonClick($statuses);" options="testsStatusesOptions" multi="true"></status-buttons>
+                                                        </div>
+                                                    </th>
+                                                </tr>
                                                 <tr ng-attr-id="test_{{test.id}}"
-                                                    ng-show="test.show && test.showByStatus"
+                                                    ng-repeat-end
+                                                    ng-if="test.show === true && test.showByStatus === true && testGroups.group[testGroups.mode].selectedName === packageName"
                                                     md-swipe-left="changeTestStatus(test, 'FAILED');"
                                                     md-swipe-right="changeTestStatus(test, 'PASSED');"
-                                                    data-ng-repeat="(id, test) in testRun.tests | orderObjectBy:predicate:reverse track by $index"
+                                                    data-ng-repeat="(id, test) in testGroupMode == 'PLAIN' ? testRun.tests : tests | orderObjectBy:testGroups.predicate:testGroups.reverse track by $index"
                                                     ng-class="{'info {{::main.theme}}' : test.status == 'IN_PROGRESS', 'success {{::main.theme}}' : test.status == 'PASSED', 'danger {{::main.theme}}' : test.status == 'FAILED', 'warning {{::main.theme}}' : test.status == 'SKIPPED', 'aborted-test-bg' : test.status == 'ABORTED'}"
                                                     data-ng-hide="testRun.status == 'IN_PROGRESS' && test.status == 'QUEUED'">
                                                         <td class="test-info">
@@ -573,6 +590,7 @@
                                                                 <span name="device" data-ng-if="test.testConfig.device" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                 <div ng-if="test.tags && test.tags.length" class="test-info_tags">
                                                                     <span class="test-info_tags_tag" ng-repeat="tag in test.tags">
+                                                                        {{test.show === true}}{{test.showByStatus === true}}{{testGroups.group[testGroups.mode].selectedName === packageName}}
                                                                         <span ng-show="$first">#</span>
                                                                         {{tag.value}}
                                                                         <span ng-show="! $last">, </span>

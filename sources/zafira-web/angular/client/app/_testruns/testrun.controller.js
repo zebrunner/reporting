@@ -11,7 +11,7 @@
     // **************************************************************************
     function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil) {
 
-        var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter", "testGroupDataToStore"];
+        var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter", "testGroupDataToStore", "testGroups", "testGroupMode", "tr", "testsTagsOptions", "testsStatusesOptions"];
 
     	const TENANT = $rootScope.globals.auth.tenant;
     	
@@ -418,8 +418,9 @@
             if($scope.zafiraWebsocket.connected) {
                 return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRunId + ".tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
-                    $scope.addTest(event.test);
-                    $scope.$apply();
+                    $scope.$apply(function () {
+                        $scope.addTest(event.test);
+                    });
                 });
             }
         };
@@ -458,13 +459,15 @@
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
             var testRun = $scope.testRuns[test.testRunId];
+            var testId = test.id;
             if (testRun == null) {
                 return;
             }
             if(testRun.tests == null){
                 testRun.tests = {};
             }
-            testRun.tests[test.id] = test;
+            testRun.tests[testId] = test;
+            testRun.tags = collectTags(testRun.tests);
         };
 
         $scope.getLengthOfSelectedTestRuns = function () {
@@ -672,7 +675,7 @@
         $scope.addTestRun = function (testRun) {
 
             if($scope.testRunId) {
-                $scope.testRun = testRun;
+                $scope.tr= testRun;
             }
             if ($scope.testRuns[testRun.id] == null) {
                 testRun.jenkinsURL = testRun.job.jobURL + "/" + testRun.buildNumber;
@@ -1410,20 +1413,27 @@
 
         $scope.onStatusButtonClick = function(statuses) {
             onTestGroupingMode(function () {
-                $scope.testGroupDataToStore.statuses = statuses;
-                showTestsByStatuses($scope.testRun.tests, statuses);
+                showTestsByStatuses($scope.testRuns[$scope.tr.id].tests, statuses);
             }, function () {
-
+                showTestsByStatuses($scope.testRuns[$scope.tr.id].tests, statuses);
             });
+            $scope.testGroupDataToStore.statuses = angular.copy(statuses);
         };
 
-        $scope.onTagSelect = function(tags) {
+        $scope.onTagSelect = function(chips) {
             onTestGroupingMode(function () {
-                $scope.testGroupDataToStore.tags = tags;
-                showTestsByTags($scope.testRun.tests, tags);
+                showTestsByTags($scope.tr.tests, chips);
             }, function () {
-
+                angular.forEach($scope.tr.tests, function (test) {
+                    test.show = true;
+                    test.showByStatus = true;
+                });
+                if(chips && chips.length) {
+                    $scope.testGroups.mode = chips[0].toLowerCase();
+                }
+                $scope.testGroups.apply = true;
             });
+            $scope.testGroupDataToStore.tags = angular.copy(chips);
         };
 
         function showTestsByTags(tests, tags) {
@@ -1457,24 +1467,106 @@
         $scope.testsTagsOptions = {};
         $scope.testsStatusesOptions = {};
 
-        $scope.resetTestsGrouping = function() {
+        $scope.resetTestsGrouping = function(testRun) {
             $scope.testsTagsOptions.reset();
             $scope.testsStatusesOptions.reset();
+            $scope.predicate = 'startTime';
+            $scope.reverse = false;
+            $scope.testGroups.predicate = 'startTime';
+            $scope.testGroups.reverse = true;
+            if(testRun) {
+                $scope.testGroupMode = 'PLAIN';
+                initTestGroups();
+            }
         };
 
         $scope.testGroupMode = 'PLAIN';
 
-        $scope.switchTestGroupMode = function (mode) {
-            if($scope.testGroupMode != mode) {
+        $scope.switchTestGroupMode = function (mode, force) {
+            if($scope.testGroupMode != mode || force) {
                 $scope.testGroupMode = mode;
-
+                if(! force) {
+                    $scope.resetTestsGrouping();
+                }
+                onTestGroupingMode(function () {
+                    if(! force) {
+                        $scope.testRuns[$scope.tr.id].tags = collectTags($scope.testRuns[$scope.tr.id].tests);
+                        $scope.testsTagsOptions.hashSymbolHide = false;
+                        $scope.testGroups.mode = 'common';
+                    }
+                    angular.element('.page').removeClass('groups-group-mode');
+                }, function () {
+                    angular.element('.page').addClass('groups-group-mode');
+                    $scope.testGroups.mode = 'package';
+                    $scope.testRuns[$scope.tr.id].tags = [{name: 'package', 'value': 'Package', 'default': true}, {
+                        name: 'class',
+                        'value': 'Class'
+                    }];
+                    groupTests(force);
+                    if(! force) {
+                        $scope.testsTagsOptions.initValues = ['Package'];
+                        $scope.testsTagsOptions.hashSymbolHide = true;
+                    }
+                });
             }
+        };
+
+        initTestGroups();
+
+        function initTestGroups() {
+            $scope.testGroups = {
+                group: {
+                    'package': {
+                        data: {},
+                        selectedName: undefined
+                    },
+                    'class': {
+                        data: {},
+                        selectedName: undefined
+                    },
+                    common: {
+                        data: {
+                            'all': []
+                        },
+                        selectedName: 'all'
+                    }
+                },
+                reverse: false,
+                predicate: 'startTime',
+                mode: 'package',
+                apply: false
+            };
+        };
+
+        $scope.selectTestGroup = function (group, selectName) {
+            group.selectedName = group.selectedName == selectName ? undefined : selectName;
+        };
+
+        function groupTests(force) {
+            if(! force) {
+                initTestGroups();
+            }
+            angular.forEach($scope.testRuns[$scope.tr.id].tests, function (value, key) {
+                if(! $scope.testGroups.group.package.data[value.notNullTestGroup] || force) {
+                    $scope.testGroups.group.package.data[value.notNullTestGroup] = [];
+                }
+                $scope.testGroups.group.package.data[value.notNullTestGroup].push(value);
+
+                if(! $scope.testGroups.group.class.data[value.testClass] || force) {
+                    $scope.testGroups.group.class.data[value.testClass] = [];
+                }
+                $scope.testGroups.group.class.data[value.testClass].push(value);
+            });
         };
 
         function collectTags(tests) {
             var result = [];
             angular.forEach(tests, function (test, key, object) {
-                result = result.concat(test.tags);
+                test.tags.forEach(function (tag) {
+                    if(result.indexOfField('value', tag.value) == -1) {
+                        result.push(tag);
+                    }
+                });
             });
             return result;
         };
@@ -1507,7 +1599,9 @@
 
         $scope.switchTestRunExpand = function (testRun, quick) {
             if (!testRun.expand) {
+                $scope.testGroups.mode = 'common';
                 $scope.loadTests(testRun.id).then(function (rs) {
+                    $scope.testGroups.group.common.data.all = testRun.tests;
                     showTestsByTags(testRun.tests);
                     showTestsByStatuses(testRun.tests);
                     testRun.tags = collectTags(testRun.tests);
@@ -1516,10 +1610,11 @@
                     testRun.expand = true;
                     $scope.expandedTestRuns.push(testRun.id);
                     $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                    $scope.testRun = testRun;
+                    $scope.tr= testRun;
                 });
             } else {
                 $tableExpandUtil.compress().then(function (rs) {
+                    $scope.resetTestsGrouping(testRun);
                     testRun.expand = false;
                     testRun.tests = null;
                     testRun.tags = null;
@@ -1639,30 +1734,36 @@
 
         // Calls on scope store
         $scope.storescope = function (testId) {
-            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.testRun, $scope.testRunId);
+            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
         };
 
         // Add operation behind all async calls
         TestRunsStorage.applySnapshot($scope).then(function (testId) {
             if(testId) {
-                var timeout = 900;
                 var watcher = waitUntilElementPresents('#test_' + testId, function () {
-                    var row = angular.element('#test_' + testId);
-                    row.addClass('target_row');
-
-                    $scope.testsTagsOptions.initValues = $scope.testGroupDataToStore.tags;
-                    $scope.testsStatusesOptions.initValues = $scope.testGroupDataToStore.statuses;
+                    $scope.switchTestGroupMode($scope.testGroupMode, true);
+                    $scope.testsTagsOptions.initValues = angular.copy($scope.testGroupDataToStore.tags);
+                    $scope.testsStatusesOptions.initValues = angular.copy($scope.testGroupDataToStore.statuses);
+                    watcher();
                     $timeout(function () {
-                        row.removeClass('target_row');
-                        watcher();
-                    }, timeout);
+                        var testRowWatcher = waitUntilElementPresents('#test_' + testId, function () {
+                            var row = angular.element('#test_' + testId);
+                            row.addClass('target_row');
+                            testRowWatcher();
+                            $timeout(function () {
+                                row.removeClass('target_row');
+                            }, 900);
+                        });
+                    }, 0, false);
                 });
             }
         });
 
         function waitUntilElementPresents(elementLocator, func) {
-            var watcher = $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function() {
-                func.call();
+            var watcher = $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function(newVal) {
+                if(newVal) {
+                    func.call();
+                }
             });
             return watcher;
         };
@@ -1671,7 +1772,7 @@
             $scope.$broadcast('controller-inited', 'TestRunListController');
             if($scope.testRunId) {
                 $timeout(function () {
-                    $scope.switchTestRunExpand($scope.testRun, true);
+                    $scope.switchTestRunExpand($scope.testRuns[$scope.tr.id], true);
                 }, 0, false);
             }
         };
