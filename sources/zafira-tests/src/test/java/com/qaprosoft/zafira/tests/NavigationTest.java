@@ -95,6 +95,7 @@ public class NavigationTest extends AbstractTest {
 
 		driver.manage().window().setSize(new Dimension(450, 1000));
 
+		pause(2);
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getNavbar().getMobileMenuButton(), 2), "Mobile nav bar button is not present");
 		dashboardPage.getNavbar().getMobileMenuButton().click();
 
