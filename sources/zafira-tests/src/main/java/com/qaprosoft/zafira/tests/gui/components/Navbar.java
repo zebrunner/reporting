@@ -37,7 +37,7 @@ public class Navbar extends AbstractUIObject
 	@FindBy(xpath = "//i[following-sibling::*[text() = 'Monitors']]")
 	private WebElement monitorsTab;
 
-	@FindBy(className = "menu-btn")
+	@FindBy(xpath = "//*[contains(@class, 'menu-btn')]")
 	private WebElement mobileMenuButton;
 
 	public Navbar(WebDriver driver, SearchContext context)
