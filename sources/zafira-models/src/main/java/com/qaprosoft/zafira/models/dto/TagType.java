@@ -15,26 +15,21 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import java.util.List;
-import java.util.Set;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.qaprosoft.zafira.models.db.Group;
-import com.qaprosoft.zafira.models.db.Permission;
-import com.qaprosoft.zafira.models.db.User;
+public class TagType extends AbstractType {
 
-public class GroupType extends AbstractType {
-
-    private static final long serialVersionUID = 4257992439033566293L;
+    private static final long serialVersionUID = 5534633175290893478L;
 
     @NotEmpty(message = "Name required")
+    @Size(max = 50)
     private String name;
 
-    @NotEmpty(message = "Role required")
-    private Group.Role role;
-    private List<User> users;
-    private Set<Permission> permissions;
+    @NotEmpty(message = "Value required")
+    @Size(max = 255)
+    private String value;
 
     public String getName() {
         return name;
@@ -44,27 +39,21 @@ public class GroupType extends AbstractType {
         this.name = name;
     }
 
-    public Group.Role getRole() {
-        return role;
+    public String getValue() {
+        return value;
     }
 
-    public void setRole(Group.Role role) {
-        this.role = role;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public List<User> getUsers() {
-        return users;
+    @Override
+    public int hashCode() {
+        return (this.name + this.value).hashCode();
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public Set<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof TagType && this.hashCode() == ((TagType) obj).hashCode();
     }
 }

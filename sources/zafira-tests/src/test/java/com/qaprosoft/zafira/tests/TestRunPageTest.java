@@ -275,10 +275,10 @@ public class TestRunPageTest extends AbstractTest
 	{
 		List<TestRun> testRuns = testRunMapper.searchTestRuns(new TestRunSearchCriteria());
 		Assert.assertEquals(testRunPage.getPageItemsCount(), testRunMapper.getTestRunsSearchCount(new TestRunSearchCriteria()), "Invalid test runs count presents");
-		int count = testRunPage.getTestRunTable().getTestRunTableRows().size();
+		int count = testRunPage.getPageItemsCount();
 		Assert.assertEquals(count, testRuns.size() <= 20 ? count : 20, "Invalid test run rows count on the page");
 		int generateCount = count <= 20 ? 25 - count : 1;
-		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(generateCount, 1);
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(count, 1, 1);
 		testRunPage = (TestRunPage) testRunPage.reload();
 		TestRun testRunView = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
 		verifyTestRunInformation(testRunView, 0);
@@ -287,9 +287,9 @@ public class TestRunPageTest extends AbstractTest
 	@Test(groups = {"acceptance", "testRun"})
 	public void verifyTestInfoTest()
 	{
-		int count = testRunPage.getTestRunTable().getTestRunTableRows().size();
+		int count = testRunPage.getPageItemsCount();
 		int generateCount = count <= 20 ? 25 - count : 1;
-		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(generateCount, 1);
+		List<TestRunViewType> testRunViewTypes = generateTestRunsIfNeed(count, 1,1);
 		testRunPage = (TestRunPage) testRunPage.reload();
 		TestRun testRunView = testRunMapper.searchTestRuns(new TestRunSearchCriteria()).get(0);
 		verifyTestRunTestInformation(testRunView, 0);
@@ -664,16 +664,18 @@ public class TestRunPageTest extends AbstractTest
 		if(testRun.getInProgress() != 0){
 			Assert.assertEquals(testRunTableRow.getInProgressCount(), testRun.getInProgress(), "Invalid in progress count");
 		}
-		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
+		//testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
 		Assert.assertTrue(testRunTableRow.getExpandTestsIcon().isDisplayed(), "Expand icon is not present on hover");
 		TestTable testTable = testRunTableRow.clickExpandTestsIcon();
+		pause(2);
 		Assert.assertEquals(testTable.getTestRows().size(), testMapper.searchTests(new TestSearchCriteria() {
 			{
 				setTestRunId(testRun.getId());
 			}
 		}).size());
-		testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
-		testTable = testRunTableRow.clickExpandTestsIcon();
+		//testRunTableRow.hoverOnElement(testRunTableRow.getEnvironment());
+		testTable = testRunTableRow.clickCloseTestIcon();
+		pause(9);
 		Assert.assertFalse(testTable.isElementPresent(1), "Test table is visible after closing");
 	}
 

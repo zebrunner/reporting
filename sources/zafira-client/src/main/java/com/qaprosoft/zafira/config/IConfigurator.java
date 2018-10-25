@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qaprosoft.zafira.models.dto.TagType;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
@@ -46,6 +47,8 @@ public interface IConfigurator
 	String getTestMethodName(ITestResult test);
 	
 	Set<TestArtifactType> getArtifacts(ITestResult test);
+
+	Set<TagType> getTestTags(ITestResult test);
 	
 	List<String> getTestWorkItems(ITestResult test);
 	

@@ -13,41 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.db;
 
-import javax.validation.constraints.NotNull;
+public class Tag extends AbstractEntity {
 
-import org.hibernate.validator.constraints.NotEmpty;
+    private static final long serialVersionUID = 4886769517837569318L;
 
-import com.qaprosoft.zafira.models.db.Permission;
+    private String name;
+    private String value;
 
-public class PermissionType extends AbstractType {
+    public Tag() {
+    }
 
-    private static final long serialVersionUID = 7083932006258442862L;
+    public Tag(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-    @NotEmpty(message = "Name required")
-    private Permission.Name name;
-
-    @NotNull(message = "Block required")
-    private Permission.Block block;
-
-    public Permission.Name getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(Permission.Name name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Permission.Block getBlock()
-    {
-        return block;
+    public String getValue() {
+        return value;
     }
 
-    public void setBlock(Permission.Block block)
-    {
-        this.block = block;
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (this.name + this.value).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof Tag && this.hashCode() == ((Tag) obj).hashCode();
     }
 }

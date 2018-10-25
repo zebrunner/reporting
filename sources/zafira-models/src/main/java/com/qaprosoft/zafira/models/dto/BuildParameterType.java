@@ -15,10 +15,9 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.qaprosoft.zafira.models.dto.AbstractType;
-
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BuildParameterType extends AbstractType

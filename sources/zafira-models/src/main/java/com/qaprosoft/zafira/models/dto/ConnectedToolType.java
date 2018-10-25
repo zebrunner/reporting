@@ -15,11 +15,10 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.qaprosoft.zafira.models.db.Setting;
-import com.qaprosoft.zafira.models.dto.AbstractType;
-
-import java.util.List;
 
 /**
  * Created by irina on 23.8.17.

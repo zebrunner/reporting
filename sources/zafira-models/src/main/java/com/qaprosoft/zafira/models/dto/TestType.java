@@ -55,6 +55,8 @@ public class TestType extends AbstractType {
 	@Valid
 	private Set<TestArtifactType> artifacts = new HashSet<>();
 	private String ciTestId;
+	@Valid
+	private Set<TagType> tags;
 
 	public TestType() {
 
@@ -239,5 +241,13 @@ public class TestType extends AbstractType {
 
 	public void setCiTestId(String ciTestId) {
 		this.ciTestId = ciTestId;
+	}
+
+	public Set<TagType> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<TagType> tags) {
+		this.tags = tags;
 	}
 }

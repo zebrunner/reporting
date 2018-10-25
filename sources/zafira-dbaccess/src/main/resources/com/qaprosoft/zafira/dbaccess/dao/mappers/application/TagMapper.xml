@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper">
+
+    <sql id="createPrefix">
+        <![CDATA[
+			INSERT INTO TAGS (NAME, VALUE)
+			SELECT
+			  DATA.NAME, DATA.VALUE
+            FROM
+        ]]>
+    </sql>
+
+    <sql id="createPostfix">
+        <![CDATA[
+ 		    AS DATA
+            WHERE NOT EXISTS (
+              SELECT
+                NAME
+              FROM
+                TAGS T
+              WHERE
+                DATA.NAME = T.NAME AND DATA.VALUE = T.VALUE
+            )
+ 		]]>
+    </sql>
+
+    <insert id="createTag" useGeneratedKeys="true" keyProperty="id">
+        <include refid="createPrefix"/>
+        <![CDATA[
+              (
+ 		        SELECT #{name}::VARCHAR as NAME, #{value}::VARCHAR AS VALUE
+ 		      )
+ 		    ]]>
+        <include refid="createPostfix"/>
+    </insert>
+
+    <insert id="createTags">
+        <include refid="createPrefix"/>
+        <foreach item="tag" index="index" collection="tags" open="(" separator=" UNION ALL" close=")">
+            <![CDATA[
+ 		      SELECT #{tag.name}::VARCHAR as NAME, #{tag.value}::VARCHAR AS VALUE
+ 		    ]]>
+        </foreach>
+        <include refid="createPostfix"/>
+    </insert>
+
+    <sql id="getTags">
+        <![CDATA[
+			SELECT
+				T.ID AS TAG_ID,
+				T.NAME AS TAG_NAME,
+				T.VALUE AS TAG_VALUE,
+				T.CREATED_AT AS TAG_CREATED_AT,
+				T.MODIFIED_AT AS TAG_MODIFIED_AT
+			FROM
+				TAGS T
+        ]]>
+    </sql>
+
+    <select id="getTagById" resultMap="TagResultMap">
+        <include refid="getTags"/>
+        <![CDATA[
+			WHERE
+			  ID = #{id}
+        ]]>
+    </select>
+
+    <select id="getTagByNameAndTestId" resultMap="TagResultMap">
+        <include refid="getTags"/>
+        <![CDATA[
+			LEFT JOIN
+              TEST_TAGS TT
+            ON
+              T.ID = TT.TAG_ID
+			WHERE
+			  TT.TEST_ID = #{testId} AND T.NAME = #{name}
+        ]]>
+    </select>
+
+    <select id="getTagByNameAndValue" resultMap="TagResultMap">
+        <include refid="getTags"/>
+        <![CDATA[
+			WHERE
+			  T.VALUE = #{value} AND T.NAME = #{name}
+        ]]>
+    </select>
+
+    <select id="getAllTags" resultMap="TagResultMap">
+        <include refid="getTags"/>
+    </select>
+
+    <select id="getTagsByTestId" resultMap="TagResultMap">
+        <include refid="getTags"/>
+        <![CDATA[
+            LEFT JOIN
+              TEST_TAGS TT
+            ON
+              T.ID = TT.TAG_ID
+			WHERE
+			  TT.TEST_ID = #{testId}
+        ]]>
+    </select>
+
+    <select id="isExists" resultType="java.lang.Boolean">
+        <![CDATA[
+            SELECT EXISTS
+              (
+                SELECT 1 FROM
+                  TAGS
+                WHERE
+                  NAME = #{name}
+              )
+        ]]>
+    </select>
+
+    <update id="updateTag">
+        <![CDATA[
+			UPDATE
+			    TAGS
+			SET
+                NAME = #{name},
+                VALUE = #{value}
+			WHERE
+			    ID = #{id}
+        ]]>
+    </update>
+
+    <sql id="deleteTag">
+        <![CDATA[
+			DELETE FROM TAGS
+        ]]>
+    </sql>
+
+    <delete id="deleteTagById">
+        <include refid="deleteTag"/>
+        <![CDATA[
+			WHERE
+			  ID = #{id}
+        ]]>
+    </delete>
+
+    <resultMap type="com.qaprosoft.zafira.models.db.Tag" id="TagResultMap" autoMapping="false">
+        <id column="TAG_ID" property="id"/>
+        <result column="TAG_NAME" property="name"/>
+        <result column="TAG_VALUE" property="value"/>
+        <result column="TAG_MODIFIED_AT" property="modifiedAt"/>
+        <result column="TAG_CREATED_AT" property="createdAt"/>
+    </resultMap>
+
+</mapper>

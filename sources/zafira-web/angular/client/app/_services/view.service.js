@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('ViewService', ['$http', '$cookies', '$rootScope', 'UtilService', 'API_URL', ViewService])
+        .factory('ViewService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', ViewService])
 
-    function ViewService($http, $cookies, $rootScope, UtilService, API_URL) {
+    function ViewService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
         var service = {};
 
         service.getViewById = getViewById;
@@ -17,23 +17,23 @@
         return service;
 
         function getViewById(id) {
-            return $http.get(API_URL + '/api/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get view by id'));
+            return $httpMock.get(API_URL + '/api/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to get view by id'));
         }
 
         function getAllViews() {
-            return $http.get(API_URL + '/api/views').then(UtilService.handleSuccess, UtilService.handleError('Unable to get all views'));
+            return $httpMock.get(API_URL + '/api/views').then(UtilService.handleSuccess, UtilService.handleError('Unable to get all views'));
         }
 
         function createView(view) {
-            return $http.post(API_URL + '/api/views', view).then(UtilService.handleSuccess, UtilService.handleError('Unable to create view'));
+            return $httpMock.post(API_URL + '/api/views', view).then(UtilService.handleSuccess, UtilService.handleError('Unable to create view'));
         }
 
         function updateView(view) {
-            return $http.put(API_URL + '/api/views', view).then(UtilService.handleSuccess, UtilService.handleError('Unable to update view'));
+            return $httpMock.put(API_URL + '/api/views', view).then(UtilService.handleSuccess, UtilService.handleError('Unable to update view'));
         }
 
         function deleteView(id) {
-            return $http.delete(API_URL + '/api/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete view'));
+            return $httpMock.delete(API_URL + '/api/views/' + id).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete view'));
         }
     }
 })();

@@ -15,13 +15,14 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.qaprosoft.zafira.models.db.Tenancy;
-import com.qaprosoft.zafira.models.dto.AbstractType;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.Arrays;
 
 import javax.validation.constraints.AssertTrue;
-import java.util.Arrays;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qaprosoft.zafira.models.db.Tenancy;
 
 public class TenancyType extends AbstractType {
 
