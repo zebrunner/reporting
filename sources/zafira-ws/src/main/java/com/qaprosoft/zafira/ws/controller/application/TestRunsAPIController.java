@@ -92,8 +92,8 @@ public class TestRunsAPIController extends AbstractController {
 	@Autowired
 	private TestRunService testRunService;
 
-    @Autowired
-    private TestSuiteService testSuiteService;
+	@Autowired
+	private TestSuiteService testSuiteService;
 
     @Autowired
 	private TestRunSpreadsheetService testRunSpreadsheetService;
@@ -377,15 +377,15 @@ public class TestRunsAPIController extends AbstractController {
 			throws ServiceException, JAXBException {
 
 		String[] recipients = getRecipients(email.getRecipients());
-        if(suiteOwner){
-            Long testSuiteId = testRunService.getTestRunByCiRunIdFull(id).getTestSuite().getId();
-            String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
-            ArrayUtils.add(recipients, suiteOwnerEmail);
-        }
-        if(suiteRunner){
-            String suiteRunnerEmail = testRunService.getTestRunByCiRunIdFull(id).getUser().getEmail();
-            ArrayUtils.add(recipients, suiteRunnerEmail);
-        }
+		if(suiteOwner){
+			Long testSuiteId = testRunService.getTestRunByCiRunIdFull(id).getTestSuite().getId();
+			String suiteOwnerEmail = testSuiteService.getTestSuiteByIdFull(testSuiteId).getUser().getEmail();
+			ArrayUtils.add(recipients, suiteOwnerEmail);
+		}
+		if(suiteRunner){
+			String suiteRunnerEmail = testRunService.getTestRunByCiRunIdFull(id).getUser().getEmail();
+			ArrayUtils.add(recipients, suiteRunnerEmail);
+		}
 
 		return testRunService.sendTestRunResultsEmail(id, false, true, recipients);
 	}
