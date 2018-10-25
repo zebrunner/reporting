@@ -93,7 +93,7 @@ public class NavigationTest extends AbstractTest {
 		Assert.assertEquals(uploadImageModalWindow.getHeaderText(), "Profile image", "Incorrect modal window name");
 		uploadImageModalWindow.closeModalWindow();
 
-		driver.manage().window().setSize(new Dimension(450, 700));
+		driver.manage().window().setSize(new Dimension(360, 640));
 
 		pause(3);
 		Assert.assertTrue(dashboardPage.isElementPresent(dashboardPage.getNavbar().getMobileMenuButton(), 2), "Mobile nav bar button is not present");
