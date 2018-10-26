@@ -102,15 +102,13 @@ public class CloudFrontService implements IJMXService<CloudFrontContext>, IURLGe
 
     @Override
     public String generatePresignedURL(Integer expiresIn, String key) throws Exception {
-        final Date expectedDate = DateUtils.addSeconds(new Date(), expiresIn);
-        final Date expirationDate = expectedDate.after(DateUtils.addDays(new Date(), 7)) ? DateUtils.addDays(new Date(), 7) : expectedDate;
         return getContext(CLOUD_FRONT) != null ? CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
                 SignerUtils.Protocol.https,
                 getContext(CLOUD_FRONT).getDistributionDomain(),
                 getContext(CLOUD_FRONT).getPrivateKey(),
                 key,
                 getContext(CLOUD_FRONT).getKeyPairId(),
-                expirationDate) : null;
+                getExpirationDate(expiresIn)) : null;
     }
 
     @ManagedAttribute(description = "Get current cloud front entity")

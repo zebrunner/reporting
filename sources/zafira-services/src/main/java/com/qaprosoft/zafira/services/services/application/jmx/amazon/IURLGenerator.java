@@ -15,7 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.amazon;
 
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.util.Date;
+
 public interface IURLGenerator {
 
     String generatePresignedURL(Integer expiresIn, String key) throws Exception;
+
+    default Date getExpirationDate(Integer expiresIn) {
+        final Date expectedDate = DateUtils.addSeconds(new Date(), expiresIn);
+        return expectedDate.after(DateUtils.addYears(new Date(), 10)) ? DateUtils.addYears(new Date(), 10) : expectedDate;
+    }
 }

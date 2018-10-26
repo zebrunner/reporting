@@ -232,10 +232,8 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
 
     @Override
     public String generatePresignedURL(Integer expiresIn, String key) {
-        final Date expectedDate = DateUtils.addSeconds(new Date(), expiresIn);
-        final Date expirationDate = expectedDate.after(DateUtils.addDays(new Date(), 7)) ? DateUtils.addDays(new Date(), 7) : expectedDate;
         return getAmazonType().getAmazonS3().generatePresignedUrl(
-                new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withExpiration(expirationDate)).toString();
+                new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withExpiration(getExpirationDate(expiresIn))).toString();
     }
 
     @ManagedAttribute(description = "Get current amazon entity")
