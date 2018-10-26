@@ -30,8 +30,39 @@
 		]]>
 	</sql>
 
+	<sql id="getTestSuiteFull">
+		<![CDATA[
+		SELECT
+			   TS.ID AS TEST_SUITE_ID,
+			   TS.USER_ID AS TEST_SUITE_USER_ID,
+			   TS.NAME AS TEST_SUITE_NAME,
+			   TS.FILE_NAME AS TEST_SUITE_FILE_NAME,
+			   TS.DESCRIPTION AS TEST_SUITE_DESCRIPTION,
+			   TS.MODIFIED_AT AS TEST_SUITE_MODIFIED_AT,
+			   TS.CREATED_AT AS TEST_SUITE_CREATED_AT,
+
+			   U.ID AS TEST_SUITE_USER_ID,
+			   U.USERNAME AS TEST_SUITE_USER_USER_NAME,
+			   U.EMAIL AS TEST_SUITE_USER_EMAIL,
+			   U.FIRST_NAME AS TEST_SUITE_USER_FIRST_NAME,
+			   U.LAST_NAME AS TEST_SUITE_USER_LAST_NAME,
+			   U.COVER_PHOTO_URL AS TEST_SUITE_USER_COVER_PHOTO_URL
+		FROM
+			 TEST_SUITES TS
+				 LEFT JOIN USERS U
+					 ON TS.USER_ID = U.ID
+		]]>
+	</sql>
+
 	<select id="getTestSuiteById" resultMap="TestSuiteResultMap">
 		<include refid="getTestSuite" />
+		<![CDATA[
+			WHERE TS.ID = #{id};
+		]]>
+	</select>
+
+	<select id="getTestSuiteByIdFull" resultMap="TestSuiteResultMap">
+		<include refid="getTestSuiteFull" />
 		<![CDATA[
 			WHERE TS.ID = #{id};
 		]]>
@@ -102,6 +133,12 @@
 	<resultMap type="com.qaprosoft.zafira.models.db.TestSuite" id="TestSuiteResultMap" autoMapping="false">
 		<id column="TEST_SUITE_ID" property="id" />
 		<result column="TEST_SUITE_USER_ID" property="user.id" />
+		<result column="TEST_SUITE_USER_USER_NAME" property="user.username" />
+		<result column="TEST_SUITE_USER_EMAIL" property="user.email" />
+		<result column="TEST_SUITE_USER_FIRST_NAME" property="user.firstName" />
+		<result column="TEST_SUITE_USER_LAST_NAME" property="user.lastName" />
+		<result column="TEST_SUITE_USER_COVER_PHOTO_URL" property="user.photoURL" />
+
 		<result column="TEST_SUITE_NAME" property="name" />
 		<result column="TEST_SUITE_FILE_NAME" property="fileName" />
 		<result column="TEST_SUITE_DESCRIPTION" property="description" />

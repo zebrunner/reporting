@@ -40,7 +40,13 @@ public class TestSuiteService
 	{
 		return testSuiteMapper.getTestSuiteById(id);
 	}
-	
+
+	@Transactional(readOnly = true)
+	public TestSuite getTestSuiteByIdFull(long id) throws ServiceException
+	{
+		return testSuiteMapper.getTestSuiteByIdFull(id);
+	}
+
 	@Transactional(readOnly = true)
 	public TestSuite getTestSuiteByName(String name) throws ServiceException
 	{
