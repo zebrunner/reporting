@@ -31,11 +31,11 @@ public class GoogleDriveService extends AbstractGoogleService
 
 	private Drive driveService;
 
-	public GoogleDriveService()
+	public GoogleDriveService(byte[] credsFile)
 	{
 		try
 		{
-			this.driveService = GoogleDriveAuthService.getService();
+			this.driveService = GoogleDriveAuthService.getService(credsFile);
 		} catch (IOException e)
 		{
 			LOGGER.error(e);

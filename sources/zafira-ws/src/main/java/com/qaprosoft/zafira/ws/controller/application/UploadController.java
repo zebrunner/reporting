@@ -15,9 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import io.swagger.annotations.Api;
@@ -30,8 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 import static com.qaprosoft.zafira.models.dto.aws.FileUploadType.Type;
 
@@ -48,6 +48,9 @@ public class UploadController extends AbstractController
 	@Autowired
 	private GoogleService googleService;
 
+	@Autowired
+	private SettingsService settingsService;
+
 	@ApiOperation(value = "Upload file", nickname = "uploadFile", code = 200, httpMethod = "POST", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
@@ -58,12 +61,12 @@ public class UploadController extends AbstractController
 		return String.format("{\"url\": \"%s\"}", amazonService.saveFile(new FileUploadType(file, type)));
 	}
 
-	@ApiOperation(value = "Upload google json file", nickname = "uploadGoogleCredentialsFile", code = 200, httpMethod = "POST", response = String.class)
+	@ApiOperation(value = "Upload setting file", nickname = "uploadSettingFile", code = 200, httpMethod = "POST", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "google", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public void uploadGoogleCredentialsFile(@RequestParam(value = "file", required = true) MultipartFile file) throws ServiceException, IOException
-	{
-		googleService.createCredentialsFile(file.getInputStream(), file.getOriginalFilename());
+	@RequestMapping(value = "setting/{tool}/{settingName}", method = RequestMethod.POST)
+	public void uploadSettingFile(@RequestParam(value = "file", required = true) MultipartFile file, @PathVariable(value = "tool") Setting.Tool tool,
+								  @PathVariable(value = "settingName") String settingName) throws Exception {
+		settingsService.createSettingFile(file.getBytes(), file.getOriginalFilename(), tool, settingName);
 	}
 }

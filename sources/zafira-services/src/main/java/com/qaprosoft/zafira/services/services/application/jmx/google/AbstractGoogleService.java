@@ -23,9 +23,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import org.apache.log4j.Logger;
-import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -54,10 +53,9 @@ public abstract class AbstractGoogleService
 		}
 	}
 
-	public static Credential authorize() throws IOException
+	public static Credential authorize(byte[] credsFile) throws IOException
 	{
-		ResourceLoader resourceLoader = new FileSystemResourceLoader();
-		return GoogleCredential.fromStream(resourceLoader.getResource(CLIENT_SECRET_DIR).getInputStream()).createScoped(SCOPES);
+		return GoogleCredential.fromStream(new ByteArrayInputStream(credsFile)).createScoped(SCOPES);
 	}
 
 	public static String getApplicationName()
@@ -78,11 +76,6 @@ public abstract class AbstractGoogleService
 	public static List<String> getScopes()
 	{
 		return SCOPES;
-	}
-
-	public static String getClientSecretDir()
-	{
-		return CLIENT_SECRET_DIR;
 	}
 
 	public static NetHttpTransport getHttpTransport()

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class Setting extends AbstractEntity
 	private String value;
 	private boolean isEncrypted;
 	private Tool tool;
+	private byte[] file;
 
 	public String getName()
 	{
@@ -73,6 +75,14 @@ public class Setting extends AbstractEntity
 		this.tool = tool;
 	}
 
+	public byte[] getFile() {
+		return file;
+	}
+
+	public void setFile(byte[] file) {
+		this.file = file;
+	}
+
 	public enum SettingType
 	{
 		GOOGLE_CLIENT_SECRET_ORIGIN, GOOGLE_ENABLED,
@@ -80,7 +90,8 @@ public class Setting extends AbstractEntity
 		JENKINS_URL, JENKINS_USER, JENKINS_API_TOKEN_OR_PASSWORD, JENKINS_ENABLED,
 		SLACK_WEB_HOOK_URL, SLACK_NOTIF_CHANNEL_EXAMPLE,
 		EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_FROM_ADDRESS, EMAIL_PASSWORD, EMAIL_ENABLED,
-		AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_REGION, AMAZON_BUCKET, AMAZON_DISTRIBUTION_DOMAIN, AMAZON_KEY_PAIR_ID, AMAZON_ENABLED,
+		AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_REGION, AMAZON_BUCKET, AMAZON_ENABLED,
+		CLOUD_FRONT_DISTRIBUTION_DOMAIN, CLOUD_FRONT_KEY_PAIR_ID, CLOUD_FRONT_PRIVATE_KEY, CLOUD_FRONT_ENABLED,
 		HIPCHAT_ACCESS_TOKEN, HIPCHAT_ENABLED,
 		LDAP_DN, LDAP_SEARCH_FILTER, LDAP_URL, LDAP_MANAGER_USER, LDAP_MANAGER_PASSWORD, LDAP_ENABLED,
 		CRYPTO_KEY_TYPE, CRYPTO_ALGORITHM, CRYPTO_KEY_SIZE, KEY, 
@@ -90,7 +101,7 @@ public class Setting extends AbstractEntity
 
 	public enum Tool
 	{
-		CRYPTO, RABBITMQ, GOOGLE, JIRA, ELASTICSEARCH, JENKINS, SLACK, EMAIL, AMAZON, HIPCHAT, LDAP
+		CRYPTO, RABBITMQ, GOOGLE, JIRA, ELASTICSEARCH, JENKINS, SLACK, EMAIL, AMAZON, CLOUD_FRONT, HIPCHAT, LDAP
 	}
 
 	public boolean isValueForEncrypting()

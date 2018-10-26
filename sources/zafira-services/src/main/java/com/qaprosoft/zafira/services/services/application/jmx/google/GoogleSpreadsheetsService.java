@@ -29,11 +29,11 @@ public class GoogleSpreadsheetsService extends AbstractGoogleService
 
 	private Sheets sheetsService;
 
-	public GoogleSpreadsheetsService()
+	public GoogleSpreadsheetsService(byte[] credsFile)
 	{
 		try
 		{
-			this.sheetsService = GoogleSheetsAuthService.getService();
+			this.sheetsService = GoogleSheetsAuthService.getService(credsFile);
 		} catch (IOException e)
 		{
 			LOGGER.error(e);

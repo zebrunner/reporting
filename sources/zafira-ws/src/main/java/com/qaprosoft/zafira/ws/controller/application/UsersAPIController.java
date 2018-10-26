@@ -23,7 +23,7 @@ import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.services.application.DashboardService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;

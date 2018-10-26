@@ -68,12 +68,12 @@
                                 </div>
                             </div>
                        </div>
-                        <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action text-right" style="border-top: none;">
+                        <div has-any-permission="['MODIFY_INTEGRATIONS']" data-ng-if="tool.isEnabled" class="card-action integration-actions text-right" style="border-top: none;">
+                            <md-button ng-if="tool.name == 'GOOGLE' || tool.name == 'CLOUD_FRONT'" ng-click="showUploadFileDialog($event, tool.name, FILE_TYPE_SETTINGS[tool.name]);" class="md-raised btn-w-md md-primary">
+                                Upload {{FILE_TYPE_SETTINGS[tool.name].split(tool.name + '_')[1].split('_').join(' ')}}
+                            </md-button>
                             <md-button name="add" data-ng-if="tool.name == 'SLACK'" ng-click="createSetting(tool)" class="md-raised btn-w-md md-active" ng-disabled="!tool.newSetting.name && !tool.newSetting.value || !tool.isEnabled">Add +</md-button><div class="divider"></div>
                             <md-button ng-if="tool.name != 'GOOGLE'" name="save" ng-click="saveTool(tool)" class="md-raised btn-w-md md-primary" ng-disabled="!tool.isEnabled">Save</md-button><div class="divider"></div>
-                            <md-button ng-if="tool.name == 'GOOGLE'" ng-click="showUploadFileDialog($event);" class="md-raised btn-w-md md-primary">
-                                Upload JSON
-                            </md-button>
                         </div>
                     </div>
                 </div>

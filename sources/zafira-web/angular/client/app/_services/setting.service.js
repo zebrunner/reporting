@@ -38,7 +38,7 @@
         }
 
         function getAmazonPolicyCookies() {
-            return $httpMock.get(API_URL + '/api/settings/creds/amazon/cookies').then(UtilService.handleSuccess, UtilService.handleError('Unable to get Amazon s3 cookies'));
+            return $httpMock.get(API_URL + '/api/settings/amazon/creds/cookies').then(UtilService.handleSuccess, UtilService.handleError('Unable to get Amazon s3 cookies'));
         }
 
         function getSettingByTool(tool) {

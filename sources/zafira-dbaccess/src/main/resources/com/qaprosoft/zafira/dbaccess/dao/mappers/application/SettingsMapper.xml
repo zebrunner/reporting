@@ -5,11 +5,12 @@
 
 	<insert id="createSetting" useGeneratedKeys="true" keyProperty="id">
 		<![CDATA[
-			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL)
+			INSERT INTO SETTINGS (NAME, VALUE, IS_ENCRYPTED, TOOL, FILE)
 			VALUES (#{name},
 					#{value},
                     #{isEncrypted},
-                    #{tool})
+                    #{tool},
+                    #{file, jdbcType=BINARY})
 		]]>
 	</insert>
 
@@ -21,6 +22,7 @@
 				S.VALUE AS SETTING_VALUE,
                 S.IS_ENCRYPTED AS SETTING_IS_ENCRYPTED,
                 S.TOOL AS SETTING_TOOL,
+                S.FILE AS SETTING_FILE,
 				S.MODIFIED_AT AS SETTING_MODIFIED_AT,
 				S.CREATED_AT AS SETTING_CREATED_AT
 			FROM
@@ -121,6 +123,11 @@
 						TOOL = #{tool},
 					]]>
 			</if>
+			<if test = "file != null">
+				<![CDATA[
+					FILE = #{file, jdbcType=BINARY},
+				]]>
+			</if>
 			<if test = "name != null">
 				<![CDATA[
 						NAME = #{name}
@@ -155,6 +162,7 @@
 		<result column="SETTING_CREATED_AT" property="createdAt" />
         <result column="SETTING_IS_ENCRYPTED" property="isEncrypted" />
         <result column="SETTING_TOOL" property="tool" />
+        <result column="SETTING_FILE" property="file" jdbcType="BINARY" />
 	</resultMap>
 
 </mapper>
