@@ -25,9 +25,9 @@ import java.io.IOException;
 public class GoogleSheetsAuthService extends AbstractGoogleService
 {
 
-	public static Sheets getService() throws IOException
+	public static Sheets getService(byte[] credsFile) throws IOException
 	{
-		return new Sheets.Builder(getHttpTransport(), getJsonFactory(), authorize())
+		return new Sheets.Builder(getHttpTransport(), getJsonFactory(), authorize(credsFile))
 				.setApplicationName(getApplicationName())
 				.build();
 	}

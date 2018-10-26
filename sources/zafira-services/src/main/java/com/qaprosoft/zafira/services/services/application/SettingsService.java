@@ -15,12 +15,16 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
+import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.util.EventPushService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +39,7 @@ import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.jmx.HipchatService;
@@ -46,9 +50,13 @@ import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class SettingsService {
+
+    private static final Logger LOGGER = Logger.getLogger(SettingsService.class);
+
     @Autowired
     private SettingsMapper settingsMapper;
 
@@ -75,6 +83,9 @@ public class SettingsService {
 
     @Autowired
     private AmazonService amazonService;
+
+    @Autowired
+    private CloudFrontService cloudFrontService;
 
     @Autowired
     private HipchatService hipchatService;
@@ -161,6 +172,20 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public File createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
+        File file = null;
+        Setting setting = getSettingsByTool(tool).stream().filter(s -> s.getName().equals(settingName)).findFirst().orElse(null);
+        if(setting != null) {
+            setting.setFile(fileBytes);
+            setting.setValue(originalFileName);
+            updateSetting(setting);
+            getServiceByTool(setting.getTool()).init();
+            notifyToolReinitiated(setting.getTool(), TenancyContext.getTenantName());
+        }
+        return file;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void reEncrypt() throws Exception {
         List<Setting> settings = getSettingsByEncrypted(true);
         for (Setting setting : settings) {
@@ -225,6 +250,9 @@ public class SettingsService {
             break;
         case AMAZON:
             service = amazonService;
+            break;
+        case CLOUD_FRONT:
+            service = cloudFrontService;
             break;
         case HIPCHAT:
             service = hipchatService;

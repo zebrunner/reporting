@@ -28,6 +28,7 @@
 				<entry key="bean:name=jenkinsService" value-ref="jenkinsService"/>
 				<entry key="bean:name=slackService" value-ref="slackService"/>
 				<entry key="bean:name=amazonService" value-ref="amazonService"/>
+				<entry key="bean:name=cloudFrontService" value-ref="cloudFrontService"/>
 				<entry key="bean:name=hipchatService" value-ref="hipchatService"/>
 				<entry key="bean:name=cryptoService" value-ref="cryptoService"/>
 				<entry key="bean:name=rabbitMQService" value-ref="rabbitMQService"/>
@@ -64,7 +65,9 @@
 
 	<bean id="slackService" class="com.qaprosoft.zafira.services.services.application.jmx.SlackService"/>
 
-	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.AmazonService"/>
+	<bean id="amazonService" class="com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService"/>
+
+	<bean id="cloudFrontService" class="com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService"/>
 
 	<bean id="hipchatService" class="com.qaprosoft.zafira.services.services.application.jmx.HipchatService"/>
 

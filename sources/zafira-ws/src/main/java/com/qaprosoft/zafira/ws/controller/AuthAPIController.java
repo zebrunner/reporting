@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.Invitation;
@@ -27,7 +25,6 @@ import com.qaprosoft.zafira.models.dto.user.PasswordType;
 import com.qaprosoft.zafira.services.exceptions.*;
 import com.qaprosoft.zafira.services.services.application.GroupService;
 import com.qaprosoft.zafira.services.services.application.InvitationService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
 import com.qaprosoft.zafira.services.services.auth.ForgotPasswordService;
 import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 import org.apache.commons.lang3.StringUtils;
@@ -65,9 +62,6 @@ public class AuthAPIController extends AbstractController {
 
 	@Autowired
 	private JWTService jwtService;
-
-	@Autowired
-	private AmazonService amazonService;
 
 	@Autowired
 	private ForgotPasswordService forgotPasswordService;
@@ -108,7 +102,7 @@ public class AuthAPIController extends AbstractController {
 	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials, HttpServletResponse response)
+	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials)
 			throws BadCredentialsException {
 		AuthTokenType authToken;
 		try {
@@ -134,7 +128,6 @@ public class AuthAPIController extends AbstractController {
 		} catch (Exception e) {
 			throw new BadCredentialsException(e.getMessage());
 		}
-		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
 	}
 
@@ -165,7 +158,7 @@ public class AuthAPIController extends AbstractController {
 	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken, HttpServletResponse response)
+	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken)
 			throws BadCredentialsException, ForbiddenOperationException {
 		AuthTokenType authToken = null;
 		try {
@@ -196,7 +189,6 @@ public class AuthAPIController extends AbstractController {
 		} catch (Exception e) {
 			throw new ForbiddenOperationException(e);
 		}
-		amazonService.getPolicyCookies().forEach((key, value) -> response.addCookie(new Cookie(key, value)));
 		return authToken;
 	}
 

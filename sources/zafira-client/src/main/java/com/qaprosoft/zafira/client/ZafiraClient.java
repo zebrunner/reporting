@@ -22,6 +22,7 @@ import java.util.*;
 import javax.ws.rs.core.MediaType;
 
 import com.qaprosoft.zafira.models.dto.*;
+import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -86,7 +87,8 @@ public class  ZafiraClient
 	private static final String TEST_RUNS_ABORT_PATH = "/api/tests/runs/abort?id=%d";
 	private static final String TEST_RUN_BY_ID_PATH = "/api/tests/runs/%d";
 	private static final String SETTINGS_TOOL_PATH = "/api/settings/tool/%s";
-	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/creds/amazon";
+	private static final String AMAZON_SESSION_CREDENTIALS_PATH = "/api/settings/amazon/creds";
+	private static final String AMAZON_PRESIGNED_URL_PATH = "/api/settings/amazon/presignedURL";
 	private static final String TENANT_TYPE_PATH = "/api/auth/tenant";
 	private static final String PROJECTS_PATH = "/api/projects/%s";
 
@@ -995,11 +997,12 @@ public class  ZafiraClient
 	/**
 	 * Uploads file to Amazon S3 used integration data from server
 	 * @param file - any file to upload
+     * @param expiresIn - in seconds to generate presigned URL
 	 * @param keyPrefix - bucket folder name where file will be stored
 	 * @return url of the file in string format
 	 * @throws Exception throws when there are any issues with a Amazon S3 connection
 	 */
-	public String uploadFile(File file, String keyPrefix) throws Exception
+	public String uploadFile(File file, Integer expiresIn, String keyPrefix) throws Exception
 	{
 		String filePath = null;
 		if(this.amazonClient != null && this.tenantType != null)
@@ -1007,7 +1010,6 @@ public class  ZafiraClient
 			String fileName = RandomStringUtils.randomAlphanumeric(20) + "." + FilenameUtils.getExtension(file.getName());
 			String key = tenantType.getTenant() + keyPrefix + fileName;
 
-			GeneratePresignedUrlRequest request;
 			try (SdkBufferedInputStream stream = new SdkBufferedInputStream(new FileInputStream(file), (int) (file.length() + 100))) {
 				String type = Mimetypes.getInstance().getMimetype(file.getName());
 
@@ -1019,9 +1021,7 @@ public class  ZafiraClient
 				this.amazonClient.putObject(putRequest);
 				this.amazonClient.setObjectAcl(this.amazonS3SessionCredentials.getBucket(), key, CannedAccessControlList.Private);
 
-				request = new GeneratePresignedUrlRequest(this.amazonS3SessionCredentials.getBucket(), key);//SignerUtils.generateResourcePath(SignerUtils.Protocol.https, this.amazonS3SessionCredentials.getDistributionDomain(), key);
-				request.setExpiration(DateUtils.addDays(new Date(), 7));
-				filePath = this.amazonClient.generatePresignedUrl(request).toString();
+				filePath = generateAmazonPresignedURL(expiresIn, key).getObject();
 
 			} catch (Exception e)
 			{
@@ -1081,6 +1081,31 @@ public class  ZafiraClient
 		} catch (Exception e)
 		{
 			LOGGER.error("Unable to get AWS session credentials", e);
+		}
+		return response;
+	}
+
+	/**
+	 * Gets Amazon S3 temporary credentials
+	 * @return Amazon S3 temporary credentials
+	 */
+	private Response<String> generateAmazonPresignedURL(Integer expiresIn, String key)
+	{
+		Response<String> response = new Response<>(0, null);
+		try
+		{
+			WebResource webResource = client.resource(serviceURL + AMAZON_PRESIGNED_URL_PATH);
+			ClientResponse clientRS =  initHeaders(webResource.type(MediaType.APPLICATION_JSON))
+					.accept(MediaType.APPLICATION_JSON).post(ClientResponse.class, new PresignedUrlRequest(expiresIn, key));
+			response.setStatus(clientRS.getStatus());
+			if (clientRS.getStatus() == 200)
+			{
+				response.setObject(clientRS.getEntity(String.class));
+			}
+
+		} catch (Exception e)
+		{
+			LOGGER.error("Unable to get AWS presigned URL", e);
 		}
 		return response;
 	}

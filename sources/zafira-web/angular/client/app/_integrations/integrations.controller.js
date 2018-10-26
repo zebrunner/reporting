@@ -22,14 +22,20 @@
             '_SECRET_KEY': 5
         };
 
-        var NOT_EDITABLE_SETTINGS = ['GOOGLE_CLIENT_SECRET_ORIGIN'];
+        var NOT_EDITABLE_SETTINGS = ['GOOGLE_CLIENT_SECRET_ORIGIN', 'CLOUD_FRONT_PRIVATE_KEY'];
+        $scope.FILE_TYPE_SETTINGS = {
+            'GOOGLE': 'GOOGLE_CLIENT_SECRET_ORIGIN',
+            'CLOUD_FRONT': 'CLOUD_FRONT_PRIVATE_KEY'
+        };
 
         $scope.saveTool = function (tool) {
            SettingsService.editSettings(tool.settings).then(function (rs) {
                 if (rs.success) {
                     var settingTool = getSettingToolByName(tool.name);
                     settingTool.isConnected = rs.data.connected;
-                    settingTool.settings = rs.data.settingList;
+                    rs.data.settingList.forEach(function (setting) {
+                        settingTool.settings[settingTool.settings.indexOfField('name', setting.name)].value = setting.value;
+                    });
                     settingTool.settings.sort(compareBySettingSortOrder);
                     alertify.success('Tool ' + tool.name + ' was changed');
                 }
@@ -180,9 +186,7 @@
                         name: rsTool,
                         isConnected: $rootScope.tools[rsTool],
                         settings: settings.data.filter(function (setting) {
-                            if(NOT_EDITABLE_SETTINGS.indexOf(setting.name) >= 0) {
-                                setting.notEditable = true;
-                            }
+                            setting.notEditable = NOT_EDITABLE_SETTINGS.indexOf(setting.name) >= 0;
                             return isEnabledSetting(rsTool, setting) ? false : setting.tool === rsTool;
                         }),
                         isEnabled: enabledSetting.value === 'true',
@@ -210,7 +214,7 @@
             });
         };
 
-        $scope.showUploadFileDialog = function ($event) {
+        $scope.showUploadFileDialog = function ($event, toolName, settingName) {
             $mdDialog.show({
                 controller: FileUploadController,
                 templateUrl: 'app/_integrations/file_modal.html',
@@ -218,8 +222,10 @@
                 targetEvent: $event,
                 clickOutsideToClose: true,
                 fullscreen: true,
-                scope: $scope,
-                preserveScope: true
+                locals: {
+                    toolName: toolName,
+                    settingName: settingName
+                }
             })
                 .then(function (tool) {
                 }, function (tool) {
@@ -229,9 +235,9 @@
                 });
         };
 
-        function FileUploadController($scope, $mdDialog) {
+        function FileUploadController($scope, $mdDialog, toolName, settingName) {
             $scope.uploadFile = function (multipartFile) {
-                UploadService.uploadGoogleJson(multipartFile).then(function (rs) {
+                UploadService.uploadSettingFile(multipartFile, toolName, settingName).then(function (rs) {
                     if(rs.success)
                     {
                         alertify.success("File was uploaded");
@@ -247,7 +253,7 @@
                 $mdDialog.hide(true);
             };
             $scope.cancel = function() {
-                $mdDialog.cancel('GOOGLE');
+                $mdDialog.cancel(toolName);
             };
         }
 

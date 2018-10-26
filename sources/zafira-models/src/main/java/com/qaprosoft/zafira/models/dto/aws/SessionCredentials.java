@@ -30,20 +30,18 @@ public class SessionCredentials implements Serializable
     private String sessionToken;
     private String region;
     private String bucket;
-    private String distributionDomain;
 
     public SessionCredentials()
     {
     }
 
-    public SessionCredentials(String accessKeyId, String secretAccessKey, String sessionToken, String region, String bucket, String distributionDomain)
+    public SessionCredentials(String accessKeyId, String secretAccessKey, String sessionToken, String region, String bucket)
     {
         this.accessKeyId = accessKeyId;
         this.secretAccessKey = secretAccessKey;
         this.sessionToken = sessionToken;
         this.region = region;
         this.bucket = bucket;
-        this.distributionDomain = distributionDomain;
     }
 
     public String getAccessKeyId()
@@ -92,13 +90,5 @@ public class SessionCredentials implements Serializable
 
     public void setBucket(String bucket) {
         this.bucket = bucket;
-    }
-
-    public String getDistributionDomain() {
-        return distributionDomain;
-    }
-
-    public void setDistributionDomain(String distributionDomain) {
-        this.distributionDomain = distributionDomain;
     }
 }

@@ -167,7 +167,7 @@
             paddingTop = 0;
             timeout = 500;
             smallTimeout = 200;
-            speed = 0.5; // px per millis
+            speed =1.5; // px per millis
             testRunId = 0;
             rectangleRow = {};
             tableHeader = {};

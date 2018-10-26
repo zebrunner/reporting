@@ -15,28 +15,34 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.google;
 
+import com.offbytwo.jenkins.JenkinsServer;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
+import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
+import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
+import com.qaprosoft.zafira.services.services.application.jmx.context.JenkinsContext;
 import com.qaprosoft.zafira.services.services.application.jmx.google.auth.GoogleDriveAuthService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.auth.GoogleSheetsAuthService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.GoogleContext;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
+import java.util.List;
+
+import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
+import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
 
 @ManagedResource(objectName = "bean:name=googleService", description = "Google init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class GoogleService implements IJMXService<GoogleContext>
 {
 
-	private static final Logger LOGGER = Logger.getLogger(GoogleService.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
 
 	private static final String CLIENT_SECRET_JSON = "./client_secret.json";
 
@@ -46,19 +52,58 @@ public class GoogleService implements IJMXService<GoogleContext>
 	@Autowired
 	private GoogleSheetsAuthService sheetsAuthService;
 
+	@Autowired
+	private SettingsService settingsService;
+
+	@Autowired
+	private CryptoService cryptoService;
+
 	private GoogleDriveService driveService;
 
 	private GoogleSpreadsheetsService spreadsheetsService;
-
-	@Autowired
-	private SettingsService settingsService;
 
 	@Override
 	@ManagedOperation(description = "Google initialization")
 	public void init()
 	{
-		driveService = new GoogleDriveService();
-		spreadsheetsService = new GoogleSpreadsheetsService();
+		String originName = null;
+		byte[] credsFile = null;
+
+		try {
+			List<Setting> googleSettings = settingsService.getSettingsByTool(GOOGLE);
+			for (Setting setting : googleSettings) {
+				if (setting.isEncrypted()) {
+					setting.setValue(cryptoService.decrypt(setting.getValue()));
+				}
+				switch (Setting.SettingType.valueOf(setting.getName())) {
+					case GOOGLE_CLIENT_SECRET_ORIGIN:
+						credsFile = setting.getFile();
+						originName = setting.getValue();
+						break;
+					default:
+						break;
+				}
+			}
+			init(credsFile, originName);
+		} catch (Exception e) {
+			LOGGER.error("Setting does not exist", e);
+		}
+	}
+
+	@ManagedOperation(description = "Change Google initialization")
+	@ManagedOperationParameters({
+			@ManagedOperationParameter(name = "originName", description = "Google origin name file"),
+			@ManagedOperationParameter(name = "credsFile", description = "Google creds file") })
+	public void init(byte[] credsFile, String originName) {
+		try {
+			if (!StringUtils.isEmpty(originName) && credsFile != null) {
+				putContext(GOOGLE, new GoogleContext(credsFile, originName));
+				driveService = new GoogleDriveService(credsFile);
+				spreadsheetsService = new GoogleSpreadsheetsService(credsFile);
+			}
+		} catch (Exception e) {
+			LOGGER.error("Unable to initialize Google integration: " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -71,36 +116,14 @@ public class GoogleService implements IJMXService<GoogleContext>
 			File file = new File(CLIENT_SECRET_JSON);
 			if(file.exists())
 			{
-				driveAuthService.getService().about();
-				sheetsAuthService.getService().spreadsheets();
+				driveAuthService.getService(getContext().getCredsFile()).about();
+				sheetsAuthService.getService(getContext().getCredsFile()).spreadsheets();
 				result = true;
 			}
 		} catch(Exception e)
 		{
 		}
 		return result;
-	}
-
-	public File createCredentialsFile(InputStream inputStream, String originalFilename)
-	{
-		File json = null;
-		try
-		{
-			json = new File(CLIENT_SECRET_JSON);
-			Files.deleteIfExists(json.toPath());
-			FileUtils.copyInputStreamToFile(inputStream, json);
-			Setting originalFilenameSetting = settingsService.getSettingByType(Setting.SettingType.GOOGLE_CLIENT_SECRET_ORIGIN);
-			originalFilenameSetting.setValue(originalFilename);
-			settingsService.updateSetting(originalFilenameSetting);
-			init();
-		} catch (Exception e)
-		{
-			LOGGER.error(e);
-		} finally
-		{
-			IOUtils.closeQuietly(inputStream);
-		}
-		return json;
 	}
 
 	@ManagedAttribute(description = "Get google drive client")
@@ -113,5 +136,10 @@ public class GoogleService implements IJMXService<GoogleContext>
 	public GoogleSpreadsheetsService getSpreadsheetsService()
 	{
 		return spreadsheetsService;
+	}
+
+	@ManagedAttribute(description = "Get google context")
+	public GoogleContext getContext() {
+		return getContext(GOOGLE);
 	}
 }

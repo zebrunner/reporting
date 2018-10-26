@@ -16,11 +16,14 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.IURLGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +45,7 @@ import com.qaprosoft.zafira.models.dto.aws.SessionCredentials;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.application.jmx.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -51,6 +54,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.Valid;
 
 @Controller
 @Api(value = "Settings API")
@@ -63,10 +68,16 @@ public class SettingsAPIController extends AbstractController
 	private AmazonService amazonService;
 
 	@Autowired
+	private CloudFrontService cloudFrontService;
+
+	@Autowired
 	private SettingsService settingsService;
 
 	@Autowired
 	private CryptoService cryptoService;
+
+	@Value("${zafira.amazon.token.expiration}")
+	private Integer amazonTokenExpiration;
 
 	@ResponseStatusDetails
 	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
@@ -246,19 +257,20 @@ public class SettingsAPIController extends AbstractController
 	@ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", code = 200, httpMethod = "GET", response = SessionCredentials.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "creds/amazon", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SessionCredentials getSessionCredentials() throws ServiceException
 	{
-		return amazonService.getTemporarySessionCredentials();
+		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration);
 	}
 
-	@ApiOperation(value = "Get amazon policy cookies", nickname = "getPolicyCookies", code = 200, httpMethod = "GET", response = Map.class)
+	@ApiOperation(value = "Generate amazon presigned URL", nickname = "generatePresignedURL", code = 200, httpMethod = "POST", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "creds/amazon/cookies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, String> getPolicyCookies() throws ServiceException
+	@RequestMapping(value = "amazon/presignedURL", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String generatePresignedURL(@RequestBody @Valid PresignedUrlRequest presignedUrlRequest) throws Exception
 	{
-		return amazonService.getPolicyCookies();
+		IURLGenerator generator = cloudFrontService.isConnected() ? cloudFrontService : amazonService;
+		return generator.generatePresignedURL(presignedUrlRequest.getExpiresIn(), presignedUrlRequest.getKey());
 	}
 
 	@ResponseStatusDetails

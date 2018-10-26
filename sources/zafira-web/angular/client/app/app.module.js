@@ -389,7 +389,8 @@
             '                    <div class="container">\n' +
             '                        <div class="bottom-block" md-ink-ripple="grey">\n' +
             '                            <input type="file" id="fileInput" class="content-input" ng-class="{\'not-empty\': myImage}"/>\n' +
-            '                            <div class="upload-zone-label">Click or drop here</div>\n' +
+            '                            <div ng-if="!fileName || !fileName.length" class="upload-zone-label">Click or drop here</div>' +
+            '                            <div ng-if="fileName && fileName.length" class="upload-zone-label">{{fileName}}</div>\n' +
             '                            <img-crop image="myImage" ng-show="otherType == undefined" result-image="myCroppedImage" change-on-fly="true" area-type="{{areaType}}" on-change="onChange()" on-load-done="onDone()"></img-crop>\n' +
             '                        </div>\n' +
             '                    </div>\n' +
@@ -405,6 +406,7 @@
             link: function ($scope, iElement, iAttrs, ngModel) {
                 $scope.myImage = '';
                 $scope.myCroppedImage = '';
+                $scope.fileName = '';
                 var canRecognize = false;
 
                 var otherType = $scope.otherType != undefined;
@@ -427,7 +429,8 @@
                             $scope.$apply(function($scope){
                                 $scope.file=evt.target.result;
                             });
-                            ngModel.$setViewValue(fileToFormData($scope.file));
+                            $scope.fileName = file.name;
+                            ngModel.$setViewValue(fileToFormData(file));
                         };
                         reader.readAsText(file);
                     }

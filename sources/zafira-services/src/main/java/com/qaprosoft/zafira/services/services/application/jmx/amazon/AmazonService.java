@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.services.services.application.jmx;
+package com.qaprosoft.zafira.services.services.application.jmx.amazon;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.AMAZON;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
+import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
+import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -40,8 +41,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.internal.SdkBufferedInputStream;
-import com.amazonaws.services.cloudfront.CloudFrontCookieSigner;
-import com.amazonaws.services.cloudfront.util.SignerUtils.Protocol;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -62,13 +61,11 @@ import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.AmazonContext;
 
 @ManagedResource(objectName = "bean:name=amazonService", description = "Amazon init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
-public class AmazonService implements IJMXService<AmazonContext> {
+public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator {
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
     public static final String COMMENT_KEY = "comment";
-
-    public static final String S3_OBJECT_KEY_PATTERN = "%s/**/*.*";
 
     private static final String FILE_PATH_SEPARATOR = "/";
 
@@ -87,8 +84,6 @@ public class AmazonService implements IJMXService<AmazonContext> {
         String privateKey = null;
         String region = null;
         String bucket = null;
-        String distributionDomain = null;
-        String keyPairId = null;
 
         try {
             List<Setting> amazonSettings = settingsService.getSettingsByTool(AMAZON);
@@ -109,17 +104,11 @@ public class AmazonService implements IJMXService<AmazonContext> {
                 case AMAZON_BUCKET:
                     bucket = setting.getValue();
                     break;
-                case AMAZON_DISTRIBUTION_DOMAIN:
-                    distributionDomain = setting.getValue();
-                    break;
-                case AMAZON_KEY_PAIR_ID:
-                    keyPairId = setting.getValue();
-                    break;
                 default:
                     break;
                 }
             }
-            init(accessKey, privateKey, region, bucket, distributionDomain, keyPairId);
+            init(accessKey, privateKey, region, bucket);
         } catch (Exception e) {
             LOGGER.error("Setting does not exist", e);
         }
@@ -130,18 +119,12 @@ public class AmazonService implements IJMXService<AmazonContext> {
             @ManagedOperationParameter(name = "accessKey", description = "Amazon access key"),
             @ManagedOperationParameter(name = "privateKey", description = "Amazon private key"),
             @ManagedOperationParameter(name = "region", description = "Amazon region"),
-            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket"),
-            @ManagedOperationParameter(name = "distributionDomain", description = "Amazon distribution domain"),
-            @ManagedOperationParameter(name = "keyPairId", description = "Amazon key pair id") })
-    public void init(String accessKey, String privateKey, String region, String bucket, String distributionDomain, String keyPairId) {
+            @ManagedOperationParameter(name = "bucket", description = "Amazon bucket")})
+    public void init(String accessKey, String privateKey, String region, String bucket) {
         try {
             if (!StringUtils.isBlank(accessKey) && !StringUtils.isBlank(privateKey) && !StringUtils.isBlank(region)
                     && !StringUtils.isBlank(bucket)) {
-                if(!StringUtils.isBlank(distributionDomain) && !StringUtils.isBlank(keyPairId)) {
-                    putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration, distributionDomain, keyPairId));
-                } else {
-                    putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration));
-                }
+                putContext(AMAZON, new AmazonContext(accessKey, privateKey, region, bucket, clientConfiguration));
             }
         } catch (Exception e) {
             LOGGER.error("Unable to initialize Amazon integration: " + e.getMessage());
@@ -223,21 +206,11 @@ public class AmazonService implements IJMXService<AmazonContext> {
     }
 
     /**
-     * Generates temporary credentials for external clients (expires in 12 hours)
-     * 
-     * @return {@link SessionCredentials} object
-     */
-    public SessionCredentials getTemporarySessionCredentials() {
-        int expiresIn = 43200;
-        return getTemporarySessionCredentials(expiresIn);
-    }
-
-    /**
      * Generates temporary credentials for external clients
      * 
      * @return {@link SessionCredentials} object
      */
-    private SessionCredentials getTemporarySessionCredentials(int expiresIn) {
+    public SessionCredentials getTemporarySessionCredentials(int expiresIn) {
         SessionCredentials result = null;
         if (getAmazonType().getAwsSecurityTokenService() != null) {
             GetSessionTokenRequest getSessionTokenRequest = new GetSessionTokenRequest();
@@ -249,7 +222,7 @@ public class AmazonService implements IJMXService<AmazonContext> {
                 Credentials credentials = getSessionTokenResult.getCredentials();
                 result = new SessionCredentials(credentials.getAccessKeyId(), credentials.getSecretAccessKey(),
                         credentials.getSessionToken(), getAmazonType().getAmazonS3().getRegionName(),
-                        getAmazonType().getS3Bucket(), getAmazonType().getDistributionDomain());
+                        getAmazonType().getS3Bucket());
             } catch (Exception e) {
                 LOGGER.error("Credentials for Security Token Service are invalid.", e);
             }
@@ -257,22 +230,10 @@ public class AmazonService implements IJMXService<AmazonContext> {
         return result;
     }
 
-    public Map<String, String> getPolicyCookies() {
-        Map<String, String> cookies = new HashMap<>();
-        try {
-            CloudFrontCookieSigner.CookiesForCustomPolicy cookiesForCustomPolicy = getPolicyCookie(DateUtils.addDays(new Date(), 21));
-            cookies.put(cookiesForCustomPolicy.getPolicy().getKey(), cookiesForCustomPolicy.getPolicy().getValue());
-            cookies.put(cookiesForCustomPolicy.getKeyPairId().getKey(), cookiesForCustomPolicy.getKeyPairId().getValue());
-            cookies.put(cookiesForCustomPolicy.getSignature().getKey(), cookiesForCustomPolicy.getSignature().getValue());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return cookies;
-    }
-
-    private CloudFrontCookieSigner.CookiesForCustomPolicy getPolicyCookie(final Date expiresOn) throws InvalidKeySpecException, IOException {
-        return CloudFrontCookieSigner.getCookiesForCustomPolicy(Protocol.https, getAmazonType().getDistributionDomain(),
-                getAmazonType().getPrivateKeyFile(), String.format(S3_OBJECT_KEY_PATTERN, TenancyContext.getTenantName()), getAmazonType().getKeyPairId(), expiresOn, null, null);
+    @Override
+    public String generatePresignedURL(Integer expiresIn, String key) {
+        return getAmazonType().getAmazonS3().generatePresignedUrl(
+                new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withExpiration(getExpirationDate(expiresIn))).toString();
     }
 
     @ManagedAttribute(description = "Get current amazon entity")
