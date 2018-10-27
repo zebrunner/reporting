@@ -2408,7 +2408,10 @@ $light-inprogress: #68c9fd;
                 vertical-align: middle;
             }
             &_controls-buttons {
-                //width: 15.48%;
+                width: 15.48%;
+                @media(max-width: $screen-lg) {
+                    min-width: 20%;
+                }
                 button {
                     width: 80px;
                     height: 32px;
@@ -2431,10 +2434,11 @@ $light-inprogress: #68c9fd;
                 }
             }
             &_tags {
-                //width: 55.73%;
-                width: 71.21%;
+                width: 55.73%;
                 min-height: 20px;
-
+                @media(max-width: $screen-lg) {
+                    width: 40%;
+                }
                 md-chips-wrap {
                     padding: 0;
                     display: inline-block;
@@ -2461,6 +2465,9 @@ $light-inprogress: #68c9fd;
             }
             &_sorts {
                 width: 7.59%;
+                @media(max-width: $screen-lg) {
+                    min-width: 8%;
+                }
                 > * {
                     padding-left: 0;
                 }
@@ -2481,6 +2488,9 @@ $light-inprogress: #68c9fd;
             }
             &_group-items {
                 width: 10.68%;
+                @media(max-width: $screen-lg) {
+                    min-width: 16%;
+                }
                 &_item {
                     display: inline-block;
                     &:not(:last-child) {
@@ -2541,12 +2551,108 @@ $light-inprogress: #68c9fd;
             }
             &_other-buttons {
                 width: 10.52%;
+                @media(max-width: $screen-lg) {
+                    min-width: 16%;
+                }
                 text-align: end;
                 button {
                     height: 32px;
                     width: 96px;
                     min-height: 32px;
                     min-width: 98px;
+                }
+            }
+        }
+    }
+}
+
+.page.groups-group-mode {
+    .test-run-group-row.groups {
+        .test-run-group {
+            > * {
+                font-size: 0;
+                * {
+                    font-size: 14px;
+                }
+            }
+            &_sorts {
+                width: 14% !important;
+                min-width: 14% !important;
+                @media(max-width: $screen-md) {
+                    width: 14% !important;
+                }
+                > * {
+                    width: 100%;
+                }
+            }
+            &_name {
+                width: 72% !important;
+                min-width: 70% !important;
+                @media(max-width: $screen-md) {
+                    width: 70% !important;
+                }
+            }
+            &_group-items {
+                width: 14% !important;
+                min-width: 14% !important;
+                @media(max-width: $screen-md) {
+                    width: 16% !important;
+                }
+                text-align: right;
+            }
+        }
+        height: 40px !important;
+        > th {
+            font-size: 14px;
+            font-weight: bold;
+            vertical-align: middle;
+            i {
+                margin-left: 17px !important;
+                font-size: 16px;
+                padding-right: 5px;
+                opacity: 0.5;
+                position: relative;
+                vertical-align: middle;
+                top: -4px;
+
+                &.checked {
+                    transform: rotate(-180deg);
+                }
+                &.unchecked {
+                    transform: rotate(0deg);
+                }
+                &.checked, &.unchecked {
+                    transform-origin: 40% 50%;
+                    transition: all 0.2s linear;
+                }
+            }
+        }
+    }
+
+    .test-run-group-row:not(.groups) {
+        .test-run-group {
+            &_controls-buttons {
+                width: 15.48%;
+                @media(max-width: $screen-lg) {
+                    width: 20%;
+                }
+            }
+            &_tags {
+                width: 44.52%;
+                @media(max-width: $screen-lg) {
+                    width: 45%;
+                }
+            }
+            &_sorts {
+                display: none;
+            }
+            &_group-items {
+                display: none;
+            }
+            &_other-buttons {
+                width: 40%;
+                @media(max-width: $screen-lg) {
+                    width: 35%;
                 }
             }
         }
