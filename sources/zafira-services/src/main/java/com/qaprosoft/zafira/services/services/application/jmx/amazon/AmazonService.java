@@ -236,6 +236,11 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
                 new GeneratePresignedUrlRequest(getAmazonType().getS3Bucket(), key).withExpiration(getExpirationDate(expiresIn))).toString();
     }
 
+    @Override
+    public Date getMaxExpirationDate() {
+        return DateUtils.addDays(new Date(), 7);
+    }
+
     @ManagedAttribute(description = "Get current amazon entity")
     public AmazonContext getAmazonType() {
         return getContext(AMAZON);

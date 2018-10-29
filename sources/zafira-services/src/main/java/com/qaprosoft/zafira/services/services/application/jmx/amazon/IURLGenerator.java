@@ -23,8 +23,10 @@ public interface IURLGenerator {
 
     String generatePresignedURL(Integer expiresIn, String key) throws Exception;
 
+    Date getMaxExpirationDate();
+
     default Date getExpirationDate(Integer expiresIn) {
         final Date expectedDate = DateUtils.addSeconds(new Date(), expiresIn);
-        return expectedDate.after(DateUtils.addYears(new Date(), 10)) ? DateUtils.addYears(new Date(), 10) : expectedDate;
+        return expectedDate.after(getMaxExpirationDate()) ? getMaxExpirationDate() : expectedDate;
     }
 }
