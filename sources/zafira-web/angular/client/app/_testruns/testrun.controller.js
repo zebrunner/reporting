@@ -1473,7 +1473,7 @@
             $scope.predicate = 'startTime';
             $scope.reverse = false;
             $scope.testGroups.predicate = 'startTime';
-            $scope.testGroups.reverse = true;
+            $scope.testGroups.reverse = false;
             if(testRun) {
                 $scope.testGroupMode = 'PLAIN';
                 initTestGroups();
@@ -1546,13 +1546,17 @@
             if(! force) {
                 initTestGroups();
             }
+            if(force) {
+                $scope.testGroups.group.package.data = {};
+                $scope.testGroups.group.class.data = {};
+            }
             angular.forEach($scope.testRuns[$scope.tr.id].tests, function (value, key) {
-                if(! $scope.testGroups.group.package.data[value.notNullTestGroup] || force) {
+                if(! $scope.testGroups.group.package.data[value.notNullTestGroup]) {
                     $scope.testGroups.group.package.data[value.notNullTestGroup] = [];
                 }
                 $scope.testGroups.group.package.data[value.notNullTestGroup].push(value);
 
-                if(! $scope.testGroups.group.class.data[value.testClass] || force) {
+                if(! $scope.testGroups.group.class.data[value.testClass]) {
                     $scope.testGroups.group.class.data[value.testClass] = [];
                 }
                 $scope.testGroups.group.class.data[value.testClass].push(value);
@@ -1738,7 +1742,8 @@
         };
 
         // Add operation behind all async calls
-        TestRunsStorage.applySnapshot($scope).then(function (testId) {
+        TestRunsStorage.applySnapshot($scope).then(function (rs) {
+            var testId = rs.additionalData;
             if(testId) {
                 var watcher = waitUntilElementPresents('#test_' + testId, function () {
                     $scope.switchTestGroupMode($scope.testGroupMode, true);
@@ -1746,18 +1751,27 @@
                     $scope.testsStatusesOptions.initValues = angular.copy($scope.testGroupDataToStore.statuses);
                     watcher();
                     $timeout(function () {
-                        var testRowWatcher = waitUntilElementPresents('#test_' + testId, function () {
-                            var row = angular.element('#test_' + testId);
-                            row.addClass('target_row');
-                            testRowWatcher();
-                            $timeout(function () {
-                                row.removeClass('target_row');
-                            }, 900);
-                        });
+                        if(! angular.element('#test_' + testId).is(':visible')) {
+                            var testRowWatcher = waitUntilElementPresents('#test_' + testId, function () {
+                                testRowWatcher();
+                                $window.scrollTo(0, rs.windowY);
+                                highlightTestRow('#test_' + testId);
+                            });
+                        } else {
+                            highlightTestRow('#test_' + testId);
+                        }
                     }, 0, false);
                 });
             }
         });
+
+        function highlightTestRow(testRowId) {
+            var row = angular.element(testRowId);
+            row.addClass('target_row');
+            $timeout(function () {
+                row.removeClass('target_row');
+            }, 900);
+        };
 
         function waitUntilElementPresents(elementLocator, func) {
             var watcher = $scope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function(newVal) {

@@ -918,11 +918,11 @@
                             angular.element('md-chip:has(.chip-item-template.item-default)').addClass('md-focused');
                         }
                         scope.chips.filter(function (chip) {
-                            return chip.default;
+                            return chip.default && ! onSwitch;
                         }).forEach(function (chip) {
                             selectedTags[chip.name + chip.value] = chip.value;
                         });
-                        selectedTags = onSwitch ? selectedTags : {};
+                        selectedTags = ! onSwitch ? selectedTags : {};
                         scope.options.initValues = [];
                         scope.onSelect({'$tags': selectedTags});
                     }

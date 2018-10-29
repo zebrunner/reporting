@@ -32,7 +32,7 @@
                         if(name == 'TestRunListController') {
                             waitUntilQueueIsEmpty(function () {
                                 applyAfterControllerInit(scope);
-                                var resolveData = angular.copy(additional);
+                                var resolveData = {additionalData: angular.copy(additional), windowY: windowOffset};
                                 resolve(resolveData);
                             });
                         }

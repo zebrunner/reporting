@@ -20,7 +20,6 @@ import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
-import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,9 +43,6 @@ public class UploadController extends AbstractController
 
 	@Autowired
 	private AmazonService amazonService;
-
-	@Autowired
-	private GoogleService googleService;
 
 	@Autowired
 	private SettingsService settingsService;

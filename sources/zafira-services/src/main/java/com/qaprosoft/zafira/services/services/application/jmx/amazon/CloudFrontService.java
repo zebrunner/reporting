@@ -97,7 +97,8 @@ public class CloudFrontService implements IJMXService<CloudFrontContext>, IURLGe
 
     @Override
     public boolean isConnected() {
-        return getCloudFrontType() != null;
+        return getCloudFrontType() != null && ! StringUtils.isBlank(getCloudFrontType().getDistributionDomain()) &&
+                ! StringUtils.isBlank(getCloudFrontType().getKeyPairId()) && getCloudFrontType().getPrivateKey() != null;
     }
 
     @Override
@@ -109,6 +110,11 @@ public class CloudFrontService implements IJMXService<CloudFrontContext>, IURLGe
                 key,
                 getContext(CLOUD_FRONT).getKeyPairId(),
                 getExpirationDate(expiresIn)) : null;
+    }
+
+    @Override
+    public Date getMaxExpirationDate() {
+        return DateUtils.addYears(new Date(), 10);
     }
 
     @ManagedAttribute(description = "Get current cloud front entity")
