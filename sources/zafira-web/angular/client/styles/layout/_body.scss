@@ -1827,6 +1827,12 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
         height: 100%;
     }
 
+    .history-tab {
+        @media (max-width:991px) {
+            overflow: auto;
+        }
+    }
+
     > div, section, .tab-content, .history-tab, table {
         height: inherit;
         > *:not(.video-section) {
@@ -1997,9 +2003,9 @@ md-ink-bar {
     display: block;
     overflow-y: auto;
     width: 100% !important;
-      @media (max-width:991px) {
+      /*@media (max-width:991px) {
         height: 167px !important;
-      }
+      }*/
   }
 
     thead {

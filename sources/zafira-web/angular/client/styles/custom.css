@@ -101,9 +101,9 @@
     overflow: auto !important;
   }
 
-  .table-history tbody {
+  /*.table-history tbody {
       height: 60vh !important;
-  }
+  }*/
 
   .table-responsive > .table > tbody > tr > td {
     white-space: pre-line !important;
