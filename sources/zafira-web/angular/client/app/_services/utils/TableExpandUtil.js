@@ -12,7 +12,7 @@
             compress: compress
         };
 
-        var LOCATORS_TO_HIDE = ['.result, md-input-container, .search-filter-body, .fixed-search-column, #pagination'];
+        var LOCATORS_TO_HIDE = ['.result:not(.main-row), md-input-container, .search-filter-body, .fixed-search-column, #pagination'];
         var rootElements = $("html, body");
         var offsetTop;
         var headerHeight;
@@ -61,10 +61,6 @@
                     // hide other test runs, filters etc.
                     elementsToHide.forEach(function (element) {
                         element.css({'display': 'none'});
-                    });
-
-                    watchUntilPainted('.result:not(.main-row)', function (locator) {
-                        angular.element(locator).css({'display': 'none'});
                     });
 
                     // scroll top if unused elements was hidden

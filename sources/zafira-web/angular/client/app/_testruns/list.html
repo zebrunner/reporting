@@ -590,7 +590,6 @@
                                                                 <span name="device" data-ng-if="test.testConfig.device" data-ng-class="test.status == 'QUEUED' ? 'grey_font' : 'light_text'"><i class="fa fa-mobile" aria-hidden="true"></i> {{test.testConfig.device}}</span>
                                                                 <div ng-if="test.tags && test.tags.length" class="test-info_tags">
                                                                     <span class="test-info_tags_tag" ng-repeat="tag in test.tags">
-                                                                        {{test.show === true}}{{test.showByStatus === true}}{{testGroups.group[testGroups.mode].selectedName === packageName}}
                                                                         <span ng-show="$first">#</span>
                                                                         {{tag.value}}
                                                                         <span ng-show="! $last">, </span>
