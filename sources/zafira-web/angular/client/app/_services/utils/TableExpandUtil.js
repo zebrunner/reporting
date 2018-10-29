@@ -63,6 +63,10 @@
                         element.css({'display': 'none'});
                     });
 
+                    watchUntilPainted('.page .result:not(.main-row)', function (locator) {
+                        angular.element(locator).css({'display': 'none'});
+                    });
+
                     // scroll top if unused elements was hidden
                     scrollBottom(0, 0);
 

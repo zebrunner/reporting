@@ -418,9 +418,8 @@
             if($scope.zafiraWebsocket.connected) {
                 return $scope.zafiraWebsocket.subscribe("/topic/" + TENANT + ".testRuns." + testRunId + ".tests", function (data) {
                     var event = $scope.getEventFromMessage(data.body);
-                    $scope.$apply(function () {
-                        $scope.addTest(event.test);
-                    });
+                    $scope.addTest(event.test);
+                    $scope.$apply();
                 });
             }
         };
@@ -467,7 +466,15 @@
                 testRun.tests = {};
             }
             testRun.tests[testId] = test;
-            testRun.tags = collectTags(testRun.tests);
+            if($scope.testGroupMode == 'PLAIN') {
+                testRun.tags = collectTags(testRun.tests);
+            } else {
+                addGroupingItem(test);
+            }
+            if($scope.tr) {
+                $scope.onTagSelect($scope.testGroupDataToStore.tags);
+                $scope.onStatusButtonClick($scope.testGroupDataToStore.statuses);
+            }
         };
 
         $scope.getLengthOfSelectedTestRuns = function () {
@@ -1478,6 +1485,9 @@
             $scope.reverse = false;
             $scope.testGroups.predicate = 'startTime';
             $scope.testGroups.reverse = false;
+            if($scope.testGroupMode == 'GROUPS') {
+                $scope.testGroups.mode = 'package';
+            }
             if(testRun) {
                 $scope.testGroupMode = 'PLAIN';
                 initTestGroups();
@@ -1555,16 +1565,30 @@
                 $scope.testGroups.group.class.data = {};
             }
             angular.forEach($scope.testRuns[$scope.tr.id].tests, function (value, key) {
-                if(! $scope.testGroups.group.package.data[value.notNullTestGroup]) {
-                    $scope.testGroups.group.package.data[value.notNullTestGroup] = [];
-                }
-                $scope.testGroups.group.package.data[value.notNullTestGroup].push(value);
-
-                if(! $scope.testGroups.group.class.data[value.testClass]) {
-                    $scope.testGroups.group.class.data[value.testClass] = [];
-                }
-                $scope.testGroups.group.class.data[value.testClass].push(value);
+                addGroupingItem(value);
             });
+        };
+
+        function addGroupingItem(test) {
+            if(! $scope.testGroups.group.package.data[test.notNullTestGroup] && test.notNullTestGroup) {
+                $scope.testGroups.group.package.data[test.notNullTestGroup] = [];
+            }
+            if(! $scope.testGroups.group.class.data[test.testClass] && test.testClass) {
+                $scope.testGroups.group.class.data[test.testClass] = [];
+            }
+            var groupPackageIndex = $scope.testGroups.group.package.data[test.notNullTestGroup].indexOfField('id', test.id);
+            var classPackageIndex = $scope.testGroups.group.class.data[test.testClass].indexOfField('id', test.id);
+
+            if(groupPackageIndex != -1) {
+                $scope.testGroups.group.package.data[test.notNullTestGroup].splice(groupPackageIndex, 1, test);
+            } else {
+                $scope.testGroups.group.package.data[test.notNullTestGroup].push(test);
+            }
+            if(classPackageIndex != -1) {
+                $scope.testGroups.group.class.data[test.testClass].splice(classPackageIndex, 1, test);
+            } else {
+                $scope.testGroups.group.class.data[test.testClass].push(test);
+            }
         };
 
         function collectTags(tests) {
@@ -1618,7 +1642,7 @@
                     testRun.expand = true;
                     $scope.expandedTestRuns.push(testRun.id);
                     $scope.subscribtions[testRun.id] = $scope.subscribeTestsTopic(testRun.id);
-                    $scope.tr= testRun;
+                    $scope.tr = testRun;
                 });
             } else {
                 $tableExpandUtil.compress().then(function (rs) {
