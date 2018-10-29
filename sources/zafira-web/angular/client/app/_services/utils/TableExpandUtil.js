@@ -12,7 +12,7 @@
             compress: compress
         };
 
-        var LOCATORS_TO_HIDE = ['.result:not(.main-row), md-input-container, .search-filter-body, .fixed-search-column, #pagination'];
+        var LOCATORS_TO_HIDE = ['.page .result:not(.main-row), .page md-input-container, .page .search-filter-body, .page .fixed-search-column, .page #pagination'];
         var rootElements = $("html, body");
         var offsetTop;
         var headerHeight;
