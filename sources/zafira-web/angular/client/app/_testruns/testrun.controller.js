@@ -752,62 +752,66 @@
         };
 
         $scope.search = function (page, pageSize) {
-            $scope.sc.date = null;
-            $scope.sc.toDate = null;
-            $scope.sc.fromDate = null;
-            $scope.selectAll = false;
+            return $q(function (resolve, reject) {
+                $scope.sc.date = null;
+                $scope.sc.toDate = null;
+                $scope.sc.fromDate = null;
+                $scope.selectAll = false;
 
-            $scope.sc.page = page;
+                $scope.sc.page = page;
 
-            $scope.expandedTestRuns = [];
+                $scope.expandedTestRuns = [];
 
-            if (pageSize) {
-                $scope.sc.pageSize = pageSize;
-            }
+                if (pageSize) {
+                    $scope.sc.pageSize = pageSize;
+                }
 
-            if ($scope.testRunId) {
-                $scope.sc.id = $scope.testRunId;
-                switchMode(0);
-            }
-            else {
-                $scope.sc = ProjectProvider.initProjects($scope.sc);
-            }
+                if ($scope.testRunId) {
+                    $scope.sc.id = $scope.testRunId;
+                    switchMode(0);
+                }
+                else {
+                    $scope.sc = ProjectProvider.initProjects($scope.sc);
+                }
 
-            fillFastSearchSc();
+                fillFastSearchSc();
 
-            fillDateSc($scope.selectedRange);
+                fillDateSc($scope.selectedRange);
 
-           var filterQuery = $scope.selectedFilterId ? '?filterId=' + $scope.selectedFilterId : undefined;
+                var filterQuery = $scope.selectedFilterId ? '?filterId=' + $scope.selectedFilterId : undefined;
 
-            TestRunService.searchTestRuns($scope.sc, filterQuery).then(function(rs) {
-                if(rs.success)
-                {
-                    var data = rs.data;
+                TestRunService.searchTestRuns($scope.sc, filterQuery).then(function(rs) {
+                    if(rs.success)
+                    {
+                        var data = rs.data;
 
-                    $scope.sr = rs.data;
+                        $scope.sr = rs.data;
 
-                    $scope.testRuns = {};
-                    $scope.selectedTestRuns = {};
+                        $scope.testRuns = {};
+                        $scope.selectedTestRuns = {};
 
-                    $scope.sc.page = data.page;
-                    $scope.sc.pageSize = data.pageSize;
-                    $scope.totalResults = data.totalResults;
+                        $scope.sc.page = data.page;
+                        $scope.sc.pageSize = data.pageSize;
+                        $scope.totalResults = data.totalResults;
 
-                    for (var i = 0; i < data.results.length; i++) {
-                        var testRun = data.results[i];
-                        var browserVersion = splitPlatform(data.results[i].platform);
-                        if(!browserVersion && data.results[i].config && data.results[i].config.browserVersion !== '*') {
-                            browserVersion = data.results[i].config.browserVersion
+                        for (var i = 0; i < data.results.length; i++) {
+                            var testRun = data.results[i];
+                            var browserVersion = splitPlatform(data.results[i].platform);
+                            if(!browserVersion && data.results[i].config && data.results[i].config.browserVersion !== '*') {
+                                browserVersion = data.results[i].config.browserVersion
+                            }
+                            testRun.browserVersion = browserVersion;
+                            testRun.tests = null;
+                            $scope.addTestRun(testRun);
                         }
-                        testRun.browserVersion = browserVersion;
-                        testRun.tests = null;
-                        $scope.addTestRun(testRun);
+                        resolve(rs);
                     }
-                }
-                else
-                {
-                    console.error(rs.message);
-                }
+                    else
+                    {
+                        console.error(rs.message);
+                        reject(rs);
+                    }
+                });
             });
         };
 
@@ -1722,7 +1726,13 @@
         (function init() {
             toSc($location.search());
             $scope.initWebsocket();
-            $scope.search(1);
+            $scope.search(1).then(function () {
+                if($scope.testRunId) {
+                    $timeout(function () {
+                        $scope.switchTestRunExpand($scope.testRuns[$scope.tr.id], true);
+                    }, 0, false);
+                }
+            });
             $scope.populateSearchQuery();
             var loadFilterDataPromises = [];
             loadFilterDataPromises.push($scope.loadEnvironments());
@@ -1784,11 +1794,6 @@
 
         this.$onInit = function () {
             $scope.$broadcast('controller-inited', 'TestRunListController');
-            if($scope.testRunId) {
-                $timeout(function () {
-                    $scope.switchTestRunExpand($scope.testRuns[$scope.tr.id], true);
-                }, 0, false);
-            }
         };
     }
 
