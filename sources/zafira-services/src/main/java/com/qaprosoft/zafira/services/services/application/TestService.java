@@ -353,7 +353,7 @@ public class TestService
 	public Test updateTest(Test test) throws ServiceException
 	{
 		testMapper.updateTest(test);
-		addTags(test.getTags(), test.getId());
+		updateTags(test.getTags(), test.getId());
 		return test;
 	}
 
@@ -592,6 +592,12 @@ public class TestService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
+	public void updateTags(Set<Tag> tags, Long testId) throws ServiceException {
+		deleteTags(testId);
+		addTags(tags, testId);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	public void addTags(Set<Tag> tags, Long testId) throws ServiceException {
 		if(tags != null && tags.size() > 0) {
 			tags = tagService.createTags(tags);
@@ -610,6 +616,11 @@ public class TestService
 	public int getTestMessageHashCode(String message)
 	{
 		return message != null ? message.replaceAll("\\d+", "*").replaceAll("\\[.*\\]", "*").hashCode() : 0;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteTags(Long testId) {
+		testMapper.deleteTags(testId);
 	}
 
 	public List<Long> getTestIds(List<Test> tests)

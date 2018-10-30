@@ -59,7 +59,9 @@ public interface TestMapper
 	void deleteTest(Test test);
 
 	void deleteTag(@Param(value = "testId") Long testId, @Param(value = "tagId") Long tagId);
-	
+
+	void deleteTags(@Param(value = "testId") Long testId);
+
 	List<Test> searchTests(TestSearchCriteria sc);
 	
 	Integer getTestsSearchCount(TestSearchCriteria sc);
