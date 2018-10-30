@@ -457,6 +457,10 @@
 
             test.elapsed = test.finishTime != null ? (test.finishTime - test.startTime) : Number.MAX_VALUE;
 
+            test.artifactsToShow = test.artifacts.filter(function (artifact) {
+                return ! artifact.name.toLowerCase().includes('live') && ! artifact.name.toLowerCase().includes('video');
+            });
+
             var testRun = $scope.testRuns[test.testRunId];
             var testId = test.id;
             if (testRun == null) {

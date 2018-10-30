@@ -154,6 +154,9 @@
         };
 
         function watchUntilPainted(elementLocator, func) {
+            if(painterWatcher) {
+                painterWatcher();
+            }
             painterWatcher = $rootScope.$watch(function() { return angular.element(elementLocator).is(':visible') }, function(newVal) {
                 if(newVal) {
                     func.call(this, elementLocator);
