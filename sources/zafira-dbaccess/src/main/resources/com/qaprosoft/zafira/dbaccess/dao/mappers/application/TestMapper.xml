@@ -415,6 +415,13 @@
 			WHERE TEST_ID = #{testId} AND TAG_ID = #{tagId}
 		]]>
 	</delete>
+
+	<delete id="deleteTags">
+		<![CDATA[
+			DELETE FROM TEST_TAGS
+			WHERE TEST_ID = #{testId}
+		]]>
+	</delete>
 	
 	<resultMap type="com.qaprosoft.zafira.models.db.Test" id="TestResultMap" autoMapping="false">
 		<id column="TEST_ID" property="id" />
