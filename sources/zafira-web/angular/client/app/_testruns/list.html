@@ -611,13 +611,13 @@
                                                         </td>
                                                         <td>
                                                             <div class="align-middle align-right" ng-if="test.status != 'QUEUED'">
-                                                                <div data-ng-show="test.artifacts.length">
+                                                                <div data-ng-show="test.artifactsToShow.length">
                                                                     <md-menu>
                                                                         <md-button name="testArtifacts" aria-label="Test artifacts" class="md-icon-button" ng-click="$mdMenu.open($event);">
                                                                             <md-icon class="material-icons">attachment</md-icon>
                                                                         </md-button>
                                                                         <md-menu-content>
-                                                                            <md-menu-item ng-repeat="artifact in test.artifacts | filter : { name : '!Live' }">
+                                                                            <md-menu-item ng-repeat="artifact in test.artifactsToShow">
                                                                                 <md-button href="{{artifact.link}}" class="artifact-button" target="blank" name="artifact">{{artifact.name}}</md-button>
                                                                             </md-menu-item>
                                                                         </md-menu-content>

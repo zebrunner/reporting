@@ -126,6 +126,30 @@
             }
             return true;
         };
+        Blob.prototype.download = function (filename) {
+            var link = angular.element('<a>')
+                .attr('style', 'display: none')
+                .attr('href', window.URL.createObjectURL(this))
+                .attr('download', filename.getValidFilename())
+                .appendTo('body');
+            link[0].click();
+            link.remove();
+        };
+        String.prototype.zip = function (objectArray) {
+            var name = this;
+            var zip = new JSZip();
+            var data = zip.folder(name);
+            angular.forEach(objectArray, function (blob, blobName) {
+                data.file(blobName.getValidFilename(), blob, {base64: true});
+            });
+            zip.generateAsync({type:"blob"})
+                .then(function(content) {
+                    content.download(name + '.zip');
+                });
+        };
+        String.prototype.getValidFilename = function () {
+            return this.replace(/[/\\?%*:|"<>]/g, '-');
+        };
     }
     ]).directive('ngReallyClick', [function() {
         return {

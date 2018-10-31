@@ -20,6 +20,10 @@
         <md-icon aria-label="Close dialog">fullscreen</md-icon>
         <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'F' to start fullscreen</md-tooltip>
     </md-button>
+    <md-button id="download" class="md-icon-button gallery-container-controls_download-button" ng-click="download(image.path, image.log)">
+        <md-icon aria-label="Close dialog">cloud_download</md-icon>
+        <md-tooltip class="gallery-container-controls_gallery-tooltip" md-direction="bottom">Press 'S' to download image</md-tooltip>
+    </md-button>
     <md-button ng-show="image.rightNeed" id="right" class="md-icon-button gallery-container-controls_right-button" data-ng-click="right(true)">
         <md-icon aria-label="Close dialog">chevron_right</md-icon>
     </md-button>
