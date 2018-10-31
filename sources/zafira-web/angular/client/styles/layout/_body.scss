@@ -1995,52 +1995,66 @@ md-ink-bar {
   overflow-y: auto !important;
 }
 
-.table-history table {
-  height: 100%;
-  overflow: auto;
-
-  tbody {
-    display: block;
-    overflow-y: auto;
-    width: 100% !important;
-      /*@media (max-width:991px) {
-        height: 167px !important;
-      }*/
-  }
-
-    thead {
-        height: 32px !important;
+.table-history {
+    th:first-child {
+        width: 95px !important;
     }
+    &_download-zip {
+        min-height: 20px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: 20px !important;
+        width: 20px !important;
+        min-width: 20px !important;
+        display: inline-block;
+    }
+    table {
+        height: 100%;
+        overflow: auto;
 
-  tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    min-height: 32px;
-    text-align: left !important;
-
-    td, th {
-      padding: 4px 15px !important;
-      vertical-align: middle !important;
-      font-size: 12px;
-      word-wrap: break-word;
-
-      &:nth-child(1),
-      &:nth-child(2) {
-        width: 80px;
-        text-align: center;
-      }
-
-      & .material-icons {
-        color: $gray-light;
-        font-size: 18px !important;
-
-        &:hover {
-          cursor: pointer;
+        tbody {
+            display: block;
+            overflow-y: auto;
+            width: 100% !important;
+            /*@media (max-width:991px) {
+              height: 167px !important;
+            }*/
         }
-      }
+
+        thead {
+            height: 32px !important;
+        }
+
+        tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            min-height: 32px;
+            text-align: left !important;
+
+            td, th {
+                padding: 4px 15px !important;
+                vertical-align: middle !important;
+                font-size: 12px;
+                word-wrap: break-word;
+
+                &:nth-child(1),
+                &:nth-child(2) {
+                    width: 80px;
+                    text-align: center;
+                }
+
+                & .material-icons {
+                    color: $gray-light;
+                    font-size: 18px !important;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
     }
-  }
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) {
@@ -2172,6 +2186,11 @@ td.settings-cell {
     &_fullscreen-button {
         top: 5px;
         right: 49px;
+    }
+
+    &_download-button {
+        top: 5px;
+        right: 93px;
     }
 
     &_right-button {

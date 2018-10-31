@@ -3,10 +3,10 @@
 
     angular
         .module('app.testruninfo')
-        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', '$stateParams', 'OFFSET', 'API_URL', '$state', '$httpMock', 'TestRunsStorage', TestRunInfoController])
+        .controller('TestRunInfoController', ['$scope', '$rootScope', '$http', '$mdDialog', '$interval', '$log', '$filter', '$anchorScroll', '$location', '$timeout', '$window', '$q', 'ElasticsearchService', 'TestService', 'TestRunService', 'UtilService', 'ArtifactService', 'DownloadService', '$stateParams', 'OFFSET', 'API_URL', '$state', '$httpMock', 'TestRunsStorage', TestRunInfoController])
 
     // **************************************************************************
-    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, $stateParams, OFFSET, API_URL, $state, $httpMock, TestRunsStorage) {
+    function TestRunInfoController($scope, $rootScope, $http, $mdDialog, $interval, $log, $filter, $anchorScroll, $location, $timeout, $window, $q, ElasticsearchService, TestService, TestRunService, UtilService, ArtifactService, DownloadService, $stateParams, OFFSET, API_URL, $state, $httpMock, TestRunsStorage) {
 
         const TENANT = $rootScope.globals.auth.tenant;
 
@@ -426,6 +426,23 @@
             return 0;
         }
 
+        $scope.downloadAll = function() {
+            var result = {};
+            var attempts = Object.size($scope.thumbs);
+            angular.forEach($scope.thumbs, function (thumb, key) {
+                DownloadService.plainDownload(thumb.path).then(function (rs) {
+                    if(rs.success) {
+                        result[thumb.log + '.png'] = rs.res.data;
+                    }
+                    attempts --;
+                    if(attempts == 0) {
+                        var name = $scope.test.id + '. ' + $scope.test.name;
+                        name.zip(result);
+                    }
+                });
+            })
+        };
+
         $scope.showGalleryDialog = function (event, url) {
             $mdDialog.show({
                 controller: GalleryController,
@@ -663,7 +680,7 @@
         })();
     }
 
-    function GalleryController($scope, $mdDialog, $q, url, ciRunId, test, thumbs) {
+    function GalleryController($scope, $mdDialog, $q, DownloadService, url, ciRunId, test, thumbs) {
 
         $scope.thumbs = Object.values(thumbs).sort(compareByIndex);
 
@@ -708,7 +725,8 @@
                 RIGHT = 39,
                 DOWN = 40,
                 ESC = 27,
-                F_KEY = 70;
+                F_KEY = 70,
+                S_KEY = 83;
 
             switch (keyCodeNumber) {
                 case LEFT:
@@ -725,6 +743,9 @@
                     break;
                 case F_KEY:
                     $scope.fullscreen();
+                    break;
+                case S_KEY:
+                    $scope.download($scope.image.path, $scope.image.log);
                     break;
                 default:
                     break;
@@ -789,6 +810,15 @@
                 thumbIndex--;
                 setImage();
             }
+        };
+
+        $scope.download = function(url, filename) {
+            DownloadService.plainDownload(url).then(function (rs) {
+                if(rs.success) {
+                    var blob = rs.res.data;
+                    blob.download(filename + '.png');
+                }
+            });
         };
 
         $scope.hide = function() {
