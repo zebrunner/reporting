@@ -28,6 +28,12 @@
 
         initDefaults();
 
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
+            if(painterWatcher) {
+                painterWatcher();
+            }
+        });
+
         return service;
 
         function expand(id, quick) {
@@ -175,6 +181,9 @@
             rectangleRow = {};
             tableHeader = {};
             elementsToHide = [];
+            if(painterWatcher) {
+                painterWatcher();
+            }
         };
     }
 })();

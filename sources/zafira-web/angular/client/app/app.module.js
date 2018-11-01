@@ -812,7 +812,7 @@
                 '        <div name="passed" class="test-run-group_group-items_item PASSED" ng-click="changeStatus($event);"></div>\n' +
                 '        <div name="aborted" class="test-run-group_group-items_item ABORTED" ng-click="changeStatus($event);"></div>\n' +
                 '        <div name="queued" class="test-run-group_group-items_item QUEUED" ng-click="changeStatus($event);"></div>\n' +
-                '        <div name="inprogress" class="test-run-group_group-items_item IN_PROGRESS" ng-click="changeStatus($event);"></div>\n' +
+                '        <div name="in_progress" class="test-run-group_group-items_item IN_PROGRESS" ng-click="changeStatus($event);"></div>\n' +
                 '      </div>',
             replace: true,
             link: function (scope, iElement, iAttrs, ngModel) {
