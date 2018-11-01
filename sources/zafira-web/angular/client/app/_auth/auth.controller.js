@@ -17,8 +17,6 @@
 
         $scope.invitation = {};
 
-        $scope.roboFooter = 'app/_auth/robo-footer.html';
-
         $scope.getInvitation = function (token) {
             InvitationService.getInvitation(token).then(function (rs) {
                 if(rs.success) {
@@ -62,7 +60,7 @@
             credentials.userId = 0;
             AuthService.resetPassword(credentials, token).then(function (rs) {
                 if(rs.success) {
-                    alertify.success('Was reset successfully.');
+                    alertify.success('Your password was changed successfully');
                     $state.go('signin');
                 } else {
                     alertify.error(rs.message);
