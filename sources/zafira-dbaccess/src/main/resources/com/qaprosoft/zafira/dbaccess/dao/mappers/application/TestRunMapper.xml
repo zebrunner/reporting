@@ -430,7 +430,14 @@
     </select>
 
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
-		<![CDATA[ SELECT * FROM NIGHTLY_VIEW NV ]]>
+        <![CDATA[
+        SELECT
+               NV.UPSTREAM_JOB_ID AS NIGHLTY_VIEW_UPSTREAM_JOB_ID,
+               NV.UPSTREAM_JOB_BUILD_NUMBER AS NIGHLTY_VIEW_UPSTREAM_JOB_BUILD_NUMBER,
+               NV.JOB_NAME AS JOB_NAME
+        FROM
+             NIGHTLY_VIEW NV
+        ]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}]]>
