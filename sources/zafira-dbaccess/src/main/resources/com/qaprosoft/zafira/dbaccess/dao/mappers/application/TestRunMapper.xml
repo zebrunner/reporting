@@ -432,9 +432,11 @@
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
         <![CDATA[
         SELECT
-               NV.UPSTREAM_JOB_ID AS NIGHLTY_VIEW_UPSTREAM_JOB_ID,
-               NV.UPSTREAM_JOB_BUILD_NUMBER AS NIGHLTY_VIEW_UPSTREAM_JOB_BUILD_NUMBER,
-               NV.JOB_NAME AS JOB_NAME
+               NV.UPSTREAM_JOB_ID AS UPSTREAM_JOB_ID,
+               NV.UPSTREAM_JOB_BUILD_NUMBER AS UPSTREAM_JOB_BUILD_NUMBER,
+               NV.JOB_NAME AS JOB_NAME,
+               NV.JOB_URL AS JOB_URL,
+               NV.JobBuild AS JobBuild
         FROM
              NIGHTLY_VIEW NV
         ]]>
