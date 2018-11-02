@@ -438,7 +438,7 @@
                NV.JOB_URL,
                NV.JobBuild,
                NV.TEST_SUITE_NAME,
-               NV.TESR_RUN_ID
+               NV.TEST_RUN_ID
         FROM
              NIGHTLY_VIEW NV
         ]]>
