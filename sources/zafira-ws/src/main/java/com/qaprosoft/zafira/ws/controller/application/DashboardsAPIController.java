@@ -224,7 +224,7 @@ public class DashboardsAPIController extends AbstractController
 						email.getHostname(),
 						accessToken,
 						projects,
-						By.id("dashboard_content"),
+						"#dashboard_content",
 						By.id("dashboard_title"),
 						dimension,
 						By.id("main-fab"), By.id("header"));

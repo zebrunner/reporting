@@ -56,7 +56,7 @@ public class SeleniumService
 	private String seleniumURL;
 
 	public List<Attachment> captureScreenshoots(List<String> urls, String domain, String auth, String projects,
-			By areaLocator, By titleLocator, Dimension dimension, By... toHideLocators) throws ServiceException
+			String areaLocator, By titleLocator, Dimension dimension, By... toHideLocators) throws ServiceException
 	{
 		List<Attachment> attachments = new ArrayList<>();
 		
@@ -88,7 +88,7 @@ public class SeleniumService
 
 				hideElements(wd, toHideLocators);
 
-				BufferedImage screenshot = WebDriverUtil.takeScreenShot(wd, wd.findElement(areaLocator));
+				BufferedImage screenshot = WebDriverUtil.takeScreenShot(wd, areaLocator);//WebDriverUtil.takeScreenShot(wd, wd.findElement(areaLocator));
 				File screenshotDocument = saveImage(screenshot);
 
 				String name = screenshotDocument.getName();

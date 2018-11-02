@@ -16,8 +16,12 @@
 package com.qaprosoft.zafira.services.util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -30,9 +34,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
+import sun.misc.BASE64Decoder;
+
+import javax.imageio.ImageIO;
 
 public class WebDriverUtil
 {
+
+	private static final Logger LOGGER = Logger.getLogger(WebDriverUtil.class);
 
 	private static final Long IMPLICITY_TIMEOUT = 30L;
 
@@ -98,6 +107,30 @@ public class WebDriverUtil
 	public static boolean isPageLoadingWithAnimation(final WebDriver wd)
 	{
 		return isElementPresent(wd, By.xpath("//*[@id = 'loader-container' and contains(@style, 'display: none')]"), 5);
+	}
+
+	public static BufferedImage takeScreenShot(final WebDriver driver, final String locator) {
+
+		JavascriptExecutor js = null;
+		String script = "";
+		BufferedImage result = null;
+		try
+		{
+			js = (JavascriptExecutor) driver;
+			script = FileUtils.readFileToString(new File(WebDriverUtil.class.getClassLoader().getResource("scripts/canvas.reader.js").getFile()));
+			String image = (String) js.executeAsyncScript(script + "crop();", locator);
+			ByteArrayInputStream bis = new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(image.substring(image.indexOf(",") + 1)));
+			result = ImageIO.read(bis);
+		}
+		catch(Exception e)
+		{
+			LOGGER.error(e.getMessage(), e);
+		}
+		finally
+		{
+			js.executeScript(script + "deleteImage();");
+		}
+		return result;
 	}
 
 	public static boolean isElementPresent(final WebDriver wd, final By by, final long timeoutOutInSeconds)

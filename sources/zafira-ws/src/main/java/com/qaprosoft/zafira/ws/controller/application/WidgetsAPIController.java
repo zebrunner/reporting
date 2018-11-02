@@ -244,7 +244,7 @@ public class WidgetsAPIController extends AbstractController
 						email.getHostname(),
 						accessToken,
 						projects,
-						By.id("widget-container-" + widgetId),
+						"#widget-container-" + widgetId,
 						By.id("widget-title-" + widgetId),
 						dimension);
 				if(attachments.size() == 0)
