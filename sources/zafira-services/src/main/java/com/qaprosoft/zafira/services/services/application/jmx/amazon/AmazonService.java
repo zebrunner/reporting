@@ -238,7 +238,7 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
 
     @Override
     public Date getMaxExpirationDate() {
-        return DateUtils.addDays(new Date(), 7);
+        return DateUtils.addDays(new Date(), 6);
     }
 
     @ManagedAttribute(description = "Get current amazon entity")
