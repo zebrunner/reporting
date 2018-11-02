@@ -65,7 +65,7 @@ public class EmailService
 
 		if(! settingsService.isConnected(EMAIL))
 		{
-			throw new IntegrationException("SMTP server connection is refused.");
+			return null;
 		}
 
 		final String text = freemarkerUtil.getFreeMarkerTemplateContent(message.getType().getTemplateName(), message);
