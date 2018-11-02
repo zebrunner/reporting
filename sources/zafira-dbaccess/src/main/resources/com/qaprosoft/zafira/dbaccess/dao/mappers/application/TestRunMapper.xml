@@ -432,17 +432,20 @@
 	<select id="getJobsTestRuns" resultMap="NightlyViewResultMap">
         <![CDATA[
         SELECT
-               NV.UPSTREAM_JOB_ID AS UPSTREAM_JOB_ID,
-               NV.UPSTREAM_JOB_BUILD_NUMBER AS UPSTREAM_JOB_BUILD_NUMBER,
-               NV.JOB_NAME AS JOB_NAME,
-               NV.JOB_URL AS JOB_URL,
-               NV.JobBuild AS JobBuild
+               NV.UPSTREAM_JOB_ID,
+               NV.UPSTREAM_JOB_BUILD_NUMBER,
+               NV.JOB_NAME,
+               NV.JOB_URL,
+               NV.JobBuild,
+               NV.TEST_SUITE_NAME,
+               NV.TESR_RUN_ID
         FROM
              NIGHTLY_VIEW NV
         ]]>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
-                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}]]>
+                      AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
+                      AND NV.ELAPSED IS NOT NULL ]]>
 			<if test="null != scmURL">
 				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
 			</if>
