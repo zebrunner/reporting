@@ -445,7 +445,7 @@
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<![CDATA[ AND NV.UPSTREAM_JOB_ID = #{upstreamJobId}
                       AND NV.UPSTREAM_JOB_BUILD_NUMBER = #{upstreamJobBuildNumber}
-                      AND NV.ELAPSED IS NOT NULL ]]>
+                      AND NV.TEST_RUN_STATUS <> 'IN_PROGRESS' ]]>
 			<if test="null != scmURL">
 				<![CDATA[ AND LOWER(NV.SCM_URL) LIKE LOWER(CONCAT('%', #{scmURL}, '%')) ]]>
 			</if>
