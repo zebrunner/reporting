@@ -413,6 +413,7 @@ CREATE VIEW NIGHTLY_VIEW AS (
           TEST_SUITES.USER_ID AS JOB_OWNER_ID,
           TEST_SUITES.NAME AS TEST_SUITE_NAME,
           TEST_RUNS.ID AS TEST_RUN_ID,
+          TEST_RUNS.STATUS AS TEST_RUN_STATUS,
           TEST_RUNS.BUILD_NUMBER As JobBuild,
           '<a href="' || JOBS.JOB_URL  || '/' || CAST(TEST_RUNS.BUILD_NUMBER AS text) || '/eTAF_Report' || '" target="_blank">' || JOBS.NAME || '</a>' as eTAF_Report,
           '<a href="' || JOBS.JOB_URL  || '/' || CAST(TEST_RUNS.BUILD_NUMBER AS text) || '/rebuild/parameterized' || '" target="_blank">Rebuild</a>' as Rebuild,
