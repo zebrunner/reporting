@@ -1,8 +1,8 @@
-<header zafira-background-theme="table" class="top-header clearfix">
+<header zafira-background-theme="header" class="top-header clearfix">
     <div ui-preloader></div>
 
     <!-- Logo -->
-    <div zafira-background-theme="table" class="logo bg-white" ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
+    <div zafira-background-theme="header" class="logo bg-white" ng-class="{ 'teal-dark': ['11','31'].indexOf(main.skin) >= 0,
                      'bg-white': main.skin === '21',
                      'bg-primary': ['12','22','32'].indexOf(main.skin) >= 0,
                      'bg-success': ['13','23','33'].indexOf(main.skin) >= 0,
@@ -10,11 +10,11 @@
                      'bg-warning': ['15','25','35'].indexOf(main.skin) >= 0,
                      'bg-danger': ['16','26','36'].indexOf(main.skin) >= 0 }">
         <a href="#!/">
-            <span class="logo-icon"><img src="assets/images/zafira-logo-color.svg"/></span>
+            <span class="logo-icon"><img src="assets/images/zafira_white_logo.svg"/></span>
         </a>
     </div>
 
-    <div zafira-background-theme="table" class="top-nav" ng-controller="SidebarController">
+    <div zafira-background-theme="header" class="top-nav" ng-controller="SidebarController">
         <ul class="nav-right pull-right list-unstyled">
             <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
                 <div class="profile-img hide-phone" style="display: inline-block;" ng-controller="SidebarController">
