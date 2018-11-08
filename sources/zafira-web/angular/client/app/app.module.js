@@ -309,6 +309,9 @@
                 var getTheme = function (mainSkinValue) {
                     var themeBackgroundClass;
                     switch (element) {
+                        case 'header':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-darkgreen' : 'background-green';
+                            break;
                         case 'graph':
                             themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;

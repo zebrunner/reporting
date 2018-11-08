@@ -89,7 +89,7 @@
                 padding-left: 20px;
             }
             .logo-icon {
-                font-size: 19px;
+                //font-size: 19px;
             }
             .logo-text {}
 
@@ -99,8 +99,8 @@
             }
             img {
 
-                height: 36px;
-                width: 36px;
+                height: 28px;
+                width: 28px;
             }
         }
 
@@ -483,6 +483,12 @@
             &:hover {
                 color: $text-color;
             }
+        }
+    }
+
+    .profile-img, .header-btn {
+        i.material-icons,  > small {
+            color: white !important;
         }
     }
 
