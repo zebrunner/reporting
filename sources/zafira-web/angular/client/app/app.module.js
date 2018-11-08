@@ -22,6 +22,7 @@
         ,'app.sidebar'
         // 3rd party feature modules
         ,'ngImgCrop'
+        ,'ngecharts'
         ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
