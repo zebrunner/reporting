@@ -68,6 +68,7 @@ body > div {
 
 #main-fab, .lonely-fab button {
     position: fixed;
+    z-index: 1;
     @media (min-width: $screen-sm) {
         right: 90px;
         bottom: 70px;
@@ -164,9 +165,18 @@ md-input-container.searchable.select {
 }
 
 .widget-icon {
-    font-size: 22px;
+    font-size: 21px;
     padding: 1px;
-    color: #474a5b;
+    color: black;
+    opacity: 0.25;
+    @media(max-width: $screen-phone) {
+        opacity: 0.5;
+    }
+    padding-right: 6px;
+
+    &:hover {
+        opacity: 0.5;
+    }
 }
 .expand-button {
     position: relative;
@@ -189,13 +199,25 @@ tr.result:hover .expand-button {
   opacity: 1;
 }*/
 
-.show-icon-on-hover {
-    display: none !important;
+@media(min-width: $screen-md) {
+    .show-icon-on-hover {
+        display: none !important;
+    }
+}
+
+.grid-stack-item {
+    .panel-default > .panel-heading {
+        background-color: inherit !important;
+        border-bottom-color: white !important;
+        font-weight: 500;
+        letter-spacing: 0.1px;
+        padding: 16px 20px 16px 23px;
+    }
 }
 
 md-chip:hover .show-icon-on-hover,
 .show-on-hover:hover .show-icon-on-hover{
-    display: inline-block !important;
+   display: inline-block !important;
 }
 
 .tests-loading-spinner {
@@ -906,17 +928,29 @@ ul.profile-image-actions {
     position: relative;
 }
 
-.profile-img:hover .profile-hovered {
-    -webkit-transition: opacity 200ms linear;
-    -moz-transition: opacity 200ms ease-in-out;
-    -ms-transition: opacity 200ms ease-in-out;
-    -o-transition: opacity 200ms ease-in-out;
-    opacity: 0.5;
+@media(min-width: $screen-phone) {
+    .profile-img:hover .profile-hovered.profile-hovered-full {
+        opacity: 0 !important;
+    }
+
+    .profile-img:hover .profile-hovered {
+        -webkit-transition: opacity 50ms linear;
+        -moz-transition: opacity 50ms ease-in-out;
+        -ms-transition: opacity 50ms ease-in-out;
+        -o-transition: opacity 50ms ease-in-out;
+        opacity: 0.5;
+    }
 }
 
 .profile-img:hover .profile-img-content {
     display: block;
     opacity: 1;
+}
+
+.profile-img:hover .profile-img-content-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 /*Chips*/
@@ -1824,7 +1858,7 @@ md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder sp
 }
 
 .tests-info-container {
-    height: calc(100% - 49px);
+    height: calc(100% - 48px);
 }
 
 .test-info-section {
@@ -2193,7 +2227,7 @@ td.settings-cell {
 
     &_fullscreen-button {
         top: 5px;
-        right: 49px;
+        right: 48px;
     }
 
     &_download-button {
@@ -2727,5 +2761,127 @@ $light-inprogress: #68c9fd;
 .integration-actions {
     > * {
         display: inline-block;
+    }
+}
+
+.fixed-page-header {
+    position: fixed;
+    height: $header-height;
+    width: calc(100% - 60px);
+    right: 0;
+    background-color: white;
+    z-index: 1;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+
+    @media(max-width: $screen-phone) {
+        width: 100%;
+    }
+
+    &-container {
+        height: 100%;
+        padding-left: 24px;
+        padding-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        > div {
+            white-space: nowrap;
+            display: inline-block;
+            margin: 0;
+            font-size: 0;
+        }
+
+        &_title {
+            font-size: 20px !important;
+            word-break: normal;
+            color: black;
+            width: 100%;
+        }
+
+        &_button {
+            width: 175px;
+            @media(max-width: $screen-phone) {
+                width: 36px;
+            }
+            > i {
+                color: $dark;
+            }
+            > button {
+                border: none !important;
+                float: right;
+                padding: 0 16px 0 6px;
+                height: 36px;
+                border-radius: 3px;
+                background-color: rgba(38, 166, 154, 0.1);
+                transition: background-color 0.15s linear;
+                color: $dark-light;
+                text-transform: uppercase;
+                font-size: 14px;
+                font-weight: bold;
+                line-height: 36px;
+                > .material-icons {
+                    font-size: 18px;
+                    line-height: 23px;
+                }
+                @media(max-width: $screen-phone) {
+                    float: none;
+                    width: 36px;
+                    padding: 0;
+                    > span {
+                        display: none;
+                    }
+                }
+
+                &:hover {
+                    background-color: rgba(38, 166, 154, 0.35);
+
+                    color: black;
+                    > .material-icons {
+                        color: black;
+                    }
+                }
+            }
+        }
+
+        &_options {
+            width: 140px;
+            > div {
+                text-align: end;
+                i {
+                    color: black;
+                    opacity: 0.5;
+                    font-size: 20px;
+                    &:not(:last-child) {
+                        padding-right: 22px;
+                        @media(max-width: $screen-phone) {
+                            padding-right: 5px;
+                        }
+                    }
+                    &:last-child {
+                        padding-right: 24px;
+                        @media(max-width: $screen-phone) {
+                            padding-right: 6px;
+                        }
+                    }
+
+                    &:hover {
+                        opacity: 0.9;
+                    }
+
+                    @media(max-width: $screen-phone) {
+                        opacity: 0.5;
+                    }
+                }
+                md-menu {
+                    float: right;
+                    width: 22px;
+                }
+            }
+        }
+    }
+
+    + div {
+        padding-top: $header_height;
     }
 }

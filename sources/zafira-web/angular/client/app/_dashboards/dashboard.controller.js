@@ -290,7 +290,7 @@
             }
         };
 
-        $scope.deleteDashboard = function(dashboard){
+        /*$scope.deleteDashboard = function(dashboard){
             var confirmedDelete = confirm('Would you like to delete dashboard "' + dashboard.title + '"?');
             if (confirmedDelete) {
                 DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
@@ -305,7 +305,7 @@
                 });
             }
             $scope.hide();
-        };
+        };*/
 
         $scope.showDashboardWidgetDialog = function (event, widget, isNew) {
             $mdDialog.show({
@@ -668,6 +668,23 @@
             });
         };
 
+        $scope.deleteDashboard = function(dashboard){
+            var confirmedDelete = confirm('Would you like to delete dashboard "' + dashboard.title + '"?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Dashboard deleted");
+                        var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
+                        window.open(mainDashboard, '_self');
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            $scope.hide();
+        };
+
          // Dashboard attributes
         $scope.createAttribute = function(attribute){
             DashboardService.CreateDashboardAttribute(dashboard.id, attribute).then(function (rs) {
@@ -707,7 +724,9 @@
         };
 
         $scope.hide = function (result, action) {
-            result.action = action;
+            if(result) {
+                result.action = action;
+            }
             $mdDialog.hide(result);
         };
         $scope.cancel = function () {
