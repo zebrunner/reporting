@@ -15,6 +15,9 @@
 
         #nav-container {
             width: $sidebar_width;
+            @media(max-width: $screen-phone) {
+                width: $sidebar_phone_width;
+            }
             @media (max-width: $screen-phone) {
                 &:not(.toggle-bottom) {
                     width: 0;
@@ -23,7 +26,7 @@
                             display: none !important;
                         }
                         >li:first-child {
-                            width: $sidebar_width;
+                            width: $sidebar_phone_width;
                         }
                     }
                 }
@@ -33,6 +36,9 @@
                         >li:first-child {
                             transition: none !important;
                             width: $sidebar_width;
+                            @media(max-width: $screen-phone) {
+                                width: $sidebar_phone_width;
+                            }
                         }
                         > li:not(:first-child) {
                             animation: iconsShowing 0.1s linear;
@@ -47,7 +53,7 @@
                 width: 0;
             }
             to {
-                width: $sidebar_width;
+                width: $sidebar_phone_width;
             }
         }
 
@@ -98,7 +104,9 @@
 
                     > i {
                         margin: 0;
-                        font-size: 22px;
+                        @media(min-width: $screen-phone) {
+                            font-size: 22px;
+                        }
                     }
                     > span {
                         display: none;
@@ -127,9 +135,9 @@
 
                     @media (max-width: $screen-phone) {
                         position: fixed;
-                        left: 60px;
-                        top: $header_height + 1px;
-                        width: calc(100% - 60px) !important;
+                        left: $sidebar_phone_width;
+                        top: $header_height;
+                        width: calc(100% - 48px) !important;
                         //height: 100%;
                     }
 

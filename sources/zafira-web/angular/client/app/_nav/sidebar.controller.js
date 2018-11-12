@@ -134,6 +134,17 @@
             }
         });
 
+        $scope.$on("$mdMenuOpen", function(name, listener) {
+            var menus = angular.element('header md-menu *[aria-owns]');
+
+            angular.forEach(menus, function (m) {
+                var menu = angular.element(m).scope();
+                if(menu.$mdMenuIsOpen) {
+                    menu.$mdMenu.close();
+                }
+            });
+        });
+
         $scope.showProjectDialog = function(event) {
             $mdDialog.show({
                 controller: ProjectController,
