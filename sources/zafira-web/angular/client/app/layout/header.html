@@ -21,7 +21,9 @@
                     <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" src="assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
                     <div class="profile-img-content-wrapper" has-any-role="['ROLE_ADMIN']">
                         <div class="profile-img-content">
-                            <span><i id="brandPhotoSetting" class="material-icons" ng-click="showUploadImageDialog($event)" style="font-size: 36px">add_circle</i></span>
+                            <span>
+                                <md-icon md-svg-src="assets/images/project_circle_add.svg" ng-click="showUploadImageDialog($event)" style="height: 36px; width: 36px;"></md-icon>
+                            </span>
                         </div>
                     </div>
                 </div>

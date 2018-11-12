@@ -10,31 +10,14 @@
                         send
                         <md-tooltip md-direction="bottom">Send by email</md-tooltip>
                     </i>
-                    <i class="material-icons hide-phone" has-any-permission="['MODIFY_WIDGETS']" ng-click="startEditWidgets();">
+                    <i class="material-icons hide-phone" ng-if="isGridStackEvailableToEdit();" has-any-permission="['MODIFY_WIDGETS']" ng-click="startEditWidgets();">
                         dashboard
                         <md-tooltip md-direction="bottom">Widget placement</md-tooltip>
                     </i>
-                    <i class="material-icons hide-phone" has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardDialog($event, dashboard, false);">
+                    <i class="material-icons" has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardDialog($event, dashboard, false);">
                         settings
                         <md-tooltip md-direction="bottom">Edit dashboard</md-tooltip>
                     </i>
-                    <md-menu class="show-phone">
-                        <i  data-ng-click="$mdMenu.open($event);" class="material-icons">more_vert</i>
-                        <md-menu-content width="2">
-                            <md-menu-item has-any-permission="['MODIFY_WIDGETS']">
-                                <md-button data-ng-click="startEditWidgets();">
-                                    <md-icon class="material-icons">dashboard</md-icon>
-                                    Widget placement
-                                </md-button>
-                            </md-menu-item>
-                            <md-menu-item has-any-permission="['MODIFY_DASHBOARDS']">
-                                <md-button data-ng-click="showDashboardDialog($event, dashboard, false);">
-                                    <md-icon class="material-icons">settings</md-icon>
-                                    Edit dashboard
-                                </md-button>
-                            </md-menu-item>
-                        </md-menu-content>
-                    </md-menu>
                 </div>
             </div>
             <div class="fixed-page-header-container_button hide-phone">

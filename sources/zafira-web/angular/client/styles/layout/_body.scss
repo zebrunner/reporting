@@ -165,7 +165,7 @@ md-input-container.searchable.select {
 }
 
 .widget-icon {
-    font-size: 21px;
+    font-size: 24px;
     padding: 1px;
     color: black;
     opacity: 0.25;
@@ -212,6 +212,9 @@ tr.result:hover .expand-button {
         font-weight: 500;
         letter-spacing: 0.1px;
         padding: 16px 20px 16px 23px;
+        @media(max-width: $screen-phone) {
+            padding-right: 5px;
+        }
     }
 }
 
@@ -792,8 +795,12 @@ div.switch-view div.card.bg-white {
     to {top: 0}
 }
 
-div.md-open-menu-container {
+body:not(.fixed-menu) div.md-open-menu-container {
     position: absolute !important;
+}
+
+body.fixed-menu div.md-open-menu-container {
+    position: fixed !important;
 }
 
 .text-capitalize {
@@ -1456,7 +1463,7 @@ md-chip md-chip-template.bg-primary {
 }
 
 .nav .material-icons {
-    font-size: 18px;
+    //font-size: 18px;
 }
 
 .menu-btn {
@@ -2851,7 +2858,7 @@ $light-inprogress: #68c9fd;
                 i {
                     color: black;
                     opacity: 0.5;
-                    font-size: 20px;
+                    font-size: 24px;
                     &:not(:last-child) {
                         padding-right: 22px;
                         @media(max-width: $screen-phone) {
