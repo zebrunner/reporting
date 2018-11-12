@@ -33,7 +33,7 @@ public class Header extends AbstractUIObject
 	@FindBy(xpath = ".//*[@id = 'brandPhoto']//md-icon")
 	private WebElement companyLogoBackgroundIcon;
 
-	@FindBy(xpath = ".//*[contains(@class, 'profile-img')]//i[text() = 'add_circle']")
+	@FindBy(xpath = ".//*[contains(@class, 'profile-img')]//md-icon[contains(@md-svg-src, 'add')]")
 	private WebElement companyProfilePhotoHoverIcon;
 
 	@FindBy(xpath = ".//button[.//*[text() = 'Projects']]")
