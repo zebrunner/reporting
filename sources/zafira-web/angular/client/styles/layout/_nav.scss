@@ -51,15 +51,15 @@
             //width: 18px;
             line-height: $line-height-computed;
             text-align: center;
-            font-size: 16px;
+            //font-size: 16px;
             transition: all $nav-transition_duration ease-in-out;
         }
 
         a {
             font-size: 13px;
-            @media(max-width: $screen-phone) {
+            /*@media(max-width: $screen-phone) {
                 font-size: 18px;
-            }
+            }*/
             transition: all $nav-transition_duration ease-in-out;
             &:hover,
             &:focus,
@@ -74,6 +74,7 @@
             text-align: left;
             font-weight: bold;
             transition: all $nav-transition_duration ease-in-out;
+            height: $sidebar_phone_width;
             &.open {
                 .icon-has-ul {
                     transform: rotate(180deg);

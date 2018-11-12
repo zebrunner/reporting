@@ -32,6 +32,7 @@
                 }
                 &.toggle-bottom {
                     animation: toggleBottom 0.1s linear;
+                    z-index: 1031;
                     #nav {
                         >li:first-child {
                             transition: none !important;
@@ -100,13 +101,14 @@
 
                     @media (max-width: $screen-phone) {
                         height: 100%;
+                        padding: 15px 10px;
                     }
 
                     > i {
                         margin: 0;
-                        @media(min-width: $screen-phone) {
+                        //@media(min-width: $screen-phone) {
                             font-size: 22px;
-                        }
+                        //}
                     }
                     > span {
                         display: none;

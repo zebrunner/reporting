@@ -25,6 +25,10 @@
             cellHeight: 20
         };
 
+        $scope.isGridStackEvailableToEdit = function() {
+            return ! angular.element('.grid-stack-one-column-mode').is(':visible');
+        };
+
         $scope.startEditWidgets = function () {
             angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack').enable();
             showGridActionToast();
