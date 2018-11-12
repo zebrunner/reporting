@@ -16,7 +16,20 @@ On the integrations page you will find multiple blocks responsible for different
 #### Amazon
 Zafira uses integration with Amazon S3 service to store user profile photos and company logo. First of all we will need to create new S3 bucket and generate access token to provide API access to Amazon S3 from Zafira.
 
-* Create new S3 bucket in region you prefer 
+* Create new S3 bucket in region you prefer
+* Navigate to bucket permissions, CORS configuration and set following policy:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+<CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
+    <AllowedHeader>*</AllowedHeader>
+</CORSRule>
+</CORSConfiguration>
+```
 * Create new IAM user with **Programmatic access**
 * Grant read/write permissions for new user (read [detailed guide](https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/))
 * Generate new access/secret keys
