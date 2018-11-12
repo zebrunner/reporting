@@ -25,8 +25,12 @@
             cellHeight: 20
         };
 
+        $scope.isJson = function(json) {
+            return typeof(json) === 'object';
+        };
+
         $scope.isGridStackEvailableToEdit = function() {
-            return ! angular.element('.grid-stack-one-column-mode').is(':visible');
+            return !angular.element('.grid-stack-one-column-mode').is(':visible');
         };
 
         $scope.startEditWidgets = function () {
@@ -566,7 +570,9 @@
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
             getDashboardById($stateParams.id).then(function (rs) {
-                refresh();
+                $timeout(function () {
+                    refresh();
+                }, 0, false);
             }, function () {
             });
         })();
@@ -748,11 +754,15 @@
         angular.copy(dashboard, $scope.dashboard);
         $scope.showWidget = false;
 
-        if (typeof $scope.widget.model ==='object'){
+        $scope.isJson = function(json) {
+            return typeof(json) === 'object';
+        };
+
+        if ($scope.isJson($scope.widget.model)){
             $scope.widget.model = JSON.stringify($scope.widget.model, null, 4);
         }
 
-        if (typeof $scope.widget.location ==='object') {
+        if ($scope.isJson($scope.widget.location)) {
             $scope.widget.location = JSON.stringify($scope.widget.location, null, 4);
         }
 
