@@ -3,12 +3,16 @@
     <#switch criterias[index].operator>
         <#case "EQUALS">
             <#if ! isPre>
-                <#local result=" = \'">
+                <#local result=" = LOWER(\'">
+            <#else>
+                <#local result=" LOWER(">
             </#if>
             <#break>
         <#case "NOT_EQUALS">
             <#if ! isPre>
-                <#local result=" != \'">
+                <#local result=" != LOWER(\'">
+            <#else>
+                <#local result=" LOWER(">
             </#if>
             <#break>
         <#case "CONTAINS">
@@ -74,12 +78,16 @@
     <#switch criterias[index].operator>
         <#case "EQUALS">
             <#if ! isPre>
-                <#local result="\'">
+                <#local result="\')">
+            <#else>
+                <#local result=")">
             </#if>
             <#break>
         <#case "NOT_EQUALS">
             <#if ! isPre>
-                <#local result="\'">
+                <#local result="\')">
+            <#else>
+                <#local result=")">
             </#if>
             <#break>
         <#case "CONTAINS">
