@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -920,7 +920,7 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
+    function EmailController($scope, $rootScope, $q, $screenshot, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
 
         var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
 
@@ -964,32 +964,43 @@
                     return;
                 }
             }
-            $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
             var projects = ProjectProvider.getProjects();
             projects = projects && projects.length ? projects : null;
-            EMAIL_TYPES[TYPE].func(projects);
-        };
-
-        function sendDashboardEmail(projects) {
-            DashboardService.SendDashboardByEmail($scope.email, projects).then(function (rs) {
-                if (rs.success) {
-                    alertify.success('Email was successfully sent!');
-                }
-                else {
-                    alertify.error(rs.message);
-                }
+            EMAIL_TYPES[TYPE].func(projects).then(function () {
+                $scope.hide();
             });
         };
 
-        function sendWidgetEmail(projects) {
-            DashboardService.SendWidgetByEmail($scope.email, projects, widgetId).then(function (rs) {
-                if (rs.success) {
-                    alertify.success('Email was successfully sent!');
-                }
-                else {
-                    alertify.error(rs.message);
-                }
+        function sendDashboardEmail() {
+            return $q(function (resolve, reject) {
+                $screenshot.take('#dashboard_content').then(function (multipart) {
+                    DashboardService.SendDashboardByEmailV2(multipart, $scope.email).then(function (rs) {
+                        if (rs.success) {
+                            alertify.success('Email was successfully sent!');
+                        }
+                        else {
+                            alertify.error(rs.message);
+                        }
+                        resolve(rs);
+                    });
+                });
+            });
+        };
+
+        function sendWidgetEmail() {
+            return $q(function (resolve, reject) {
+                $screenshot.take('#widget-container-' + widgetId).then(function (multipart) {
+                    DashboardService.SendDashboardByEmailV2(multipart, $scope.email).then(function (rs) {
+                        if (rs.success) {
+                            alertify.success('Email was successfully sent!');
+                        }
+                        else {
+                            alertify.error(rs.message);
+                        }
+                        resolve(rs);
+                    });
+                });
             });
         };
 

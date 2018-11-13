@@ -117,7 +117,7 @@ public class WebDriverUtil
 		try
 		{
 			js = (JavascriptExecutor) driver;
-			script = FileUtils.readFileToString(new File(WebDriverUtil.class.getClassLoader().getResource("scripts/canvas.reader.js").getFile()));
+			script = FileUtils.readFileToString(new File(WebDriverUtil.class.getResource("/scripts/canvas.reader.js").getPath()));
 			String image = (String) js.executeAsyncScript(script + "crop();", locator);
 			ByteArrayInputStream bis = new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(image.substring(image.indexOf(",") + 1)));
 			result = ImageIO.read(bis);

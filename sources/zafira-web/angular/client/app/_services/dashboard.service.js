@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('DashboardService', ['$httpMock', '$cookies', '$rootScope', '$location', 'UtilService', 'API_URL', DashboardService])
+        .factory('DashboardService', ['$httpMock', '$cookies', '$rootScope', '$location', 'UtilService', '$httpParamSerializer', 'API_URL', DashboardService])
 
-    function DashboardService($httpMock, $cookies, $rootScope, $location, UtilService, API_URL) {
+    function DashboardService($httpMock, $cookies, $rootScope, $location, UtilService, $httpParamSerializer, API_URL) {
 
     	var service = {};
 
@@ -24,6 +24,7 @@
         service.UpdateDashboardWidgets = UpdateDashboardWidgets;
         service.DeleteDashboardWidget = DeleteDashboardWidget;
         service.SendDashboardByEmail = SendDashboardByEmail;
+        service.SendDashboardByEmailV2 = SendDashboardByEmailV2;
         service.SendWidgetByEmail = SendWidgetByEmail;
         service.GetWidgets = GetWidgets;
         service.CreateWidget = CreateWidget;
@@ -99,6 +100,11 @@
         	var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
         	var path = projects ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
             return $httpMock.post(API_URL + '/api/dashboards/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+        }
+
+        function SendDashboardByEmailV2(multipart, email) {
+            var qs = $httpParamSerializer(email);
+            return $httpMock.post(API_URL + '/api/dashboards/email/v2?' + qs + '&file=', multipart, {headers: {'Content-Type': undefined}, transformRequest : angular.identity}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function SendWidgetByEmail(email, projects, widgetId) {

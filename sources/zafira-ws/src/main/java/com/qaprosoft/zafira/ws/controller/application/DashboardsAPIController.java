@@ -15,13 +15,17 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.*;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
+import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -33,15 +37,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 import com.qaprosoft.zafira.models.db.Attribute;
@@ -62,6 +58,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Api(value = "Dashboards API")
@@ -239,6 +236,19 @@ public class DashboardsAPIController extends AbstractController
 				LOGGER.error(e);
 			}
 		}).start();
+		return null;
+	}
+
+	@ApiOperation(value = "Upload file", nickname = "uploadFile", code = 200, httpMethod = "POST", response = String.class)
+	@ResponseStatus(HttpStatus.OK)
+	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
+	@RequestMapping(value = "email/v2", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody String uploadFile(@RequestParam(value = "file", required = true) MultipartFile file, @ModelAttribute DashboardEmailType email) throws ServiceException, IOException {
+		List<Attachment> attachments = new ArrayList<>();
+		File attachment = new File(file.getOriginalFilename());
+		file.transferTo(attachment);
+		attachments.add(new Attachment(email.getSubject(), attachment));
+		emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 		return null;
 	}
 
