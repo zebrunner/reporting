@@ -19,14 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.*;
 
 import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
 
-import com.qaprosoft.zafira.models.dto.aws.FileUploadType;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
@@ -245,7 +244,7 @@ public class DashboardsAPIController extends AbstractController
 	@RequestMapping(value = "email/v2", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String uploadFile(@RequestParam(value = "file", required = true) MultipartFile file, @ModelAttribute DashboardEmailType email) throws ServiceException, IOException {
 		List<Attachment> attachments = new ArrayList<>();
-		File attachment = new File(file.getOriginalFilename());
+		File attachment = File.createTempFile(FilenameUtils.getName(file.getOriginalFilename()), "." + FilenameUtils.getExtension(file.getOriginalFilename()));
 		file.transferTo(attachment);
 		attachments.add(new Attachment(email.getSubject(), attachment));
 		emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
