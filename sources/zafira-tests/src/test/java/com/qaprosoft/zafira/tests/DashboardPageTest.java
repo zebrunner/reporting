@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests;
 
 import com.qaprosoft.zafira.services.util.WebDriverUtil;
+import org.openqa.selenium.Cookie;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,7 +17,9 @@ public class DashboardPageTest extends AbstractTest {
 
 	@BeforeMethod
 	public void loginUser() {
-		driver.get("http://echarts.baidu.com/echarts2/doc/example/line1.html#-en");
+		driver.get("http://localhost:3000/#!/dashboards/10");
+		driver.manage().addCookie(new Cookie("Access-Token", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcm5hbWUiOiJhZG1pbiIsImdyb3VwSWRzIjpbM10sInRlbmFudCI6InN0YWdlIiwiZXhwIjoxNTQyMTE2NDUyfQ.je0kTz-301swQOnLhAr_8JOVb5emToGERf_2Byws6BnFBQil6sNbvGvF2EODNiI_ZD9UBUBYDSp5-MfknxE45Q"));
+		driver.get("http://localhost:3000/#!/dashboards/10");
 		/*LoginPageService loginPageService = new LoginPageService(driver);
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.open();

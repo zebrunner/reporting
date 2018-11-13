@@ -101,6 +101,12 @@
 			LIMIT 10000
 		]]>
 	</select>
+	
+	<select id="getPostgresVersion" resultType="java.lang.String">
+		<![CDATA[
+		SELECT version();
+		]]>
+	</select>
 
 	<update id="updateSetting">
 		<![CDATA[

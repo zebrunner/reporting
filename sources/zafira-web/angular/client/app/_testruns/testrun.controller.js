@@ -1170,7 +1170,9 @@
             return $q(function(resolve, reject) {
                 TestRunService.getPlatforms().then(function (rs) {
                     if (rs.success) {
-                        $scope.platforms = rs.data;
+                        $scope.platforms = rs.data.filter(function (platform) {
+                            return platform && platform.length;
+                        });
                         resolve($scope.platforms);
                     }
                     else {
@@ -1776,7 +1778,11 @@
 
         // Calls on scope store
         $scope.storescope = function (testId) {
-            TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
+            $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
+                if(fromState && toState){
+                    TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
+                }
+            });
         };
 
         // Add operation behind all async calls

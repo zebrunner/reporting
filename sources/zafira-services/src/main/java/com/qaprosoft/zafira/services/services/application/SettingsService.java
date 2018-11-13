@@ -15,16 +15,11 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.*;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
-import com.qaprosoft.zafira.services.util.EventPushService;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,25 +32,25 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.models.db.Setting.SettingType;
 import com.qaprosoft.zafira.models.db.Setting.Tool;
+import com.qaprosoft.zafira.models.push.events.ReinitEventMessage;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.emails.AsynSendEmailTask;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.ElasticsearchService;
 import com.qaprosoft.zafira.services.services.application.jmx.HipchatService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
 import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
 import com.qaprosoft.zafira.services.services.application.jmx.JiraService;
+import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
+import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
-import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
-import org.springframework.web.multipart.MultipartFile;
+import com.qaprosoft.zafira.services.util.EventPushService;
 
 @Service
 public class SettingsService {
-
-    private static final Logger LOGGER = Logger.getLogger(SettingsService.class);
 
     @Autowired
     private SettingsMapper settingsMapper;
@@ -218,6 +213,12 @@ public class SettingsService {
             TenancyContext.setTenantName(rm.getTenancy());
             getServiceByTool(rm.getTool()).init();
         }
+    }
+    
+    @Transactional(readOnly = true)
+    public String getPostgresVersion() throws ServiceException
+    {
+        return settingsMapper.getPostgresVersion();
     }
 
     @SuppressWarnings("rawtypes")

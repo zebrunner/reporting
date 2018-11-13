@@ -22,6 +22,7 @@
         ,'app.sidebar'
         // 3rd party feature modules
         ,'ngImgCrop'
+        ,'ngecharts'
         ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
@@ -309,6 +310,9 @@
                 var getTheme = function (mainSkinValue) {
                     var themeBackgroundClass;
                     switch (element) {
+                        case 'header':
+                            themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'background-darkgreen' : 'background-green';
+                            break;
                         case 'graph':
                             themeBackgroundClass = darkThemes.indexOf(mainSkinValue) >= 0 ? 'gray-container' : 'background-clear-white';
                             break;
@@ -542,7 +546,8 @@
             restrict: 'E',
             template: '<span>' +
             '            <img alt="avatar" ng-src="{{ngModel}}" ng-class="{\'imageRotateHorizontal\': rotateHorizontal}" class="img-circle profile-hovered" ng-if="ngModel && ngModel.length && ngModel.split(\'?\')[0]" style="width: {{imageSize}}px">' +
-            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: #777777" ng-if="iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '            <i class="material-icons profile-hovered" style="font-size: {{size}}px; vertical-align: middle; color: #777777" ng-if="icon && iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])">{{icon}}</i>' +
+            '            <md-icon class="profile-hovered profile-hovered-full" ng-if="src && !icon && iconVisible && !(ngModel && ngModel.length && ngModel.split(\'?\')[0])" md-svg-src="{{src}}" aria-label="icon" style="width: {{imageSize}}px; height: {{imageSize}}px; color: white;"></md-icon>' +
             '            <md-tooltip ng-if="label" md-direction="right">{{ label }}</md-tooltip>' +
             '          </span>',
             require: 'ngModel',
@@ -555,13 +560,14 @@
                 icon: '@',
                 iconVisible: '=?',
                 label: '@',
-                rotateHorisontal: '=?'
+                rotateHorisontal: '=?',
+                src: '@'
             },
             compile: function(element, attrs){
                 return {
                     pre: function preLink(scope, iElement, iAttrs, controller) {
                         if (!attrs.size) { scope.size = 120; }
-                        if (!attrs.icon) { scope.icon = 'account_circle'; }
+                        if (!attrs.icon && ! attrs.src) { scope.icon = 'account_circle'; }
                         if (!attrs.iconVisible) { scope.iconVisible = true; }
                         if (!attrs.autoResize) { scope.autoResize = true; }
                         if (!attrs.rotateHorisontal) { scope.rotateHorisontal = false; } else { scope.autoResize = scope.autoResize == 'true' }

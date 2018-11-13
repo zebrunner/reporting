@@ -67,6 +67,11 @@
         </md-dialog-content>
 
         <md-dialog-actions layout="row">
+            <md-button has-any-permission="['MODIFY_DASHBOARDS']" id="delete" data-ng-if="! isNew" type="submit"
+                       class="md-raised btn-w-md"
+                       ng-disabled="dashboard_form.$invalid" data-ng-click="deleteDashboard(dashboard);">
+                Delete
+            </md-button>
              <md-button id="create" data-ng-if="isNew" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="dashboard_form.$invalid" data-ng-click="createDashboard(dashboard)">

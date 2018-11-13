@@ -30,7 +30,7 @@
                 },
                 {
                     name: 'pattern',
-                    message: 'Username must have only latin letters and special characters',
+                    message: 'Username must have only latin letters, numbers and special characters',
                     additional: '_ -'
                 },
                 {

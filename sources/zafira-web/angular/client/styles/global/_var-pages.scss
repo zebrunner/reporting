@@ -4,10 +4,11 @@ $boxed_layout_width:    1200px;
 $screen-sm-max:         ($screen-sm - 1);
 
 // Top header
-$header_height:             64px;           //**
+$header_height:             48px;           //**
 $page-padding-right-left:   20px;
 $page-padding-top-bottom:   15px;
 $sidebar_width:             60px;
+$sidebar_phone_width:       $header_height;
 $header_line_height:        20px;           //** line-height of the header text
 $header_container_bg:       $dark;
 $header-border:             rgba(255,255,255,.06);
