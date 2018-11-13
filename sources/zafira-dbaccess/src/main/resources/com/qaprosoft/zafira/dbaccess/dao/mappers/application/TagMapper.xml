@@ -3,47 +3,32 @@
 
 <mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper">
 
-    <sql id="createPrefix">
-        <![CDATA[
-			INSERT INTO TAGS (NAME, VALUE)
-			SELECT
-			  DATA.NAME, DATA.VALUE
-            FROM
-        ]]>
-    </sql>
-
-    <sql id="createPostfix">
-        <![CDATA[
- 		    AS DATA
-            WHERE NOT EXISTS (
-              SELECT
-                NAME
-              FROM
-                TAGS T
-              WHERE
-                DATA.NAME = T.NAME AND DATA.VALUE = T.VALUE
-            )
- 		]]>
-    </sql>
-
     <insert id="createTag" useGeneratedKeys="true" keyProperty="id">
-        <include refid="createPrefix"/>
         <![CDATA[
-              (
- 		        SELECT #{name}::VARCHAR as NAME, #{value}::VARCHAR AS VALUE
- 		      )
- 		    ]]>
-        <include refid="createPostfix"/>
+          INSERT INTO TAGS (NAME, VALUE) VALUES
+            (
+            #{name},
+            #{value}
+            )
+ 		      ON CONFLICT DO NOTHING
+        ]]>
     </insert>
 
     <insert id="createTags">
-        <include refid="createPrefix"/>
-        <foreach item="tag" index="index" collection="tags" open="(" separator=" UNION ALL" close=")">
+        <![CDATA[
+          INSERT INTO TAGS (NAME, VALUE) VALUES
+        ]]>
+        <foreach item="tag" index="index" collection="tags" open="" separator="," close="">
             <![CDATA[
- 		      SELECT #{tag.name}::VARCHAR as NAME, #{tag.value}::VARCHAR AS VALUE
+                (
+ 		          #{name},
+ 		          #{value}
+ 		        )
  		    ]]>
         </foreach>
-        <include refid="createPostfix"/>
+        <![CDATA[
+ 		  ON CONFLICT DO NOTHING
+        ]]>
     </insert>
 
     <sql id="getTags">
