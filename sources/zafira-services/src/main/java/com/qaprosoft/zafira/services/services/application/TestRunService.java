@@ -265,8 +265,8 @@ public class TestRunService
 				testRun.setElapsed(null);
 				testRun.setPlatform(null);
 				testRun.setConfigXML(null);
-                testRun.setConfig(null);
-                testRun.setComments(null);
+				testRun.setConfig(null);
+				testRun.setComments(null);
 				testRun.setAppVersion(null);
 				testRun.setReviewed(false);
 
