@@ -1780,9 +1780,7 @@
         $scope.storescope = function (testId) {
             $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
                 if(fromState && toState){
-                    if(event.target.target !== '_blank') {
-                        TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
-                    }
+                    TestRunsStorage.takeSnapshot($scope, VALUES_TO_STORE, $window, testId, $scope.tr, $scope.testRunId);
                 }
             });
         };
