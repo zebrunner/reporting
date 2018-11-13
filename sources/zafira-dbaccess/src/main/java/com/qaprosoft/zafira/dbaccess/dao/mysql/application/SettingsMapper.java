@@ -44,4 +44,6 @@ public interface SettingsMapper
 	void deleteSetting(Setting setting);
 
 	void deleteSettingById(long id);
+	
+	String getPostgresVersion();
 }
