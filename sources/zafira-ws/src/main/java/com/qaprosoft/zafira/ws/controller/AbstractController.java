@@ -270,6 +270,16 @@ public abstract class AbstractController
 		return result;
 	}
 	
+	@ExceptionHandler(UnhealthyStateException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ResponseBody
+    public ErrorResponse handleUnhealthyStateException(UnhealthyStateException e) 
+	{
+		ErrorResponse result = new ErrorResponse();
+		result.setError(new Error(ErrorCode.UNHEALTHY_STATUS, "reason", e.getMessage()));
+		return result;
+    }
+
 	protected void checkCurrentUserAccess(long userId) throws ForbiddenOperationException
 	{
 		if(!isAdmin() && userId != getPrincipalId())

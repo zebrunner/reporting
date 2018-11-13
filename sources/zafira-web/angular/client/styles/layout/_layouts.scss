@@ -85,7 +85,8 @@ html {
             z-index: 100; // should be highter than top header
             position: fixed;
             left: 0;
-            top: $header_height + 1px;
+            top: $header_height;
+            box-shadow: none;
             @media (max-width: $screen-phone) {
                 top: 0;
             }

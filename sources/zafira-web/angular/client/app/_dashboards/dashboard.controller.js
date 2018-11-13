@@ -25,6 +25,14 @@
             cellHeight: 20
         };
 
+        $scope.isJson = function(json) {
+            return typeof(json) === 'object';
+        };
+
+        $scope.isGridStackEvailableToEdit = function() {
+            return !angular.element('.grid-stack-one-column-mode').is(':visible');
+        };
+
         $scope.startEditWidgets = function () {
             angular.element('.grid-stack').gridstack($scope.gridstackOptions).data('gridstack').enable();
             showGridActionToast();
@@ -290,7 +298,7 @@
             }
         };
 
-        $scope.deleteDashboard = function(dashboard){
+        /*$scope.deleteDashboard = function(dashboard){
             var confirmedDelete = confirm('Would you like to delete dashboard "' + dashboard.title + '"?');
             if (confirmedDelete) {
                 DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
@@ -305,7 +313,7 @@
                 });
             }
             $scope.hide();
-        };
+        };*/
 
         $scope.showDashboardWidgetDialog = function (event, widget, isNew) {
             $mdDialog.show({
@@ -562,7 +570,9 @@
                 $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
             }
             getDashboardById($stateParams.id).then(function (rs) {
-                refresh();
+                $timeout(function () {
+                    refresh();
+                }, 0, false);
             }, function () {
             });
         })();
@@ -668,6 +678,23 @@
             });
         };
 
+        $scope.deleteDashboard = function(dashboard){
+            var confirmedDelete = confirm('Would you like to delete dashboard "' + dashboard.title + '"?');
+            if (confirmedDelete) {
+                DashboardService.DeleteDashboard(dashboard.id).then(function (rs) {
+                    if (rs.success) {
+                        alertify.success("Dashboard deleted");
+                        var mainDashboard = $location.$$absUrl.substring(0, $location.$$absUrl.lastIndexOf('/'));
+                        window.open(mainDashboard, '_self');
+                    }
+                    else {
+                        alertify.error(rs.message);
+                    }
+                });
+            }
+            $scope.hide();
+        };
+
          // Dashboard attributes
         $scope.createAttribute = function(attribute){
             DashboardService.CreateDashboardAttribute(dashboard.id, attribute).then(function (rs) {
@@ -707,7 +734,9 @@
         };
 
         $scope.hide = function (result, action) {
-            result.action = action;
+            if(result) {
+                result.action = action;
+            }
             $mdDialog.hide(result);
         };
         $scope.cancel = function () {
@@ -725,11 +754,15 @@
         angular.copy(dashboard, $scope.dashboard);
         $scope.showWidget = false;
 
-        if (typeof $scope.widget.model ==='object'){
+        $scope.isJson = function(json) {
+            return typeof(json) === 'object';
+        };
+
+        if ($scope.isJson($scope.widget.model)){
             $scope.widget.model = JSON.stringify($scope.widget.model, null, 4);
         }
 
-        if (typeof $scope.widget.location ==='object') {
+        if ($scope.isJson($scope.widget.location)) {
             $scope.widget.location = JSON.stringify($scope.widget.location, null, 4);
         }
 

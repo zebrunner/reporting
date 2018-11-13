@@ -17,7 +17,7 @@ import com.qaprosoft.zafira.tests.gui.components.Navbar;
 public abstract class BasePage extends AbstractPage
 {
 
-	@FindBy(css = "h2.section-header")
+	@FindBy(css = "h2.section-header, #pageTitle")
 	private WebElement pageTitle;
 
 	@FindBy(xpath = "//*[contains(@class, 'section-header')]//small | //*[contains(@class, 'fixed-search-column')]//small")

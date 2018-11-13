@@ -1,39 +1,40 @@
 <div data-ng-controller="DashboardController">
-    <div id="dashboard_content" class="page page-dashboard">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="section-header" id="pageTitle">{{dashboard.title}}</h2>
+    <div class="fixed-page-header">
+        <div class="fixed-page-header-container">
+            <div class="fixed-page-header-container_title" id="pageTitle">
+                {{dashboard.title}}
+            </div>
+            <div class="fixed-page-header-container_options">
+                <div>
+                    <i class="material-icons" data-ng-if="tools['EMAIL']" ng-click="showEmailDialog($event);">
+                        send
+                        <md-tooltip md-direction="bottom">Send by email</md-tooltip>
+                    </i>
+                    <i class="material-icons hide-phone" ng-if="isGridStackEvailableToEdit();" has-any-permission="['MODIFY_WIDGETS']" ng-click="startEditWidgets();">
+                        dashboard
+                        <md-tooltip md-direction="bottom">Widget placement</md-tooltip>
+                    </i>
+                    <i class="material-icons" has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardDialog($event, dashboard, false);">
+                        settings
+                        <md-tooltip md-direction="bottom">Edit dashboard</md-tooltip>
+                    </i>
+                </div>
+            </div>
+            <div class="fixed-page-header-container_button hide-phone">
+                <button has-any-permission="['MODIFY_DASHBOARDS']" ng-click="showDashboardDialog($event, {}, true);">
+                    <md-icon class="material-icons">add</md-icon>
+                    <span>Add dashboard</span>
+                </button>
             </div>
         </div>
-        <md-fab-speed-dial id="main-fab" md-direction="up" class="md-scale md-fab-bottom-right">
-            <md-fab-trigger>
-                <md-button id="mainFab" aria-label="menu" class="md-fab md-primary" md-visible="tooltipVisible">
-                    <span class="fa fa-bars"></span>
-                </md-button>
-            </md-fab-trigger>
-            <md-fab-actions>
-                <md-button id="deleteDashboard" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="deleteDashboard(dashboard)" has-any-permission="['MODIFY_DASHBOARDS']">
-                    <md-tooltip md-direction="top">Delete dashboard</md-tooltip>
-                    <span class="fa fa-trash"></span>
-                </md-button>
-                <md-button id="updateWidgets" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="startEditWidgets()" has-any-permission="['MODIFY_WIDGETS']">
-                    <md-tooltip md-direction="top">Update widgets</md-tooltip>
-                    <span class="fa fa-arrows-alt"></span>
-                </md-button>
-                <md-button id="sendByEmail" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showEmailDialog($event)" data-ng-if="tools['EMAIL']">
-                    <md-tooltip md-direction="top">Send by email</md-tooltip>
-                    <span class="fa fa-envelope-o"></span>
-                </md-button>
-                <md-button id="updateDashboard" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, dashboard, false)" has-any-permission="['MODIFY_DASHBOARDS']">
-                    <md-tooltip md-direction="top">Update dashboard</md-tooltip>
-                    <span class="fa fa-cog"></span>
-                </md-button>
-                <md-button id="newDashboard" aria-label="menu" class="md-fab md-raised md-fab-sm" data-ng-click="showDashboardDialog($event, {}, true)" has-any-permission="['MODIFY_DASHBOARDS']">
-                    <md-tooltip md-direction="top">New dashboard</md-tooltip>
-                    <span class="fa fa-plus"></span>
-                </md-button>
-            </md-fab-actions>
-        </md-fab-speed-dial>
+    </div>
+    <div id="dashboard_content" class="page page-dashboard">
+        <md-fab-trigger id="main-fab" has-any-permission="['MODIFY_WIDGETS']">
+            <md-button id="createWidget" aria-label="menu" class="md-fab md-primary" data-ng-click="showWidgetDialog($event, {model : '{}'}, true, dashboard);">
+                <md-tooltip md-direction="top">New widget</md-tooltip>
+                <md-icon>add</md-icon>
+            </md-button>
+        </md-fab-trigger>
 	    <div class="row">
 	         <div class="col-lg-12">
 	         	<ul class="nav nav-pills">
@@ -49,16 +50,48 @@
 			<input type="hidden" id="dashboard_title" value="{{dashboard.title}}" />
             <div gridstack class="grid-stack" options="gridstackOptions"
                  on-change="" on-drag-start="" on-drag-stop="" on-resize-start="" on-resize-stop="" style="margin-bottom: 20px">
-                <div class="grid-stack-item" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets track by widget.id" gridstack-item gs-item-x="widget.location.x" gs-item-y="widget.location.y"
+                <div class="grid-stack-item show-on-hover" data-gs-min-height="2" data-gs-min-width="2" ng-attr-id="widget-{{widget.id}}" data-ng-repeat="widget in dashboard.widgets track by widget.id" gridstack-item gs-item-x="widget.location.x" gs-item-y="widget.location.y"
                      gs-item-width="widget.location.width" gs-item-height="widget.location.height" on-item-added="" on-item-removed="">
                     <input type="hidden" ng-attr-id="widget-title-{{ widget.id }}" value="{{widget.title}}" />
                     <div ng-attr-id="widget-container-{{ widget.id }}" class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
-                        <div class="panel-heading show-on-hover">
+                        <div class="panel-heading">
                             {{widget.title}}
                             <span class="show-icon-on-hover pull-right">
-                                <i class="material-icons pull-right widget-icon" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">delete</i>
-                                <i class="material-icons pull-right widget-icon" data-ng-click="showEmailDialog($event, widget.id)">email</i>
-                                <i class="material-icons pull-right widget-icon" data-ng-click="showWidgetDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">edit</i>
+                                <i class="material-icons widget-icon hide-phone" data-ng-if="tools['EMAIL']" data-ng-click="showEmailDialog($event, widget.id)">
+                                    send
+                                    <md-tooltip md-direction="top">Send by email</md-tooltip>
+                                </i>
+                                <i class="material-icons widget-icon hide-phone" data-ng-click="showWidgetDialog($event, widget, false, dashboard)" has-any-permission="['MODIFY_WIDGETS']">
+                                    edit
+                                    <md-tooltip md-direction="top">Edit widget</md-tooltip>
+                                </i>
+                                <i class="material-icons widget-icon hide-phone" data-ng-click="deleteDashboardWidget(widget)" has-any-permission="['MODIFY_WIDGETS']">
+                                    delete
+                                    <md-tooltip md-direction="top">Delete from dashboard</md-tooltip>
+                                </i>
+                                <md-menu class="show-phone">
+                                    <i  data-ng-click="$mdMenu.open($event);" class="material-icons widget-icon">more_vert</i>
+                                    <md-menu-content width="2">
+                                        <md-menu-item data-ng-if="tools['EMAIL']">
+                                            <md-button data-ng-click="showEmailDialog($event, widget.id);">
+                                                <md-icon class="material-icons">send</md-icon>
+                                                Send by email
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item has-any-permission="['MODIFY_WIDGETS']">
+                                            <md-button data-ng-click="showWidgetDialog($event, widget, false, dashboard);">
+                                                <md-icon class="material-icons">edit</md-icon>
+                                                Edit widget
+                                            </md-button>
+                                        </md-menu-item>
+                                        <md-menu-item has-any-permission="['MODIFY_WIDGETS']">
+                                            <md-button data-ng-click="deleteDashboardWidget(widget);">
+                                                <md-icon class="material-icons">delete</md-icon>
+                                                Delete from dashboard
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                            </md-menu>
                             </span>
                         </div>
                         <div data-ng-attr-id="{{ widget.id }}" align="center" class="panel-body" data-ng-class="{'graph-box' :  (widget.type == 'linechart' || widget.type == 'piechart')}">
@@ -70,6 +103,9 @@
                              <div data-ng-if="widget.type == 'piechart'" class="pie-chart">
                                 <pie-chart data="widget.data.dataset" options="widget.model"></pie-chart>
                              </div>
+                            <div data-ng-if="widget.type == 'echart' && isJson(widget.model)">
+                                <div data-echarts dataset="widget.data.dataset" with-legend="true" data-options="widget.model"></div>
+                            </div>
                              <div data-ng-if="widget.type == 'table'" class="table-responsive">
                                 <table  data-ng-attr-id="table-{{ widget.id }}" class="table table-striped table-bordered table-hover" style="width: 100%;">
                                     <thead>
@@ -99,11 +135,6 @@
 		</div>
 	</div>
     <div class="page page-dashboard widget-block">
-        <div class="row" has-any-permission="['MODIFY_WIDGETS']">
-            <div class="col-lg-12">
-                <button id="createWidget" type="button" class="btn btn-primary btn-outline btn-lg btn-block" data-ng-click="showWidgetDialog($event, {model : '{}'}, true, dashboard)">Create new widget</button>
-            </div>
-        </div>
         <div class="row" has-any-permission="['MODIFY_WIDGETS']">
             <div class="col-md-12">
                 <article class="article">

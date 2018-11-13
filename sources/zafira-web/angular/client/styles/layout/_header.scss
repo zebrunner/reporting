@@ -36,7 +36,7 @@
     // @media (min-width:$screen-sm) {
     //     height: $header_height;
     // }
-    @extend .z-depth-1;
+    //@extend .z-depth-1;
 
     .dropdown-menu.with-arrow.panel {
         @extend .z-depth-1;
@@ -73,8 +73,8 @@
             //width: 100%;
             height: $header_height;
             line-height: $header_height;
-            text-align: left;
-            left: 12px;
+            text-align: center;
+            left: 0;
             transition: width .25s ease-in-out;
             //@media (min-width: $screen-sm) {
                 display: inline-block;
@@ -85,11 +85,11 @@
                 //left: 20px;
             }
             @media (max-width: $screen-phone) {
-                left: 60px;
+                left: 40px;
                 padding-left: 20px;
             }
             .logo-icon {
-                font-size: 19px;
+                //font-size: 19px;
             }
             .logo-text {}
 
@@ -99,8 +99,9 @@
             }
             img {
 
-                height: 36px;
-                width: 36px;
+                height: 28px;
+                width: 28px;
+                vertical-align: sub;
             }
         }
 
@@ -200,6 +201,7 @@
                 line-height: $header_line_height;
 
                 > li {
+                    font-size: 0;
                     float: left;
                     &.nav-profile {
                         > a {
@@ -377,6 +379,7 @@
 // Flags
 .header-container {
     position: fixed;
+    height: 48px;
     top: 0;
     right: 0;
     width: 100%;
@@ -412,14 +415,24 @@
     // only apply to first level, not dropdown
     .header-btn {
         &.md-button {
+
             margin: 0;
             line-height: $header_height;
             min-width: $header_height;
             border-radius: 0;
 
+            padding-left: 5px;
+            padding-right: 23px;
+
+            @media (max-width: $screen-phone) {
+                padding-right: 12px;
+            }
+
             > .material-icons {
                 vertical-align: middle;
                 font-size: 18px;
+                margin: -4px;
+                padding-left: 3px;
             }
 
             .badge {
@@ -433,6 +446,9 @@
     }
 }
 
+#profileMenu {
+    padding-right: 19px;
+}
 
 //
 .skin-check {
@@ -483,6 +499,12 @@
             &:hover {
                 color: $text-color;
             }
+        }
+    }
+
+    .profile-img, .header-btn {
+        i.material-icons,  > small, md-icon {
+            color: white !important;
         }
     }
 

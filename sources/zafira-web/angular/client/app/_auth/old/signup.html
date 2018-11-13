@@ -30,7 +30,7 @@
                                            id="username"
                                            autocomplete="new-password"
                                            ng-model="user.username"
-                                           ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
+                                           ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_-]+$/"/>
                                     <div ng-messages="signup_form.username.$error">
                                         <div ng-repeat="validation in VALIDATIONS.username" ng-message="{{validation.name}}">
                                             <span ng-if="validation.additional">

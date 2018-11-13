@@ -59,13 +59,16 @@
                 });
             }
             CLOSE_ON.forEach(function (value) {
-                angular.element(value).on('click', function (e) {
-                    var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
-                    if(! isSliceOfSidebar) {
-                        closeMenu(scope, ele);
-                    }
-                });
+                angular.element(value).on('touchstart', closeMenuFunction);
+                angular.element(value).on('mousedown', closeMenuFunction);
             });
+
+            function closeMenuFunction(e) {
+                var isSliceOfSidebar = sidebar ? sidebar.find(e.target).length > 0 : false;
+                if(! isSliceOfSidebar) {
+                    closeMenu(scope, ele);
+                }
+            }
         }
     }
 

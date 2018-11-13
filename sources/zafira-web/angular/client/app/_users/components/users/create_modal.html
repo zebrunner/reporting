@@ -16,7 +16,7 @@
                     <md-input-container flex>
                         <label>Username</label>
                         <input id="username" type="text" ng-model="user.username" name="username" required
-                               ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z_-]+$/"/>
+                               ng-minlength="3" ng-maxlength="50" ng-pattern="/^[A-Za-z0-9_-]+$/"/>
                         <div ng-messages="user_form.username.$error">
                             <div ng-repeat="validation in UtilService.validations.username" ng-message="{{validation.name}}">
                                 <span ng-if="validation.additional">

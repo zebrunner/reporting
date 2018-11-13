@@ -7,7 +7,7 @@
           </a>
         </li>
         <li toggle-menu has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
-            <a md-button aria-label="menu" href="#!/dashboards" data-ng-mouseenter="loadDashboards();">
+            <a md-button aria-label="menu" href="#!/dashboards" data-ng-click="loadDashboards();">
               <i class="material-icons">equalizer</i><span data-translate="DASHBOARDS"></span>
             </a>
             <ul class="auto-width width-icon">
@@ -31,28 +31,6 @@
                 </li>
             </ul>
         </li>
-        <!--<li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
-            <a auto-height-trigger="viewsLoaded" md-button aria-label="menu" href="#!/tests/runs" data-ng-mouseenter="loadViews();">
-              <i class="material-icons">playlist_add_check</i>
-              <span data-translate="TEST_RUNS"></span>
-            </a>
-            <ul auto-height="viewsLoaded" class="auto-width width-icon">
-                <li>
-                    <a data-toggle-nav-collapsed-min back md-button aria-label="menu" href="#!/tests/runs"><span data-translate="SHOW_LATEST_RUNS"></span></a>
-                </li>
-                <md-divider data-ng-if="views.length > 0"></md-divider>
-                <li data-toggle-nav-collapsed-min back data-ng-repeat="view in views | orderBy:'name'" style="position: relative;" class="show-on-hover">
-                    <a md-button href="#!/views/{{view.id}}">{{view.name}}</a>
-                    <span style="position: absolute; right: 10px; top: 15px;" class="show-icon-on-hover">
-                        <i class="fa fa-edit fa-fw" data-ng-click="showViewDialog($event, view)" has-any-permission="['MODIFY_TEST_RUN_VIEWS']"></i>
-                    </span>
-                </li>
-                <md-divider></md-divider>
-                <li data-toggle-nav-collapsed-min back has-any-permission="['MODIFY_TEST_RUN_VIEWS']">
-                    <a md-button aria-label="menu" href="" data-ng-click="showViewDialog($event)"></i>Create view +</a>
-                </li>
-            </ul>
-        </li>-->
         <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
             <a md-button aria-label="menu" href="#!/tests/runs">
                 <i class="material-icons">playlist_add_check</i>
@@ -60,7 +38,7 @@
             </a>
         </li>
         <li toggle-menu has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
-            <a md-button aria-label="menu" href="#!/tests/runs/views" data-ng-mouseenter="loadViews();">
+            <a md-button aria-label="menu" href="#!/tests/runs/views" data-ng-click="loadViews();">
                 <i class="material-icons">remove_red_eye</i><span data-translate="VEIWS"></span>
             </a>
             <ul class="auto-width width-icon">
