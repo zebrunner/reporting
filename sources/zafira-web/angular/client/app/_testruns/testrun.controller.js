@@ -1170,7 +1170,9 @@
             return $q(function(resolve, reject) {
                 TestRunService.getPlatforms().then(function (rs) {
                     if (rs.success) {
-                        $scope.platforms = rs.data;
+                        $scope.platforms = rs.data.filter(function (platform) {
+                            return platform && platform.length;
+                        });
                         resolve($scope.platforms);
                     }
                     else {
