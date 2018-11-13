@@ -74,7 +74,6 @@
             text-align: left;
             font-weight: bold;
             transition: all $nav-transition_duration ease-in-out;
-            height: $sidebar_phone_width;
             &.open {
                 .icon-has-ul {
                     transform: rotate(180deg);
@@ -104,6 +103,7 @@
                 display: block;
                 padding: 15px 15px;
                 transition: all $nav-transition_duration ease-in-out;
+                height: $sidebar_phone_width;
 
                 .badge {
                     position: absolute;
