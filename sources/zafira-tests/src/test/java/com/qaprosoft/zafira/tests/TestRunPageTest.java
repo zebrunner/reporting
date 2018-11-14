@@ -530,7 +530,7 @@ public class TestRunPageTest extends AbstractTest
 		testDetailsModalWindow.typeComment("Text");
 		testDetailsModalWindow.clickAddCommentButton();
 		int afterCommentActionCommentsCount = parseCommentsCount(testDetailsModalWindow.getCommentsTabHeading().getText());
-		Assert.assertTrue((afterCommentActionCommentsCount - startCommentsCount) == 1);
+		Assert.assertEquals((afterCommentActionCommentsCount - startCommentsCount), 1);
 		testDetailsModalWindow.closeModalWindow();
 
 	}
@@ -624,7 +624,7 @@ public class TestRunPageTest extends AbstractTest
 		Assert.assertEquals(testRunPage.getSuccessAlert().getText(), "Filter was deleted", "Incorrect success alert text");
 
 		TestRunAPIService testRunAPIService = new TestRunAPIService();
-		testRunAPIService.createTestRuns(1, 2, 0, 0, 0, 0, 0).get(0);
+		testRunAPIService.createTestRuns(1, 2, 0, 0, 0, 0, 0);
 
 		generatedName = "name1" + RandomUtils.nextInt(0, 10000);
 		filterBlock.createFilter(generatedName, "desc1", "Status:Equals:Passed");
@@ -705,8 +705,8 @@ public class TestRunPageTest extends AbstractTest
 			switch(status)
 			{
 				case ABORTED:
-					Assert.assertTrue(currentTest.getMessage().length() > 100 == isShowMoreLinkPresent, "Show more link is not present");
-					Assert.assertTrue(currentTest.getMessage().length() > 100 == (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
+					Assert.assertEquals(currentTest.getMessage().length() > 100, isShowMoreLinkPresent, "Show more link is not present");
+					Assert.assertEquals(currentTest.getMessage().length() > 100, (currentTestRow.getShowMoreLogText().length() == 100), "Show more link is not present");
 					Assert.assertTrue(currentTest.getMessage().contains(currentTestRow.getShowLessLogText()), "Show more visible incorrect");
 					Assert.assertTrue(currentTestRow.isElementPresent(currentTestRow.getOpenTestDetailsModalButton(), 1), "Details button is not visible");
 			    case PASSED:

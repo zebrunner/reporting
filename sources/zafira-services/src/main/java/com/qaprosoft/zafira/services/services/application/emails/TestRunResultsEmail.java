@@ -27,7 +27,7 @@ public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s %s (%s) on %s %s";
 
-	private Map<String, String> configuration = new HashMap<String, String>();
+	private Map<String, String> configuration = new HashMap<>();
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
@@ -165,7 +165,7 @@ public class TestRunResultsEmail implements IEmailMessage
 		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
 		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
 		platformInfo = platformInfo.trim();
-		while(platformInfo.indexOf("  ") != -1) {
+		while(platformInfo.contains("  ")) {
 			platformInfo = platformInfo.replaceFirst("  ", " ");
 		}
 		platformInfo = "(" + platformInfo + ")";

@@ -43,7 +43,7 @@ public class TestCaseService
 	@Autowired
 	private TestCaseMapper testCaseMapper;
 	
-	private static LoadingCache<String, Lock> updateLocks = CacheBuilder.newBuilder()
+	private static final LoadingCache<String, Lock> updateLocks = CacheBuilder.newBuilder()
 			.maximumSize(100000)
 			.expireAfterWrite(15, TimeUnit.SECONDS)
 			.build(
@@ -137,7 +137,7 @@ public class TestCaseService
 	public SearchResult<TestCase> searchTestCases(TestCaseSearchCriteria sc) throws ServiceException
 	{
 		actualizeSearchCriteriaDate(sc);
-		SearchResult<TestCase> results = new SearchResult<TestCase>();
+		SearchResult<TestCase> results = new SearchResult<>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());

@@ -71,7 +71,7 @@ public class JobsAPIController
 	private TestRunService testRunService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create job", nickname = "createJob", code = 200, httpMethod = "POST", response = JobType.class)
+	@ApiOperation(value = "Create job", nickname = "createJob", httpMethod = "POST", response = JobType.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JobType createJob(@RequestBody @Valid JobType job,
@@ -82,7 +82,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all jobs", nickname = "getAllJobs", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all jobs", nickname = "getAllJobs", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Job> getAllJobs() throws ServiceException
@@ -91,7 +91,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", code = 200, httpMethod = "POST", response = Map.class)
+	@ApiOperation(value = "Get latest job test runs", nickname = "getLatestJobTestRuns", httpMethod = "POST", response = Map.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}/tests/runs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, TestRun> getLatestJobTestRuns(@QueryParam("env") String env,
@@ -106,7 +106,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create job view", nickname = "createJobViews", code = 200, httpMethod = "POST", response = List.class)
+	@ApiOperation(value = "Create job view", nickname = "createJobViews", httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({ "ROLE_ADMIN" })
@@ -121,7 +121,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update job view", nickname = "updateJobViews", code = 200, httpMethod = "PUT", response = List.class)
+	@ApiOperation(value = "Update job view", nickname = "updateJobViews", httpMethod = "PUT", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Secured({ "ROLE_ADMIN" })
@@ -140,7 +140,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get job views", nickname = "getJobViews", code = 200, httpMethod = "GET", response = Map.class)
+	@ApiOperation(value = "Get job views", nickname = "getJobViews", httpMethod = "GET", response = Map.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "views/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, List<JobViewType>> getJobViews(@PathVariable(value = "id") long id)
@@ -159,7 +159,7 @@ public class JobsAPIController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete job views", nickname = "deleteJobViews", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete job views", nickname = "deleteJobViews", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

@@ -29,7 +29,11 @@ import org.springframework.security.core.Authentication;
 public class RestMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler
 {
 
-	private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
+	private static final AuthenticationTrustResolver trustResolver;
+
+	static {
+		trustResolver = new AuthenticationTrustResolverImpl();
+	}
 
 	@Override
 	protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication,
@@ -38,7 +42,7 @@ public class RestMethodSecurityExpressionHandler extends DefaultMethodSecurityEx
 		RestMethodSecurityExpressionRoot root =
 				new RestMethodSecurityExpressionRoot(authentication, (UserPermissionEvaluator) getPermissionEvaluator());
 		root.setPermissionEvaluator(getPermissionEvaluator());
-		root.setTrustResolver(this.trustResolver);
+		root.setTrustResolver(trustResolver);
 		root.setRoleHierarchy(getRoleHierarchy());
 		return root;
 	}

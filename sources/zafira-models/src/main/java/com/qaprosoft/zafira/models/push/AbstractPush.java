@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class AbstractPush 
 {
-	public static enum Type 
+	public enum Type
 	{
 		TEST_RUN, TEST, TEST_RUN_STATISTICS
 	}

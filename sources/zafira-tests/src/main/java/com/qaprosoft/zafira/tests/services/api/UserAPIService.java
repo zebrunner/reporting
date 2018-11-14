@@ -15,9 +15,7 @@ public class UserAPIService extends AbstractAPIService {
 
 	public List<UserType> createUsers(int count) {
 		List<UserType> userTypes = new ArrayList<>();
-		IntStream.iterate(0, i -> i++).limit(count).forEach(index -> {
-			userTypes.add(createUser(new UserTypeBuilder()));
-		});
+		IntStream.iterate(0, i -> i++).limit(count).forEach(index -> userTypes.add(createUser(new UserTypeBuilder())));
 		return userTypes;
 	}
 }

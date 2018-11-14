@@ -60,7 +60,7 @@ public class ProjectsAPIController extends AbstractController {
 	private ProjectService projectService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create project", nickname = "createProject", code = 200, httpMethod = "POST", response = ProjectType.class)
+	@ApiOperation(value = "Create project", nickname = "createProject", httpMethod = "POST", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
@@ -71,7 +71,7 @@ public class ProjectsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete project", nickname = "deleteProject", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete project", nickname = "deleteProject", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
@@ -81,7 +81,7 @@ public class ProjectsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update project", nickname = "updateProject", code = 200, httpMethod = "PUT", response = ProjectType.class)
+	@ApiOperation(value = "Update project", nickname = "updateProject", httpMethod = "PUT", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_PROJECTS')")
@@ -92,7 +92,7 @@ public class ProjectsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all projects", nickname = "getAllProjects", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,7 +105,7 @@ public class ProjectsAPIController extends AbstractController {
 	}
 	
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get project by name", nickname = "getProjectByName", code = 200, httpMethod = "GET", response = ProjectType.class)
+	@ApiOperation(value = "Get project by name", nickname = "getProjectByName", httpMethod = "GET", response = ProjectType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

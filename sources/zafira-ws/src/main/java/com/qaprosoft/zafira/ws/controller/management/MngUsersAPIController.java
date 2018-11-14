@@ -55,7 +55,7 @@ public class MngUsersAPIController extends AbstractController {
     private Mapper mapper;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get user profile", nickname = "getUserProfile", code = 200, httpMethod = "GET", response = UserType.class)
+    @ApiOperation(value = "Get user profile", nickname = "getUserProfile", httpMethod = "GET", response = UserType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -69,7 +69,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Update user profile", nickname = "updateUserProfile", code = 200, httpMethod = "PUT", response = UserType.class)
+    @ApiOperation(value = "Update user profile", nickname = "updateUserProfile", httpMethod = "PUT", response = UserType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -83,7 +83,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", httpMethod = "DELETE")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -96,7 +96,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Update user password", nickname = "updateUserPassword", code = 200, httpMethod = "PUT")
+    @ApiOperation(value = "Update user password", nickname = "updateUserPassword", httpMethod = "PUT")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -107,7 +107,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get all users", nickname = "getAllUsers", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all users", nickname = "getAllUsers", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -117,7 +117,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Create user", nickname = "createUser", code = 200, httpMethod = "POST", response = UserType.class)
+    @ApiOperation(value = "Create user", nickname = "createUser", httpMethod = "POST", response = UserType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -127,7 +127,7 @@ public class MngUsersAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Delete user", nickname = "deleteUser", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete user", nickname = "deleteUser", httpMethod = "DELETE")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -140,7 +140,7 @@ public class MngUsersAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
+    @ApiOperation(value = "Add user to group", nickname = "addUserToGroup", httpMethod = "PUT", response = User.class)
     @RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody UserType addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id) throws ServiceException {
         return mapper.map(mngUserService.addUserToGroup(user, id), UserType.class);
@@ -150,7 +150,7 @@ public class MngUsersAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", httpMethod = "DELETE")
     @RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
     public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId, @PathVariable(value = "userId") long userId)
             throws ServiceException {

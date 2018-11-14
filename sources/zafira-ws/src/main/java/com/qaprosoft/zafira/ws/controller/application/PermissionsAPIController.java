@@ -49,7 +49,7 @@ public class PermissionsAPIController
 	private PermissionService permissionService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all permissions", nickname = "getAllPermissions", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")

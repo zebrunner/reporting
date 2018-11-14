@@ -19,14 +19,14 @@ import java.util.List;
 
 import com.qaprosoft.zafira.models.db.Attachment;
 
-public class DashboardEmail implements IEmailMessage
+public class CommonEmail implements IEmailMessage
 {
 	
 	private String subject;
 	private String text;
 	private List<Attachment> attachments;
 	
-	public DashboardEmail(String subject, String text, List<Attachment> attachments)
+	public CommonEmail(String subject, String text, List<Attachment> attachments)
 	{
 		this.subject = subject;
 		this.text = text;

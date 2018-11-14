@@ -96,7 +96,7 @@ public class UserProfilePage extends BasePage
 	private WebElement tokenInput;
 
 
-	public enum ColorSchema {LIGHT, DARK};
+	public enum ColorSchema {LIGHT, DARK}
 
 	public UserProfilePage(WebDriver driver)
 	{

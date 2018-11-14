@@ -80,7 +80,7 @@ public class SettingsAPIController extends AbstractController
 	private Integer amazonTokenExpiration;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all settings", nickname = "getAllSettings", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -92,7 +92,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get settings by integration", nickname = "getSettingsByIntegration", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get settings by integration", nickname = "getSettingsByIntegration", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -105,7 +105,7 @@ public class SettingsAPIController extends AbstractController
 
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get settings by tool", nickname = "getSettingsByTool", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "tool/{tool}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Setting> getSettingsByTool(@PathVariable(value="tool") String tool, @RequestParam(value = "decrypt", required = false, defaultValue="false") boolean decrypt) throws Exception
@@ -132,7 +132,7 @@ public class SettingsAPIController extends AbstractController
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get tools", nickname = "getTools", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get tools", nickname = "getTools", httpMethod = "GET", response = List.class)
     @RequestMapping(value = "tools", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Tool> getTools() throws ServiceException
     {
@@ -143,7 +143,7 @@ public class SettingsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Is tool connected", nickname = "isToolConnected", code = 200, httpMethod = "GET", response = Boolean.class)
+	@ApiOperation(value = "Is tool connected", nickname = "isToolConnected", httpMethod = "GET", response = Boolean.class)
 	@RequestMapping(value = "tools/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Boolean isToolConnected(@PathVariable(value = "name") Tool tool) throws ServiceException
 	{
@@ -151,7 +151,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = String.class)
+	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", httpMethod = "GET", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -163,7 +163,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = Setting.class)
+	@ApiOperation(value = "Get company logo URL", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "companyLogo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Setting getCompanyLogoURL() throws ServiceException
@@ -172,7 +172,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", code = 200, httpMethod = "GET", response = Setting.class)
+	@ApiOperation(value = "Get setting value", nickname = "getSettingValue", httpMethod = "GET", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -183,7 +183,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete setting", nickname = "deleteSetting", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete setting", nickname = "deleteSetting", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -195,7 +195,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create setting", nickname = "createSetting", code = 200, httpMethod = "POST", response = Setting.class)
+	@ApiOperation(value = "Create setting", nickname = "createSetting", httpMethod = "POST", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -207,7 +207,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Edit setting", nickname = "editSetting", code = 200, httpMethod = "PUT", response = Setting.class)
+	@ApiOperation(value = "Edit setting", nickname = "editSetting", httpMethod = "PUT", response = Setting.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -219,7 +219,7 @@ public class SettingsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Edit settings", nickname = "editSettings", code = 200, httpMethod = "PUT", response = List.class)
+	@ApiOperation(value = "Edit settings", nickname = "editSettings", httpMethod = "PUT", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -254,7 +254,7 @@ public class SettingsAPIController extends AbstractController
         return connectedTool;
 	}
 
-	@ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", code = 200, httpMethod = "GET", response = SessionCredentials.class)
+	@ApiOperation(value = "Get amazon session credentials", nickname = "getSessionCredentials", httpMethod = "GET", response = SessionCredentials.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
 	@RequestMapping(value = "amazon/creds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -263,7 +263,7 @@ public class SettingsAPIController extends AbstractController
 		return amazonService.getTemporarySessionCredentials(amazonTokenExpiration);
 	}
 
-	@ApiOperation(value = "Generate amazon presigned URL", nickname = "generatePresignedURL", code = 200, httpMethod = "POST", response = String.class)
+	@ApiOperation(value = "Generate amazon presigned URL", nickname = "generatePresignedURL", httpMethod = "POST", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
 	@RequestMapping(value = "amazon/presignedURL", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

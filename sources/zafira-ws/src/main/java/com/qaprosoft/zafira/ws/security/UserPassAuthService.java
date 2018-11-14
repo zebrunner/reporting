@@ -35,7 +35,7 @@ public class UserPassAuthService implements UserDetailsService
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		User user = null;
+		User user;
 		try
 		{
 			user = userService.getUserByUsername(username);

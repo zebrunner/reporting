@@ -34,7 +34,6 @@ public class Tokenizer
 
 	public String randomToken()
 	{
-		String randomNum = new Integer(prng.nextInt()).toString();
-		return new String(Hex.encodeHex(sha.digest(randomNum.getBytes())));
+		return new String(Hex.encodeHex(sha.digest(Integer.toString(prng.nextInt()).getBytes())));
 	}
 }

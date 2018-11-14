@@ -46,7 +46,7 @@ public class FiltersAPIController extends AbstractController
 	private Mapper mapper;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create filter", nickname = "createFilter", code = 200, httpMethod = "POST", response = FilterType.class)
+	@ApiOperation(value = "Create filter", nickname = "createFilter", httpMethod = "POST", response = FilterType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -68,7 +68,7 @@ public class FiltersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all public filters", nickname = "getAllPublicFilters", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all public filters", nickname = "getAllPublicFilters", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "all/public", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +79,7 @@ public class FiltersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update filter", nickname = "updateFilter", code = 200, httpMethod = "PUT", response = FilterType.class)
+	@ApiOperation(value = "Update filter", nickname = "updateFilter", httpMethod = "PUT", response = FilterType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("isOwner(@filterService.getFilterById(#filterType.id), 'userId')")
@@ -92,7 +92,7 @@ public class FiltersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete filter", nickname = "deleteFilter", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete filter", nickname = "deleteFilter", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("isOwner(@filterService.getFilterById(#id), 'userId')")
@@ -103,7 +103,7 @@ public class FiltersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get filter builder", nickname = "getBuilder", code = 200, httpMethod = "GET", response = Subject.class)
+	@ApiOperation(value = "Get filter builder", nickname = "getBuilder", httpMethod = "GET", response = Subject.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{name}/builder", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

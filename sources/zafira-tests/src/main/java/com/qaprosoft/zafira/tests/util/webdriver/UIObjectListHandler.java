@@ -30,6 +30,7 @@ public class UIObjectListHandler<T extends AbstractUIObject> implements Invocati
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object invoke(Object object, Method method, Object[] objects) throws Throwable
 	{
 

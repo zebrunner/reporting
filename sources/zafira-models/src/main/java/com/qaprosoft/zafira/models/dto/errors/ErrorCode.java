@@ -41,9 +41,9 @@ public enum ErrorCode
 	INTEGRATION_UNAVAILABLE(2001),
 	UNHEALTHY_STATUS(2002);
 
-	private int code;
+	private final int code;
 
-	private ErrorCode(int code)
+	ErrorCode(int code)
 	{
 		this.code = code;
 	}

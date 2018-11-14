@@ -32,11 +32,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTService
 {
-	private String secret;
+	private final String secret;
 	
-	private Integer authTokenExp;
+	private final Integer authTokenExp;
 	
-	private Integer refreshTokenExp;
+	private final Integer refreshTokenExp;
 
 	@Autowired
 	private UserService userService;

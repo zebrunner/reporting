@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.tests.services.api.builders;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 
@@ -34,7 +35,7 @@ public class TestTypeBuilder extends AbstractTypeBuilder<TestType>
 			setTestGroup("com.qaprosoft.com.testgroup");
 			setStartTime(System.currentTimeMillis());
 			setDependsOnMethods("");
-			setWorkItems(Arrays.asList("TEST#" + getNextRandomInt()));
+			setWorkItems(Collections.singletonList("TEST#" + getNextRandomInt()));
 		}
 	};
 

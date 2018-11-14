@@ -49,6 +49,7 @@ public class UIElementDecorator implements FieldDecorator
         return isList ? getObjects(loader, field, locator) : getObject(loader, field, locator);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends AbstractUIObject> T getObject(ClassLoader loader, Field field, ElementLocator locator) {
         Class<? extends AbstractUIObject> clazz = (Class<? extends AbstractUIObject>) field.getType();
         T uiObject;
@@ -70,10 +71,10 @@ public class UIElementDecorator implements FieldDecorator
         return uiObject;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends AbstractUIObject> List<T> getObjects(ClassLoader loader, Field field, ElementLocator locator) {
         InvocationHandler handler = new UIObjectListHandler<>((Class<?>) getListType(field), driver, locator, field.getName());
-        List<T> proxies = (List<T>) Proxy.newProxyInstance(loader, new Class[]{ List.class }, handler);
-        return proxies;
+        return (List<T>) Proxy.newProxyInstance(loader, new Class[]{ List.class }, handler);
     }
 
     private Type getListType(Field field) {

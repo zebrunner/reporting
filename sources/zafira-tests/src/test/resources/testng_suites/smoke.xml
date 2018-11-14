@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite preserve-order="true" verbose="1" name="Zafira Smoke Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
+<suite verbose="1" name="Zafira Smoke Tests" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
 	
 	<test name="Login with valid credentials">
 		<classes>
@@ -12,7 +12,7 @@
 		</classes>
 	</test>
 
-	<test parallel="false" preserve-order="true" name="Test run tests">
+	<test parallel="false" name="Test run tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.TestRunPageTest">
 				<methods>

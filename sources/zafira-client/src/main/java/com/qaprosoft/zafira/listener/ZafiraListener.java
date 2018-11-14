@@ -146,7 +146,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 			this.job = zc.registerJob(ci.getCiUrl(), suiteOwner.getId());
 			
 			// Register upstream job if required
-			UserType anonymous = null;
+			UserType anonymous;
 			if (BuildCasue.UPSTREAMTRIGGER.equals(ci.getCiBuildCause())) 
 			{
 				anonymous = zc.getUserOrAnonymousIfNotFound(ZafiraClient.DEFAULT_USER);
@@ -635,7 +635,6 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 	 * 
 	 * @param config bean
 	 * @return XML representation of configuration bean
-	 * @throws JAXBException
 	 */
 	private String convertToXML(ConfigurationType config)
 	{
@@ -699,7 +698,7 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 
 				if (dependentMethod)
 				{
-					sb.append("Test skipped due to the dependency from: " + dependentMethodName);
+					sb.append("Test skipped due to the dependency from: ").append(dependentMethodName);
 				} 
 				else 
 				{
@@ -709,12 +708,12 @@ public class ZafiraListener implements ISuiteListener, ITestListener, IHookable,
 		}
 		else
 		{
-			sb.append(result.getThrowable().getMessage() + "\n");
+			sb.append(result.getThrowable().getMessage()).append("\n");
 	    	
             StackTraceElement[] elems = result.getThrowable().getStackTrace();
 	        for (StackTraceElement elem : elems) 
 	        {
-	        	sb.append("\n" + elem.toString());
+	        	sb.append("\n").append(elem.toString());
             }
 		}
 		

@@ -5,7 +5,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 
 public class AuthAPIService
 {
-	private ZafiraClient zafiraClient = new ZafiraClient(Config.get("zafira_service_url"));
+	private final ZafiraClient zafiraClient = new ZafiraClient(Config.get("zafira_service_url"));
 
 	public String getAuthToken()
 	{

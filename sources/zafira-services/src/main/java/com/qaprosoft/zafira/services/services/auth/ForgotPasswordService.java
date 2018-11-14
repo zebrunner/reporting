@@ -52,7 +52,7 @@ public class ForgotPasswordService {
 
     @Transactional(rollbackFor = Exception.class)
     public void sendForgotPasswordEmail(EmailType emailType, User user) throws ServiceException {
-        AbstractEmail emailMessage = null;
+        AbstractEmail emailMessage;
         if(user.getSource().equals(User.Source.INTERNAL)) {
             String token = RandomStringUtils.randomAlphanumeric(50);
             userService.updateResetToken(token, user.getId());

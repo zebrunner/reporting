@@ -97,7 +97,7 @@ public class TestsAPIController extends AbstractController
 	private StatisticsService statisticsService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Start test", nickname = "startTest", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Start test", nickname = "startTest", httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -112,7 +112,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Finish test", nickname = "finishTest", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Finish test", nickname = "finishTest", httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -131,7 +131,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update test", nickname = "updateTest", code = 200, httpMethod = "PUT", response = Test.class)
+	@ApiOperation(value = "Update test", nickname = "updateTest", httpMethod = "PUT", response = Test.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -149,7 +149,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test work items", nickname = "createTestWorkItems", code = 200, httpMethod = "POST", response = TestType.class)
+	@ApiOperation(value = "Create test work items", nickname = "createTestWorkItems", httpMethod = "POST", response = TestType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -162,7 +162,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete test by id", nickname = "deleteTest", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -174,7 +174,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Search tests", nickname = "searchTests", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ApiOperation(value = "Search tests", nickname = "searchTests", httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -185,7 +185,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get test case work items by type", nickname = "getTestCaseWorkItemsByType", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get test case work items by type", nickname = "getTestCaseWorkItemsByType", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -203,7 +203,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create or update test work item", nickname = "createOrUpdateTestWorkItem", code = 200, httpMethod = "POST", response = WorkItem.class)
+	@ApiOperation(value = "Create or update test work item", nickname = "createOrUpdateTestWorkItem", httpMethod = "POST", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -232,7 +232,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", code = 200, httpMethod = "PUT", response = WorkItem.class)
+	@ApiOperation(value = "Update test known issue", nickname = "updateTestKnownIssue", httpMethod = "PUT", response = WorkItem.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -247,7 +247,7 @@ public class TestsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete test work item", nickname = "deleteTestWorkItem", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete test work item", nickname = "deleteTestWorkItem", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -291,7 +291,7 @@ public class TestsAPIController extends AbstractController
 	}
 	
 	@ResponseStatusDetails
-	@ApiOperation(value = "Add test artifact", nickname = "addTestArtifact", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Add test artifact", nickname = "addTestArtifact", httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

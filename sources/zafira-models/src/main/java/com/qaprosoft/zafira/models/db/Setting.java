@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 

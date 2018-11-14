@@ -128,7 +128,7 @@ public class TestRunsAPIController extends AbstractController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunsAPIController.class);
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Start test run", nickname = "startTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
+	@ApiOperation(value = "Start test run", nickname = "startTestRun", httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -146,7 +146,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update test run config", nickname = "updateTestRun", code = 200, httpMethod = "PUT", response = TestRunType.class)
+	@ApiOperation(value = "Update test run config", nickname = "updateTestRun", httpMethod = "PUT", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -167,7 +167,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Finish test run", nickname = "finishTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
+	@ApiOperation(value = "Finish test run", nickname = "finishTestRun", httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -184,7 +184,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", code = 200, httpMethod = "POST", response = TestRunType.class)
+	@ApiOperation(value = "Abort test run", nickname = "abortTestRun", httpMethod = "POST", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
@@ -214,7 +214,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", code = 200, httpMethod = "POST", response = List.class)
+	@ApiOperation(value = "Create queued testRun", nickname = "queueTestRun", httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "queue", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -228,7 +228,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get test run", nickname = "getTestRun", code = 200, httpMethod = "GET", response = TestRunType.class)
+	@ApiOperation(value = "Get test run", nickname = "getTestRun", httpMethod = "GET", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -245,7 +245,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ApiOperation(value = "Search test runs", nickname = "searchTestRuns", httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody SearchResult<TestRun> searchTestRuns(
 			@RequestParam(value = "filterId", required = false) Long filterId, @RequestBody TestRunSearchCriteria sc)
@@ -264,7 +264,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ApiOperation(value = "Rerun jobs", nickname = "smartRerun", httpMethod = "POST", response = SearchResult.class)
 	@RequestMapping(value = "rerun/jobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<TestRunType> rerunJobs(
 			@RequestParam(value = "doRebuild", defaultValue = "false", required = false) Boolean doRebuild,
@@ -301,7 +301,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get test run by ci run id", nickname = "getTestRunByCiRunId", code = 200, httpMethod = "GET", response = TestRunType.class)
+	@ApiOperation(value = "Get test run by ci run id", nickname = "getTestRunByCiRunId", httpMethod = "GET", response = TestRunType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -315,7 +315,7 @@ public class TestRunsAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get test run results by id", nickname = "getTestRunResults", code = 200, httpMethod = "GET", response = java.util.List.class)
+	@ApiOperation(value = "Get test run results by id", nickname = "getTestRunResults", httpMethod = "GET", response = java.util.List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{id}/results", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -330,7 +330,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Create compare matrix", nickname = "createCompareMatrix", code = 200, httpMethod = "GET", response = Map.class)
+	@ApiOperation(value = "Create compare matrix", nickname = "createCompareMatrix", httpMethod = "GET", response = Map.class)
 	@RequestMapping(value = "{ids}/compare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Long, Map<String, Test>> createCompareMatrix(
 			@PathVariable(value = "ids") String testRunIds) throws ServiceException {
@@ -344,7 +344,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Delete test run", nickname = "deleteTestRun", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete test run", nickname = "deleteTestRun", httpMethod = "DELETE")
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public void deleteTestRun(@PathVariable(value = "id") long id) throws ServiceException {
@@ -354,7 +354,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Send test run result email", nickname = "sendTestRunResultsEmail", code = 200, httpMethod = "POST", response = String.class)
+	@ApiOperation(value = "Send test run result email", nickname = "sendTestRunResultsEmail", httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendTestRunResultsEmail(@PathVariable(value = "id") String id,
 			@RequestBody @Valid EmailType email,
@@ -368,7 +368,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Send failed test run result email", nickname = "sendTestRunFailureEmail", code = 200, httpMethod = "POST", response = String.class)
+	@ApiOperation(value = "Send failed test run result email", nickname = "sendTestRunFailureEmail", httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/emailFailure", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String sendTestRunFailureEmail(@PathVariable(value = "id") String id,
 														@RequestBody @Valid EmailType email,
@@ -393,7 +393,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", code = 200, httpMethod = "POST", response = String.class)
+	@ApiOperation(value = "Create test run results spreadsheet", nickname = "createTestRunResultSpreadsheet", httpMethod = "POST", response = String.class)
 	@RequestMapping(value = "{id}/spreadsheet", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String createTestRunResultSpreadsheet(@PathVariable(value = "id") String id,
 			@RequestBody String recipients) throws ServiceException {
@@ -405,7 +405,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", code = 200, httpMethod = "GET", response = String.class)
+	@ApiOperation(value = "Get test run result html text", nickname = "exportTestRunHTML", httpMethod = "GET", response = String.class)
 	@RequestMapping(value = "{id}/export", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public @ResponseBody String exportTestRunHTML(@PathVariable(value = "id") String id)
 			throws ServiceException, JAXBException {
@@ -415,7 +415,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Mark test run as reviewed", nickname = "markTestRunAsReviewed", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Mark test run as reviewed", nickname = "markTestRunAsReviewed", httpMethod = "POST")
 	@PreAuthorize("hasPermission('MODIFY_TEST_RUNS')")
 	@RequestMapping(value = "{id}/markReviewed", method = RequestMethod.POST)
 	public void markTestRunAsReviewed(@PathVariable(value = "id") long id, @RequestBody @Valid CommentType comment)
@@ -428,7 +428,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Rerun test run", nickname = "rerunTestRun", httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/rerun", method = RequestMethod.GET)
 	public void rerunTestRun(@PathVariable(value = "id") long id,
@@ -453,7 +453,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Debug test run", nickname = "debugTestRun", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Debug test run", nickname = "debugTestRun", httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/debug", method = RequestMethod.GET)
 	public void debugTestRun(@PathVariable(value = "id") long id) throws ServiceException {
@@ -470,7 +470,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Abort job", nickname = "abortCIJob", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Abort job", nickname = "abortCIJob", httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "abort/ci", method = RequestMethod.GET)
 	public void abortCIJob(@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
@@ -490,7 +490,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Abort debug", nickname = "abortDebug", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Abort debug", nickname = "abortDebug", httpMethod = "GET")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "abort/debug", method = RequestMethod.GET)
 	public void abortDebug(@ApiParam(value = "Test run id") @RequestParam(value = "id", required = false) Long id,
@@ -510,7 +510,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Build test run", nickname = "buildTestRun", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Build test run", nickname = "buildTestRun", httpMethod = "POST")
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/build", method = RequestMethod.POST)
 	public void buildTestRun(@PathVariable(value = "id") long id,
@@ -529,7 +529,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get job parameters", nickname = "getjobParameters", code = 200, httpMethod = "GET", response = Map.class)
+	@ApiOperation(value = "Get job parameters", nickname = "getjobParameters", httpMethod = "GET", response = Map.class)
 	@PreAuthorize("hasPermission('TEST_RUNS_CI')")
 	@RequestMapping(value = "{id}/jobParameters", method = RequestMethod.GET)
 	public @ResponseBody List<BuildParameterType> getjobParameters(@PathVariable(value = "id") long id)
@@ -544,7 +544,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get environments", nickname = "getEnvironments", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get environments", nickname = "getEnvironments", httpMethod = "GET", response = List.class)
 	@RequestMapping(value = "environments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<String> getEnvironments() throws ServiceException {
 		return testRunService.getEnvironments();
@@ -553,7 +553,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get platforms", nickname = "getPlatforms", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get platforms", nickname = "getPlatforms", httpMethod = "GET", response = List.class)
 	@RequestMapping(value = "platforms", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<String> getPlatforms() throws ServiceException {
 		return testRunService.getPlatforms();
@@ -562,7 +562,7 @@ public class TestRunsAPIController extends AbstractController {
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Get console output from jenkins by test run id", nickname = "getConsoleOutput", httpMethod = "GET")
 	@RequestMapping(value = "jobConsoleOutput/{count}/{fullCount}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<Integer, String> getConsoleOutput(@PathVariable(value = "count") int count,
 			@PathVariable(value = "fullCount") int fullCount, @RequestParam(value = "id", required = false) Long id,

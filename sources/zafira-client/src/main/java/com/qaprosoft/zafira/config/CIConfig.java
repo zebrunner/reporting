@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CIConfig
 {
-	public enum BuildCasue { UPSTREAMTRIGGER, TIMERTRIGGER, MANUALTRIGGER, SCMTRIGGER };
+	public enum BuildCasue { UPSTREAMTRIGGER, TIMERTRIGGER, MANUALTRIGGER, SCMTRIGGER }
 	
 	private String ciRunId;
 	private String ciUrl;
@@ -88,7 +88,7 @@ public class CIConfig
 
 	public void setCiParentUrl(String ciParentUrl)
 	{
-		this.ciParentUrl = StringUtils.removeEnd(ciParentUrl, "/");;
+		this.ciParentUrl = StringUtils.removeEnd(ciParentUrl, "/");
 	}
 
 	public Integer getCiParentBuild()

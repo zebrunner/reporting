@@ -26,8 +26,7 @@ import com.qaprosoft.zafira.models.dto.errors.ErrorCode;
 public class ErrorCodeSerializer extends JsonSerializer<ErrorCode>
 {
 	@Override
-	public void serialize(ErrorCode value, JsonGenerator jgen, SerializerProvider provider) throws IOException,
-			JsonProcessingException
+	public void serialize(ErrorCode value, JsonGenerator jgen, SerializerProvider provider) throws IOException
 	{
 		jgen.writeNumber(value.getCode());
 	}

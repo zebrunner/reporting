@@ -161,7 +161,7 @@ public class UserMapperTest extends AbstractTestNGSpringContextTests
 		UserSearchCriteria userSearchCriteria = new UserSearchCriteria();
 		userSearchCriteria.setGroupName(GROUP.getName());
 		userMapper.deleteUserFromGroup(USER.getId(), GROUP.getId());
-		userMapper.searchUsers(userSearchCriteria).get(0);
+		userMapper.searchUsers(userSearchCriteria);
 	}
 
 	private void checkUser(User user)

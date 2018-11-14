@@ -24,7 +24,7 @@ import com.qaprosoft.zafira.models.db.Tenancy;
  */
 public class TenancyContext {
 
-	private static ThreadLocal<String> tenant = new InheritableThreadLocal<>();
+	private static final ThreadLocal<String> tenant = new InheritableThreadLocal<>();
 
     public static void setTenantName(String tenantName) {
         tenant.set(tenantName != null ? tenantName.toLowerCase() : null);

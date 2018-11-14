@@ -26,7 +26,7 @@ import com.qaprosoft.zafira.tests.util.Config;
 public abstract class AbstractPage extends AbstractUIObject
 {
 
-	protected String url;
+	protected final String url;
 
 	public AbstractPage(WebDriver driver, String path)
 	{
@@ -43,7 +43,7 @@ public abstract class AbstractPage extends AbstractUIObject
 	
 	public boolean isOpened()
 	{
-		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url)).booleanValue();
+		return new WebDriverWait(driver, 15).until(ExpectedConditions.urlMatches(url));
 	}
 
 	public String getUrl() {

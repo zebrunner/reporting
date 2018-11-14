@@ -1,6 +1,7 @@
 package com.qaprosoft.zafira.tests.gui;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -33,11 +34,11 @@ public abstract class AbstractUIObject
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractPage.class);
 	protected static final Long IMPLICITLY_TIMEOUT = 25L;
-	protected int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
-	protected int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
+	protected static final int ADMIN_ID = Integer.valueOf(Config.get("admin1.id"));
+	protected static final int PERFORMANCE_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.performance.id"));
 
 	protected WebDriver driver;
-	protected SearchContext context;
+	protected final SearchContext context;
 	protected WebElement rootElement;
 	protected String fieldName;
 
@@ -72,6 +73,7 @@ public abstract class AbstractUIObject
 		PageFactory.initElements(new UIElementDecorator(driver, elementLocatorFactory), this);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean isElementPresent(By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -97,6 +99,7 @@ public abstract class AbstractUIObject
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean isElementPresent(WebElement webElement, By by, long seconds)
 	{
 		String element = by == null ? "" : by.toString();
@@ -146,6 +149,7 @@ public abstract class AbstractUIObject
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean waitUntilElementIsPresent(WebElement webElement, By by, long seconds)
 	{
 		return innerTimeoutOperation(() -> {
@@ -168,7 +172,7 @@ public abstract class AbstractUIObject
 	{
 		return innerTimeoutOperation(() -> {
 			WebDriverWait webDriverWait = new WebDriverWait(driver, seconds, 0L);
-			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Arrays.asList(webElement)));
+			webDriverWait.until(ExpectedConditions.invisibilityOfAllElements(Collections.singletonList(webElement)));
 			return webDriverWait;
 		});
 	}
@@ -213,7 +217,7 @@ public abstract class AbstractUIObject
 
 	private boolean innerTimeoutOperation(Supplier<Wait> operationSupplier)
 	{
-		boolean result = false;
+		boolean result;
 		try
 		{
 			driver.manage().timeouts().implicitlyWait(0L, TimeUnit.SECONDS);

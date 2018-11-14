@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -88,7 +89,7 @@ public class TestRunSpreadsheetService
 			Sheet sheet = spreadsheet.getSheets().stream().filter(s -> s.getProperties().getTitle().equalsIgnoreCase(TEST_RUN_RESULTS_SHEET_NAME)).findFirst().orElse(new Sheet());
 			Request cellsStyleRequest = spreadsheetsService.setCellsStyle(sheet.getProperties().getSheetId(),
 					0, 1, 0, testRunResults.get(0).size(), true, 10, "Arial", true);
-			spreadsheetsService.batchUpdate(spreadsheet.getSpreadsheetId(), Arrays.asList(cellsStyleRequest));
+			spreadsheetsService.batchUpdate(spreadsheet.getSpreadsheetId(), Collections.singletonList(cellsStyleRequest));
 			SheetProperties sheetProperties = sheet.getProperties();
 			spreadsheetsService.writeValuesIntoSpreadsheet(spreadsheet.getSpreadsheetId(), testRunResults, TEST_RUN_RESULTS_SHEET_NAME);
 			Request columnsAndRowsCountRequest = spreadsheetsService.setColumnAndRowsCounts(sheetProperties, testRunResults.get(0).size(), testRunResults.size());
@@ -111,7 +112,7 @@ public class TestRunSpreadsheetService
 		List<List<Object>> result = new ArrayList<>();
 		result.add(Arrays.asList(headerTitles));
 		List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-		tests.stream().forEach(test -> {
+		tests.forEach(test -> {
 			List<Object> testResult = new ArrayList<>();
 			testResult.add(getNotNullSpreadsheetValue(test.getStatus().name()));
 			testResult.add(getNotNullSpreadsheetValue(test.getMessage()));
@@ -120,7 +121,7 @@ public class TestRunSpreadsheetService
 			testResult.add(getNotNullSpreadsheetValue(test.getSecondaryOwner()));
 			testResult.add(getNotNullSpreadsheetValue(test.getTestConfig().getDevice()));
 			Period period = new Interval(test.getStartTime().getTime(), test.getFinishTime().getTime()).toPeriod();
-			StringBuffer elapsedTime = new StringBuffer();
+			StringBuilder elapsedTime = new StringBuilder();
 			elapsedTime.append(period.getDays() > 0 ? String.format("%d days", period.getDays()) : "");
 			elapsedTime.append(period.getHours() > 0 ? String.format(" %d hours", period.getHours()) : "");
 			elapsedTime.append(period.getMinutes() > 0 ? String.format(" %d minutes", period.getMinutes()) : "");

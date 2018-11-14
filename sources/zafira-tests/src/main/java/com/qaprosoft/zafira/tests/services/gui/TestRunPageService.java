@@ -107,7 +107,7 @@ public class TestRunPageService extends AbstractPageService
 	public TestTable getTestTableByRowIndex(int index)
 	{
 		TestRunTableRow testRunTableRow = getTestRunRowByIndex(index);
-		TestTable result = null;
+		TestTable result;
 		if(! testRunPage.isElementPresent(testRunTableRow.getTestTable().getRootElement(), 1))
 		{
 			testRunPage.hoverOnElement(testRunTableRow.getRootElement());

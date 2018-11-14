@@ -56,6 +56,6 @@ public class Subject
 
 	public void sortCriterias()
 	{
-		Collections.sort(this.criterias, Comparator.comparing(Criteria::getName));
+		this.criterias.sort(Comparator.comparing(Criteria::getName));
 	}
 }

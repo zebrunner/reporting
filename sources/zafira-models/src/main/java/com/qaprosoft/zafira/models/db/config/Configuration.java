@@ -34,7 +34,7 @@ public class Configuration
 	{
 		if (arg == null)
 		{
-			arg = new ArrayList<Argument>();
+			arg = new ArrayList<>();
 		}
 		return this.arg;
 	}

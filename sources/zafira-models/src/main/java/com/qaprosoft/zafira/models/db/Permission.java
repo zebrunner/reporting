@@ -75,7 +75,7 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
 	public boolean equals(Object o)
 	{
 		boolean equals = false;
-		if (o != null && o instanceof Permission)
+		if (o instanceof Permission)
 		{
 			if(this.getId() != null)
 			{
@@ -98,6 +98,6 @@ public class Permission extends AbstractEntity implements Comparable<Permission>
 	@Override
 	public int compareTo(Permission o)
 	{
-		return this.getId() > o.getId() ? 1 : -1;
+		return o != null && this.getId() > o.getId() ? 1 : -1;
 	}
 }

@@ -79,7 +79,7 @@ public class UsersAPIController extends AbstractController
 	private Mapper mapper;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get user profile", nickname = "getUserProfile", code = 200, httpMethod = "GET", response = UserType.class)
+	@ApiOperation(value = "Get user profile", nickname = "getUserProfile", httpMethod = "GET", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -99,7 +99,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get extended user profile", nickname = "getExtendedUserProfile", code = 200, httpMethod = "GET", response = Map.class)
+	@ApiOperation(value = "Get extended user profile", nickname = "getExtendedUserProfile", httpMethod = "GET", response = Map.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -121,7 +121,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update user profile", nickname = "updateUserProfile", code = 200, httpMethod = "PUT", response = UserType.class)
+	@ApiOperation(value = "Update user profile", nickname = "updateUserProfile", httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -137,7 +137,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete user profile photo", nickname = "deleteUserProfilePhoto", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -151,7 +151,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update user password", nickname = "updateUserPassword", code = 200, httpMethod = "PUT")
+	@ApiOperation(value = "Update user password", nickname = "updateUserPassword", httpMethod = "PUT")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -163,7 +163,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Search users", nickname = "searchUsers", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ApiOperation(value = "Search users", nickname = "searchUsers", httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -175,7 +175,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", code = 200, httpMethod = "PUT", response = UserType.class)
+	@ApiOperation(value = "Create ot update user", nickname = "createOrUpdateUser", httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -187,7 +187,7 @@ public class UsersAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update user status", nickname = "updateStatus", code = 200, httpMethod = "PUT", response = UserType.class)
+	@ApiOperation(value = "Update user status", nickname = "updateStatus", httpMethod = "PUT", response = UserType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -202,7 +202,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", code = 200, httpMethod = "PUT", response = User.class)
+	@ApiOperation(value = "Add user to group", nickname = "addUserToGroup", httpMethod = "PUT", response = User.class)
 	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "group/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody User addUserToGroup(@RequestBody User user, @PathVariable(value = "id") long id)
@@ -215,7 +215,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete user from group", nickname = "deleteUserFromGroup", httpMethod = "DELETE")
 	@PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
 	@RequestMapping(value = "{userId}/group/{groupId}", method = RequestMethod.DELETE)
 	public void deleteUserFromGroup(@PathVariable(value = "groupId") long groupId,
@@ -228,7 +228,7 @@ public class UsersAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get default user preferences", nickname = "getDefaultUserPreferences", httpMethod = "GET", response = List.class)
 	@RequestMapping(value = "preferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<UserPreference> getDefaultUserPreferences() throws ServiceException
 	{
@@ -236,7 +236,7 @@ public class UsersAPIController extends AbstractController
 	}
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", code = 200, httpMethod = "PUT", response = List.class)
+    @ApiOperation(value = "Update user preferences", nickname = "createDashboardAttribute", httpMethod = "PUT", response = List.class)
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value="{userId}/preferences", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<UserPreference> createUserPreference(@PathVariable(value="userId") long userId, @RequestBody List<UserPreference> preferences) throws ServiceException {
@@ -248,7 +248,7 @@ public class UsersAPIController extends AbstractController
     }
 
 	@ResponseStatusDetails
-    @ApiOperation(value = "Reset user preferences to default", nickname = "resetUserPreferencesToDefault", code = 200, httpMethod = "PUT", response = List.class)
+    @ApiOperation(value = "Reset user preferences to default", nickname = "resetUserPreferencesToDefault", httpMethod = "PUT", response = List.class)
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({
    				@ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "preferences/default", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -258,7 +258,7 @@ public class UsersAPIController extends AbstractController
    	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete user preferences", nickname = "deleteUserPreferences", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 			{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

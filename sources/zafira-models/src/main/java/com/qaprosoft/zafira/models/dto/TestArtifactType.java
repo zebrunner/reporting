@@ -105,7 +105,7 @@ public class TestArtifactType extends AbstractType
 	public boolean equals(Object obj)
 	{
 		boolean equals = false;
-		if(obj != null && obj instanceof TestArtifactType)
+		if(obj instanceof TestArtifactType)
 		{
 			equals = this.name == ((TestArtifactType)obj).getName();
 		}

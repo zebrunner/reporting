@@ -50,7 +50,7 @@ public class MngGroupsAPIController extends AbstractController {
     private Mapper mapper;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Create group", nickname = "createGroup", code = 200, httpMethod = "POST", response = GroupType.class)
+    @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = GroupType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,7 +59,7 @@ public class MngGroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", code = 200, httpMethod = "POST", response = GroupType.class)
+    @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", httpMethod = "POST", response = GroupType.class)
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "permissions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody GroupType addPermissionsToGroup(@Valid @RequestBody GroupType group) throws ServiceException {
@@ -68,7 +68,7 @@ public class MngGroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get group", nickname = "getGroup", code = 200, httpMethod = "GET", response = GroupType.class)
+    @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = GroupType.class)
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody GroupType getGroup(@PathVariable(value = "id") long id) throws ServiceException {
         return mapper.map(mngGroupService.getGroupById(id), GroupType.class);
@@ -76,7 +76,7 @@ public class MngGroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get all groups", nickname = "getAllGroups", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<GroupType> getAllGroups() throws ServiceException {
         return mngGroupService.getAllGroups().stream().map(group -> mapper.map(group, GroupType.class)).collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class MngGroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", code = 200, httpMethod = "GET", response = Integer.class)
+    @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Integer getGroupsCount() throws ServiceException {
         return mngGroupService.getGroupsCount();
@@ -92,7 +92,7 @@ public class MngGroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get roles", nickname = "getRoles", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Group.Role> getRoles() throws ServiceException {
         return Arrays.asList(Group.Role.values());
@@ -100,7 +100,7 @@ public class MngGroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Update group", nickname = "updateGroup", code = 200, httpMethod = "PUT", response = GroupType.class)
+    @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = GroupType.class)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody GroupType updateGroup(@Valid @RequestBody GroupType group) throws ServiceException {
         return mapper.map(mngGroupService.updateGroup(mapper.map(group, Group.class)), GroupType.class);
@@ -110,7 +110,7 @@ public class MngGroupsAPIController extends AbstractController {
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Delete group", nickname = "deleteGroup", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteGroup(@PathVariable(value = "id") long id) throws ServiceException {
         mngGroupService.deleteGroup(id);
