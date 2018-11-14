@@ -87,6 +87,7 @@ services:
       - "rabbitmq"
       - "redis"
       - "screenshoter"
+      - "selenoid"
     restart: always
   selenoid:
     image: "aerokube/selenoid"
@@ -96,6 +97,7 @@ services:
     volumes:
       - "$PWD:/etc/selenoid/" # assumed current dir contains browsers.json
       - "/var/run/docker.sock:/var/run/docker.sock"
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-listen", ":4444", "-timeout", "3m0s"]
     restart: always
   selenoid-ui:
     image: "aerokube/selenoid-ui"
