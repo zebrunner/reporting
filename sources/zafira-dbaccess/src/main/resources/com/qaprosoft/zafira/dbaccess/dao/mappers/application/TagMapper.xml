@@ -79,6 +79,36 @@
         ]]>
     </select>
 
+    <select id="getTagsByNameAndTestRunCiRunId" resultMap="java.lang.String">
+        <![CDATA[
+        SELECT TG.VALUE
+        FROM
+             TAGS TG
+        LEFT JOIN TEST_TAGS TT
+            ON TG.ID = TT.TAG_ID
+        LEFT JOIN TESTS T
+            ON TT.TEST_ID = T.ID
+        LEFT JOIN TEST_RUNS TR
+            ON T.TEST_RUN_ID = TR.ID
+        WHERE
+          TG.NAME = #{name} AND TR.CI_RUN_ID = #{ciRunId}
+        ]]>
+    </select>
+
+    <select id="getPlatforms" resultType="java.lang.String">
+		<![CDATA[
+        SELECT
+                DISTINCT
+                        LOWER(TR.PLATFORM)
+        FROM
+             TEST_RUNS TR
+        ORDER BY
+                 LOWER(TR.PLATFORM)
+                ASC
+        LIMIT 10000
+        ]]>
+	</select>
+
     <select id="getTagByNameAndValue" resultMap="TagResultMap">
         <include refid="getTags"/>
         <![CDATA[

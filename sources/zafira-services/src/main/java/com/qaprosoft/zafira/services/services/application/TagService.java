@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,12 @@ public class TagService {
 		return tagMapper.getTagByNameAndTestId(name, testId);
 	}
 
-	@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
+    public List<String> getTagsByNameAndTestRunCiRunId(String name, String ciRunId) {
+        return tagMapper.getTagsByNameAndTestRunCiRunId(name, ciRunId);
+    }
+
+    @Transactional(readOnly = true)
 	public Tag getTagByNameAndValue(String name, String value) {
 		return tagMapper.getTagByNameAndValue(name, value);
 	}
