@@ -44,7 +44,7 @@ public class TagsAPIController extends AbstractController
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "{ciRunId}/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody IntegrationInfoType getIntegrationByTag(@PathVariable(value = "ciRunId") String ciRunId, @PathVariable(value = "name") String name) {
+	public @ResponseBody IntegrationInfoType getIntegrationByTag(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "name") String name) {
         List<String> integrationTagValues = tagService.getTagsByNameAndTestRunCiRunId(name, ciRunId);
         IntegrationInfoType integrationInfo = new IntegrationInfoType();
         List<String> testCaseList = new ArrayList<>();
