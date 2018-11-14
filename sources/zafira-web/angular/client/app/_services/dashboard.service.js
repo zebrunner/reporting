@@ -96,7 +96,7 @@
 
         function SendDashboardByEmail(multipart, email) {
             var queryParams = $httpParamSerializer(email);
-            return $httpMock.post(API_URL + '/api/dashboards/email/v2?' + queryParams + '&file=', multipart, {headers: {'Content-Type': undefined}, transformRequest : angular.identity}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+            return $httpMock.post(API_URL + '/api/upload/email?' + queryParams + '&file=', multipart, {headers: {'Content-Type': undefined}, transformRequest : angular.identity}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function GetWidgets() {
