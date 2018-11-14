@@ -87,6 +87,7 @@ services:
       - "rabbitmq"
       - "redis"
       - "screenshoter"
+      - "selenoid"
     restart: always
   selenoid:
     image: "aerokube/selenoid"
