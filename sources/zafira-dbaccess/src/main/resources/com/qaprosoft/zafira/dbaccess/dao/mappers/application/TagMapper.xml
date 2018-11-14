@@ -64,7 +64,7 @@
         ]]>
     </select>
 
-    <select id="getTagsByNameAndTestRunCiRunId" resultMap="java.lang.String">
+    <select id="getTagsByNameAndTestRunCiRunId" resultType="java.lang.String">
         <![CDATA[
         SELECT TG.VALUE
         FROM
