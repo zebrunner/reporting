@@ -91,7 +91,7 @@ public class AuthAPIController extends AbstractController {
 	private String adminUsername;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get current tenant", nickname = "getTenant", code = 200, httpMethod = "GET", response = String.class)
+	@ApiOperation(value = "Get current tenant", nickname = "getTenant", httpMethod = "GET", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "tenant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody TenantType getTenant() {
@@ -99,7 +99,7 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Generates auth token", nickname = "login", code = 200, httpMethod = "POST", response = AuthTokenType.class)
+	@ApiOperation(value = "Generates auth token", nickname = "login", httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AuthTokenType login(@Valid @RequestBody CredentialsType credentials)
@@ -132,10 +132,10 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Sign up", nickname = "signup", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Sign up", nickname = "signup", httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "signup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void signup(@RequestHeader(value = "Access-Token", required = true) String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
+	public void signup(@RequestHeader(value = "Access-Token") String token, @Valid @RequestBody UserType userType) throws BadCredentialsException, ServiceException {
 		if(userService.getUserByUsername(userType.getUsername()) != null) {
 			throw new EntityAlreadyExistsException("username", User.class, false);
 		}
@@ -155,12 +155,12 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", code = 200, httpMethod = "POST", response = AuthTokenType.class)
+	@ApiOperation(value = "Refreshes auth token", nickname = "refreshToken", httpMethod = "POST", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "refresh", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AuthTokenType refresh(@RequestBody @Valid RefreshTokenType refreshToken)
 			throws BadCredentialsException, ForbiddenOperationException {
-		AuthTokenType authToken = null;
+		AuthTokenType authToken;
 		try {
 			User jwtUser = jwtService.parseRefreshToken(refreshToken.getRefreshToken());
 
@@ -193,7 +193,7 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Forgot password", nickname = "forgotPassword", code = 200, httpMethod = "POST")
+	@ApiOperation(value = "Forgot password", nickname = "forgotPassword", httpMethod = "POST")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "password/forgot", method = RequestMethod.POST)
 	public void forgotPassword(@Valid @RequestBody EmailType emailType) throws ServiceException {
@@ -204,10 +204,10 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get forgot password type by token", nickname = "getForgotPasswordType", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Get forgot password type by token", nickname = "getForgotPasswordType", httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "password/forgot", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getForgotPasswordType(@RequestParam(value = "token", required = true) String token) throws ForbiddenOperationException {
+	public void getForgotPasswordType(@RequestParam(value = "token") String token) throws ForbiddenOperationException {
 		User user = userService.getUserByResetToken(token);
 		if(user == null || ! user.getSource().equals(User.Source.INTERNAL)) {
 			throw new ForbiddenOperationException();
@@ -215,10 +215,10 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Reset password", nickname = "resetPassword", code = 200, httpMethod = "PUT")
+	@ApiOperation(value = "Reset password", nickname = "resetPassword", httpMethod = "PUT")
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "password", method = RequestMethod.PUT)
-	public void resetPassword(@RequestHeader(value = "Access-Token", required = true) String token, @Valid @RequestBody PasswordType passwordType) throws ServiceException {
+	public void resetPassword(@RequestHeader(value = "Access-Token") String token, @Valid @RequestBody PasswordType passwordType) throws ServiceException {
 		User user = userService.getUserByResetToken(token);
 		if(user != null && user.getSource().equals(User.Source.INTERNAL)) {
 			PasswordChangingType passwordChangingType = new PasswordChangingType();
@@ -230,7 +230,7 @@ public class AuthAPIController extends AbstractController {
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Generates access token", nickname = "accessToken", code = 200, httpMethod = "GET", response = AuthTokenType.class)
+	@ApiOperation(value = "Generates access token", nickname = "accessToken", httpMethod = "GET", response = AuthTokenType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@RequestMapping(value = "access", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

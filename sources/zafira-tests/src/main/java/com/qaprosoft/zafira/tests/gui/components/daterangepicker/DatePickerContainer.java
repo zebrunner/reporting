@@ -78,8 +78,6 @@ public class DatePickerContainer extends AbstractUIObject
 
     public void clickDateByValue(String value)
     {
-        WebElement dateElement = dates.stream().filter(date -> date.getText().equals(value)).findFirst().orElse(null);
-        if(dateElement != null)
-            dateElement.click();
+        dates.stream().filter(date -> date.getText().equals(value)).findFirst().ifPresent(WebElement::click);
     }
 }

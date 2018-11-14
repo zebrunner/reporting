@@ -83,7 +83,7 @@ public class Job extends AbstractEntity
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj != null && obj instanceof Job && this.hashCode() == ((Job)obj).hashCode());
+		return (obj instanceof Job && this.hashCode() == ((Job) obj).hashCode());
 	}
 	
 	@Override

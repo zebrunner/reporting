@@ -43,8 +43,6 @@ public class JenkinsClient extends JenkinsHttpClient {
      * Allows to configure HTTP connection timeouts for save Jenkins integration.
      * 
      * @param uri - Jenkins URI
-     * @param username
-     * @param password
      * @return configured {@link HttpClientBuilder}
      */
     private static HttpClientBuilder configureHttpClient(URI uri, JenkinsConfig config) {

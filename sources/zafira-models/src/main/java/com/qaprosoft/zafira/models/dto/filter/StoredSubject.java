@@ -21,7 +21,7 @@ import java.util.List;
 
 public class StoredSubject
 {
-	private Subject testRunSubject = new Subject()
+	private final Subject testRunSubject = new Subject()
 	{
 		{
 			setName(Name.TEST_RUN);
@@ -94,7 +94,7 @@ public class StoredSubject
 		}
 	};
 
-	private List<Subject> subjects = new ArrayList<Subject>()
+	private final List<Subject> subjects = new ArrayList<Subject>()
 	{
 		private static final long serialVersionUID = 3499422182444939573L;
 

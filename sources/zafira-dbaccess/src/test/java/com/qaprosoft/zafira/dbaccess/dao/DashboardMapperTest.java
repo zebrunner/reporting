@@ -21,6 +21,7 @@ import static org.testng.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.qaprosoft.zafira.dbaccess.utils.KeyGenerator;
@@ -112,7 +113,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     public void addWidgetToDashboard() {
         widgetMapper.createWidget(WIDGET);
         dashboardMapper.addDashboardWidget(DASHBOARD.getId(), WIDGET);
-        DASHBOARD.setWidgets(Arrays.asList(WIDGET));
+        DASHBOARD.setWidgets(Collections.singletonList(WIDGET));
     }
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
@@ -123,7 +124,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
 
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard", "updateDashboard"})
     public void getDashboardByType() {
-    	Sort<Dashboard> sort = new Sort<Dashboard>();
+    	Sort<Dashboard> sort = new Sort<>();
         List<Dashboard> dashboards = sort.sortById(dashboardMapper.getDashboardsByHidden(false));
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }
@@ -131,7 +132,7 @@ public class DashboardMapperTest extends AbstractTestNGSpringContextTests {
     @Test(enabled = ENABLED, dependsOnMethods = {"createDashboard", "addWidgetToDashboard"})
     public void getAllDashboards()
     {
-        Sort<Dashboard> sort = new Sort<Dashboard>();
+        Sort<Dashboard> sort = new Sort<>();
         List<Dashboard> dashboards = sort.sortById(dashboardMapper.getAllDashboards());
         checkDashboard(dashboards.get(dashboards.size() - 1));
     }

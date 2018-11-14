@@ -52,7 +52,7 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean
 	@Autowired
 	private JWTService jwtService;
 	
-	private RequestMatcher requestMatcher = new AntPathRequestMatcher("/**");
+	private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/**");
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException

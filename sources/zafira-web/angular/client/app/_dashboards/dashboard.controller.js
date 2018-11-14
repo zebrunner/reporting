@@ -3,9 +3,9 @@
 
     angular
         .module('app.dashboard')
-        .controller('DashboardController', ['$scope', '$rootScope', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
+        .controller('DashboardController', ['$scope', '$rootScope', '$screenshot', '$q', '$timeout', '$interval', '$cookies', '$location', '$state', '$http', '$mdConstant', '$stateParams', '$mdDialog', '$mdToast', 'UtilService', 'DashboardService', 'UserService', 'AuthService', 'ProjectProvider', DashboardController])
 
-    function DashboardController($scope, $rootScope, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
+    function DashboardController($scope, $rootScope, $screenshot, $q, $timeout, $interval, $cookies, $location, $state, $http, $mdConstant, $stateParams, $mdDialog, $mdToast, UtilService, DashboardService, UserService, AuthService, ProjectProvider) {
 
         $scope.currentUserId = $location.search().userId;
 
@@ -920,7 +920,7 @@
         })();
     }
 
-    function EmailController($scope, $rootScope, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
+    function EmailController($scope, $rootScope, $q, $screenshot, $mdDialog, $mdConstant, DashboardService, UserService, ProjectProvider, widgetId) {
 
         var TYPE = widgetId ? 'WIDGET' : 'DASHBOARD';
 
@@ -931,12 +931,12 @@
             'DASHBOARD': {
                 title: CURRENT_DASHBOARD_TITLE,
                 subject: CURRENT_DASHBOARD_TITLE,
-                func: sendDashboardEmail
+                locator: '#dashboard_content'
             },
             'WIDGET': {
                 title: CURRENT_WIDGET_TITLE,
                 subject: CURRENT_WIDGET_TITLE,
-                func: sendWidgetEmail
+                locator: '#widget-container-' + widgetId
             }
         };
 
@@ -964,32 +964,25 @@
                     return;
                 }
             }
-            $scope.hide();
             $scope.email.recipients = $scope.email.recipients.toString();
-            var projects = ProjectProvider.getProjects();
-            projects = projects && projects.length ? projects : null;
-            EMAIL_TYPES[TYPE].func(projects);
-        };
-
-        function sendDashboardEmail(projects) {
-            DashboardService.SendDashboardByEmail($scope.email, projects).then(function (rs) {
-                if (rs.success) {
-                    alertify.success('Email was successfully sent!');
-                }
-                else {
-                    alertify.error(rs.message);
-                }
+            sendEmail(EMAIL_TYPES[TYPE].locator).then(function () {
+                $scope.hide();
             });
         };
 
-        function sendWidgetEmail(projects) {
-            DashboardService.SendWidgetByEmail($scope.email, projects, widgetId).then(function (rs) {
-                if (rs.success) {
-                    alertify.success('Email was successfully sent!');
-                }
-                else {
-                    alertify.error(rs.message);
-                }
+        function sendEmail(locator) {
+            return $q(function (resolve, reject) {
+                $screenshot.take(locator).then(function (multipart) {
+                    DashboardService.SendDashboardByEmail(multipart, $scope.email).then(function (rs) {
+                        if (rs.success) {
+                            alertify.success('Email was successfully sent!');
+                        }
+                        else {
+                            alertify.error(rs.message);
+                        }
+                        resolve(rs);
+                    });
+                });
             });
         };
 

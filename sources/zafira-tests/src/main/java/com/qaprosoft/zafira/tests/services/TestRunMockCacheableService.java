@@ -15,7 +15,7 @@ import com.qaprosoft.zafira.services.services.application.cache.ICacheableServic
 public class TestRunMockCacheableService implements ICacheableService<Long, TestRunStatistics>
 {
 
-	private Map<Long, TestRunStatistics> statistics;
+	private final Map<Long, TestRunStatistics> statistics;
 
 	public TestRunMockCacheableService()
 	{

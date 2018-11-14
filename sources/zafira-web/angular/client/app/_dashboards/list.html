@@ -29,7 +29,7 @@
         </div>
     </div>
     <div id="dashboard_content" class="page page-dashboard">
-        <md-fab-trigger id="main-fab" has-any-permission="['MODIFY_WIDGETS']">
+        <md-fab-trigger id="main-fab" has-any-permission="['MODIFY_WIDGETS']" data-html2canvas-ignore>
             <md-button id="createWidget" aria-label="menu" class="md-fab md-primary" data-ng-click="showWidgetDialog($event, {model : '{}'}, true, dashboard);">
                 <md-tooltip md-direction="top">New widget</md-tooltip>
                 <md-icon>add</md-icon>
@@ -56,7 +56,7 @@
                     <div ng-attr-id="widget-container-{{ widget.id }}" class="panel panel-default grid-stack-item-content" zafira-background-theme="graph">
                         <div class="panel-heading">
                             {{widget.title}}
-                            <span class="show-icon-on-hover pull-right">
+                            <span class="show-icon-on-hover pull-right" data-html2canvas-ignore>
                                 <i class="material-icons widget-icon hide-phone" data-ng-if="tools['EMAIL']" data-ng-click="showEmailDialog($event, widget.id)">
                                     send
                                     <md-tooltip md-direction="top">Send by email</md-tooltip>

@@ -62,7 +62,7 @@ public class STFClient
 
 	public Response<Devices> getAllDevices()
 	{
-		Response<Devices> result = new Response<Devices>(0, null);
+		Response<Devices> result = new Response<>(0, null);
 		try
 		{
 			HttpClient client = HttpClientBuilder.create().build();
@@ -88,7 +88,7 @@ public class STFClient
 
 	public Response<STFDevice> getDevice(String udid)
 	{
-		Response<STFDevice> result = new Response<STFDevice>(0, null);
+		Response<STFDevice> result = new Response<>(0, null);
 		try
 		{
 			HttpClient client = HttpClientBuilder.create().build();
@@ -160,7 +160,7 @@ public class STFClient
 
 	public Response<RemoteConnectUserDevice> remoteConnectDevice(String serial)
 	{
-		Response<RemoteConnectUserDevice> result = new Response<RemoteConnectUserDevice>(0, null);
+		Response<RemoteConnectUserDevice> result = new Response<>(0, null);
 		try
 		{
 			HttpClient client = HttpClientBuilder.create().build();

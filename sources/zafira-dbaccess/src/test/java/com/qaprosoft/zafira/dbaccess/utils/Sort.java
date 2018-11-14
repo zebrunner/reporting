@@ -25,14 +25,7 @@ public class Sort<T extends AbstractEntity>
 {
 	public List<T> sortById(List<T> abstractEntityList)
 	{
-		Collections.sort(abstractEntityList, new Comparator<T>()
-		{
-			@Override
-			public int compare(AbstractEntity o1, AbstractEntity o2)
-			{
-				return (int) (o1.getId() - o2.getId());
-			}
-		});
+		abstractEntityList.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
 		return abstractEntityList;
 	}
 }

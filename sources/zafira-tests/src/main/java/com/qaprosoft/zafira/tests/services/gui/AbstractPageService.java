@@ -9,7 +9,7 @@ public abstract class AbstractPageService
 {
 	private static final Logger LOGGER = Logger.getLogger(AbstractPageService.class);
 
-	protected int GENERAL_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.general.id"));
+	protected final int GENERAL_DASHBOARD_ID = Integer.valueOf(Config.get("dashboard.general.id"));
 	protected WebDriver driver;
 
 	protected AbstractPageService(WebDriver driver)

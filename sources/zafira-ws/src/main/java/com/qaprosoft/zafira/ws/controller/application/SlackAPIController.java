@@ -54,7 +54,7 @@ public class SlackAPIController extends AbstractController
 	private TestRunService testRunService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Trigger review notif", nickname = "triggerReviewNotif", code = 200, httpMethod = "GET")
+	@ApiOperation(value = "Trigger review notif", nickname = "triggerReviewNotif", httpMethod = "GET")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

@@ -10,7 +10,6 @@
         <version>2.0</version>
     </parent>
 
-    <groupId>com.qaprosoft</groupId>
     <artifactId>zafira-tests</artifactId>
     <version>2.0</version>
     <packaging>jar</packaging>

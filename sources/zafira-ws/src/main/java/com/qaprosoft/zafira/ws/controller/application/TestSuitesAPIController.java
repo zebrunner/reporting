@@ -53,7 +53,7 @@ public class TestSuitesAPIController extends AbstractController
 	private TestSuiteService testSuiteService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create test suite", nickname = "createTestSuite", code = 200, httpMethod = "POST", notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
+	@ApiOperation(value = "Create test suite", nickname = "createTestSuite", httpMethod = "POST", notes = "Create a new test suite.", response = TestSuiteType.class, responseContainer = "TestSuiteType")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

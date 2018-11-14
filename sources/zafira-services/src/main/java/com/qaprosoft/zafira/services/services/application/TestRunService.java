@@ -80,7 +80,7 @@ import com.qaprosoft.zafira.services.util.FreemarkerUtil;
 @Service
 public class TestRunService
 {
-	private static Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
 	public static final String DEFAULT_PROJECT = "UNKNOWN";
 
 	@Autowired
@@ -116,7 +116,7 @@ public class TestRunService
 	@Autowired
 	private StatisticsService statisticsService;
 
-	private static LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
+	private static final LoadingCache<Long, Lock> updateLocks = CacheBuilder.newBuilder()
 			.maximumSize(100000)
 			.expireAfterWrite(150, TimeUnit.MILLISECONDS)
 			.build(
@@ -155,7 +155,7 @@ public class TestRunService
 	public SearchResult<TestRun> searchTestRuns(TestRunSearchCriteria sc) throws ServiceException
 	{
 		actualizeSearchCriteriaDate(sc);
-		SearchResult<TestRun> results = new SearchResult<TestRun>();
+		SearchResult<TestRun> results = new SearchResult<>();
 		results.setPage(sc.getPage());
 		results.setPageSize(sc.getPageSize());
 		results.setSortOrder(sc.getSortOrder());
@@ -525,10 +525,7 @@ public class TestRunService
 		{
 			for(String testName : testNames)
 			{
-				if(testNamesWithTests.get(testRunId).get(testName) == null)
-				{
-					testNamesWithTests.get(testRunId).put(testName, null);
-				}
+				testNamesWithTests.get(testRunId).putIfAbsent(testName, null);
 			}
 		}
 		return testNamesWithTests;

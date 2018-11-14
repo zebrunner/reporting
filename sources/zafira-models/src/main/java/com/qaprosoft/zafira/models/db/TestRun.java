@@ -32,7 +32,7 @@ public class TestRun extends AbstractEntity
 
 	public enum Initiator
 	{
-		SCHEDULER, UPSTREAM_JOB, HUMAN;
+		SCHEDULER, UPSTREAM_JOB, HUMAN
 	}
 	
 	public enum DriverMode

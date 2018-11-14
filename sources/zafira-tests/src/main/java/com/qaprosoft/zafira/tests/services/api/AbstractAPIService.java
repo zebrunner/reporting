@@ -20,7 +20,7 @@ public abstract class AbstractAPIService {
 		ZAFIRA_CLIENT.setAuthToken("Bearer " + AUTH_API_SERVICE.getAuthToken());
 	}
 
-	protected Random random = new Random();
+	protected final Random random = new Random();
 
 	protected UserType USER = new UserType() {
 		/**

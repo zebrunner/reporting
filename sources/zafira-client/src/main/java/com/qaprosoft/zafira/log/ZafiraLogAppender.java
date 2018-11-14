@@ -360,13 +360,14 @@ public class ZafiraLogAppender extends AppenderSkeleton
 	/**
 	 * Declares the exchange on RabbitMQ server according to properties set
 	 */
+	@SuppressWarnings("SynchronizeOnNonFinalField")
 	private void createExchange() throws IOException
 	{
 		if (this.channel != null && this.channel.isOpen())
 		{
 			synchronized (this.channel)
 			{
-				Map<String, Object> args = new HashMap<String, Object>();
+				Map<String, Object> args = new HashMap<>();
 				args.put(this.type, history);
 				channel.exchangeDeclare(this.exchange, "x-recent-history", false, false, args);
 			}
@@ -525,7 +526,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 		AppenderTask(LoggingEvent loggingEvent)
 		{
 			this.loggingEvent = loggingEvent;
-			String testId = null;
+			String testId;
 			if(loggingEvent.getLevel().equals(MetaInfoLevel.META_INFO) && ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID") != null) {
 				testId = ((MetaInfoMessage) loggingEvent.getMessage()).getHeaders().get("CI_TEST_ID");
 			} else {
@@ -551,7 +552,7 @@ public class ZafiraLogAppender extends AppenderSkeleton
 						.type(loggingEvent.getLevel().toString())
 						.correlationId(String.valueOf(correlationId))
 						.contentType("text/json");
-				createChannel().basicPublish(exchange, routingKey, b.build(), payload.toString().getBytes());
+				createChannel().basicPublish(exchange, routingKey, b.build(), payload.getBytes());
 			}
 
 			return loggingEvent;

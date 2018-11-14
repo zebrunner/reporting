@@ -47,9 +47,9 @@ public class LDAPAuthenticationProvider extends AbstractLdapAuthenticationProvid
     @Autowired
     private ServletContext servletContext;
 
-    private LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
+    private final LDAPUserDetailsContextMapper ldapUserDetailsContextMapper;
 
-    private LdapAuthoritiesPopulator authoritiesPopulator;
+    private final LdapAuthoritiesPopulator authoritiesPopulator;
 
     public LDAPAuthenticationProvider(LDAPUserDetailsContextMapper ldapUserDetailsContextMapper) {
         this.ldapUserDetailsContextMapper = ldapUserDetailsContextMapper;

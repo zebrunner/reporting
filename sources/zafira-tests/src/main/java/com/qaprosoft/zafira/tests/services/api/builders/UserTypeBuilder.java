@@ -5,7 +5,7 @@ import com.qaprosoft.zafira.models.dto.user.UserType;
 public class UserTypeBuilder extends AbstractTypeBuilder<UserType>
 {
 
-	private UserType userType = new UserType()
+	private final UserType userType = new UserType()
 	{
 		private static final long serialVersionUID = -779719747964127512L;
 		{

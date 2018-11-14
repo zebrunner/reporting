@@ -78,7 +78,7 @@ public abstract class AbstractGoogleService
 		return SCOPES;
 	}
 
-	public static NetHttpTransport getHttpTransport()
+	protected static NetHttpTransport getHttpTransport()
 	{
 		return HTTP_TRANSPORT;
 	}

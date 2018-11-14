@@ -35,7 +35,7 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 
 	private Class<T> clazz;
 
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	public AbstractServiceTest(Class<T> clazz)
 	{
@@ -59,8 +59,8 @@ public class AbstractServiceTest<T> extends AbstractTestNGSpringContextTests
 	{
 		TEST_RUN_STATISTICS("testRunStatistics", TestRunStatistics.class);
 
-		private String name;
-		private Class<?> clazz;
+		private final String name;
+		private final Class<?> clazz;
 
 		CacheType(String name, Class<?> clazz)
 		{

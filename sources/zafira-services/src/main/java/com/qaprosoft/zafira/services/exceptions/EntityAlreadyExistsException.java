@@ -21,7 +21,7 @@ public class EntityAlreadyExistsException extends ServiceException {
 
     private static final long serialVersionUID = 5062713977366541469L;
 
-    private String fieldName;
+    private final String fieldName;
 
     public EntityAlreadyExistsException(String fieldName) {
         this.fieldName = fieldName;

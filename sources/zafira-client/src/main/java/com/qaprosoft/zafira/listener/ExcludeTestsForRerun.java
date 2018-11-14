@@ -81,7 +81,7 @@ public class ExcludeTestsForRerun
 					if (a instanceof Test)
 					{
 						isTest = true;
-						if (((Test) a).dataProvider() != null && !((Test) a).dataProvider().isEmpty())
+						if (!((Test) a).dataProvider().isEmpty())
 						{
 							if (!classesToRerun.contains(testNGMethod.getRealClass().getName()) && ((Test) a).enabled())
 							{

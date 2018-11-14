@@ -34,7 +34,7 @@ public class EventPushService<T extends EventMessage> {
 
         SETTINGS("settings"), MONITORS("monitors");
 
-        private String routingKey;
+        private final String routingKey;
 
         Type(String routingKey) {
             this.routingKey = routingKey;

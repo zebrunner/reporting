@@ -115,7 +115,7 @@ public class GoogleSpreadsheetsService extends AbstractGoogleService
 
 	public Request setColumnAndRowsCounts(SheetProperties sheetProperties, Integer columnCount, Integer rowCount)
 	{
-		sheetProperties = sheetProperties.setGridProperties(new GridProperties()
+		sheetProperties.setGridProperties(new GridProperties()
 				.setColumnCount(columnCount)
 				.setRowCount(rowCount));
 		return new Request().setUpdateSheetProperties(new UpdateSheetPropertiesRequest().setProperties(sheetProperties).setFields("*"));
@@ -123,7 +123,7 @@ public class GoogleSpreadsheetsService extends AbstractGoogleService
 
 	public Request setTabColor(SheetProperties sheetProperties, float red, float green, float blue)
 	{
-		sheetProperties = sheetProperties.setTabColor(new Color()
+		sheetProperties.setTabColor(new Color()
 				.setRed(red)
 				.setGreen(green)
 				.setBlue(blue));

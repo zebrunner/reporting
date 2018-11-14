@@ -97,6 +97,6 @@ public class PermissionMapperTest extends AbstractTestNGSpringContextTests
 	private void checkPermission(Permission group)
 	{
 		assertEquals(group.getName(), PERMISSION.getName(), "Permission name must match");
-		assertEquals(group.getName(), PERMISSION.getBlock(), "Permission block must match");
+		assertEquals(group.getBlock(), PERMISSION.getBlock(), "Permission block must match");
 	}
 }

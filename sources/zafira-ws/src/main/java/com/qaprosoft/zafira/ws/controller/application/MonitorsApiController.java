@@ -66,7 +66,7 @@ public class MonitorsApiController extends AbstractController
 	private Mapper mapper;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create monitor", nickname = "createMonitor", code = 200, httpMethod = "POST", response = Monitor.class)
+	@ApiOperation(value = "Create monitor", nickname = "createMonitor", httpMethod = "POST", response = Monitor.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_MONITORS')")
@@ -78,7 +78,7 @@ public class MonitorsApiController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Check monitor", nickname = "checkMonitor", code = 200, httpMethod = "POST", response = MonitorCheckType.class)
+	@ApiOperation(value = "Check monitor", nickname = "checkMonitor", httpMethod = "POST", response = MonitorCheckType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_MONITORS')")
@@ -89,7 +89,7 @@ public class MonitorsApiController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Search monitors", nickname = "searchMonitors", code = 200, httpMethod = "POST", response = SearchResult.class)
+	@ApiOperation(value = "Search monitors", nickname = "searchMonitors", httpMethod = "POST", response = SearchResult.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('VIEW_MONITORS')")
@@ -108,7 +108,7 @@ public class MonitorsApiController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete monitor", nickname = "deleteMonitor", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_MONITORS')")
@@ -121,7 +121,7 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Update monitor", nickname = "updateMonitor", code = 200, httpMethod = "PUT", response = Group.class)
+	@ApiOperation(value = "Update monitor", nickname = "updateMonitor", httpMethod = "PUT", response = Group.class)
 	@PreAuthorize("hasPermission('MODIFY_MONITORS')")
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody MonitorType updateMonitor(@RequestParam(value = "switchJob", required = false) Boolean switchJob,
@@ -131,7 +131,7 @@ public class MonitorsApiController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all monitors", nickname = "getAllMonitors", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
@@ -151,7 +151,7 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", code = 200, httpMethod = "GET", response = Monitor.class)
+	@ApiOperation(value = "Get monitor by id", nickname = "getMonitorById", httpMethod = "GET", response = Monitor.class)
 	@PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
 	@RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody MonitorType getMonitorById(@PathVariable(value = "id") long id) throws ServiceException
@@ -162,7 +162,7 @@ public class MonitorsApiController extends AbstractController
 	@ResponseStatusDetails
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", code = 200, httpMethod = "GET", response = Integer.class)
+	@ApiOperation(value = "Get monitors count", nickname = "getMonitorsCount", httpMethod = "GET", response = Integer.class)
 	@PreAuthorize("hasAnyPermission('VIEW_MONITORS', 'MODIFY_MONITORS')")
 	@RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Integer getMonitorsCount() throws ServiceException

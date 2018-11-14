@@ -57,7 +57,8 @@ import com.qaprosoft.zafira.services.services.application.jmx.context.JenkinsCon
 
 @ManagedResource(objectName = "bean:name=jenkinsService", description = "Jenkins init Managed Bean", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
 public class JenkinsService implements IJMXService<JenkinsContext> {
-    private static Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JenkinsService.class);
 
     private final String FOLDER_REGEX = ".+job\\/.+\\/job.+";
 
@@ -181,13 +182,13 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
 
     private QueueReference stop(JobWithDetails job, Integer buildNumber) throws IOException {
         ExtractHeader location = (ExtractHeader) job.getClient().post(job.getUrl() + buildNumber + "/stop",
-                (Object) null, ExtractHeader.class);
+                null, ExtractHeader.class);
         return new QueueReference(location.getLocation());
     }
 
     private QueueReference terminate(JobWithDetails job, Integer buildNumber) throws IOException {
         ExtractHeader location = (ExtractHeader) job.getClient().post(job.getUrl() + buildNumber + "/term",
-                (Object) null, ExtractHeader.class);
+                null, ExtractHeader.class);
         return new QueueReference(location.getLocation());
     }
 
@@ -239,7 +240,7 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
     }
 
     private JobWithDetails getJobWithDetails(Job ciJob) throws IOException {
-        JobWithDetails job = null;
+        JobWithDetails job;
         if (ciJob.getJobURL().matches(FOLDER_REGEX)) {
             String folderName = ciJob.getJobURL().split("/job/")[1];
             Optional<FolderJob> folder = getServer().getFolderJob(getServer().getJob(folderName));
@@ -269,10 +270,9 @@ public class JenkinsService implements IJMXService<JenkinsContext> {
                 (Predicate<Map<String, Object>>) action -> action.containsKey("parameters"));
         List<BuildParameterType> params = new ArrayList<>();
         if (parameters != null && !parameters.isEmpty()) {
-            Iterator iterator = ((List) ((Map) parameters.toArray()[0]).get("parameters")).iterator();
-            while (iterator.hasNext()) {
+            for (Object o : ((List) ((Map) parameters.toArray()[0]).get("parameters"))) {
                 BuildParameterType buildParameter = new BuildParameterType();
-                Map<String, Object> param = (Map) iterator.next();
+                Map<String, Object> param = (Map) o;
                 String name = String.valueOf(param.get("name"));
                 String value = String.valueOf(param.get("value"));
                 String buildParamClass = String.valueOf(param.get("_class"));

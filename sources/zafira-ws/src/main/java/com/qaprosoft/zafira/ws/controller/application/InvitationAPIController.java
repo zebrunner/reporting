@@ -51,7 +51,7 @@ public class InvitationAPIController extends AbstractController {
     private Mapper mapper;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Invite users", nickname = "inviteUsers", code = 200, httpMethod = "POST", response = List.class)
+    @ApiOperation(value = "Invite users", nickname = "inviteUsers", httpMethod = "POST", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
@@ -61,7 +61,7 @@ public class InvitationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Retry invite user", nickname = "retryInviteUser", code = 200, httpMethod = "POST", response = Invitation.class)
+    @ApiOperation(value = "Retry invite user", nickname = "retryInviteUser", httpMethod = "POST", response = Invitation.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('INVITE_USERS')")
@@ -71,10 +71,10 @@ public class InvitationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get invitation", nickname = "getInvitation", code = 200, httpMethod = "GET", response = InvitationType.class)
+    @ApiOperation(value = "Get invitation", nickname = "getInvitation", httpMethod = "GET", response = InvitationType.class)
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody InvitationType getInvitation(@RequestParam(value = "token", required = true) String token) throws ServiceException {
+    public @ResponseBody InvitationType getInvitation(@RequestParam(value = "token") String token) throws ServiceException {
         Invitation invitation = invitationService.getInvitationByToken(token);
         if(invitation == null || ! invitation.isValid()) {
             throw new ForbiddenOperationException();
@@ -83,7 +83,7 @@ public class InvitationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get all invitations", nickname = "getAllInvitations", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all invitations", nickname = "getAllInvitations", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasAnyPermission('INVITE_USERS', 'MODIFY_INVITATIONS')")
@@ -93,7 +93,7 @@ public class InvitationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Delete invitation", nickname = "deleteInvitationById", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete invitation", nickname = "deleteInvitationById", httpMethod = "DELETE")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_INVITATIONS')")
