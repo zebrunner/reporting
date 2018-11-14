@@ -40,29 +40,19 @@
 
 	<insert id="addTags">
 		<![CDATA[
-			INSERT INTO TEST_TAGS (TAG_ID, TEST_ID)
-			SELECT
-				DATA.TAG_ID, DATA.TEST_ID
-			FROM
-		]]>
-		<foreach item="tag" index="index" collection="tags" open="(" separator=" UNION ALL" close=")">
+          INSERT INTO TEST_TAGS (TAG_ID, TEST_ID) VALUES
+        ]]>
+		<foreach item="tag" index="index" collection="tags" open="" separator="," close="">
 			<![CDATA[
-			  SELECT #{tag.id} as TAG_ID, #{testId} AS TEST_ID
-			]]>
+ 		    (
+ 		    	#{tag.id},
+ 		    	#{testId}
+ 		    )
+          ]]>
 		</foreach>
 		<![CDATA[
-			AS DATA
-            WHERE NOT EXISTS (
-              SELECT
-                TEST_ID
-              FROM
-                TEST_TAGS TT
-              WHERE
-                DATA.TAG_ID = TT.TAG_ID
-			  AND
-				DATA.TEST_ID = TT.TEST_ID
-            )
-		]]>
+ 		    ON CONFLICT DO NOTHING
+          ]]>
 	</insert>
 
 	<delete id="deleteTestByTestRunIdAndNameAndStatus">
