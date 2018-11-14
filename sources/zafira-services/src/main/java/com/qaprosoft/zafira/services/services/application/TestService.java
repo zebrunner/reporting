@@ -144,6 +144,7 @@ public class TestService
 		test.setTestConfig(null);
 		test.setNeedRerun(true);
 		test.setCiTestId(null);
+		test.setTags(null);
 		createTest(test);
 	}
 

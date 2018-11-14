@@ -74,7 +74,7 @@
                 var result = formatter;
                 if(placeholders && placeholders.length === 1) {
                     var placeholder = placeholders[0];
-                    if(placeholder.indexOf('filter') >= 0) {
+                    if(placeholder.indexOf('$filter') >= 0) {
                         var filter = placeholder.split('|')[1].trim();
                         var filterSlices = filter.split(':');
                         var filterType = filterSlices[0].trim();
@@ -88,7 +88,7 @@
             };
 
             function getPlaceholders(str) {
-                return str.match(/(?<=\$)(.+?)(?=\$)/g);
+                return str.match(/(?:\$)(.+?)(?=\$)/g);
             };
         };
     };
