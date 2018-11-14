@@ -1,0 +1,5 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite preserve-order="true" verbose="1" name="Zafira Smoke Tests" skipfailedinvocationcounts="false" junit="false" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
+
+</suite>
