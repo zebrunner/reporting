@@ -190,69 +190,9 @@ public class DashboardsAPIController extends AbstractController
 		}
 		return widgets;
 	}
-	
-    @ResponseStatusDetails
-    @ApiOperation(value = "Send dashboard by email", nickname = "sendDashboardByEmail", code = 200, httpMethod = "POST")
-	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Access-Token", paramType = "header") })
-	@RequestMapping(value="email", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-	public @ResponseBody String sendDashboardByEmail(@RequestHeader(name="Access-Token", required=true) String accessToken,
-			@RequestParam(value = "projects", required = false, defaultValue = "") String projects,
-			@RequestBody @Valid DashboardEmailType email)
-			throws ServiceException, JAXBException, InterruptedException, ExecutionException
-	{
-		User user = jwtService.parseRefreshToken(accessToken);
-		if(user == null)
-		{
-			throw new BadCredentialsException("Invalid access token");
-		}
-
-		String[] dimensions = new String[2];
-		if(!StringUtils.isEmpty(email.getDimension()))
-		{
-			dimensions = email.getDimension().toLowerCase().split("x");
-		}
-		Dimension dimension = !StringUtils.isEmpty(email.getDimension()) ? new Dimension(Integer.valueOf(dimensions[0]), Integer.valueOf(dimensions[1])) : null;
-
-		new Thread(() -> {
-			try
-			{
-				List<Attachment> attachments = seleniumService.captureScreenshoots(email.getUrls(),
-						email.getHostname(),
-						accessToken,
-						projects,
-						"#dashboard_content",
-						By.id("dashboard_title"),
-						dimension,
-						By.id("main-fab"), By.id("header"));
-				if(attachments.size() == 0)
-				{
-					throw new ServiceException("Unable to create dashboard screenshots");
-				}
-
-				emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
-			} catch (ServiceException e)
-			{
-				LOGGER.error(e);
-			}
-		}).start();
-		return null;
-	}
-
-	@ApiOperation(value = "Upload file", nickname = "uploadFile", code = 200, httpMethod = "POST", response = String.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({@ApiImplicitParam(name = "Authorization", paramType = "header")})
-	@RequestMapping(value = "email/v2", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody String uploadFile(@RequestParam(value = "file", required = true) MultipartFile file, @ModelAttribute DashboardEmailType email) throws ServiceException, IOException {
-		List<Attachment> attachments = new ArrayList<>();
-		File attachment = File.createTempFile(FilenameUtils.getName(file.getOriginalFilename()), "." + FilenameUtils.getExtension(file.getOriginalFilename()));
-		file.transferTo(attachment);
-		attachments.add(new Attachment(email.getSubject(), attachment));
-		emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
-		return null;
-	}
 
 	@ResponseStatusDetails
-    @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", code = 200, httpMethod = "POST", response = List.class)
+    @ApiOperation(value = "Create dashboard attribute", nickname = "createDashboardAttribute", httpMethod = "POST", response = List.class)
 	@ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
 	@PreAuthorize("hasPermission('MODIFY_DASHBOARDS')")
 	@RequestMapping(value="{dashboardId}/attributes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

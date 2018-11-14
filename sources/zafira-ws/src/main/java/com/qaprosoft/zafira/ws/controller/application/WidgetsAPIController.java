@@ -254,7 +254,6 @@ public class WidgetsAPIController extends AbstractController
 				emailService.sendEmail(new DashboardEmail(email.getSubject(), email.getText(), attachments), email.getRecipients().trim().replaceAll(",", " ").replaceAll(";", " ").split(" "));
 			} catch (ServiceException e)
 			{
-				LOGGER.error(e);
 			}
 		}).start();
 		return null;

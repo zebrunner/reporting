@@ -931,12 +931,12 @@
             'DASHBOARD': {
                 title: CURRENT_DASHBOARD_TITLE,
                 subject: CURRENT_DASHBOARD_TITLE,
-                func: sendDashboardEmail
+                locator: '#dashboard_content'
             },
             'WIDGET': {
                 title: CURRENT_WIDGET_TITLE,
                 subject: CURRENT_WIDGET_TITLE,
-                func: sendWidgetEmail
+                locator: '#widget-container-' + widgetId
             }
         };
 
@@ -965,33 +965,15 @@
                 }
             }
             $scope.email.recipients = $scope.email.recipients.toString();
-            var projects = ProjectProvider.getProjects();
-            projects = projects && projects.length ? projects : null;
-            EMAIL_TYPES[TYPE].func(projects).then(function () {
+            sendEmail(EMAIL_TYPES[TYPE].locator).then(function () {
                 $scope.hide();
             });
         };
 
-        function sendDashboardEmail() {
+        function sendEmail(locator) {
             return $q(function (resolve, reject) {
-                $screenshot.take('#dashboard_content').then(function (multipart) {
-                    DashboardService.SendDashboardByEmailV2(multipart, $scope.email).then(function (rs) {
-                        if (rs.success) {
-                            alertify.success('Email was successfully sent!');
-                        }
-                        else {
-                            alertify.error(rs.message);
-                        }
-                        resolve(rs);
-                    });
-                });
-            });
-        };
-
-        function sendWidgetEmail() {
-            return $q(function (resolve, reject) {
-                $screenshot.take('#widget-container-' + widgetId).then(function (multipart) {
-                    DashboardService.SendDashboardByEmailV2(multipart, $scope.email).then(function (rs) {
+                $screenshot.take(locator).then(function (multipart) {
+                    DashboardService.SendDashboardByEmail(multipart, $scope.email).then(function (rs) {
                         if (rs.success) {
                             alertify.success('Email was successfully sent!');
                         }
