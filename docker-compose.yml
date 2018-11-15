@@ -68,7 +68,6 @@ services:
       - "db"
       - "rabbitmq"
       - "redis"
-      - "screenshoter"
     restart: always
   zafira-batch:
     image: qaprosoft/zafira-batch:latest

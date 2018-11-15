@@ -80,7 +80,6 @@ services:
       - "db"
       - "rabbitmq"
       - "redis"
-      - "screenshoter"
       - "selenoid"
     restart: always
   selenoid:
