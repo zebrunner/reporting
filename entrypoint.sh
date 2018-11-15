@@ -68,7 +68,6 @@ echo zafira.ldap.dn=$ZAFIRA_LDAP_DN >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.search_filter=$ZAFIRA_LDAP_SEARCH_FILTER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.manager.user=$ZAFIRA_LDAP_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.ldap.manager.password=$ZAFIRA_LDAP_PASSWORD >> $CATALINA_HOME/conf/catalina.properties
-echo zafira.selenium.url=$ZAFIRA_SELENIUM_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.elasticsearch.url=$ZAFIRA_ELASTICSEARCH_URL >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.elasticsearch.user=$ZAFIRA_ELASTICSEARCH_USER >> $CATALINA_HOME/conf/catalina.properties
 echo zafira.elasticsearch.pass=$ZAFIRA_ELASTICSEARCH_PASS >> $CATALINA_HOME/conf/catalina.properties

@@ -45,8 +45,6 @@ ENV ZAFIRA_NEWRELIC_LOG_LEVEL=info
 
 ENV ZAFIRA_ELASTICSEARCH_URL=
 
-ENV ZAFIRA_SELENIUM_URL=http://localhost:4444/wd/hub
-
 RUN apt-get update && apt-get install zip
 RUN mkdir ${CATALINA_HOME}/shared
 
