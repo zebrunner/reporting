@@ -78,7 +78,7 @@ public class TagsAPIController extends AbstractController
     @ApiOperation(value = "Get TestRail integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @RequestMapping(value = "{ciRunId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{ciRunId}/testrail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Map<String, String> getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId) throws ServiceException {
         Map<String, String> testRailInfo = new HashMap<>();
         TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
