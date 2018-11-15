@@ -90,7 +90,7 @@ services:
     volumes:
       - "$PWD:/etc/selenoid/" # assumed current dir contains browsers.json
       - "/var/run/docker.sock:/var/run/docker.sock"
-    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-listen", ":4444", "-timeout", "3m0s", "-limit", "8"]
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-listen", ":4444", "-service-startup-timeout", "5m0s", "-session-attempt-timeout", "5m0s", "-timeout", "3m0s", "-limit", "8"]
     restart: always
   selenoid-ui:
     image: "aerokube/selenoid-ui"
