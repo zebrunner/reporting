@@ -17,7 +17,11 @@ package com.qaprosoft.zafira.models.db;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
 
@@ -29,6 +33,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class TestRun extends AbstractEntity
 {
 	private static final long serialVersionUID = -1847933012610222160L;
+    private static final String NAME = "%s %s (%s) on %s %s";
+    private Map<String, String> configuration = new HashMap<>();
 
 	public enum Initiator
 	{
@@ -156,7 +162,47 @@ public class TestRun extends AbstractEntity
 		this.configXML = configXML;
 	}
 
-	public WorkItem getWorkItem()
+    public String getName(Configuration configuration) {
+        for (Argument arg : configuration.getArg())
+        {
+            this.configuration.put(arg.getKey(), arg.getValue());
+        }
+        String appVersion = argumentIsPresent("app_version")? this.configuration.get("app_version") + " - ": "";
+        String platformInfo = buildPlatformInfo();
+        return String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
+                this.configuration.get("env"), platformInfo);
+    }
+
+    private boolean argumentIsPresent(String arg, String... ignoreValues) {
+        if(configuration.get(arg) == null || "".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
+            return false;
+        }
+        for(String ignoreValue: ignoreValues) {
+            if(configuration.get(arg).equals(ignoreValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String buildPlatformInfo() {
+        String platformInfo = "%s %s %s";
+        String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
+        String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
+        String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
+        platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
+        platformInfo = platformInfo.trim();
+        while(platformInfo.indexOf("  ") != -1) {
+            platformInfo = platformInfo.replaceFirst("  ", " ");
+        }
+        platformInfo = "(" + platformInfo + ")";
+        if(!platformInfo.equals("()"))
+            return platformInfo;
+        else
+            return "";
+    }
+
+    public WorkItem getWorkItem()
 	{
 		return workItem;
 	}

@@ -25,9 +25,9 @@ import java.util.Map;
 
 public class TestRunResultsEmail implements IEmailMessage
 {
-	private static final String SUBJECT = "%s: %s %s (%s) on %s %s";
+	private static final String SUBJECT = "%s: %s";
 
-	private Map<String, String> configuration = new HashMap<String, String>();
+	private Map<String, String> configuration = new HashMap<>();
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
@@ -135,44 +135,12 @@ public class TestRunResultsEmail implements IEmailMessage
 	public String getSubject()
 	{
 		String status = buildStatusText(testRun);
-		String appVersion = argumentIsPresent("app_version")? configuration.get("app_version") + " - ": "";
-		String platformInfo = buildPlatformInfo();
-		return String.format(SUBJECT, status, appVersion, testRun.getTestSuite().getName(), testRun.getTestSuite().getFileName(),
-				configuration.get("env"), platformInfo);
+		return String.format(SUBJECT, status, testRun.getName());
 	}
 	
 	public static String buildStatusText(TestRun testRun){
 		return Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() && ! testRun.isBlocker() ? "PASSED (known issues)"
 				: testRun.isBlocker() ? "FAILED (BLOCKERS)" : testRun.getStatus().name();
-	}
-
-	private boolean argumentIsPresent(String arg, String... ignoreValues) {
-		if(configuration.get(arg) == null || "".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
-			return false;
-		}
-		for(String ignoreValue: ignoreValues) {
-			if(configuration.get(arg).equals(ignoreValue)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private String buildPlatformInfo() {
-		String platformInfo = "%s %s %s";
-		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
-		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
-		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
-		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
-		platformInfo = platformInfo.trim();
-		while(platformInfo.indexOf("  ") != -1) {
-			platformInfo = platformInfo.replaceFirst("  ", " ");
-		}
-		platformInfo = "(" + platformInfo + ")";
-		if(!platformInfo.equals("()"))
-			return platformInfo;
-		else
-			return "";
 	}
 
 	@Override
