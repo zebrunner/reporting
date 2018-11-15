@@ -15,14 +15,20 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.ws.controller.application;
 
+import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.dto.IntegrationInfoType;
+import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
+import com.qaprosoft.zafira.services.services.application.TestConfigService;
+import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +44,12 @@ public class TagsAPIController extends AbstractController
 {
 	@Autowired
 	private TagService tagService;
+
+    @Autowired
+	private TestConfigService testConfigService;
+
+    @Autowired
+    private TestRunService testRunService;
 
     @ResponseStatusDetails
 	@ApiOperation(value = "Get integration info by tag name", nickname = "getIntegrationByTag", code = 200, httpMethod = "GET", response = IntegrationInfoType.class)
@@ -61,4 +73,20 @@ public class TagsAPIController extends AbstractController
         integrationInfo.setTestCaseIds(testCaseList);
 		return integrationInfo;
 	}
+
+    @ResponseStatusDetails
+    @ApiOperation(value = "Get TestRail integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = Map.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
+    @RequestMapping(value = "{ciRunId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Map<String, String> getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId) throws ServiceException {
+        Map<String, String> testRailInfo = new HashMap<>();
+        TestRun testRun = testRunService.getTestRunByCiRunId(ciRunId);
+        for (Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML())) {
+            if(arg.getKey().contains("testrail")){
+                testRailInfo.put(arg.getKey(), arg.getValue());
+            }
+        }
+        return testRailInfo;
+    }
 }
