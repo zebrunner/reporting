@@ -192,7 +192,7 @@ public class TestRun extends AbstractEntity
         String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
         platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
         platformInfo = platformInfo.trim();
-        while(platformInfo.indexOf("  ") != -1) {
+        while(platformInfo.contains("  ")) {
             platformInfo = platformInfo.replaceFirst("  ", " ");
         }
         platformInfo = "(" + platformInfo + ")";

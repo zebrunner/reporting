@@ -135,41 +135,12 @@ public class TestRunResultsEmail implements IEmailMessage
 	public String getSubject()
 	{
 		String status = buildStatusText(testRun);
-		return String.format(SUBJECT, status, testRun.getName());
+		return String.format(SUBJECT, status, testRun.getName(configuration));
 	}
 	
 	public static String buildStatusText(TestRun testRun){
 		return Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() && ! testRun.isBlocker() ? "PASSED (known issues)"
 				: testRun.isBlocker() ? "FAILED (BLOCKERS)" : testRun.getStatus().name();
-	}
-
-	private boolean argumentIsPresent(String arg, String... ignoreValues) {
-		if(configuration.get(arg) == null || "".equals(configuration.get(arg)) || configuration.get(arg).equalsIgnoreCase("null")) {
-			return false;
-		}
-		for(String ignoreValue: ignoreValues) {
-			if(configuration.get(arg).equals(ignoreValue)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private String buildPlatformInfo() {
-		String platformInfo = "%s %s %s";
-		String mobilePlatformVersion = argumentIsPresent("mobile_platform_name")? configuration.get("mobile_platform_name"): "";
-		String browser = argumentIsPresent("browser")? configuration.get("browser"): "";
-		String locale = argumentIsPresent("locale", "en_US", "en", "US")? configuration.get("locale"): "";
-		platformInfo = String.format(platformInfo, mobilePlatformVersion, browser, locale);
-		platformInfo = platformInfo.trim();
-		while(platformInfo.contains("  ")) {
-			platformInfo = platformInfo.replaceFirst("  ", " ");
-		}
-		platformInfo = "(" + platformInfo + ")";
-		if(!platformInfo.equals("()"))
-			return platformInfo;
-		else
-			return "";
 	}
 
 	@Override
