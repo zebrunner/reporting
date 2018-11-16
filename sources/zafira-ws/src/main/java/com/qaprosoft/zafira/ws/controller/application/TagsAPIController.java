@@ -71,7 +71,7 @@ public class TagsAPIController extends AbstractController
                     testRailIntegration.setMilestone(arg.getValue());
                 }
             }
-            testRailIntegration.setCreatedBy(testRun.getName(configuration));
+            testRailIntegration.setTestRunName(testRun.getName(configuration));
         }
         return testRailIntegration;
     }
