@@ -27,7 +27,7 @@ public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s";
 
-	private Map<String, String> configuration = new HashMap<>();
+	private Configuration configuration = new Configuration();
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
@@ -38,10 +38,7 @@ public class TestRunResultsEmail implements IEmailMessage
 
 	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests)
 	{
-		for (Argument arg : config.getArg())
-		{
-			configuration.put(arg.getKey(), arg.getValue());
-		}
+		this.configuration = config;
 		this.testRun = testRun;
 		this.tests = tests;
 		if(testRun.getElapsed() != null)
@@ -53,13 +50,11 @@ public class TestRunResultsEmail implements IEmailMessage
 		}
 	}
 
-	public Map<String, String> getConfiguration()
-	{
+	public Configuration getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(Map<String, String> configuration)
-	{
+	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
 	}
 
