@@ -170,7 +170,7 @@ public class TestRun extends AbstractEntity
         String appVersion = argumentIsPresent("app_version")? this.configuration.get("app_version") + " - ": "";
         String platformInfo = buildPlatformInfo();
         return String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
-                this.configuration.get("env"), platformInfo);
+                this.configuration.get("env"), platformInfo).trim();
     }
 
     private boolean argumentIsPresent(String arg, String... ignoreValues) {
