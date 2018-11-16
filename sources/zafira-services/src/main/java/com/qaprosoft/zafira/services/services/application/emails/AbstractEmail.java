@@ -26,7 +26,7 @@ public abstract class AbstractEmail implements IEmailMessage {
     private String companyLogoURL;
     private String workspaceURL;
 
-    public AbstractEmail(String subject, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
+    protected AbstractEmail(String subject, String zafiraLogoURL, String companyLogoURL, String workspaceURL) {
         this.subject = subject;
         this.zafiraLogoURL = zafiraLogoURL;
         this.companyLogoURL = companyLogoURL;

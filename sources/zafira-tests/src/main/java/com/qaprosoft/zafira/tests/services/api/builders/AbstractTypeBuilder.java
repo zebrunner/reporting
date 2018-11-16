@@ -15,11 +15,11 @@ public abstract class AbstractTypeBuilder<T extends AbstractType> implements IMo
 
 	protected static final Logger LOGGER = Logger.getLogger(AbstractTypeBuilder.class);
 
-	protected Random random = new Random();
-	protected Long userId = 1L;
+	protected final Random random = new Random();
+	protected static final Long userId = 1L;
 	protected static final String ZAFIRA_URL = Config.get("zafira_service_url");
-	protected static ZafiraClient zafiraClient;
-	protected static AuthAPIService authAPIService = new AuthAPIService();
+	protected static final ZafiraClient zafiraClient;
+	protected static final AuthAPIService authAPIService = new AuthAPIService();
 
 	static
 	{

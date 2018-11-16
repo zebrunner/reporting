@@ -26,14 +26,14 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 public class FreemarkerUtil
 {
 
-	private Logger LOGGER = Logger.getLogger(FreemarkerUtil.class);
+	private static final Logger LOGGER = Logger.getLogger(FreemarkerUtil.class);
 
 	@Autowired
 	private Configuration freemarkerConfiguration;
 
 	public String getFreeMarkerTemplateContent(String template, Object obj) throws ServiceException
 	{
-		StringBuffer content = new StringBuffer();
+		StringBuilder content = new StringBuilder();
 		try
 		{
 			content.append(FreeMarkerTemplateUtils

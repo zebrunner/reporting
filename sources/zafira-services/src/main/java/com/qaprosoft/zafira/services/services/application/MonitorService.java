@@ -70,7 +70,7 @@ public class MonitorService
 			monitor = getMonitorById(monitor.getId());
 		}
 		Integer actualCode = monitorHttpService.getResponseCode(monitor);
-		Boolean success = actualCode.equals(monitor.getExpectedCode());
+		boolean success = actualCode.equals(monitor.getExpectedCode());
 		if(monitor.getId() != null && ! check)
 		{
 			monitor.setSuccess(success);

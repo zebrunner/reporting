@@ -65,7 +65,7 @@ public class TestRow extends AbstractRow
 	{
 		String[] classes = getRootElement().getAttribute("class").split(" ");
 		String statusClass = classes[classes.length - 1].toLowerCase();
-		Status result = null;
+		Status result;
 		switch (statusClass)
 		{
 			case "success":

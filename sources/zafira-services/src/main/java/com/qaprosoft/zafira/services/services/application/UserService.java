@@ -234,7 +234,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public SearchResult<User> searchUsers(UserSearchCriteria sc) throws ServiceException {
         actualizeSearchCriteriaDate(sc);
-        SearchResult<User> results = new SearchResult<User>();
+        SearchResult<User> results = new SearchResult<>();
         results.setPage(sc.getPage());
         results.setPageSize(sc.getPageSize());
         results.setSortOrder(sc.getSortOrder());

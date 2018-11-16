@@ -53,7 +53,7 @@ public class GroupsAPIController extends AbstractController {
     private GroupService groupService;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Create group", nickname = "createGroup", code = 200, httpMethod = "POST", response = Group.class)
+    @ApiOperation(value = "Create group", nickname = "createGroup", httpMethod = "POST", response = Group.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
@@ -64,7 +64,7 @@ public class GroupsAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", code = 200, httpMethod = "POST", response = Group.class)
+    @ApiOperation(value = "Add permissions to group", nickname = "addPermissionsToGroup", httpMethod = "POST", response = Group.class)
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "permissions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,7 +75,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get group", nickname = "getGroup", code = 200, httpMethod = "GET", response = Group.class)
+    @ApiOperation(value = "Get group", nickname = "getGroup", httpMethod = "GET", response = Group.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Group getGroup(@PathVariable(value = "id") long id) throws ServiceException
@@ -85,7 +85,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get all groups", nickname = "getAllGroups", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all groups", nickname = "getAllGroups", httpMethod = "GET", response = List.class)
     @RequestMapping(value = "all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     public @ResponseBody List<Group> getAllGroups() throws ServiceException
@@ -95,7 +95,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", code = 200, httpMethod = "GET", response = Integer.class)
+    @ApiOperation(value = "Get groups count", nickname = "getGroupsCount", httpMethod = "GET", response = Integer.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Integer getGroupsCount() throws ServiceException
@@ -105,7 +105,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Get roles", nickname = "getRoles", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get roles", nickname = "getRoles", httpMethod = "GET", response = List.class)
     @PreAuthorize("hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "roles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Group.Role> getRoles() throws ServiceException
@@ -115,7 +115,7 @@ public class GroupsAPIController extends AbstractController {
 
     @ResponseStatusDetails
     @ResponseStatus(HttpStatus.OK) @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Update group", nickname = "updateGroup", code = 200, httpMethod = "PUT", response = Group.class)
+    @ApiOperation(value = "Update group", nickname = "updateGroup", httpMethod = "PUT", response = Group.class)
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Group updateGroup(@RequestBody Group group) throws ServiceException
@@ -127,7 +127,7 @@ public class GroupsAPIController extends AbstractController {
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @ApiOperation(value = "Delete group", nickname = "deleteGroup", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete group", nickname = "deleteGroup", httpMethod = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') and hasPermission('MODIFY_USER_GROUPS')")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteGroup(@PathVariable(value = "id") long id) throws ServiceException

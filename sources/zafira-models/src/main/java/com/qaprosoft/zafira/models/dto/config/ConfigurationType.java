@@ -37,7 +37,7 @@ public class ConfigurationType implements Serializable
 	{
 		if (arg == null)
 		{
-			arg = new ArrayList<ArgumentType>();
+			arg = new ArrayList<>();
 		}
 		return this.arg;
 	}

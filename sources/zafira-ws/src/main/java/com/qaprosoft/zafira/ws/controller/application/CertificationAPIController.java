@@ -53,18 +53,18 @@ public class CertificationAPIController extends AbstractController
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(path="details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CertificationType getCertifcationDetails(@RequestParam(value="upstreamJobId", required=true) Long upstreamJobId, @RequestParam(value="upstreamJobBuildNumber", required=true) Integer upstreamJobBuildNumber) throws ServiceException
+	public @ResponseBody CertificationType getCertifcationDetails(@RequestParam(value="upstreamJobId") Long upstreamJobId, @RequestParam(value="upstreamJobBuildNumber") Integer upstreamJobBuildNumber) throws ServiceException
 	{
 		CertificationType certification = new CertificationType();
 		
 		for(TestRun testRun : testRunService.getTestRunsByUpstreamJobIdAndUpstreamJobBuildNumber(upstreamJobId, upstreamJobBuildNumber))
 		{
-			String platform = testRun.getPlatform();
+			StringBuilder platform = new StringBuilder(testRun.getPlatform());
 			for(Argument arg : testConfigService.readConfigArgs(testRun.getConfigXML()))
 			{
 				if("browser_version".equals(arg.getKey()) && !"*".equals(arg.getValue()))
 				{
-					platform += " " + arg.getValue();
+					platform.append(" ").append(arg.getValue());
 				}
 			}
 			
@@ -72,7 +72,7 @@ public class CertificationAPIController extends AbstractController
 			{
 				if(!file.getKey().endsWith("/"))
 				{
-					certification.addScreenshot(amazonService.getComment(file.getKey()), platform, amazonService.getPublicLink(file));
+					certification.addScreenshot(amazonService.getComment(file.getKey()), platform.toString(), amazonService.getPublicLink(file));
 				}
 			}
 		}

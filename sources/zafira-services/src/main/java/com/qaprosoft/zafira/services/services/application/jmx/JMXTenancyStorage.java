@@ -38,7 +38,7 @@ public class JMXTenancyStorage {
     @Autowired
     private SettingsService settingsService;
 
-    private static Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
+    private static final Map<Setting.Tool, Map<String, ? extends AbstractContext>> tenancyEntity = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {

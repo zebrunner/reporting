@@ -22,7 +22,7 @@ import java.util.List;
 
 public class SearchCriteria
 {
-	public enum SortOrder {ASC, DESC};
+	public enum SortOrder {ASC, DESC}
 	
 	// Pages are zero-based
 	private Integer page = 1;

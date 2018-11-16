@@ -78,7 +78,7 @@ public class JSONLayout extends Layout
 
 			throwable.put("message", t.getMessage());
 			throwable.put("className", t.getClass().getCanonicalName());
-			List<JSONObject> traceObjects = new ArrayList<JSONObject>();
+			List<JSONObject> traceObjects = new ArrayList<>();
 			for (StackTraceElement ste : t.getStackTrace())
 			{
 				JSONObject element = new JSONObject();

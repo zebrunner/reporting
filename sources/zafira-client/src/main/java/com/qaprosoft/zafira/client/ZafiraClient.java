@@ -26,7 +26,6 @@ import com.qaprosoft.zafira.models.dto.aws.PresignedUrlRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.qaprosoft.zafira.config.CIConfig;
@@ -136,7 +134,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<UserType> getUserProfile()
 	{
-		Response<UserType> response = new Response<UserType>(0, null);
+		Response<UserType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + PROFILE_PATH);
@@ -157,7 +155,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<UserType> getUserProfile(String username)
 	{
-		Response<UserType> response = new Response<UserType>(0, null);
+		Response<UserType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + PROFILE_PATH + "?username=" + username);
@@ -178,7 +176,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<AuthTokenType> login(String username, String password)
 	{
-		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		Response<AuthTokenType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + LOGIN_PATH);
@@ -199,7 +197,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<UserType> createUser(UserType user)
 	{
-		Response<UserType> response = new Response<UserType>(0, null);
+		Response<UserType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + USERS_PATH);
@@ -220,7 +218,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<AuthTokenType> refreshToken(String token)
 	{
-		Response<AuthTokenType> response = new Response<AuthTokenType>(0, null);
+		Response<AuthTokenType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + REFRESH_TOKEN_PATH);
@@ -241,7 +239,7 @@ public class  ZafiraClient
 
 	public synchronized Response<JobType> createJob(JobType job)
 	{
-		Response<JobType> response = new Response<JobType>(0, null);
+		Response<JobType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + JOBS_PATH);
@@ -262,7 +260,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<TestSuiteType> createTestSuite(TestSuiteType testSuite)
 	{
-		Response<TestSuiteType> response = new Response<TestSuiteType>(0, null);
+		Response<TestSuiteType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_SUITES_PATH);
@@ -283,7 +281,7 @@ public class  ZafiraClient
 	
 	public Response<TestRunType> startTestRun(TestRunType testRun)
 	{
-		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		Response<TestRunType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
@@ -304,7 +302,7 @@ public class  ZafiraClient
 	
 	public Response<TestRunType> updateTestRun(TestRunType testRun)
 	{
-		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		Response<TestRunType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
@@ -325,7 +323,7 @@ public class  ZafiraClient
 	
 	public Response<TestRunType> finishTestRun(long id)
 	{
-		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		Response<TestRunType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_FINISH_PATH, id));
@@ -346,7 +344,7 @@ public class  ZafiraClient
 	
 	public Response<TestRunType> getTestRun(long id)
 	{
-		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		Response<TestRunType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUN_BY_ID_PATH, id));
@@ -367,7 +365,7 @@ public class  ZafiraClient
 	
 	public Response<TestRunType> getTestRunByCiRunId(String ciRunId)
 	{
-		Response<TestRunType> response = new Response<TestRunType>(0, null);
+		Response<TestRunType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_RUNS_PATH);
@@ -388,7 +386,7 @@ public class  ZafiraClient
 	
 	public Response<TestType> startTest(TestType test)
 	{
-		Response<TestType> response = new Response<TestType>(0, null);
+		Response<TestType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TESTS_PATH);
@@ -409,7 +407,7 @@ public class  ZafiraClient
 	
 	public Response<TestType> finishTest(TestType test)
 	{
-		Response<TestType> response = new Response<TestType>(0, null);
+		Response<TestType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_FINISH_PATH, test.getId()));
@@ -443,7 +441,7 @@ public class  ZafiraClient
 	
 	public Response<TestType> createTestWorkItems(long testId, List<String> workItems)
 	{
-		Response<TestType> response = new Response<TestType>(0, null);
+		Response<TestType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_WORK_ITEMS_PATH, testId));
@@ -469,7 +467,7 @@ public class  ZafiraClient
 	 */
 	public void addTestArtifact(TestArtifactType artifact)
 	{
-		Response<TestArtifactType> response = new Response<TestArtifactType>(0, null);
+		Response<TestArtifactType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_ARTIFACTS_PATH, artifact.getTestId()));
@@ -484,7 +482,7 @@ public class  ZafiraClient
 	
 	public synchronized Response<TestCaseType> createTestCase(TestCaseType testCase)
 	{
-		Response<TestCaseType> response = new Response<TestCaseType>(0, null);
+		Response<TestCaseType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_CASES_PATH);
@@ -505,7 +503,7 @@ public class  ZafiraClient
 	
 	public Response<TestCaseType []> createTestCases(TestCaseType [] testCases)
 	{
-		Response<TestCaseType []> response = new Response<TestCaseType []>(0, null);
+		Response<TestCaseType []> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + TEST_CASES_BATCH_PATH);
@@ -526,7 +524,7 @@ public class  ZafiraClient
 	
 	public Response<TestType []> getTestRunResults(long id)
 	{
-		Response<TestType []> response = new Response<TestType []>(0, null);
+		Response<TestType []> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(TEST_RUNS_RESULTS_PATH, id));
@@ -908,9 +906,9 @@ public class  ZafiraClient
 		if(dependsOnMethods != null)
 		{
 			StringBuilder sb = new StringBuilder();
-			for(String method : Arrays.asList(dependsOnMethods))
+			for(String method : dependsOnMethods)
 			{
-				sb.append(StringUtils.substringAfterLast(method, ".") + StringUtils.SPACE);
+				sb.append(StringUtils.substringAfterLast(method, ".")).append(StringUtils.SPACE);
 			}
 			test.setDependsOnMethods(sb.toString());
 		}
@@ -975,7 +973,7 @@ public class  ZafiraClient
 	@SuppressWarnings({ "unchecked" })
 	public synchronized Response<List<HashMap<String, String>>> getToolSettings(String tool, boolean decrypt)
 	{
-		Response<List<HashMap<String, String>>> response = new Response<List<HashMap<String, String>>>(0, null);
+		Response<List<HashMap<String, String>>> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(SETTINGS_TOOL_PATH, tool) + "?decrypt=" + decrypt);
@@ -1156,7 +1154,7 @@ public class  ZafiraClient
 	 */
 	public Response<ProjectType> getProjectByName(String name)
 	{
-		Response<ProjectType> response = new Response<ProjectType>(0, null);
+		Response<ProjectType> response = new Response<>(0, null);
 		try
 		{
 			WebResource webResource = client.resource(serviceURL + String.format(PROJECTS_PATH, name));

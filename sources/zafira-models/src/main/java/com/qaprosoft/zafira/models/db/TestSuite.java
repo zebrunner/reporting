@@ -71,7 +71,7 @@ public class TestSuite extends AbstractEntity
 	@Override
 	public boolean equals(Object obj)
 	{
-		return (obj != null && obj instanceof TestSuite && this.hashCode() == ((TestSuite)obj).hashCode());
+		return (obj instanceof TestSuite && this.hashCode() == ((TestSuite) obj).hashCode());
 	}
 	
 	@Override

@@ -50,7 +50,7 @@ public class MngTenanciesAPIController extends AbstractController {
     private Mapper mapper;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Create tenancy", nickname = "createTenancy", code = 200, httpMethod = "POST", response = TenancyType.class)
+    @ApiOperation(value = "Create tenancy", nickname = "createTenancy", httpMethod = "POST", response = TenancyType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -61,7 +61,7 @@ public class MngTenanciesAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get tenancy by id or name", nickname = "getTenancyByIdOrName", code = 200, httpMethod = "GET", response = TenancyType.class)
+    @ApiOperation(value = "Get tenancy by id or name", nickname = "getTenancyByIdOrName", httpMethod = "GET", response = TenancyType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -72,7 +72,7 @@ public class MngTenanciesAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get all tenancies", nickname = "getAllTenancies", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all tenancies", nickname = "getAllTenancies", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -82,7 +82,7 @@ public class MngTenanciesAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Update tenancy", nickname = "updateTenancy", code = 200, httpMethod = "PUT", response = TenancyType.class)
+    @ApiOperation(value = "Update tenancy", nickname = "updateTenancy", httpMethod = "PUT", response = TenancyType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -93,7 +93,7 @@ public class MngTenanciesAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Delete tenancy by id or name", nickname = "deleteTenancyByIdOrName", code = 200, httpMethod = "DELETE")
+    @ApiOperation(value = "Delete tenancy by id or name", nickname = "deleteTenancyByIdOrName", httpMethod = "DELETE")
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams(
             { @ApiImplicitParam(name = "Authorization", paramType = "header") })

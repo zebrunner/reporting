@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ErrorResponse
 {
-	@JsonInclude(Include.ALWAYS)
+	@JsonInclude
 	private Error error;
 	@JsonInclude(Include.NON_EMPTY)
 	private List<Error> validationErrors;

@@ -15,13 +15,10 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.services.services.application.jmx.google;
 
-import com.offbytwo.jenkins.JenkinsServer;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
 import com.qaprosoft.zafira.services.services.application.jmx.CryptoService;
 import com.qaprosoft.zafira.services.services.application.jmx.IJMXService;
-import com.qaprosoft.zafira.services.services.application.jmx.JenkinsService;
-import com.qaprosoft.zafira.services.services.application.jmx.context.JenkinsContext;
 import com.qaprosoft.zafira.services.services.application.jmx.google.auth.GoogleDriveAuthService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.auth.GoogleSheetsAuthService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.GoogleContext;
@@ -35,14 +32,13 @@ import java.io.File;
 import java.util.List;
 
 import static com.qaprosoft.zafira.models.db.Setting.Tool.GOOGLE;
-import static com.qaprosoft.zafira.models.db.Setting.Tool.JENKINS;
 
 @ManagedResource(objectName = "bean:name=googleService", description = "Google init Managed Bean",
 		currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200)
 public class GoogleService implements IJMXService<GoogleContext>
 {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GoogleService.class);
 
 	private static final String CLIENT_SECRET_JSON = "./client_secret.json";
 

@@ -22,7 +22,6 @@ import static com.qaprosoft.zafira.models.dto.TestRunStatistics.Action.REMOVE_BL
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper;
 import com.qaprosoft.zafira.models.db.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -205,7 +204,7 @@ public class TestService
 						testMapper.createTestWorkItem(existingTest, knownIssue);
 						if (existingTest.getWorkItems() == null)
 						{
-							existingTest.setWorkItems(new ArrayList<WorkItem>());
+							existingTest.setWorkItems(new ArrayList<>());
 						}
 						existingTest.getWorkItems().add(knownIssue);
 					}
@@ -466,9 +465,8 @@ public class TestService
 		deleteTestWorkItemByWorkItemIdAndTestId(workItemId, test.getId());
 
 		testRunService.calculateTestRunResult(test.getTestRunId(), false);
-		TestRun testRun = testRunService.getTestRunById(test.getTestRunId());
 
-		return testRun;
+		return testRunService.getTestRunById(test.getTestRunId());
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -522,13 +520,13 @@ public class TestService
 
 					if (!testCasesByClass.containsKey(tc.getTestClass()))
 					{
-						testCasesByClass.put(tc.getTestClass(), new ArrayList<Long>());
+						testCasesByClass.put(tc.getTestClass(), new ArrayList<>());
 					}
 					testCasesByClass.get(tc.getTestClass()).add(tc.getId());
 
 					if (!testCasesByMethod.containsKey(tc.getTestMethod()))
 					{
-						testCasesByMethod.put(tc.getTestMethod(), new ArrayList<Long>());
+						testCasesByMethod.put(tc.getTestMethod(), new ArrayList<>());
 					}
 					testCasesByMethod.get(tc.getTestMethod()).add(tc.getId());
 				}

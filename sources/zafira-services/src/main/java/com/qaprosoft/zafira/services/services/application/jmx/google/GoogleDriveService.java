@@ -46,7 +46,7 @@ public class GoogleDriveService extends AbstractGoogleService
 	{
 		USER("user"), GROUP("group"), DOMAIN("domain"), ANYONE("anyone");
 
-		private String value;
+		private final String value;
 
 		GranteeType(String value)
 		{
@@ -63,7 +63,7 @@ public class GoogleDriveService extends AbstractGoogleService
 	{
 		ORGANIZER("organizer"), OWNER("owner"), WRITER("writer"), COMMENTER("commenter"), READER("reader");
 
-		private String value;
+		private final String value;
 
 		GranteeRoleType(String value)
 		{

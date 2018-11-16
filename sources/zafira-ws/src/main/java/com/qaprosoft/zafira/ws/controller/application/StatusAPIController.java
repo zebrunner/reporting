@@ -43,7 +43,7 @@ public class StatusAPIController extends AbstractController {
 	private SettingsService settingsService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get service status", nickname = "status", code = 200, httpMethod = "GET", response = String.class)
+	@ApiOperation(value = "Get service status", nickname = "status", httpMethod = "GET", response = String.class)
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody String getStatus() throws ServiceException {

@@ -27,7 +27,7 @@ public class FileUploadType
 	{
 		USERS("/users"), COMMON("/common"), VIDEOS("/artifacts/videos"), SCREENSHOTS("/artifacts/screenshots");
 
-		private String path;
+		private final String path;
 
 		Type(String path) {
 			this.path = path;

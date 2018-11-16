@@ -60,7 +60,7 @@ public class ViewsAPIController extends AbstractController
 	private ViewService viewService;
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get view", nickname = "getViewById", code = 200, httpMethod = "GET", response = View.class)
+	@ApiOperation(value = "Get view", nickname = "getViewById", httpMethod = "GET", response = View.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -71,7 +71,7 @@ public class ViewsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Get all views", nickname = "getAllViews", code = 200, httpMethod = "GET", response = List.class)
+	@ApiOperation(value = "Get all views", nickname = "getAllViews", httpMethod = "GET", response = List.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -83,7 +83,7 @@ public class ViewsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Create view", nickname = "createView", code = 200, httpMethod = "POST", response = ViewType.class)
+	@ApiOperation(value = "Create view", nickname = "createView", httpMethod = "POST", response = ViewType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -95,7 +95,7 @@ public class ViewsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Update view", nickname = "updateView", code = 200, httpMethod = "PUT", response = ViewType.class)
+	@ApiOperation(value = "Update view", nickname = "updateView", httpMethod = "PUT", response = ViewType.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })
@@ -107,7 +107,7 @@ public class ViewsAPIController extends AbstractController
 	}
 
 	@ResponseStatusDetails
-	@ApiOperation(value = "Delete view", nickname = "deleteViewById", code = 200, httpMethod = "DELETE")
+	@ApiOperation(value = "Delete view", nickname = "deleteViewById", httpMethod = "DELETE")
 	@ResponseStatus(HttpStatus.OK)
 	@ApiImplicitParams(
 	{ @ApiImplicitParam(name = "Authorization", paramType = "header") })

@@ -73,7 +73,7 @@ public class ConfigurationAPIController extends AbstractController {
     private TestRunService testRunService;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get version", nickname = "getVersion", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get version", nickname = "getVersion", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,7 +86,7 @@ public class ConfigurationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get all projects", nickname = "getAllProjects", code = 200, httpMethod = "GET", response = List.class)
+    @ApiOperation(value = "Get all projects", nickname = "getAllProjects", httpMethod = "GET", response = List.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "projects", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -97,7 +97,7 @@ public class ConfigurationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get jenkins config", nickname = "getJenkinsConfig", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get jenkins config", nickname = "getJenkinsConfig", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "jenkins", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -109,7 +109,7 @@ public class ConfigurationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get jira config", nickname = "getJiraConfig", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get jira config", nickname = "getJiraConfig", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "jira", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -121,13 +121,11 @@ public class ConfigurationAPIController extends AbstractController {
     }
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Is slack available for test run", nickname = "isSlackAvailableForRun", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "slack/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<String, Object> isSlackAvailable(@PathVariable(value = "id") long id)
-            throws ServiceException,
-            IOException, InterruptedException
+    public @ResponseBody Map<String, Object> isSlackAvailable(@PathVariable(value = "id") long id) throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
         TestRun tr = testRunService.getTestRunByIdFull(id);
@@ -143,13 +141,11 @@ public class ConfigurationAPIController extends AbstractController {
     }
     
     @ResponseStatusDetails
-    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Is slack available", nickname = "isSlackAvailable", httpMethod = "GET", response = Map.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "slack", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<String, Object> isSlackAvailable()
-            throws ServiceException,
-            IOException, InterruptedException
+    public @ResponseBody Map<String, Object> isSlackAvailable() throws ServiceException
     {
         Map<String, Object> config = new HashMap<>();
         if (slackService.getWebhook() != null && slackService.isConnected())

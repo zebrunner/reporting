@@ -101,8 +101,7 @@ public class UserPreferenceService
 	@Transactional(readOnly = true)
 	public UserPreference getUserPreferenceByNameAndUserId(String name, long userId) throws ServiceException
 	{
-        UserPreference userPreference = userPreferenceMapper.getUserPreferenceByNameAndUserId(name, userId);
-		return userPreference;
+		return userPreferenceMapper.getUserPreferenceByNameAndUserId(name, userId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

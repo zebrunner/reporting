@@ -21,7 +21,7 @@ import org.springframework.web.context.ContextLoader;
 
 public class LocaleContext {
 
-    private static MessageSource messageSource;
+    private static final MessageSource messageSource;
 
     static {
         messageSource = (MessageSource) ContextLoader.getCurrentWebApplicationContext().getBean("serviceMessageSource");

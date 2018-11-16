@@ -13,44 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.services.services.application.emails;
 
 import java.util.List;
 
-public class DashboardEmailType extends EmailType
+import com.qaprosoft.zafira.models.db.Attachment;
+
+public class CommonEmail implements IEmailMessage
 {
-	private static final long serialVersionUID = 4407281347247491977L;
-	private List<String> urls;
-	private String hostname;
-	private String dimension;
 	
-	public List<String> getUrls()
+	private String subject;
+	private String text;
+	private List<Attachment> attachments;
+	
+	public CommonEmail(String subject, String text, List<Attachment> attachments)
 	{
-		return urls;
+		this.subject = subject;
+		this.text = text;
+		this.attachments = attachments;
 	}
 
-	public void setUrls(List<String> urls)
+	@Override
+	public String getSubject()
 	{
-		this.urls = urls;
+		return subject;
 	}
 
-	public String getHostname()
-	{
-		return hostname;
+	@Override
+	public EmailType getType() {
+		return EmailType.DASHBOARD;
 	}
 
-	public void setHostname(String hostname)
+	@Override
+	public List<Attachment> getAttachments() 
 	{
-		this.hostname = hostname;
+		return attachments;
 	}
 
-	public String getDimension()
+	@Override
+	public String getText() 
 	{
-		return dimension;
-	}
-
-	public void setDimension(String dimension)
-	{
-		this.dimension = dimension;
+		return text;
 	}
 }

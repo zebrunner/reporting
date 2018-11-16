@@ -39,7 +39,7 @@ public class CertificationType
 		steps.add(step);
 		if(!screenshots.containsKey(platform))
 		{
-			screenshots.put(platform, new HashMap<String, String>());
+			screenshots.put(platform, new HashMap<>());
 		}
 		screenshots.get(platform).put(step, url);
 	}
@@ -57,10 +57,5 @@ public class CertificationType
 	public Map<String, Map<String, String>> getScreenshots()
 	{
 		return screenshots;
-	}
-	
-	public void sort()
-	{
-		
 	}
 }

@@ -70,8 +70,7 @@ public class TestArtifactService
 	@Transactional(readOnly = true)
 	public TestArtifact getTestArtifactByNameAndTestId(String name, long testId)
 	{
-        TestArtifact testArtifact = testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
-		return testArtifact;
+		return testArtifactMapper.getTestArtifactByNameAndTestId(name, testId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

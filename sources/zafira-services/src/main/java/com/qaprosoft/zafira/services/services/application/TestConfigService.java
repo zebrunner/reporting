@@ -40,7 +40,7 @@ import com.qaprosoft.zafira.services.exceptions.ServiceException;
 @Service
 public class TestConfigService
 {
-	private Logger logger = Logger.getLogger(TestConfigService.class);
+	private static final Logger logger = Logger.getLogger(TestConfigService.class);
 	
 	@Autowired
 	private TestConfigMapper testConfigMapper;

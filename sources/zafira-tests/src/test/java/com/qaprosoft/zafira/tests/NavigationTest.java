@@ -4,8 +4,6 @@ import com.qaprosoft.zafira.tests.gui.components.*;
 import com.qaprosoft.zafira.tests.gui.components.modals.UploadImageModalWindow;
 import com.qaprosoft.zafira.tests.gui.pages.*;
 import com.qaprosoft.zafira.tests.services.gui.LoginPageService;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

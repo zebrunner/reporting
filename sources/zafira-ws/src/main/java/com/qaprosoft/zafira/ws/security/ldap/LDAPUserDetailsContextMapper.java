@@ -32,7 +32,8 @@ import java.util.Collection;
 
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper
 {
-	private Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
+
+	private static final Logger LOGGER = Logger.getLogger(LDAPUserDetailsContextMapper.class);
 	
 	@Autowired
 	private UserService userService;

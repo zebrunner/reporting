@@ -15,7 +15,6 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.services.services.application;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,9 +46,7 @@ import com.qaprosoft.zafira.services.services.application.jmx.LDAPService;
 import com.qaprosoft.zafira.services.services.application.jmx.RabbitMQService;
 import com.qaprosoft.zafira.services.services.application.jmx.SlackService;
 import com.qaprosoft.zafira.services.services.application.jmx.amazon.AmazonService;
-import com.qaprosoft.zafira.services.services.application.jmx.amazon.CloudFrontService;
 import com.qaprosoft.zafira.services.services.application.jmx.google.GoogleService;
-import com.qaprosoft.zafira.services.util.EventPushService;
 
 @Service
 public class SettingsService {
@@ -169,8 +166,7 @@ public class SettingsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public File createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
-        File file = null;
+    public void createSettingFile(byte[] fileBytes, String originalFileName, Tool tool, String settingName) throws Exception {
         Setting setting = getSettingsByTool(tool).stream().filter(s -> s.getName().equals(settingName)).findFirst().orElse(null);
         if(setting != null) {
             setting.setFile(fileBytes);
@@ -179,7 +175,6 @@ public class SettingsService {
             getServiceByTool(setting.getTool()).init();
             notifyToolReinitiated(setting.getTool(), TenancyContext.getTenantName());
         }
-        return file;
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -20,6 +20,7 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class TestMapperTest extends AbstractTestNGSpringContextTests
 	public void searchTests()
 	{
 		TestSearchCriteria sc = new TestSearchCriteria();
-		sc.setTestRunIds(Arrays.asList(TEST.getTestRunId()));
+		sc.setTestRunIds(Collections.singletonList(TEST.getTestRunId()));
 		sc.setPageSize(Integer.MAX_VALUE);
 		List<Test> tests = testMapper.searchTests(sc);
 		int count = testMapper.getTestsSearchCount(sc);

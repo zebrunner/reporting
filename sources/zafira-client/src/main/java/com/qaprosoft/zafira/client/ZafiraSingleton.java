@@ -45,7 +45,7 @@ public enum ZafiraSingleton {
 
 	private Boolean running = false;
 
-	private ZafiraSingleton() {
+	ZafiraSingleton() {
 		try {
 			CombinedConfiguration config = new CombinedConfiguration(new MergeCombiner());
 			config.setThrowExceptionOnMissing(false);
@@ -55,7 +55,7 @@ public enum ZafiraSingleton {
 							.configure(new Parameters().properties().setFileName(ZAFIRA_PROPERTIES))
 							.getConfiguration());
 
-			final Boolean enabled = config.getBoolean("zafira_enabled", false);
+			final boolean enabled = config.getBoolean("zafira_enabled", false);
 			final String url = config.getString("zafira_service_url", StringUtils.EMPTY);
 			final String token = config.getString("zafira_access_token", StringUtils.EMPTY);
 

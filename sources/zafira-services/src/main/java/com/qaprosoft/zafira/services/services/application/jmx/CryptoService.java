@@ -58,7 +58,7 @@ public class CryptoService implements IJMXService<CryptoContext> {
         int size = 0;
         String key = null;
 
-        List<Setting> cryptoSettings = null;
+        List<Setting> cryptoSettings;
         try {
             cryptoSettings = settingsService.getSettingsByTool(CRYPTO);
 
@@ -149,7 +149,7 @@ public class CryptoService implements IJMXService<CryptoContext> {
         return connected;
     }
 
-    public static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException {
+    private static SecretKey generateKey(String keyType, int size) throws NoSuchAlgorithmException {
         LOGGER.debug("generating key use algorithm: '" + keyType + "'; size: " + size);
         KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType);
         keyGenerator.init(size);

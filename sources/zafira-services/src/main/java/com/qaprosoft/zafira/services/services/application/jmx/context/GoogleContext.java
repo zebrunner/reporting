@@ -18,8 +18,8 @@ package com.qaprosoft.zafira.services.services.application.jmx.context;
 public class GoogleContext extends AbstractContext
 {
 
-    private byte[] credsFile;
-    private String credsFileOriginName;
+    private final byte[] credsFile;
+    private final String credsFileOriginName;
 
     public GoogleContext(byte[] credsFile, String credsFileOriginName) {
         this.credsFile = credsFile;

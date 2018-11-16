@@ -59,7 +59,7 @@ public class UserPermissionEvaluator implements IUserPermissionEvaluator
 	{
 		if(authentication != null && targetDomainObject instanceof Long)
 		{
-			return ((JwtUserType)authentication.getPrincipal()).getId() == ((Long) targetDomainObject).longValue();
+			return ((JwtUserType)authentication.getPrincipal()).getId() == (Long) targetDomainObject;
 		}
 		return false;
 	}

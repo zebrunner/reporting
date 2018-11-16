@@ -151,7 +151,7 @@ public class MonitorJobService
 	public void updateExistingTrigger(Monitor monitor)
 	{
 
-		Trigger oldTrigger = null;
+		Trigger oldTrigger;
 		try
 		{
 			oldTrigger = springScheduler.getScheduler()

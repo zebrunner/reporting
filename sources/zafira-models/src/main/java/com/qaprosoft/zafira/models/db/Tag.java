@@ -53,6 +53,6 @@ public class Tag extends AbstractEntity {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof Tag && this.hashCode() == ((Tag) obj).hashCode();
+        return obj instanceof Tag && this.hashCode() == ((Tag) obj).hashCode();
     }
 }

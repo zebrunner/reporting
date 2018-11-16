@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('DashboardService', ['$httpMock', '$cookies', '$rootScope', '$location', 'UtilService', 'API_URL', DashboardService])
+        .factory('DashboardService', ['$httpMock', '$cookies', '$rootScope', '$location', 'UtilService', '$httpParamSerializer', 'API_URL', DashboardService])
 
-    function DashboardService($httpMock, $cookies, $rootScope, $location, UtilService, API_URL) {
+    function DashboardService($httpMock, $cookies, $rootScope, $location, UtilService, $httpParamSerializer, API_URL) {
 
     	var service = {};
 
@@ -24,7 +24,6 @@
         service.UpdateDashboardWidgets = UpdateDashboardWidgets;
         service.DeleteDashboardWidget = DeleteDashboardWidget;
         service.SendDashboardByEmail = SendDashboardByEmail;
-        service.SendWidgetByEmail = SendWidgetByEmail;
         service.GetWidgets = GetWidgets;
         service.CreateWidget = CreateWidget;
         service.UpdateWidget = UpdateWidget;
@@ -95,17 +94,9 @@
             return $httpMock.delete(API_URL + '/api/dashboards/' + dashboardId + '/widgets/' + widgetId).then(UtilService.handleSuccess, UtilService.handleError('Unable to delete widget from dashboard'));
         }
 
-        function SendDashboardByEmail(email, projects) {
-        	var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
-        	var path = projects ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
-            return $httpMock.post(API_URL + '/api/dashboards/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
-        }
-
-        function SendWidgetByEmail(email, projects, widgetId) {
-            var config = {'headers' : { 'Access-Token' : $rootScope.globals.auth.accessToken } };
-            var path = projects && projects.length ? '?projects=' + encodeURIComponent(JSON.stringify(projects)) : '';
-            path = widgetId ? path.length ? path + '&widgetId=' + widgetId : '?widgetId=' + widgetId : '';
-            return $httpMock.post(API_URL + '/api/widgets/email' + path, email, config).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
+        function SendDashboardByEmail(multipart, email) {
+            var queryParams = $httpParamSerializer(email);
+            return $httpMock.post(API_URL + '/api/upload/email?' + queryParams + '&file=', multipart, {headers: {'Content-Type': undefined}, transformRequest : angular.identity}).then(UtilService.handleSuccess, UtilService.handleError('Unable to send dashboard by email'));
         }
 
         function GetWidgets() {

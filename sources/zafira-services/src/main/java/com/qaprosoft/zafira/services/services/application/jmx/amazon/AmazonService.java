@@ -65,7 +65,7 @@ public class AmazonService implements IJMXService<AmazonContext>, IURLGenerator 
 
     private static final Logger LOGGER = Logger.getLogger(AmazonService.class);
 
-    public static final String COMMENT_KEY = "comment";
+    private static final String COMMENT_KEY = "comment";
 
     private static final String FILE_PATH_SEPARATOR = "/";
 

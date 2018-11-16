@@ -54,6 +54,6 @@ public class TagType extends AbstractType {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof TagType && this.hashCode() == ((TagType) obj).hashCode();
+        return obj instanceof TagType && this.hashCode() == ((TagType) obj).hashCode();
     }
 }
