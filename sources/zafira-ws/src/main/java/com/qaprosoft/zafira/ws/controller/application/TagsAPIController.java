@@ -57,20 +57,22 @@ public class TagsAPIController extends AbstractController
     TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "tagName") String tagName) throws ServiceException, JAXBException {
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-        IntegrationTag integrationTag = tagService.getIntegrationTagInfo(tagName, ciRunId);
-        testRailIntegration.setProjectId(integrationTag.getProjectId());
-        testRailIntegration.setSuiteId(integrationTag.getSuiteId());
-        testRailIntegration.setTestCases(integrationTag.getTestCaseIds());
-        testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
-        Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-        for (Argument arg : configuration.getArg()) {
-            if(arg.getKey().contains("testrail_assignee")){
-                testRailIntegration.setCreatedBy(arg.getValue());
-            } else if (arg.getKey().contains("testrail_milestone")){
-                testRailIntegration.setMilestone(arg.getValue());
+        if (testRun != null){
+            IntegrationTag integrationTag = tagService.getIntegrationTagInfo(tagName, ciRunId);
+            testRailIntegration.setProjectId(integrationTag.getProjectId());
+            testRailIntegration.setSuiteId(integrationTag.getSuiteId());
+            testRailIntegration.setTestCases(integrationTag.getTestCaseIds());
+            testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
+            Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
+            for (Argument arg : configuration.getArg()) {
+                if(arg.getKey().contains("testrail_assignee")){
+                    testRailIntegration.setCreatedBy(arg.getValue());
+                } else if (arg.getKey().contains("testrail_milestone")){
+                    testRailIntegration.setMilestone(arg.getValue());
+                }
             }
+            testRailIntegration.setCreatedBy(testRun.getName(configuration));
         }
-        testRailIntegration.setCreatedBy(testRun.getName(configuration));
         return testRailIntegration;
     }
 }
