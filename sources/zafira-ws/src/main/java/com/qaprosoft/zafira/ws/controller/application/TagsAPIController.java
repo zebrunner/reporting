@@ -18,11 +18,10 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.tag.TagIntegrationType;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
-import com.qaprosoft.zafira.services.services.application.TestConfigService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
-import java.util.*;
 
 @Controller
 @Api(value = "Tags operations")
@@ -51,40 +49,18 @@ public class TagsAPIController extends AbstractController
     private TestRunService testRunService;
 
     @ResponseStatusDetails
-	@ApiOperation(value = "Get integration info by tag name", nickname = "getIntegrationByTag", code = 200, httpMethod = "GET", response = TagIntegrationType.class)
-	@ResponseStatus(HttpStatus.OK)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-	@RequestMapping(value = "{ciRunId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody
-    TagIntegrationType getIntegrationByTag(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "name") String name) {
-        List<String> integrationTagValues = tagService.getTagsByNameAndTestRunCiRunId(name, ciRunId);
-        TagIntegrationType integrationInfo = new TagIntegrationType();
-        List<String> testCaseList = new ArrayList<>();
-        integrationTagValues.forEach (
-                tagValue -> {
-                    String[] tagInfoArray = tagValue.split("-");
-                    if(integrationInfo.getProjectId() == null){
-                        integrationInfo.setProjectId(tagInfoArray[0]);
-                        integrationInfo.setSuiteId(tagInfoArray[1]);
-                    }
-                    testCaseList.add(tagValue.split("-")[2]);
-                }
-        );
-        integrationInfo.setTestCaseIds(testCaseList);
-		return integrationInfo;
-	}
-
-    @ResponseStatusDetails
-    @ApiOperation(value = "Get TestRail integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = Map.class)
+    @ApiOperation(value = "Get TestRail integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = TestRailIntegrationType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "{ciRunId}/testrail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId) throws ServiceException, JAXBException {
+    TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "tagName") String tagName) throws ServiceException, JAXBException {
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
-        testRailIntegration.setProjectId(testRun.getProject().getId());
-        testRailIntegration.setSuiteId(testRun.getTestSuite().getId());
+        IntegrationTag integrationTag = tagService.getIntegrationTagInfo(tagName, ciRunId);
+        testRailIntegration.setProjectId(integrationTag.getProjectId());
+        testRailIntegration.setSuiteId(integrationTag.getSuiteId());
+        testRailIntegration.setTestCases(integrationTag.getTestCaseIds());
         testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
         Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
         for (Argument arg : configuration.getArg()) {

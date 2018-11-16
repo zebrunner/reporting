@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRailIntegrationType extends AbstractType
@@ -27,26 +28,27 @@ public class TestRailIntegrationType extends AbstractType
 
     private static final long serialVersionUID = 1948601171483936535L;
 
-    private Long projectId;
-    private Long suiteId;
+    private String projectId;
+    private String suiteId;
     private String testRunName;
     private Long createdAfter;
     private String createdBy;
     private String milestone;
+    private List<String> testCases;
 
-    public Long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 
-    public Long getSuiteId() {
+    public String getSuiteId() {
         return suiteId;
     }
 
-    public void setSuiteId(Long suiteId) {
+    public void setSuiteId(String suiteId) {
         this.suiteId = suiteId;
     }
 
@@ -80,5 +82,13 @@ public class TestRailIntegrationType extends AbstractType
 
     public void setTestRunName(String testRunName) {
         this.testRunName = testRunName;
+    }
+
+    public List<String> getTestCases() {
+        return testCases;
+    }
+
+    public void setTestCases(List<String> testCases) {
+        this.testCases = testCases;
     }
 }
