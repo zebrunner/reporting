@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.qaprosoft.zafira.models.dto;
+package com.qaprosoft.zafira.models.dto.tag;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.dto.AbstractType;
+
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
-public class IntegrationInfoType extends AbstractType
+public class TagIntegrationType extends AbstractType
 {
 	private static final long serialVersionUID = 3974731737677785447L;
 
