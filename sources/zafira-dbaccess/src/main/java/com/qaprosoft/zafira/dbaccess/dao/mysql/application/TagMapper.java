@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import com.qaprosoft.zafira.models.db.Tag;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public interface TagMapper {
 
 	Tag getTagByNameAndTestId(@Param(value = "name") String name, @Param(value = "testId") Long testId);
 
-	List<String> getTagsByNameAndTestRunCiRunId(@Param(value = "name") String name, @Param(value = "ciRunId") String ciRunId);
+	List<String> getTagsByNameAndTestRunCiRunId(@Param(value = "name") IntegrationType name, @Param(value = "ciRunId") String ciRunId);
 
 	Tag getTagByNameAndValue(@Param(value = "name") String name, @Param(value = "value") String value);
 

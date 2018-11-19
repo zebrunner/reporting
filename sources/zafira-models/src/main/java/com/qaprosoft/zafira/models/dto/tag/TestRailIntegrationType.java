@@ -17,10 +17,9 @@ package com.qaprosoft.zafira.models.dto.tag;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qaprosoft.zafira.models.dto.AbstractType;
 
 @JsonInclude(Include.NON_NULL)
-public class TestRailIntegrationType extends IntegrationTag
+public class TestRailIntegrationType extends IntegrationInfo
 {
 
     private static final long serialVersionUID = 1948601171483936535L;

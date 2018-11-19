@@ -18,6 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo.*;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
@@ -53,11 +54,11 @@ public class TagsAPIController extends AbstractController
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "{ciRunId}/testrail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "tagName") String tagName) throws ServiceException, JAXBException {
+    TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId) throws ServiceException, JAXBException {
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
-            testRailIntegration = (TestRailIntegrationType)tagService.getTestRailIntegrationInfo(tagName, ciRunId, testRailIntegration);
+            testRailIntegration = (TestRailIntegrationType)tagService.getIntegrationInfo(IntegrationType.TESTRAIL_TESTCASE_UUID, ciRunId, testRailIntegration);
             testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             for (Argument arg : configuration.getArg()) {

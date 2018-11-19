@@ -17,8 +17,8 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper;
 import com.qaprosoft.zafira.models.db.Tag;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +67,7 @@ public class TagService {
 	}
 
     @Transactional(readOnly = true)
-    public List<String> getTagsByNameAndTestRunCiRunId(String name, String ciRunId) {
+    public List<String> getTagsByNameAndTestRunCiRunId(IntegrationType name, String ciRunId) {
         return tagMapper.getTagsByNameAndTestRunCiRunId(name, ciRunId);
     }
 
@@ -87,7 +87,7 @@ public class TagService {
 	}
 
 	@Transactional(readOnly = true)
-	public IntegrationTag getTestRailIntegrationInfo(String name, String ciRunId, IntegrationTag integrationInfo) {
+	public IntegrationInfo getIntegrationInfo(IntegrationType name, String ciRunId, IntegrationInfo integrationInfo) {
 		List<String> integrationTagValues = getTagsByNameAndTestRunCiRunId(name, ciRunId);
 		List<String> testCaseList = new ArrayList<>();
 		integrationTagValues.forEach (
