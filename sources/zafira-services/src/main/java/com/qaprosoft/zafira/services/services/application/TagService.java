@@ -87,7 +87,7 @@ public class TagService {
 	}
 
 	@Transactional(readOnly = true)
-	public IntegrationInfo getIntegrationInfo(IntegrationType name, String ciRunId, IntegrationInfo integrationInfo) {
+	public void getIntegrationInfo(IntegrationType name, String ciRunId, IntegrationInfo integrationInfo) {
 		List<String> integrationTagValues = getTagsByNameAndTestRunCiRunId(name, ciRunId);
 		List<String> testCaseList = new ArrayList<>();
 		integrationTagValues.forEach (
@@ -101,7 +101,6 @@ public class TagService {
 				}
 		);
 		integrationInfo.setTestCaseIds(testCaseList);
-		return integrationInfo;
 	}
 
 	@Transactional(readOnly = true)

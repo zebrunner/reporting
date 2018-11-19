@@ -58,7 +58,7 @@ public class TagsAPIController extends AbstractController
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
-            testRailIntegration = (TestRailIntegrationType)tagService.getIntegrationInfo(IntegrationType.TESTRAIL_TESTCASE_UUID, ciRunId, testRailIntegration);
+            tagService.getIntegrationInfo(IntegrationType.TESTRAIL_TESTCASE_UUID, ciRunId, testRailIntegration);
             testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             for (Argument arg : configuration.getArg()) {
