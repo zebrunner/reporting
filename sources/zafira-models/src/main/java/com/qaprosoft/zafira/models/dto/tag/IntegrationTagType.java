@@ -22,7 +22,7 @@ import com.qaprosoft.zafira.models.dto.AbstractType;
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
-public class IntegrationTag extends AbstractType
+public class IntegrationTagType extends AbstractType
 {
 	private static final long serialVersionUID = 3974731737677785447L;
 

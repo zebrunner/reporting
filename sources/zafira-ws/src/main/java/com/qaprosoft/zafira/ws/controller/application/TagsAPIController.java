@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationTagType;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
@@ -58,10 +58,10 @@ public class TagsAPIController extends AbstractController
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
-            IntegrationTag integrationTag = tagService.getIntegrationTagInfo(tagName, ciRunId);
+            IntegrationTagType integrationTag = tagService.getIntegrationTagInfo(tagName, ciRunId);
             testRailIntegration.setProjectId(integrationTag.getProjectId());
             testRailIntegration.setSuiteId(integrationTag.getSuiteId());
-            testRailIntegration.setTestCases(integrationTag.getTestCaseIds());
+            testRailIntegration.setTestCaseIds(integrationTag.getTestCaseIds());
             testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             for (Argument arg : configuration.getArg()) {
