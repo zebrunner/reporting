@@ -87,7 +87,7 @@ public class TagService {
 	}
 
 	@Transactional(readOnly = true)
-	public TestRailIntegrationType getTestRailIntegrationInfo(String name, String ciRunId, TestRailIntegrationType integrationInfo) {
+	public IntegrationTag getTestRailIntegrationInfo(String name, String ciRunId, IntegrationTag integrationInfo) {
 		List<String> integrationTagValues = getTagsByNameAndTestRunCiRunId(name, ciRunId);
 		List<String> testCaseList = new ArrayList<>();
 		integrationTagValues.forEach (
