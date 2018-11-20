@@ -66,7 +66,7 @@ Jenkins integration is used for triggering new builds and collecting test jobs c
 </p>
 
 #### Jira
-Jira integration allows to track known issues status for failed test cases. When you assign known issue to contstantly failing test cases you may specify appropriate Jira ticket. In Jira integrationg is inabled, Zafira will check current ticket status and track failure as known issus if ticket opened and as unknown if it is closed, so you will never loose regression bugs.
+Jira integration allows to track known issues status for failed test cases. When you assign known issue to contstantly failing test cases you may specify appropriate Jira ticket. If Jira integration is enabled, Zafira will check current ticket status and track failure as known issue if ticket opened and as unknown if it is closed, so you will never lose regression bugs.
 
 * Paste Jira URL, username and password to Zafira
 * List set of statuses that indicates that ticket is closed
@@ -89,7 +89,7 @@ Zafira supports LDAP authentication, in this case on first success login via LDA
 
 #### SLACK
 Zafira is capable to post automation results into specific Slack channels for better visibility.
-If integration is set up right after test run is finished notification with run details will be sent into appropriate channel. Such  Slack notification contains base information on test run and also includes links to this run in Zafira and Jenkins.
+If integration is set up correctly after test run is finished notification with run details will be sent into appropriate channel. Such  Slack notification contains base information on test run and also includes links to this run in Zafira and Jenkins.
 After user marks some run as reviewed and Slack integration is configured for executed Jenkins job user will be proposed to send to Slack notification about reviewed run.
 In order to setup Slack integration follow the next steps:
 
