@@ -104,6 +104,22 @@
 		]]>
 	</select>
 
+	<select id="getTestRunWorkItems" resultType="java.lang.String">
+        <![CDATA[
+		SELECT WI.JIRA_ID
+		FROM
+			 WORK_ITEMS WI
+				 LEFT JOIN TEST_WORK_ITEMS TWI
+					 ON WI.ID = TWI.WORK_ITEM_ID
+				 LEFT JOIN TESTS T
+					 ON TWI.TEST_ID = T.ID
+				 LEFT JOIN TEST_RUNS TR
+					 ON T.TEST_RUN_ID = TR.ID
+		WHERE
+			  TR.CI_RUN_ID = #{ciRunId}
+		]]>
+    </select>
+
 	<update id="updateWorkItem">
 		<![CDATA[
 			UPDATE

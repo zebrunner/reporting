@@ -33,7 +33,9 @@ public interface WorkItemMapper
 	WorkItem getWorkItemByTestCaseIdAndHashCode(@Param("testCaseId") long testCaseId, @Param("hashCode") int hashCode);
 	
 	List<WorkItem> getWorkItemsByTestCaseIdAndType(@Param("testCaseId") long testCaseId, @Param("type") Type type);
-	
+
+	List<String> getTestRunWorkItems(String ciRunId);
+
 	void updateWorkItem(WorkItem workItem);
 
 	void deleteWorkItemById(long id);

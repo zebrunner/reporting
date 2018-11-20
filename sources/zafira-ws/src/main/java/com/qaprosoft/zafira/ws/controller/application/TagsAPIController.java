@@ -16,13 +16,13 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
-import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationInfoType.*;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
+import com.qaprosoft.zafira.services.services.application.WorkItemService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -44,6 +44,9 @@ public class TagsAPIController extends AbstractController
 {
 	@Autowired
 	private TagService tagService;
+
+    @Autowired
+    private WorkItemService workItemService;
 
     @Autowired
     private TestRunService testRunService;
@@ -69,6 +72,11 @@ public class TagsAPIController extends AbstractController
                 }
             });
             testRailIntegration.setTestRunName(testRun.getName(configuration));
+            testRailIntegration.setTestRunStatus(testRun.getStatus().name());
+            testRailIntegration.setTestRunComment(testRun.getComments());
+            testRailIntegration.setTestRunAppVersion(testRun.getAppVersion());
+            testRailIntegration.setTestRunElapsed(testRun.getElapsed());
+            testRailIntegration.setDefects(workItemService.getTestRunWorkItems(testRun.getCiRunId()));
         }
         return testRailIntegration;
     }
