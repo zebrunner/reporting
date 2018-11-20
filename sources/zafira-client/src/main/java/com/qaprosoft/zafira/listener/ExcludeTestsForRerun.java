@@ -101,9 +101,13 @@ public class ExcludeTestsForRerun
 							if (!ArrayUtils.contains(allDependentMethods, testNGMethod.getRealClass().getName() + "."
 									+ testNGMethod.getConstructorOrMethod().getMethod().getName()))
 							{
+//								SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
+//								TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner, testNGMethod.getXmlTest(), false, null);
+								
+								// TODO: investigate Comparator<ITestNGMethod> implementation
 								SuiteRunner suiteRunner = new SuiteRunner(new Configuration(), new XmlSuite(), "");
-								TestRunner testRunner = new TestRunner(new Configuration(), suiteRunner,
-										testNGMethod.getXmlTest(), false, null);
+								TestRunner testRunner  = new TestRunner(new Configuration(), suiteRunner, testNGMethod.getXmlTest(), false, null, null);
+								
 								TestResult testResult = new TestResult(testNGMethod.getTestClass(),
 										testNGMethod.getInstance(), testNGMethod, null, 0, 0, testRunner);
 								if (testNamesNoRerun.contains(configurator.getTestName(testResult)) && ((Test) a).enabled())
