@@ -16,7 +16,7 @@
 package com.qaprosoft.zafira.dbaccess.dao.mysql.application;
 
 import com.qaprosoft.zafira.models.db.Tag;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo.*;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfoType.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.models.dto.tag;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 import java.util.List;
 
-public abstract class IntegrationInfo extends AbstractType
+public abstract class IntegrationInfoType extends AbstractType
 {
 	private static final long serialVersionUID = 3974731737677785447L;
 

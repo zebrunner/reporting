@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationInfo.*;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationInfoType.*;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
@@ -61,13 +61,13 @@ public class TagsAPIController extends AbstractController
             tagService.getIntegrationInfo(IntegrationType.TESTRAIL_TESTCASE_UUID, ciRunId, testRailIntegration);
             testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            for (Argument arg : configuration.getArg()) {
+            configuration.getArg().forEach(arg -> {
                 if(arg.getKey().contains("testrail_assignee")){
                     testRailIntegration.setCreatedBy(arg.getValue());
                 } else if (arg.getKey().contains("testrail_milestone")){
                     testRailIntegration.setMilestone(arg.getValue());
                 }
-            }
+            });
             testRailIntegration.setTestRunName(testRun.getName(configuration));
         }
         return testRailIntegration;

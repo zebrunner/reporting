@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class TestRailIntegrationType extends IntegrationInfo
+public class TestRailIntegrationType extends IntegrationInfoType
 {
 
     private static final long serialVersionUID = 1948601171483936535L;
