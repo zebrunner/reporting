@@ -35,6 +35,4 @@ public class IntegrationType {
     public void setIntegrationInfo(List<IntegrationInfo> integrationInfo) {
         this.integrationInfo = integrationInfo;
     }
-
-
 }

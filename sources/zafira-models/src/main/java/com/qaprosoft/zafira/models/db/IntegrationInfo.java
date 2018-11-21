@@ -15,7 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class IntegrationInfo extends AbstractEntity {
+public class IntegrationInfo {
 
     private static final long serialVersionUID = -2354000459687721395L;
 
@@ -28,8 +28,8 @@ public class IntegrationInfo extends AbstractEntity {
         return tagValue;
     }
 
-    public void setTagValue(String value) {
-        this.tagValue = value;
+    public void setTagValue(String tagValue) {
+        this.tagValue = tagValue;
     }
 
     public String getStatus() {
