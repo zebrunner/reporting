@@ -17,46 +17,20 @@ package com.qaprosoft.zafira.models.dto.tag;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qaprosoft.zafira.models.db.IntegrationInfo;
 import com.qaprosoft.zafira.models.dto.AbstractType;
 
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
-public class TestRailIntegrationType extends AbstractType
+public class TestRailIntegrationType extends IntegrationType
 {
     private static final long serialVersionUID = 1948601171483936535L;
 
-    private String projectId;
-    private String suiteId;
-    private List <TestCaseResult> testCaseInfo;
     private String testRunName;
     private Long createdAfter;
     private String createdBy;
     private String milestone;
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getSuiteId() {
-        return suiteId;
-    }
-
-    public void setSuiteId(String suiteId) {
-        this.suiteId = suiteId;
-    }
-
-    public List<TestCaseResult> getTestCaseInfo() {
-        return testCaseInfo;
-    }
-
-    public void setTestCaseInfo(List<TestCaseResult> testCaseInfo) {
-        this.testCaseInfo = testCaseInfo;
-    }
 
     public String getTestRunName() {
         return testRunName;

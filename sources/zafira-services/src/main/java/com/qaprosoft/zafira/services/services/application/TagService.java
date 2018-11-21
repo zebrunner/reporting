@@ -17,10 +17,9 @@ package com.qaprosoft.zafira.services.services.application;
 
 import com.qaprosoft.zafira.dbaccess.dao.mysql.application.TagMapper;
 import com.qaprosoft.zafira.models.db.Tag;
-import com.qaprosoft.zafira.models.db.TestRailIntegrationInfo;
+import com.qaprosoft.zafira.models.db.IntegrationInfo;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.models.dto.tag.TestCaseResult;
-import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,8 +65,8 @@ public class TagService {
 	}
 
     @Transactional(readOnly = true)
-    public List<TestRailIntegrationInfo> getTagsByNameAndTestRunCiRunId(IntegrationTag name, String ciRunId) {
-        return tagMapper.getTagsByNameAndTestRunCiRunId(name, ciRunId);
+    public List<IntegrationInfo> getIntegrationInfoByNameAndTestRunCiRunId(IntegrationTag name, String ciRunId) {
+        return tagMapper.getIntegrationInfoByNameAndTestRunCiRunId(name, ciRunId);
     }
 
     @Transactional(readOnly = true)
@@ -86,33 +85,9 @@ public class TagService {
 	}
 
 	@Transactional(readOnly = true)
-	public void getTesRailIntegrationInfo(String ciRunId, TestRailIntegrationType integrationInfo) {
-		List<TestRailIntegrationInfo> testRailIntegrationInfo = getTagsByNameAndTestRunCiRunId(IntegrationTag.TESTRAIL_TESTCASE_UUID, ciRunId);
-		Map<String, TestCaseResult> testCaseResultMap = new HashMap<>();
-		testRailIntegrationInfo.forEach (
-				queryResult -> {
-					String[] tagInfoArray = queryResult.getTagValue().split("-");
-                    TestCaseResult testCaseResult;
-                    List<String> defectList;
-                    if(testCaseResultMap.get(tagInfoArray[2]) == null){
-                        if(integrationInfo.getProjectId() == null){
-                            integrationInfo.setProjectId(tagInfoArray[0]);
-                            integrationInfo.setSuiteId(tagInfoArray[1]);
-                        }
-                        testCaseResult = new TestCaseResult();
-                        testCaseResult.setTestCaseId(tagInfoArray[2]);
-                        testCaseResult.setStatus(queryResult.getStatus());
-                        defectList = new ArrayList<>();
-                    } else {
-                        testCaseResult = testCaseResultMap.get(tagInfoArray[2]);
-                        defectList = testCaseResult.getDefects();
-                    }
-                    defectList.add(queryResult.getDefectId());
-                    testCaseResult.setDefects(defectList);
-                    testCaseResultMap.put(tagInfoArray[2], testCaseResult);
-				}
-		);
-		integrationInfo.setTestCaseInfo((List<TestCaseResult>) testCaseResultMap.values());
+	public void getTesRailIntegrationInfo(String ciRunId, IntegrationTag integrationTag, IntegrationType integrationType) {
+		List<IntegrationInfo> integrationInfo = getIntegrationInfoByNameAndTestRunCiRunId(integrationTag, ciRunId);
+        integrationType.setIntegrationInfo(integrationInfo);
 	}
 
 	@Transactional(readOnly = true)
