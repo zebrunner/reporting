@@ -64,19 +64,25 @@
         ]]>
     </select>
 
-    <select id="getTagsByNameAndTestRunCiRunId" resultType="java.lang.String">
+    <select id="getTagsByNameAndTestRunCiRunId" resultMap="TestCaseInfo">
         <![CDATA[
-        SELECT TG.VALUE
-        FROM
-             TAGS TG
+        SELECT TG.VALUE, TC.STATUS, WI.JIRA_ID
+        FROM TAGS TG
         LEFT JOIN TEST_TAGS TT
             ON TG.ID = TT.TAG_ID
         LEFT JOIN TESTS T
             ON TT.TEST_ID = T.ID
         LEFT JOIN TEST_RUNS TR
             ON T.TEST_RUN_ID = TR.ID
+        LEFT JOIN TEST_CASES TC
+            ON T.TEST_CASE_ID = TC.ID
+        RIGHT JOIN TEST_WORK_ITEMS TWI
+            ON TWI.TEST_ID = T.ID
+        RIGHT JOIN WORK_ITEMS WI
+            ON TWI.WORK_ITEM_ID = WI.ID
         WHERE
-          TG.NAME = #{name} AND TR.CI_RUN_ID = #{ciRunId}
+               G.NAME = #{name} AND TR.CI_RUN_ID = #{ciRunId}
+        GROUP BY TG.VALUE, TC.STATUS, WI.JIRA_ID
         ]]>
     </select>
 
@@ -164,4 +170,9 @@
         <result column="TAG_CREATED_AT" property="createdAt"/>
     </resultMap>
 
+    <resultMap type="com.qaprosoft.zafira.models.db.TestRailIntegrationInfo" id="TestCaseInfo" autoMapping="false">
+        <result column="VALUE" property="value"/>
+        <result column="STATUS" property="status"/>
+        <result column="JIRA_ID" property="defectId"/>
+    </resultMap>
 </mapper>

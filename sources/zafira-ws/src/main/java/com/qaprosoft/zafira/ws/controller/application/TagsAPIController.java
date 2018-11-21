@@ -17,7 +17,6 @@ package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Configuration;
-import com.qaprosoft.zafira.models.dto.tag.IntegrationInfoType.*;
 import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
@@ -61,7 +60,7 @@ public class TagsAPIController extends AbstractController
         TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
-            tagService.getIntegrationInfo(IntegrationType.TESTRAIL_TESTCASE_UUID, ciRunId, testRailIntegration);
+            tagService.getTesRailIntegrationInfo(ciRunId, testRailIntegration);
             testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             configuration.getArg().forEach(arg -> {
@@ -72,11 +71,6 @@ public class TagsAPIController extends AbstractController
                 }
             });
             testRailIntegration.setTestRunName(testRun.getName(configuration));
-            testRailIntegration.setTestRunStatus(testRun.getStatus().name());
-            testRailIntegration.setTestRunComment(testRun.getComments());
-            testRailIntegration.setTestRunAppVersion(testRun.getAppVersion());
-            testRailIntegration.setTestRunElapsed(testRun.getElapsed());
-            testRailIntegration.setDefects(workItemService.getTestRunWorkItems(testRun.getCiRunId()));
         }
         return testRailIntegration;
     }
