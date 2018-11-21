@@ -62,12 +62,6 @@ public class WorkItemService
 		return workItemMapper.getWorkItemsByTestCaseIdAndType(testCaseId, type);
 	}
 
-	@Transactional(readOnly = true)
-	public List<String> getTestRunWorkItems(String ciRunId) throws ServiceException
-	{
-		return workItemMapper.getTestRunWorkItems(ciRunId);
-	}
-
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem updateWorkItem(WorkItem workItem) throws ServiceException
 	{

@@ -18,7 +18,7 @@ package com.qaprosoft.zafira.ws.controller.application;
 import com.qaprosoft.zafira.models.db.TestRun;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
-import com.qaprosoft.zafira.models.dto.tag.TestRailIntegrationType;
+import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
@@ -46,33 +46,32 @@ public class TagsAPIController extends AbstractController
 	private TagService tagService;
 
     @Autowired
-    private WorkItemService workItemService;
-
-    @Autowired
     private TestRunService testRunService;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get TestRail integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = TestRailIntegrationType.class)
+    @ApiOperation(value = "Get integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = IntegrationType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
     @RequestMapping(value = "{ciRunId}/testrail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    TestRailIntegrationType getTestRailIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId) throws ServiceException, JAXBException {
-        TestRailIntegrationType testRailIntegration = new TestRailIntegrationType();
+    IntegrationType getIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "integrationTag") IntegrationTag integrationTag) throws ServiceException, JAXBException {
+        IntegrationType integration = new IntegrationType();
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
-            tagService.getTesRailIntegrationInfo(ciRunId, IntegrationTag.TESTRAIL_TESTCASE_UUID, testRailIntegration);
-            testRailIntegration.setCreatedAfter(testRun.getCreatedAt().getTime());
+            tagService.getTesRailIntegrationInfo(ciRunId, integrationTag, integration);
+            integration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            configuration.getArg().forEach(arg -> {
-                if(arg.getKey().contains("testrail_assignee")){
-                    testRailIntegration.setCreatedBy(arg.getValue());
-                } else if (arg.getKey().contains("testrail_milestone")){
-                    testRailIntegration.setMilestone(arg.getValue());
-                }
-            });
-            testRailIntegration.setTestRunName(testRun.getName(configuration));
+            if(integrationTag == IntegrationTag.TESTRAIL_TESTCASE_UUID){
+                configuration.getArg().forEach(arg -> {
+                    if(arg.getKey().contains("testrail_assignee")){
+                        integration.getCustomParams().put("assignee", arg.getValue());
+                    } else if (arg.getKey().contains("testrail_milestone")){
+                        integration.getCustomParams().put("milestone", arg.getValue());
+                    }
+                });
+            }
+            integration.setTestRunName(testRun.getName(configuration));
         }
-        return testRailIntegration;
+        return integration;
     }
 }
