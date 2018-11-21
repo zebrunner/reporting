@@ -171,7 +171,7 @@
     </resultMap>
 
     <resultMap type="com.qaprosoft.zafira.models.db.IntegrationInfo" id="IntegrationInfo" autoMapping="false">
-        <result column="VALUE" property="value"/>
+        <result column="VALUE" property="tagValue"/>
         <result column="STATUS" property="status"/>
         <result column="MESSAGE" property="message"/>
         <result column="JIRA_ID" property="defectId"/>
