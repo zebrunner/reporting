@@ -22,7 +22,6 @@ import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
 import com.qaprosoft.zafira.services.exceptions.ServiceException;
 import com.qaprosoft.zafira.services.services.application.TagService;
 import com.qaprosoft.zafira.services.services.application.TestRunService;
-import com.qaprosoft.zafira.services.services.application.WorkItemService;
 import com.qaprosoft.zafira.ws.controller.AbstractController;
 import com.qaprosoft.zafira.ws.swagger.annotations.ResponseStatusDetails;
 import io.swagger.annotations.Api;
@@ -49,10 +48,10 @@ public class TagsAPIController extends AbstractController
     private TestRunService testRunService;
 
     @ResponseStatusDetails
-    @ApiOperation(value = "Get integration info", nickname = "getTestRailIntegrationInfo", code = 200, httpMethod = "GET", response = IntegrationType.class)
+    @ApiOperation(value = "Get integration info", nickname = "getTestIntegrationInfo", code = 200, httpMethod = "GET", response = IntegrationType.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParams({ @ApiImplicitParam(name = "Authorization", paramType = "header") })
-    @RequestMapping(value = "{ciRunId}/testrail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "{ciRunId}/integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     IntegrationType getIntegrationInfo(@PathVariable(value = "ciRunId") String ciRunId, @RequestParam(value = "integrationTag") IntegrationTag integrationTag) throws ServiceException, JAXBException {
         IntegrationType integration = new IntegrationType();
