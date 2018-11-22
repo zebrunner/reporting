@@ -86,20 +86,6 @@
         ]]>
     </select>
 
-    <select id="getPlatforms" resultType="java.lang.String">
-		<![CDATA[
-        SELECT
-                DISTINCT
-                        LOWER(TR.PLATFORM)
-        FROM
-             TEST_RUNS TR
-        ORDER BY
-                 LOWER(TR.PLATFORM)
-                ASC
-        LIMIT 10000
-        ]]>
-	</select>
-
     <select id="getTagByNameAndValue" resultMap="TagResultMap">
         <include refid="getTags"/>
         <![CDATA[

@@ -27,7 +27,7 @@ public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s";
 
-	private Configuration configuration = new Configuration();
+	private Configuration configuration;
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
