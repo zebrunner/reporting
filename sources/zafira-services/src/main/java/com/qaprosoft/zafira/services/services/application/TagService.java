@@ -85,7 +85,7 @@ public class TagService {
 	}
 
 	@Transactional(readOnly = true)
-	public void getTesRailIntegrationInfo(String ciRunId, IntegrationTag integrationTag, IntegrationType integrationType) {
+	public void getIntegrationInfo(String ciRunId, IntegrationTag integrationTag, IntegrationType integrationType) {
 		List<IntegrationInfo> integrationInfo = getIntegrationInfoByNameAndTestRunCiRunId(integrationTag, ciRunId);
         integrationType.setIntegrationInfo(integrationInfo);
 	}
