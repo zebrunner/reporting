@@ -60,16 +60,18 @@ public class TagsAPIController extends AbstractController
             tagService.getIntegrationInfo(ciRunId, integrationTag, integration);
             integration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
+            integration.setTestRunName(testRun.getName(configuration));
             if(integrationTag == IntegrationTag.TESTRAIL_TESTCASE_UUID){
                 configuration.getArg().forEach(arg -> {
                     if(arg.getKey().contains("testrail_assignee")){
                         integration.getCustomParams().put("assignee", arg.getValue());
                     } else if (arg.getKey().contains("testrail_milestone")){
                         integration.getCustomParams().put("milestone", arg.getValue());
+                    } else if (arg.getKey().contains("testrail_run_name")){
+                        integration.setTestRunName(arg.getValue());
                     }
                 });
             }
-            integration.setTestRunName(testRun.getName(configuration));
         }
         return integration;
     }
