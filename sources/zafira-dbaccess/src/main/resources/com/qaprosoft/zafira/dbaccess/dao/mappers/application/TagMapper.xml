@@ -76,9 +76,9 @@
             ON T.TEST_RUN_ID = TR.ID
         LEFT JOIN TEST_CASES TC
             ON T.TEST_CASE_ID = TC.ID
-        RIGHT JOIN TEST_WORK_ITEMS TWI
+        LEFT JOIN TEST_WORK_ITEMS TWI
             ON TWI.TEST_ID = T.ID
-        RIGHT JOIN WORK_ITEMS WI
+        LEFT JOIN WORK_ITEMS WI
             ON TWI.WORK_ITEM_ID = WI.ID
         WHERE
                 TG.NAME = #{name} AND TR.CI_RUN_ID = #{ciRunId}
