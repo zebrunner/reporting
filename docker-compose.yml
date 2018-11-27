@@ -31,11 +31,6 @@ services:
     ports:
       - 6379:6379
     restart: always
-  screenshoter:
-    image: selenium/standalone-chrome:latest
-    volumes:
-      - /dev/shm:/dev/shm
-    restart: always
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
     volumes:
@@ -69,12 +64,10 @@ services:
       - ZAFIRA_URL=http://localhost:8080
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
-      - ZAFIRA_SELENIUM_URL=http://screenshoter:4444/wd/hub
     depends_on:
       - "db"
       - "rabbitmq"
       - "redis"
-      - "screenshoter"
     restart: always
   zafira-batch:
     image: qaprosoft/zafira-batch:latest
