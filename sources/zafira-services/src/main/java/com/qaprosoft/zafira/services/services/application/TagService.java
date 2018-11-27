@@ -64,12 +64,12 @@ public class TagService {
 		return tagMapper.getTagByNameAndTestId(name, testId);
 	}
 
-    @Transactional(readOnly = true)
-    public List<IntegrationInfo> getIntegrationInfoByNameAndTestRunCiRunId(IntegrationTag name, String ciRunId) {
-        return tagMapper.getIntegrationInfoByNameAndTestRunCiRunId(name, ciRunId);
-    }
+	@Transactional(readOnly = true)
+	public List<IntegrationInfo> getIntegrationInfoByNameAndTestRunCiRunId(IntegrationTag name, String ciRunId) {
+		return tagMapper.getIntegrationInfoByNameAndTestRunCiRunId(name, ciRunId);
+	}
 
-    @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public Tag getTagByNameAndValue(String name, String value) {
 		return tagMapper.getTagByNameAndValue(name, value);
 	}
@@ -87,7 +87,7 @@ public class TagService {
 	@Transactional(readOnly = true)
 	public void getIntegrationInfo(String ciRunId, IntegrationTag integrationTag, IntegrationType integrationType) {
 		List<IntegrationInfo> integrationInfo = getIntegrationInfoByNameAndTestRunCiRunId(integrationTag, ciRunId);
-        integrationType.setIntegrationInfo(integrationInfo);
+		integrationType.setIntegrationInfo(integrationInfo);
 	}
 
 	@Transactional(readOnly = true)
