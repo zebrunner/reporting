@@ -587,7 +587,7 @@ public class TestRunService
 		email.setSuccessRate(calculateSuccessRate(testRun));
 		return freemarkerUtil.getFreeMarkerTemplateContent(email.getType().getTemplateName(), email);
 	}
-	
+
 	public Configuration readConfiguration(String xml) throws JAXBException
 	{
         Configuration configuration = new Configuration();
@@ -598,7 +598,7 @@ public class TestRunService
         }
 		return configuration;
 	}
-	
+
 	public static int calculateSuccessRate(TestRun testRun)
 	{
 		int total = testRun.getPassed() + testRun.getFailed() + testRun.getSkipped();

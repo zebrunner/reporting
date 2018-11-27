@@ -61,7 +61,7 @@ public class WorkItemService
 	{
 		return workItemMapper.getWorkItemsByTestCaseIdAndType(testCaseId, type);
 	}
-	
+
 	@Transactional(rollbackFor = Exception.class)
 	public WorkItem updateWorkItem(WorkItem workItem) throws ServiceException
 	{
