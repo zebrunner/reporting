@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'MngUserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'ElasticsearchService', 'SettingProvider', AppCtrl]); // overall control
-	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, MngUserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
+        .controller('AppCtrl', [ '$scope', '$rootScope', '$templateCache', '$state', 'httpBuffer', '$location', '$window', '$cookies', '$document', '$http', '$q', 'appConfig', 'AuthService', 'UserService', 'DashboardService', 'SettingsService', 'ConfigService', 'AuthIntercepter', 'UtilService', 'ElasticsearchService', 'SettingProvider', AppCtrl]); // overall control
+	    function AppCtrl($scope, $rootScope, $templateCache, $state, httpBuffer, $location, $window, $cookies, $document, $http, $q, appConfig, AuthService, UserService, DashboardService, SettingsService, ConfigService, AuthIntercepter, UtilService, ElasticsearchService, SettingProvider) {
 
 	        $scope.pageTransitionOpts = appConfig.pageTransitionOpts;
 	        $scope.main = appConfig.main;
@@ -94,20 +94,6 @@
                 })
             };
 
-            $scope.initMngExtendedUserProfile = function () {
-                return $q(function(resolve, reject) {
-                    MngUserService.getExtendedUserProfile().then(function(rs) {
-                        if(rs.success)
-                        {
-                            $rootScope.currentUser = rs.data;
-                            resolve(rs.data);
-                        } else {
-                            reject(rs);
-                        }
-                    });
-                })
-            };
-
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
 	            switch(data) {
@@ -169,20 +155,15 @@
 
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
 	            AuthService.SetCredentials(auth);
-	            init(function () {
-                    $scope.initSession();
-                    $scope.initExtendedUserProfile().then(function(rs) {
-                        var bufferedRequests = httpBuffer.getBuffer();
-                        if(bufferedRequests && bufferedRequests.length) {
-                            $window.location.href = bufferedRequests[0].location;
-                        } else {
-                            $state.go('dashboard', {id: rs});
-                        }
-                    }, function (rs) {
-                    })
-                }, function () {
-                    $state.go('tenancies');
-                    $scope.initMngExtendedUserProfile();
+                $scope.initSession();
+                $scope.initExtendedUserProfile().then(function(rs) {
+                    var bufferedRequests = httpBuffer.getBuffer();
+                    if(bufferedRequests && bufferedRequests.length) {
+                        $window.location.href = bufferedRequests[0].location;
+                    } else {
+                        $state.go('dashboard', {id: rs});
+                    }
+                }, function (rs) {
                 });
 	        });
 
@@ -238,14 +219,6 @@
                 }
             };
 
-            function init(tenantFunction, managementFunction) {
-                if($rootScope.globals && $rootScope.globals.auth.tenant && $rootScope.globals.auth.tenant == 'management') {
-                    managementFunction.call();
-                } else {
-                    tenantFunction.call();
-                }
-            };
-
 	        (function initController() {
 	        		// Used for dashboard emails
 	            var authorization = $cookies.get('Access-Token');
@@ -267,16 +240,11 @@
                 
 	            if ($rootScope.globals.auth)
 	            {
-                    init(function () {
-                        $scope.initSession();
-                        $scope.initExtendedUserProfile().then(function (rs) {
-                            if(['dashboards'].indexOf($state.current.name) >= 0) {
-                                $state.go('dashboard', {id: rs});
-                            }
-                        });
-                    }, function () {
-                        $state.go('tenancies');
-                        $scope.initMngExtendedUserProfile();
+                    $scope.initSession();
+                    $scope.initExtendedUserProfile().then(function (rs) {
+                        if(['dashboards'].indexOf($state.current.name) >= 0) {
+                            $state.go('dashboard', {id: rs});
+                        }
                     });
 	            }
                  getVersion();

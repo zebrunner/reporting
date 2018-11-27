@@ -18,7 +18,6 @@ package com.qaprosoft.zafira.ws.controller;
 import javax.validation.Valid;
 
 import com.qaprosoft.zafira.models.db.Invitation;
-import com.qaprosoft.zafira.models.db.Tenancy;
 import com.qaprosoft.zafira.models.dto.auth.*;
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.models.dto.user.PasswordType;
@@ -42,7 +41,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
-import com.qaprosoft.zafira.models.db.Group;
 import com.qaprosoft.zafira.models.db.User;
 import com.qaprosoft.zafira.models.dto.user.UserType;
 import com.qaprosoft.zafira.services.services.application.UserService;
@@ -119,7 +117,7 @@ public class AuthAPIController extends AbstractController {
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			final String tenant = user.getRoles().contains(Group.Role.ROLE_SUPERADMIN) ? Tenancy.getManagementSchema() : TenancyContext.getTenantName();
+			final String tenant = TenancyContext.getTenantName();
 
 			authToken = new AuthTokenType("Bearer", jwtService.generateAuthToken(user, tenant),
 					jwtService.generateRefreshToken(user, tenant), jwtService.getExpiration(), tenant);

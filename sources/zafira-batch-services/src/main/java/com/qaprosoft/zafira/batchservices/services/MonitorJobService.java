@@ -21,7 +21,7 @@ import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Monitor;
 import com.qaprosoft.zafira.models.push.events.MonitorEventMessage;
 import com.qaprosoft.zafira.services.services.application.MonitorService;
-import com.qaprosoft.zafira.services.services.management.MngTenancyService;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -54,12 +54,12 @@ public class MonitorJobService
 	private MonitorService monitorService;
 
 	@Autowired
-	private MngTenancyService mngTenancyService;
+	private TenancyService tenancyService;
 
 	@PostConstruct
 	public void init()
 	{
-		mngTenancyService.iterateItems(tenancy -> {
+		tenancyService.iterateItems(() -> {
 			List<Monitor> monitors = monitorService.getAllMonitors();
 			for (Monitor monitor : monitors)
 			{

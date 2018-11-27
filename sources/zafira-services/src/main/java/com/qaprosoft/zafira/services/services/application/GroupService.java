@@ -98,7 +98,7 @@ public class GroupService
 	}
 
 	public static List<Role> getRoles() {
-		return Arrays.stream(Role.values()).filter(role -> ! Arrays.asList(Group.getIgnoredRoles()).contains(role)).collect(Collectors.toList());
+		return Arrays.asList(Role.values());
 	}
 
 	@Transactional(readOnly = true)

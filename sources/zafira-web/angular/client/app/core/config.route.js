@@ -60,10 +60,6 @@
                         templateUrl: 'app/_testruns/list.html',
                         store: true
                     })
-                    .state('tenancies', {
-                        url: '/tenancies',
-                        templateUrl: 'app/_tenancies/list.html'
-                    })
                     .state('tests/runs/info', {
                         url: '/tests/runs/:id/info/:testId',
                         templateUrl: 'app/_testruns/_info/list.html'

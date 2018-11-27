@@ -16,7 +16,7 @@
 
     <div zafira-background-theme="header" class="top-nav" ng-controller="SidebarController">
         <ul class="nav-right pull-right list-unstyled">
-            <li has-any-role="['ROLE_SUPERADMIN']" except-condition="true">
+            <li>
                 <div class="profile-img hide-phone" style="display: inline-block;" ng-controller="SidebarController">
                     <profile-photo id="brandPhoto" ng-model="companyLogo.value" size="40" src="assets/images/project_photo.svg" icon-visible="currentUser.isAdmin"></profile-photo>
                     <div class="profile-img-content-wrapper" has-any-role="['ROLE_ADMIN']">

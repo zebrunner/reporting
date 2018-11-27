@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.qaprosoft.zafira.models.dto;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.validation.constraints.AssertTrue;
@@ -24,7 +25,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qaprosoft.zafira.models.db.Tenancy;
 
-public class TenancyType extends AbstractType {
+public class TenancyType implements Serializable {
 
     private static final long serialVersionUID = 8230787643243488944L;
 

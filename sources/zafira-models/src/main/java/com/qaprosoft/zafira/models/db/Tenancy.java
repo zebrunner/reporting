@@ -15,7 +15,9 @@
  ******************************************************************************/
 package com.qaprosoft.zafira.models.db;
 
-public class Tenancy extends AbstractEntity {
+import java.io.Serializable;
+
+public class Tenancy implements Serializable {
 
     private static final long serialVersionUID = -4999394495425059506L;
 

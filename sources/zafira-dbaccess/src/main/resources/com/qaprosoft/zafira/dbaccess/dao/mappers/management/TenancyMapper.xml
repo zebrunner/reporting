@@ -1,90 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.MngTenancyMapper">
-
-	<insert id="createTenancy" useGeneratedKeys="true" keyProperty="id">
-		<![CDATA[
-			INSERT INTO TENANCIES (NAME)
-			VALUES (
-				#{name}
-			)
-		]]>
-	</insert>
+<mapper namespace="com.qaprosoft.zafira.dbaccess.dao.mysql.management.TenancyMapper">
 
 	<sql id="getTenancy">
 		<![CDATA[
 			SELECT
-				T.ID AS TENANCY_ID,
-				T.NAME AS TENANCY_NAME,
-				T.MODIFIED_AT AS TENANCY_MODIFIED_AT,
-				T.CREATED_AT AS TENANCY_CREATED_AT
+				T.NAME AS TENANCY_NAME
 			FROM
 				TENANCIES T
 		]]>
 	</sql>
-
-	<select id="getTenancyById" resultMap="TenancyResultMap">
-		<include refid="getTenancy" />
-		<![CDATA[
-			WHERE T.ID = #{id};
-		]]>
-	</select>
-
-	<select id="getTenancyByName" resultMap="TenancyResultMap">
-		<include refid="getTenancy" />
-		<![CDATA[
-			WHERE T.NAME = #{name};
-		]]>
-	</select>
 	
 	<select id="getAllTenancies" resultMap="TenancyResultMap">
 		<include refid="getTenancy" />
 	</select>
 
-	<update id="updateTenancy">
-		<![CDATA[
-			UPDATE
-			    TENANCIES
-		]]>
-			<set>
-				<if test="null != name">
-		            <![CDATA[
-		               NAME = #{name},
-		            ]]>
-				</if>
-			</set>
-		<![CDATA[
-			WHERE
-			    ID = #{id}
-		]]>
-	</update>
-
-	<sql id="deleteTenancy">
-		<![CDATA[
-			DELETE FROM TENANCIES
-		]]>
-	</sql>
-
-	<delete id="deleteTenancyById">
-		<include refid="deleteTenancy" />
-		<![CDATA[
-			WHERE ID = #{id}
-		]]>
-	</delete>
-
-	<delete id="deleteTenancyByName">
-		<include refid="deleteTenancy" />
-		<![CDATA[
-			WHERE NAME = #{name}
-		]]>
-	</delete>
-
 	<resultMap type="com.qaprosoft.zafira.models.db.Tenancy" id="TenancyResultMap" autoMapping="false">
-		<id column="TENANCY_ID" property="id" />
 		<result column="TENANCY_NAME" property="name" />
-		<result column="TENANCY_MODIFIED_AT" property="modifiedAt" />
-		<result column="TENANCY_CREATED_AT" property="createdAt" />
 	</resultMap>
 
 </mapper>

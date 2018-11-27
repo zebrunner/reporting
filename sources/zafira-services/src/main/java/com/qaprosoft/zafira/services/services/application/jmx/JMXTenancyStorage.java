@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.qaprosoft.zafira.dbaccess.utils.TenancyContext;
 import com.qaprosoft.zafira.models.db.Setting;
 import com.qaprosoft.zafira.services.services.application.SettingsService;
-import com.qaprosoft.zafira.services.services.management.MngTenancyService;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
 import com.qaprosoft.zafira.services.services.application.jmx.context.AbstractContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ import javax.annotation.PostConstruct;
 public class JMXTenancyStorage {
 
     @Autowired
-    private MngTenancyService mngTenancyService;
+    private TenancyService tenancyService;
 
     @Autowired
     private SettingsService settingsService;
@@ -42,7 +42,7 @@ public class JMXTenancyStorage {
 
     @PostConstruct
     public void init() {
-        mngTenancyService.iterateItems(tenancy -> {
+        tenancyService.iterateItems(() -> {
             Arrays.stream(Setting.Tool.values()).forEach(tool -> {
                 settingsService.getServiceByTool(tool).init();
             });

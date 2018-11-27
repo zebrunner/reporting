@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 
 import com.qaprosoft.zafira.models.dto.user.PasswordChangingType;
 import com.qaprosoft.zafira.services.exceptions.ForbiddenOperationException;
-import com.qaprosoft.zafira.services.services.management.MngTenancyService;
+import com.qaprosoft.zafira.services.services.management.TenancyService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -54,6 +54,9 @@ public class UserService {
     @Value("${zafira.admin.password}")
     private String adminPassword;
 
+    @Value("${zafira.multitenant}")
+    private String isMultitenant;
+
     @Autowired
     private UserMapper userMapper;
 
@@ -67,12 +70,12 @@ public class UserService {
     private UserPreferenceService userPreferenceService;
 
     @Autowired
-    private MngTenancyService tenancyService;
+    private TenancyService tenancyService;
 
     @PostConstruct
     public void init() {
         if (!StringUtils.isBlank(adminUsername) && !StringUtils.isBlank(adminPassword)) {
-            tenancyService.iterateItems(tenancy -> {
+            tenancyService.iterateItems(() -> {
                 try {
                     User user = getUserByUsername(adminUsername);
                     if (user == null) {

@@ -19,19 +19,7 @@ import com.qaprosoft.zafira.models.db.Tenancy;
 
 import java.util.List;
 
-public interface MngTenancyMapper {
-
-    void createTenancy(Tenancy tenancy);
-
-    Tenancy getTenancyById(Long id);
-
-    Tenancy getTenancyByName(String name);
+public interface TenancyMapper {
 
     List<Tenancy> getAllTenancies();
-
-    void updateTenancy(Tenancy tenancy);
-
-    void deleteTenancyById(Long id);
-
-    void deleteTenancyByName(String name);
 }
