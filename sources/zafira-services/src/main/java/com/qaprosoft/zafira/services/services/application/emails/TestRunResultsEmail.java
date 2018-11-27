@@ -120,7 +120,7 @@ public class TestRunResultsEmail implements IEmailMessage
 	{
 		this.successRate = successRate;
 	}
-	
+
 	public String getElapsed()
 	{
 		return elapsed;
@@ -132,7 +132,7 @@ public class TestRunResultsEmail implements IEmailMessage
 		String status = buildStatusText(testRun);
 		return String.format(SUBJECT, status, testRun.getName(configuration));
 	}
-	
+
 	public static String buildStatusText(TestRun testRun){
 		return Status.PASSED.equals(testRun.getStatus()) && testRun.isKnownIssue() && ! testRun.isBlocker() ? "PASSED (known issues)"
 				: testRun.isBlocker() ? "FAILED (BLOCKERS)" : testRun.getStatus().name();
