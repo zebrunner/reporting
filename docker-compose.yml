@@ -60,7 +60,6 @@ services:
     env_file:
      - integrations.env
     environment:
-      - ZAFIRA_MULTITENANT=false
       - ZAFIRA_URL=http://localhost:8080
       - ZAFIRA_USER=qpsdemo
       - ZAFIRA_PASS=qpsdemo
@@ -73,8 +72,6 @@ services:
     image: qaprosoft/zafira-batch:latest
     env_file:
      - integrations.env
-    environment:
-      - ZAFIRA_MULTITENANT=false
     depends_on:
       - "db"
       - "rabbitmq"
