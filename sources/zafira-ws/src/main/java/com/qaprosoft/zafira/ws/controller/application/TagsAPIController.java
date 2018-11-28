@@ -28,6 +28,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,16 +62,26 @@ public class TagsAPIController extends AbstractController
             integration.setCreatedAfter(testRun.getCreatedAt().getTime());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             integration.setTestRunName(testRun.getName(configuration));
-            if(integrationTag == IntegrationTag.TESTRAIL_TESTCASE_UUID){
-                configuration.getArg().forEach(arg -> {
-                    if(arg.getKey().contains("testrail_assignee")){
-                        integration.getCustomParams().put("assignee", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_milestone")){
-                        integration.getCustomParams().put("milestone", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_run_name")){
-                        integration.setTestRunName(arg.getValue());
-                    }
-                });
+            switch (integrationTag){
+                case TESTRAIL_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if(arg.getKey().contains("testrail_assignee")){
+                            integration.getCustomParams().put("assignee", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_milestone")){
+                            integration.getCustomParams().put("milestone", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_run_name") && !StringUtils.isEmpty(arg.getValue())){
+                            integration.setTestRunName(arg.getValue());
+                        }
+                    });
+                    break;
+                case QTEST_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if(arg.getKey().contains("qtest_cycle_name")){
+                            integration.getCustomParams().put("cycle_name", arg.getValue());
+                        } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())){
+                            integration.setTestRunName(arg.getValue());
+                        }
+                    });
             }
         }
         return integration;
