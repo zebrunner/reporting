@@ -58,7 +58,6 @@
                 axisFormatterApply(opts.yAxis);
 
                 chart.setOption(opts);
-                console.log(JSON.stringify(opts, null, 2));
                 scope.$emit('create', chart);
 
                 angular.element($window).bind('resize', function(){
