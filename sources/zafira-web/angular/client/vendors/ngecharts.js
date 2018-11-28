@@ -20,17 +20,29 @@
         };
     }]);
 
+    var DEFAULT_HEIGHT = '320px';
+
     function buildLinkFunc($window, $filter) {
         return function (scope, ele, attrs) {
             var chart, options;
-            ele[0].style.height = ele[0].style.height ? ele[0].style.height : '320px';
-            chart = echarts.init(ele[0], 'macarons');
 
             createChart(scope.options);
 
             function createChart(options) {
                 var opts = angular.copy(options);
                 if (!opts) return;
+
+
+                             // If there is height static value in html element
+                var height = ele[0].style.height ? ele[0].style.height :
+                    // else if there is height static value in options.height (options.height.value)
+                    opts.height && opts.height.value && opts.height.value.length ? opts.height.value :
+                    // else if there is each data element height static value in options.height (options.height.dataItemValue)
+                    opts.height && opts.height.dataItemValue && opts.height.dataItemValue > 0 && scope.dataset && ! opts.dataset ? scope.dataset.length * opts.height.dataItemValue + 'px' :
+                    // else use default value
+                    DEFAULT_HEIGHT;
+                ele[0].style.height = height;
+                chart = echarts.init(ele[0], 'macarons');
 
                 if(scope.dataset && ! opts.dataset) {
                     opts.dataset = {};
@@ -46,6 +58,7 @@
                 axisFormatterApply(opts.yAxis);
 
                 chart.setOption(opts);
+                console.log(JSON.stringify(opts, null, 2));
                 scope.$emit('create', chart);
 
                 angular.element($window).bind('resize', function(){
