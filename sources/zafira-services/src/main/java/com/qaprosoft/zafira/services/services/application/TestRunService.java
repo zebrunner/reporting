@@ -16,11 +16,7 @@
 package com.qaprosoft.zafira.services.services.application;
 
 import static com.qaprosoft.zafira.models.db.Setting.SettingType.JIRA_URL;
-import static com.qaprosoft.zafira.models.db.Status.ABORTED;
-import static com.qaprosoft.zafira.models.db.Status.FAILED;
-import static com.qaprosoft.zafira.models.db.Status.IN_PROGRESS;
-import static com.qaprosoft.zafira.models.db.Status.PASSED;
-import static com.qaprosoft.zafira.models.db.Status.SKIPPED;
+import static com.qaprosoft.zafira.models.db.Status.*;
 import static com.qaprosoft.zafira.services.util.DateFormatter.actualizeSearchCriteriaDate;
 
 import java.io.ByteArrayInputStream;
@@ -82,6 +78,14 @@ public class TestRunService
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestRunService.class);
 	public static final String DEFAULT_PROJECT = "UNKNOWN";
+
+	public enum FailureCause {
+		UNRECOGNIZED_FAILURE,
+		COMPILATION_FAILURE,
+		TIMED_OUT,
+		BUILD_FAILURE,
+		ABORTED
+	}
 
 	@Autowired
 	private URLResolver urlResolver;
@@ -407,11 +411,11 @@ public class TestRunService
 	{
 		if(testRun != null){
 			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-			if(IN_PROGRESS.equals(testRun.getStatus()))
+			if(IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(abortCause))
 			{
 				for(Test test : tests)
 				{
-					if(IN_PROGRESS.equals(test.getStatus()))
+					if(IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus()))
 					{
 						testService.abortTest(test, abortCause);
 					}
@@ -606,6 +610,17 @@ public class TestRunService
 		return total > 0 ? (new BigDecimal(rate).setScale(2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))).intValue() : 0;
 	}
 
+    public boolean isBuildFailure(String comments)
+    {
+        boolean failure = false;
+        if(StringUtils.isNotEmpty(comments)){
+            if(comments.contains(FailureCause.BUILD_FAILURE.name()) || comments.contains(FailureCause.COMPILATION_FAILURE.name())){
+                failure = true;
+            }
+        }
+        return failure;
+    }
+
 	@Transactional
 	public TestRun addComment(long id, String comment) throws ServiceException
 	{
@@ -617,13 +632,6 @@ public class TestRunService
 		testRun.setComments(comment);
 		updateTestRun(testRun);
 		return testRunMapper.getTestRunByIdFull(id);
-	}
-
-	@Transactional
-	public void updateComment(TestRun testRun, String comment) throws ServiceException
-	{
-		testRun.setComments(comment);
-		updateTestRun(testRun);
 	}
 
 	@Transactional(readOnly = true)
