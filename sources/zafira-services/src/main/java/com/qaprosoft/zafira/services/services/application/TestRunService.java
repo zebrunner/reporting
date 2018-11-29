@@ -411,7 +411,7 @@ public class TestRunService
 	{
 		if(testRun != null){
 			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-			if(IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(testRun.getComments()))
+			if(IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(abortCause))
 			{
 				for(Test test : tests)
 				{
