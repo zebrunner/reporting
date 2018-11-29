@@ -28,6 +28,7 @@ import org.joda.time.Seconds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.springframework.util.StringUtils;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity
@@ -171,7 +172,7 @@ public class TestRun extends AbstractEntity
 		String platformInfo = buildPlatformInfo();
 		String testRunName = String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
 				this.configuration.get("env"), platformInfo).trim();
-		if(env == null){
+		if(StringUtils.isEmpty(this.configuration.get("env"))){
 			testRunName = testRunName.split("on")[0];
 		}
 		return testRunName;
