@@ -411,11 +411,11 @@ public class TestRunService
 	{
 		if(testRun != null){
 			List<Test> tests = testService.getTestsByTestRunId(testRun.getId());
-			if(IN_PROGRESS.equals(testRun.getStatus()))
+			if(IN_PROGRESS.equals(testRun.getStatus()) || QUEUED.equals(testRun.getStatus()) && isBuildFailure(testRun.getComments()))
 			{
 				for(Test test : tests)
 				{
-					if(IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus()) && isBuildFailure(testRun.getComments()))
+					if(IN_PROGRESS.equals(test.getStatus()) || QUEUED.equals(test.getStatus()))
 					{
 						testService.abortTest(test, abortCause);
 					}
