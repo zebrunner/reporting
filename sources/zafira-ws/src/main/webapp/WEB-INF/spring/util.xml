@@ -28,6 +28,7 @@
 				<value>dozer/TestArtifact-dozer-mapping.xml</value>
 				<value>dozer/Tenancy-dozer-mapping.xml</value>
 				<value>dozer/Invitation-dozer-mapping.xml</value>
+				<value>dozer/ScmAccount-dozer-mapping.xml</value>
 				<value>dozer/Tag-dozer-mapping.xml</value>
 			</list>
 		</property>

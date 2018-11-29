@@ -33,6 +33,7 @@
                     case '/signup':
                     case '/password/forgot':
                     case '/password/reset':
+                    case '/scm/callback':
                         return $element.addClass('body-wide body-auth');
                     case '/page/lock-screen':
                         return $element.addClass('body-wide body-lock');

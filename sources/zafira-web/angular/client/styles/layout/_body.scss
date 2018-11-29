@@ -1357,6 +1357,11 @@ button#resetFilter {
   }
 }
 
+.ci_icon_container {
+    width: 100%;
+    text-align: end;
+}
+
 .filter-chip {
     button {
         border-radius: 50%;
@@ -2898,5 +2903,49 @@ $light-inprogress: #68c9fd;
     width: 1920px !important;
     .md-dialog-container {
         width: 100vw;
+    }
+}
+
+.ci-helper-container {
+    .ace_editor {
+        height: 200px;
+    }
+    &_builder {
+        input:not([type='checkbox']), select {
+            width: 400px;
+            height: 50px;
+            padding: 0 20px 0 20px;
+            border: 1px gray solid;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+        }
+    }
+    &_select {
+        img {
+            height: 40px;
+            padding-right: 5px;
+            border-radius: 50%;
+        }
+        i {
+            vertical-align: bottom;
+        }
+        md-input-container {
+            display: block;
+            width: 400px;
+        }
+    }
+}
+
+.ci-helper-container_select_option {
+    padding-left: 5px;
+    img {
+        height: 40px;
+        padding-right: 5px;
+        border-radius: 50%;
+    }
+    i {
+        vertical-align: bottom;
     }
 }

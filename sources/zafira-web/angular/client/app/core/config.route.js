@@ -42,6 +42,10 @@
                         url: '/users',
                         templateUrl: 'app/_users/list.html'
                     })
+                    .state('scm/callback', {
+                        url: '/scm/callback',
+                        templateUrl: 'app/_scm/list.html'
+                    })
                     .state('tests/cases', {
                         url: '/tests/cases',
                         templateUrl: 'app/_testcases/list.html'

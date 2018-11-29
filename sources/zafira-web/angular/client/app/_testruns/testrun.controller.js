@@ -3,13 +3,13 @@
 
     angular
         .module('app.testrun')
-        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', '$tableExpandUtil', TestRunListController])
+        .controller('TestRunListController', ['$scope', '$rootScope', '$mdToast', '$mdMenu', '$location', '$window', '$cookieStore', '$mdDialog', '$mdConstant', '$interval', '$timeout', '$stateParams', '$mdDateRangePicker', '$q', 'FilterService', 'ProjectService', 'TestService', 'TestRunService', 'UtilService', 'UserService', 'SettingsService', 'ProjectProvider', 'ConfigService', 'SlackService', 'DownloadService', 'API_URL', 'DEFAULT_SC', 'OFFSET', 'TestRunsStorage', '$tableExpandUtil', 'ScmService', TestRunListController])
         .config(function ($compileProvider) {
             $compileProvider.preAssignBindingsEnabled(true);
         });
 
     // **************************************************************************
-    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil) {
+    function TestRunListController($scope, $rootScope, $mdToast, $mdMenu, $location, $window, $cookieStore, $mdDialog, $mdConstant, $interval, $timeout, $stateParams, $mdDateRangePicker, $q, FilterService, ProjectService, TestService, TestRunService, UtilService, UserService, SettingsService, ProjectProvider, ConfigService, SlackService, DownloadService, API_URL, DEFAULT_SC, OFFSET, TestRunsStorage, $tableExpandUtil, ScmService) {
 
         var VALUES_TO_STORE = ["predicate", "reverse", "fastSearch", "testRunId", "testRuns", "totalResults", "selectedTestRuns", "searchFormIsEmpty", "showRealTimeEvents", "projects", "showReset", "selectAll", "sc", "currentCriteria", "currentOperator", "currentValue", "subjectBuilder", "filters", "filter", "selectedFilterRange", "rabbitmq", "jira", "jenkins", "currentMode", "testRunInDebugMode", "debugHost", "debugPort", "selectedRange", "slackChannels", "isSlackAvailable", "filterBlockExpand", "collapseFilter", "testGroupDataToStore", "testGroups", "testGroupMode", "tr", "testsTagsOptions", "testsStatusesOptions"];
 
@@ -1396,6 +1396,23 @@
                 });
         };
 
+        $scope.showCiHelperDialog = function(testRun, event) {
+            $mdDialog.show({
+                controller: CiHelperController,
+                templateUrl: 'app/_testruns/ci_helper_modal.html',
+                parent: angular.element(document.body),
+                targetEvent: event,
+                clickOutsideToClose:true,
+                fullscreen: true,
+                locals: {
+
+                }
+            })
+            .then(function(answer) {
+            }, function() {
+            });
+        };
+
         $scope.showDetailsDialog = function(test, event) {
             $scope.isNewIssue = true;
             $scope.isNewTask = true;
@@ -2137,6 +2154,163 @@
 
         })();
     }
+
+    function CiHelperController($scope, $rootScope, $q, $window, $mdDialog, ScmService) {
+
+        $scope.ciOptions = {};
+
+        $scope.text = '';
+        $scope.jsonModel = {};
+
+        $scope.aceOptions = {
+            useWrapMode : true,
+            showGutter: false,
+            theme:'eclipse',
+            mode: 'json',
+            firstLineNumber: 5,
+            onLoad: function (editor) {
+
+            },
+            onChange: function (editor) {
+
+            }
+        };
+
+        $scope.getElement = function(item) {
+            var result;
+            if(angular.isArray(item)) {
+                result = 'select'
+            } else if(item === true || item === false) {
+                result = 'checkbox'
+            } else {
+                result = 'input';
+            }
+            return result;
+        };
+
+        $scope.drawHTML = function() {
+            var jsonText = $scope.text.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
+            jsonText = jsonText.replace(/\'/g, "\"");
+            $scope.jsonModel = JSON.parse(jsonText);
+            angular.forEach($scope.jsonModel, function (value, key) {
+                if(! angular.isArray(value)) {
+                    $scope.ciOptions[key] = value;
+                } else if(value.length) {
+                    $scope.ciOptions[key] = value[0];
+                }
+            });
+        };
+
+        function getClientId() {
+            return $q(function (resolve, reject) {
+                ScmService.getClientId().then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        $scope.repositories = [];
+        $scope.organizations = [];
+        $scope.scmAccount = {};
+
+        $scope.connectToGitHub = function() {
+            getClientId().then(function (clientId) {
+                var url = 'https://github.com/login?client_id=' + clientId + '&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3D' + clientId + '%26scope%3Drepo%252Cread%253Auser%252Cread%253Aorg';
+                var height = 650;
+                var width = 450;
+                var location = getCenterWindowLocation(height, width);
+                var gitHubPopUp = $window.open(url,'targetWindow', 'resizable=no, width=' + width + ', height=' + height + ', top=' + location.top + ', left=' + location.left);
+
+                gitHubPopUp.onbeforeunload = function (e) {
+                    var code = getCode(gitHubPopUp.location);
+                    initAccessToken(code).then(function (scmAccount) {
+                        $scope.scmAccount = scmAccount;
+                        $scope.getOrganizations();
+                    });
+                };
+
+                gitHubPopUp.onload = function (e) {
+                    debugger;
+                };
+
+                if (window.focus) {
+                    gitHubPopUp.focus();
+                }
+            });
+        };
+
+        $scope.getOrganizations = function() {
+            ScmService.getOrganizations($scope.scmAccount.id).then(function (rs) {
+                if(rs.success) {
+                    $scope.organizations = rs.data;
+                    $scope.getRepositories();
+                }
+            });
+        };
+
+        $scope.getRepositories = function() {
+            var organizationName = $scope.scmAccount.organizationName ? $scope.scmAccount.organizationName : '';
+            ScmService.getRepositories($scope.scmAccount.id, organizationName).then(function (rs) {
+                if(rs.success) {
+                    $scope.repositories = rs.data;
+                }
+            });
+        };
+
+        function getCode(location) {
+            var urlParams = new URLSearchParams(location.search);
+            return urlParams.get('code');
+        };
+
+        function initAccessToken(code) {
+            return $q(function (resolve, reject) {
+                ScmService.exchangeCode(code).then(function (rs) {
+                    if(rs.success) {
+                        resolve(rs.data);
+                    }
+                });
+            });
+        };
+
+        function getCenterWindowLocation(height, width) {
+            var dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+            var dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+            var w = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+            var h = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+            var left = ((w / 2) - (width / 2)) + dualScreenLeft;
+            var top = ((h / 2) - (height / 2)) + dualScreenTop;
+            return {'top': top, 'left': left};
+        }
+
+        /*{
+            env: ["DEMO", "STAG"],
+            browser: ["chrome", "firefox"],
+            suite: null,
+            method: "execute",
+            rerun: false
+          }*/
+
+        /*env:
+            - demo
+            - stage
+        browser:
+            - chrome
+            - firefox
+        suite_name: null*/
+
+        $scope.hide = function(testRun) {
+            $mdDialog.hide(testRun);
+        };
+
+        $scope.cancel = function() {
+            $mdDialog.cancel();
+        };
+
+        (function initController() {
+        })();
+    };
 
     function TestRunRerunController($scope, $mdDialog, TestRunService, testRun, jenkins) {
 

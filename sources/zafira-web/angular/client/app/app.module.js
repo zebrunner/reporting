@@ -10,6 +10,7 @@
         ,'app.auth'
         ,'app.dashboard'
         ,'app.user'
+        ,'app.scm'
         ,'app.testcase'
         ,'app.testrun'
         ,'app.testruninfo'
@@ -22,6 +23,7 @@
         // 3rd party feature modules
         ,'ngImgCrop'
         ,'ngecharts'
+        ,'ui.ace'
         ,'elasticsearch'
         ,'md.data.table'
         ,'timer'
