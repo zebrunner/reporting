@@ -90,7 +90,7 @@
                 <td>Comments:</td>
                 <td>
                     <pre style="white-space: pre-line;">
-                        ${testRun.comments?trim[0..<255]}
+                        ${testRun.comments?trim[0..*255]}
                     </pre>
                 </td>
             </tr>
