@@ -634,13 +634,6 @@ public class TestRunService
 		return testRunMapper.getTestRunByIdFull(id);
 	}
 
-	@Transactional
-	public void updateComment(TestRun testRun, String comment) throws ServiceException
-	{
-		testRun.setComments(comment);
-		updateTestRun(testRun);
-	}
-
 	@Transactional(readOnly = true)
 	@Cacheable(value = "environments", key = "T(com.qaprosoft.zafira.dbaccess.utils.TenancyContext).tenantName + ':' + #result", condition = "#result != null && #result.size() != 0")
 	public List<String> getEnvironments() throws ServiceException
