@@ -26,7 +26,7 @@ public class ScmAccount extends AbstractEntity {
     private Name name;
 
     public enum Name {
-        GIT_HUB
+        GITHUB
     }
 
     public ScmAccount() {

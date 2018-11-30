@@ -33,7 +33,7 @@ public class GitHubHttpUtils {
 
     private static final Logger LOGGER = Logger.getLogger(GitHubHttpUtils.class);
 
-    private static final String GIT_HUB_ACCESS_TOKEN_PATH = "https://github.com/login/oauth/access_token";
+    private static final String GITHUB_ACCESS_TOKEN_PATH = "https://github.com/login/oauth/access_token";
 
     private CloseableHttpClient httpClient;
 
@@ -47,11 +47,10 @@ public class GitHubHttpUtils {
     }
 
     private static HttpPost buildGetAccessTokenRequest(String code, String clientId, String secret) throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder(GIT_HUB_ACCESS_TOKEN_PATH);
+        URIBuilder uriBuilder = new URIBuilder(GITHUB_ACCESS_TOKEN_PATH);
         uriBuilder.addParameter("client_id", clientId)
                 .addParameter("client_secret", secret)
                 .addParameter("code", code)
-                //.addParameter("redirect_uri", "on-access-token")
                 .addParameter("accept", "json");
         return new HttpPost(uriBuilder.build());
     }
