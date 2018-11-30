@@ -45,8 +45,17 @@
                 chart = echarts.init(ele[0], 'macarons');
 
                 if(scope.dataset && ! opts.dataset) {
-                    opts.dataset = {};
-                    opts.dataset.source = scope.dataset;
+
+                    if(! opts.data || opts.data === 'outer') {
+                        opts.dataset = {};
+                        opts.dataset.source = scope.dataset;
+                    } else if(opts.data && opts.data === 'inner' && opts.series && opts.series.length) {
+                        scope.dataset.forEach(function (dataItem, index, array) {
+                            if(opts.series.length > index) {
+                                opts.series[index].data = [dataItem];
+                            }
+                        });
+                    }
 
                     if(opts.dimensions && opts.dimensions.length) {
                         opts.dataset.dimensions = opts.dimensions;
