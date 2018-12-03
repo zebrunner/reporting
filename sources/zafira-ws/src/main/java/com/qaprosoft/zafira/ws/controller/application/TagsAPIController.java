@@ -36,6 +36,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
+import java.util.Calendar;
 
 @Controller
 @Api(value = "Tags operations")
@@ -59,7 +60,14 @@ public class TagsAPIController extends AbstractController
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
             tagService.getIntegrationInfo(ciRunId, integrationTag, integration);
-            integration.setCreatedAfter(testRun.getCreatedAt().getTime());
+            integration.setCreatedAfter(testRun.getCreatedAt());
+            integration.setStartedAt(testRun.getStartedAt());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(testRun.getStartedAt());
+            calendar.add(Calendar.SECOND, testRun.getElapsed());
+            integration.setFinishedAt(calendar.getTime());
+
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             integration.setTestRunName(testRun.getName(configuration));
             switch (integrationTag){
