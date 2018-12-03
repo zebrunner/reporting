@@ -68,6 +68,7 @@ public class TagsAPIController extends AbstractController
             calendar.add(Calendar.SECOND, testRun.getElapsed());
             integration.setFinishedAt(calendar.getTime());
 
+            integration.setEnv(testRun.getEnv());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             integration.setTestRunName(testRun.getName(configuration));
             switch (integrationTag){

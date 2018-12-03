@@ -15,6 +15,7 @@ public class IntegrationType {
     private String suiteId;
     private List<IntegrationInfo> integrationInfo;
     private String testRunName;
+    private String env;
     private Date createdAfter;
     private Date startedAt;
     private Date finishedAt;
@@ -50,6 +51,16 @@ public class IntegrationType {
 
     public void setTestRunName(String testRunName) {
         this.testRunName = testRunName;
+    }
+
+    public String getEnv()
+    {
+        return env;
+    }
+
+    public void setEnv(String env)
+    {
+        this.env = env;
     }
 
     public Date getCreatedAfter() {
