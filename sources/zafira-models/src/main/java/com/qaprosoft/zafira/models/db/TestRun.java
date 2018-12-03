@@ -172,9 +172,6 @@ public class TestRun extends AbstractEntity
 		String platformInfo = buildPlatformInfo();
 		String testRunName = String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
 				this.configuration.get("env"), platformInfo).trim();
-		if(StringUtils.isEmpty(this.configuration.get("env"))){
-			testRunName = testRunName.split("on")[0];
-		}
 		return testRunName;
 	}
 
