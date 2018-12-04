@@ -15,7 +15,7 @@ public class IntegrationType {
     private String suiteId;
     private List<IntegrationInfo> integrationInfo;
     private String testRunName;
-    private String env;
+    private String platform;
     private Date createdAfter;
     private Date startedAt;
     private Date finishedAt;
@@ -53,14 +53,14 @@ public class IntegrationType {
         this.testRunName = testRunName;
     }
 
-    public String getEnv()
+    public String getPlatform()
     {
-        return env;
+        return platform;
     }
 
-    public void setEnv(String env)
+    public void setPlatform(String platform)
     {
-        this.env = env;
+        this.platform = platform;
     }
 
     public Date getCreatedAfter() {
