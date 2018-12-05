@@ -16,8 +16,9 @@
 package com.qaprosoft.zafira.services.services.application.emails;
 
 import com.qaprosoft.zafira.models.db.*;
+import com.qaprosoft.zafira.models.db.config.Argument;
+import com.qaprosoft.zafira.models.db.config.Configuration;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,9 +35,12 @@ public class TestRunResultsEmail implements IEmailMessage
 	private int successRate;
 	private String elapsed;
 
-	public TestRunResultsEmail(Map<String, String> config, TestRun testRun, List<Test> tests)
+	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests)
 	{
-		this.configuration = config;
+		for (Argument arg : config.getArg())
+		{
+			configuration.put(arg.getKey(), arg.getValue());
+		}
 		this.testRun = testRun;
 		this.tests = tests;
 		if(testRun.getElapsed() != null)
