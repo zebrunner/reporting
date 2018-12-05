@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
@@ -37,6 +38,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Api(value = "Tags operations")
@@ -70,7 +73,12 @@ public class TagsAPIController extends AbstractController
 
             integration.setPlatform(testRun.getPlatform());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            integration.setTestRunName(testRun.getName(configuration));
+            Map <String, String> configMap = new HashMap<>();
+            for (Argument arg : configuration.getArg())
+            {
+                configMap.put(arg.getKey(), arg.getValue());
+            }
+            integration.setTestRunName(testRun.getName(configMap));
             switch (integrationTag){
                 case TESTRAIL_TESTCASE_UUID:
                     configuration.getArg().forEach(arg -> {
