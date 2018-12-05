@@ -19,6 +19,7 @@ import com.qaprosoft.zafira.models.db.*;
 import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s";
 
-	private Map<String, String> configuration;
+	private Map<String, String> configuration = new HashMap<>();
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
