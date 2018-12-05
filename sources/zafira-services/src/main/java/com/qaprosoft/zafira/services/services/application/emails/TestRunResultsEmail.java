@@ -16,8 +16,6 @@
 package com.qaprosoft.zafira.services.services.application.emails;
 
 import com.qaprosoft.zafira.models.db.*;
-import com.qaprosoft.zafira.models.db.config.Argument;
-import com.qaprosoft.zafira.models.db.config.Configuration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +25,7 @@ public class TestRunResultsEmail implements IEmailMessage
 {
 	private static final String SUBJECT = "%s: %s";
 
-	private Configuration configuration;
+	private Map<String, String> configuration;
 	private TestRun testRun;
 	private List<Test> tests;
 	private String jiraURL;
@@ -36,7 +34,7 @@ public class TestRunResultsEmail implements IEmailMessage
 	private int successRate;
 	private String elapsed;
 
-	public TestRunResultsEmail(Configuration config, TestRun testRun, List<Test> tests)
+	public TestRunResultsEmail(Map<String, String> config, TestRun testRun, List<Test> tests)
 	{
 		this.configuration = config;
 		this.testRun = testRun;
@@ -50,11 +48,11 @@ public class TestRunResultsEmail implements IEmailMessage
 		}
 	}
 
-	public Configuration getConfiguration() {
+	public Map<String, String> getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(Configuration configuration) {
+	public void setConfiguration(Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 
