@@ -65,12 +65,12 @@ public class TagsAPIController extends AbstractController
             tagService.getIntegrationInfo(ciRunId, integrationTag, integration);
             integration.setCreatedAfter(testRun.getCreatedAt());
             integration.setStartedAt(testRun.getStartedAt());
-
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(testRun.getStartedAt());
-            calendar.add(Calendar.SECOND, testRun.getElapsed());
+            if(testRun.getElapsed() != null){
+                calendar.add(Calendar.SECOND, testRun.getElapsed());
+            }
             integration.setFinishedAt(calendar.getTime());
-
             integration.setPlatform(testRun.getPlatform());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
             Map <String, String> configMap = new HashMap<>();
