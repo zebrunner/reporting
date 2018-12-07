@@ -1273,34 +1273,32 @@ BEGIN
   -- Insert General dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('General', FALSE, 0) RETURNING id INTO general_dashboard_id;
 
-  total_tests_count_sql :=
-  '
-SELECT
-        PROJECT AS "PROJECT",
-        sum(PASSED) AS "PASS",
-        sum(FAILED) AS "FAIL",
-        sum(KNOWN_ISSUE) AS "ISSUE",
-        sum(SKIPPED) AS "SKIP",
-        sum(QUEUED) AS "QUEUE",
-        round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
-    FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY PROJECT
-    UNION
-    SELECT  ''<B><I>TOTAL</I></B>'' AS "PROJECT",
-        sum(PASSED) AS "PASS",
-        sum(FAILED) AS "FAIL",
-        sum(KNOWN_ISSUE) AS "ISSUE",
-        sum(SKIPPED) AS "SKIP",
-        sum(QUEUED) AS "QUEUE",
-        round (100.0 * sum( passed ) / (sum( total )), 2) as "Pass Rate"
-    FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    ORDER BY "PASS" DESC';
+  total_tests_count_sql := '
+  SELECT
+      PROJECT AS "PROJECT",
+      sum(PASSED) AS "PASS",
+      sum(FAILED) AS "FAIL",
+      sum(KNOWN_ISSUE) AS "ISSUE",
+      sum(SKIPPED) AS "SKIP",
+      sum(QUEUED) AS "QUEUE",
+      round (100.0 * sum(PASSED) / (sum(TOTAL)), 2) AS "PASS RATE"
+  FROM TOTAL_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY PROJECT
+  UNION
+  SELECT  ''<B><I>TOTAL</I></B>'' AS "PROJECT",
+      sum(PASSED) AS "PASS",
+      sum(FAILED) AS "FAIL",
+      sum(KNOWN_ISSUE) AS "ISSUE",
+      sum(SKIPPED) AS "SKIP",
+      sum(QUEUED) AS "QUEUE",
+      round (100.0 * sum(PASSED) / (sum(TOTAL)), 2) AS "PASS RATE"
+  FROM TOTAL_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  ORDER BY "PASS" DESC';
 
-  total_tests_count_model :=
-  '
-{
+  total_tests_count_model := '
+  {
       "columns": [
           "PROJECT",
           "PASS",
@@ -1312,299 +1310,410 @@ SELECT
       ]
   }';
 
-  total_tests_sql :=
-  '
-SELECT
-     unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-     unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-     unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
+  total_tests_sql := '
+  SELECT
+  unnest(array[''PASSED'',
+              ''FAILED'',
+              ''SKIPPED'',
+              ''KNOWN ISSUE'',
+              ''QUEUED'',
+              ''ABORTED'']) AS "label",
+      unnest(
+      array[sum(PASSED),
+          sum(FAILED),
+          sum(SKIPPED),
+          sum(KNOWN_ISSUE),
+          sum(QUEUED),
+          sum(ABORTED)]) AS "value"
   FROM TOTAL_VIEW
-  WHERE PROJECT LIKE ANY (''{#{project}}'')
-  ORDER BY "value" DESC';
+    WHERE
+      PROJECT LIKE ANY (''{#{project}}'')';
 
-  total_tests_model :=
-  '{
-       "thickness": 20
-   }';
+  total_tests_model := '
+   {
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
+        },
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
+        },
+        "formatter": "{b0}<br>{d0}%"
+    },
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "85%"
+            ]
+        }
+    ]
+}';
 
-  weekly_test_impl_progress_sql :=
-  '
-SELECT
-      date_trunc(''week'', TEST_CASES.CREATED_AT)::date AS "CREATED_AT" ,
+  weekly_test_impl_progress_sql := '
+  SELECT
+      date_trunc(''week'', TEST_CASES.CREATED_AT) AS "CREATED_AT",
       count(*) AS "AMOUNT"
   FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
   INNER JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
   WHERE PROJECTS.NAME LIKE ANY (''{#{project}}'')
+  AND TEST_CASES.CREATED_AT > (current_date - interval ''1 year'')
   GROUP BY 1
   ORDER BY 1;';
 
-  weekly_test_impl_progress_model :=
-  '
-{
-        "series": [
+  weekly_test_impl_progress_model := '
+  {
+      "grid": {
+          "right": "2%",
+          "left": "4%",
+          "top": "8%",
+          "bottom": "8%"
+      },
+      "legend": {
+          "top": -5
+      },
+      "tooltip": {
+          "trigger": "axis"
+      },
+      "dimensions": [
+          "CREATED_AT",
+          "AMOUNT"
+      ],
+      "color": [
+          "#7fbae3",
+          "#919e8b"
+      ],
+      "xAxis": {
+          "type": "category",
+          "axisLabel": {
+              "formatter": "$filter | date: MMM dd$"
+          }
+      },
+      "yAxis": {},
+      "series": [
           {
-            "axis": "y",
-            "dataset": "dataset",
-            "key": "AMOUNT",
-            "label": "INTERPOLATED AMOUNT",
-            "interpolation": {"mode": "bundle", "tension": 0.8},
-            "color": "#f0ad4e",
-            "type": [
-              "line"
-            ],
-            "id": "AMOUNT"
+              "type": "bar"
           },
           {
-            "axis": "y",
-            "dataset": "dataset",
-            "key": "AMOUNT",
-            "label": "AMOUNT",
-            "color": "#3a87ad",
-            "type": [
-              "column"
-            ],
-            "id": "AMOUNT"
+              "type": "line",
+              "smooth": true,
+              "lineStyle": {
+                  "type": "dotted"
+              }
           }
-        ],
-        "axes": {
-          "x": {
-            "key": "CREATED_AT",
-            "type": "date"
-          }
-        }
-    }';
-
-  total_jira_tickets_sql :=
-  '
-SELECT
-        PROJECTS.NAME AS "PROJECT",
-        COUNT(DISTINCT WORK_ITEMS.JIRA_ID) AS "COUNT"
-    FROM TEST_WORK_ITEMS
-        INNER JOIN WORK_ITEMS ON TEST_WORK_ITEMS.WORK_ITEM_ID = WORK_ITEMS.ID
-        INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
-        INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
-    WHERE WORK_ITEMS.TYPE=''BUG''
-    AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
-    GROUP BY "PROJECT"
-    ORDER BY "COUNT" DESC;';
-
-  total_jira_tickets_model :=
-  '{
-      "columns":[
-         "PROJECT",
-         "COUNT"
       ]
-   }';
+  }';
 
-  total_tests_man_hours_sql :=
-  '
-SELECT
-        SUM(TOTAL_HOURS) AS "ACTUAL",
-        SUM(TOTAL_HOURS) AS "ETA",
-        TESTED_AT AS "CREATED_AT"
-    FROM TOTAL_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY "CREATED_AT"
-    UNION
-    SELECT
-        SUM(TOTAL_HOURS) AS "ACTUAL",
-        ROUND(SUM(TOTAL_HOURS)/extract(day from current_date)
-        * extract(day from date_trunc(''month'', current_date) + interval ''1 month'' - interval ''1 day'')) AS "ETA",
-        date_trunc(''month'', current_date) AS "CREATED_AT"
-    FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY "CREATED_AT"
-    ORDER BY "CREATED_AT";';
+  total_jira_tickets_sql := '
+  SELECT
+      PROJECTS.NAME AS "PROJECT",
+      COUNT(DISTINCT WORK_ITEMS.JIRA_ID) AS "COUNT"
+  FROM TEST_WORK_ITEMS
+      INNER JOIN WORK_ITEMS ON TEST_WORK_ITEMS.WORK_ITEM_ID = WORK_ITEMS.ID
+      INNER JOIN TEST_CASES ON WORK_ITEMS.TEST_CASE_ID = TEST_CASES.ID
+      INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
+  WHERE WORK_ITEMS.TYPE=''BUG''
+  AND PROJECTS.NAME LIKE ANY (''{#{project}}'')
+  GROUP BY "PROJECT"
+  ORDER BY "COUNT" DESC;';
 
-  total_tests_man_hours_model :=
-  '
+  total_jira_tickets_model := '
+  {
+     "columns":[
+        "PROJECT",
+        "COUNT"
+     ]
+  }';
+
+  total_tests_man_hours_sql := '
+  SELECT
+      SUM(TOTAL_HOURS) AS "ACTUAL",
+      SUM(TOTAL_HOURS) AS "ETA",
+      CREATED_AT AS "CREATED_AT"
+  FROM TOTAL_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+      AND CREATED_AT < date_trunc(''month'', current_date)
+  GROUP BY "CREATED_AT"
+  UNION
+  SELECT
+      SUM(TOTAL_HOURS) AS "ACTUAL",
+      ROUND(SUM(TOTAL_HOURS)/extract(day from current_date) * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day'')) AS "ETA",
+      date_trunc(''month'', current_date) AS "CREATED_AT"
+  FROM MONTHLY_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY "CREATED_AT"
+  ORDER BY "CREATED_AT";';
+
+  total_tests_man_hours_model := '
 {
-        "series": [
-            {
-                "axis": "y",
-                "dataset": "dataset",
-                "key": "ACTUAL",
-                "label": "ACTUAL",
-                "color": "#5C9AE1",
-                "thickness": "10px",
-                "type": [
-                    "column"
-                ],
-                "id": "ACTUAL",
-                "visible": true
-            },
-            {
-                "axis": "y",
-                "dataset": "dataset",
-                "key": "ETA",
-                "label": "ETA",
-                "color": "#C4C9CE",
-                "thickness": "10px",
-                "interpolation": {
-                    "mode": "bundle",
-                    "tension": 1
-                },
-                "type": [
-                    "dashed-line"
-                ],
-                "id": "ETA",
-                "visible": true
-            }
-        ],
-        "axes": {
-            "x": {
-                "key": "CREATED_AT",
-                "type": "date",
-                "ticks": "functions(value) {return ''wow!''}"
-            },
-            "y": {
-                "min": "0"
+    "grid": {
+        "right": "2%",
+        "left": "4%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {
+        "top": -5
+    },
+    "tooltip": {
+        "trigger": "axis"
+    },
+    "dimensions": [
+        "CREATED_AT",
+        "ACTUAL",
+        "ETA"
+    ],
+    "xAxis": {
+        "type": "category",
+        "axisLabel": {
+            "formatter": "$filter | date: MMM dd$"
+        }
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "bar"
+        },
+        {
+            "type": "line",
+            "smooth": true,
+            "lineStyle": {
+                "type": "dashed"
             }
         }
-    }';
+    ],
+    "color": [
+        "#7fbae3",
+        "#919e8b"
+    ]
+}';
 
-  total_tests_by_month_sql =
-  '
-SELECT
+  total_tests_by_month_sql = '
+  SELECT
+      date_trunc(''month'', CREATED_AT) AS "CREATED_AT",
       SUM(PASSED) as "PASSED",
       SUM(FAILED) AS "FAILED",
       SUM(SKIPPED) AS "SKIPPED",
-      SUM(IN_PROGRESS) AS "IN PROGRESS",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
       SUM(ABORTED) AS "ABORTED",
       SUM(QUEUED) AS "QUEUED",
-      SUM(TOTAL) AS "TOTAL",
-      date_trunc(''month'', TESTED_AT) AS "CREATED_AT"
+      SUM(TOTAL) AS "TOTAL"
   FROM TOTAL_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')
-  AND TESTED_AT < date_trunc(''month'', current_date)
+  AND CREATED_AT < date_trunc(''month'', current_date)
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT"';
 
-  total_tests_by_month_model =
-  '
+  total_tests_by_month_model = '
 {
-      "series": [
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "PASSED",
-              "label": "PASSED",
-              "color": "#5cb85c",
-              "thickness": "10px",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "PASSED"
-          },
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "FAILED",
-              "label": "FAILED",
-              "color": "#d9534f",
-              "thickness": "10px",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "FAILED"
-          },
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "SKIPPED",
-              "label": "SKIPPED",
-              "color": "#f0ad4e",
-              "thickness": "10px",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "SKIPPED"
-          },
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "IN PROGRESS",
-              "label": "IN PROGRESS",
-              "color": "#3a87ad",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "IN PROGRESS"
-          },
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "ABORTED",
-              "label": "ABORTED",
-              "color": "#aaaaaa",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "ABORTED"
-          },
-          {
-            "axis": "y",
-            "dataset": "dataset",
-            "key": "QUEUED",
-            "label": "QUEUED",
-            "color": "#6C6C6C",
-            "type": [
-                "line",
-                "dot",
-                "area"
-            ],
-            "id": "QUEUED"
-          },
-          {
-              "axis": "y",
-              "dataset": "dataset",
-              "key": "TOTAL",
-              "label": "TOTAL",
-              "color": "#D3D3D3",
-              "type": [
-                  "line",
-                  "dot",
-                  "area"
-              ],
-              "id": "TOTAL"
-          }
-      ],
-      "axes": {
-          "x": {
-              "key": "CREATED_AT",
-              "type": "date",
-              "ticks": "functions(value) {return ''wow!''}"
-          }
-      }
-  }';
+    "grid": {
+        "right": "2%",
+        "left": "6%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis"
+    },
+    "dimensions": [
+        "CREATED_AT",
+        "PASSED",
+        "FAILED",
+        "SKIPPED",
+        "KNOWN ISSUE",
+        "ABORTED",
+        "TOTAL"
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5",
+        "#D3D3D3"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false,
+        "axisLabel": {
+            "formatter": "$filter | date: yyyy MMM $"
+        }
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        }
+    ]
+}';
 
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('TOTAL TESTS (COUNT)', 'table', total_tests_count_sql, total_tests_count_model)
       RETURNING id INTO total_tests_count_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TOTAL TESTS', 'piechart', total_tests_sql, total_tests_model)
+                                                       ('TOTAL TESTS', 'echart', total_tests_sql, total_tests_model)
       RETURNING id INTO total_tests_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('WEEKLY TEST IMPLEMENTATION PROGRESS', 'linechart', weekly_test_impl_progress_sql, weekly_test_impl_progress_model)
+                                                       ('WEEKLY TEST IMPLEMENTATION PROGRESS', 'echart', weekly_test_impl_progress_sql, weekly_test_impl_progress_model)
       RETURNING id INTO weekly_test_impl_progress_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('TOTAL JIRA TICKETS', 'table', total_jira_tickets_sql, total_jira_tickets_model)
       RETURNING id INTO total_jira_tickets_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TOTAL TESTS (MAN-HOURS)', 'linechart', total_tests_man_hours_sql, total_tests_man_hours_model)
+                                                       ('TOTAL TESTS (MAN-HOURS)', 'echart', total_tests_man_hours_sql, total_tests_man_hours_model)
       RETURNING id INTO total_tests_man_hours_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TOTAL TESTS (BY MONTH)', 'linechart', total_tests_by_month_sql, total_tests_by_month_model)
+                                                       ('TOTAL TESTS (BY MONTH)', 'echart', total_tests_by_month_sql, total_tests_by_month_model)
       RETURNING id INTO total_tests_by_month_id;
 
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -1612,13 +1721,13 @@ SELECT
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (general_dashboard_id, total_tests_id, '{"x":0,"y":0,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (general_dashboard_id, total_tests_count_id, '{"x":0,"y":11,"width":4,"height":11}');
+                                                                            (general_dashboard_id, total_tests_count_id, '{"x":0,"y":11,"width":4,"height":8}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (general_dashboard_id, weekly_test_impl_progress_id, '{"x":4,"y":22,"height":11,"width":8}');
+                                                                            (general_dashboard_id, weekly_test_impl_progress_id, '{"x":4,"y":11,"height":11,"width":8}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (general_dashboard_id, total_jira_tickets_id, '{"x":0,"y":22,"width":4,"height":11}');
+                                                                            (general_dashboard_id, total_jira_tickets_id, '{"x":0,"y":19,"width":4,"height":6}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (general_dashboard_id, total_tests_by_month_id, '{"x":4,"y":11,"width":8,"height":11}');
+                                                                            (general_dashboard_id, total_tests_by_month_id, '{"x":4,"y":33,"width":8,"height":11}');
 
   -- Insert Monthly dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Monthly Regression', FALSE, 4) RETURNING id INTO monthly_dashboard_id;
