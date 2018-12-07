@@ -2600,131 +2600,392 @@ BEGIN
   -- Insert Nightly dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Nightly Regression', FALSE, 2) RETURNING id INTO nightly_dashboard_id;
 
-  nightly_total_sql :=
-  '
-SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
-    FROM NIGHTLY_VIEW
-    WHERE
-        PROJECT LIKE ANY (''{#{project}}'')
-    ORDER BY "value" DESC';
+  nightly_total_sql := '
+  SELECT
+  unnest(array[MIN(CREATED_AT)::text,
+              ''PASSED'',
+              ''FAILED'',
+              ''SKIPPED'',
+              ''KNOWN ISSUE'',
+              ''QUEUED'',
+              ''ABORTED'']) AS "label",
+     unnest(
+      array[0,
+          sum(PASSED),
+          sum(FAILED),
+          sum(SKIPPED),
+          sum(KNOWN_ISSUE),
+          sum(QUEUED),
+          sum(ABORTED)]) AS "value"
+  FROM NIGHTLY_VIEW
+  WHERE
+  PROJECT LIKE ANY (''{#{project}}'')';
 
   nightly_total_model := '
-    {
-        "thickness": 20
-    }';
-
-  nightly_platform_pass_rate_sql :=
-  '
-SELECT
-        case when (PLATFORM IS NULL AND BROWSER <> '''') then ''WEB''
-            when (PLATFORM = ''*'' AND BROWSER <> '''') then ''WEB''
-            when (PLATFORM IS NULL AND BROWSER = '''') then ''API''
-            when (PLATFORM = ''*''  AND BROWSER = '''') then ''API''
-            else PLATFORM end AS "PLATFORM",
-        Build AS "BUILD",
-        sum( PASSED ) AS "PASSED",
-        sum( FAILED ) AS "FAILED",
-        sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-        sum( SKIPPED) AS "SKIPPED",
-        sum( ABORTED ) AS "ABORTED",
-        sum( QUEUED ) AS "QUEUED",
-        sum(TOTAL) AS "TOTAL",
-        round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED (%)",
-        round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED (%)",
-        round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
-        round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)",
-        round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED (%)"
-    FROM NIGHTLY_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY "PLATFORM", "BUILD"
-    ORDER BY "PLATFORM"';
-
-  nightly_platform_pass_rate_model :=
-  '
 {
-      "columns": [
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
+        },
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
+        },
+        "formatter": "{b0}<br>{d0}%"
+    },
+    "color": [
+        "#ffffff",
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "75%"
+            ]
+        }
+    ],
+    "thickness": 20
+}';
+
+  nightly_platform_pass_rate_sql := '
+  SELECT PLATFORM AS "PLATFORM",
+      round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
+      round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
+      round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
+      0 - round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED",
+      0 - round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED",
+      0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
+  FROM NIGHTLY_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY PLATFORM
+  ORDER BY PLATFORM';
+
+  nightly_platform_pass_rate_model := '
+  {
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow"
+        }
+    },
+    "legend": {
+        "data": [
+            "PASSED",
+            "FAILED",
+            "SKIPPED",
+            "KNOWN ISSUE",
+            "QUEUED",
+            "ABORTED"
+        ]
+    },
+    "grid": {
+        "left": "5%",
+        "right": "5%",
+        "bottom": "3%",
+        "containLabel": true
+    },
+    "xAxis": [
+        {
+            "type": "value"
+        }
+    ],
+    "yAxis": [
+        {
+            "type": "category",
+            "axisTick": {
+                "show": false
+            }
+        }
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "dimensions": [
         "PLATFORM",
-        "BUILD",
         "PASSED",
         "FAILED",
-        "KNOWN ISSUE",
         "SKIPPED",
-        "ABORTED",
+        "KNOWN ISSUE",
         "QUEUED",
-        "TOTAL",
-        "PASSED (%)",
-        "FAILED (%)",
-        "KNOWN ISSUE (%)",
-        "SKIPPED (%)",
-        "ABORTED (%)",
-        "QUEUED (%)"
-      ]
-    }';
+        "ABORTED"
+    ],
+    "height": {
+        "dataItemValue": 80
+    },
+    "series": [
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside",
+                    "formatter": "{@PASSED}%"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside",
+                    "formatter": "{@FAILED}%"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": false,
+                    "position": "inside",
+                    "formatter": "{@SKIPPED}%"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside",
+                    "formatter": "{@KNOWN ISSUE}%"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside",
+                    "formatter": "{@QUEUED}%"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside",
+                    "formatter": "{@ABORTED}%"
+                }
+            }
+        }
+    ]
+}';
 
-  nightly_details_sql :=
-  '
-SELECT
-        OWNER AS "OWNER",
-        ''<a href="#{zafiraURL}/#!/dashboards/'||personal_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Board</a>'' AS "REPORT",
+  nightly_details_sql := '
+  SELECT
+        ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || ''</a>'' AS "OWNER",
         SUM(PASSED) AS "PASSED",
         SUM(FAILED) AS "FAILED",
         SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
         SUM(SKIPPED) AS "SKIPPED",
         sum( QUEUED ) AS "QUEUED",
-        SUM(TOTAL) AS "TOTAL",
-        round (100.0 * SUM(PASSED) / (SUM(TOTAL)), 0)::integer AS "PASSED (%)",
-        round (100.0 * SUM(FAILED) / (SUM(TOTAL)), 0)::integer AS "FAILED (%)",
-        round (100.0 * SUM(KNOWN_ISSUE) / (SUM(TOTAL)), 0)::integer AS "KNOWN ISSUE (%)",
-        round (100.0 * SUM(SKIPPED) / (SUM(TOTAL)), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED (%)",
-        round (100.0 * (SUM(TOTAL)-SUM(PASSED)) / (SUM(TOTAL)), 0)::integer AS "FAIL RATE (%)"
+        SUM(TOTAL) AS "TOTAL"
     FROM NIGHTLY_VIEW
     WHERE
       PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY OWNER_ID, OWNER
-    ORDER BY OWNER';
+    GROUP BY OWNER_ID, OWNER_USERNAME
+    ORDER BY OWNER_USERNAME';
 
-  nightly_details_model :=
-  '
-{
+  nightly_details_model := '
+  {
       "columns": [
-        "OWNER",
-        "REPORT",
-        "PASSED",
-        "FAILED",
-        "KNOWN ISSUE",
-        "SKIPPED",
-        "QUEUED",
-        "TOTAL",
-        "PASSED (%)",
-        "FAILED (%)",
-        "KNOWN ISSUE (%)",
-        "SKIPPED (%)",
-        "QUEUED (%)"
-      ]
-    }';
-
-  nightly_person_pass_rate_sql :=
-  '
-  SELECT
-  MIN(Updated) AS "REGRESSION DATE"
-  FROM NIGHTLY_VIEW;';
-
-  nightly_person_pass_rate_model :=
-  '{
-      "columns": [
-          "REGRESSION DATE"
+          "OWNER",
+          "PASSED",
+          "FAILED",
+          "KNOWN ISSUE",
+          "TOTAL"
       ]
   }';
 
-  nightly_failures_sql :=
-  '
-SELECT count(*) AS "COUNT",
-      ''<a href="#{zafiraURL}/#!/dashboards/'||failures_dashboard_id||'?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>'' AS "REPORT",
+  nightly_person_pass_rate_sql := '
+  SELECT OWNER_USERNAME AS "OWNER",
+      round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
+      round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
+      round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
+      0 - round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED",
+      0 - round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED",
+      0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
+  FROM NIGHTLY_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY OWNER_USERNAME
+  ORDER BY OWNER_USERNAME';
+
+  nightly_person_pass_rate_model := '
+{
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow"
+        }
+    },
+    "legend": {
+        "data": [
+            "PASSED",
+            "FAILED",
+            "SKIPPED",
+            "KNOWN ISSUE",
+            "QUEUED",
+            "ABORTED"
+        ]
+    },
+    "grid": {
+        "left": "5%",
+        "right": "5%",
+        "bottom": "3%",
+        "containLabel": true
+    },
+    "xAxis": [
+        {
+            "type": "value"
+        }
+    ],
+    "yAxis": [
+        {
+            "type": "category",
+            "axisTick": {
+                "show": false
+            }
+        }
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "dimensions": [
+        "OWNER",
+        "PASSED",
+        "FAILED",
+        "SKIPPED",
+        "KNOWN ISSUE",
+        "QUEUED",
+        "ABORTED"
+    ],
+    "height": {
+        "dataItemValue": 160
+    },
+    "series": [
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack-queued",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        }
+    ]
+}';
+
+  nightly_failures_sql := '
+  SELECT count(*) AS "COUNT",
+      ''<a href="#{zafiraURL}/#!/dashboards/2?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>'' AS "REPORT",
       substring(MESSAGE from 1 for 210) as "MESSAGE"
   FROM NIGHTLY_FAILURES_VIEW
   GROUP BY substring(MESSAGE from 1 for 210)
@@ -2741,16 +3002,16 @@ SELECT count(*) AS "COUNT",
   }';
 
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('NIGHTLY TOTAL', 'piechart', nightly_total_sql, nightly_total_model)
+                                                       ('NIGHTLY TOTAL', 'echart', nightly_total_sql, nightly_total_model)
       RETURNING id INTO nightly_total_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('NIGHTLY PLATFORM DETAILS', 'table', nightly_platform_pass_rate_sql, nightly_platform_pass_rate_model)
+                                                       ('NIGHTLY PASS RATE BY PLATFORM (%)', 'echart', nightly_platform_pass_rate_sql, nightly_platform_pass_rate_model)
       RETURNING id INTO nightly_platform_pass_rate_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('NIGHTLY DETAILS', 'table', nightly_details_sql, nightly_details_model)
       RETURNING id INTO nightly_details_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('NIGHTLY (DATE)', 'table', nightly_person_pass_rate_sql, nightly_person_pass_rate_model)
+                                                       ('NIGHTLY PASS RATE BY PERSON (%)', 'echart', nightly_person_pass_rate_sql, nightly_person_pass_rate_model)
       RETURNING id INTO nightly_person_pass_rate_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('NIGHTLY FAILURES', 'table', nightly_failures_sql, nightly_failures_model)
@@ -2759,12 +3020,12 @@ SELECT count(*) AS "COUNT",
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (nightly_dashboard_id, nightly_total_id, '{"x":0,"y":0,"height":11,"width":4}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (nightly_dashboard_id, nightly_platform_pass_rate_id, '{"x":0,"y":22,"height":15,"width":12}');
+                                                                            (nightly_dashboard_id, nightly_platform_pass_rate_id, '{"x":4,"y":0,"width":8,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (nightly_dashboard_id, nightly_details_id, '{"x":0,"y":11,"height":11,"width":12}');
+                                                                            (nightly_dashboard_id, nightly_details_id, '{"x":0,"y":11,"width":4,"height":7}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (nightly_dashboard_id, nightly_person_pass_rate_id, '{"x":8,"y":0,"width":4,"height":11}');
+                                                                            (nightly_dashboard_id, nightly_person_pass_rate_id, '{"x":4,"y":11,"width":8,"height":7}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (nightly_dashboard_id, nightly_failures_id, '{"x":0,"y":37,"width":12,"height":22}');
+                                                                            (nightly_dashboard_id, nightly_failures_id, '{"x":0,"y":18,"width":12,"height":6}');
 
 END$$;
