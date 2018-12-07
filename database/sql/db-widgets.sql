@@ -131,8 +131,8 @@ DECLARE personal_dashboard_id DASHBOARDS.id%TYPE;
 BEGIN
 	-- Insert Stability dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', TRUE, 8) RETURNING id INTO stability_dashboard_id;
-	stability_percent_sql := '
-  SELECT
+	stability_percent_sql :=
+	'SELECT
   unnest(array[''STABILITY'',
                   ''FAILURE'',
                   ''OMISSION'',
@@ -147,8 +147,8 @@ BEGIN
   WHERE
       TEST_CASE_ID = ''#{testCaseId}''';
 
-	stability_percent_model :='
-  {
+	stability_percent_model :=
+	'{
       "legend": {
           "orient": "vertical",
           "x": "left",
@@ -207,8 +207,8 @@ BEGIN
       "thickness": 20
   }';
 
-	test_case_info_sql :='
-  SELECT
+	test_case_info_sql :=
+	'SELECT
       TEST_CASES.ID AS "ID",
       TEST_CASES.TEST_CLASS AS "TEST CLASS",
       TEST_CASES.TEST_METHOD AS "TEST METHOD",
@@ -220,8 +220,8 @@ BEGIN
       LEFT JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
   WHERE TEST_CASES.ID = ''#{testCaseId}''';
 
-	test_case_info_model :='
-  {
+	test_case_info_model :=
+	'{
       "columns": [
           "ID",
           "TEST CLASS",
@@ -232,8 +232,8 @@ BEGIN
       ]
   }';
 
-	stability_trend_sql :='
-  SELECT
+	stability_trend_sql :=
+	'SELECT
       STABILITY as "STABILITY",
       100 - OMISSION - KNOWN_FAILURE - ABORTED as "FAILURE",
       100 - KNOWN_FAILURE - ABORTED as "OMISSION",
@@ -242,8 +242,8 @@ BEGIN
   WHERE TEST_CASE_ID = ''#{testCaseId}''
   ORDER BY "TESTED_AT"';
 
-	stability_trend_model :='
-  {
+	stability_trend_model :=
+	'{
       "grid": {
           "right": "2%",
           "left": "2%",
@@ -341,21 +341,21 @@ BEGIN
 	-- Insert Failures dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Failures analysis', TRUE, 5) RETURNING id INTO failures_dashboard_id;
 
-	error_message_sql :='
-  SELECT Message AS "Error Message"
+	error_message_sql :=
+	'SELECT Message AS "Error Message"
   FROM NIGHTLY_FAILURES_VIEW
   WHERE MESSAGE_HASHCODE=''#{hashcode}''
   LIMIT 1';
 
-	error_message_model := '
-  {
+	error_message_model :=
+	'{
       "columns":[
          "Error Message"
       ]
   }';
 
-	detailed_failures_report_sql := '
-  SELECT count(*) as "COUNT",
+	detailed_failures_report_sql :=
+	'SELECT count(*) as "COUNT",
       Env AS "ENV",
       TEST_INFO_URL AS "REPORT",
       Rebuild AS "REBUILD"
@@ -367,8 +367,8 @@ BEGIN
   GROUP BY "ENV", "REPORT", "REBUILD", substring(Message from 1 for 210)
   ORDER BY "COUNT" DESC, "ENV"';
 
-	detailed_failures_report_model := '
-  {
+	detailed_failures_report_model :=
+	'{
       "columns": [
           "COUNT",
           "ENV",
@@ -377,8 +377,8 @@ BEGIN
       ]
   }';
 
-	failures_count_sql := '
-  SELECT
+	failures_count_sql :=
+	'SELECT
       Env AS "ENV",
       count(*) as "COUNT"
   FROM NIGHTLY_FAILURES_VIEW
@@ -390,8 +390,8 @@ BEGIN
   ORDER BY "COUNT" DESC
   ';
 
-	failures_count_model := '
-  {
+	failures_count_model :=
+	'{
       "columns": [
           "ENV",
           "COUNT"
@@ -417,8 +417,8 @@ BEGIN
 	-- Insert Personal dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Personal', FALSE, 1) RETURNING id INTO personal_dashboard_id;
 
-	nightly_details_personal_sql := '
-  SELECT
+	nightly_details_personal_sql :=
+	'SELECT
       OWNER_USERNAME as "OWNER",
       BUILD_NUMBER as "BUILD",
       ''<a href="#{zafiraURL}/#!/tests/runs/''||TEST_RUN_ID||''" target="_blank"> '' || TEST_SUITE_NAME ||'' </a>'' AS "REPORT",
@@ -432,8 +432,8 @@ BEGIN
   ORDER BY "BUILD" DESC
   ';
 
-	nightly_details_personal_model := '
-  {
+	nightly_details_personal_model :=
+	'{
       "columns": [
           "OWNER",
           "BUILD",
@@ -445,8 +445,8 @@ BEGIN
       ]
   }';
 
-	monthly_total_personal_sql :='
-  SELECT
+	monthly_total_personal_sql :=
+	'SELECT
   unnest(array[OWNER_USERNAME,
                 ''PASSED'',
                 ''FAILED'',
@@ -467,8 +467,8 @@ BEGIN
      AND PROJECT LIKE ANY (''{#{project}}'')
   GROUP BY OWNER_USERNAME';
 
-	monthly_total_personal_model :='
-{
+	monthly_total_personal_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -528,8 +528,8 @@ BEGIN
     ]
 }';
 
-	weekly_total_personal_sql :='
-  SELECT
+	weekly_total_personal_sql :=
+	'SELECT
   unnest(array[OWNER_USERNAME,
               ''PASSED'',
               ''FAILED'',
@@ -550,8 +550,8 @@ BEGIN
      AND PROJECT LIKE ANY (''{#{project}}'')
   GROUP BY OWNER_USERNAME';
 
-	weekly_total_personal_model := '
-{
+	weekly_total_personal_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -611,8 +611,8 @@ BEGIN
     ]
 }';
 
-	nightly_total_personal_sql :='
-  SELECT
+	nightly_total_personal_sql :=
+	'SELECT
   unnest(array[OWNER_USERNAME,
               ''PASSED'',
               ''FAILED'',
@@ -633,8 +633,8 @@ BEGIN
      AND PROJECT LIKE ANY (''{#{project}}'')
   GROUP BY OWNER_USERNAME';
 
-	nightly_total_personal_model :='
-{
+	nightly_total_personal_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -695,8 +695,8 @@ BEGIN
 }';
 
 
-	total_last_30_days_personal_sql := '
-  SELECT
+	total_last_30_days_personal_sql :=
+	'SELECT
       TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
       sum( PASSED ) AS "PASSED",
       sum( FAILED ) AS "FAILED",
@@ -725,8 +725,8 @@ BEGIN
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT" ASC';
 
-	total_last_30_days_personal_model :='
-{
+	total_last_30_days_personal_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "6%",
@@ -872,8 +872,8 @@ BEGIN
     ]
 }';
 
-	nightly_personal_failures_sql :='
-  SELECT count(*) AS "COUNT",
+	nightly_personal_failures_sql :=
+	'SELECT count(*) AS "COUNT",
       ENV AS "ENV",
       ''<a href="#{zafiraURL}/#!/dashboards/2?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>''
           AS "REPORT",
@@ -886,8 +886,8 @@ BEGIN
   GROUP BY "ENV", substring(MESSAGE from 1 for 210), "REBUILD"
   ORDER BY "COUNT" DESC';
 
-	nightly_personal_failures_model :='
-  {
+	nightly_personal_failures_model :=
+	'{
       "columns": [
           "COUNT",
           "ENV",
@@ -897,8 +897,8 @@ BEGIN
       ]
   }';
 
-	nightly_personal_cron_sql := '
-  SELECT
+	nightly_personal_cron_sql :=
+	'SELECT
   ''<a href="''||UPSTREAM_JOB_URL||''" target="_blank">''||UPSTREAM_JOB_NAME||''</a>'' AS "NAME",
         OWNER_USERNAME as "OWNER",
         UPSTREAM_JOB_BUILD_NUMBER as "BUILD",
@@ -913,8 +913,8 @@ BEGIN
   GROUP BY "OWNER", "BUILD", "NAME", UPSTREAM_JOB_ID, UPSTREAM_JOB_URL
   ORDER BY "BUILD" DESC';
 
-	nightly_personal_cron_model := '
-  {
+	nightly_personal_cron_model :=
+	'{
       "columns": [
           "NAME",
           "BUILD",
@@ -968,8 +968,8 @@ BEGIN
 	-- Insert User Performance dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('User Performance', TRUE, 6) RETURNING id INTO user_performance_dashboard_id;
 
-	personal_total_rate_sql := '
-  SELECT
+	personal_total_rate_sql :=
+	'SELECT
       OWNER_USERNAME AS "OWNER",
       sum( passed ) AS "PASSED",
       sum( failed ) AS "FAILED",
@@ -979,8 +979,8 @@ BEGIN
   WHERE OWNER_ID = ''#{currentUserId}''
   GROUP BY "OWNER"';
 
-	personal_total_rate_model :='
-  {
+	personal_total_rate_model :=
+	'{
       "columns":[
          "OWNER",
          "PASSED",
@@ -990,16 +990,16 @@ BEGIN
       ]
   }';
 
-	personal_total_tests_man_hours_sql := '
-  SELECT
+	personal_total_tests_man_hours_sql :=
+	'SELECT
       SUM(TOTAL_HOURS) AS "MAN-HOURS",
   CREATED_AT AS "CREATED_AT"
   FROM TOTAL_VIEW WHERE OWNER_ID = ''#{currentUserId}''
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT"';
 
-	personal_total_tests_man_hours_model := '
-  {
+	personal_total_tests_man_hours_model :=
+	'{
       "grid": {
           "right": "2%",
           "left": "4%",
@@ -1034,8 +1034,8 @@ BEGIN
       ]
   }';
 
-	weekly_test_impl_progress_user_perf_sql := '
-  SELECT
+	weekly_test_impl_progress_user_perf_sql :=
+	'SELECT
       date_trunc(''week'', TEST_CASES.CREATED_AT)::date AS "CREATED_AT" ,
       count(*) AS "AMOUNT"
   FROM TEST_CASES INNER JOIN
@@ -1044,8 +1044,8 @@ BEGIN
   GROUP BY 1
   ORDER BY 1;';
 
-	weekly_test_impl_progress_user_perf_model := '
-{
+	weekly_test_impl_progress_user_perf_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "4%",
@@ -1087,8 +1087,8 @@ BEGIN
     ]
 }';
 
-	total_tests_trend_sql := '
-  SELECT
+	total_tests_trend_sql :=
+	'SELECT
       TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
       sum( PASSED ) AS "PASSED",
       sum( FAILED ) AS "FAILED",
@@ -1101,8 +1101,8 @@ BEGIN
   WHERE OWNER_ID=''#{currentUserId}''
   GROUP BY "CREATED_AT"';
 
-	total_tests_trend_model := '
-{
+	total_tests_trend_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "6%",
@@ -1273,8 +1273,8 @@ BEGIN
 	-- Insert General dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('General', FALSE, 0) RETURNING id INTO general_dashboard_id;
 
-	total_tests_count_sql := '
-  SELECT
+	total_tests_count_sql :=
+	'SELECT
       PROJECT AS "PROJECT",
       sum(PASSED) AS "PASS",
       sum(FAILED) AS "FAIL",
@@ -1297,8 +1297,8 @@ BEGIN
   WHERE PROJECT LIKE ANY (''{#{project}}'')
   ORDER BY "PASS" DESC';
 
-	total_tests_count_model := '
-  {
+	total_tests_count_model :=
+	'{
       "columns": [
           "PROJECT",
           "PASS",
@@ -1310,8 +1310,8 @@ BEGIN
       ]
   }';
 
-	total_tests_sql := '
-  SELECT
+	total_tests_sql :=
+	'SELECT
   unnest(array[''PASSED'',
               ''FAILED'',
               ''SKIPPED'',
@@ -1329,8 +1329,8 @@ BEGIN
     WHERE
       PROJECT LIKE ANY (''{#{project}}'')';
 
-	total_tests_model := '
-   {
+	total_tests_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -1389,8 +1389,8 @@ BEGIN
     ]
 }';
 
-	weekly_test_impl_progress_sql := '
-  SELECT
+	weekly_test_impl_progress_sql :=
+	'SELECT
       date_trunc(''week'', TEST_CASES.CREATED_AT) AS "CREATED_AT",
       count(*) AS "AMOUNT"
   FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
@@ -1400,8 +1400,8 @@ BEGIN
   GROUP BY 1
   ORDER BY 1;';
 
-	weekly_test_impl_progress_model := '
-  {
+	weekly_test_impl_progress_model :=
+	'{
       "grid": {
           "right": "2%",
           "left": "4%",
@@ -1443,8 +1443,8 @@ BEGIN
       ]
   }';
 
-	total_jira_tickets_sql := '
-  SELECT
+	total_jira_tickets_sql :=
+	'SELECT
       PROJECTS.NAME AS "PROJECT",
       COUNT(DISTINCT WORK_ITEMS.JIRA_ID) AS "COUNT"
   FROM TEST_WORK_ITEMS
@@ -1456,16 +1456,16 @@ BEGIN
   GROUP BY "PROJECT"
   ORDER BY "COUNT" DESC;';
 
-	total_jira_tickets_model := '
-  {
+	total_jira_tickets_model :=
+	'{
      "columns":[
         "PROJECT",
         "COUNT"
      ]
   }';
 
-	total_tests_man_hours_sql := '
-  SELECT
+	total_tests_man_hours_sql :=
+	'SELECT
       SUM(TOTAL_HOURS) AS "ACTUAL",
       SUM(TOTAL_HOURS) AS "ETA",
       CREATED_AT AS "CREATED_AT"
@@ -1483,8 +1483,8 @@ BEGIN
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT";';
 
-	total_tests_man_hours_model := '
-{
+	total_tests_man_hours_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "4%",
@@ -1527,8 +1527,8 @@ BEGIN
     ]
 }';
 
-	total_tests_by_month_sql = '
-  SELECT
+	total_tests_by_month_sql =
+	'SELECT
       date_trunc(''month'', CREATED_AT) AS "CREATED_AT",
       SUM(PASSED) as "PASSED",
       SUM(FAILED) AS "FAILED",
@@ -1543,8 +1543,8 @@ BEGIN
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT"';
 
-	total_tests_by_month_model = '
-{
+	total_tests_by_month_model =
+	'{
     "grid": {
         "right": "2%",
         "left": "6%",
@@ -1732,8 +1732,8 @@ BEGIN
 	-- Insert Monthly dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Monthly Regression', FALSE, 4) RETURNING id INTO monthly_dashboard_id;
 
-	monthly_total_sql := '
-  SELECT
+	monthly_total_sql :=
+	'SELECT
   unnest(array[''PASSED'',
               ''FAILED'',
               ''SKIPPED'',
@@ -1751,8 +1751,8 @@ BEGIN
     WHERE
       PROJECT LIKE ANY (''{#{project}}'')';
 
-	monthly_total_model := '
-  {
+	monthly_total_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -1812,8 +1812,8 @@ BEGIN
     "thickness": 20
 }';
 
-	test_results_30_sql := '
-  SELECT
+	test_results_30_sql :=
+	'SELECT
       TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
       sum(PASSED) AS "PASSED",
       sum(FAILED) AS "FAILED",
@@ -1826,8 +1826,8 @@ BEGIN
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT";';
 
-	test_results_30_model := '
-  {
+	test_results_30_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "4%",
@@ -1959,8 +1959,8 @@ BEGIN
     ]
 }';
 
-	monthly_platform_pass_rate_sql := '
-  SELECT PLATFORM AS "PLATFORM",
+	monthly_platform_pass_rate_sql :=
+	'SELECT PLATFORM AS "PLATFORM",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -1972,8 +1972,8 @@ BEGIN
   GROUP BY PLATFORM
   ORDER BY PLATFORM';
 
-	monthly_platform_pass_rate_model := '
-  {
+	monthly_platform_pass_rate_model :=
+	'{
     "tooltip": {
         "trigger": "axis",
         "axisPointer": {
@@ -2093,8 +2093,8 @@ BEGIN
     ]
 }';
 
-	monthly_details_sql := '
-  SELECT
+	monthly_details_sql :=
+	'SELECT
       OWNER_USERNAME AS "OWNER",
       ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || '' - Personal Board</a>'' AS "REPORT",
       SUM(PASSED) AS "PASSED",
@@ -2115,8 +2115,8 @@ BEGIN
   GROUP BY OWNER_ID, OWNER_USERNAME
   ORDER BY OWNER_USERNAME';
 
-	monthly_details_model := '
-  {
+	monthly_details_model :=
+	'{
       "columns": [
         "OWNER",
         "REPORT",
@@ -2159,8 +2159,8 @@ BEGIN
 	-- Insert Weekly dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Weekly Regression', FALSE, 3) RETURNING id INTO weekly_dashboard_id;
 
-	weekly_total_sql := '
-  SELECT
+	weekly_total_sql :=
+	'SELECT
   unnest(array[''PASSED'',
               ''FAILED'',
               ''SKIPPED'',
@@ -2178,8 +2178,7 @@ BEGIN
   WHERE
   PROJECT LIKE ANY (''{#{project}}'')';
 
-	weekly_total_model := '
-{
+	weekly_total_model := '{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -2239,8 +2238,8 @@ BEGIN
     "thickness": 20
 }';
 
-	weekly_test_results_sql := '
-  SELECT
+	weekly_test_results_sql :=
+	'SELECT
       TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
       sum( PASSED ) AS "PASSED",
       sum( FAILED ) AS "FAILED",
@@ -2253,8 +2252,8 @@ BEGIN
   WHERE PROJECT LIKE ANY (''{#{project}}'')
   GROUP BY "CREATED_AT"';
 
-	weekly_test_results_model := '
-  {
+	weekly_test_results_model :=
+	'{
     "grid": {
         "right": "2%",
         "left": "6%",
@@ -2400,8 +2399,8 @@ BEGIN
     ]
 }';
 
-	weekly_platform_pass_rate_sql := '
-  SELECT PLATFORM AS "PLATFORM",
+	weekly_platform_pass_rate_sql :=
+	'SELECT PLATFORM AS "PLATFORM",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -2413,8 +2412,8 @@ BEGIN
   GROUP BY PLATFORM
   ORDER BY PLATFORM';
 
-	weekly_platform_pass_rate_model := '
-  {
+	weekly_platform_pass_rate_model :=
+	'{
     "tooltip": {
         "trigger": "axis",
         "axisPointer": {
@@ -2534,8 +2533,8 @@ BEGIN
     ]
 }';
 
-	weekly_details_sql := '
-  SELECT
+	weekly_details_sql :=
+	'SELECT
         OWNER_USERNAME AS "OWNER",
         ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || '' - Personal Board</a>'' AS "REPORT",
         SUM(PASSED) AS "PASSED",
@@ -2556,8 +2555,8 @@ BEGIN
    GROUP BY OWNER_ID, OWNER_USERNAME
    ORDER BY OWNER_USERNAME';
 
-	weekly_details_model := '
-  {
+	weekly_details_model :=
+	'{
       "columns": [
         "OWNER",
         "REPORT",
@@ -2600,8 +2599,8 @@ BEGIN
 	-- Insert Nightly dashboard data
 	INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Nightly Regression', FALSE, 2) RETURNING id INTO nightly_dashboard_id;
 
-	nightly_total_sql := '
-  SELECT
+	nightly_total_sql :=
+	'SELECT
   unnest(array[MIN(CREATED_AT)::text,
               ''PASSED'',
               ''FAILED'',
@@ -2621,8 +2620,8 @@ BEGIN
   WHERE
   PROJECT LIKE ANY (''{#{project}}'')';
 
-	nightly_total_model := '
-{
+	nightly_total_model :=
+	'{
     "legend": {
         "orient": "vertical",
         "x": "left",
@@ -2683,8 +2682,8 @@ BEGIN
     "thickness": 20
 }';
 
-	nightly_platform_pass_rate_sql := '
-  SELECT PLATFORM AS "PLATFORM",
+	nightly_platform_pass_rate_sql :=
+	'SELECT PLATFORM AS "PLATFORM",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -2696,8 +2695,8 @@ BEGIN
   GROUP BY PLATFORM
   ORDER BY PLATFORM';
 
-	nightly_platform_pass_rate_model := '
-  {
+	nightly_platform_pass_rate_model :=
+	'{
     "tooltip": {
         "trigger": "axis",
         "axisPointer": {
@@ -2823,8 +2822,8 @@ BEGIN
     ]
 }';
 
-	nightly_details_sql := '
-  SELECT
+	nightly_details_sql :=
+	'SELECT
         ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || ''</a>'' AS "OWNER",
         SUM(PASSED) AS "PASSED",
         SUM(FAILED) AS "FAILED",
@@ -2838,8 +2837,8 @@ BEGIN
     GROUP BY OWNER_ID, OWNER_USERNAME
     ORDER BY OWNER_USERNAME';
 
-	nightly_details_model := '
-  {
+	nightly_details_model :=
+	'{
       "columns": [
           "OWNER",
           "PASSED",
@@ -2849,8 +2848,8 @@ BEGIN
       ]
   }';
 
-	nightly_person_pass_rate_sql := '
-  SELECT OWNER_USERNAME AS "OWNER",
+	nightly_person_pass_rate_sql :=
+	'SELECT OWNER_USERNAME AS "OWNER",
       round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
       round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
       round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
@@ -2862,8 +2861,8 @@ BEGIN
   GROUP BY OWNER_USERNAME
   ORDER BY OWNER_USERNAME';
 
-	nightly_person_pass_rate_model := '
-{
+	nightly_person_pass_rate_model :=
+	'{
     "tooltip": {
         "trigger": "axis",
         "axisPointer": {
@@ -2983,8 +2982,8 @@ BEGIN
     ]
 }';
 
-	nightly_failures_sql := '
-  SELECT count(*) AS "COUNT",
+	nightly_failures_sql :=
+	'SELECT count(*) AS "COUNT",
       ''<a href="#{zafiraURL}/#!/dashboards/2?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>'' AS "REPORT",
       substring(MESSAGE from 1 for 210) as "MESSAGE"
   FROM NIGHTLY_FAILURES_VIEW
