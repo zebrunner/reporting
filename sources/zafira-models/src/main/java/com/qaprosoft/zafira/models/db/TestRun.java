@@ -163,18 +163,12 @@ public class TestRun extends AbstractEntity
 		this.configXML = configXML;
 	}
 
-	public String getName(Configuration configuration) {
-		for (Argument arg : configuration.getArg())
-		{
-			this.configuration.put(arg.getKey(), arg.getValue());
-		}
+	public String getName(Map<String, String> configuration) {
+		this.configuration = configuration;
 		String appVersion = argumentIsPresent("app_version")? this.configuration.get("app_version") + " - ": "";
 		String platformInfo = buildPlatformInfo();
 		String testRunName = String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
 				this.configuration.get("env"), platformInfo).trim();
-		if(StringUtils.isEmpty(this.configuration.get("env"))){
-			testRunName = testRunName.split("on")[0];
-		}
 		return testRunName;
 	}
 

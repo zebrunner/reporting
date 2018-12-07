@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
@@ -36,6 +37,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Api(value = "Tags operations")
@@ -59,9 +63,22 @@ public class TagsAPIController extends AbstractController
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
             tagService.getIntegrationInfo(ciRunId, integrationTag, integration);
-            integration.setCreatedAfter(testRun.getCreatedAt().getTime());
+            integration.setCreatedAfter(testRun.getCreatedAt());
+            integration.setStartedAt(testRun.getStartedAt());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(testRun.getStartedAt());
+            if(testRun.getElapsed() != null){
+                calendar.add(Calendar.SECOND, testRun.getElapsed());
+            }
+            integration.setFinishedAt(calendar.getTime());
+            integration.setPlatform(testRun.getPlatform());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            integration.setTestRunName(testRun.getName(configuration));
+            Map <String, String> configMap = new HashMap<>();
+            for (Argument arg : configuration.getArg())
+            {
+                configMap.put(arg.getKey(), arg.getValue());
+            }
+            integration.setTestRunName(testRun.getName(configMap));
             switch (integrationTag){
                 case TESTRAIL_TESTCASE_UUID:
                     configuration.getArg().forEach(arg -> {

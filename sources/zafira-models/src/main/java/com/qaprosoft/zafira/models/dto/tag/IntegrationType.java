@@ -3,6 +3,7 @@ package com.qaprosoft.zafira.models.dto.tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.qaprosoft.zafira.models.db.IntegrationInfo;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,10 @@ public class IntegrationType {
     private String suiteId;
     private List<IntegrationInfo> integrationInfo;
     private String testRunName;
-    private Long createdAfter;
+    private String platform;
+    private Date createdAfter;
+    private Date startedAt;
+    private Date finishedAt;
     private Map<String, String> customParams = new HashMap<>();
 
     public String getProjectId() {
@@ -49,12 +53,42 @@ public class IntegrationType {
         this.testRunName = testRunName;
     }
 
-    public Long getCreatedAfter() {
+    public String getPlatform()
+    {
+        return platform;
+    }
+
+    public void setPlatform(String platform)
+    {
+        this.platform = platform;
+    }
+
+    public Date getCreatedAfter() {
         return createdAfter;
     }
 
-    public void setCreatedAfter(Long createdAfter) {
+    public void setCreatedAfter(Date createdAfter) {
         this.createdAfter = createdAfter;
+    }
+
+    public Date getStartedAt()
+    {
+        return startedAt;
+    }
+
+    public void setStartedAt(Date startedAt)
+    {
+        this.startedAt = startedAt;
+    }
+
+    public Date getFinishedAt()
+    {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(Date finishedAt)
+    {
+        this.finishedAt = finishedAt;
     }
 
     public Map<String, String> getCustomParams() {
