@@ -2,7 +2,7 @@ SET SCHEMA 'zafira';
 
 DO $$
 -- Declare dashboards
-DECLARE personal_dashboard_id DASHBOARDS.id%TYPE;
+  DECLARE personal_dashboard_id DASHBOARDS.id%TYPE;
   DECLARE user_performance_dashboard_id DASHBOARDS.id%TYPE;
   DECLARE general_dashboard_id DASHBOARDS.id%TYPE;
   DECLARE monthly_dashboard_id DASHBOARDS.id%TYPE;
@@ -34,15 +34,15 @@ DECLARE personal_dashboard_id DASHBOARDS.id%TYPE;
   DECLARE nightly_details_personal_id WIDGETS.id%TYPE;
   DECLARE nightly_details_personal_sql WIDGETS.sql%TYPE;
   DECLARE nightly_details_personal_model WIDGETS.model%TYPE;
-  DECLARE monthly_total_personal_pie_id WIDGETS.id%TYPE;
-  DECLARE monthly_total_personal_pie_sql WIDGETS.sql%TYPE;
-  DECLARE monthly_total_personal_pie_model WIDGETS.model%TYPE;
-  DECLARE weekly_total_personal_pie_id WIDGETS.id%TYPE;
-  DECLARE weekly_total_personal_pie_sql WIDGETS.sql%TYPE;
-  DECLARE weekly_total_personal_pie_model WIDGETS.model%TYPE;
-  DECLARE nightly_total_personal_pie_id WIDGETS.id%TYPE;
-  DECLARE nightly_total_personal_pie_sql WIDGETS.sql%TYPE;
-  DECLARE nightly_total_personal_pie_model WIDGETS.model%TYPE;
+  DECLARE monthly_total_personal_id WIDGETS.id%TYPE;
+  DECLARE monthly_total_personal_sql WIDGETS.sql%TYPE;
+  DECLARE monthly_total_personal_model WIDGETS.model%TYPE;
+  DECLARE weekly_total_personal_id WIDGETS.id%TYPE;
+  DECLARE weekly_total_personal_sql WIDGETS.sql%TYPE;
+  DECLARE weekly_total_personal_model WIDGETS.model%TYPE;
+  DECLARE nightly_total_personal_id WIDGETS.id%TYPE;
+  DECLARE nightly_total_personal_sql WIDGETS.sql%TYPE;
+  DECLARE nightly_total_personal_model WIDGETS.model%TYPE;
   DECLARE total_last_30_days_personal_id WIDGETS.id%TYPE;
   DECLARE total_last_30_days_personal_sql WIDGETS.sql%TYPE;
   DECLARE total_last_30_days_personal_model WIDGETS.model%TYPE;
@@ -70,9 +70,9 @@ DECLARE personal_dashboard_id DASHBOARDS.id%TYPE;
   DECLARE total_tests_count_sql WIDGETS.sql%TYPE;
   DECLARE total_tests_count_model WIDGETS.model%TYPE;
 
-  DECLARE total_tests_pie_id WIDGETS.id%TYPE;
-  DECLARE total_tests_pie_sql WIDGETS.sql%TYPE;
-  DECLARE total_tests_pie_model WIDGETS.model%TYPE;
+  DECLARE total_tests_id WIDGETS.id%TYPE;
+  DECLARE total_tests_sql WIDGETS.sql%TYPE;
+  DECLARE total_tests_model WIDGETS.model%TYPE;
   DECLARE weekly_test_impl_progress_id WIDGETS.id%TYPE;
   DECLARE weekly_test_impl_progress_sql WIDGETS.sql%TYPE;
   DECLARE weekly_test_impl_progress_model WIDGETS.model%TYPE;
@@ -132,23 +132,342 @@ BEGIN
   -- Insert Stability dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Stability', TRUE, 8) RETURNING id INTO stability_dashboard_id;
   stability_percent_sql := '
-SELECT
-unnest(array[''STABILITY'',
-                ''FAILURE'',
-                ''OMISSION'',
-                ''KNOWN ISSUE'',
-                ''INTERRUPT'']) AS "label",
-unnest(array[ROUND(AVG(STABILITY)::numeric, 0),
-                 ROUND(AVG(FAILURE)::numeric, 0),
-                 ROUND(AVG(OMISSION)::numeric, 0),
-                 ROUND(AVG(KNOWN_FAILURE)::numeric, 0),
-                 ROUND(AVG(INTERRUPT)::numeric, 0)]) AS "value"
-FROM TEST_CASE_HEALTH_VIEW
-WHERE
-    TEST_CASE_ID = ''#{testCaseId}''
-';
+  SELECT
+  unnest(array[''STABILITY'',
+                  ''FAILURE'',
+                  ''OMISSION'',
+                  ''KNOWN ISSUE'',
+                  ''INTERRUPT'']) AS "label",
+  unnest(array[ROUND(AVG(STABILITY)::numeric, 0),
+                   ROUND(AVG(FAILURE)::numeric, 0),
+                   ROUND(AVG(OMISSION)::numeric, 0),
+                   ROUND(AVG(KNOWN_FAILURE)::numeric, 0),
+                   ROUND(AVG(INTERRUPT)::numeric, 0)]) AS "value"
+  FROM TEST_CASE_HEALTH_VIEW
+  WHERE
+      TEST_CASE_ID = ''#{testCaseId}''';
 
   stability_percent_model :='
+  {
+      "legend": {
+          "orient": "vertical",
+          "x": "left",
+          "y": "center",
+          "itemGap": 10,
+          "textStyle": {
+              "fontSize": 10
+          },
+          "formatter": "{name}"
+      },
+      "tooltip": {
+          "trigger": "item",
+          "axisPointer": {
+              "type": "shadow"
+          },
+          "formatter": "{b0}<br>{d0}%"
+      },
+      "color": [
+          "#61c8b3",
+          "#e76a77",
+          "#fddb7a",
+          "#9f5487",
+          "#b5b5b5"
+      ],
+      "series": [
+          {
+              "type": "pie",
+              "selectedMode": "multi",
+              "hoverOffset": 2,
+              "clockwise": false,
+              "stillShowZeroSum": false,
+              "avoidLabelOverlap": true,
+              "itemStyle": {
+                  "normal": {
+                      "label": {
+                          "show": true,
+                          "position": "outside",
+                          "formatter": "{@value} ({d0}%)"
+                      },
+                      "labelLine": {
+                          "show": true
+                      }
+                  },
+                  "emphasis": {
+                      "label": {
+                          "show": true
+                      }
+                  }
+              },
+              "radius": [
+                  "0%",
+                  "75%"
+              ]
+          }
+      ],
+      "thickness": 20
+  }';
+
+  test_case_info_sql :='
+  SELECT
+      TEST_CASES.ID AS "ID",
+      TEST_CASES.TEST_CLASS AS "TEST CLASS",
+      TEST_CASES.TEST_METHOD AS "TEST METHOD",
+      TEST_SUITES.FILE_NAME AS "TEST SUITE",
+      USERS.USERNAME AS "OWNER",
+      TO_CHAR(TEST_CASES.CREATED_AT, ''MM/DD/YYYY'') AS "CREATED AT"
+      FROM TEST_CASES
+      LEFT JOIN TEST_SUITES ON TEST_CASES.TEST_SUITE_ID = TEST_SUITES.ID
+      LEFT JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
+  WHERE TEST_CASES.ID = ''#{testCaseId}''';
+
+  test_case_info_model :='
+  {
+      "columns": [
+          "ID",
+          "TEST CLASS",
+          "TEST METHOD",
+          "TEST SUITE",
+          "OWNER",
+          "CREATED AT"
+      ]
+  }';
+
+  stability_trend_sql :='
+  SELECT
+      STABILITY as "STABILITY",
+      100 - OMISSION - KNOWN_FAILURE - ABORTED as "FAILURE",
+      100 - KNOWN_FAILURE - ABORTED as "OMISSION",
+      date_trunc(''month'', TESTED_AT) AS "TESTED_AT"
+  FROM TEST_CASE_HEALTH_VIEW
+  WHERE TEST_CASE_ID = ''#{testCaseId}''
+  ORDER BY "TESTED_AT"';
+
+  stability_trend_model :='
+  {
+      "grid": {
+          "right": "2%",
+          "left": "2%",
+          "top": "8%",
+          "bottom": "8%"
+      },
+      "legend": {},
+      "tooltip": {
+          "trigger": "axis"
+      },
+      "dimensions": [
+          "TESTED_AT",
+          "STABILITY",
+          "FAILURE",
+          "OMISSION"
+      ],
+      "color": [
+          "#61c8b3",
+          "#e76a77",
+          "#fddb7a"
+      ],
+      "xAxis": {
+          "type": "category",
+          "boundaryGap": false,
+          "axisLabel": {
+              "formatter": "$filter | date: MMM dd$"
+          }
+      },
+      "yAxis": {},
+      "series": [
+          {
+              "type": "line",
+              "z": 3,
+              "itemStyle": {
+                  "normal": {
+                      "areaStyle": {
+                          "opacity": 0.3,
+                          "type": "default"
+                      }
+                  }
+              },
+              "lineStyle": {
+                  "width": 1
+              }
+          },
+          {
+              "type": "line",
+              "z": 2,
+              "itemStyle": {
+                  "normal": {
+                      "areaStyle": {
+                          "opacity": 0.3,
+                          "type": "default"
+                      }
+                  }
+              },
+              "lineStyle": {
+                  "width": 1
+              }
+          },
+          {
+              "type": "line",
+              "z": 1,
+              "itemStyle": {
+                  "normal": {
+                      "areaStyle": {
+                          "opacity": 0.3,
+                          "type": "default"
+                      }
+                  }
+              },
+              "lineStyle": {
+                  "width": 1
+              }
+          }
+      ]
+  }';
+
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('STABILITY (%)', 'echart', stability_percent_sql, stability_percent_model)
+      RETURNING id INTO stability_percent_id;
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('TESTCASE INFO', 'table', test_case_info_sql, test_case_info_model)
+      RETURNING id INTO test_case_info_id;
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('STABILITY TREND (%)', 'echart', stability_trend_sql, stability_trend_model)
+      RETURNING id INTO stability_trend_id;
+
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (stability_dashboard_id, stability_percent_id, '{"x":0,"y":0,"width":4,"height":11}');
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (stability_dashboard_id, test_case_info_id, '{"x":4,"y":0,"width":8,"height":6}');
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (stability_dashboard_id, stability_trend_id, '{"x":0,"y":22,"width":12,"height":11}');
+  -- Insert Failures dashboard data
+  INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Failures analysis', TRUE, 5) RETURNING id INTO failures_dashboard_id;
+
+  error_message_sql :='
+  SELECT Message AS "Error Message"
+  FROM NIGHTLY_FAILURES_VIEW
+  WHERE MESSAGE_HASHCODE=''#{hashcode}''
+  LIMIT 1';
+
+    error_message_model := '
+  {
+      "columns":[
+         "Error Message"
+      ]
+  }';
+
+  detailed_failures_report_sql := '
+  SELECT count(*) as "COUNT",
+      Env AS "ENV",
+      TEST_REPORT AS "REPORT",
+      Rebuild AS "REBUILD"
+  FROM NIGHTLY_FAILURES_VIEW
+  WHERE substring(Message from 1 for 210)  IN (
+      SELECT substring(Message from 1 for 210)
+      FROM NIGHTLY_FAILURES_VIEW
+      WHERE MESSAGE_HASHCODE=''#{hashcode}'')
+  GROUP BY "ENV", "REPORT", "REBUILD", substring(Message from 1 for 210)
+  ORDER BY "COUNT" DESC, "ENV"';
+
+  detailed_failures_report_model := '
+  {
+      "columns": [
+          "COUNT",
+          "ENV",
+          "REPORT",
+          "REBUILD"
+      ]
+  }';
+
+  failures_count_sql := '
+  SELECT
+      Env AS "ENV",
+      count(*) as "COUNT"
+  FROM NIGHTLY_FAILURES_VIEW
+  WHERE substring(Message from 1 for 210)  IN (
+     SELECT substring(Message from 1 for 210)
+  FROM NIGHTLY_FAILURES_VIEW
+  WHERE MESSAGE_HASHCODE=''#{hashcode}'')
+  GROUP BY "ENV"
+  ORDER BY "COUNT" DESC
+  ';
+
+    failures_count_model := '
+  {
+      "columns": [
+          "ENV",
+          "COUNT"
+      ]
+  }';
+
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('ERROR MESSAGE', 'table', error_message_sql, error_message_model)
+      RETURNING id INTO error_message_id;
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('DETAILED FAILURES REPORT', 'table', detailed_failures_report_sql, detailed_failures_report_model)
+      RETURNING id INTO detailed_failures_report_id;
+  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
+                                                       ('FAILURES COUNT', 'table', failures_count_sql, failures_count_model)
+      RETURNING id INTO failures_count_id;
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (failures_dashboard_id, error_message_id, '{"x":3,"y":0,"width":9,"height":14}');
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (failures_dashboard_id, detailed_failures_report_id, '{"x":0,"y":14,"width":12,"height":10}');
+  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
+                                                                            (failures_dashboard_id, failures_count_id, '{"x":0,"y":0,"width":3,"height":14}');
+
+  -- Insert Personal dashboard data
+  INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Personal', FALSE, 1) RETURNING id INTO personal_dashboard_id;
+
+  nightly_details_personal_sql := '
+  SELECT
+      OWNER_USERNAME as "OWNER",
+      BUILD_NUMBER as "BUILD",
+      ''<a href="#{zafiraURL}/#!/tests/runs/''||TEST_RUN_ID||''" target="_blank"> '' || TEST_SUITE_NAME ||'' </a>'' AS "REPORT",
+      ZAFIRA_REPORT_URL as "ZAFIRA_REPORT",
+      sum(Passed) || ''/'' || sum(FAILED) + sum(KNOWN_ISSUE) || ''/'' || sum(Skipped) as "P/F/S",
+      REBUILD_URL as "REBUILD",
+  CREATED_AT::text as "UPDATED"
+  FROM NIGHTLY_VIEW
+  WHERE OWNER_ID=''#{currentUserId}''
+  GROUP BY "OWNER", "BUILD", "REPORT", "ZAFIRA_REPORT", "REBUILD", "UPDATED"
+  ORDER BY "BUILD" DESC
+  ';
+
+  nightly_details_personal_model := '
+  {
+      "columns": [
+          "OWNER",
+          "BUILD",
+          "REPORT",
+          "ZAFIRA_REPORT",
+          "P/F/S",
+          "REBUILD",
+          "UPDATED"
+      ]
+  }';
+
+  monthly_total_personal_sql :='
+  SELECT
+  unnest(array[OWNER_USERNAME,
+                ''PASSED'',
+                ''FAILED'',
+                ''SKIPPED'',
+                ''KNOWN ISSUE'',
+                ''QUEUED'',
+                ''ABORTED'']) AS "label",
+       unnest(
+        array[0,
+            sum(PASSED),
+            sum(FAILED),
+            sum(SKIPPED),
+            sum(KNOWN_ISSUE),
+            sum(QUEUED),
+            sum(ABORTED)]) AS "value"
+  FROM MONTHLY_VIEW
+  WHERE OWNER_ID = ''#{currentUserId}''
+     AND PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY OWNER_USERNAME';
+
+  monthly_total_personal_model :='
 {
     "legend": {
         "orient": "vertical",
@@ -168,10 +487,12 @@ WHERE
         "formatter": "{b0}<br>{d0}%"
     },
     "color": [
+        "#ffffff",
         "#61c8b3",
         "#e76a77",
         "#fddb7a",
         "#9f5487",
+        "#6dbbe7",
         "#b5b5b5"
     ],
     "series": [
@@ -204,54 +525,211 @@ WHERE
                 "75%"
             ]
         }
-    ],
-    "thickness": 20
-}
-';
-
-  test_case_info_sql :='
-SELECT
-    TEST_CASES.ID AS "ID",
-    TEST_CASES.TEST_CLASS AS "TEST CLASS",
-    TEST_CASES.TEST_METHOD AS "TEST METHOD",
-    TEST_SUITES.FILE_NAME AS "TEST SUITE",
-    USERS.USERNAME AS "OWNER",
-    TO_CHAR(TEST_CASES.CREATED_AT, ''MM/DD/YYYY'') AS "CREATED AT"
-    FROM TEST_CASES
-    LEFT JOIN TEST_SUITES ON TEST_CASES.TEST_SUITE_ID = TEST_SUITES.ID
-    LEFT JOIN USERS ON TEST_CASES.PRIMARY_OWNER_ID = USERS.ID
-WHERE TEST_CASES.ID = ''#{testCaseId}''
-';
-
-  test_case_info_model :='
-{
-    "columns": [
-        "ID",
-        "TEST CLASS",
-        "TEST METHOD",
-        "TEST SUITE",
-        "OWNER",
-        "CREATED AT"
     ]
-}
-';
+}';
 
-  stability_trend_sql :='
-SELECT
-    STABILITY as "STABILITY",
-    100 - OMISSION - KNOWN_FAILURE - ABORTED as "FAILURE",
-    100 - KNOWN_FAILURE - ABORTED as "OMISSION",
-    date_trunc(''month'', TESTED_AT) AS "TESTED_AT"
-FROM TEST_CASE_HEALTH_VIEW
-WHERE TEST_CASE_ID = ''#{testCaseId}''
-ORDER BY "TESTED_AT"
-';
+  weekly_total_personal_sql :='
+  SELECT
+  unnest(array[OWNER_USERNAME,
+              ''PASSED'',
+              ''FAILED'',
+              ''SKIPPED'',
+              ''KNOWN ISSUE'',
+              ''QUEUED'',
+              ''ABORTED'']) AS "label",
+     unnest(
+      array[0,
+          sum(PASSED),
+          sum(FAILED),
+          sum(SKIPPED),
+          sum(KNOWN_ISSUE),
+          sum(QUEUED),
+          sum(ABORTED)]) AS "value"
+  FROM WEEKLY_VIEW
+  WHERE OWNER_ID = ''#{currentUserId}''
+     AND PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY OWNER_USERNAME';
 
-  stability_trend_model :='
+  weekly_total_personal_model := '
+{
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
+        },
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
+        },
+        "formatter": "{b0}<br>{d0}%"
+    },
+    "color": [
+        "#ffffff",
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "75%"
+            ]
+        }
+    ]
+}';
+
+  nightly_total_personal_sql :='
+  SELECT
+  unnest(array[OWNER_USERNAME,
+              ''PASSED'',
+              ''FAILED'',
+              ''SKIPPED'',
+              ''KNOWN ISSUE'',
+              ''QUEUED'',
+              ''ABORTED'']) AS "label",
+     unnest(
+      array[0,
+          sum(PASSED),
+          sum(FAILED),
+          sum(SKIPPED),
+          sum(KNOWN_ISSUE),
+          sum(QUEUED),
+          sum(ABORTED)]) AS "value"
+  FROM NIGHTLY_VIEW
+  WHERE OWNER_ID = ''#{currentUserId}''
+     AND PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY OWNER_USERNAME';
+
+  nightly_total_personal_model :='
+{
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
+        },
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
+        },
+        "formatter": "{b0}<br>{d0}%"
+    },
+    "color": [
+        "#ffffff",
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
+        {
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "75%"
+            ]
+        }
+    ]
+}';
+
+
+  total_last_30_days_personal_sql := '
+  SELECT
+      TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
+      sum( PASSED ) AS "PASSED",
+      sum( FAILED ) AS "FAILED",
+      sum( SKIPPED ) AS "SKIPPED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( ABORTED ) AS "ABORTED",
+      sum( QUEUED ) AS "QUEUED",
+      sum( TOTAL ) AS "TOTAL"
+  FROM THIRTY_DAYS_VIEW
+  WHERE OWNER_ID=''#{currentUserId}''
+      AND PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY "CREATED_AT"
+  UNION
+  SELECT
+      TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
+      sum( PASSED ) AS "PASSED",
+      sum( FAILED ) AS "FAILED",
+      sum( SKIPPED ) AS "SKIPPED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( ABORTED ) AS "ABORTED",
+      sum( QUEUED ) AS "QUEUED",
+      sum( TOTAL ) AS "TOTAL"
+  FROM NIGHTLY_VIEW
+  WHERE OWNER_ID=''#{currentUserId}''
+      AND PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY "CREATED_AT"
+  ORDER BY "CREATED_AT" ASC';
+
+  total_last_30_days_personal_model :='
 {
     "grid": {
         "right": "2%",
-        "left": "2%",
+        "left": "6%",
         "top": "8%",
         "bottom": "8%"
     },
@@ -260,28 +738,34 @@ ORDER BY "TESTED_AT"
         "trigger": "axis"
     },
     "dimensions": [
-        "TESTED_AT",
-        "STABILITY",
-        "FAILURE",
-        "OMISSION"
+        "CREATED_AT",
+        "PASSED",
+        "FAILED",
+        "SKIPPED",
+        "KNOWN ISSUE",
+        "ABORTED",
+        "QUEUED",
+        "TOTAL"
     ],
     "color": [
         "#61c8b3",
         "#e76a77",
-        "#fddb7a"
+        "#fddb7a",
+        "#9f5487",
+        "#b5b5b5",
+        "#6dbbe7",
+        "#b5b5b5"
     ],
     "xAxis": {
         "type": "category",
-        "boundaryGap": false,
-        "axisLabel": {
-            "formatter": "$filter | date: MMM dd$"
-        }
+        "boundaryGap": false
     },
     "yAxis": {},
     "series": [
         {
             "type": "line",
-            "z": 3,
+            "smooth": false,
+            "stack": "Status",
             "itemStyle": {
                 "normal": {
                     "areaStyle": {
@@ -296,7 +780,8 @@ ORDER BY "TESTED_AT"
         },
         {
             "type": "line",
-            "z": 2,
+            "smooth": false,
+            "stack": "Status1",
             "itemStyle": {
                 "normal": {
                     "areaStyle": {
@@ -311,7 +796,67 @@ ORDER BY "TESTED_AT"
         },
         {
             "type": "line",
-            "z": 1,
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
             "itemStyle": {
                 "normal": {
                     "areaStyle": {
@@ -325,317 +870,12 @@ ORDER BY "TESTED_AT"
             }
         }
     ]
-}
-';
+}';
 
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('STABILITY (%)', 'echart', stability_percent_sql, stability_percent_model)
-      RETURNING id INTO stability_percent_id;
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TESTCASE INFO', 'table', test_case_info_sql, test_case_info_model)
-      RETURNING id INTO test_case_info_id;
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('STABILITY TREND (%)', 'echart', stability_trend_sql, stability_trend_model)
-      RETURNING id INTO stability_trend_id;
-
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (stability_dashboard_id, stability_percent_id, '{"x":0,"y":0,"width":4,"height":11}');
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (stability_dashboard_id, test_case_info_id, '{"x":4,"y":0,"width":8,"height":6}');
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (stability_dashboard_id, stability_trend_id, '{"x":0,"y":22,"width":12,"height":11}');
-  -- Insert Failures dashboard data
-  INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Failures analysis', TRUE, 5) RETURNING id INTO failures_dashboard_id;
-
-  error_message_sql :='
-SELECT Message AS "Error Message"
-FROM NIGHTLY_FAILURES_VIEW
-WHERE MESSAGE_HASHCODE=''#{hashcode}''
-LIMIT 1';
-
-  error_message_model := '
-{
-    "columns":[
-       "Error Message"
-    ]
-}
-';
-
-  detailed_failures_report_sql := '
-SELECT count(*) as "COUNT",
-    Env AS "ENV",
-    TEST_REPORT AS "REPORT",
-    Rebuild AS "REBUILD"
-FROM NIGHTLY_FAILURES_VIEW
-WHERE substring(Message from 1 for 210)  IN (
-    SELECT substring(Message from 1 for 210)
-    FROM NIGHTLY_FAILURES_VIEW
-    WHERE MESSAGE_HASHCODE=''#{hashcode}'')
-GROUP BY "ENV", "REPORT", "REBUILD", substring(Message from 1 for 210)
-ORDER BY "COUNT" DESC, "ENV"
-';
-
-  detailed_failures_report_model := '
-{
-    "columns": [
-        "COUNT",
-        "ENV",
-        "REPORT",
-        "REBUILD"
-    ]
-}
-';
-
-  failures_count_sql := '
-SELECT
-    Env AS "ENV",
-    count(*) as "COUNT"
-FROM NIGHTLY_FAILURES_VIEW
-WHERE substring(Message from 1 for 210)  IN (
-   SELECT substring(Message from 1 for 210)
-FROM NIGHTLY_FAILURES_VIEW
-WHERE MESSAGE_HASHCODE=''#{hashcode}'')
-GROUP BY "ENV"
-ORDER BY "COUNT" DESC
-';
-
-  failures_count_model := '
-{
-    "columns": [
-        "ENV",
-        "COUNT"
-    ]
-}
-';
-
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('ERROR MESSAGE', 'table', error_message_sql, error_message_model)
-      RETURNING id INTO error_message_id;
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('DETAILED FAILURES REPORT', 'table', detailed_failures_report_sql, detailed_failures_report_model)
-      RETURNING id INTO detailed_failures_report_id;
-  INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('FAILURES COUNT', 'table', failures_count_sql, failures_count_model)
-      RETURNING id INTO failures_count_id;
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (failures_dashboard_id, error_message_id, '{"x":3,"y":0,"width":9,"height":14}');
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (failures_dashboard_id, detailed_failures_report_id, '{"x":0,"y":14,"width":12,"height":10}');
-  INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (failures_dashboard_id, failures_count_id, '{"x":0,"y":0,"width":3,"height":14}');
-
-  -- Insert Personal dashboard data
-  INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Personal', FALSE, 1) RETURNING id INTO personal_dashboard_id;
-
-  nightly_details_personal_sql :=
-  '
-  SELECT
-      OWNER as "OWNER",
-      BUILD as "BUILD",
-      ''<a href="#{zafiraURL}/#!/tests/runs/''||TEST_RUN_ID||''" target="_blank"> '' || TEST_SUITE_NAME ||'' </a>'' AS "REPORT",
-      eTAF_Report as "ETAF_REPORT",
-      sum(Passed) || ''/'' || sum(FAILED) + sum(KNOWN_ISSUE) || ''/'' || sum(Skipped) as "P/F/S",
-      REBUILD as "REBUILD",
-  UPDATED as "UPDATED"
-  FROM NIGHTLY_VIEW
-  WHERE OWNER_ID=''#{currentUserId}''
-  GROUP BY "OWNER", "BUILD", "REPORT", "ETAF_REPORT", "REBUILD", "UPDATED"
-  ORDER BY "BUILD" DESC';
-
-  nightly_details_personal_model :=
-  '{
-      "columns": [
-          "OWNER",
-          "BUILD",
-          "REPORT",
-          "ETAF_REPORT",
-          "P/F/S",
-          "REBUILD",
-          "UPDATED"
-      ]
-  }';
-
-  monthly_total_personal_pie_sql :=
-  'SELECT
-      unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-      unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-      unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
-  FROM MONTHLY_VIEW
-  WHERE
-      PROJECT LIKE ANY (''{#{project}}'')
-      AND OWNER_ID = ''#{currentUserId}''
-  ORDER BY "value" DESC';
-
-  monthly_total_personal_pie_model :=
-  '{
-      "thickness": 20
-   }';
-
-  weekly_total_personal_pie_sql :=
-  'SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
-    FROM WEEKLY_VIEW
-    WHERE
-        PROJECT LIKE ANY (''{#{project}}'')
-        AND OWNER_ID = ''#{currentUserId}''
-    ORDER BY "value" DESC';
-
-  weekly_total_personal_pie_model :=
-  '{
-         "thickness": 20
-     }';
-
-  nightly_total_personal_pie_sql :=
-  '
-    SELECT
-        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
-    FROM NIGHTLY_VIEW
-    WHERE
-        PROJECT LIKE ANY (''{#{project}}'')
-        AND OWNER_ID = ''#{currentUserId}''
-    ORDER BY "value" DESC';
-
-  nightly_total_personal_pie_model :=
-  '{
-       "thickness": 20
-   }';
-
-  total_last_30_days_personal_sql :=
-  'SELECT
-        sum(PASSED) AS "PASSED",
-        sum(FAILED) AS "FAILED",
-        sum(KNOWN_ISSUE) AS "KNOWN_ISSUE",
-        sum(SKIPPED) AS "SKIPPED",
-        sum(IN_PROGRESS) AS "IN_PROGRESS",
-        sum(ABORTED) AS "ABORTED",
-        sum(QUEUED) AS "QUEUED",
-STARTED::date AS "CREATED_AT"
-    FROM BIMONTHLY_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND OWNER_ID = ''#{currentUserId}''
-    AND STARTED >= current_date  - interval ''30 day''
-    GROUP BY "CREATED_AT"
-    ORDER BY "CREATED_AT";';
-
-  total_last_30_days_personal_model :=
-  '{
-         "series": [
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "PASSED",
-                 "label": "PASSED",
-                 "color": "#5cb85c",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "PASSED"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "FAILED",
-                 "label": "FAILED",
-                 "color": "#d9534f",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "FAILED"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "KNOWN_ISSUE",
-                 "label": "KNOWN_ISSUE",
-                 "color": "#AA5C33",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "KNOWN_ISSUE"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "SKIPPED",
-                 "label": "SKIPPED",
-                 "color": "#f0ad4e",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "SKIPPED"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "ABORTED",
-                 "label": "ABORTED",
-                 "color": "#AAAAAA",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "ABORTED"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "IN_PROGRESS",
-                 "label": "IN_PROGRESS",
-                 "color": "#3a87ad",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "IN_PROGRESS"
-             },
-             {
-                 "axis": "y",
-                 "dataset": "dataset",
-                 "key": "QUEUED",
-                 "label": "QUEUED",
-                 "color": "#6C6C6C",
-                 "thickness": "10px",
-                 "type": [
-                     "line",
-                     "dot",
-                     "area"
-                 ],
-                 "id": "QUEUED"
-             }
-         ],
-         "axes": {
-             "x": {
-                 "key": "CREATED_AT",
-                 "type": "date",
-                 "ticks": "functions(value) {return ''wow!''}"
-             }
-         }
-    }';
-
-  nightly_personal_failures_sql :=
-  'SELECT count(*) AS "COUNT",
+  nightly_personal_failures_sql :='
+  SELECT count(*) AS "COUNT",
       ENV AS "ENV",
-      ''<a href="#{zafiraURL}/#!/dashboards/'||failures_dashboard_id||'?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>''
+      ''<a href="#{zafiraURL}/#!/dashboards/2?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>''
           AS "REPORT",
       substring(MESSAGE from 1 for 210) as "MESSAGE",
       REBUILD as "REBUILD"
@@ -646,8 +886,8 @@ STARTED::date AS "CREATED_AT"
   GROUP BY "ENV", substring(MESSAGE from 1 for 210), "REBUILD"
   ORDER BY "COUNT" DESC';
 
-  nightly_personal_failures_model :=
-  '{
+  nightly_personal_failures_model :='
+  {
       "columns": [
           "COUNT",
           "ENV",
@@ -657,51 +897,51 @@ STARTED::date AS "CREATED_AT"
       ]
   }';
 
-  nightly_personal_cron_sql :=
-  'SELECT
+  nightly_personal_cron_sql := '
+  SELECT
   ''<a href="''||UPSTREAM_JOB_URL||''" target="_blank">''||UPSTREAM_JOB_NAME||''</a>'' AS "NAME",
-        OWNER as "OWNER",
+        OWNER_USERNAME as "OWNER",
         UPSTREAM_JOB_BUILD_NUMBER as "BUILD",
         SUM(PASSED) as "PASS",
         SUM(FAILED) as "FAIL",
         SUM(SKIPPED) as "SKIP",
-	      SUM(ABORTED) as "ABORTED",
-  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=false" id="cron_rerun" class="cron_rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
-  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER||''&doRebuild=true&rerunFailures=true" class="cron_rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
+          SUM(ABORTED) as "ABORTED",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER_USERNAME||''&doRebuild=true&rerunFailures=false" id="cron_rerun" class="cron_rerun_all" target="_blank">Restart all</a>'' AS "RESTART ALL",
+  ''<a href="#{jenkinsURL}/job/Management_Jobs/job/smartJobsRerun/buildWithParameters?token=ciStart&ci_job_id=''||UPSTREAM_JOB_ID||''&ci_parent_build=''||UPSTREAM_JOB_BUILD_NUMBER||''&ci_user_id=''||OWNER_USERNAME||''&doRebuild=true&rerunFailures=true" class="cron_rerun_failures" target="_blank">Restart failures</a>'' AS "RESTART FAILURES"
     FROM NIGHTLY_VIEW
   WHERE OWNER_ID=''#{currentUserId}''
   GROUP BY "OWNER", "BUILD", "NAME", UPSTREAM_JOB_ID, UPSTREAM_JOB_URL
   ORDER BY "BUILD" DESC';
 
-  nightly_personal_cron_model :=
-  '{
-         "columns": [
-             "NAME",
-             "BUILD",
-             "OWNER",
-             "PASS",
-             "FAIL",
-             "SKIP",
-	           "ABORTED",
-             "RESTART ALL",
-             "RESTART FAILURES"
-         ]
-     }';
+  nightly_personal_cron_model := '
+  {
+      "columns": [
+          "NAME",
+          "BUILD",
+          "OWNER",
+          "PASS",
+          "FAIL",
+          "SKIP",
+	        "ABORTED",
+          "RESTART ALL",
+          "RESTART FAILURES"
+      ]
+  }';
 
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('NIGHTLY DETAILS PERSONAL', 'table', nightly_details_personal_sql, nightly_details_personal_model)
       RETURNING id INTO nightly_details_personal_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('MONTHLY TOTAL PERSONAL', 'piechart', monthly_total_personal_pie_sql, monthly_total_personal_pie_model)
-      RETURNING id INTO monthly_total_personal_pie_id;
+                                                       ('MONTHLY TOTAL PERSONAL', 'echart', monthly_total_personal_sql, monthly_total_personal_model)
+      RETURNING id INTO monthly_total_personal_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('WEEKLY TOTAL PERSONAL', 'piechart', weekly_total_personal_pie_sql, weekly_total_personal_pie_model)
-      RETURNING id INTO weekly_total_personal_pie_id;
+                                                       ('WEEKLY TOTAL PERSONAL', 'echart', weekly_total_personal_sql, weekly_total_personal_model)
+      RETURNING id INTO weekly_total_personal_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('NIGHTLY TOTAL PERSONAL', 'piechart', nightly_total_personal_pie_sql, nightly_total_personal_pie_model)
-      RETURNING id INTO nightly_total_personal_pie_id;
+                                                       ('NIGHTLY TOTAL PERSONAL', 'echart', nightly_total_personal_sql, nightly_total_personal_model)
+      RETURNING id INTO nightly_total_personal_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TEST RESULTS (LAST 30 DAYS) PERSONAL', 'linechart', total_last_30_days_personal_sql, total_last_30_days_personal_model)
+                                                       ('TEST RESULTS (LAST 30 DAYS) PERSONAL', 'echart', total_last_30_days_personal_sql, total_last_30_days_personal_model)
       RETURNING id INTO total_last_30_days_personal_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('NIGHTLY - PERSONAL FAILURES', 'table', nightly_personal_failures_sql, nightly_personal_failures_model)
@@ -711,279 +951,331 @@ STARTED::date AS "CREATED_AT"
       RETURNING id INTO nightly_personal_cron_id;
 
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, nightly_details_personal_id, '{"x":0,"y":28,"width":12,"height":21}');
+                                                                            (personal_dashboard_id, nightly_details_personal_id, '{"x":0,"y":28,"width":12,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, monthly_total_personal_pie_id, '{"x":8,"y":0,"width":4,"height":11}');
+                                                                            (personal_dashboard_id, monthly_total_personal_id, '{"x":8,"y":0,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, weekly_total_personal_pie_id, '{"x":4,"y":0,"width":4,"height":11}');
+                                                                            (personal_dashboard_id, weekly_total_personal_id, '{"x":4,"y":0,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, nightly_total_personal_pie_id, '{"x":0,"y":0,"width":4,"height":11}');
+                                                                            (personal_dashboard_id, nightly_total_personal_id, '{"x":0,"y":0,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":17,"width":12,"height":11}');
+                                                                            (personal_dashboard_id, total_last_30_days_personal_id, '{"x":0,"y":11,"width":12,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, nightly_personal_failures_id, '{"x":0,"y":49,"width":12,"height":15}');
+                                                                            (personal_dashboard_id, nightly_personal_failures_id, '{"x":0,"y":39,"width":12,"height":6}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (personal_dashboard_id, nightly_personal_cron_id, '{"x":0,"y":17,"width":12,"height":8}');
-
+                                                                            (personal_dashboard_id, nightly_personal_cron_id, '{"x":0,"y":22,"width":12,"height":6}');
 
   -- Insert User Performance dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('User Performance', TRUE, 6) RETURNING id INTO user_performance_dashboard_id;
 
-  personal_total_rate_sql :=
-  'SELECT
-        OWNER AS "OWNER",
-        sum( passed ) AS "PASSED",
-        sum( failed ) AS "FAILED",
-        sum( skipped ) AS "SKIPPED",
-        round (100.0 * sum( passed ) / (sum( total )), 2) as "PASS RATE"
-    FROM TOTAL_VIEW
-    WHERE OWNER_ID = ''#{currentUserId}''
-    GROUP BY "OWNER"';
+  personal_total_rate_sql := '
+  SELECT
+      OWNER_USERNAME AS "OWNER",
+      sum( passed ) AS "PASSED",
+      sum( failed ) AS "FAILED",
+      sum( skipped ) AS "SKIPPED",
+      round (100.0 * sum( passed ) / (sum( total )), 2) as "PASS RATE"
+  FROM TOTAL_VIEW
+  WHERE OWNER_ID = ''#{currentUserId}''
+  GROUP BY "OWNER"';
 
-  personal_total_rate_model :=
-  '{
-       "columns":[
-          "OWNER",
-          "PASSED",
-          "FAILED",
-          "SKIPPED",
-          "PASS RATE"
-       ]
-   }';
+  personal_total_rate_model :='
+  {
+      "columns":[
+         "OWNER",
+         "PASSED",
+         "FAILED",
+         "SKIPPED",
+         "PASS RATE"
+      ]
+  }';
 
-  personal_total_tests_man_hours_sql :=
-  'SELECT
+  personal_total_tests_man_hours_sql := '
+  SELECT
       SUM(TOTAL_HOURS) AS "MAN-HOURS",
-    TESTED_AT AS "CREATED_AT"
+  CREATED_AT AS "CREATED_AT"
   FROM TOTAL_VIEW WHERE OWNER_ID = ''#{currentUserId}''
   GROUP BY "CREATED_AT"
   ORDER BY "CREATED_AT"';
 
-  personal_total_tests_man_hours_model :=
-  '{
-    "series": [
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "MAN-HOURS",
-        "label": "MAN-HOURS",
-        "color": "#5cb85c",
-        "thickness": "10px",
-        "type": [
-          "column"
-           ],
-        "id": "MAN-HOURS"
-      }
-    ],
-    "axes": {
-      "x": {
-        "key": "CREATED_AT",
-        "type": "date",
-        "ticks": "functions(value) {return ''wow!''}"
+  personal_total_tests_man_hours_model := '
+  {
+      "grid": {
+          "right": "2%",
+          "left": "4%",
+          "top": "8%",
+          "bottom": "8%"
       },
-      "y": {
-        "min": "0"
-      }
-    }
-  }';
-
-  weekly_test_impl_progress_user_perf_sql :=
-  'SELECT
-        date_trunc(''week'', TEST_CASES.CREATED_AT)::date AS "CREATED_AT" ,
-        count(*) AS "AMOUNT"
-    FROM TEST_CASES INNER JOIN
-        USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
-    WHERE USERS.ID=''#{currentUserId}''
-    GROUP BY 1
-    ORDER BY 1;';
-
-  weekly_test_impl_progress_user_perf_model :=
-  '{
-      "series": [
-        {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "AMOUNT",
-          "label": "INTERPOLATED AMOUNT",
-          "interpolation": {"mode": "bundle", "tension": 0.8},
-          "color": "#f0ad4e",
-          "type": [
-            "line"
-          ],
-          "id": "AMOUNT"
-        },
-        {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "AMOUNT",
-          "label": "AMOUNT",
-          "color": "#3a87ad",
-          "type": [
-            "column"
-          ],
-          "id": "AMOUNT"
-        }
+      "legend": {
+          "top": -5
+      },
+      "tooltip": {
+          "trigger": "axis"
+      },
+      "dimensions": [
+          "CREATED_AT",
+          "MAN-HOURS"
       ],
-      "axes": {
-        "x": {
-          "key": "CREATED_AT",
-          "type": "date"
-        },
-        "y": {
-          "min": "0"
-        }
-      }
-    }';
-
-  total_tests_trend_sql :=
-  'SELECT
-        TESTED_AT AS "MONTH",
-        sum( PASSED ) AS "PASSED",
-        sum( FAILED ) AS "FAILED",
-        sum( SKIPPED ) AS "SKIPPED",
-        sum( IN_PROGRESS ) AS "IN_PROGRESS",
-        sum( ABORTED ) AS "ABORTED",
-        sum( QUEUED ) AS "QUEUED",
-        sum( TOTAL ) AS "TOTAL"
-    FROM TOTAL_VIEW
-    WHERE OWNER_ID=''#{currentUserId}''
-    GROUP BY 1
-    ORDER BY 1';
-
-  total_tests_trend_model :=
-  '{
-    "series": [
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "PASSED",
-        "label": "PASSED",
-        "color": "#5cb85c",
-        "thickness": "10px",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "PASSED"
+      "xAxis": {
+          "type": "category",
+          "axisLabel": {
+              "formatter": "$filter | date: MMM dd$"
+          }
       },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "FAILED",
-        "label": "FAILED",
-        "color": "#d9534f",
-      "thickness": "10px",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "FAILED"
-      },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "SKIPPED",
-        "label": "SKIPPED",
-        "color": "#f0ad4e",
-      "thickness": "10px",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "SKIPPED"
-      },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "IN_PROGRESS",
-        "label": "IN_PROGRESS",
-        "color": "#3a87ad",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "IN_PROGRESS"
-      },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "ABORTED",
-        "label": "ABORTED",
-        "color": "#aaaaaa",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "ABORTED"
-      },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "TOTAL",
-        "label": "TOTAL",
-        "color": "#d3d3d3",
-        "type": [
-          "line",
-          "dot",
-          "area"
-        ],
-        "id": "TOTAL"
-      },
-      {
-        "axis": "y",
-        "dataset": "dataset",
-        "key": "QUEUED",
-        "label": "QUEUED",
-        "color": "#6C6C6C",
-        "type": [
-            "line",
-            "dot",
-            "area"
-        ],
-        "id": "QUEUED"
-      }
- ],
-    "axes": {
-      "x": {
-        "key": "MONTH",
-        "type": "date",
-        "ticks": "functions(value) {return ''wow!''}"
-      }
-    }
+      "yAxis": {},
+      "series": [
+          {
+              "type": "bar"
+          }
+      ],
+      "color": [
+          "#7fbae3",
+          "#919e8b"
+      ]
   }';
+
+  weekly_test_impl_progress_user_perf_sql := '
+  SELECT
+      date_trunc(''week'', TEST_CASES.CREATED_AT)::date AS "CREATED_AT" ,
+      count(*) AS "AMOUNT"
+  FROM TEST_CASES INNER JOIN
+      USERS ON TEST_CASES.PRIMARY_OWNER_ID=USERS.ID
+  WHERE USERS.ID=''#{currentUserId}''
+  GROUP BY 1
+  ORDER BY 1;';
+
+  weekly_test_impl_progress_user_perf_model := '
+{
+    "grid": {
+        "right": "2%",
+        "left": "4%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {
+        "top": -5
+    },
+    "tooltip": {
+        "trigger": "axis"
+    },
+    "dimensions": [
+        "CREATED_AT",
+        "AMOUNT"
+    ],
+    "color": [
+        "#7fbae3",
+        "#919e8b"
+    ],
+    "xAxis": {
+        "type": "category",
+        "axisLabel": {
+            "formatter": "$filter | date: MMM dd$"
+        }
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "bar"
+        },
+        {
+            "type": "line",
+            "smooth": true,
+            "lineStyle": {
+                "type": "dotted"
+            }
+        }
+    ]
+}';
+
+  total_tests_trend_sql := '
+  SELECT
+      TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
+      sum( PASSED ) AS "PASSED",
+      sum( FAILED ) AS "FAILED",
+      sum( SKIPPED ) AS "SKIPPED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( ABORTED ) AS "ABORTED",
+      sum( QUEUED ) AS "QUEUED",
+      sum( TOTAL ) AS "TOTAL"
+  FROM TOTAL_VIEW
+  WHERE OWNER_ID=''#{currentUserId}''
+  GROUP BY "CREATED_AT"';
+
+  total_tests_trend_model := '
+{
+    "grid": {
+        "right": "2%",
+        "left": "6%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis"
+    },
+    "dimensions": [
+        "CREATED_AT",
+        "PASSED",
+        "FAILED",
+        "SKIPPED",
+        "KNOWN ISSUE",
+        "ABORTED",
+        "QUEUED",
+        "TOTAL"
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#b5b5b5",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "line",
+            "smooth": false,
+            "stack": "Status",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "stack": "Status1",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        }
+    ]
+}';
 
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('PERSONAL TOTAL RATE', 'table', personal_total_rate_sql, personal_total_rate_model)
       RETURNING id INTO personal_total_rate_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('PERSONAL TOTAL TESTS (MAN-HOURS)', 'linechart', personal_total_tests_man_hours_sql, personal_total_tests_man_hours_model)
+                                                       ('PERSONAL TOTAL TESTS (MAN-HOURS)', 'echart', personal_total_tests_man_hours_sql, personal_total_tests_man_hours_model)
       RETURNING id INTO personal_total_tests_man_hours_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('WEEKLY TEST IMPLEMENTATION PROGRESS (NUMBER OF TEST METHODS IMPLEMENTED BY PERSON)', 'linechart', weekly_test_impl_progress_user_perf_sql, weekly_test_impl_progress_user_perf_model)
+                                                       ('WEEKLY TEST IMPLEMENTATION PROGRESS (NUMBER OF TEST METHODS IMPLEMENTED BY PERSON)', 'echart', weekly_test_impl_progress_user_perf_sql, weekly_test_impl_progress_user_perf_model)
       RETURNING id INTO weekly_test_impl_progress_user_perf_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TOTAL TESTS TREND', 'linechart', total_tests_trend_sql, total_tests_trend_model)
+                                                       ('TOTAL TESTS TREND', 'echart', total_tests_trend_sql, total_tests_trend_model)
       RETURNING id INTO total_tests_trend_id;
 
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (user_performance_dashboard_id, personal_total_rate_id, '{"x": 0, "y": 0, "height": 11, "width": 4}');
+                                                                            (user_performance_dashboard_id, personal_total_rate_id, '{"x":0,"y":0,"height":11,"width":4}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (user_performance_dashboard_id, personal_total_tests_man_hours_id, '{"x": 4, "y": 0, "height": 11, "width": 8}');
+                                                                            (user_performance_dashboard_id, personal_total_tests_man_hours_id, '{"x":4,"y":0,"width":8,"height":12}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (user_performance_dashboard_id, weekly_test_impl_progress_user_perf_id, '{"x": 0, "y": 11, "height": 11, "width": 12}');
+                                                                            (user_performance_dashboard_id, weekly_test_impl_progress_user_perf_id, '{"x":0,"y":12,"width":12,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (user_performance_dashboard_id, total_tests_trend_id, '{"x": 0, "y": 22, "height": 11, "width": 12}');
+                                                                            (user_performance_dashboard_id, total_tests_trend_id, '{"x":0,"y":23,"width":12,"height":12}');
 
   -- Insert General dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('General', FALSE, 0) RETURNING id INTO general_dashboard_id;
 
   total_tests_count_sql :=
-  'SELECT
+  '
+SELECT
         PROJECT AS "PROJECT",
         sum(PASSED) AS "PASS",
         sum(FAILED) AS "FAIL",
@@ -1007,7 +1299,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "PASS" DESC';
 
   total_tests_count_model :=
-  '{
+  '
+{
       "columns": [
           "PROJECT",
           "PASS",
@@ -1019,8 +1312,9 @@ STARTED::date AS "CREATED_AT"
       ]
   }';
 
-  total_tests_pie_sql :=
-  'SELECT
+  total_tests_sql :=
+  '
+SELECT
      unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
      unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
      unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
@@ -1028,13 +1322,14 @@ STARTED::date AS "CREATED_AT"
   WHERE PROJECT LIKE ANY (''{#{project}}'')
   ORDER BY "value" DESC';
 
-  total_tests_pie_model :=
+  total_tests_model :=
   '{
        "thickness": 20
    }';
 
   weekly_test_impl_progress_sql :=
-  'SELECT
+  '
+SELECT
       date_trunc(''week'', TEST_CASES.CREATED_AT)::date AS "CREATED_AT" ,
       count(*) AS "AMOUNT"
   FROM TEST_CASES INNER JOIN PROJECTS ON TEST_CASES.PROJECT_ID = PROJECTS.ID
@@ -1044,7 +1339,8 @@ STARTED::date AS "CREATED_AT"
   ORDER BY 1;';
 
   weekly_test_impl_progress_model :=
-  '{
+  '
+{
         "series": [
           {
             "axis": "y",
@@ -1079,7 +1375,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   total_jira_tickets_sql :=
-  'SELECT
+  '
+SELECT
         PROJECTS.NAME AS "PROJECT",
         COUNT(DISTINCT WORK_ITEMS.JIRA_ID) AS "COUNT"
     FROM TEST_WORK_ITEMS
@@ -1100,7 +1397,8 @@ STARTED::date AS "CREATED_AT"
    }';
 
   total_tests_man_hours_sql :=
-  'SELECT
+  '
+SELECT
         SUM(TOTAL_HOURS) AS "ACTUAL",
         SUM(TOTAL_HOURS) AS "ETA",
         TESTED_AT AS "CREATED_AT"
@@ -1119,7 +1417,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
   total_tests_man_hours_model :=
-  '{
+  '
+{
         "series": [
             {
                 "axis": "y",
@@ -1165,7 +1464,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   total_tests_by_month_sql =
-  'SELECT
+  '
+SELECT
       SUM(PASSED) as "PASSED",
       SUM(FAILED) AS "FAILED",
       SUM(SKIPPED) AS "SKIPPED",
@@ -1181,7 +1481,8 @@ STARTED::date AS "CREATED_AT"
   ORDER BY "CREATED_AT"';
 
   total_tests_by_month_model =
-  '{
+  '
+{
       "series": [
           {
               "axis": "y",
@@ -1291,8 +1592,8 @@ STARTED::date AS "CREATED_AT"
                                                        ('TOTAL TESTS (COUNT)', 'table', total_tests_count_sql, total_tests_count_model)
       RETURNING id INTO total_tests_count_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TOTAL TESTS', 'piechart', total_tests_pie_sql, total_tests_pie_model)
-      RETURNING id INTO total_tests_pie_id;
+                                                       ('TOTAL TESTS', 'piechart', total_tests_sql, total_tests_model)
+      RETURNING id INTO total_tests_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('WEEKLY TEST IMPLEMENTATION PROGRESS', 'linechart', weekly_test_impl_progress_sql, weekly_test_impl_progress_model)
       RETURNING id INTO weekly_test_impl_progress_id;
@@ -1309,7 +1610,7 @@ STARTED::date AS "CREATED_AT"
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (general_dashboard_id, total_tests_man_hours_id, '{"x":4,"y":0,"width":8,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (general_dashboard_id, total_tests_pie_id, '{"x":0,"y":0,"width":4,"height":11}');
+                                                                            (general_dashboard_id, total_tests_id, '{"x":0,"y":0,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (general_dashboard_id, total_tests_count_id, '{"x":0,"y":11,"width":4,"height":11}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
@@ -1323,7 +1624,8 @@ STARTED::date AS "CREATED_AT"
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Monthly Regression', FALSE, 4) RETURNING id INTO monthly_dashboard_id;
 
   monthly_total_sql :=
-  'SELECT
+  '
+SELECT
      unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
      unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
      unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
@@ -1333,12 +1635,14 @@ STARTED::date AS "CREATED_AT"
   ORDER BY "value" DESC';
 
   monthly_total_model :=
-  '{
+  '
+{
       "thickness": 20
    }';
 
   test_results_30_sql :=
-  'SELECT
+  '
+SELECT
         sum(PASSED) AS "PASSED",
         sum(FAILED) AS "FAILED",
         sum(KNOWN_ISSUE) AS "KNOWN_ISSUE",
@@ -1354,7 +1658,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
   test_results_30_model :=
-  '{
+  '
+{
      "series": [
        {
          "axis": "y",
@@ -1464,7 +1769,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   monthly_platform_pass_rate_sql :=
-  'SELECT
+  '
+SELECT
       case when (PLATFORM IS NULL AND BROWSER <> '''') then ''WEB''
            when (PLATFORM = ''*'' AND BROWSER <> '''') then ''WEB''
            when (PLATFORM IS NULL AND BROWSER = '''') then ''API''
@@ -1490,7 +1796,8 @@ STARTED::date AS "CREATED_AT"
   ORDER BY "PLATFORM"';
 
   monthly_platform_pass_rate_model :=
-  '{
+  '
+{
       "columns": [
         "PLATFORM",
         "BUILD",
@@ -1511,7 +1818,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   monthly_details_sql :=
-  'SELECT
+  '
+SELECT
         OWNER AS "OWNER",
         ''<a href="#{zafiraURL}/#!/dashboards/'||personal_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Board</a>'' AS "REPORT",
         SUM(PASSED) AS "PASSED",
@@ -1533,7 +1841,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY OWNER';
 
   monthly_details_model :=
-  '{
+  '
+{
       "columns": [
         "OWNER",
         "REPORT",
@@ -1577,7 +1886,8 @@ STARTED::date AS "CREATED_AT"
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Weekly Regression', FALSE, 3) RETURNING id INTO weekly_dashboard_id;
 
   weekly_total_sql :=
-  'SELECT
+  '
+SELECT
        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
@@ -1587,12 +1897,14 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "value" DESC';
 
   weekly_total_model :=
-  '{
+  '
+{
        "thickness": 20
    }';
 
   weekly_test_results_sql :=
-  'SELECT
+  '
+SELECT
         sum(PASSED) AS "PASSED",
         sum(FAILED) AS "FAILED",
         sum(KNOWN_ISSUE) AS "KNOWN_ISSUE",
@@ -1608,7 +1920,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "CREATED_AT";';
 
   weekly_test_results_model :=
-  '{
+  '
+{
      "series": [
        {
          "axis": "y",
@@ -1717,7 +2030,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   weekly_platform_details_sql :=
-  'SELECT
+  '
+SELECT
         case when (PLATFORM IS NULL AND BROWSER <> '''') then ''WEB''
              when (PLATFORM = ''*'' AND BROWSER <> '''') then ''WEB''
              when (PLATFORM IS NULL AND BROWSER = '''') then ''API''
@@ -1743,7 +2057,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "PLATFORM"';
 
   weekly_platform_details_model :=
-  '{
+  '
+{
       "columns": [
         "PLATFORM",
         "BUILD",
@@ -1764,7 +2079,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   weekly_details_sql :=
-  'SELECT
+  '
+SELECT
         OWNER AS "OWNER",
         ''<a href="#{zafiraURL}/#!/dashboards/'||personal_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Board</a>'' AS "REPORT",
         SUM(PASSED) AS "PASSED",
@@ -1786,7 +2102,8 @@ STARTED::date AS "CREATED_AT"
    ORDER BY OWNER';
 
   weekly_details_model :=
-  '{
+  '
+{
       "columns": [
         "OWNER",
         "REPORT",
@@ -1830,7 +2147,8 @@ STARTED::date AS "CREATED_AT"
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Nightly Regression', FALSE, 2) RETURNING id INTO nightly_dashboard_id;
 
   nightly_total_sql :=
-  'SELECT
+  '
+SELECT
        unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
        unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
        unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
@@ -1845,7 +2163,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   nightly_platform_pass_rate_sql :=
-  'SELECT
+  '
+SELECT
         case when (PLATFORM IS NULL AND BROWSER <> '''') then ''WEB''
             when (PLATFORM = ''*'' AND BROWSER <> '''') then ''WEB''
             when (PLATFORM IS NULL AND BROWSER = '''') then ''API''
@@ -1871,7 +2190,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY "PLATFORM"';
 
   nightly_platform_pass_rate_model :=
-  '{
+  '
+{
       "columns": [
         "PLATFORM",
         "BUILD",
@@ -1892,7 +2212,8 @@ STARTED::date AS "CREATED_AT"
     }';
 
   nightly_details_sql :=
-  'SELECT
+  '
+SELECT
         OWNER AS "OWNER",
         ''<a href="#{zafiraURL}/#!/dashboards/'||personal_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Board</a>'' AS "REPORT",
         SUM(PASSED) AS "PASSED",
@@ -1914,7 +2235,8 @@ STARTED::date AS "CREATED_AT"
     ORDER BY OWNER';
 
   nightly_details_model :=
-  '{
+  '
+{
       "columns": [
         "OWNER",
         "REPORT",
@@ -1946,7 +2268,8 @@ STARTED::date AS "CREATED_AT"
   }';
 
   nightly_failures_sql :=
-  'SELECT count(*) AS "COUNT",
+  '
+SELECT count(*) AS "COUNT",
       ''<a href="#{zafiraURL}/#!/dashboards/'||failures_dashboard_id||'?hashcode='' || max(MESSAGE_HASHCODE)  || ''" target="_blank">Failures Analysis Report</a>'' AS "REPORT",
       substring(MESSAGE from 1 for 210) as "MESSAGE"
   FROM NIGHTLY_FAILURES_VIEW
