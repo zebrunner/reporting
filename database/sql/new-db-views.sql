@@ -357,7 +357,7 @@ BEGIN
   detailed_failures_report_sql := '
   SELECT count(*) as "COUNT",
       Env AS "ENV",
-      TEST_REPORT AS "REPORT",
+      TEST_INFO_URL AS "REPORT",
       Rebuild AS "REBUILD"
   FROM NIGHTLY_FAILURES_VIEW
   WHERE substring(Message from 1 for 210)  IN (
@@ -2148,13 +2148,13 @@ BEGIN
       RETURNING id INTO monthly_details_id;
 
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (monthly_dashboard_id, monthly_total_id, '{"x":0,"y":0,"height":11,"width":3}');
+                                                                            (monthly_dashboard_id, monthly_total_id, '{"x":0,"y":0,"height":11,"width":4}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (monthly_dashboard_id, test_results_30_id, '{"x":6,"y":0,"height":11,"width":6}');
+                                                                            (monthly_dashboard_id, test_results_30_id, '{"x":4,"y":0,"height":11,"width":8}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (monthly_dashboard_id, monthly_platform_pass_rate_id, '{"x":0,"y":22,"width":12,"height":18}');
+                                                                            (monthly_dashboard_id, monthly_platform_pass_rate_id, '{"x":0,"y":11,"width":12,"height":14}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (monthly_dashboard_id, monthly_details_id, '{"x":0,"y":11,"height":11,"width":12}');
+                                                                            (monthly_dashboard_id, monthly_details_id, '{"x":0,"y":25,"height":6,"width":12}');
 
   -- Insert Weekly dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Weekly Regression', FALSE, 3) RETURNING id INTO weekly_dashboard_id;
@@ -2589,13 +2589,13 @@ BEGIN
       RETURNING id INTO weekly_details_id;
 
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (weekly_dashboard_id, weekly_total_id, '{"x":0,"y":0,"height":11,"width":3}');
+                                                                            (weekly_dashboard_id, weekly_total_id, '{"x":0,"y":0,"height":11,"width":4}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (weekly_dashboard_id, weekly_test_results_id, '{"x":6,"y":0,"height":11,"width":6}');
+                                                                            (weekly_dashboard_id, weekly_test_results_id, '{"x":4,"y":0,"height":11,"width":8}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (weekly_dashboard_id, weekly_platform_pass_rate_id, '{"x":0,"y":22,"height":20,"width":12}');
+                                                                            (weekly_dashboard_id, weekly_platform_pass_rate_id, '{"x":0,"y":11,"width":12,"height":17}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (weekly_dashboard_id, weekly_details_id, '{"x":0,"y":11,"height":11,"width":12}');
+                                                                            (weekly_dashboard_id, weekly_details_id, '{"x":0,"y":28,"height":6,"width":12}');
 
   -- Insert Nightly dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Nightly Regression', FALSE, 2) RETURNING id INTO nightly_dashboard_id;
