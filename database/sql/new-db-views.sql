@@ -105,9 +105,9 @@ DO $$
   DECLARE weekly_test_results_id WIDGETS.id%TYPE;
   DECLARE weekly_test_results_sql WIDGETS.sql%TYPE;
   DECLARE weekly_test_results_model WIDGETS.model%TYPE;
-  DECLARE weekly_platform_details_id WIDGETS.id%TYPE;
-  DECLARE weekly_platform_details_sql WIDGETS.sql%TYPE;
-  DECLARE weekly_platform_details_model WIDGETS.model%TYPE;
+  DECLARE weekly_platform_pass_rate_id WIDGETS.id%TYPE;
+  DECLARE weekly_platform_pass_rate_sql WIDGETS.sql%TYPE;
+  DECLARE weekly_platform_pass_rate_model WIDGETS.model%TYPE;
   DECLARE weekly_details_id WIDGETS.id%TYPE;
   DECLARE weekly_details_sql WIDGETS.sql%TYPE;
   DECLARE weekly_details_model WIDGETS.model%TYPE;
@@ -2159,204 +2159,385 @@ BEGIN
   -- Insert Weekly dashboard data
   INSERT INTO DASHBOARDS (TITLE, HIDDEN, POSITION) VALUES ('Weekly Regression', FALSE, 3) RETURNING id INTO weekly_dashboard_id;
 
-  weekly_total_sql :=
-  '
-SELECT
-       unnest(array[''PASSED'', ''FAILED'', ''SKIPPED'', ''KNOWN ISSUE'', ''ABORTED'', ''QUEUED'']) AS "label",
-       unnest(array[''#109D5D'', ''#DC4437'', ''#FCBE1F'', ''#AA5C33'', ''#AAAAAA'', ''#6C6C6C'']) AS "color",
-       unnest(array[SUM(PASSED), SUM(FAILED), SUM(SKIPPED), SUM(KNOWN_ISSUE), SUM(ABORTED), SUM(QUEUED)]) AS "value"
-    FROM WEEKLY_VIEW
-    WHERE
-        PROJECT LIKE ANY (''{#{project}}'')
-    ORDER BY "value" DESC';
+  weekly_total_sql := '
+  SELECT
+  unnest(array[''PASSED'',
+              ''FAILED'',
+              ''SKIPPED'',
+              ''KNOWN ISSUE'',
+              ''QUEUED'',
+              ''ABORTED'']) AS "label",
+     unnest(
+      array[sum(PASSED),
+          sum(FAILED),
+          sum(SKIPPED),
+          sum(KNOWN_ISSUE),
+          sum(QUEUED),
+          sum(ABORTED)]) AS "value"
+  FROM WEEKLY_VIEW
+  WHERE
+  PROJECT LIKE ANY (''{#{project}}'')';
 
-  weekly_total_model :=
-  '
+  weekly_total_model := '
 {
-       "thickness": 20
-   }';
-
-  weekly_test_results_sql :=
-  '
-SELECT
-        sum(PASSED) AS "PASSED",
-        sum(FAILED) AS "FAILED",
-        sum(KNOWN_ISSUE) AS "KNOWN_ISSUE",
-        sum(SKIPPED) AS "SKIPPED",
-        sum(IN_PROGRESS) AS "IN_PROGRESS",
-        sum(ABORTED) AS "ABORTED",
-        sum(QUEUED) AS "QUEUED",
-        STARTED::date AS "CREATED_AT"
-    FROM MONTHLY_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    AND STARTED >= current_date  - interval ''7 day''
-    GROUP BY "CREATED_AT"
-    ORDER BY "CREATED_AT";';
-
-  weekly_test_results_model :=
-  '
-{
-     "series": [
-       {
-         "axis": "y",
-         "dataset": "dataset",
-         "key": "PASSED",
-         "label": "PASSED",
-         "color": "#5cb85c",
-         "thickness": "10px",
-         "type": [
-           "line",
-           "dot",
-           "area"
-         ],
-         "id": "PASSED"
-       },
-       {
-         "axis": "y",
-         "dataset": "dataset",
-         "key": "FAILED",
-         "label": "FAILED",
-         "color": "#d9534f",
-       "thickness": "10px",
-         "type": [
-           "line",
-           "dot",
-           "area"
-         ],
-         "id": "FAILED"
-       },
-    {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "KNOWN_ISSUE",
-          "label": "KNOWN_ISSUE",
-          "color": "#AA5C33",
-          "thickness": "10px",
-          "type": [
-            "line",
-            "dot",
-            "area"
-          ],
-          "id": "KNOWN_ISSUE"
+    "legend": {
+        "orient": "vertical",
+        "x": "left",
+        "y": "center",
+        "itemGap": 10,
+        "textStyle": {
+            "fontSize": 10
         },
-        {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "SKIPPED",
-          "label": "SKIPPED",
-          "color": "#f0ad4e",
-        "thickness": "10px",
-          "type": [
-            "line",
-            "dot",
-            "area"
-          ],
-          "id": "SKIPPED"
+        "formatter": "{name}"
+    },
+    "tooltip": {
+        "trigger": "item",
+        "axisPointer": {
+            "type": "shadow"
         },
+        "formatter": "{b0}<br>{d0}%"
+    },
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "series": [
         {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "ABORTED",
-          "label": "ABORTED",
-          "color": "#AAAAAA",
-        "thickness": "10px",
-          "type": [
-            "line",
-            "dot",
-            "area"
-          ],
-          "id": "ABORTED"
-        },
-        {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "IN_PROGRESS",
-          "label": "IN_PROGRESS",
-          "color": "#3a87ad",
-          "type": [
-            "line",
-            "dot",
-            "area"
-          ],
-          "id": "IN_PROGRESS"
-        },
-        {
-          "axis": "y",
-          "dataset": "dataset",
-          "key": "QUEUED",
-          "label": "QUEUED",
-          "color": "#6C6C6C",
-          "type": [
-              "line",
-              "dot",
-              "area"
-          ],
-          "id": "QUEUED"
+            "type": "pie",
+            "selectedMode": "multi",
+            "hoverOffset": 2,
+            "clockwise": false,
+            "stillShowZeroSum": false,
+            "avoidLabelOverlap": true,
+            "itemStyle": {
+                "normal": {
+                    "label": {
+                        "show": true,
+                        "position": "outside",
+                        "formatter": "{@value} ({d0}%)"
+                    },
+                    "labelLine": {
+                        "show": true
+                    }
+                },
+                "emphasis": {
+                    "label": {
+                        "show": true
+                    }
+                }
+            },
+            "radius": [
+                "0%",
+                "75%"
+            ]
         }
-      ],
-      "axes": {
-        "x": {
-          "key": "CREATED_AT",
-          "type": "date",
-          "ticks": "functions(value) {return ''wow!''}"
-        }
-      }
-    }';
+    ],
+    "thickness": 20
+}';
 
-  weekly_platform_details_sql :=
-  '
-SELECT
-        case when (PLATFORM IS NULL AND BROWSER <> '''') then ''WEB''
-             when (PLATFORM = ''*'' AND BROWSER <> '''') then ''WEB''
-             when (PLATFORM IS NULL AND BROWSER = '''') then ''API''
-             when (PLATFORM = ''*''  AND BROWSER = '''') then ''API''
-             else PLATFORM end AS "PLATFORM",
-        Build AS "BUILD",
-        sum( PASSED ) AS "PASSED",
-        sum( FAILED ) AS "FAILED",
-        sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
-        sum( SKIPPED) AS "SKIPPED",
-        sum( ABORTED ) AS "ABORTED",
-        sum( QUEUED ) AS "QUEUED",
-        sum(TOTAL) AS "TOTAL",
-        round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED (%)",
-        round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED (%)",
-        round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE (%)",
-        round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED (%)",
-        round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED (%)",
-        round (100.0 * sum( QUEUED ) / sum(TOTAL), 0)::integer AS "QUEUED (%)"
-    FROM WEEKLY_VIEW
-    WHERE PROJECT LIKE ANY (''{#{project}}'')
-    GROUP BY "PLATFORM", "BUILD"
-    ORDER BY "PLATFORM"';
+  weekly_test_results_sql := '
+  SELECT
+      TO_CHAR(CREATED_AT, ''MM/DD/YYYY'') AS "CREATED_AT",
+      sum( PASSED ) AS "PASSED",
+      sum( FAILED ) AS "FAILED",
+      sum( SKIPPED ) AS "SKIPPED",
+      sum( KNOWN_ISSUE ) AS "KNOWN ISSUE",
+      sum( ABORTED ) AS "ABORTED",
+      sum( QUEUED ) AS "QUEUED",
+      sum( TOTAL ) AS "TOTAL"
+  FROM WEEKLY_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY "CREATED_AT"';
 
-  weekly_platform_details_model :=
-  '
-{
-      "columns": [
-        "PLATFORM",
-        "BUILD",
+  weekly_test_results_model := '
+  {
+    "grid": {
+        "right": "2%",
+        "left": "6%",
+        "top": "8%",
+        "bottom": "8%"
+    },
+    "legend": {},
+    "tooltip": {
+        "trigger": "axis"
+    },
+    "dimensions": [
+        "CREATED_AT",
         "PASSED",
         "FAILED",
-        "KNOWN ISSUE",
         "SKIPPED",
+        "KNOWN ISSUE",
         "ABORTED",
         "QUEUED",
-        "TOTAL",
-        "PASSED (%)",
-        "FAILED (%)",
-        "KNOWN ISSUE (%)",
-        "SKIPPED (%)",
-        "ABORTED (%)",
-        "QUEUED (%)"
-      ]
-    }';
+        "TOTAL"
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#b5b5b5",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "xAxis": {
+        "type": "category",
+        "boundaryGap": false
+    },
+    "yAxis": {},
+    "series": [
+        {
+            "type": "line",
+            "smooth": false,
+            "stack": "Status",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "stack": "Status1",
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        },
+        {
+            "type": "line",
+            "smooth": false,
+            "itemStyle": {
+                "normal": {
+                    "areaStyle": {
+                        "opacity": 0.3,
+                        "type": "default"
+                    }
+                }
+            },
+            "lineStyle": {
+                "width": 1
+            }
+        }
+    ]
+}';
 
-  weekly_details_sql :=
-  '
-SELECT
-        OWNER AS "OWNER",
-        ''<a href="#{zafiraURL}/#!/dashboards/'||personal_dashboard_id||'?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER || '' - Personal Board</a>'' AS "REPORT",
+  weekly_platform_pass_rate_sql := '
+  SELECT PLATFORM AS "PLATFORM",
+      round (100.0 * sum( PASSED ) / sum(TOTAL), 0)::integer AS "PASSED",
+      round (100.0 * sum( KNOWN_ISSUE ) / sum(TOTAL), 0)::integer AS "KNOWN ISSUE",
+      round (100.0 * sum( QUEUED) / sum(TOTAL), 0)::integer AS "QUEUED",
+      0 - round (100.0 * sum( FAILED ) / sum(TOTAL), 0)::integer AS "FAILED",
+      0 - round (100.0 * sum( SKIPPED ) / sum(TOTAL), 0)::integer AS "SKIPPED",
+      0 - round (100.0 * sum( ABORTED) / sum(TOTAL), 0)::integer AS "ABORTED"
+  FROM WEEKLY_VIEW
+  WHERE PROJECT LIKE ANY (''{#{project}}'')
+  GROUP BY PLATFORM
+  ORDER BY PLATFORM';
+
+  weekly_platform_pass_rate_model := '
+  {
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow"
+        }
+    },
+    "legend": {
+        "data": [
+            "PASSED",
+            "FAILED",
+            "SKIPPED",
+            "KNOWN ISSUE",
+            "QUEUED",
+            "ABORTED"
+        ]
+    },
+    "grid": {
+        "left": "5%",
+        "right": "5%",
+        "bottom": "3%",
+        "containLabel": true
+    },
+    "xAxis": [
+        {
+            "type": "value"
+        }
+    ],
+    "yAxis": [
+        {
+            "type": "category",
+            "axisTick": {
+                "show": false
+            }
+        }
+    ],
+    "color": [
+        "#61c8b3",
+        "#e76a77",
+        "#fddb7a",
+        "#9f5487",
+        "#6dbbe7",
+        "#b5b5b5"
+    ],
+    "dimensions": [
+        "PLATFORM",
+        "PASSED",
+        "FAILED",
+        "SKIPPED",
+        "KNOWN ISSUE",
+        "QUEUED",
+        "ABORTED"
+    ],
+    "height": {
+        "dataItemValue": 100
+    },
+    "series": [
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack-queued",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "inside"
+                }
+            }
+        },
+        {
+            "type": "bar",
+            "stack": "stack",
+            "label": {
+                "normal": {
+                    "show": true,
+                    "position": "left"
+                }
+            }
+        }
+    ]
+}';
+
+  weekly_details_sql := '
+  SELECT
+        OWNER_USERNAME AS "OWNER",
+        ''<a href="#{zafiraURL}/#!/dashboards/3?userId='' || OWNER_ID || ''" target="_blank">'' || OWNER_USERNAME || '' - Personal Board</a>'' AS "REPORT",
         SUM(PASSED) AS "PASSED",
         SUM(FAILED) AS "FAILED",
         SUM(KNOWN_ISSUE) AS "KNOWN ISSUE",
@@ -2372,12 +2553,11 @@ SELECT
    FROM WEEKLY_VIEW
    WHERE
    PROJECT LIKE ANY (''{#{project}}'')
-   GROUP BY OWNER_ID, OWNER
-   ORDER BY OWNER';
+   GROUP BY OWNER_ID, OWNER_USERNAME
+   ORDER BY OWNER_USERNAME';
 
-  weekly_details_model :=
-  '
-{
+  weekly_details_model := '
+  {
       "columns": [
         "OWNER",
         "REPORT",
@@ -2393,17 +2573,17 @@ SELECT
         "SKIPPED (%)",
         "QUEUED (%)"
       ]
-    }';
+  }';
 
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('WEEKLY TOTAL', 'piechart', weekly_total_sql, weekly_total_model)
+                                                       ('WEEKLY TOTAL', 'echart', weekly_total_sql, weekly_total_model)
       RETURNING id INTO weekly_total_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('TEST RESULTS (LAST 7 DAYS)', 'linechart', weekly_test_results_sql, weekly_test_results_model)
+                                                       ('TEST RESULTS (WEEKLY)', 'echart', weekly_test_results_sql, weekly_test_results_model)
       RETURNING id INTO weekly_test_results_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
-                                                       ('WEEKLY PLATFORM DETAILS', 'table', weekly_platform_details_sql, weekly_platform_details_model)
-      RETURNING id INTO weekly_platform_details_id;
+                                                       ('WEEKLY PASS RATE BY PLATFORM (%)', 'echart', weekly_platform_pass_rate_sql, weekly_platform_pass_rate_model)
+      RETURNING id INTO weekly_platform_pass_rate_id;
   INSERT INTO WIDGETS (TITLE, TYPE, SQL, MODEL) VALUES
                                                        ('WEEKLY DETAILS', 'table', weekly_details_sql, weekly_details_model)
       RETURNING id INTO weekly_details_id;
@@ -2413,7 +2593,7 @@ SELECT
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (weekly_dashboard_id, weekly_test_results_id, '{"x":6,"y":0,"height":11,"width":6}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
-                                                                            (weekly_dashboard_id, weekly_platform_details_id, '{"x":0,"y":22,"height":20,"width":12}');
+                                                                            (weekly_dashboard_id, weekly_platform_pass_rate_id, '{"x":0,"y":22,"height":20,"width":12}');
   INSERT INTO DASHBOARDS_WIDGETS (DASHBOARD_ID, WIDGET_ID, LOCATION) VALUES
                                                                             (weekly_dashboard_id, weekly_details_id, '{"x":0,"y":11,"height":11,"width":12}');
 
