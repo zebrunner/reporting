@@ -1081,7 +1081,7 @@
 	            $rootScope.$on('$locationChangeStart', function (event, next, current) {
 	                // redirect to login page if not logged in and trying to access a restricted page
 	                var restrictedPage = $.inArray($location.path(), ['/signin']) === -1;
-	                var loggedIn = $rootScope.globals || $cookies.get('Access-Token');
+	                var loggedIn = $rootScope.globals || $cookies.get('Access-Token'); //TODO: @Boniara: check if it is old unneeded code: "$cookies.get('Access-Token')"
 	                if (restrictedPage && !loggedIn)
 	                {
 	                    $location.path('/signin');

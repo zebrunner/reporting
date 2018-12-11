@@ -149,51 +149,58 @@
                 });
             };
 
+            $rootScope.$on("$stateChangeStart", function (event, currentRoute, previousRoute) {
+                var loginRequired = currentRoute.data && currentRoute.data.requireLogin;
+
+                //Redirect to login page if authorization is required and user is not authorized
+                if (loginRequired && !AuthService.IsLoggedIn()) {
+                    event.preventDefault();
+                    $state.go('signin', {referrer: currentRoute.name});
+                }
+            });
+
             $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
 	            $document.scrollTo(0, 0);
 	        });
 
-	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
-	            AuthService.SetCredentials(auth);
+	        $rootScope.$on("event:auth-loginSuccess", function(ev, payload){
+                AuthService.SetCredentials(payload.auth);
                 $scope.initSession();
                 $scope.initExtendedUserProfile().then(function(rs) {
                     var bufferedRequests = httpBuffer.getBuffer();
-                    if(bufferedRequests && bufferedRequests.length) {
+
+                    if (bufferedRequests && bufferedRequests.length) {
                         $window.location.href = bufferedRequests[0].location;
                     } else {
-                        $state.go('dashboard', {id: rs});
+                        if (payload.referrer) {
+                           $state.go(payload.referrer);
+                        } else {
+                            $state.go('dashboard', {id: rs});
+                        }
                     }
                 }, function (rs) {
                 });
 	        });
 
-            $rootScope.$on('event:auth-loginRequired', function()
-	        {
-	        	if($cookies.get('Access-Token'))
-	            {
-	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}}
+            $rootScope.$on('event:auth-loginRequired', function() {
+                // TODO: @Boniara: is this correct or old code?
+                if ($cookies.get('Access-Token')) {
+	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}};
 	            }
 
-	        	if($rootScope.globals.auth != null && $rootScope.globals.auth.refreshToken != null)
-	        	{
-	        		AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
-	        		.then(
-		            function (rs) {
-		            	if(rs.success)
-		            	{
-                            AuthService.SetCredentials(rs.data);
-		            		AuthIntercepter.loginConfirmed();
-		            	}
-		            	else if($state.current.name != 'signup')
-		            	{
-		            		$state.go("signin");
-		            		AuthIntercepter.loginCancelled();
-		            	}
-		            });
-	        	}
-	        	else if($state.current.name != 'signup')
-	        	{
-	        		$state.go("signin");
+	        	if ($rootScope.globals.auth && $rootScope.globals.auth.refreshToken) {
+                    AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
+                        .then(function (rs) {
+                            if (rs.success) {
+                                AuthService.SetCredentials(rs.data);
+                                AuthIntercepter.loginConfirmed();
+                            } else if ($state.current.name !== 'signup') {
+                                AuthIntercepter.loginCancelled();
+                                $state.go("signin", {referrer: $state.current.name});
+                            }
+                        });
+	        	} else if ($state.current.name !== 'signup') {
+                    $state.go('signin', {referrer: $state.current.name});
 	        	}
 	        });
 
@@ -220,29 +227,29 @@
             };
 
 	        (function initController() {
-	        		// Used for dashboard emails
+	            //TODO: @Boniara: do we need this code right below and is it correct (using 'Access-Token')?
+	            // Used for dashboard emails
 	            var authorization = $cookies.get('Access-Token');
                 if(authorization) {
                     AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
                 }
-                
-                $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
-                SettingsService.getCompanyLogo().then(function(rs) {
-                    if(rs.success)
-                    {
-                        if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
-                            $rootScope.companyLogo.value = rs.data.value;
-                            $rootScope.companyLogo.id = rs.data.id;
-                            SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
+
+                SettingsService.getCompanyLogo()
+                    .then(function(rs) {
+                        if (rs.success) {
+                            if (!$rootScope.companyLogo.value || $rootScope.companyLogo.value !== rs.data) {
+                                $rootScope.companyLogo.value = rs.data.value;
+                                $rootScope.companyLogo.id = rs.data.id;
+                                SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
+                            }
                         }
-                    }
-                });
-                
-	            if ($rootScope.globals.auth)
-	            {
+                    });
+                $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
+	            if ($rootScope.globals.auth) {
                     $scope.initSession();
-                    $scope.initExtendedUserProfile().then(function (rs) {
-                        if(['dashboards'].indexOf($state.current.name) >= 0) {
+                    $scope.initExtendedUserProfile()
+                    .then(function (rs) {
+                        if ($state.current.name === 'dashboards') {
                             $state.go('dashboard', {id: rs});
                         }
                     });

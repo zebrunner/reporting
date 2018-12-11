@@ -97,7 +97,12 @@
             AuthService.Login(credentials.username, credentials.password)
                 .then(function(rs) {
                     if (rs.success) {
-                        $rootScope.$broadcast('event:auth-loginSuccess', rs.data);
+                        var payload = {
+                            auth: rs.data
+                        };
+
+                        $state.params.referrer && (payload.referrer = $state.params.referrer);
+                        $rootScope.$broadcast('event:auth-loginSuccess', payload);
                     } else {
                         $scope.credentials = {
                             valid: false
