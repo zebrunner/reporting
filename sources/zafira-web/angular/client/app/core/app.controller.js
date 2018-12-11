@@ -183,25 +183,20 @@
 	        });
 
             $rootScope.$on('event:auth-loginRequired', function() {
-                // TODO: @Boniara: is this correct or old code?
-                if ($cookies.get('Access-Token')) {
-	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}};
-	            }
-
-	        	if ($rootScope.globals.auth && $rootScope.globals.auth.refreshToken) {
-                    AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
-                        .then(function (rs) {
-                            if (rs.success) {
-                                AuthService.SetCredentials(rs.data);
-                                AuthIntercepter.loginConfirmed();
-                            } else if ($state.current.name !== 'signup') {
-                                AuthIntercepter.loginCancelled();
-                                $state.go("signin", {referrer: $state.current.name});
-                            }
-                        });
-	        	} else if ($state.current.name !== 'signup') {
-                    $state.go('signin', {referrer: $state.current.name});
-	        	}
+		        	if ($rootScope.globals.auth && $rootScope.globals.auth.refreshToken) {
+	                    AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
+	                        .then(function (rs) {
+	                            if (rs.success) {
+	                                AuthService.SetCredentials(rs.data);
+	                                AuthIntercepter.loginConfirmed();
+	                            } else if ($state.current.name !== 'signup') {
+	                                AuthIntercepter.loginCancelled();
+	                                $state.go("signin", {referrer: $state.current.name});
+	                            }
+	                        });
+		        	} else if ($state.current.name !== 'signup') {
+	                    $state.go('signin', {referrer: $state.current.name});
+		        	}
 	        });
 
             function getVersion() {
@@ -227,13 +222,6 @@
             };
 
 	        (function initController() {
-	            //TODO: @Boniara: do we need this code right below and is it correct (using 'Access-Token')?
-	            // Used for dashboard emails
-	            var authorization = $cookies.get('Access-Token');
-                if(authorization) {
-                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
-                }
-
                 SettingsService.getCompanyLogo()
                     .then(function(rs) {
                         if (rs.success) {
