@@ -1,6 +1,8 @@
 # Lifecycle
 ### Step 1: Refresh token
 
+**Request**
+
 **POST: /zafira-ws/api/auth/refresh**
 ```json
 {
@@ -11,9 +13,10 @@
 |:---:|:------:|:---------:|
 |refreshToken|String|token obtained by generation|
 
+---
 
+**Response**
 
-#### Response
 ```json
 {
   "type": "Bearer",
