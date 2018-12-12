@@ -33,7 +33,9 @@
 |refreshToken| String   | Token |
 |tenant|String|Nodename of kubernetes|
 
-#### Step 2: Get user profile
+---
+
+### Step 2: Get user profile
 
 **Request**
 
