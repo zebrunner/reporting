@@ -13,8 +13,6 @@
 |:---:|:------:|:---------:|
 |refreshToken|String|token obtained by generation|
 
----
-
 **Response**
 
 ```json
@@ -26,6 +24,7 @@
   "tenant": "zafira"
 }
 ```
+
 |Field   | Datatype |  Description |
 |:--------:|:----------:|:----------:|
 |type| String   | Type of authorization |
@@ -38,37 +37,16 @@
 
 **Request**
 
-**Method:** GET,
-**URI:** ~/zafira-ws/api/users/profile?username={username}
+**GET: /zafira-ws/api/users/profile?username={username}**
+
 **Headers:**
 
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
 |Authorization| String   | Type + Access token |
 
-
-**Data:** No
-
-**URI example:** ~/zafira-ws/api/users/profile?username=qpsdemo
-
 **Response**
 
-**Status code:** 200
-**Response Body:**
-
-|Field   | Datatype |  Description |
-|:--------:|:----------:|:----------:|
-|id| int   | Unique user identifier |
-|username| String   | Credentials |
-|password| String   | Credentials|
-|roles| String array   | user roles("ROLE_ADMIN", "ROLE_ADMIN", "ROLE_SUPERADMIN") |
-|permissions|Object List   | List of user permissions |
-|preferences|Object List   | List of user preferences |
-|lastLogin|Date   | Date of users last login |
-|source|Object   | "INTERNAL", "LDAP" |
-|status|Object   | Logged in or not("ACTIVE","INACTIVE") |
-
-**Body example:**
 ```json
 {
   "id":2,
@@ -94,6 +72,18 @@
  "status":"ACTIVE"
  }
 ```
+
+|Field   | Datatype |  Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique user identifier |
+|username| String   | Credentials |
+|password| String   | Credentials|
+|roles| String array   | user roles("ROLE_ADMIN", "ROLE_ADMIN", "ROLE_SUPERADMIN") |
+|permissions|Object List   | List of user permissions |
+|preferences|Object List   | List of user preferences |
+|lastLogin|Date   | Date of users last login |
+|source|Object   | "INTERNAL", "LDAP" |
+|status|Object   | Logged in or not("ACTIVE","INACTIVE") |
 
 #### Step 3: Create a test suite
 
