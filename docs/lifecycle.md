@@ -1,9 +1,9 @@
 # Lifecycle
 ### Step 1: Refresh token
 
-**Request**
-
 **POST: /zafira-ws/api/auth/refresh**
+
+**Request**
 ```json
 {
   "refreshToken": "eyJhbGciOiJIUzUxMiJ9..."
@@ -14,7 +14,6 @@
 |refreshToken|String|token obtained by generation|
 
 **Response**
-
 ```json
 {
   "type": "Bearer",
@@ -24,31 +23,27 @@
   "tenant": "zafira"
 }
 ```
-
 |Field   | Datatype |  Description |
 |:--------:|:----------:|:----------:|
 |type| String   | Type of authorization |
 |accessToken| String   |  Refreshed token we need for headers |
 |expiresIn| int   | Expiration time of new token|
 |refreshToken| String   | Token |
-|tenant|String|Nodename of kubernetes|
+|tenant|String|Tenant name|
 
 ---
 
 ### Step 2: Get user profile
 
-**Request**
-
 **GET: /zafira-ws/api/users/profile?username={username}**
 
-**Headers:**
+**Headers:** Authorization=Bearer {accessToken}
 
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   | Type + Access token |
+**Request**
+```json
+```
 
 **Response**
-
 ```json
 {
   "id":2,
@@ -74,7 +69,6 @@
  "status":"ACTIVE"
  }
 ```
-
 |Field   | Datatype |  Description |
 |:--------:|:----------:|:----------:|
 |id| int   | Unique user identifier |
@@ -87,13 +81,13 @@
 |source|Object   | "INTERNAL", "LDAP" |
 |status|Object   | Logged in or not("ACTIVE","INACTIVE") |
 
-#### Step 3: Create a test suite
+---
+
+### Step 3: Create a test suite
 
 **Request**
 
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests/suites
-**Headers:**
+**POST: /zafira-ws/api/tests/suites**
 
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
