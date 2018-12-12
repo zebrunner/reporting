@@ -122,26 +122,11 @@ None
 
 #### Step 4: Create a job
 
+**POST: /zafira-ws/api/jobs**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/jobs
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   | Type + Access token |
-
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|jenkinsHost| String   | Jenkins host |
-|jobURL| String   | Job url |
-|name| String   | Job name|
-|userId| int   |Unique test suite identifier |
-
-**Body example:**
 ```json
 {
    "jenkinsHost": "ExampleJenkinsHost",
@@ -150,21 +135,14 @@ None
    "userId": 2
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique job identifier|
 |jenkinsHost| String   | Jenkins host |
 |jobURL| String   | Job url |
-|name| String   | Job name |
-|userId| int   | Unique user identifier|
+|name| String   | Job name|
+|userId| int   |Unique test suite identifier |
 
-**Body example:**
+**Response**
 ```json
 {
   "id": 8,
@@ -174,31 +152,23 @@ None
   "userId": 2
 }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique job identifier|
+|jenkinsHost| String   | Jenkins host |
+|jobURL| String   | Job url |
+|name| String   | Job name |
+|userId| int   | Unique user identifier|
+
+---
 
 #### Step 5: Create a test run
 
-Registers a test run on Zafira UI
+**POST: /zafira-ws/api/tests/runs**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests/runs
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   | Type + Access token|
-
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|jobId| int   |  Unique job identifier |
-|testSuiteId| int   | Unique test suite identifier  |
-|buildNumber| int   | Build number|
-|startedBy| String   | One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN" |
-|driverMode| String  | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE" |
-
-**Body example:**
 ```json
 {
    "buildNumber": 0,
@@ -208,27 +178,15 @@ Registers a test run on Zafira UI
    "testSuiteId": 8
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique test run identifier|
-|ciRunId| String   | CI run id |
-|jobId| int   | Job id |
-|testSuiteId| int   | Unique test suite identifier |
-|buildNumber| int   | Build number |
-|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps |
-|driverMode| String   | Optional value : "METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
-|knownIssue| bool   | Failing reason in ticket|
-|reviewed|bool| Shows whether a test has been reviewed |
-|status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
-|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
+|jobId| int   |  Unique job identifier |
+|testSuiteId| int   | Unique test suite identifier  |
+|buildNumber| int   | Build number|
+|startedBy| String   | One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN" |
+|driverMode| String  | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE" |
 
-**Body example:**
+**Response**
 ```json
 {
    "id": 62,
@@ -244,29 +202,29 @@ Registers a test run on Zafira UI
    "reviewed": false
  }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique test run identifier|
+|ciRunId| String   | CI run id |
+|jobId| int   | Job id |
+|testSuiteId| int   | Unique test suite identifier |
+|buildNumber| int   | Build number |
+|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps |
+|driverMode| String   | Optional value : "METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
+|knownIssue| bool   | Failing reason in ticket|
+|reviewed|bool| Shows whether a test has been reviewed |
+|status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
+|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
+
+---
 
 #### Step 6: Create a test case
 
+**POST: /zafira-ws/api/tests/cases**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests/cases
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   |   Type + Access token |
-
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|primaryOwnerId| int   | Unique identifier of test case creator |
-|testClass| String   | Name of test class |
-|testMethod| String   | Name of test method|
-|testSuiteId| int   | Unique test suite identifier |
-
-**Body example:**
 ```json
 {
    "primaryOwnerId": 2,
@@ -275,21 +233,14 @@ Registers a test run on Zafira UI
    "testSuiteId": 8
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique identifier of test case|
 |primaryOwnerId| int   | Unique identifier of test case creator |
-|testClass| String   | Name of test class  |
-|testMethod| String   | Name of test method |
+|testClass| String   | Name of test class |
+|testMethod| String   | Name of test method|
 |testSuiteId| int   | Unique test suite identifier |
 
-**Body example:**
+**Response**
 ```json
 {
    "id": 23,
@@ -299,30 +250,23 @@ Registers a test run on Zafira UI
    "primaryOwnerId": 2
  }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique identifier of test case|
+|primaryOwnerId| int   | Unique identifier of test case creator |
+|testClass| String   | Name of test class  |
+|testMethod| String   | Name of test method |
+|testSuiteId| int   | Unique test suite identifier |
+
+---
 
 #### Step 7: Start a test
 
-Registers a test start on Zafira UI
+**POST: /zafira-ws/api/tests**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   |   Type + Access token |
-
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|testRunId| int   | Unique test run identifier |
-|testCaseId| int   | Unique identifier of test case |
-|name|String| Test name  |
-|status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
-
-**Body example:**
 ```json
 {
    "name": "ExampleTestName",
@@ -331,26 +275,14 @@ Registers a test start on Zafira UI
    "testRunId": 62
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique test identifier|
-|name|String|Test name |
-|status|String|Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
-|testRunId| int   | Unique test run identifier|
-|testCaseId| int   |  Unique identifier of test case |
-|retry|int| Shows the count the test ran |
-|knownIssue| bool   | Failing reason in ticket |
-|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
-|needRerun|bool| Flag that indicates whether a reran is needed |
-|artifacts| Object array| List of test artifacts(logs, screenshots etc) |
+|testRunId| int   | Unique test run identifier |
+|testCaseId| int   | Unique identifier of test case |
+|name|String| Test name  |
+|status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
 
-**Body example:**
+**Response**
 ```json
 {
   "id": 222,
@@ -365,37 +297,28 @@ Registers a test start on Zafira UI
   "artifacts": []
 }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique test identifier|
+|name|String|Test name |
+|status|String|Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")  |
+|testRunId| int   | Unique test run identifier|
+|testCaseId| int   |  Unique identifier of test case |
+|retry|int| Shows the count the test ran |
+|knownIssue| bool   | Failing reason in ticket |
+|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
+|needRerun|bool| Flag that indicates whether a reran is needed |
+|artifacts| Object array| List of test artifacts(logs, screenshots etc) |
+
+---
 
 #### Step 8: Finish a test
 
+**POST: /zafira-ws/api/tests/{testId}/finish**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests/{testId}/finish
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   |  Type + Access token |
-
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|id| int   |  Unique test identifier  |
-|name|String| Test name |
-|status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
-|testRunId| int   | Unique test run identifier |
-|testCaseId| int   |  Unique identifier of test case|
-|retry|int| Shows the count the test ran |
-|knownIssue| bool   | Failing reason in ticket   |
-|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
-|needRerun|bool| Flag that indicates whether a reran is needed |
-|artifacts|Object array| List of test artifacts(logs, screenshots etc)|
-
-**Request URI example:** ~/zafira-ws/api/tests/runs/222/finish
-
-**Body example:**
 ```json
 {
    "id": 222,
@@ -410,26 +333,20 @@ Registers a test start on Zafira UI
    "artifacts": []
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique test identifier |
-|name|String|Test name |
+|id| int   |  Unique test identifier  |
+|name|String| Test name |
 |status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
-|testRunId| int   | Unique test run identifier|
-|testCaseId| int   | Unique identifier of test case|
-|retry|int| Shows the count the test ran|
-|knownIssue| bool   |Failing reason in ticket |
-|blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
+|testRunId| int   | Unique test run identifier |
+|testCaseId| int   |  Unique identifier of test case|
+|retry|int| Shows the count the test ran |
+|knownIssue| bool   | Failing reason in ticket   |
+|blocker| bool   | Unexpected behavior that keeps you from performing all test case steps  |
 |needRerun|bool| Flag that indicates whether a reran is needed |
 |artifacts|Object array| List of test artifacts(logs, screenshots etc)|
 
-**Body example:**
+**Response**
 ```json
 {
    "id": 222,
@@ -444,44 +361,32 @@ Registers a test start on Zafira UI
    "artifacts": []
 }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique test identifier |
+|name|String|Test name |
+|status|String| Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED") |
+|testRunId| int   | Unique test run identifier|
+|testCaseId| int   | Unique identifier of test case|
+|retry|int| Shows the count the test ran|
+|knownIssue| bool   |Failing reason in ticket |
+|blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
+|needRerun|bool| Flag that indicates whether a reran is needed |
+|artifacts|Object array| List of test artifacts(logs, screenshots etc)|
+
+---
 
 #### Step 9: Finish a test run
 
+
+**POST: /zafira-ws/api/tests/runs/{testRunId}/finish**
+
+**Headers:** Authorization=Bearer {accessToken}
+
 **Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/tests/runs/{testRunId}/finish
-**Headers:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String |  Type + Access token |
-
-**URI example:** ~/zafira-ws/api/tests/runs/62/finish
-
-**Body:** No
-
+None
 
 **Response**
-
-**Status code:** 200
-**Response Body:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|id| int   | Unique test run identifier|
-|ciRunId| String   | CI run id |
-|testSuiteId| int   |Unique test suite identifier |
-|status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")|
-|jobId| int   | Job id|
-|buildNumber| int   | Build number |
-|startedBy|String| One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN"|
-|knownIssue| bool   | Failing reason in ticket|
-|blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
-|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
-|reviewed|bool| Shows whether a test has been reviewed|
-
-**Body example:**
 ```json
 {
   "id": 62,
@@ -496,3 +401,17 @@ Registers a test start on Zafira UI
   "driverMode": "METHOD_MODE",
   "reviewed": false
 }
+```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique test run identifier|
+|ciRunId| String   | CI run id |
+|testSuiteId| int   |Unique test suite identifier |
+|status| String   | Test run status ("UNKNOWN", "IN_PROGRESS", "PASSED", "FAILED", "SKIPPED", "ABORTED", "QUEUED")|
+|jobId| int   | Job id|
+|buildNumber| int   | Build number |
+|startedBy|String| One of the values : "SCHEDULER", "UPSTREAM_JOB", "HUMAN"|
+|knownIssue| bool   | Failing reason in ticket|
+|blocker| bool   |Unexpected behavior that keeps you from performing all test case steps |
+|driverMode| String   | One of the values :  METHOD_MODE", "CLASS_MODE", "SUITE_MODE"|
+|reviewed|bool| Shows whether a test has been reviewed|
