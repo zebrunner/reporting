@@ -3,6 +3,7 @@ pages:
     - Overview: index.md
     - Getting started: getting_started.md
     - Client setup: client_setup.md
+    - Lifecycle: lifecycle.md
     - Integrations: integrations.md
     - Profile: profile.md
     - Dashboards: dashboards.md
