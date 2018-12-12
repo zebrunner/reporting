@@ -40,8 +40,7 @@
 **Headers:** Authorization=Bearer {accessToken}
 
 **Request**
-```json
-```
+None
 
 **Response**
 ```json
@@ -85,23 +84,11 @@
 
 ### Step 3: Create a test suite
 
-**Request**
-
 **POST: /zafira-ws/api/tests/suites**
 
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|Authorization| String   | Type + Access token |
+**Headers:** Authorization=Bearer {accessToken}
 
-**Data:**
-
-|Field   | Datatype | Description |
-|:--------:|:----------:|:----------:|
-|userId| int   | Unique user identifier|
-|fileName| String   | Name of XML suite|
-|name| String   | Suite name |
-
-**Body example:**
+**Request**
 ```json
 {
    "fileName": "ExampleFileName",
@@ -109,20 +96,13 @@
    "userId": 2
  }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype | Description |
 |:--------:|:----------:|:----------:|
-|id| int   | Unique test suite identifier|
-|name| String   | Suite name|
-|fileName| String   | Name of XML suite|
 |userId| int   | Unique user identifier|
+|fileName| String   | Name of XML suite|
+|name| String   | Suite name |
 
-**Body example:**
+**Response**
 ```json
 {
   "id": 8,
@@ -131,6 +111,14 @@
   "userId": 2
 }
 ```
+|Field   | Datatype | Description |
+|:--------:|:----------:|:----------:|
+|id| int   | Unique test suite identifier|
+|name| String   | Suite name|
+|fileName| String   | Name of XML suite|
+|userId| int   | Unique user identifier|
+
+---
 
 #### Step 4: Create a job
 
