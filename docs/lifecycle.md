@@ -2,7 +2,7 @@
 
 Schema below illustrates general test run flow that should be followed for new listeners implmentation:
 <p align="center">
-  <img width="700px" height="600px" src="img/lifecycle.png">
+  <img width="700px" height="600px" src="../img/lifecycle.png">
 </p>
 
 ---
