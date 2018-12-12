@@ -1,7 +1,6 @@
-# Zafira's minimal http flow
----
-Step 1: Refresh token
----
+# Lifecycle
+
+#### Step 1: Refresh token
 
 **Request**
 
@@ -45,9 +44,7 @@ Step 1: Refresh token
 }
 ```
 
----
-Step 2: Get user profile
----
+#### Step 2: Get user profile
 
 **Request**
 
@@ -108,9 +105,8 @@ Step 2: Get user profile
  }
 ```
 
----
-Step 3: Create a test suite
----
+#### Step 3: Create a test suite
+
 **Request**
 
 **Method:** POST,
@@ -160,9 +156,8 @@ Step 3: Create a test suite
 }
 ```
 
----
-Step 4: Create a job
----
+#### Step 4: Create a job
+
 **Request**
 
 **Method:** POST,
@@ -216,9 +211,8 @@ Step 4: Create a job
 }
 ```
 
----
-Step 5: Create a test run
----
+#### Step 5: Create a test run
+
 Registers a test run on Zafira UI
 **Request**
 
@@ -287,9 +281,8 @@ Registers a test run on Zafira UI
  }
 ```
 
----
-Step 6: Create a test case
----
+#### Step 6: Create a test case
+
 **Request**
 
 **Method:** POST,
@@ -343,9 +336,8 @@ Step 6: Create a test case
  }
 ```
 
----
-Step 7: Start a test
----
+#### Step 7: Start a test
+
 Registers a test start on Zafira UI
 **Request**
 
@@ -410,9 +402,8 @@ Registers a test start on Zafira UI
 }
 ```
 
----
-Step 8: Finish a test
----
+#### Step 8: Finish a test
+
 **Request**
 
 **Method:** POST,
@@ -489,9 +480,9 @@ Step 8: Finish a test
    "artifacts": []
 }
 ```
----
-Step 9: Finish a test run
----
+
+#### Step 9: Finish a test run
+
 **Request**
 
 **Method:** POST,
