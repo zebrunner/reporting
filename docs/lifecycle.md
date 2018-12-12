@@ -1,30 +1,28 @@
 # Lifecycle
+### Step 1: Refresh token
 
-#### Step 1: Refresh token
-
-**Request**
-
-**Method:** POST,
-**URI:** ~/zafira-ws/api/auth/refresh
-**Headers:** No
-**Data:**
-
+**POST: /zafira-ws/api/auth/refresh**
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzUxMiJ9..."
+}
+```
 |Field|Datatype|Description|
 |:---:|:------:|:---------:|
 |refreshToken|String|token obtained by generation|
 
-**Body example:**
+
+
+#### Response
 ```json
 {
-  "refreshToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicGFzc3dvcmQiOiJPUG1zRDFrbTdvaGlIOGtWNjJ3TmRRb3Awb3BCWlBkdiIsInRlbmFudCI6InphZmlyYSIsImV4cCI6MTMwMzkzNjM5OTQ5fQ.pE7d-yr14QxlGSDaBQOn7mRR-2SGgr8RXvdTtZU3JHOEDw3QIVyEJYp-2sTlYiHzG5T_mfuvk7QnccdQZB0CHA"
+  "type": "Bearer",
+  "accessToken": "eyJhbGciOiJIUzUMiJ9...",
+  "refreshToken": "eyJhbGciOiJIUzUxMi...",
+  "expiresIn": 300,
+  "tenant": "zafira"
 }
 ```
-
-**Response**
-
-**Status code:** 200
-**Response Body:**
-
 |Field   | Datatype |  Description |
 |:--------:|:----------:|:----------:|
 |type| String   | Type of authorization |
@@ -32,17 +30,6 @@
 |expiresIn| int   | Expiration time of new token|
 |refreshToken| String   | Token |
 |tenant|String|Nodename of kubernetes|
-
-**Body example:**
-```json
-{
-  "type": "Bearer",
-  "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcm5hbWUiOiJxcHNkZW1vIiwiZ3JvdXBJZHMiOlszXSwidGVuYW50IjoiemFmaXJhIiwiZXhwIjoxNTQ0NjM5MTQyfQ.H4JE7TEUodDEXpfipP7NjDWE0ORjGOCFgSFlQ0X5LfcUSVmQbebazh7C0_UBVmIZeBb6hqLNwEtqW07-mchwrQ",
-  "refreshToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicGFzc3dvcmQiOiJPUG1zRDFrbTdvaGlIOGtWNjJ3TmRRb3Awb3BCWlBkdiIsInRlbmFudCI6InphZmlyYSIsImV4cCI6MTU0NTIyNTk0Mn0.DcYuX4gQYuLeCFqf-fyZhr2Oe0D0ebsHmHPFyqFVWrlV6WtNEfDNjmjkm4XPumfcMD9lytWzzGwGecan3APf2g",
-  "expiresIn": 300,
-  "tenant": "zafira"
-}
-```
 
 #### Step 2: Get user profile
 
