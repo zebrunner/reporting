@@ -1,4 +1,12 @@
 # Lifecycle
+
+Schema below illustrates general test run flow that should be followed for new listeners implmentation:
+<p align="center">
+  <img width="700px" height="600px" src="img/lifecycle.png">
+</p>
+
+---
+
 ### Step 1: Refresh token
 
 **POST: /zafira-ws/api/auth/refresh**
@@ -120,7 +128,7 @@ None
 
 ---
 
-#### Step 4: Create a job
+### Step 4: Create a job
 
 **POST: /zafira-ws/api/jobs**
 
@@ -162,7 +170,7 @@ None
 
 ---
 
-#### Step 5: Create a test run
+### Step 5: Create a test run
 
 **POST: /zafira-ws/api/tests/runs**
 
@@ -218,7 +226,7 @@ None
 
 ---
 
-#### Step 6: Create a test case
+### Step 6: Create a test case
 
 **POST: /zafira-ws/api/tests/cases**
 
@@ -260,7 +268,7 @@ None
 
 ---
 
-#### Step 7: Start a test
+### Step 7: Start a test
 
 **POST: /zafira-ws/api/tests**
 
@@ -312,7 +320,7 @@ None
 
 ---
 
-#### Step 8: Finish a test
+### Step 8: Finish a test
 
 **POST: /zafira-ws/api/tests/{testId}/finish**
 
@@ -376,8 +384,7 @@ None
 
 ---
 
-#### Step 9: Finish a test run
-
+### Step 9: Finish a test run
 
 **POST: /zafira-ws/api/tests/runs/{testRunId}/finish**
 
