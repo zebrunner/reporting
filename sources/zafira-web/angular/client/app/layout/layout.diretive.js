@@ -5,7 +5,7 @@
         // quickview
         .directive('toggleQuickview', toggleQuickview)
 
-        .directive('uiPreloader', ['$rootScope', uiPreloader]);
+        .directive('uiPreloader', ['$rootScope', '$transitions', uiPreloader]);
 
     function toggleQuickview() {
         var directive = {
@@ -36,25 +36,26 @@
         }
     }
 
-    function uiPreloader($rootScope) {
+    function uiPreloader($rootScope, $transitions) {
         return {
             restrict: 'A',
             template:'<span class="bar"></span>',
             link: function(scope, el, attrs) {        
                 el.addClass('preloaderbar hide');
-                scope.$on('$stateChangeStart', function(event) {
+
+                $transitions.onStart({}, function() {
                     el.removeClass('hide').addClass('active');
                 });
-                scope.$on('$stateChangeSuccess', function( event, toState, toParams, fromState ) {
-                    event.targetScope.$watch('$viewContentLoaded', function(){
+                $transitions.onSuccess({}, function() {
+                    $rootScope.$watch('$viewContentLoaded', function() {
                         el.addClass('hide').removeClass('active');
-                    })
+                    });
                 });
 
-                scope.$on('preloader:active', function(event) {
+                scope.$on('preloader:active', function() {
                     el.removeClass('hide').addClass('active');
                 });
-                scope.$on('preloader:hide', function(event) {
+                scope.$on('preloader:hide', function() {
                     el.addClass('hide').removeClass('active');
                 });                
             }

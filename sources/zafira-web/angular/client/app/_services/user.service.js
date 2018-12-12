@@ -23,11 +23,16 @@
         service.updateUserPreferences = updateUserPreferences;
         service.resetUserPreferencesToDefault = resetUserPreferencesToDefault;
         service.deleteUserPreferences = deleteUserPreferences;
+        service.fetchUserProfile = fetchUserProfile;
 
         return service;
 
         function getUserProfile() {
         	return $httpMock.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess, UtilService.handleError('Unable to get user profile'));
+        }
+
+        function fetchUserProfile() {
+            return $httpMock.get(API_URL + '/api/users/profile').then(UtilService.handleSuccess);
         }
 
         function getExtendedUserProfile() {

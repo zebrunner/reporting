@@ -8,7 +8,6 @@
     "angular-aria": "~1.6.0",
     "angular-messages": "~1.6.0",
     "angular-cookies": "~1.6.0",
-    "angular-ui-router": "~0.4.2",
     "angular-translate": "~2.15.1",
     "angular-translate-loader-static-files": "~2.15.1",
     "angular-scroll": "~1.0.0",
@@ -33,7 +32,8 @@
     "md-date-range-picker": "^0.7.2",
     "ng-img-crop": "ngImgCrop#^0.3.2",
     "elasticsearch": "^15.0.0",
-    "jszip": "Stuk/jszip#^3.1.5"
+    "jszip": "Stuk/jszip#^3.1.5",
+    "angular-ui-router": "^1.0.20"
   },
   "devDependencies": {
     "bootstrap-sass-official": "~3.3.0"

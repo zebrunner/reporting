@@ -1075,18 +1075,34 @@
 	    return angular.equals({}, object);
 	  }
 	}])
-    .run(['$rootScope', '$location', '$cookies', '$http',
-            function($rootScope, $location, $cookies, $http)
-            {
-	            $rootScope.$on('$locationChangeStart', function (event, next, current) {
-	                // redirect to login page if not logged in and trying to access a restricted page
-	                var restrictedPage = $.inArray($location.path(), ['/signin']) === -1;
-	                var loggedIn = $rootScope.globals || $cookies.get('Access-Token'); //TODO: @Boniara: check if it is old unneeded code: "$cookies.get('Access-Token')"
-	                if (restrictedPage && !loggedIn)
-	                {
-	                    $location.path('/signin');
-	                }
-	            });
+    .run(['$rootScope',
+        '$location',
+        '$cookies',
+        '$http',
+        '$transitions',
+        'AuthService',
+        '$document',
+        'UserService',
+        '$state',
+        '$timeout',
+        function($rootScope, $location, $cookies, $http, $transitions, AuthService,
+                 $document, UserService, $state, $timeout) {
+
+                $transitions.onStart({}, function(trans) {
+                    var toState = trans.to();
+                    var loginRequired = !!(toState.data && toState.data.requireLogin);
+
+                    //Redirect to login page if authorization is required and user is not authorized
+                    if (loginRequired && !AuthService.IsLoggedIn()) {
+                        return UserService.fetchUserProfile()
+                            .catch(function() {
+                                return trans.router.stateService.target('signin', {referrer: toState.name});
+                            });
+                    }
+                });
+                $transitions.onSuccess({}, function() {
+                    $document.scrollTo(0, 0);
+                });
             }
       ])
 })();

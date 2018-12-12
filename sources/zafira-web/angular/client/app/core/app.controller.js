@@ -149,20 +149,6 @@
                 });
             };
 
-            $rootScope.$on("$stateChangeStart", function (event, currentRoute, previousRoute) {
-                var loginRequired = currentRoute.data && currentRoute.data.requireLogin;
-
-                //Redirect to login page if authorization is required and user is not authorized
-                if (loginRequired && !AuthService.IsLoggedIn()) {
-                    event.preventDefault();
-                    $state.go('signin', {referrer: currentRoute.name});
-                }
-            });
-
-            $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
-	            $document.scrollTo(0, 0);
-	        });
-
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, payload){
                 AuthService.SetCredentials(payload.auth);
                 $scope.initSession();
