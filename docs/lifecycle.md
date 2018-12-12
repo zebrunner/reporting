@@ -1,13 +1,7 @@
 # Zafira's minimal http flow
 ---
-Step 1: Preconditions and refresh token
+Step 1: Refresh token
 ---
-
-First, login into Zafira under your creds **via UI**. Then navigate to user settings (just click on your username on
-top-right corner of the screen and click **"My profile"** button), where you can find **"Access token"** section.
-Click on **"Generate"** button and you will obtain access token, whish expires in 5 hours.
-
-Then, refresh your access token by **http request**, like this:
 
 **Request**
 
