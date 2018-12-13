@@ -32,6 +32,7 @@
         ,'textAngular'
         ,'gridstack-angular'
         ,'ngMaterialDateRangePicker'
+        ,'angular-jwt'
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
         $anchorScrollProvider.disableAutoScrolling();
@@ -1083,21 +1084,33 @@
         'AuthService',
         '$document',
         'UserService',
-        '$state',
-        '$timeout',
+        '$q',
         function($rootScope, $location, $cookies, $http, $transitions, AuthService,
-                 $document, UserService, $state, $timeout) {
+                 $document) {
 
-                $transitions.onStart({}, function(trans) {
+                $transitions.onBefore({}, function(trans) {
                     var toState = trans.to();
                     var loginRequired = !!(toState.data && toState.data.requireLogin);
+                    var onlyGuests = !!(toState.data && toState.data.onlyGuests);
+                    var isAuthorized = AuthService.isAuthorized();
 
                     //Redirect to login page if authorization is required and user is not authorized
-                    if (loginRequired && !AuthService.IsLoggedIn()) {
-                        return UserService.fetchUserProfile()
-                            .catch(function() {
-                                return trans.router.stateService.target('signin', {referrer: toState.name});
-                            });
+                    if (loginRequired && !isAuthorized) {
+                        return trans.router.stateService.target('signin', {referrer: toState.name});
+                    } else if (onlyGuests) {
+                        if (isAuthorized) {
+                            if ($rootScope.currentUser) {
+                                return trans.router.stateService.target('dashboard', {id: $rootScope.currentUser.defaultDashboardId});
+                            } else {
+                                var authData = AuthService.getAuthData();
+
+                                if (authData) {
+                                    $rootScope.$broadcast('event:auth-loginSuccess', {auth: authData});
+                                }
+
+                                return false;
+                            }
+                        }
                     }
                 });
                 $transitions.onSuccess({}, function() {

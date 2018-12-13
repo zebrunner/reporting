@@ -177,6 +177,7 @@
 	                                AuthIntercepter.loginConfirmed();
 	                            } else if ($state.current.name !== 'signup') {
 	                                AuthIntercepter.loginCancelled();
+	                                AuthService.ClearCredentials();
 	                                $state.go("signin", {referrer: $state.current.name});
 	                            }
 	                        });

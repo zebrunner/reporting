@@ -32,19 +32,45 @@
                         templateUrl: 'app/_auth/signin.html',
                         params: {
                             referrer: null
+                        },
+                        data: {
+                            onlyGuests: true,
+                            classes: 'body-wide body-auth'
                         }
                     })
                     .state('signup', {
                         url: '/signup',
-                        templateUrl: 'app/_auth/signup.html'
+                        templateUrl: 'app/_auth/signup.html',
+                        data: {
+                            onlyGuests: true,
+                            classes: 'body-wide body-auth'
+                        }
+                    })
+                    .state('logout', {
+                        url: '/logout',
+                        controller: function($state, AuthService) {
+                            AuthService.ClearCredentials();
+                            $state.go('signin');
+                        },
+                        data: {
+                            requireLogin: true
+                        }
                     })
                     .state('forgotPassword', {
                         url: '/password/forgot',
-                        templateUrl: 'app/_auth/forgot-password.html'
+                        templateUrl: 'app/_auth/forgot-password.html',
+                        data: {
+                            onlyGuests: true,
+                            classes: 'body-wide body-auth'
+                        }
                     })
                     .state('resetPassword', {
                         url: '/password/reset',
-                        templateUrl: 'app/_auth/reset-password.html'
+                        templateUrl: 'app/_auth/reset-password.html',
+                        data: {
+                            onlyGuests: true,
+                            classes: 'body-wide body-auth'
+                        }
                     })
                     .state('users/profile', {
                         url: '/users/profile',
@@ -127,11 +153,17 @@
                     })
                     .state('404', {
                         url: '/404',
-                        templateUrl: 'app/page/404.html'
+                        templateUrl: 'app/page/404.html',
+                        data: {
+                            classes: 'body-wide body-err'
+                        }
                     })
                     .state('500', {
                         url: '/500',
-                        templateUrl: 'app/page/500.html'
+                        templateUrl: 'app/page/500.html',
+                        data: {
+                            classes: 'body-wide body-err'
+                        }
                     });
 
                 $urlRouterProvider
