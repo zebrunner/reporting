@@ -73,7 +73,8 @@
                         url: '/signin',
                         templateUrl: 'app/_auth/signin.html',
                         params: {
-                            referrer: null
+                            referrer: null,
+                            referrerParams: null
                         },
                         data: {
                             onlyGuests: true,

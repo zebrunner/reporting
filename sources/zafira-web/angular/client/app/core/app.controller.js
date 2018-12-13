@@ -113,9 +113,11 @@
                             $window.location.href = bufferedRequests[0].location;
                         } else {
                             if (payload.referrer) {
-                               $state.go(payload.referrer);
+                                var params = payload.referrerParams ? payload.referrerParams : {};
+
+                               $state.go(payload.referrer, params);
                             } else {
-                                $state.go('dashboard', {id: user.id});
+                                $state.go('dashboard', {id: user.defaultDashboardId});
                             }
                         }
                     });
@@ -131,11 +133,11 @@
 	                            } else if ($state.current.name !== 'signup') {
 	                                AuthIntercepter.loginCancelled();
 	                                AuthService.ClearCredentials();
-	                                $state.go("signin", {referrer: $state.current.name});
+                                    $state.go("signin", {referrer: $state.current.name, referrerParams: $state.current.params});
 	                            }
 	                        });
 		        	} else if ($state.current.name !== 'signup') {
-	                    $state.go('signin', {referrer: $state.current.name});
+	                    $state.go('signin', {referrer: $state.current.name, referrerParams: $state.current.params});
 		        	}
 	        });
 

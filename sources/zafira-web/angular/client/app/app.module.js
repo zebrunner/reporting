@@ -1084,23 +1084,24 @@
         'AuthService',
         '$document',
         'UserService',
-        '$q',
         function($rootScope, $location, $cookies, $http, $transitions, AuthService,
-                 $document) {
+                 $document, UserService) {
 
                 $transitions.onBefore({}, function(trans) {
                     var toState = trans.to();
+                    var toStateParams = trans.params();
                     var loginRequired = !!(toState.data && toState.data.requireLogin);
                     var onlyGuests = !!(toState.data && toState.data.onlyGuests);
                     var isAuthorized = AuthService.isAuthorized();
+                    var currentUser = UserService.getCurrentUser();
 
                     //Redirect to login page if authorization is required and user is not authorized
                     if (loginRequired && !isAuthorized) {
-                        return trans.router.stateService.target('signin', {referrer: toState.name});
+                        return trans.router.stateService.target('signin', {referrer: toState.name, referrerParams: toStateParams});
                     } else if (onlyGuests) {
                         if (isAuthorized) {
-                            if ($rootScope.currentUser) {
-                                return trans.router.stateService.target('dashboard', {id: $rootScope.currentUser.defaultDashboardId});
+                            if (currentUser) {
+                                return trans.router.stateService.target('dashboard', {id: currentUser.defaultDashboardId});
                             } else {
                                 var authData = AuthService.getAuthData();
 
