@@ -239,7 +239,7 @@ public class TestRunService
 		TestRun testRun;
 		// Check if testRun with provided ci_run_id exists in DB (mostly for queued and aborted without execution)
 		TestRun existingRun = getTestRunByCiRunId(queueTestRunParams.getCiRunId());
-		if(existingRun == null || Status.QUEUED.equals(existingRun.getStatus()))
+		if(existingRun == null || Status.QUEUED.equals(existingRun.getStatus()) || Status.ABORTED.equals(existingRun.getStatus()))
 		{
 			testRun = getLatestJobTestRunByBranchAndJobName(queueTestRunParams.getBranch(),
 					queueTestRunParams.getJobName());
