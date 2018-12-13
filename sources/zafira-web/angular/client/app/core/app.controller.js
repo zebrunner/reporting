@@ -65,35 +65,6 @@
                 });
 	        };
 
-	        $scope.initExtendedUserProfile = function () {
-                return $q(function(resolve, reject) {
-                    UserService.getExtendedUserProfile().then(function(rs) {
-                        if(rs.success)
-                        {
-                            $rootScope.currentUser = rs.data["user"];
-                            $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
-                            $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
-                            $rootScope.currentUser.defaultDashboardId= rs.data["defaultDashboardId"];
-                            if($rootScope.currentUser.defaultDashboardId === null) {
-                                alertify.warning("Default Dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
-                            if($rootScope.currentUser.pefrDashboardId === null) {
-                                alertify.error("'User Performance' dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.personalDashboardId = rs.data["personalDashboardId"];
-                            if($rootScope.currentUser.personalDashboardId === null) {
-                                alertify.error("'Personal' dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.stabilityDashboardId = rs.data["stabilityDashboardId"];
-                            resolve(rs.data['defaultDashboardId']);
-                        } else {
-                            reject(rs);
-                        }
-                    });
-                })
-            };
-
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
 	            switch(data) {
@@ -130,42 +101,24 @@
                 }
             });
 
-            $rootScope.setDefaultPreferences = function(userPreferences){
-                userPreferences.forEach(function(userPreference) {
-                    switch(userPreference.name) {
-                        case 'DEFAULT_DASHBOARD':
-                            $rootScope.currentUser.defaultDashboard = userPreference.value;
-                            break;
-                        case 'REFRESH_INTERVAL':
-                            $rootScope.currentUser.refreshInterval = userPreference.value;
-                            break;
-                        case 'THEME':
-                            $rootScope.currentUser.theme = userPreference.value;
-                            $scope.main.skin = userPreference.value;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-            };
-
 	        $rootScope.$on("event:auth-loginSuccess", function(ev, payload){
                 AuthService.SetCredentials(payload.auth);
                 $scope.initSession();
-                $scope.initExtendedUserProfile().then(function(rs) {
-                    var bufferedRequests = httpBuffer.getBuffer();
+                UserService.initCurrentUser()
+                    .then(function(user) {
+                        var bufferedRequests = httpBuffer.getBuffer();
 
-                    if (bufferedRequests && bufferedRequests.length) {
-                        $window.location.href = bufferedRequests[0].location;
-                    } else {
-                        if (payload.referrer) {
-                           $state.go(payload.referrer);
+                        $scope.main.skin = user.theme;
+                        if (bufferedRequests && bufferedRequests.length) {
+                            $window.location.href = bufferedRequests[0].location;
                         } else {
-                            $state.go('dashboard', {id: rs});
+                            if (payload.referrer) {
+                               $state.go(payload.referrer);
+                            } else {
+                                $state.go('dashboard', {id: user.id});
+                            }
                         }
-                    }
-                }, function (rs) {
-                });
+                    });
 	        });
 
             $rootScope.$on('event:auth-loginRequired', function() {
@@ -221,13 +174,19 @@
                     });
                 $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
 	            if ($rootScope.globals.auth) {
+                    var currentUser;
+
                     $scope.initSession();
-                    $scope.initExtendedUserProfile()
-                    .then(function (rs) {
-                        if ($state.current.name === 'dashboards') {
-                            $state.go('dashboard', {id: rs});
-                        }
-                    });
+
+                    currentUser = UserService.getCurrentUser();
+                    if (!currentUser) {
+                        UserService.initCurrentUser()
+                            .then(function (user) {
+                                $scope.main.skin = user.theme;
+                            });
+                    } else {
+                        $scope.main.skin = currentUser.theme;
+                    }
 	            }
                  getVersion();
 	        })();

@@ -11,6 +11,31 @@
 	                    templateUrl: 'app/_dashboards/list.html',
                         data: {
                             requireLogin: true
+                        },
+                        params: {
+                            currentUser: null
+                        },
+                        resolve: {
+                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {
+                                var currentUser = UserService.getCurrentUser();
+
+                                if (!currentUser) {
+                                    return UserService.initCurrentUser()
+                                        .then(function(user) {
+                                            if (!$stateParams.id) {
+                                                $state.go('dashboard', {id: user.defaultDashboardId}, {notify: false});
+                                            }
+
+                                            return $q.resolve(user);
+                                        });
+                                } else {
+                                    if (!$stateParams.id) {
+                                        $state.go('dashboard', {id: currentUser.defaultDashboardId}, {notify: false});
+                                    }
+
+                                    return $q.resolve(currentUser);
+                                }
+                            },]
                         }
 	                })
 	                .state('dashboards', {
@@ -18,6 +43,23 @@
 	                    templateUrl: 'app/_dashboards/list.html',
                         data: {
                             requireLogin: true
+                        },
+                        params: {
+                            currentUser: null
+                        },
+                        resolve: {
+                            currentUser: ['$stateParams', '$q', 'UserService', '$state', ($stateParams, $q, UserService, $state) => {
+                                var currentUser = UserService.getCurrentUser();
+
+                                if (!currentUser) {
+                                    return UserService.initCurrentUser()
+                                        .then(function(user) {
+                                            $state.go('dashboard', {id: user.defaultDashboardId});
+                                        });
+                                } else {
+                                    $state.go('dashboard', {id: currentUser.defaultDashboardId});
+                                }
+                            },]
                         }
 	                })
                     .state('views', {
