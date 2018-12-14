@@ -40,43 +40,48 @@ angular
    * On 401 response (without 'ignoreAuthModule' option) stores the request
    * and broadcasts 'event:auth-loginRequired'.
    */
-  .config(['$httpProvider', function($httpProvider) {
-    $httpProvider.interceptors.push(['$rootScope', '$q', '$injector', 'httpBuffer', 'API_URL', function($rootScope, $q, $injector, httpBuffer, API_URL) {
-        var UNRECOGNIZED_STATES = ['signin', 'signup'];
-      return {
-          request: function (config) {
+    .config(['$httpProvider', function($httpProvider) {
+        $httpProvider.interceptors.push(['$rootScope', '$q', '$injector', 'httpBuffer', 'API_URL', function($rootScope, $q, $injector, httpBuffer, API_URL) {
+            var UNRECOGNIZED_STATES = ['signin', 'signup'];
 
-              var globals = $rootScope.globals;
-              if(config.url.includes(API_URL) && globals && globals.auth) {
-                  config.headers['Authorization'] = globals.auth.type + " " + globals.auth.accessToken;
-              }
+            return {
+                request: function(config) {
+                    var globals = $rootScope.globals;
 
-              return config;
-          },
-        responseError: function(rejection) {
-            var location = window.location.href;
-            var stateName = $injector.get('$state').current.name;
-        	if(UNRECOGNIZED_STATES.indexOf(stateName) == -1)
-        	{
-        		var config = rejection.config || {};
-                switch (rejection.status) {
-                  case 401:
-                    var deferred = $q.defer();
-                    var bufferLength = httpBuffer.append(config, deferred, location);
-                    if (bufferLength === 1)
-                      $rootScope.$broadcast('event:auth-loginRequired', rejection);
-                    return deferred.promise;
-                  /*case 403:
-                      $injector.get('$state').go('403');
-                      break;*/
+                    if (config.url.includes(API_URL) && globals && globals.auth) {
+                        config.headers['Authorization'] = globals.auth.type + ' ' + globals.auth.accessToken;
+                    }
+
+                    return config;
+                },
+                responseError: function(rejection) {
+                    var location = window.location.href;
+                    var stateName = $injector.get('$state').current.name;
+
+                    if (UNRECOGNIZED_STATES.indexOf(stateName) === -1) {
+                        var config = rejection.config || {};
+
+                        switch (rejection.status) {
+                            case 401:
+                                var deferred = $q.defer();
+                                var bufferLength = httpBuffer.append(config, deferred, location);
+
+                                if (bufferLength === 1) {
+                                    $rootScope.$broadcast('event:auth-loginRequired', rejection);
+                                }
+
+                                return deferred.promise;
+                            /*case 403:
+                                $injector.get('$state').go('403');
+                                break;*/
+                        }
+                    }
+                    // otherwise, default behaviour
+                    return $q.reject(rejection);
                 }
-        	}
-	      // otherwise, default behaviour
-	      return $q.reject(rejection);
-        }
-      };
+            };
+        }]);
     }]);
-  }]);
 
   /**
    * Private module, a utility, required internally by 'http-auth-interceptor'.

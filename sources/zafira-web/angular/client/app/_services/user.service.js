@@ -3,26 +3,31 @@
 
     angular
         .module('app.services')
-        .factory('UserService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', UserService])
+        .factory('UserService', ['$httpMock', '$cookies', '$rootScope', 'UtilService', 'API_URL', '$q', UserService])
 
-    function UserService($httpMock, $cookies, $rootScope, UtilService, API_URL) {
-        var service = {};
-
-        service.getUserProfile = getUserProfile;
-        service.getExtendedUserProfile = getExtendedUserProfile;
-        service.updateStatus = updateStatus;
-        service.searchUsers = searchUsers;
-        service.searchUsersWithQuery = searchUsersWithQuery;
-        service.updateUserProfile = updateUserProfile;
-        service.deleteUserProfilePhoto = deleteUserProfilePhoto;
-        service.updateUserPassword = updateUserPassword;
-        service.createOrUpdateUser = createOrUpdateUser;
-        service.addUserToGroup = addUserToGroup;
-        service.deleteUserFromGroup = deleteUserFromGroup;
-        service.getDefaultPreferences = getDefaultPreferences;
-        service.updateUserPreferences = updateUserPreferences;
-        service.resetUserPreferencesToDefault = resetUserPreferencesToDefault;
-        service.deleteUserPreferences = deleteUserPreferences;
+    function UserService($httpMock, $cookies, $rootScope, UtilService, API_URL, $q) {
+        var _currentUser = null;
+        var service = {
+            getUserProfile: getUserProfile,
+            getExtendedUserProfile: getExtendedUserProfile,
+            updateStatus: updateStatus,
+            searchUsers: searchUsers,
+            searchUsersWithQuery: searchUsersWithQuery,
+            updateUserProfile: updateUserProfile,
+            deleteUserProfilePhoto: deleteUserProfilePhoto,
+            updateUserPassword: updateUserPassword,
+            createOrUpdateUser: createOrUpdateUser,
+            addUserToGroup: addUserToGroup,
+            deleteUserFromGroup: deleteUserFromGroup,
+            getDefaultPreferences: getDefaultPreferences,
+            updateUserPreferences: updateUserPreferences,
+            resetUserPreferencesToDefault: resetUserPreferencesToDefault,
+            deleteUserPreferences: deleteUserPreferences,
+            initCurrentUser: initCurrentUser,
+            getCurrentUser: getCurrentUser,
+            clearCurrentUser: clearCurrentUser,
+            setDefaultPreferences: setDefaultPreferences
+        };
 
         return service;
 
@@ -83,6 +88,74 @@
         }
         function resetUserPreferencesToDefault() {
             return $httpMock.put(API_URL + '/api/users/preferences/default').then(UtilService.handleSuccess, UtilService.handleError('Unable to reset user preferences to default'));
+        }
+
+        function initCurrentUser() {
+            if (_currentUser) {
+                !$rootScope.currentUser && ($rootScope.currentUser = _currentUser);
+
+                return $q.resolve(_currentUser);
+            }
+
+            return getExtendedUserProfile()
+                .then(function(rs) {
+                    if (rs.success) {
+                        _currentUser = rs.data['user'];
+                        $rootScope.currentUser = _currentUser; //TODO: get rid of $rootScope.currentUser and use service instead
+                        $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
+                        setDefaultPreferences($rootScope.currentUser.preferences);
+
+                        $rootScope.currentUser.pefrDashboardId = rs.data['performanceDashboardId'];
+                        if (!$rootScope.currentUser.pefrDashboardId) {
+                            alertify.error('\'User Performance\' dashboard is unavailable!');
+                        }
+
+                        $rootScope.currentUser.personalDashboardId = rs.data['personalDashboardId'];
+                        if (!$rootScope.currentUser.personalDashboardId) {
+                            alertify.error('\'Personal\' dashboard is unavailable!');
+                        }
+
+                        $rootScope.currentUser.stabilityDashboardId = rs.data['stabilityDashboardId'];
+
+                        $rootScope.currentUser.defaultDashboardId = rs.data['defaultDashboardId'];
+                        if (!$rootScope.currentUser.defaultDashboardId) {
+                            alertify.warning('Default Dashboard is unavailable!');
+                        }
+
+                        return _currentUser;
+                    } else {
+                        return $q.reject(rs);
+                    }
+                });
+        }
+
+        function clearCurrentUser() {
+            _currentUser = null;
+            $rootScope.currentUser = _currentUser;
+
+            return _currentUser;
+        }
+
+        function getCurrentUser() {
+            return _currentUser;
+        }
+
+        function setDefaultPreferences(userPreferences){
+            userPreferences.forEach(function(userPreference) {
+                switch(userPreference.name) {
+                    case 'DEFAULT_DASHBOARD':
+                        _currentUser.defaultDashboard = userPreference.value;
+                        break;
+                    case 'REFRESH_INTERVAL':
+                        _currentUser.refreshInterval = userPreference.value;
+                        break;
+                    case 'THEME':
+                        _currentUser.theme = userPreference.value;
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
     }
 })();

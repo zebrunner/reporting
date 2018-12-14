@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('AuthService', ['$httpMock', '$cookies', '$rootScope', '$state', 'UtilService', 'UserService', 'API_URL', AuthService])
+        .factory('AuthService', ['$httpMock', '$cookies', '$rootScope', '$state', 'UtilService', 'UserService', 'API_URL', 'jwtHelper', AuthService])
 
-    function AuthService($httpMock, $cookies, $rootScope, $state, UtilService, UserService, API_URL) {
+    function AuthService($httpMock, $cookies, $rootScope, $state, UtilService, UserService, API_URL, jwtHelper) {
 
         var service = {};
 
@@ -23,6 +23,8 @@
         service.IsLoggedIn = IsLoggedIn;
         service.UserHasAnyRole = UserHasAnyRole;
         service.UserHasAnyPermission = UserHasAnyPermission;
+        service.isAuthorized = isAuthorized;
+        service.getAuthData = getAuthData;
 
         function Login(username, password) {
             return $httpMock.post(API_URL + '/api/auth/login', {
@@ -76,15 +78,32 @@
         }
 
         function ClearCredentials() {
-            $rootScope.currentUser = null;
+            UserService.clearCurrentUser();
             $rootScope.globals = {};
             $cookies.remove('globals');
 //            $cookies.remove('Access-Token');
             //$httpMock.defaults.headers.common.Authorization = null;
         }
 
+        function getAuthData() {
+            var globals = $rootScope.globals || $cookies.getObject('globals');
+
+            return globals && globals.auth;
+        }
+
+        function isAuthorized() {
+            var isAuthorized = false;
+            var auth = getAuthData();
+
+            if (auth && auth.refreshToken && !jwtHelper.isTokenExpired(auth.refreshToken)) {
+                isAuthorized = true;
+            }
+
+            return isAuthorized;
+        }
+
         function IsLoggedIn() {
-            return $rootScope.currentUser != null && $rootScope.globals.auth != null;
+            return !!($rootScope.currentUser && $rootScope.globals.auth);
         }
 
         function UserHasAnyRole(roles) {

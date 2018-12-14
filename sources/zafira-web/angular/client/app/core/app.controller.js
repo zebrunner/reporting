@@ -65,35 +65,6 @@
                 });
 	        };
 
-	        $scope.initExtendedUserProfile = function () {
-                return $q(function(resolve, reject) {
-                    UserService.getExtendedUserProfile().then(function(rs) {
-                        if(rs.success)
-                        {
-                            $rootScope.currentUser = rs.data["user"];
-                            $rootScope.currentUser.isAdmin = $rootScope.currentUser.roles.indexOf('ROLE_ADMIN') >= 0;
-                            $rootScope.setDefaultPreferences($rootScope.currentUser.preferences);
-                            $rootScope.currentUser.defaultDashboardId= rs.data["defaultDashboardId"];
-                            if($rootScope.currentUser.defaultDashboardId === null) {
-                                alertify.warning("Default Dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.pefrDashboardId = rs.data["performanceDashboardId"];
-                            if($rootScope.currentUser.pefrDashboardId === null) {
-                                alertify.error("'User Performance' dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.personalDashboardId = rs.data["personalDashboardId"];
-                            if($rootScope.currentUser.personalDashboardId === null) {
-                                alertify.error("'Personal' dashboard is unavailable!");
-                            }
-                            $rootScope.currentUser.stabilityDashboardId = rs.data["stabilityDashboardId"];
-                            resolve(rs.data['defaultDashboardId']);
-                        } else {
-                            reject(rs);
-                        }
-                    });
-                })
-            };
-
 	        $rootScope.$on('event:settings-toolsInitialized', function (event, data) {
 
 	            switch(data) {
@@ -130,71 +101,44 @@
                 }
             });
 
-            $rootScope.setDefaultPreferences = function(userPreferences){
-                userPreferences.forEach(function(userPreference) {
-                    switch(userPreference.name) {
-                        case 'DEFAULT_DASHBOARD':
-                            $rootScope.currentUser.defaultDashboard = userPreference.value;
-                            break;
-                        case 'REFRESH_INTERVAL':
-                            $rootScope.currentUser.refreshInterval = userPreference.value;
-                            break;
-                        case 'THEME':
-                            $rootScope.currentUser.theme = userPreference.value;
-                            $scope.main.skin = userPreference.value;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-            };
-
-            $rootScope.$on("$stateChangeSuccess", function (event, currentRoute, previousRoute) {
-	            $document.scrollTo(0, 0);
-	        });
-
-	        $rootScope.$on("event:auth-loginSuccess", function(ev, auth){
-	            AuthService.SetCredentials(auth);
+	        $rootScope.$on("event:auth-loginSuccess", function(ev, payload){
+                AuthService.SetCredentials(payload.auth);
                 $scope.initSession();
-                $scope.initExtendedUserProfile().then(function(rs) {
-                    var bufferedRequests = httpBuffer.getBuffer();
-                    if(bufferedRequests && bufferedRequests.length) {
-                        $window.location.href = bufferedRequests[0].location;
-                    } else {
-                        $state.go('dashboard', {id: rs});
-                    }
-                }, function (rs) {
-                });
+                UserService.initCurrentUser()
+                    .then(function(user) {
+                        var bufferedRequests = httpBuffer.getBuffer();
+
+                        $scope.main.skin = user.theme;
+                        if (bufferedRequests && bufferedRequests.length) {
+                            $window.location.href = bufferedRequests[0].location;
+                        } else {
+                            if (payload.referrer) {
+                                var params = payload.referrerParams ? payload.referrerParams : {};
+
+                               $state.go(payload.referrer, params);
+                            } else {
+                                $state.go('dashboard', {id: user.defaultDashboardId});
+                            }
+                        }
+                    });
 	        });
 
-            $rootScope.$on('event:auth-loginRequired', function()
-	        {
-	        	if($cookies.get('Access-Token'))
-	            {
-	            	$rootScope.globals = { 'auth' : { 'refreshToken' : $cookies.get('Access-Token')}}
-	            }
-
-	        	if($rootScope.globals.auth != null && $rootScope.globals.auth.refreshToken != null)
-	        	{
-	        		AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
-	        		.then(
-		            function (rs) {
-		            	if(rs.success)
-		            	{
-                            AuthService.SetCredentials(rs.data);
-		            		AuthIntercepter.loginConfirmed();
-		            	}
-		            	else if($state.current.name != 'signup')
-		            	{
-		            		$state.go("signin");
-		            		AuthIntercepter.loginCancelled();
-		            	}
-		            });
-	        	}
-	        	else if($state.current.name != 'signup')
-	        	{
-	        		$state.go("signin");
-	        	}
+            $rootScope.$on('event:auth-loginRequired', function() {
+		        	if ($rootScope.globals.auth && $rootScope.globals.auth.refreshToken) {
+	                    AuthService.RefreshToken($rootScope.globals.auth.refreshToken)
+	                        .then(function (rs) {
+	                            if (rs.success) {
+	                                AuthService.SetCredentials(rs.data);
+	                                AuthIntercepter.loginConfirmed();
+	                            } else if ($state.current.name !== 'signup') {
+	                                AuthIntercepter.loginCancelled();
+	                                AuthService.ClearCredentials();
+                                    $state.go("signin", {referrer: $state.current.name, referrerParams: $state.current.params});
+	                            }
+	                        });
+		        	} else if ($state.current.name !== 'signup') {
+	                    $state.go('signin', {referrer: $state.current.name, referrerParams: $state.current.params});
+		        	}
 	        });
 
             function getVersion() {
@@ -220,32 +164,31 @@
             };
 
 	        (function initController() {
-	        		// Used for dashboard emails
-	            var authorization = $cookies.get('Access-Token');
-                if(authorization) {
-                    AuthService.SetCredentials({'accessToken': authorization, 'type': 'Bearer'});
-                }
-                
-                $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
-                SettingsService.getCompanyLogo().then(function(rs) {
-                    if(rs.success)
-                    {
-                        if(! $rootScope.companyLogo.value || $rootScope.companyLogo.value != rs.data) {
-                            $rootScope.companyLogo.value = rs.data.value;
-                            $rootScope.companyLogo.id = rs.data.id;
-                            SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
-                        }
-                    }
-                });
-                
-	            if ($rootScope.globals.auth)
-	            {
-                    $scope.initSession();
-                    $scope.initExtendedUserProfile().then(function (rs) {
-                        if(['dashboards'].indexOf($state.current.name) >= 0) {
-                            $state.go('dashboard', {id: rs});
+                SettingsService.getCompanyLogo()
+                    .then(function(rs) {
+                        if (rs.success) {
+                            if (!$rootScope.companyLogo.value || $rootScope.companyLogo.value !== rs.data) {
+                                $rootScope.companyLogo.value = rs.data.value;
+                                $rootScope.companyLogo.id = rs.data.id;
+                                SettingProvider.setCompanyLogoURL($rootScope.companyLogo.value);
+                            }
                         }
                     });
+                $rootScope.globals = $rootScope.globals && $rootScope.globals.auth ? $rootScope.globals : $cookies.getObject('globals') || {};
+	            if ($rootScope.globals.auth) {
+                    var currentUser;
+
+                    $scope.initSession();
+
+                    currentUser = UserService.getCurrentUser();
+                    if (!currentUser) {
+                        UserService.initCurrentUser()
+                            .then(function (user) {
+                                $scope.main.skin = user.theme;
+                            });
+                    } else {
+                        $scope.main.skin = currentUser.theme;
+                    }
 	            }
                  getVersion();
 	        })();

@@ -32,6 +32,7 @@
         ,'textAngular'
         ,'gridstack-angular'
         ,'ngMaterialDateRangePicker'
+        ,'angular-jwt'
     ])
     .config(['$httpProvider', '$anchorScrollProvider', function($httpProvider, $anchorScrollProvider) {
         $anchorScrollProvider.disableAutoScrolling();
@@ -1075,18 +1076,47 @@
 	    return angular.equals({}, object);
 	  }
 	}])
-    .run(['$rootScope', '$location', '$cookies', '$http',
-            function($rootScope, $location, $cookies, $http)
-            {
-	            $rootScope.$on('$locationChangeStart', function (event, next, current) {
-	                // redirect to login page if not logged in and trying to access a restricted page
-	                var restrictedPage = $.inArray($location.path(), ['/signin']) === -1;
-	                var loggedIn = $rootScope.globals || $cookies.get('Access-Token');
-	                if (restrictedPage && !loggedIn)
-	                {
-	                    $location.path('/signin');
-	                }
-	            });
+    .run(['$rootScope',
+        '$location',
+        '$cookies',
+        '$http',
+        '$transitions',
+        'AuthService',
+        '$document',
+        'UserService',
+        function($rootScope, $location, $cookies, $http, $transitions, AuthService,
+                 $document, UserService) {
+
+                $transitions.onBefore({}, function(trans) {
+                    var toState = trans.to();
+                    var toStateParams = trans.params();
+                    var loginRequired = !!(toState.data && toState.data.requireLogin);
+                    var onlyGuests = !!(toState.data && toState.data.onlyGuests);
+                    var isAuthorized = AuthService.isAuthorized();
+                    var currentUser = UserService.getCurrentUser();
+
+                    //Redirect to login page if authorization is required and user is not authorized
+                    if (loginRequired && !isAuthorized) {
+                        return trans.router.stateService.target('signin', {referrer: toState.name, referrerParams: toStateParams});
+                    } else if (onlyGuests) {
+                        if (isAuthorized) {
+                            if (currentUser) {
+                                return trans.router.stateService.target('dashboard', {id: currentUser.defaultDashboardId});
+                            } else {
+                                var authData = AuthService.getAuthData();
+
+                                if (authData) {
+                                    $rootScope.$broadcast('event:auth-loginSuccess', {auth: authData});
+                                }
+
+                                return false;
+                            }
+                        }
+                    }
+                });
+                $transitions.onSuccess({}, function() {
+                    $document.scrollTo(0, 0);
+                });
             }
       ])
 })();
