@@ -6,7 +6,7 @@
 		<listener class-name="com.qaprosoft.zafira.tests.util.TestListener"/>
 	</listeners>
 	
-	<test parallel="false" name="Profile tests">
+	<!-- test parallel="false" name="Profile tests">
 		<classes>
 			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
 				<methods>
@@ -14,6 +14,6 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
+	</test-->
 
 </suite>
