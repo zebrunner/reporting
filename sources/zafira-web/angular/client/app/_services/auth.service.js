@@ -78,7 +78,7 @@
         }
 
         function ClearCredentials() {
-            $rootScope.currentUser = null;
+            UserService.clearCurrentUser();
             $rootScope.globals = {};
             $cookies.remove('globals');
 //            $cookies.remove('Access-Token');
