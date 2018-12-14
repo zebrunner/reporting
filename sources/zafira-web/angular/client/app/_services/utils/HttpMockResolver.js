@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('$httpMock', ['$http', '$rootScope', '$q', HttpMockResolver])
+        .factory('$httpMock', ['$http', '$rootScope', '$q', '$transitions', HttpMockResolver])
 
-    function HttpMockResolver($http, $rootScope, $q) {
+    function HttpMockResolver($http, $rootScope, $q, $transitions) {
 
         var service = {
             // trigger mock
@@ -24,11 +24,13 @@
         var state = '';
         var isBackClicked = false;
 
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
-            if(needStore(toState)) {
+        $transitions.onStart({}, function(trans) {
+            var toState = trans.to();
+
+            if (needStore(toState)) {
                 state = toState.name;
                 storage[state] = {};
-            } else if(needRestore(toState)) {
+            } else if (needRestore(toState)) {//TODO: what missed here?
 
             }
         });

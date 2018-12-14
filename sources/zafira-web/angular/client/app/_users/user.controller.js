@@ -151,7 +151,9 @@
                 if (rs.success) {
                     $scope.preferences = rs.data;
                     //$rootScope.$broadcast('event:preferencesReset');
-                    $rootScope.setDefaultPreferences(rs.data && rs.data.length ? rs.data : $rootScope.currentUser.preferences);
+                    if (rs.data && rs.data.length) {
+                        UserService.setDefaultPreferences(rs.data);
+                    }
                     alertify.success('User preferences are successfully updated');
                 }
                 else {
@@ -163,7 +165,7 @@
         $scope.resetPreferences = function () {
             UserService.resetUserPreferencesToDefault().then(function (rs) {
                 if (rs.success) {
-                    $rootScope.setDefaultPreferences(rs.data);
+                    UserService.setDefaultPreferences(rs.data);
                     alertify.success('Preferences are set to default');
                 }
                 else {

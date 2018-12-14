@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite verbose="1" name="Zafira Acceptance Tests" parallel="tests" thread-count="5" data-provider-thread-count="5" annotations="JDK">
+
+	<listeners>
+		<listener class-name="com.qaprosoft.zafira.tests.util.TestListener"/>
+	</listeners>
+	
+	<!-- test parallel="false" name="Profile tests">
+		<classes>
+			<class name="com.qaprosoft.zafira.tests.UserProfilePageTest">
+				<methods>
+					<include name="changePasswordTest"/>
+				</methods>
+			</class>
+		</classes>
+	</test-->
+
+</suite>
