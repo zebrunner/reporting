@@ -443,9 +443,9 @@ public class TestRunService
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public List<TestRun> getTestRunsForRerun(JobSearchCriteria sc) throws ServiceException
+	public List<TestRun> getTestRunsForSmartRerun(JobSearchCriteria sc) throws ServiceException
 	{
-		return testRunMapper.getTestRunsForRerun(sc);
+		return testRunMapper.getTestRunsForSmartRerun(sc);
 	}
 
 	@Transactional(rollbackFor = Exception.class)

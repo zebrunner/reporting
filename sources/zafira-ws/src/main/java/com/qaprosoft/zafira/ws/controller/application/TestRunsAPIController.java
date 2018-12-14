@@ -279,7 +279,7 @@ public class TestRunsAPIController extends AbstractController {
 		if (rerunFailures && sc.getFailurePercent() == null) {
 			sc.setFailurePercent(0);
 		}
-		List<TestRun> testRuns = testRunService.getTestRunsForRerun(sc);
+		List<TestRun> testRuns = testRunService.getTestRunsForSmartRerun(sc);
 		List<TestRunType> testRunTypes = new ArrayList<>();
 		if (testRuns != null) {
 			testRunTypes = testRuns.stream().map(testRun -> {

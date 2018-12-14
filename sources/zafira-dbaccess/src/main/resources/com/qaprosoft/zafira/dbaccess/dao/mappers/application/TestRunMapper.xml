@@ -429,7 +429,7 @@
 		</choose>
     </select>
 
-	<select id="getTestRunsForRerun" resultMap="NightlyViewResultMap">
+	<select id="getTestRunsForSmartRerun" resultMap="NightlyViewResultMap">
         <![CDATA[
         SELECT
                NV.UPSTREAM_JOB_ID,
