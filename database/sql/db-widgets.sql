@@ -1476,7 +1476,7 @@ BEGIN
   UNION
   SELECT
       ROUND(SUM(TOTAL_SECONDS)/3600) AS "ACTUAL",
-      ROUND(SUM(TOTAL_SECONDS)/3600/extract(day from current_date) * extract(day from date_trunc('day', date_trunc('month', current_date) + interval '1 month') - interval '1 day')) AS "ETA",
+      ROUND(SUM(TOTAL_SECONDS)/3600/extract(day from current_date) * extract(day from date_trunc(''day'', date_trunc(''month'', current_date) + interval ''1 month'') - interval ''1 day'')) AS "ETA",
       date_trunc(''month'', current_date) AS "CREATED_AT"
   FROM MONTHLY_VIEW
   WHERE PROJECT LIKE ANY (''{#{project}}'')

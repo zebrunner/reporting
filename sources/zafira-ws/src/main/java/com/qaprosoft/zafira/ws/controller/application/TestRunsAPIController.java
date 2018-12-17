@@ -195,7 +195,7 @@ public class TestRunsAPIController extends AbstractController {
 			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException, UnsupportedEncodingException {
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		if (testRun == null) {
-			throw new ServiceException("Test run not found for abort!");
+			throw new TestRunNotFoundException("Test run not found for abort!");
 		}
 
 		if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
