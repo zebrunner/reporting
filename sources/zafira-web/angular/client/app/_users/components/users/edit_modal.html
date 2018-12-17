@@ -2,7 +2,7 @@
     <form class="form-validation" name="profile_form" ng-submit="updateUser(); UtilService.untouchForm(profile_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2 id="modalTitle">User</h2>
+                <h2 id="modalTitle">Edit user profile</h2>
                 <span flex></span>
                 <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
@@ -73,7 +73,7 @@
             <md-button id="save" type="submit"
                        class="md-raised btn-w-md md-primary"
                        ng-disabled="profile_form.$invalid">
-                Update
+                Save
             </md-button>
         </md-dialog-actions>
     </form>
