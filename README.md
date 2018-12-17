@@ -89,7 +89,7 @@ Regardless of Zafira client language you have to generate **zafira_access_token*
 ## Documentation and free support
 * [User manual](http://qaprosoft.github.io/zafira)
 * [Demo project](https://github.com/qaprosoft/carina-demo)
-* [Telegram channel](https://t.me/zafira_support)
+* [Telegram channel](https://t.me/qps_zafira)
 
 ## Code formatter
 We propose to use our configured [**Java code formatter for Eclipse**](https://github.com/qaprosoft/carina/blob/master/carina_formatter.xml). To use same formatter in IntelliJ IDEA you should install and configure [**Eclipse Code Formatter**](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter).
