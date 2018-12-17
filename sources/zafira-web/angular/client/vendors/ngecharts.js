@@ -65,6 +65,7 @@
 
                 axisFormatterApply(opts.xAxis);
                 axisFormatterApply(opts.yAxis);
+                tooltipFormatterApply(opts.tooltip);
 
                 chart.setOption(opts);
                 scope.$emit('create', chart);
@@ -89,13 +90,19 @@
                 }
             };
 
+            function tooltipFormatterApply(tooltip) {
+                if(tooltip && tooltip.formatter && tooltip.formatter.length) {
+                    tooltip.formatter = applyFormatter(tooltip.formatter);
+                }
+            };
+
             function applyFormatter(formatter) {
                 var asString = JSON.stringify(formatter);
                 var placeholders = getPlaceholders(asString);
                 var result = formatter;
                 if(placeholders && placeholders.length === 1) {
                     var placeholder = placeholders[0];
-                    if(placeholder.indexOf('$filter') >= 0) {
+                    if(placeholder.indexOf('\"$filter') === 0) {
                         var filter = placeholder.split('|')[1].trim();
                         var filterSlices = filter.split(':');
                         var filterType = filterSlices[0].trim();
@@ -103,13 +110,16 @@
                         result = function(value, index) {
                             return $filter(filterType)(value, filterValue);
                         }
+                    } else if(placeholder.indexOf('\"$function') === 0) {
+                        var funcStr = placeholder.split('$function')[1];
+                        result = new Function('params', 'ticket', 'callback', funcStr);
                     }
                 }
                 return result;
             };
 
             function getPlaceholders(str) {
-                return str.match(/(?:\$)(.+?)(?=\$)/g);
+                return str.match(/(?:^"\$)(.+?)(?=\$"$)/g);
             };
         };
     };
