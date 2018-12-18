@@ -2,7 +2,7 @@
     <form class="form-validation" name="view_form" ng-submit="UtilService.untouchForm(view_form)" ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2 id="modalTitle">View</h2>
+                <h2 id="modalTitle"><span ng-if="! view.id">New</span><span ng-if="view.id">Edit/delete</span> view</h2>
                 <span flex></span>
                 <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
                     <md-icon aria-label="Close dialog">close</md-icon>
