@@ -11,7 +11,7 @@ public class ChangePasswordModalWindow extends AbstractModalWindow
 	@FindBy(name = "password")
 	private WebElement passwordInput;
 
-	@FindBy(xpath = ".//button[contains(text(), 'Change')]")
+	@FindBy(xpath = ".//button[contains(text(), 'Apply')]")
 	private WebElement changeButton;
 
 	public ChangePasswordModalWindow(WebDriver driver, SearchContext context)
