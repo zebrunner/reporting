@@ -1,0 +1,79 @@
+$modal-grey: #dfe3e5;
+$modal-white: #ffffff;
+
+.zf-modal-container {
+    height: 680px !important;//69%;
+    width: 880px !important;//61%;
+    font-size: 0 !important;
+
+    &_helper, &_content {
+        display: inline-block;
+        height: 100%;
+        font-size: 12px;
+        padding: 24px;
+        float: left;
+    }
+    &_helper {
+        width: 34%;
+        background-color: $modal-white;
+    }
+    &_content {
+        width: 66%;
+        background-color: $modal-grey;
+        padding-top: 30px;
+    }
+
+    .md-dialog-content {
+        padding: 0;
+        height: 100%;
+        > * {
+            height: 100%;
+        }
+    }
+}
+
+
+// Inputs
+.zf-input-container {
+    > input {
+        width: 272px;
+        height: 34px;
+        border-radius: 4px;
+        background-color: $modal-white;
+        border: 1px solid $modal-white;
+        font-size: 14px;
+        padding: 11px;
+
+        &::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+            opacity: 0.5;
+            font-weight: 500;
+        }
+    }
+}
+
+
+.zf-button {
+    display: inline-block;
+    width: 140px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    letter-spacing: 0.1px;
+    color: black;
+}
+// Controls
+.zf-button.zf-chip-button {
+    width: 100% !important;
+    height: 32px;
+    border-radius: 16px;
+    letter-spacing: 0.7px !important;
+    color: $modal-white;
+    background-color: $brand-light;
+
+    i.material-icons {
+        vertical-align: middle;
+        font-size: 16px;
+        padding: 0 5px;
+    }
+}

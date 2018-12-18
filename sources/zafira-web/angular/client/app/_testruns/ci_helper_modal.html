@@ -1,102 +1,106 @@
-<md-dialog flex="100" style="height: 100%;" aria-label="User profile" zafira-background-theme="modal">
-    <md-toolbar>
-        <div class="md-toolbar-tools">
-            <h2 id="modalTitle">CI Helper</h2>
-            <span flex></span>
-            <md-button id="close" class="md-icon-button" data-ng-click="cancel()">
-                <md-icon aria-label="Close dialog">close</md-icon>
-            </md-button>
+<zf-modal class="ci-runner-container">
+    <zf-modal-helper-container class="ci-runner-container_helper">
+        <div class="ci-runner-container_helper_title">Test runner</div>
+        <div class="ci-runner-container_helper_choose">
+            <button class="zf-button zf-chip-button">
+                Add template
+                <i class="material-icons">add_circle</i>
+            </button>
+            <div class="ci-runner-container_helper_choose_or">or</div>
+            <div class="ci-runner-container_helper_choose_else">Choose Test Suite</div>
         </div>
-    </md-toolbar>
-    <div class="md-dialog-content ci-helper-container">
-        <div class="row ui-section no-margin-bottom">
-            <div class="col-lg-12">
-                <section class="panel panel-default">
-                    <div zafira-background-theme="modal">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div layout="column" ng-cloak class="md-inline-form">
-                                    <div layout-padding>
-                                        <form class="form-validation" name="scm_form" ng-cloak>
-                                            <input type="button" ng-click="connectToGitHub();" value="Connect to GitHub"/>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div layout="column" ng-cloak class="md-inline-form ci-helper-container_select">
-                                    <div layout-padding>
-                                        <form class="form-validation" name="scm_form" ng-cloak>
-                                            <md-input-container ng-if="organizations.length">
-                                                <md-select ng-change="getRepositories();" ng-model="scmAccount.organizationName">
-                                                    <md-option value=""><em>Yourself</em></md-option>
-                                                    <md-option ng-repeat="organization in organizations" ng-value="organization.name" class="ci-helper-container_select_option">
-                                                        <img ng-src="{{organization.avatarURL}}"/>
-                                                        {{organization.name}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                            <md-input-container ng-if="repositories.length">
-                                                <md-select ng-model="scmAccount.repositoryName">
-                                                    <md-option ng-repeat="repository in repositories" ng-value="repository.name" class="ci-helper-container_select_option">
-                                                        <i ng-if="repository.private" class="material-icons">lock</i>
-                                                        <i ng-if="! repository.private" class="material-icons">lock_open</i>
-                                                        {{repository.name}}
-                                                    </md-option>
-                                                </md-select>
-                                            </md-input-container>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
-                                    <div layout-padding>
-                                        <form class="form-validation" name="editor_form" ng-cloak>
-                                            <div ui-ace="{{aceOptions}}" ng-model="text"></div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row ci-helper-container_builder">
-                            <div class="col-lg-12">
-                                <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
-                                    <div layout-padding>
-                                        <form class="form-validation" name="builder_form" ng-cloak>
-                                            <div ng-repeat="(key, value) in jsonModel track by $index">
-                                                <div ng-if="getElement(value) === 'select';">
-                                                    <label>{{key}}</label>
-                                                    <select ng-model="ciOptions[key]">
-                                                        <option ng-repeat="val in value track by $index" value="{{val}}">{{val}}</option>
-                                                    </select>
-                                                </div>
-                                                <div ng-if="getElement(value) === 'checkbox';">
-                                                    <label>{{key}}</label>
-                                                    <input type="checkbox" name="checkbox" ng-model="ciOptions[key]"/>
-                                                </div>
-                                                <div ng-if="getElement(value) === 'input';">
-                                                    <label>{{key}}</label>
-                                                    <input type="text" name="input" ng-model="ciOptions[key]">
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+        <div class="ci-runner-container_helper_section">
+            <div class="ci-runner-container_helper_section_item">MMF</div>
+            <div class="ci-runner-container_helper_section_item">Test custom params creation</div>
+            <div class="ci-runner-container_helper_section_item">Test custom paramsewededsdcsdcscsdsc creation sdcdcdcedcdsc</div>
+            <div class="ci-runner-container_helper_section_item">Test custom paramswedwsdcsdcsd creationedcedece dcdcsddscsdcsdcsd</div>
+        </div>
+    </zf-modal-helper-container>
+    <zf-modal-content-container class="ci-runner-container_content">
+        <div class="ci-runner-container_content_title">
+            <zf-input-container>
+                <input ng-model="newModel" placeholder="Title"/>
+            </zf-input-container>
+        </div>
+        <div class="ci-runner-container_content_scm-connector">
+            <div>Select a Github repository</div>
+
+        </div>
+    </zf-modal-content-container>
+    <!--<div class="row">
+        <div class="col-lg-12">
+            <div layout="column" ng-cloak class="md-inline-form">
+                <div layout-padding>
+                    <form class="form-validation" name="scm_form" ng-cloak>
+                        <input type="button" ng-click="connectToGitHub();" value="Connect to GitHub"/>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <md-dialog-actions layout="row">
-        <md-button id="send" class="md-raised btn-w-md md-primary" ng-click="drawHTML();">
-            Draw
-        </md-button>
-    </md-dialog-actions>
-</md-dialog>
+    <div class="row">
+        <div class="col-lg-12">
+            <div layout="column" ng-cloak class="md-inline-form ci-helper-container_select">
+                <div layout-padding>
+                    <form class="form-validation" name="scm_form" ng-cloak>
+                        <md-input-container ng-if="organizations.length">
+                            <md-select ng-change="getRepositories();" ng-model="scmAccount.organizationName">
+                                <md-option value=""><em>Yourself</em></md-option>
+                                <md-option ng-repeat="organization in organizations" ng-value="organization.name" class="ci-helper-container_select_option">
+                                    <img ng-src="{{organization.avatarURL}}"/>
+                                    {{organization.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container ng-if="repositories.length">
+                            <md-select ng-model="scmAccount.repositoryName">
+                                <md-option ng-repeat="repository in repositories" ng-value="repository.name" class="ci-helper-container_select_option">
+                                    <i ng-if="repository.private" class="material-icons">lock</i>
+                                    <i ng-if="! repository.private" class="material-icons">lock_open</i>
+                                    {{repository.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
+                <div layout-padding>
+                    <form class="form-validation" name="editor_form" ng-cloak>
+                        <div ui-ace="{{aceOptions}}" ng-model="text"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ci-helper-container_builder">
+        <div class="col-lg-12">
+            <div layout="column" ng-cloak class="md-inline-form comment-modal-textarea-padding">
+                <div layout-padding>
+                    <form class="form-validation" name="builder_form" ng-cloak>
+                        <div ng-repeat="(key, value) in jsonModel track by $index">
+                            <div ng-if="getElement(value) === 'select';">
+                                <label>{{key}}</label>
+                                <select ng-model="ciOptions[key]">
+                                    <option ng-repeat="val in value track by $index" value="{{val}}">{{val}}</option>
+                                </select>
+                            </div>
+                            <div ng-if="getElement(value) === 'checkbox';">
+                                <label>{{key}}</label>
+                                <input type="checkbox" name="checkbox" ng-model="ciOptions[key]"/>
+                            </div>
+                            <div ng-if="getElement(value) === 'input';">
+                                <label>{{key}}</label>
+                                <input type="text" name="input" ng-model="ciOptions[key]">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</zf-modal>

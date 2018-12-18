@@ -20,6 +20,7 @@
         ,'app.integrations'
         ,'app.certification'
         ,'app.sidebar'
+        ,'app.common'
         // 3rd party feature modules
         ,'ngImgCrop'
         ,'ngecharts'

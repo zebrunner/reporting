@@ -1404,6 +1404,7 @@
                 targetEvent: event,
                 clickOutsideToClose:true,
                 fullscreen: true,
+                autoWrap: false,
                 locals: {
 
                 }
