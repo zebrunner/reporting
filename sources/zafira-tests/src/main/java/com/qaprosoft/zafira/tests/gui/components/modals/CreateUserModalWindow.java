@@ -29,7 +29,7 @@ public class CreateUserModalWindow extends AbstractModalWindow
 	@FindBy(xpath = ".//button[contains(text(), 'Create')]")
 	private WebElement createButton;
 
-	@FindBy(xpath = ".//button[contains(text(), 'Update')]")
+	@FindBy(xpath = ".//button[contains(text(), 'Save')]")
 	private WebElement updateButton;
 
 	@FindBy(xpath = ".//button[contains(text(), 'Delete')]")
