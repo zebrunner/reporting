@@ -195,7 +195,7 @@ public class TestRunsAPIController extends AbstractController {
 			@RequestBody(required = false) CommentType abortCause) throws ServiceException, InterruptedException, UnsupportedEncodingException {
 		TestRun testRun = id != null ? testRunService.getTestRunById(id) : testRunService.getTestRunByCiRunId(ciRunId);
 		if (testRun == null) {
-			throw new ServiceException("Test run not found for abort!");
+			throw new TestRunNotFoundException("Test run not found for abort!");
 		}
 
 		if (Status.IN_PROGRESS.equals(testRun.getStatus()) || Status.QUEUED.equals(testRun.getStatus())) {
@@ -279,7 +279,7 @@ public class TestRunsAPIController extends AbstractController {
 		if (rerunFailures && sc.getFailurePercent() == null) {
 			sc.setFailurePercent(0);
 		}
-		List<TestRun> testRuns = testRunService.getJobsTestRuns(sc);
+		List<TestRun> testRuns = testRunService.getTestRunsForSmartRerun(sc);
 		List<TestRunType> testRunTypes = new ArrayList<>();
 		if (testRuns != null) {
 			testRunTypes = testRuns.stream().map(testRun -> {
@@ -438,13 +438,9 @@ public class TestRunsAPIController extends AbstractController {
 		if (testRun == null) {
 			throw new TestRunNotFoundException();
 		}
-		if(!StringUtils.isEmpty(testRun.getComments())) {
-			if(rerunFailures){
-				testRunService.updateComment(testRun, "rebuild failures run");
-			} else {
-				testRunService.updateComment(testRun, null);
-			}
-		}
+		testRun.setComments(null);
+		testRun.setReviewed(false);
+		testRunService.updateTestRun(testRun);
 		if (!jenkinsService.rerunJob(testRun.getJob(), testRun.getBuildNumber(), rerunFailures)) {
 			throw new UnableToRebuildCIJobException();
 		}

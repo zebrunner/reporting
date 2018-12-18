@@ -3,9 +3,9 @@
 
     angular
         .module('app.services')
-        .factory('$tableExpandUtil', ['$timeout', '$rootScope', '$window', '$q', TableExpandUtil])
+        .factory('$tableExpandUtil', ['$timeout', '$rootScope', '$window', '$q', '$transitions', TableExpandUtil])
 
-    function TableExpandUtil($timeout, $rootScope, $window, $q) {
+    function TableExpandUtil($timeout, $rootScope, $window, $q, $transitions) {
 
         var service = {
             expand: expand,
@@ -28,8 +28,8 @@
 
         initDefaults();
 
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState,fromParams) {
-            if(painterWatcher) {
+        $transitions.onStart({}, function() {
+            if (painterWatcher) {
                 painterWatcher();
             }
         });

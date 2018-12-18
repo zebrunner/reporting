@@ -16,6 +16,7 @@
 package com.qaprosoft.zafira.ws.controller.application;
 
 import com.qaprosoft.zafira.models.db.TestRun;
+import com.qaprosoft.zafira.models.db.config.Argument;
 import com.qaprosoft.zafira.models.db.config.Configuration;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationTag;
 import com.qaprosoft.zafira.models.dto.tag.IntegrationType;
@@ -28,6 +29,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,6 +37,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.bind.JAXBException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Api(value = "Tags operations")
@@ -58,19 +63,42 @@ public class TagsAPIController extends AbstractController
         TestRun testRun = testRunService.getTestRunByCiRunIdFull(ciRunId);
         if (testRun != null){
             tagService.getIntegrationInfo(ciRunId, integrationTag, integration);
-            integration.setCreatedAfter(testRun.getCreatedAt().getTime());
+            integration.setCreatedAfter(testRun.getCreatedAt());
+            integration.setStartedAt(testRun.getStartedAt());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(testRun.getStartedAt());
+            if(testRun.getElapsed() != null){
+                calendar.add(Calendar.SECOND, testRun.getElapsed());
+            }
+            integration.setFinishedAt(calendar.getTime());
+            integration.setPlatform(testRun.getPlatform());
             Configuration configuration = testRunService.readConfiguration(testRun.getConfigXML());
-            integration.setTestRunName(testRun.getName(configuration));
-            if(integrationTag == IntegrationTag.TESTRAIL_TESTCASE_UUID){
-                configuration.getArg().forEach(arg -> {
-                    if(arg.getKey().contains("testrail_assignee")){
-                        integration.getCustomParams().put("assignee", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_milestone")){
-                        integration.getCustomParams().put("milestone", arg.getValue());
-                    } else if (arg.getKey().contains("testrail_run_name")){
-                        integration.setTestRunName(arg.getValue());
-                    }
-                });
+            Map <String, String> configMap = new HashMap<>();
+            for (Argument arg : configuration.getArg())
+            {
+                configMap.put(arg.getKey(), arg.getValue());
+            }
+            integration.setTestRunName(testRun.getName(configMap));
+            switch (integrationTag){
+                case TESTRAIL_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if(arg.getKey().contains("testrail_assignee")){
+                            integration.getCustomParams().put("assignee", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_milestone")){
+                            integration.getCustomParams().put("milestone", arg.getValue());
+                        } else if (arg.getKey().contains("testrail_run_name") && !StringUtils.isEmpty(arg.getValue())){
+                            integration.setTestRunName(arg.getValue());
+                        }
+                    });
+                    break;
+                case QTEST_TESTCASE_UUID:
+                    configuration.getArg().forEach(arg -> {
+                        if(arg.getKey().contains("qtest_cycle_name")){
+                            integration.getCustomParams().put("cycle_name", arg.getValue());
+                        } else if (arg.getKey().contains("qtest_suite_name") && !StringUtils.isEmpty(arg.getValue())){
+                            integration.setTestRunName(arg.getValue());
+                        }
+                    });
             }
         }
         return integration;

@@ -28,6 +28,7 @@ import org.joda.time.Seconds;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.springframework.util.StringUtils;
 
 @JsonInclude(Include.NON_NULL)
 public class TestRun extends AbstractEntity
@@ -162,15 +163,13 @@ public class TestRun extends AbstractEntity
 		this.configXML = configXML;
 	}
 
-	public String getName(Configuration configuration) {
-		for (Argument arg : configuration.getArg())
-		{
-			this.configuration.put(arg.getKey(), arg.getValue());
-		}
+	public String getName(Map<String, String> configuration) {
+		this.configuration = configuration;
 		String appVersion = argumentIsPresent("app_version")? this.configuration.get("app_version") + " - ": "";
 		String platformInfo = buildPlatformInfo();
-		return String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
+		String testRunName = String.format(NAME, appVersion, testSuite.getName(), testSuite.getFileName(),
 				this.configuration.get("env"), platformInfo).trim();
+		return testRunName;
 	}
 
 	private boolean argumentIsPresent(String arg, String... ignoreValues) {

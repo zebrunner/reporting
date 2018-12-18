@@ -488,7 +488,7 @@
             $scope.stopRefreshIntervalInterval();
         });
 
-        function getDashboardById (dashboardId) {
+        function getDashboardById(dashboardId) {
             return $q(function (resolve, reject) {
                 DashboardService.GetDashboardById(dashboardId).then(function (rs) {
                     if (rs.success) {
@@ -565,15 +565,10 @@
         });
 
         (function init() {
-
-            if(!$stateParams.id && $rootScope.currentUser && $rootScope.currentUser.defaultDashboardId) {
-                $state.go('dashboard', {id: $rootScope.currentUser.defaultDashboardId})
-            }
             getDashboardById($stateParams.id).then(function (rs) {
                 $timeout(function () {
                     refresh();
                 }, 0, false);
-            }, function () {
             });
         })();
     }

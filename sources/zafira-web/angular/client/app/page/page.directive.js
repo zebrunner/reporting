@@ -9,44 +9,29 @@
     function customPage() {
         var directive = {
             restrict: 'A',
-            controller: ['$scope', '$element', '$location', customPageCtrl]
+            controller: ['$scope', '$element', '$location', '$transitions', '$state', customPageCtrl]
         };
 
         return directive;
 
-        function customPageCtrl($scope, $element, $location) {
-            var addBg, path;
-
-            path = function() {
-                return $location.path();
-            };
-
-            addBg = function(path) {
+        function customPageCtrl($scope, $element, $location, $transitions) {
+            function handleTransition(toState, fromState) {
                 $element.removeClass('on-canvas');
-                $element.removeClass('body-wide body-err body-lock body-auth');
-                switch (path) {
-                    case '/404':
-                    case '/page/404':
-                    case '/page/500':
-                        return $element.addClass('body-wide body-err');
-                    case '/signin':
-                    case '/signup':
-                    case '/password/forgot':
-                    case '/password/reset':
-                    case '/scm/callback':
-                        return $element.addClass('body-wide body-auth');
-                    case '/page/lock-screen':
-                        return $element.addClass('body-wide body-lock');
+                if (toState.name !== fromState.name) {
+                    if (fromState.data && fromState.data.classes) {
+                        $element.removeClass(fromState.data.classes);
+                    }
+                    if (toState.data && toState.data.classes) {
+                        $element.addClass(toState.data.classes);
+                    }
                 }
-            };
+            }
 
-            addBg($location.path());
-
-            $scope.$watch(path, function(newVal, oldVal) {
-                if (newVal === oldVal) {
-                    return;
-                }
-                return addBg($location.path());
+            $transitions.onSuccess({}, function(e) {
+                handleTransition(e.to(), e.from());
+            });
+            $transitions.onError({}, function(e) {
+                handleTransition(e.from(), e.to());
             });
         }
     }
