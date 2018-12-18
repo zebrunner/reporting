@@ -83,7 +83,7 @@ public class UserPageTest extends AbstractTest
 		userPage.clickOutside();
 		createUserModalWindow = userPageService.goToEditUserModalWindow(0);
 		Assert.assertTrue(createUserModalWindow.isElementPresent(4), "Edit user modal window not opened");
-		Assert.assertEquals(createUserModalWindow.getHeaderText(), "User",
+		Assert.assertEquals(createUserModalWindow.getHeaderText(), "Edit user profile",
 				"Invalid header text on edit profile modal window");
 		createUserModalWindow.closeModalWindow();
 
@@ -288,7 +288,7 @@ public class UserPageTest extends AbstractTest
 		Assert.assertEquals(createUserModalWindow.getWebElementValue(createUserModalWindow.getEmailInput()),
 				userType.getEmail(), "Email in input is invalid");
 		Assert.assertTrue(createUserModalWindow.isElementPresent(createUserModalWindow.getUpdateButton(), 1),
-				"Update button is not present");
+				"Save button is not present");
 		/*Assert.assertTrue(createUserModalWindow.isElementPresent(createUserModalWindow.getDeleteButton(), 1),
 				"Delete button is not present");*/
 	}
